@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release EXE|x64">
+      <Configuration>Release EXE</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F3D0041C-5A46-400F-ACC4-65E287277165}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Simple++</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)includes\freetype\;$(SolutionDir)includes\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MSVCPRTD.LIB;FreeImage.lib;freetype26MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>FreeImage.lib;freetype250.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>$(SolutionDir)includes\freetype\;$(SolutionDir)includes\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="Application.hpp" />
+    <ClInclude Include="BasicIO.h" />
+    <ClInclude Include="BasicIO.hpp" />
+    <ClInclude Include="BasicSimpleIO.h" />
+    <ClInclude Include="BasicSimpleLoadableIO.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontLoadable.h" />
+    <ClInclude Include="FreeTypeChar.h" />
+    <ClInclude Include="Graphic.h" />
+    <ClInclude Include="Graphic.hpp" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="IO.h" />
+    <ClInclude Include="IO.hpp" />
+    <ClInclude Include="BasicLoadable.h" />
+    <ClInclude Include="BasicLoadableIO.h" />
+    <ClInclude Include="BuildConfig.h" />
+    <ClInclude Include="CoordinateChunk.h" />
+    <ClInclude Include="CoordinateChunk.hpp" />
+    <ClInclude Include="CoordinateSystem.h" />
+    <ClInclude Include="CoordinateSystem.hpp" />
+    <ClInclude Include="CoordinateSystemObject.h" />
+    <ClInclude Include="CoordinateSystemObject.hpp" />
+    <ClInclude Include="Date.h" />
+    <ClInclude Include="Date.hpp" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="Duration.h" />
+    <ClInclude Include="Duration.hpp" />
+    <ClInclude Include="FreeImage.h" />
+    <ClInclude Include="SimpleIO.h" />
+    <ClInclude Include="SimpleIO.hpp" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Texture.hpp" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="Logical.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Map.hpp" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Math\BoundingBox2D.h" />
+    <ClInclude Include="Math\BoundingBox2D.hpp" />
+    <ClInclude Include="Math\Mat2.h" />
+    <ClInclude Include="Math\Mat2.hpp" />
+    <ClInclude Include="Math\Mat3.h" />
+    <ClInclude Include="Math\Mat3.hpp" />
+    <ClInclude Include="Math\Mat4.h" />
+    <ClInclude Include="Math\Mat4.hpp" />
+    <ClInclude Include="Math\Operations.h" />
+    <ClInclude Include="Math\Rectangle.h" />
+    <ClInclude Include="Math\Rectangle.hpp" />
+    <ClInclude Include="Math\Vec2.h" />
+    <ClInclude Include="Math\Vec2.hpp" />
+    <ClInclude Include="Math\Vec3.h" />
+    <ClInclude Include="Math\Vec3.hpp" />
+    <ClInclude Include="Math\Vec4.h" />
+    <ClInclude Include="Math\Vec4.hpp" />
+    <ClInclude Include="MemoryAllocation.h" />
+    <ClInclude Include="MemoryAllocation.hpp" />
+    <ClInclude Include="Mutex.h" />
+    <ClInclude Include="Network.h" />
+    <ClInclude Include="Network\Address.h" />
+    <ClInclude Include="Network\AddrInfo.h" />
+    <ClInclude Include="Network\MultiConnectionsServer.h" />
+    <ClInclude Include="Network\Network.h" />
+    <ClInclude Include="Network\Socket.h" />
+    <ClInclude Include="OrderedMap.h" />
+    <ClInclude Include="OrderedMap.hpp" />
+    <ClInclude Include="OrderedVector.h" />
+    <ClInclude Include="OrderedVector.hpp" />
+    <ClInclude Include="RandomAccessIterator.h" />
+    <ClInclude Include="RandomAccessIterator.hpp" />
+    <ClInclude Include="Regex.h" />
+    <ClInclude Include="Regex.hpp" />
+    <ClInclude Include="SimpleLog.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="String.h" />
+    <ClInclude Include="String.hpp" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Test.h" />
+    <ClInclude Include="TextureLoadable.h" />
+    <ClInclude Include="TextureLoadable.hpp" />
+    <ClInclude Include="Thread.h" />
+    <ClInclude Include="Tick.h" />
+    <ClInclude Include="TickRate.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="TimePoint.h" />
+    <ClInclude Include="TimePoint.hpp" />
+    <ClInclude Include="UTF8String.h" />
+    <ClInclude Include="UTF8String.hpp" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="Utility.hpp" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="Vector.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BasicIO.cpp" />
+    <ClCompile Include="BasicSimpleIO.cpp" />
+    <ClCompile Include="BasicSimpleLoadableIO.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontLoadable.cpp" />
+    <ClCompile Include="FreeTypeChar.cpp" />
+    <ClCompile Include="IO.cpp" />
+    <ClCompile Include="BasicLoadable.cpp" />
+    <ClCompile Include="BasicLoadableIO.cpp" />
+    <ClCompile Include="Simple++.cpp" />
+    <ClCompile Include="Date.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="FreeImage.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Mutex.cpp" />
+    <ClCompile Include="Network\Address.cpp" />
+    <ClCompile Include="Network\AddrInfo.cpp" />
+    <ClCompile Include="Network\MultiConnectionsServer.cpp" />
+    <ClCompile Include="Network\Network.cpp" />
+    <ClCompile Include="Network\Socket.cpp" />
+    <ClCompile Include="SimpleLog.cpp" />
+    <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="Tick.cpp" />
+    <ClCompile Include="TickRate.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="TimePoint.cpp" />
+    <ClCompile Include="UTF8String.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

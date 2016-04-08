@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ArrayOfArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Socket.cpp</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\AddrInfo.cpp</string>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\AddrInfo.h</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\MultiConnectionsServer.cpp</string>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\MultiConnectionsServer.h</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Network.cpp</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Debug.cpp</string>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Debug.h</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Log.cpp</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Address.cpp</string>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Address.h</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>D:\Creations\C++\Simple++\Simple++\Simple++\Simple++.cpp</string>
+    </ArrayOfString>
+  </ArrayOfArrayOfString>
+</ArrayOfArrayOfArrayOfString>
