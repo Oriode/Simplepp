@@ -28,41 +28,41 @@ namespace Math {
 
 	template <typename T>
 	const Vec2<T> & BoundingBox2D<T>::getCenter() const{
-		return this->center;
+		return this -> center;
 	}
 
 	template <typename T>
 	const Vec2<T> & BoundingBox2D<T>::getSize() const{
-		return this->size;
+		return this -> size;
 	}
 
 
 	template <typename T>
 	void BoundingBox2D<T>::setSize(const Vec2<T> & size){
-		this->size = size;
+		this -> size = size;
 	}
 
 	template <typename T>
 	void BoundingBox2D<T>::setCenter(const Vec2<T> & center){
-		this->center = center;
+		this -> center = center;
 	}
 
 	template <typename T>
 	bool BoundingBox2D<T>::isColiding(const BoundingBox2D<T> & r) const{
-		return (std::abs(this->center.x - r.getCenter().x) * 2 < (this->size.x + r.getSize().x)) &&
-			(std::abs(this->center.y - r.getCenter().y) * 2 < (this->size.y + r.getSize().y));
+		return (std::abs(this -> center.x - r.getCenter().x) * 2 < (this -> size.x + r.getSize().x)) &&
+			(std::abs(this -> center.y - r.getCenter().y) * 2 < (this -> size.y + r.getSize().y));
 
 	}
 
 	template <typename T>
 	BoundingBox2D<T> & BoundingBox2D<T>::operator+=(const Vec2<T> & p){
-		this->center += p;
+		this -> center += p;
 		return *this;
 	}
 
 	template <typename T>
 	BoundingBox2D<T> & BoundingBox2D<T>::operator-=(const Vec2<T> & p){
-		this->center -= p;
+		this -> center -= p;
 		return *this;
 	}
 

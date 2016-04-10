@@ -48,15 +48,15 @@ namespace Math {
 
 	template <typename T>
 	BoundingBox2D<T> & BoundingBox2D<T>::operator=(const Rectangle<T> & r){
-		this->size = r.getRightTop() - r.getLeftBottom();
-		this->center = (r.getLeftBottom() + r.getRightTop()) / T(2);
+		this -> size = r.getRightTop() - r.getLeftBottom();
+		this -> center = (r.getLeftBottom() + r.getRightTop()) / T(2);
 		return *this;
 	}
 
 	template <typename T>
 	Rectangle<T> BoundingBox2D<T>::toRectangle() const{
-		Vec2<T> size2(this->size / T(2));
-		return Rectangle<T>(this->center - size2, this->center + size2);
+		Vec2<T> size2(this -> size / T(2));
+		return Rectangle<T>(this -> center - size2, this -> center + size2);
 	}
 
 

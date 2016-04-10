@@ -121,7 +121,7 @@ namespace Graphic {
 		if ( !IO::write(fileStream, &nbCharsLoaded) )
 			return false;
 		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); it++ ) {
-			if ( !IO::write(fileStream, it ->getValue()) )
+			if ( !IO::write(fileStream, it  -> getValue()) )
 				return false;
 		}
 

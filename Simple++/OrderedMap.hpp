@@ -27,10 +27,10 @@ T * OrderedMap<I, T, Compare>::getValue( const I & index ){
 
 
 	if (getIndexi(minIndex) == index){
-		return &( this->dataTable[minIndex].value );
+		return &( this -> dataTable[minIndex].value );
 	}
 	else if (getIndexi(maxIndex) == index){
-		return &( this->dataTable[maxIndex].value );
+		return &( this -> dataTable[maxIndex].value );
 	}
 	return NULL;
 }
@@ -180,7 +180,7 @@ bool OrderedMap<I, T, Compare>::existsIndex( const I & index ){
 
 	while (deltaIndex > 1){		
 		Size thisIndex = minIndex + deltaIndex / 2;
-		if (this->sortFunction(getIndexi(thisIndex), index))
+		if (this -> sortFunction(getIndexi(thisIndex), index))
 			minIndex = thisIndex;
 		else 
 			maxIndex = thisIndex;
@@ -245,7 +245,7 @@ T & OrderedMap<I, T, Compare>::operator[]( const I & index ){
 	else if (getIndexi(maxIndex) == index)
 		return getValuei(maxIndex);
 	else {
-		if (this->sortFunction(getIndexi(minIndex), index)){
+		if (this -> sortFunction(getIndexi(minIndex), index)){
 			inserti(maxIndex, index, T());
 			return getValuei(maxIndex);
 		} else {
@@ -312,7 +312,7 @@ void OrderedMap<I, T, Compare>::inserti( Size it, const I & index, const T & dat
 	}
 
 
-	for (Size i = this->size, j = this->size - 1; i > it; i--, j--){
+	for (Size i = this -> size, j = this -> size - 1; i > it; i--, j--){
 		setValuei(i, getValuei(j));
 		setIndexi(i, getIndexi(j));
 	}

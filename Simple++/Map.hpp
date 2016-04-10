@@ -199,7 +199,7 @@ void Map<I, T>::eraseIndexAll(const I & index){
 
 template<typename I, typename T>
 typename Map<I,T>::Size Map<I, T>::searchIndex(const I & index) const{
-	for (typename Map<I,T>::Size i = 0; i < this->size; i++){
+	for (typename Map<I,T>::Size i = 0; i < this -> size; i++){
 		if (getIndexi(i) == index){
 			return i;
 		}

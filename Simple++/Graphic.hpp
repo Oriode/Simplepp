@@ -11,7 +11,7 @@ namespace Graphic {
 			Functor(_Image<T> * image, const ColorRGBA<T> & color) : image(image), color(color) {}
 
 			void operator()(float x, float y, const _Image<T> & c) {
-				this -> image-> drawImage(Point(x, y), this -> color, c);
+				this -> image ->  drawImage(Point(x, y), this -> color, c);
 			}
 		private:
 			_Image<T> * image;
@@ -58,7 +58,7 @@ namespace Graphic {
 			Functor(_Image<T> * image) : image(image) {}
 
 			void operator()(float x, float y, const _Image<T> & c) {
-				this -> image-> drawImage(Point(x, y), c);
+				this -> image ->  drawImage(Point(x, y), c);
 			}
 		private:
 			_Image<T> * image;

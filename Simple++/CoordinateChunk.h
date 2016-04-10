@@ -63,9 +63,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Right, next, distance );
 			newChunk -> _setNeighbor(Direction::Left, it, vec3It.x);
 
-			it ->		_setNeighbor(Direction::Right, newChunk, vec3It.x);
+			it  -> 		_setNeighbor(Direction::Right, newChunk, vec3It.x);
 			if ( next )
-				next ->	_setNeighbor(Direction::Left, newChunk, distance);
+				next  -> 	_setNeighbor(Direction::Left, newChunk, distance);
 
 			it = newChunk;
 		}
@@ -85,9 +85,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Top, next, distance );
 			newChunk -> _setNeighbor(Direction::Bottom, it, vec3It.y);
 
-			it ->		_setNeighbor(Direction::Top, newChunk, vec3It.y);
+			it  -> 		_setNeighbor(Direction::Top, newChunk, vec3It.y);
 			if ( next )
-				next ->	_setNeighbor(Direction::Bottom, newChunk, distance);
+				next  -> 	_setNeighbor(Direction::Bottom, newChunk, distance);
 			it = newChunk;
 			generateRightTopBack = true;
 		}
@@ -106,9 +106,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Front, next, distance );
 			newChunk -> _setNeighbor(Direction::Back, it, vec3It.z);
 
-			it ->		_setNeighbor(Direction::Front, newChunk, vec3It.z);
+			it  -> 		_setNeighbor(Direction::Front, newChunk, vec3It.z);
 			if ( next )
-				next ->	_setNeighbor(Direction::Back, newChunk, distance);
+				next  -> 	_setNeighbor(Direction::Back, newChunk, distance);
 			it = newChunk;
 		} else {
 			//The chunk we wanted to add already exists...LOL
@@ -136,9 +136,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Front, next, distance );
 			newChunk -> _setNeighbor(Direction::Back, it, vec3It.z);
 
-			it ->		_setNeighbor(Direction::Front, newChunk, vec3It.z);
+			it  -> 		_setNeighbor(Direction::Front, newChunk, vec3It.z);
 			if ( next )
-				next ->	_setNeighbor(Direction::Back, newChunk, distance );
+				next  -> 	_setNeighbor(Direction::Back, newChunk, distance );
 			it = newChunk;
 			generateRightBottomFront = true;
 		}
@@ -156,9 +156,9 @@ public:
 		rightTopFront -> _setNeighbor(Direction::Top, next, distance);
 		rightTopFront -> _setNeighbor(Direction::Bottom, it, vec3It.y);
 
-		it ->		_setNeighbor(Direction::Top, rightTopFront, vec3It.y);
+		it  -> 		_setNeighbor(Direction::Top, rightTopFront, vec3It.y);
 		if ( next )
-			next ->	_setNeighbor(Direction::Bottom, rightTopFront, distance);
+			next  -> 	_setNeighbor(Direction::Bottom, rightTopFront, distance);
 
 
 
@@ -181,9 +181,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Top, next, distance );
 			newChunk -> _setNeighbor(Direction::Bottom, it, vec3It.y);
 
-			it ->		_setNeighbor(Direction::Top, newChunk, vec3It.y);
+			it  -> 		_setNeighbor(Direction::Top, newChunk, vec3It.y);
 			if ( next )
-				next ->	_setNeighbor(Direction::Bottom, newChunk, distance);
+				next  -> 	_setNeighbor(Direction::Bottom, newChunk, distance);
 			it = newChunk;
 
 		}
@@ -203,9 +203,9 @@ public:
 			rightTopBack -> _setNeighbor(Direction::Right, next, distance);
 			rightTopBack -> _setNeighbor(Direction::Left, it, vec3It.x);
 
-			it ->		_setNeighbor(Direction::Right, rightTopBack, vec3It.x);
+			it  -> 		_setNeighbor(Direction::Right, rightTopBack, vec3It.x);
 			if ( next )
-				next ->	_setNeighbor(Direction::Left, rightTopBack, distance);
+				next  -> 	_setNeighbor(Direction::Left, rightTopBack, distance);
 
 		}
 		
@@ -229,9 +229,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Front, next, distance );
 			newChunk -> _setNeighbor(Direction::Back, it, vec3It.z);
 
-			it ->		_setNeighbor(Direction::Front, newChunk, vec3It.z);
+			it  -> 		_setNeighbor(Direction::Front, newChunk, vec3It.z);
 			if ( next )
-				next ->	_setNeighbor(Direction::Back, newChunk, distance );
+				next  -> 	_setNeighbor(Direction::Back, newChunk, distance );
 			it = newChunk;
 			generateLeftTopFront = true;
 		}
@@ -249,9 +249,9 @@ public:
 		rightTopFront -> _setNeighbor(Direction::Right, next, distance);
 		rightTopFront -> _setNeighbor(Direction::Left, it, vec3It.x);
 
-		it ->		_setNeighbor(Direction::Right, rightTopFront, vec3It.x);
+		it  -> 		_setNeighbor(Direction::Right, rightTopFront, vec3It.x);
 		if ( next )
-			next ->	_setNeighbor(Direction::Left, rightTopFront, distance);
+			next  -> 	_setNeighbor(Direction::Left, rightTopFront, distance);
 			
 
 
@@ -275,9 +275,9 @@ public:
 			newChunk -> _setNeighbor(Direction::Front, next, distance);
 			newChunk -> _setNeighbor(Direction::Back, it, vec3It.z);
 
-			it ->		_setNeighbor(Direction::Front, newChunk, vec3It.z);
+			it  -> 		_setNeighbor(Direction::Front, newChunk, vec3It.z);
 			if ( next )
-				next ->	_setNeighbor(Direction::Back, newChunk, distance);
+				next  -> 	_setNeighbor(Direction::Back, newChunk, distance);
 			it = newChunk;
 		}
 
@@ -296,9 +296,9 @@ public:
 			rightBottomFront -> _setNeighbor(Direction::Right, next, distance);
 			rightBottomFront -> _setNeighbor(Direction::Left, it, vec3It.x);
 
-			it ->		_setNeighbor(Direction::Right, rightBottomFront, vec3It.x);
+			it  -> 		_setNeighbor(Direction::Right, rightBottomFront, vec3It.x);
 			if ( next )
-				next ->	_setNeighbor(Direction::Left, rightBottomFront, distance);
+				next  -> 	_setNeighbor(Direction::Left, rightBottomFront, distance);
 
 
 		}
@@ -326,9 +326,9 @@ public:
 			leftTopFront -> _setNeighbor(Direction::Top, next, distance);
 			leftTopFront -> _setNeighbor(Direction::Bottom, it, vec3It.y);
 
-			it ->		_setNeighbor(Direction::Top, leftTopFront, vec3It.y);
+			it  -> 		_setNeighbor(Direction::Top, leftTopFront, vec3It.y);
 			if ( next )
-				next ->	_setNeighbor(Direction::Bottom, leftTopFront, distance);
+				next  -> 	_setNeighbor(Direction::Bottom, leftTopFront, distance);
 
 		}
 		

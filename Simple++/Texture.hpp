@@ -59,12 +59,12 @@ namespace Graphic {
 
 	template<typename T>
 	void Graphic::Texture<T>::setPixel(typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y, const T * p) {
-		this -> datas[i]-> getDatas()[this -> size.x * y + x] = p;
+		this -> datas[i] ->  getDatas()[this -> size.x * y + x] = p;
 	}
 
 	template<typename T>
 	const T * Texture<T>::getPixel(typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y) const {
-		return this -> datas[i]-> getDatas()[this -> size.x * y + x];
+		return this -> datas[i] ->  getDatas()[this -> size.x * y + x];
 	}
 
 

@@ -3,7 +3,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T>::Mat4(const T * datas){
-		memcpy(this->column, datas, sizeof(T) * 16);
+		memcpy(this -> column, datas, sizeof(T) * 16);
 	}
 
 

@@ -7,13 +7,13 @@ namespace Math {
 	template<typename T>
 	template<typename Compare>
 	MATH_FUNC_QUALIFIER bool Vec3<T>::_logicalOperatorOR( Compare func, const Vec3<T> & v ) const{
-		return func(this -> x, v.x) || func(this -> y, v.y) || func(this->z, v.z);
+		return func(this -> x, v.x) || func(this -> y, v.y) || func(this -> z, v.z);
 	}
 
 	template<typename T>
 	template<typename Compare>
 	MATH_FUNC_QUALIFIER bool Vec3<T>::_logicalOperatorAND( Compare func, const Vec3<T> & v )const{
-		return func(this -> x, v.x) && func(this ->y, v.y) && func(this ->z, v.z);
+		return func(this -> x, v.x) && func(this  -> y, v.y) && func(this  -> z, v.z);
 	}
 
 	template<typename T>

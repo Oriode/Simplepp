@@ -1,5 +1,5 @@
 #pragma once
 
 
-#include "Network/MultiConnectionsServer.h"
-#include "Network/Socket.h"
+#include "Network/Server.h"
+#include "Network/Connection.h"

@@ -10,6 +10,7 @@ namespace Graphic {
 
 
 
+	
 
 	///@brief draw the text to the specified position
 	///@param font Font object to use
@@ -31,8 +32,6 @@ namespace Graphic {
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false));
 
 
-
-
 	///@brief draw the text to the specified position without a blending, the character bitmap will directly by copied to the specified image
 	///@param font Font object to use
 	///@param point Position where to draw (left bottom anchor of the text)
@@ -40,6 +39,7 @@ namespace Graphic {
 	///@param centered If the text has to be centered vertically or horizontally.
 	template<typename T>
 	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false));
+
 
 
 	///@brief draw the text to the specified position without a blending, the character bitmap will directly by copied to the specified image
@@ -51,10 +51,12 @@ namespace Graphic {
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false));
 
 
-
+	///@brief private function do not touch this.
 	template<typename Func>
 	void _drawText(const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func);
 
+
+	///@brief private function do not touch this.
 	template<typename Func>
 	void _drawText(const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
 }

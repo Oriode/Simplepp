@@ -14,7 +14,7 @@
 /************************************************************************/
 /* Enabled logging or not                                               */
 /************************************************************************/
-//#define LOG							<= Please set it inside the compilations options
+//#define LOG											<= Please set it inside the compilations options
 
 /************************************************************************/
 /* Select what to log (0 = ALL, 1 = INFO, 2 = WARNING, 3 = ERROR)       */
@@ -23,13 +23,13 @@
 
 
 /************************************************************************/
-/* If the this is a debug build						                  */
+/* If the this is a debug build						      */
 /************************************************************************/
-//#define DEBUG						<= Please set it inside the compilations options
+//#define DEBUG											<= Please set it inside the compilations options
 
 
 /************************************************************************/
 /* enable or disable memory debug                                       */
 /************************************************************************/
-//#define DEBUG_MEMORY					<= Please set it inside the compilations options
+//#define DEBUG_MEMORY										<= Please set it inside the compilations options
 

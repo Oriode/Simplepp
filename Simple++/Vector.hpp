@@ -31,9 +31,9 @@ template<typename C>
 Vector<T>::Vector(const Vector<C> & vector) :
 size(vector.getSize()),
 maxSize(vector.getMaxSize()),
-dataTable((this->maxSize) ? new T[this->maxSize] : NULL)
+dataTable((this -> maxSize) ? new T[this -> maxSize] : NULL)
 {
-	copy(this -> dataTable, vector.getData(), this->maxSize);
+	copy(this -> dataTable, vector.getData(), this -> maxSize);
 	_updateIterators();
 }
 
@@ -43,9 +43,9 @@ template<typename T>
 Vector<T>::Vector(const Vector<T> & vector) :
 maxSize(vector.maxSize),
 size(vector.size),
-dataTable((maxSize) ? new T[this->maxSize] : NULL)
+dataTable((maxSize) ? new T[this -> maxSize] : NULL)
 {
-	copy(this -> dataTable, vector.getData(), this->maxSize);
+	copy(this -> dataTable, vector.getData(), this -> maxSize);
 
 	_updateIterators();
 }
@@ -143,7 +143,7 @@ Vector<T>::Vector(const C * data, typename Vector<T>::Size size, typename Vector
 
 template<typename T>
 Vector<T>::~Vector(void){
-	delete[] this->dataTable;
+	delete[] this -> dataTable;
 }
 
 
@@ -224,14 +224,14 @@ void Vector<T>::createFromData( const T * dataTable, typename Vector<T>::Size si
 template<typename T>
 template<typename C>
 void Vector<T>::createFromData(const C * dataTable, typename Vector<T>::Size size){
-	delete[] this->dataTable;
-	this->dataTable = new T[size];
+	delete[] this -> dataTable;
+	this -> dataTable = new T[size];
 
 	for (Size i = 0; i < size; i++)
-		this->dataTable[i] = dataTable[i];
+		this -> dataTable[i] = dataTable[i];
 
-	this->size = size;
-	this->maxSize = size;
+	this -> size = size;
+	this -> maxSize = size;
 	_updateIterators();
 }
 
@@ -472,7 +472,7 @@ const T & Vector<T>::getLast() const{
 
 template<typename T>
 T & Vector<T>::getLast() {
-	return *(this->iteratorEnd - 1);
+	return *(this -> iteratorEnd - 1);
 }
 
 
@@ -583,12 +583,12 @@ T * Vector<T>::data(){
 
 template<typename T>
 const T * Vector<T>::getData() const{
-	return this->dataTable;
+	return this -> dataTable;
 }
 
 template<typename T>
 const T * Vector<T>::data() const{
-	return this->dataTable;
+	return this -> dataTable;
 }
 
 
@@ -621,16 +621,16 @@ bool Vector<T>::iterate(RandomAccessIterator * it, elemType ** e) {
 /************************************************************************/
 template<typename T>
 Vector<T> & Vector<T>::operator=(const Vector<T> & vector){
-	this->maxSize = vector.maxSize;
-	this->size = vector.size;
+	this -> maxSize = vector.maxSize;
+	this -> size = vector.size;
 
 	//debugDelete(this -> table);
-	delete[] this->dataTable;
-	this->dataTable = (this->maxSize) ? new T[this->maxSize] : NULL;
+	delete[] this -> dataTable;
+	this -> dataTable = (this -> maxSize) ? new T[this -> maxSize] : NULL;
 	//debugNew(this -> table, this -> maxSize * sizeof(T));
 
-	for (typename Vector<T>::Size i = 0; i < this->maxSize; i++)
-		this->dataTable[i] = vector.dataTable[i];
+	for (typename Vector<T>::Size i = 0; i < this -> maxSize; i++)
+		this -> dataTable[i] = vector.dataTable[i];
 
 	_updateIterators();
 
@@ -655,14 +655,14 @@ Vector<T> & Vector<T>::operator=(Vector && v) {
 template<typename T>
 template<typename C>
 Vector<T> & Vector<T>::operator=(const Vector<C> & vector){
-	this->maxSize = vector.getMaxSize();
-	this->size = vector.getSize();
+	this -> maxSize = vector.getMaxSize();
+	this -> size = vector.getSize();
 
-	delete[] this->dataTable;
-	this->dataTable = (this->maxSize) ? new T[this->maxSize] : NULL;
+	delete[] this -> dataTable;
+	this -> dataTable = (this -> maxSize) ? new T[this -> maxSize] : NULL;
 
-	for (typename Vector<T>::Size i = 0; i < this->maxSize; i++)
-		this->dataTable[i] = vector[i];
+	for (typename Vector<T>::Size i = 0; i < this -> maxSize; i++)
+		this -> dataTable[i] = vector[i];
 
 	_updateIterators();
 
@@ -721,7 +721,7 @@ void Vector<T>::reserve( typename Vector<T>::Size newMax ){
 
 template<typename T>
 void Vector<T>::allocate(typename Vector<T>::Size newMax){
-	delete[] this->dataTable;
+	delete[] this -> dataTable;
 	if (newMax)
 		this -> dataTable = new T[newMax];
 	else 
@@ -734,15 +734,15 @@ void Vector<T>::allocate(typename Vector<T>::Size newMax){
 
 template<typename T>
 void Vector<T>::_allocateNoNullDelete(const Size & newMax){
-	this->dataTable = new T[newMax];
-	this->maxSize = newMax;
+	this -> dataTable = new T[newMax];
+	this -> maxSize = newMax;
 	_updateIterators();
 }
 
 
 template<typename T>
 void Vector<T>::_allocateNoNull(const Size & newMax){
-	delete[] this->dataTable;
+	delete[] this -> dataTable;
 	this -> dataTable = new T[newMax];
 	this -> maxSize = newMax;
 	_updateIterators();
@@ -751,12 +751,12 @@ void Vector<T>::_allocateNoNull(const Size & newMax){
 
 template<typename T>
 T & Vector<T>::operator[]( const typename Vector<T>::Size index ) {
-	return *(this->dataTable + index);
+	return *(this -> dataTable + index);
 }
 
 template<typename T>
 const T & Vector<T>::operator[](const typename Vector<T>::Size index ) const{
-	return *(this->dataTable + index);
+	return *(this -> dataTable + index);
 }
 
 template<typename T>
@@ -828,7 +828,7 @@ const T & Vector<T>::operator[]( typename Vector<T>::RandomAccessIterator i ) co
 
 template<typename T>
 void Vector<T>::setValuei(typename Vector<T>::Size i, const T & data){
-	this->dataTable[i] = data;
+	this -> dataTable[i] = data;
 }
 
 
@@ -841,13 +841,13 @@ void Vector<T>::setValueit(RandomAccessIterator i, const T & data){
 
 template<typename T>
 const T & Vector<T>::getValuei(typename Vector<T>::Size i) const{
-	return this->dataTable[i];
+	return this -> dataTable[i];
 }
 
 
 template<typename T>
 T & Vector<T>::getValuei(typename Vector<T>::Size i){
-	return this->dataTable[i];
+	return this -> dataTable[i];
 }
 
 

@@ -16,16 +16,16 @@ BasicLoadable::~BasicLoadable(){
 
 void BasicLoadable::load(){
 	lock();
-	if ( this->mIsloaded ) {
+	if ( this -> mIsloaded ) {
 		unlock();
 		return;
 	}
-	this->bIsLoading = true;
+	this -> bIsLoading = true;
 
 	onLoad();
 
-	this->bIsLoading = false;
-	this->mIsloaded = true;
+	this -> bIsLoading = false;
+	this -> mIsloaded = true;
 	unlock();
 
 }
@@ -33,12 +33,12 @@ void BasicLoadable::load(){
 void BasicLoadable::unload(){
 	lock();
 
-	if (!this->mIsloaded) {
+	if (!this -> mIsloaded) {
 		unlock();
 		return;
 	}
 	onUnload();
-	this->mIsloaded = false;
+	this -> mIsloaded = false;
 	unlock();
 }
 
@@ -71,7 +71,7 @@ void BasicLoadable::reload() {
 }
 
 bool BasicLoadable::isLoading() const{
-	return this->bIsLoading;
+	return this -> bIsLoading;
 }
 
 
@@ -90,7 +90,7 @@ void BasicLoadable::unlock() {
 }
 
 BasicLoadable & BasicLoadable::operator=(const BasicLoadable & loadable) {
-	this-> bIsLoading = loadable.bIsLoading;
-	this-> mIsloaded = loadable.mIsloaded;
+	this ->  bIsLoading = loadable.bIsLoading;
+	this ->  mIsloaded = loadable.mIsloaded;
 	return *this;
 }

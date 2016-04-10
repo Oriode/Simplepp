@@ -74,7 +74,7 @@ int main(int argc, char * argv[]){
 	fontTest.writeToFile(L"myFont2.cfont");
 
 	FreeImage glyphFreeImage;
-	glyphFreeImage.loadFromDatas((unsigned char *) fontTest2['A']->getDatas(), fontTest2['A'] -> getSize(), FreeImage::Format::R);
+	glyphFreeImage.loadFromDatas((unsigned char *) fontTest2['A'] -> getDatas(), fontTest2['A'] -> getSize(), FreeImage::Format::R);
 	glyphFreeImage.saveToFile("glyphTest.png", FreeImage::SavingFormat::PNG);
 
 
@@ -252,7 +252,7 @@ int main(int argc, char * argv[]){
 	/*CoordinateChunk<float, size_t, 1000> * zeroChunk = new CoordinateChunk<float, size_t, 1000>(0);
 	Log::startChrono();
 	for ( unsigned long i = 0; i < 15000; i++ ) {
-		zeroChunk->insertChunk(Math::Vec3<size_t>(Math::random(), Math::random(), Math::random()));
+		zeroChunk -> insertChunk(Math::Vec3<size_t>(Math::random(), Math::random(), Math::random()));
 	}
 	Log::getChrono(String() << "CHUNK INSERT");
 	*/
@@ -476,9 +476,9 @@ int main(int argc, char * argv[]){
 
 	
 
-	
-
-	
+	/************************************************************************/
+	/* TESTING NETWORK API                                                  */
+	/************************************************************************/
 /*
 	int result;
 	std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
@@ -489,38 +489,37 @@ int main(int argc, char * argv[]){
 
 	if (result == 0){
 		/////CLIENT
-		Network::MultiConnectionsServer myUDPSocket(Network::SockType::UDP, Network::IpFamily::Undefined);
-		myUDPSocket.Listen(5001, 100);
+		Network::Server myUDPConnection(Network::SockType::UDP, Network::IpFamily::Undefined);
+		myUDPConnection.Listen(5001, 100);
 
-		Network::Socket myTCPSocket(Network::SockType::TCP, Network::IpFamily::Undefined);
-		myTCPSocket.Connect("127.0.0.1", 5001);
+		Network::Connection myTCPConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
+		myTCPConnection.Connect("127.0.0.1", 5001);
 
 		Network::Address addresFrom;
-		if (myUDPSocket.ReceiveFrom(testData2, sizeof(testData2), &addresFrom))
-			Log::displayLog(std::string("We got an UDP message from the server " + std::string(testData2)).c_str());
+		if (myUDPConnection.ReceiveFrom(testData2, sizeof(testData2), &addresFrom))
+			Log::displayLog(String() << "We got an UDP message from the server " << testData2);
 
-		while (1);
 	} else if (result == 1) {
 		//SERVER
-		Network::MultiConnectionsServer myConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
+		Network::Server myConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
 		myConnection.Listen(5001, 100);
-		Network::Socket clientSocket;
-		while (myConnection.Accept(&clientSocket)){
-			Log::displayLog(std::string("We got a client ! IP : " + clientSocket.getIp()).c_str());
+		Network::Connection clientConnection;
+		while (myConnection.Accept(&clientConnection)){
+			Log::displayLog(String() << "We got a client ! IP : " << clientConnection.getIp());
 
-			Network::Socket myUDPSocket(Network::SockType::UDP, Network::IpFamily::Undefined);
-			myUDPSocket.Connect(clientSocket, 5001);
+			Network::Connection myUDPConnection(Network::SockType::UDP, Network::IpFamily::Undefined);
+			myUDPConnection.Connect(clientConnection, 5001);
 
 			Log::displayLog("Sending UDP Message to client.");
 
-			myUDPSocket.Send(testData, sizeof(testData));
+			myUDPConnection.Send(testData, sizeof(testData));
 		}
 	} else {
 		/////CLIENT
-		Network::Socket myTCPSocket(Network::SockType::TCP, Network::IpFamily::Undefined);
+		Network::Connection myTCPConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
 		
-		if (myTCPSocket.Connect("www.google.fr", 80)){
-			Log::displayLog(std::string("Connected to Google ! IP:" + myTCPSocket.getIp()).c_str());
+		if (myTCPConnection.Connect("www.google.fr", 80)){
+			Log::displayLog(std::string("Connected to Google ! IP:" + myTCPConnection.getIp()).c_str());
 		}
 
 		

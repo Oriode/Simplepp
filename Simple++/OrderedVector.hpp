@@ -192,7 +192,7 @@ void OrderedVector<T, Compare>::insert( const T & data ){
 		deltaIndex = maxIndex - minIndex;
 	}
 
-	if (this->sortFunction(getValuei(minIndex), data))
+	if (this -> sortFunction(getValuei(minIndex), data))
 		insert(maxIndex, data);
 	else 
 		insert(minIndex, data);

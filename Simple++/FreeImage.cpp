@@ -90,7 +90,7 @@ void FreeImage::onLoad(){
 
 		// Check that the plugin has reading capabilities and load the file.  
 		if ( FreeImage_FIFSupportsReading(imageFormat) ) {
-			this->freeImage = FreeImage_LoadU(imageFormat, fileName.toCString());
+			this -> freeImage = FreeImage_LoadU(imageFormat, fileName.toCString());
 		}
 
 		if ( this -> freeImage == NULL ) {
@@ -164,7 +164,7 @@ FIBITMAP * FreeImage::getFreeImage(){
 }
 
 unsigned int FreeImage::getBPP() const{
-	return this-> BPP;
+	return this ->  BPP;
 }
 
 unsigned char * FreeImage::getDatas() const{
@@ -195,7 +195,7 @@ bool FreeImage::saveToFile( const WString & fileName, SavingFormat savingFormat,
 	load();
 
 	if ( savingFormat == SavingFormat::JPG ) {
-		if ( FreeImage_SaveU((FREE_IMAGE_FORMAT) savingFormat, this->freeImage, fileName.toCString(), quality) ) {
+		if ( FreeImage_SaveU((FREE_IMAGE_FORMAT) savingFormat, this -> freeImage, fileName.toCString(), quality) ) {
 			log(String("Success writing file : ") << fileName);
 			return true;
 		} else {
@@ -255,7 +255,7 @@ void FreeImage::loadFromDatas( unsigned char * datas, const Math::vec2ui & size,
 	this -> fileName.clear();			//we have no reason to keep a filepath now.
 
 
-	this -> freeImage = FreeImage_ConvertFromRawBits(datas, this->size.x, this->size.y, this->size.x * ( this->BPP / 8 ), this->BPP, FI_RGBA_RED_MASK, FI_RGBA_BLUE_MASK, FI_RGBA_GREEN_MASK, this -> invertY);
+	this -> freeImage = FreeImage_ConvertFromRawBits(datas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_BLUE_MASK, FI_RGBA_GREEN_MASK, this -> invertY);
 	
 	setLoading(false);
 	setLoaded(true);

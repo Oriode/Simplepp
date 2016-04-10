@@ -585,6 +585,7 @@ public:
 	static typename BasicString<T>::Size getLast(const T * buffer, const T * toSearch);
 
 	static const T numbers[16];
+	static const String<T> null;
 
 protected:
 	BasicString(ctor);
@@ -652,7 +653,6 @@ protected:
 	BasicString & _concatWOS(const unsigned long long & ull, unsigned int base);
 	BasicString & _concatWOS(const double & d, unsigned int precision, unsigned int base);
 	BasicString & _concatWOS(const float & f, unsigned int precision, unsigned int base);
-
 
 
 

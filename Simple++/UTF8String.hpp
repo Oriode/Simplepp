@@ -33,23 +33,23 @@ void UTF8String::_operatorCONCAT(const T & str, const Size & bufferSize){
 	typename UTF8String::Size newSize = oldSize + bufferSize;
 	auto newSizeSentinel = newSize + 1;
 
-	if (this->maxSize < newSizeSentinel){
-		this->maxSize = newSizeSentinel * 2;
+	if (this -> maxSize < newSizeSentinel){
+		this -> maxSize = newSizeSentinel * 2;
 
-		char * newDatas = new char[this->maxSize];
-		Vector::copy(newDatas, this->dataTable, oldSize);
-		delete[] this->dataTable;
-		this->dataTable = newDatas;
+		char * newDatas = new char[this -> maxSize];
+		Vector::copy(newDatas, this -> dataTable, oldSize);
+		delete[] this -> dataTable;
+		this -> dataTable = newDatas;
 	}
 
 	Size addedSize = bufferSize + 1;
 	unsigned char size;
-	auto bufferTmp = this->dataTable + addedSize;
+	auto bufferTmp = this -> dataTable + addedSize;
 	for (Size j = 0; j < addedSize; j++, bufferTmp += size)
 		CodePoint2Chars(str[j], bufferTmp, &size);
 
 	*bufferTmp = '\0';
-	this->size = newSize;
+	this -> size = newSize;
 	_updateIterators();
 }
 
@@ -65,16 +65,16 @@ UTF8String & UTF8String::operator=(const C * str){
 
 template<typename T>
 void UTF8String::_contructorEQUAL(const T & str, const Size & bufferSize){
-	this->maxSize = (bufferSize + 1) * 4;
-	this->dataTable = new char[this->maxSize];
+	this -> maxSize = (bufferSize + 1) * 4;
+	this -> dataTable = new char[this -> maxSize];
 
 	unsigned char size;
-	auto bufferTmp = this->dataTable;
+	auto bufferTmp = this -> dataTable;
 	for (Size j = 0; j < bufferSize; j++, bufferTmp += size)
 		CodePoint2Chars(str[j], bufferTmp, &size);
 
 	*bufferTmp = '\0';
-	this->size = (Size)(bufferTmp - this->dataTable);
+	this -> size = (Size)(bufferTmp - this -> dataTable);
 	_updateIterators();
 }
 
@@ -84,12 +84,12 @@ UTF8String & UTF8String::_operatorEQUAL(const T & str, const Size & bufferSize){
 		allocate((bufferSize + 1) * 4);
 
 	unsigned char size;
-	auto bufferTmp = this->dataTable;
+	auto bufferTmp = this -> dataTable;
 	for (Size j = 0; j < bufferSize; j++, bufferTmp += size)
 		CodePoint2Chars(str[j], bufferTmp, &size);
 
 	*bufferTmp = '\0';
-	this->size = (Size)(bufferTmp - this->dataTable);
+	this -> size = (Size)(bufferTmp - this -> dataTable);
 	_updateIterators();
 	return *this;
 }
