@@ -8,14 +8,14 @@ namespace Network {
 	AddrInfo::AddrInfo(const AddrInfo & addrInfo){
 		this -> ai_addr = NULL;
 		this -> ai_canonname = NULL;
-		setNext(NULL);
+		this -> ai_next = NULL;
 		*this = addrInfo;
 	}
 
 	AddrInfo::AddrInfo(const struct addrinfo & addrInfo){
 		this -> ai_addr = NULL;
 		this -> ai_canonname = NULL;
-		setNext(NULL);
+		this -> ai_next = NULL;
 		*this = addrInfo;
 	}
 
@@ -23,21 +23,25 @@ namespace Network {
 		setSockType(sockType);
 		setIpFamily(ipFamily);
 		setFlags(0);
-		setNext(NULL);
+		this -> ai_next = NULL;
 		setProtocol(0);
 		this -> ai_addrlen = 0;
 		this -> ai_addr = NULL;
 		this -> ai_canonname = NULL;
-
 	}
 
 
 	
 	AddrInfo::AddrInfo(const AddrInfo & addrInfo, SockType sockType, IpFamily ipFamily, unsigned short port) {
+		this -> ai_next = NULL;
+		this -> ai_addrlen = 0;
+		this -> ai_addr = NULL;
+		this -> ai_canonname = NULL;
+
 		*this = ( ( struct addrinfo )addrInfo );
 		setSockType(sockType);
 		setIpFamily(ipFamily);
-		setSockAddrPort(port);
+		setPort(port);
 	}
 
 	AddrInfo::AddrInfo(const String & ip, const String & service, SockType sockType, IpFamily ipFamily /*= IpFamily::Undefined*/) {
@@ -63,13 +67,23 @@ namespace Network {
 		freeaddrinfo(addrResults);
 	}
 
+	AddrInfo::AddrInfo(AddrInfo && addrInfo) {
+		*this = Utility::toRValue(addrInfo);
+	}
+
+	AddrInfo::AddrInfo(ctor) {
+
+	}
+
 	AddrInfo::~AddrInfo() {
-		freeaddrinfo(this);
+		delete[] this -> ai_addr;
+		delete[] this -> ai_canonname;
+
+		delete (AddrInfo *) this -> ai_next;
 	}
 
 	AddrInfo & AddrInfo::operator=(const AddrInfo & addrInfo){
-		*this = ((struct addrinfo)addrInfo);
-		return *this;
+		return operator=(( struct addrinfo &)addrInfo);
 	}
 
 	AddrInfo & AddrInfo::operator=(const struct addrinfo & addrInfo){
@@ -83,18 +97,15 @@ namespace Network {
 		setSockAddr(addrInfo.ai_addr, addrInfo.ai_addrlen);
 
 		if (addrInfo.ai_canonname != NULL){
-			size_t textSize = strlen(addrInfo.ai_canonname);
+			size_t textSize = String::getSize(addrInfo.ai_canonname);
 			this -> ai_canonname = new char[textSize + 1];
 			memcpy(this -> ai_canonname, addrInfo.ai_canonname, textSize + 1);
 		}
 		else
 			this -> ai_canonname = NULL;
 
+		this -> ai_next = NULL;
 		return *this;
-	}
-
-	void AddrInfo::setNext(struct addrinfo * next){
-		this -> ai_next = next;
 	}
 
 	size_t AddrInfo::getSockAddrLen() const{
@@ -138,7 +149,15 @@ namespace Network {
 		return this -> ai_protocol;
 	}
 
-	const struct sockaddr * AddrInfo::getSockAddr() const{
+	AddrInfo & AddrInfo::operator=(AddrInfo && addrInfo) {
+		( ( struct addrinfo ) *this ) = ( ( struct addrinfo ) Utility::toRValue(addrInfo) );
+		addrInfo.ai_addr = NULL;
+		addrInfo.ai_canonname = NULL;
+		addrInfo.ai_next = NULL;
+		return *this;
+	}
+
+	const struct sockaddr * AddrInfo::getSockAddr() const {
 		return this -> ai_addr;
 	}
 
@@ -256,7 +275,7 @@ namespace Network {
 		
 	}
 
-	void AddrInfo::setSockAddrPort(unsigned short port){
+	void AddrInfo::setPort(unsigned short port){
 		if (this -> ai_addr != NULL){
 			if (this -> ai_addr -> sa_family == AF_INET)
 				((struct sockaddr_in*)this -> ai_addr) -> sin_port = htons(port);
@@ -265,7 +284,7 @@ namespace Network {
 		}
 	}
 
-	void AddrInfo::setSockAddrPort(const struct sockaddr * sockAddr){
+	void AddrInfo::setPort(const struct sockaddr * sockAddr){
 		if (this -> ai_addr != NULL){
 			if (this -> ai_addr -> sa_family == AF_INET)
 				((struct sockaddr_in*)this -> ai_addr) -> sin_port = ((struct sockaddr_in*)sockAddr) -> sin_port;

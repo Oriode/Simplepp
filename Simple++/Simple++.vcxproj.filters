@@ -19,6 +19,15 @@
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{69fd9ed2-9668-4e6b-bc64-34468ed0baa8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Time">
+      <UniqueIdentifier>{78f011e4-9863-4b99-8038-5b3cb7ee640e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{929d1433-4d0d-4cd9-bcf9-e810750cae88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphic">
+      <UniqueIdentifier>{aad0bd7d-1d5f-4869-b92c-50830c954853}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -28,9 +37,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
@@ -43,12 +49,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MemoryAllocation.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mutex.h">
@@ -67,12 +67,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OrderedMap.hpp">
@@ -96,54 +90,6 @@
     <ClInclude Include="Utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\BoundingBox2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\BoundingBox2D.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Mat3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Mat3.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Mat4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Mat4.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Rectangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Rectangle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec2.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec3.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec4.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\Network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="String.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -151,9 +97,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UTF8String.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BasicLoadable.h">
@@ -165,25 +108,10 @@
     <ClInclude Include="SimpleLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Mat2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Mat2.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Math\Operations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TimePoint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Tick.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Duration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CoordinateSystem.h">
@@ -202,15 +130,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CoordinateSystemObject.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Date.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TimePoint.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Duration.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Regex.h">
@@ -237,24 +156,6 @@
     <ClInclude Include="IO.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeTypeChar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BasicIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -267,25 +168,10 @@
     <ClInclude Include="SimpleIO.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureLoadable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureLoadable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BasicSimpleIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BasicSimpleLoadableIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLoadable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphic.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Network\Address.h">
@@ -299,6 +185,129 @@
     </ClInclude>
     <ClInclude Include="Network\Server.h">
       <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Network.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat2.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat2.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat3.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat3.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat4.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat4.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec2.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec2.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec3.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec3.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec4.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec4.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Date.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Date.hpp">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="TimePoint.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="TimePoint.hpp">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.hpp">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeTypeChar.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeImage.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLoadable.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoadable.hpp">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoadable.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.hpp">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.hpp">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Duration.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Duration.hpp">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\BoundingBox2D.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\BoundingBox2D.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Rectangle.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Rectangle.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

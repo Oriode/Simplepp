@@ -41,6 +41,14 @@ namespace Network {
 		Address(const AddrInfo & addrInfo);
 
 
+		///@brief copy constructor
+		///@param address object to copy
+		Address(const Address & address);
+
+		///@brief move constructor
+		///@param address Object to move from.
+		Address(Address && address);
+
 		///@brief copy constructor from an old-school struct addrinfo
 		///@param addrInfo struct addrinfo to copy
 		Address(const struct addrinfo & addrInfo);
@@ -57,6 +65,12 @@ namespace Network {
 		///@param address Object to copy
 		Address & operator=(const Address & address);
 
+
+		///@brief move operator
+		///@param address object to move from
+		///@return reference to this
+		Address & operator = (Address && address);
+
 		using AddrInfo::getNameInfo;
 		using AddrInfo::getPort;
 		using AddrInfo::getSockAddrLen;
@@ -65,6 +79,10 @@ namespace Network {
 		using AddrInfo::getSockType;
 		using AddrInfo::getSockTypeS;
 		using AddrInfo::getSockAddr;
+
+
+		using AddrInfo::setSockType;
+		using AddrInfo::setPort;
 
 
 		///@brief get the port as unsigned short (this function use buffered values)
@@ -76,19 +94,15 @@ namespace Network {
 		///@return IP as String
 		const String & getIp();
 
-
 	protected:
-		void setIp(const String & ip);
-		void setPort(unsigned short port);
+		Address(ctor);
 
-		void setIpPortUpdated(bool value);
-	private:
 		void _update();
+	private:
 
 		String mIp;
 		unsigned short mPort;
 
-		bool mUpdated;
 
 	};
 }

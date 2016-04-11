@@ -29,7 +29,8 @@ typedef struct sockaddr_in6 SOCKADDR_IN6;
 
 
 #include "../Log.h"
-
+#include "../String.h"
+#include "../Utility.h"
 
 
 

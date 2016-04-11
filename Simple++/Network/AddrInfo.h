@@ -5,7 +5,6 @@
 ///@date 10/04/16 (DMY)
 
 
-#include "../String.h"
 #include "Network.h"
 
 
@@ -13,7 +12,7 @@
 namespace Network {
 
 
-	///@brief Representing a struct addrinfo, all the info of an address. This class can be down casted freely to struct addrinfo. Warning when using this class, you may prefer using Address Class which is more safer.
+	///@brief Representing a struct addrinfo, all the info of an address without the "list" side ai_next is not used. This class can be down casted freely to struct addrinfo. Warning when using this class, you may prefer using Address Class which is more safer.
 	class AddrInfo : public addrinfo {
 	public:
 		///@brief Create an AddrInfo from a SockType and an IpFamily
@@ -39,6 +38,11 @@ namespace Network {
 		AddrInfo(const AddrInfo & addrInfo);
 
 
+		///@brief move constructor
+		///@param addrInfo object to be moved from
+		AddrInfo(AddrInfo && addrInfo);
+
+
 		///@brief Copy constructor with an another SockType, IpFamily and port
 		///@param addrInfo object to copy
 		AddrInfo(const AddrInfo & addrInfo, SockType sockType, IpFamily ipFamily, unsigned short port);
@@ -62,6 +66,13 @@ namespace Network {
 		void setSockAddr(const struct sockaddr * sockAddr, size_t sockAddrLen);
 
 
+		///@brief set the inside address
+		///@param ip IP to look for
+		///@param service Service to look for ("http", 80, ...)
+		///@param ipFamily IPv4, IPv6 or Undefined to look for the two
+		//void setAddress(const String & ip, const String & service, IpFamily ipFamily = IpFamily::Undefined);
+
+
 		///@brief copy operator
 		///@param addrInfo other object to copy
 		///@return this object as a reference
@@ -74,6 +85,12 @@ namespace Network {
 		AddrInfo & operator = (const struct addrinfo & addrInfo);
 
 
+
+		///@brief move operator
+		///@param addrInfo from which to move
+		///@return reference of this
+		AddrInfo & operator = (AddrInfo && addrInfo);
+
 		///@brief get the struct sockaddr of this object
 		const struct sockaddr * getSockAddr() const;
 
@@ -85,7 +102,7 @@ namespace Network {
 
 		///@brief set the sockaddr port from an another sockaddr
 		///@param sockaddr struct sockaddr where to copy the port
-		void setSockAddrPort(const struct sockaddr * sockAddr);
+		void setPort(const struct sockaddr * sockAddr);
 
 
 		///@brief get the length in bytes of the struct sockaddr
@@ -139,14 +156,9 @@ namespace Network {
 		void addFlag(Flags flags);
 
 
-		///@brief set the next (because this object is a chained list)
-		///@param next Other addrinfo to link as the next of this one
-		void setNext(struct addrinfo * next);
-
 		///@brief set the CanonName of this object
 		///@param name CanonName to set
 		void setCanonName(const String & name);
-
 
 
 		///@brief alias of getnameinfo() and cast the result to a String
@@ -174,7 +186,7 @@ namespace Network {
 
 		///@brief set the sockaddr port 
 		///@param port Port as an unsigned short
-		void setSockAddrPort(unsigned short port);
+		void setPort(unsigned short port);
 
 
 		///@brief set the IP family of this addrinfo (this won't change the struct sockaddr and may corrupt this object)
@@ -188,6 +200,10 @@ namespace Network {
 		///@brief set the SockType (TCP or UDP) (this won't change the struct sockaddr and may corrupt this object)
 		///@param sockType
 		void setSockType(SockType sockType);
+
+	protected:
+		enum ctor { null };
+		AddrInfo(ctor);
 
 	};
 

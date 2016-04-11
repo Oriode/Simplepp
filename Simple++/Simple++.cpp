@@ -161,7 +161,7 @@ int main(int argc, char * argv[]){
 
 
 	FreeImage freeImage2;
-	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGBA);
+	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGB);
 	freeImage2.saveToFile("ultimateTest2.png", FreeImage::SavingFormat::PNG);
 
 
@@ -197,9 +197,9 @@ int main(int argc, char * argv[]){
 	freeImage2.loadFromDatas((unsigned char *) testblendCasted.getDatas(), testblendCasted.getSize(), FreeImage::Format::RGB);
 	freeImage2.saveToFile("testBlend2.png", FreeImage::SavingFormat::PNG);
 
-	return 0;
 
-	Application<char> a(argc, argv);
+	
+	/*Application<char> a(argc, argv);
 
 
 
@@ -247,7 +247,7 @@ int main(int argc, char * argv[]){
 		chunkMap.insert(Math::Vec3<size_t>(Math::random(), Math::random(), Math::random()), new CoordinateChunk<float, size_t, 1000>(i));
 	}
 	Log::getChrono(String() << "CHUNK INSERT MAP");
-	
+	*/
 
 	/*CoordinateChunk<float, size_t, 1000> * zeroChunk = new CoordinateChunk<float, size_t, 1000>(0);
 	Log::startChrono();
@@ -479,7 +479,7 @@ int main(int argc, char * argv[]){
 	/************************************************************************/
 	/* TESTING NETWORK API                                                  */
 	/************************************************************************/
-/*
+
 	int result;
 	std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
 	scanf_s("%d", &result);
@@ -489,44 +489,41 @@ int main(int argc, char * argv[]){
 
 	if (result == 0){
 		/////CLIENT
-		Network::Server myUDPConnection(Network::SockType::UDP, Network::IpFamily::Undefined);
-		myUDPConnection.Listen(5001, 100);
+		Network::Server myUDPServer;
+		myUDPServer.listen(5001, Network::SockType::UDP, Network::IpFamily::Undefined);
 
-		Network::Connection myTCPConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
-		myTCPConnection.Connect("127.0.0.1", 5001);
+		Network::Connection myTCPConnection;
+		myTCPConnection.connect("::1", 5001, Network::SockType::TCP);
 
-		Network::Address addresFrom;
-		if (myUDPConnection.ReceiveFrom(testData2, sizeof(testData2), &addresFrom))
+		Network::Address addressFrom;
+		if (myUDPServer.receiveFrom(testData2, sizeof(testData2), &addressFrom))
 			Log::displayLog(String() << "We got an UDP message from the server " << testData2);
 
 	} else if (result == 1) {
 		//SERVER
-		Network::Server myConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
-		myConnection.Listen(5001, 100);
+		Network::Server myTCPServer;
+		myTCPServer.listen(5001, Network::SockType::TCP, Network::IpFamily::Undefined);
+		myTCPServer.listen(5002, Network::SockType::TCP, Network::IpFamily::Undefined);
+
 		Network::Connection clientConnection;
-		while (myConnection.Accept(&clientConnection)){
+		while (myTCPServer.accept(&clientConnection)){
 			Log::displayLog(String() << "We got a client ! IP : " << clientConnection.getIp());
 
-			Network::Connection myUDPConnection(Network::SockType::UDP, Network::IpFamily::Undefined);
-			myUDPConnection.Connect(clientConnection, 5001);
+			clientConnection.setSockType(Network::SockType::UDP);
+			clientConnection.connect();
 
 			Log::displayLog("Sending UDP Message to client.");
 
-			myUDPConnection.Send(testData, sizeof(testData));
+			clientConnection.send(testData, sizeof(testData));
 		}
 	} else {
-		/////CLIENT
-		Network::Connection myTCPConnection(Network::SockType::TCP, Network::IpFamily::Undefined);
+		/////GOOGLE TEST
+		Network::Connection myTCPConnection;
 		
-		if (myTCPConnection.Connect("www.google.fr", 80)){
-			Log::displayLog(std::string("Connected to Google ! IP:" + myTCPConnection.getIp()).c_str());
+		if ( myTCPConnection.connect("www.google.fr", 80, Network::SockType::TCP) ) {
+			Log::displayLog(String("Connected to Google ! IP:") << myTCPConnection.getIp());
 		}
-
-		
-
-		while (1);
-
-	}*/
+	}
 
 	
 	return 0;

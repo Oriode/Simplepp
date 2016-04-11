@@ -585,7 +585,7 @@ public:
 	static typename BasicString<T>::Size getLast(const T * buffer, const T * toSearch);
 
 	static const T numbers[16];
-	static const String<T> null;
+	static const BasicString<T> null;
 
 protected:
 	BasicString(ctor);

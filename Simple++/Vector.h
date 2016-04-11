@@ -9,7 +9,6 @@
 
 #include "Logical.h"
 #include "Utility.h"
-#include "RandomAccessIterator.h"
 #include "SimpleLog.h"
 #include "BasicSimpleIO.h"
 #include "SimpleIO.h"

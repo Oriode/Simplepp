@@ -16,7 +16,7 @@ template<typename T>
 const T BasicString<T>::numbers[16] = { T('0'), T('1'), T('2'), T('3'), T('4'), T('5'), T('6'), T('7'), T('8'), T('9'), T('A'), T('B'), T('C'), T('D'), T('E'), T('F') };
 
 template<typename T>
-const String<T> null = String("");
+const BasicString<T> BasicString<T>::null = BasicString<T>("");
 
 
 
@@ -498,6 +498,7 @@ BasicString<T> & BasicString<T>::concat(const std::basic_string<C, std::char_tra
 template<typename T>
 template<typename C>
 BasicString<T> & BasicString<T>::concat(const C * str) {
+	if ( !str ) return *this;
 	for ( ; *str != C('\0'); str++ ) {
 		this -> size++;
 		if ( this -> size >= this -> maxSize ) {
