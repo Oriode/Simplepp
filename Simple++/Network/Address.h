@@ -24,17 +24,17 @@ namespace Network {
 
 
 		///@brief Constructor from a IP, Service, SockType and IpFamily
-		///@param ip IP to connect to
+		///@param address to connect to (IP or domain name)
 		///@param service Service to be used.
 		///@param sockType SockType
 		///@param ipFamily IpFamily
-		Address(const String & ip, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
+		Address(const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
 
 		///@brief Constructor from a IP, Service, SockType and IpFamily
-		///@param ip IP to connect to
+		///@param address to connect to (IP or domain name)
 		///@param service Service to be used.
 		///@param hints Hints to be used (sockType, ipFamily, flags, protocol) 
-		Address(const String & ip, const String & service, const AddrInfo & hints);
+		Address(const String & address, const String & service, const AddrInfo & hints);
 
 		///@brief copy constructor to up cast
 		///@param addrInfo

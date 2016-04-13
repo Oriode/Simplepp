@@ -496,7 +496,7 @@ int main(int argc, char * argv[]){
 		myTCPConnection.connect("::1", 5001, Network::SockType::TCP);
 
 		Network::Address addressFrom;
-		if (myUDPServer.receiveFrom(testData2, sizeof(testData2), &addressFrom))
+		if (myUDPServer.receive(testData2, sizeof(testData2), &addressFrom))
 			Log::displayLog(String() << "We got an UDP message from the server " << testData2);
 
 	} else if (result == 1) {
@@ -507,8 +507,6 @@ int main(int argc, char * argv[]){
 
 		Network::Connection clientConnection;
 		while (myTCPServer.accept(&clientConnection)){
-			Log::displayLog(String() << "We got a client ! IP : " << clientConnection.getIp());
-
 			clientConnection.setSockType(Network::SockType::UDP);
 			clientConnection.connect();
 

@@ -20,18 +20,18 @@ namespace Network {
 		return _listen(NULL, String(port).getData(), sockType, ipFamily, maxClients);
 	}
 
-	bool Server::listen(const String & ip, const String & service, SockType sockType, IpFamily ipFamily, int maxClients){
-		return _listen(ip.getData(), service.getData(), sockType, ipFamily, maxClients);
+	bool Server::listen(const String & address, const String & service, SockType sockType, IpFamily ipFamily, int maxClients){
+		return _listen(address.getData(), service.getData(), sockType, ipFamily, maxClients);
 	}
 
-	bool Server::listen(const String & ip, unsigned int port, SockType sockType, IpFamily ipFamily, int maxClients){
-		return _listen(ip.getData(), String(port).getData(), sockType, ipFamily, maxClients);
+	bool Server::listen(const String & address, unsigned int port, SockType sockType, IpFamily ipFamily, int maxClients){
+		return _listen(address.getData(), String(port).getData(), sockType, ipFamily, maxClients);
 	}
 
-	bool Server::listen(const AddrInfo & addrInfo, int maxClients /*= 100*/){
+	bool Server::listen(const Address & address, int maxClients /*= 100*/){
 		if (!Network::init()) return false;
 
-		AddrInfo thisAddrInfo(addrInfo);
+		AddrInfo thisAddrInfo( *((AddrInfo *)  &address) );
 		if (((int) _tryListen(&thisAddrInfo, maxClients)) == SOCKET_ERROR){
 			error(String("Unable to bind ip ") << thisAddrInfo.getIpFamilyS() << " : " << thisAddrInfo.getNameInfo() << " on port " << thisAddrInfo.getPort() << " with protocol " << thisAddrInfo.getSockTypeS());
 			return false;
@@ -141,8 +141,8 @@ namespace Network {
 	}
 
 	bool Server::accept(Connection * clientSocket){
-		if (getNumSocket() == 1)
-			return accept(0, clientSocket);
+		if (getNumConnections() == 1)
+			return this -> mSocketVector[0] -> accept(clientSocket);
 
 		Connection * selectedSocket = _select();
 		if (selectedSocket)
@@ -152,9 +152,7 @@ namespace Network {
 
 	}
 
-	bool Server::accept(unsigned int socketIndex, Connection * clientSocket){
-		return this -> mSocketVector[socketIndex] -> accept(clientSocket);
-	}
+
 
 	void Server::updateFdSet(){
 		this -> mFdSet.fd_count = (u_int) Math::min<Vector<Connection * >::Size>(this -> mSocketVector.getSize(), FD_SETSIZE);
@@ -163,14 +161,18 @@ namespace Network {
 		}
 	}
 
-	typename Vector<Connection * >::Size Server::getNumSocket() const{
+	typename Vector<Connection * >::Size Server::getNumConnections() const{
 		return this -> mSocketVector.getSize();
 	}
 
-	Connection * Server::_select(){
+	size_t Server::getMaximumNbConnections() {
+		return FD_SETSIZE;
+	}
+
+	Connection * Server::_select() {
 		if (this -> mFdSet.fd_count > 0){
 			memcpy(&this -> mFdSetTmp, &this -> mFdSet, sizeof(fd_set));
-			if (::select((int)getNumSocket(), &this -> mFdSetTmp, 0,  0, 0) == SOCKET_ERROR){
+			if (::select((int)getNumConnections(), &this -> mFdSetTmp, 0,  0, 0) == SOCKET_ERROR){
 				error("Select failed !");
 				return NULL;
 			}
@@ -185,16 +187,16 @@ namespace Network {
 					}
 				}
 			}
-			return NULL;
 		}
+		return NULL;
 	}
 
-	bool Server::receiveFrom(char * buffer, int size, Address * addressFrom){
+	int Server::receive(char * buffer, int maxSize, Address * addressFrom){
 		Connection * selectedSocket = _select();
 		if (selectedSocket)
-			return selectedSocket -> receiveFrom(buffer, &size, addressFrom) != NULL;
+			return selectedSocket -> receive(buffer, maxSize, addressFrom);
 		else 
-			return false;
+			return 0;
 	}
 
 

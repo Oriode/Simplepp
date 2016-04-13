@@ -3,21 +3,19 @@
 
 namespace Network {
 
-	Connection::Connection(const AddrInfo & addrInfo) : 
-		Address(addrInfo),
+
+	Connection::Connection(const Address & address) : 
+		Address(address),
 		mSocket(0),
 		mIsCreated(false),
 		mIsListening(false)
 	{
 		
 	}
+	/*
 
 
-	Connection::Connection(ctor) : Address(null) {
-
-	}
-
-	Connection::Connection(const String & ip, const String & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/) :
+	Connection::Connection(const String & ip, const String & service, SockType sockType / *= SockType::TCP* /, IpFamily ipFamily / *= IpFamily::Undefined* /) :
 		Address(ip, service, sockType, ipFamily),
 		mSocket(0),
 		mIsCreated(false),
@@ -33,9 +31,12 @@ namespace Network {
 		mIsListening(false)
 	{
 
+	}*/
+
+
+	Connection::Connection(ctor) : Address(null) {
+
 	}
-
-
 
 
 
@@ -54,11 +55,12 @@ namespace Network {
 
 	}
 
+/*
 	Connection & Connection::operator=(const AddrInfo & addrInfo) {
 		close();
 		Address::operator=(addrInfo);
 		return *this;
-	}
+	}*/
 
 	Connection::~Connection(){
 		close();
@@ -66,10 +68,22 @@ namespace Network {
 
 
 
-	bool Connection::listen(int maxClients){
+	const Address & Connection::getAddress() const {
+		return *this;
+	}
+
+	void Connection::setAddess(const Address & address) {
+		close();
+		Address::operator=(address);
+	}
+
+	bool Connection::listen(int maxClients) {
 		if (!Network::init()) return false;
 
-		if (this -> mIsCreated) close();
+		if ( this -> mIsCreated ) {
+			close();
+			warn("The connection was already open. Closing the old one.");
+		}
 
 		if ( !_tryListen(this, maxClients) ) {
 			error(String("Unable to bind ip ") << getIpFamilyS() << " : " + getNameInfo() << " on port " << getPort() << " with protocol " << getSockTypeS());
@@ -119,15 +133,18 @@ namespace Network {
 		return _listen(NULL, String(port).getData(), sockType, ipFamily, maxClients);
 	}
 
-	bool Connection::listen(const AddrInfo & addrInfo, int maxClients /*= 100*/){
-		*this = addrInfo;
+	bool Connection::listen(const Address & address, int maxClients /*= 100*/){
+		setAddess(address);
 		return listen(maxClients);
 	}
 
 	bool Connection::_listen(const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/){
 		if (!Network::init()) return false;
 
-		if (this -> mIsCreated) close();
+		if ( this -> mIsCreated ) {
+			close();
+			warn("The connection was already open. Closing the old one.");
+		}
 
 		setSockType(sockType);
 		setIpFamily(ipFamily);
@@ -155,7 +172,9 @@ namespace Network {
 	bool Connection::connect(){
 		if (!Network::init()) return false;
 
-		if (this -> mIsCreated) close();
+		if ( this -> mIsCreated ) {
+			close();
+		}
 
 		if (!_tryConnect(this)){
 			error(String("Unable to connect to host ") << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS());
@@ -193,8 +212,12 @@ namespace Network {
 	}
 
 
-	bool Connection::connect(const AddrInfo & addrInfo){
-		*this = addrInfo;
+	bool Connection::isConnected() const {
+		return this -> mIsCreated;
+	}
+
+	bool Connection::connect(const Address & address) {
+		setAddess(address);
 		return connect();
 	}
 
@@ -204,7 +227,10 @@ namespace Network {
 	bool Connection::_connect(const char * ip, const char * service, SockType sockType, IpFamily ipFamily){
 		if (!Network::init()) return false;
 
-		if (this -> mIsCreated) close();
+		if ( this -> mIsCreated ) {
+			close();
+			warn("The connection was already open. Closing the old one.");
+		}
 
 		setSockType(sockType);
 		setIpFamily(ipFamily);
@@ -248,7 +274,7 @@ namespace Network {
 			SOCKET newSocket = connectStatic(*addrInfo);
 			if ( newSocket != SOCKET_ERROR ) {
 				this -> mSocket = newSocket;
-				if ( addrInfo != this ) *this = *addrInfo;
+				if ( addrInfo != this ) setAddess(*addrInfo);
 				return true;
 			}
 
@@ -256,14 +282,14 @@ namespace Network {
 			newSocket = connectStatic(*addrInfo);
 			if (newSocket != SOCKET_ERROR){
 				this -> mSocket = newSocket;
-				if ( addrInfo != this ) *this = *addrInfo;
+				if ( addrInfo != this ) setAddess(*addrInfo);
 				return true;
 			}
 		} else {
 			SOCKET newSocket = connectStatic(*addrInfo);
 			if (newSocket != SOCKET_ERROR){
 				this -> mSocket = newSocket;
-				if ( addrInfo != this ) *this = *addrInfo;
+				if ( addrInfo != this ) setAddess(*addrInfo);
 				return true;
 			}
 		}
@@ -287,7 +313,7 @@ namespace Network {
 			SOCKET newSocket = listenStatic(*addrInfo, maxClients);
 			if ( newSocket != SOCKET_ERROR ) {
 				this -> mSocket = newSocket;
-				if ( addrInfo != this ) *this = *addrInfo;
+				if ( addrInfo != this ) setAddess(*addrInfo);
 				return true;
 			}
 
@@ -296,7 +322,7 @@ namespace Network {
 			 newSocket = listenStatic(*addrInfo);
 			if (newSocket != SOCKET_ERROR){
 				this -> mSocket = newSocket;
-				if ( addrInfo != this ) *this = *addrInfo;
+				if ( addrInfo != this ) setAddess(*addrInfo);
 				return true;
 			}
 		}
@@ -304,7 +330,7 @@ namespace Network {
 			SOCKET newSocket = listenStatic(*addrInfo, maxClients);
 			if (newSocket != SOCKET_ERROR){
 				this -> mSocket = newSocket;
-				if ( addrInfo != this ) *this = *addrInfo;
+				if ( addrInfo != this ) setAddess(*addrInfo);
 				return true;
 			}
 		}
@@ -341,7 +367,7 @@ namespace Network {
 				return false;
 			}
 		} else if (getSockType() == SockType::UDP) {
-			if (sendto(this -> mSocket, buffer, size, 0, getSockAddr(), (int)getSockAddrLen()) == SOCKET_ERROR){
+			if (::sendto(this -> mSocket, buffer, size, 0, getSockAddr(), (int)getSockAddrLen()) == SOCKET_ERROR){
 				error("Unable to send UDP data.");
 				return false;
 			}
@@ -360,11 +386,10 @@ namespace Network {
 			return false;
 		}
 
-		log(String("we got an accept on Socket ") << this -> mSocket);
 
 		clientSocket -> newSockAddr(sizeof(SOCKADDR_STORAGE));
 		SOCKET clientSock;
-		socklen_t sockLen = clientSocket -> ai_addrlen;
+		socklen_t sockLen = ( socklen_t) clientSocket -> ai_addrlen;
 		clientSock = ::accept(this -> mSocket, clientSocket -> ai_addr, &sockLen);
 		//accept ONLY set the address (ip) in ai_addr
 		clientSocket -> ai_addrlen = sockLen;
@@ -381,6 +406,9 @@ namespace Network {
 		clientSocket -> setPort(getSockAddr());
 		clientSocket -> _update();
 
+		log(String("Socket ") << this -> mSocket << " has accepted a new client " << clientSocket->getIpFamilyS() << " : " << clientSocket->getIp());
+
+
 		return true;
 	}
 
@@ -391,7 +419,7 @@ namespace Network {
 
 
 	int Connection::receive(char * buffer, int maxSize){
-		int amountRead = recv(this -> mSocket, buffer, maxSize, 0);
+		int amountRead = ::recv(this -> mSocket, buffer, maxSize, 0);
 		if (amountRead <= 0){
 			if (amountRead == SOCKET_ERROR){
 				error("Error while receiving !");
@@ -401,11 +429,11 @@ namespace Network {
 		return amountRead;
 	}
 
-	Connection * Connection::receiveFrom(char * buffer, int * size, Address * addressFrom){
+	int Connection::receive(char * buffer, int maxSize, Address * addressFrom){
 		//cast in order to resolve access problem
 		Connection * castedAddress = (Connection*)addressFrom;
 		castedAddress -> newSockAddr(sizeof(SOCKADDR_STORAGE));
-		int amountRead = recvfrom(this -> mSocket, buffer, *size, 0, castedAddress -> ai_addr, (int*)&castedAddress -> ai_addrlen);
+		int amountRead = ::recvfrom(this -> mSocket, buffer, maxSize, 0, castedAddress -> ai_addr, (int*)&castedAddress -> ai_addrlen);
 		if (amountRead <= 0){
 			if (amountRead == SOCKET_ERROR){
 				error("Error while ReceiveFrom.");
@@ -413,8 +441,7 @@ namespace Network {
 			return 0;
 		}
 		castedAddress -> setPort(getSockAddr());
-
-		return this;
+		return amountRead;
 	}
 
 	Connection & Connection::operator=(Connection && socket) {
@@ -426,10 +453,10 @@ namespace Network {
 	}
 
 
-	bool Connection::sendTo(char * buffer, int size, const Address & addressTo){
+	bool Connection::send(char * buffer, int size, const Address & addressTo){
 		//cast in order to resolve access problem
 		const Connection * castedAddress = (const Connection*)&addressTo;
-		if (sendto(this -> mSocket, buffer, size, 0, castedAddress -> getSockAddr(), (int)castedAddress  -> getSockAddrLen()) == SOCKET_ERROR){
+		if (::sendto(this -> mSocket, buffer, size, 0, castedAddress -> getSockAddr(), (int)castedAddress  -> getSockAddrLen()) == SOCKET_ERROR){
 			error("Unable to send UDP data.");
 			return false;
 		}

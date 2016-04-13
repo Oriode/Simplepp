@@ -54,6 +54,12 @@ namespace Network {
 
 	};
 
+	enum class Error : int {
+		NoError = 0,
+		HostNotFound = 1,
+		SocketError = 2
+	};
+
 
 	class Network{
 	public:
