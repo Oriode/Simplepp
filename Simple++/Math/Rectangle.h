@@ -13,7 +13,7 @@ namespace Math {
 		Rectangle();
 		Rectangle(const Vec2<T> & leftBottom,
 				const Vec2<T> & rightTop);
-		Rectangle(const T & left, const T & top, const T & right, const T & bottom);
+		Rectangle(const T & left, const T & bottom, const T & right, const T & top);
 
 
 		const T & getLeft() const;

@@ -4,7 +4,7 @@ namespace Math {
 	const Rectangle<T> Math::Rectangle<T>::null = Rectangle<T>(0, 0);
 
 	template <typename T>
-	Rectangle<T>::Rectangle(const T & left, const T & top, const T & right, const T & bottom){
+	Rectangle<T>::Rectangle(const T & left, const T & bottom, const T & right, const T & top){
 		this -> pointLeftBottom.x = left;
 		this -> pointLeftBottom.y = bottom;
 		this -> pointRightTop.x = right;

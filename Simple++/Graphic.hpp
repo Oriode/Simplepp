@@ -366,4 +366,49 @@ namespace Graphic {
 			}
 		}
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+	template<typename T, size_t N>
+	T * computeGaussianKernel(T(&kernel)[N], const T & sigmaL) {
+		assert(N % 2 == 1);
+		const size_t NHalfed = N / 2;
+		const T sigma = NHalfed / T(2);
+
+		for ( size_t i = 0; i < NHalfed; i++ ) {
+			size_t i2 = NHalfed - i;
+
+			T sigma2Square = T(2) * ( sigma * sigma );
+			kernel[i] = Math::exp(-( ( i2 * i2 ) / sigma2Square ));
+
+			//apply symmetric
+			kernel[N - i - 1] = kernel[i];
+		}
+
+		kernel[NHalfed] = T(1);
+
+
+		T sum(0);
+		for ( size_t i = 0; i < N; i++ ) {
+			sum += kernel[i];
+		}
+
+		for ( size_t i = 0; i < N; i++ ) {
+			kernel[i] *= T(1) / sum;
+		}
+
+		return kernel;
+	}
+
+
+
 }

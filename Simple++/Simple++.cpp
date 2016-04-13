@@ -48,6 +48,27 @@ private:
 
 
 
+template<typename T>
+class ImageFunctor {
+public:
+	ImageFunctor() {};
+	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> * color) { return *this; }
+	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> * color) {
+		Graphic::ColorRGB<T> & colorR = *color;
+
+		unsigned int len = Math::length(p);
+
+		colorR.r += len;
+		colorR.g -= len;
+		colorR.b += colorR.r + colorR.g;
+
+		
+		return *this; }
+	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> * color) { return *this; }
+
+};
+
+
 int main(int argc, char * argv[]){
 	const unsigned long long G1 =		1000000000;
 	const unsigned long long M100 =	100000000;
@@ -102,6 +123,7 @@ int main(int argc, char * argv[]){
 	Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 100); 
 	Graphic::ColorRGB<unsigned char> colorMagenta(255, 0, 150);
 	Graphic::ColorRGBA<unsigned char> colorBlack(0, 0, 0, 150);
+	Graphic::ColorRGBA<unsigned char> colorTransluscient(0, 0, 0, 0);
 
 
 	//imageTest2[1] -> fill((const unsigned char *) &myColor);
@@ -124,28 +146,43 @@ int main(int argc, char * argv[]){
 	//testBlend.drawImage(Graphic::Point(50, 50), testBlend2);
 	//imageTest2[0] -> drawImage(Graphic::Point(-50, 250), *imageTest2[1]);
 
-	
+	//log(String(Math::pi<float>()));
 
-
+	constexpr size_t KERNELRADIUS = 20;
+	float mySuperKernel[KERNELRADIUS * 2 + 1];
+	Graphic::computeGaussianKernel(mySuperKernel, 5.0f);
 
 	//0.035822	0.05879	0.086425	0.113806	0.13424	0.141836	0.13424	0.113806	0.086425	0.05879	0.035822
 
-	float gaussianKernel[] = { 0.011254,	0.016436,	0.023066,	0.031105,	0.040306,	0.050187,	0.060049,	0.069041,	0.076276,	0.080977,	0.082607,	0.080977,	0.076276,	0.069041,	0.060049,	0.050187,	0.040306,	0.031105,	0.023066,	0.016436,	0.011254 };
+	//float gaussianKernel[] = { 0.011254,	0.016436,	0.023066,	0.031105,	0.040306,	0.050187,	0.060049,	0.069041,	0.076276,	0.080977,	0.082607,	0.080977,	0.076276,	0.069041,	0.060049,	0.050187,	0.040306,	0.031105,	0.023066,	0.016436,	0.011254 };
 
-	unsigned int filterWeight = unsigned int(-1) / ( 21 * 256);
-	unsigned int filter[21];
+	unsigned int filterWeight = unsigned int(-1) / ( (KERNELRADIUS * 2 + 1) * 256);
+	unsigned int filter[KERNELRADIUS * 2 + 1];
 
 	Graphic::_Image<float> imageFloated(*imageTest2[0]);
 
-	for ( size_t i = 0; i < 21; i++ ) {
-		filter[i] = gaussianKernel[i] * float(filterWeight);
+	for ( size_t i = 0; i < ( KERNELRADIUS * 2 + 1 ); i++ ) {
+		filter[i] = mySuperKernel[i] * float(filterWeight);
 	}
-	Graphic::_Image<float> imageBlurred = imageFloated.applyFilter(gaussianKernel, Graphic::ImageF::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<float>(0,0,0,0));
-	*( imageTest2[0] ) = imageBlurred;
+
+	//switch to luminance
+	Graphic::Image imageBlurred = imageTest2[0] -> toFormat(Graphic::Format::R).toFormat(Graphic::Format::RGBA);
+
+	//imageBlurred.fill(colorTransluscient);
+	*( imageTest2[0] ) = imageBlurred.applyFilter(filter, Graphic::Image::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+
+	//apply functor
+	//imageBlurred.setPixels(ImageFunctor<unsigned char>());
+
+
+	//*( imageTest2[0] ) = imageBlurred.applyFilter(filter, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	//*( imageTest2[0] ) = imageBlurred;
 
 
 
-	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
+
+
+	//Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
 
 	//Graphic::Image textImage(Math::vec2ui(textRectangle.getRight() - textRectangle.getLeft(), textRectangle.getTop() - textRectangle.getBottom()), Graphic::Format::RGBA);
 	//textImage.fill(colorWhite);
@@ -161,7 +198,7 @@ int main(int argc, char * argv[]){
 
 
 	FreeImage freeImage2;
-	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGB);
+	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGBA);
 	freeImage2.saveToFile("ultimateTest2.png", FreeImage::SavingFormat::PNG);
 
 
@@ -479,6 +516,7 @@ int main(int argc, char * argv[]){
 	/************************************************************************/
 	/* TESTING NETWORK API                                                  */
 	/************************************************************************/
+/*
 
 	int result;
 	std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
@@ -523,7 +561,7 @@ int main(int argc, char * argv[]){
 		}
 	}
 
-	
+	*/
 	return 0;
 }
 

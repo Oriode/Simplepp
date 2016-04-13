@@ -9,8 +9,13 @@
 namespace Graphic {
 
 
+	template<typename T, size_t N>
+	T * computeGaussianKernel(T(&kernel)[N], const T & sigma);
+
 
 	
+
+
 
 	///@brief draw the text to the specified position
 	///@param font Font object to use

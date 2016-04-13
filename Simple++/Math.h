@@ -25,6 +25,20 @@
 
 namespace Math {
 
+	/************************************************************************/
+	/* Constants                                                            */
+	/************************************************************************/
+	template<typename T = double>
+	constexpr T e(){
+		return T(2.7182818);
+	};
+
+	template<typename T = double>
+	constexpr T pi() {
+		return T(3.14159265359);
+	};
+	
+
 	MATH_FUNC_QUALIFIER float random(float min, float max);
 	MATH_FUNC_QUALIFIER int random(int min, int max);
 	MATH_FUNC_QUALIFIER unsigned int random(unsigned int min, unsigned int max);
@@ -484,6 +498,7 @@ namespace Math {
 	using std::min;
 	using std::ceil;
 	using std::floor;
+	using std::exp;
 
 
 

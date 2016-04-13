@@ -128,7 +128,7 @@ namespace Graphic {
 
 	template<typename T>
 	const T * _Image<T>::getPixel(unsigned int x, unsigned int y) const {
-		return getDatas()[( this -> size.x * y + x ) * this -> format];
+		return getDatas(x, y);
 	}
 
 
@@ -136,7 +136,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	T * Graphic::_Image<T>::getPixel(unsigned int x, unsigned int y) {
-		return this -> buffer + ( this -> size.x * y + x ) * this -> format;
+		return getDatas(x, y);
 	}
 
 
@@ -293,6 +293,17 @@ namespace Graphic {
 	template<typename T>
 	const T * _Image<T>::getDatas() const {
 		return this -> buffer;
+	}
+
+	template<typename T>
+	T * _Image<T>::getDatas(unsigned int x, unsigned int y) {
+		return this -> buffer + getDataOffset(x, y);
+
+	}
+
+	template<typename T>
+	const T * _Image<T>::getDatas(unsigned int x, unsigned int y) const {
+		return this -> buffer + getDataOffset(x, y);
 	}
 
 
@@ -606,15 +617,104 @@ namespace Graphic {
 
 
 	////////////////////
+
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fill(const ColorR<T> & color, const Rectangle & rectangle) {
+	template<typename Func>
+	void _Image<T>::setPixels(Func & functor) {
+		return setPixels(functor, Rectangle(0, getSize()));
+	}
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename Func>
+	void _Image<T>::setPixels(Func & functor, const Rectangle & rectangle) {
+
+		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
+		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
+
+
+		Math::Vec2<typename Math::vec2ui::Type> i;
+
 		switch ( this -> format ) {
 		case Format::R: {		//Blend R -> R
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
+				auto it2 = it;
+				for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
+					functor(i, ( ColorR<T> * ) it2);
+					it2 += 1;
+				}
+				it += nbComponentsPerLine;
+			}
+			break;
+		}
+		case Format::RGB: {	//Blend R -> RGB
+			for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
+				auto it2 = it;
+				for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
+					functor(i, ( ColorRGB<T> * ) it2);
+					it2 += 3;
+				}
+				it += nbComponentsPerLine;
+			}
+			break;
+		}
+		case Format::RGBA: {	//Blend R -> RGBA
+			for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
+				auto it2 = it;
+				for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
+					functor(i, ( ColorRGBA<T> * ) it2);
+					it2 += 4;
+				}
+				it += nbComponentsPerLine;
+			}
+			break;
+		}
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	Math::Rectangle<unsigned int> _Image<T>::_clampRectangle(const Rectangle & rectangle) const {
+		Math::Rectangle<unsigned int> rectangleUI;
+
+		if ( rectangle.getBottom() < 0 ) 		rectangleUI.setBottom(0);
+		else							rectangleUI.setBottom(rectangle.getBottom());
+
+
+		if ( rectangle.getLeft() < 0 )		rectangleUI.setLeft(0);
+		else							rectangleUI.setLeft(rectangle.getLeft());
+
+
+		if ( rectangle.getTop() < 0 )				rectangleUI.setTop(0);
+		else								rectangleUI.setTop(rectangle.getTop());
+
+
+		if ( rectangle.getRight() < 0 )			rectangleUI.setRight(0);
+		else								rectangleUI.setRight(rectangle.getRight());
+
+		if ( rectangleUI.getTop() > getSize().y )		rectangleUI.setTop(getSize().y);
+		if ( rectangleUI.getRight() > getSize().x )	rectangleUI.setRight(getSize().x);
+
+		return rectangleUI;
+	}
+
+
+
+
+
+	////////////////////
+	template<typename T /*= unsigned char*/>
+	void Graphic::_Image<T>::fill(const ColorR<T> & color, const Rectangle & rectangle) {
+		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
+		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		size_t nbComponentsPerLineRectangle = getNbComponents() * width;
+		size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
+
+		switch ( this -> format ) {
+		case Format::R: {		//Blend R -> R
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 1 ) {
 					it2[0] = color;
@@ -624,11 +724,7 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {	//Blend R -> RGB
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 3 ) {
 					it2[0] = color;
@@ -640,11 +736,7 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {	//Blend R -> RGBA
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 4 ) {
 					it2[0] = color;
@@ -662,13 +754,15 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	void Graphic::_Image<T>::fill(const ColorRGB<T> & color, const Rectangle & rectangle) {
+		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
+		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		size_t nbComponentsPerLineRectangle = getNbComponents() * width;
+		size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
+
 		switch ( this -> format ) {
 		case Format::R: {		//Blend RGB -> R
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 1 ) {
 					it2[0] = color.r;
@@ -678,11 +772,7 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {	//Blend RGB -> RGB
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 3 ) {
 					it2[0] = color.r;
@@ -694,11 +784,7 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {	//Blend RGB -> RGBA
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 4 ) {
 					it2[0] = color.r;
@@ -716,13 +802,14 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	void Graphic::_Image<T>::fill(const ColorRGBA<T> & color, const Rectangle & rectangle) {
+		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
+		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		size_t nbComponentsPerLineRectangle = getNbComponents() * width;
+		size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
 		switch ( this -> format ) {
 		case Format::R: {		//Blend RGBA -> R
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 1 ) {
 					it2[0] = color.r;
@@ -732,11 +819,7 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {	//Blend RGBA -> RGB
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 3 ) {
 					it2[0] = color.r;
@@ -748,11 +831,7 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {	//Blend RGBA -> RGBA
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
+			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 				auto maxIt = it + nbComponentsPerLineRectangle;
 				for ( auto it2 = it; it2 < maxIt; it2 += 4 ) {
 					it2[0] = color.r;
@@ -2040,22 +2119,27 @@ namespace Graphic {
 	template<typename C>
 	void _Image<T>::_blendPixelRGBtoR(C * pixelDest, const C * pixelSource) {
 		unsigned int sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = sum / 3;
+		*( pixelDest ) = C(sum / 3);
 	}
 
+	template<typename T /*= unsigned char*/>
+	void _Image<T>::_blendPixelRGBtoR(unsigned char * pixelDest, const unsigned char * pixelSource) {
+		unsigned short sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
+		*( pixelDest ) = unsigned char(sum / 3);
+	}
 
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::_blendPixelRGBtoR(float * pixelDest, const float * pixelSource) {
 		auto sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = sum / 3.0f;
+		*( pixelDest ) = float(sum / 3.0f);
 	}
 
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::_blendPixelRGBtoR(double * pixelDest, const double * pixelSource) {
 		auto sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = sum / 3.0;
+		*( pixelDest ) = double(sum / 3.0);
 	}
 
 	/*
@@ -2526,6 +2610,13 @@ namespace Graphic {
 
 
 
+
+
+
+
+
+
+
 	template<typename T>
 	T _Image<T>::_getComponmentMaxValue() {
 		return T(-1);
@@ -2604,13 +2695,24 @@ namespace Graphic {
 	template<typename C, int N>
 	_Image<T> _Image<T>::_applyFilter(const C(&filter)[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const {
 		assert(N % 2 == 1);
-		assert(this -> format == Format::RGB);		//TODO : handle other format
 
 		typename Math::vec2ui::Type NHalfed = ( N / 2 );
 		typename Math::vec2ui::Type NEven = NHalfed * 2;
 
-		typename Math::vec2ui::Type borderSize1 = NHalfed;
-		typename Math::vec2ui::Type borderSize2 = NHalfed - 1;
+
+		typename Math::vec2ui::Type borderSize1;
+		typename Math::vec2ui::Type borderSize2;
+
+		switch ( convolutionMode ) {
+		case ConvolutionMode::ExtendedSize:
+			borderSize1 = NHalfed;
+			borderSize2 = NHalfed - 1;
+			break;
+		case ConvolutionMode::NormalSize:
+			borderSize1 = NHalfed;
+			borderSize2 = 0;
+		}
+		
 		typename Math::vec2ui::Type borderSize = borderSize1 + borderSize2;
 
 
@@ -2628,11 +2730,11 @@ namespace Graphic {
 
 
 		//drawing the background color 
-		imageBorder.fill(color, Rectangle(0, imageBorder.getSize().y - borderSize, borderSize, borderSize));
-		imageBorder.fill(color, Rectangle(imageBorder.getSize().x - borderSize, imageBorder.getSize().y - borderSize, imageBorder.getSize().x, borderSize));
+		imageBorder.fill(color, Rectangle(0, borderSize, borderSize, imageBorder.getSize().y - borderSize ));
+		imageBorder.fill(color, Rectangle(imageBorder.getSize().x - borderSize, borderSize, imageBorder.getSize().x, imageBorder.getSize().y - borderSize ));
 
-		imageHori.fill(color, Rectangle(0, borderSize, imageHori.getSize().x, 0));
-		imageHori.fill(color, Rectangle(0, imageHori.getSize().y, imageHori.getSize().x, imageHori.getSize().y - borderSize));
+		imageHori.fill(color, Rectangle(0, 0, imageHori.getSize().x, borderSize));
+		imageHori.fill(color, Rectangle(0, imageHori.getSize().y - borderSize, imageHori.getSize().x, imageHori.getSize().y));
 
 
 		//copy the old image into a bigger one to handle border correctly without overflow
@@ -2870,14 +2972,23 @@ namespace Graphic {
 	template<typename C, int N>
 	_Image<T> _Image<T>::_applyFilterf(const C(&filter)[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const {
 		assert(N % 2 == 1);
-		assert(this -> format == Format::RGB);		//TODO : handle other format
 		assert((Utility::isSame<T, C>::value));
 
 		typename Math::vec2ui::Type NHalfed = ( N / 2 );
 		typename Math::vec2ui::Type NEven = NHalfed * 2;
 
-		typename Math::vec2ui::Type borderSize1 = NHalfed;
-		typename Math::vec2ui::Type borderSize2 = NHalfed - 1;
+		typename Math::vec2ui::Type borderSize1;
+		typename Math::vec2ui::Type borderSize2;
+
+		switch ( convolutionMode ) {
+		case ConvolutionMode::ExtendedSize:
+			borderSize1 = NHalfed;
+			borderSize2 = NHalfed - 1;
+			break;
+		case ConvolutionMode::NormalSize:
+			borderSize1 = NHalfed;
+			borderSize2 = 0;
+		}
 		typename Math::vec2ui::Type borderSize = borderSize1 + borderSize2;
 
 
@@ -2895,11 +3006,11 @@ namespace Graphic {
 
 
 		//drawing the background color 
-		imageBorder.fill(color, Rectangle(0, imageBorder.getSize().y - borderSize, borderSize, borderSize));
-		imageBorder.fill(color, Rectangle(imageBorder.getSize().x - borderSize, imageBorder.getSize().y - borderSize, imageBorder.getSize().x, borderSize));
+		imageBorder.fill(color, Rectangle(0, borderSize, borderSize, imageBorder.getSize().y - borderSize));
+		imageBorder.fill(color, Rectangle(imageBorder.getSize().x - borderSize, borderSize, imageBorder.getSize().x, imageBorder.getSize().y - borderSize));
 
-		imageHori.fill(color, Rectangle(0, borderSize, imageHori.getSize().x, 0));
-		imageHori.fill(color, Rectangle(0, imageHori.getSize().y, imageHori.getSize().x, imageHori.getSize().y - borderSize));
+		imageHori.fill(color, Rectangle(0, 0, imageHori.getSize().x, borderSize));
+		imageHori.fill(color, Rectangle(0, imageHori.getSize().y - borderSize, imageHori.getSize().x, imageHori.getSize().y));
 
 
 		//copy the old image into a bigger one to handle border correctly without overflow
@@ -3087,6 +3198,219 @@ namespace Graphic {
 
 		return imageVert;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	template<typename T /*= unsigned char*/>
+	_Image<T> _Image<T>::toFormat(Format newFormat, ConversionMode conversionMode) const {
+		_Image<T> newImage(getSize(), newFormat);
+
+
+
+
+		switch ( getFormat() ) {
+		case Format::R: {
+
+			switch ( newFormat ) {
+			case Format::R: {		// R -> R
+				Vector<T>::copy(newImage.buffer, this -> buffer, getNbPixels() * getNbComponents());
+				break;
+			}
+			case Format::RGB: {	// R -> RGB
+				auto thisIt = this -> buffer;
+				auto otherIt = newImage.getDatas();
+				auto maxIt = thisIt + getNbPixels() * getNbComponents();
+
+				for ( ; thisIt < maxIt; ) {
+					otherIt[0] = thisIt[0];
+					otherIt[1] = thisIt[0];
+					otherIt[2] = thisIt[0];
+
+					thisIt += getNbComponents();
+					otherIt += newImage.getNbComponents();
+				}
+				break;
+			}
+			case Format::RGBA: {	//R -> RGBA
+				auto thisIt = this -> buffer;
+				auto otherIt = newImage.getDatas();
+				auto maxIt = thisIt + getNbPixels() * getNbComponents();
+
+				for ( ; thisIt < maxIt; ) {
+					otherIt[0] = thisIt[0];
+					otherIt[1] = thisIt[0];
+					otherIt[2] = thisIt[0];
+					otherIt[3] = _getComponmentMaxValue();
+
+					thisIt += getNbComponents();
+					otherIt += newImage.getNbComponents();
+				}
+				break;
+			}
+			}
+
+
+			break;
+		}
+		case Format::RGB: {
+
+			switch ( newFormat ) {
+			case Format::R: {		// RGB -> R
+				auto thisIt = this -> buffer;
+				auto otherIt = newImage.getDatas();
+				auto maxIt = thisIt + getNbPixels() * getNbComponents();
+
+				switch ( conversionMode ) {
+				case ConversionMode::Alpha:
+					for ( ; thisIt < maxIt; ) {
+						otherIt[0] = _getComponmentMaxValue();
+						thisIt += getNbComponents();
+						otherIt += newImage.getNbComponents();
+					}
+
+					break;
+				case ConversionMode::Luminance: {
+					for ( ; thisIt < maxIt; ) {
+						_blendPixelRGBtoR(otherIt, thisIt);
+						thisIt += getNbComponents();
+						otherIt += newImage.getNbComponents();
+					}
+				}
+				case ConversionMode::Trunquate: {
+					for ( ; thisIt < maxIt; ) {
+						otherIt[0] = thisIt[0];
+						thisIt += getNbComponents();
+						otherIt += newImage.getNbComponents();
+					}
+				}
+				default:
+					break;
+				}
+
+
+				break;
+			}
+			case Format::RGB: {	// RGB -> RGB
+				Vector<T>::copy(newImage.buffer, this -> buffer, getNbPixels() * getNbComponents());
+				break;
+			}
+			case Format::RGBA: {	//RGB -> RGBA
+				auto thisIt = this -> buffer;
+				auto otherIt = newImage.getDatas();
+				auto maxIt = thisIt + getNbPixels() * getNbComponents();
+
+				for ( ; thisIt < maxIt; ) {
+					_blendPixelRGBtoRGBA(otherIt, thisIt);
+					thisIt += getNbComponents();
+					otherIt += newImage.getNbComponents();
+				}
+				break;
+			}
+			}
+
+			break;
+		}
+		case Format::RGBA: {
+
+			switch ( newFormat ) {
+			case Format::R: {		// RGBA -> R
+				auto thisIt = this -> buffer;
+				auto otherIt = newImage.getDatas();
+				auto maxIt = thisIt + getNbPixels() * getNbComponents();
+
+				switch ( conversionMode ) {
+				case ConversionMode::Alpha:
+					for ( ; thisIt < maxIt; ) {
+						otherIt[0] = thisIt[3];
+						otherIt += newImage.getNbComponents();
+					}
+
+					break;
+				case ConversionMode::Luminance: {
+					for ( ; thisIt < maxIt; ) {
+						_blendPixelRGBtoR(otherIt, thisIt);
+						thisIt += getNbComponents();
+						otherIt += newImage.getNbComponents();
+					}
+				}
+				case ConversionMode::Trunquate: {
+					for ( ; thisIt < maxIt; ) {
+						otherIt[0] = thisIt[0];
+						thisIt += getNbComponents();
+						otherIt += newImage.getNbComponents();
+					}
+				}
+				default:
+					break;
+				}
+
+
+				break;
+			}
+			case Format::RGB: {	// RGBA -> RGB
+				auto thisIt = this -> buffer;
+				auto otherIt = newImage.getDatas();
+				auto maxIt = thisIt + getNbPixels() * getNbComponents();
+
+				for ( ; thisIt < maxIt; ) {
+					otherIt[0] = thisIt[0];
+					otherIt[1] = thisIt[1];
+					otherIt[2] = thisIt[2];
+
+					thisIt += getNbComponents();
+					otherIt += newImage.getNbComponents();
+				}
+				break;
+			}
+			case Format::RGBA: {	//RGBA -> RGBA
+				Vector<T>::copy(newImage.buffer, this -> buffer, getNbPixels() * getNbComponents());
+				break;
+			}
+			}
+			break;
+		}
+		}
+
+
+
+		return newImage;
+
+
+	}
+
+	template<typename T /*= unsigned char*/>
+	unsigned int Graphic::_Image<T>::getNbComponents() const {
+		return ( unsigned int ) this -> format;
+	}
+
+
+	template<typename T>
+	template<typename C>
+	void _Image<T>::sumComponmentsRGB(const C * destBuffer, const T * inBuffer, size_t numPixels) {
+
+		destBuffer[0] = C(0);
+
+		for ( size_t i = 0; i < numPixels; i++ ) {
+			destBuffer[i] += inBuffer[i];
+			buffer++;
+		}
+
+	}
+
 
 
 

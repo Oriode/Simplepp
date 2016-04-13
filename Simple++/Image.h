@@ -40,6 +40,7 @@ namespace Graphic {
 
 		enum class LoadingFormat { R, RGB, BGR, RGBA, ABGR };
 		enum class ConvolutionMode {NormalSize, ExtendedSize};
+		enum class ConversionMode {Luminance, Trunquate, Alpha};
 
 
 		
@@ -122,9 +123,20 @@ namespace Graphic {
 		///@return data buffer
 		const T * getDatas() const;
 
+
 		///@brief get the data buffer of this image 
 		///@return data buffer
 		T * getDatas();
+
+
+
+		///@brief get the data buffer of this image starting with the selected pixel
+		///@return data buffer
+		const T * getDatas(unsigned int x, unsigned int y) const;
+
+		///@brief get the data buffer of this image starting with the selected pixel
+		///@return data buffer
+		T * getDatas(unsigned int x, unsigned int y);
 
 
 		///@brief get a pixel from this image
@@ -189,9 +201,36 @@ namespace Graphic {
 		///@return Number of components per pixels.
 		inline unsigned int getNbComponents() const;
 
+
+		///@brief Create a new Image from this one with a new format
+		///@param newFormat Format of the new image
+		///@param conversionMode Only used when converted to Format::R (Luminance : Use the average of the RGB channels, Trunquate : Use the R channel, Alpha : Use the Alpha Channel)
+		///@return Image based of this one with a new format
+		_Image<T> toFormat(Format newFormat, ConversionMode conversionMode = ConversionMode::Luminance) const;
+
 		/************************************************************************/
 		/* Drawing methods                                                      */
 		/************************************************************************/
+
+		///@brief Set a functor to each pixels in the rectangle of this image
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> * c);"
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> * c);"
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> * c);"
+		///														
+		///@param rectangle Rectangle where to apply the functor.
+		template<typename Func>
+		void setPixels(Func & functor, const Rectangle & rectangle);
+
+
+
+		///@brief Set a functor to each pixels of this image
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> * c);"
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> * c);"
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> * c);"
+		template<typename Func>
+		void setPixels(Func & functor);
 
 
 		///@brief fill the complete image with a color.
@@ -336,7 +375,7 @@ namespace Graphic {
 
 
 
-		///@brief apply a symmetrical convolution filter (gaussian blur for exemple)
+		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
 		///@param filter Filter table (the table has to have an odd size)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
@@ -345,12 +384,18 @@ namespace Graphic {
 		_Image<T> applyFilter(const C(&filter)[N],  ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null) const;
 
 
+
+
+
+
 		
 
 	protected:
 
 
 	private:
+
+		inline Math::Rectangle<unsigned int> _clampRectangle(const Rectangle & rectangle) const;
 
 		template<typename C, int N>
 		_Image<T> _applyFilter(const C(&filter)[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
@@ -463,6 +508,7 @@ namespace Graphic {
 
 		template<typename C>
 		inline static void _blendPixelRGBtoR(C * pixelDest, const C * pixelSource);
+		inline static void _blendPixelRGBtoR(unsigned char * pixelDest, const unsigned char * pixelSource);
 		inline static void _blendPixelRGBtoR(float * pixelDest, const float * pixelSource);
 		inline static void _blendPixelRGBtoR(double * pixelDest, const double * pixelSource);
 
@@ -479,6 +525,9 @@ namespace Graphic {
 		inline static void _blendPixelRGBAtoR(double * pixelDest, const double * pixelSource);
 
 
+		
+
+
 		inline static T _getComponmentMaxValue();
 
 		template<typename C>
@@ -490,25 +539,6 @@ namespace Graphic {
 		T * buffer;
 
 	};
-
-	template<typename T /*= unsigned char*/>
-	unsigned int Graphic::_Image<T>::getNbComponents() const {
-		return (unsigned int) this -> format;
-	}
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::sumComponmentsRGB(const C * destBuffer, const T * inBuffer, size_t numPixels) {
-
-		destBuffer[0] = C(0);
-
-		for ( size_t i = 0; i < numPixels; i++ ) {
-			destBuffer[i] += inBuffer[i];
-			buffer ++;
-		}
-
-	}
 
 
 
