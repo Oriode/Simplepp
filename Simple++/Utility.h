@@ -1,6 +1,8 @@
 #pragma once
 
 
+#include <cfloat>
+#include <limits>
 
 namespace Utility {
 
@@ -54,6 +56,27 @@ namespace Utility {
 		enum : bool { value = sizeof(check(static_cast<T2*>( 0 ))) == sizeof(yes) };
 	};
 
+
+
+	template<typename T>
+	class biggerType {
+		typedef T Type;
+	};
+
+	template<>
+	class biggerType<char> {
+		typedef short Type;
+	};
+
+	template<>
+	class biggerType<unsigned char> {
+		typedef unsigned short Type;
+	};
+
+
+
+	
+
 //	template < typename Base, typename PotentialDerived >
 //	bool isBase<Base, PotentialDerived>::value = IsClassT<Base,PotentialDerived >::check(0);
 
@@ -67,6 +90,202 @@ namespace Utility {
 	public:
 		static bool const value = sizeof(test<T>(0)) == sizeof(yes);
 	};*/
+
+
+
+	template<typename T>
+	class TypesInfos {
+	public:
+		typedef T Bigger;
+		static bool isInteger() { return false; }
+		static T getMin() { return T(); }
+		static T getMax() { return T(); }
+		static bool isSigned() { return false; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+	};
+
+
+	template<>
+	class TypesInfos<char> {
+	public:
+		typedef char T;
+		typedef short Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(CHAR_MIN); }
+		static T getMax() { return T(CHAR_MAX); }
+		static bool isSigned() { return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+	};
+
+	template<>
+	class TypesInfos<unsigned char> {
+	public:
+		typedef unsigned char T;
+		typedef unsigned short Bigger;
+
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(0); }
+		static T getMax() { return T(UCHAR_MAX); }
+		static bool isSigned() { return false; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+
+
+
+	template<>
+	class TypesInfos<short> {
+	public:
+		typedef short T;
+		typedef int Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(SHRT_MIN); }
+		static T getMax() { return T(SHRT_MAX); }
+		static bool isSigned() { return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+	template<>
+	class TypesInfos<unsigned short> {
+	public:
+		typedef unsigned short T;
+		typedef unsigned int Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(0); }
+		static T getMax() { return T(USHRT_MAX); }
+		static bool isSigned() { return false; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+
+	template<>
+	class TypesInfos<int> {
+	public:
+		typedef int T;
+		typedef long Bigger;
+
+		static bool isInteger()		{ return true; }
+		static T getMin()			{ return T(INT_MIN); }
+		static T getMax()			{ return T(INT_MAX); }
+		static bool isSigned()		{ return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+	template<>
+	class TypesInfos<unsigned int> {
+	public:
+		typedef unsigned int T;
+		typedef unsigned long Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(0); }
+		static T getMax() { return T(UINT_MAX); }
+		static bool isSigned() { return false; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+
+	template<>
+	class TypesInfos<long> {
+	public:
+		typedef long T;
+		typedef long long Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(LONG_MIN); }
+		static T getMax() { return T(LONG_MAX); }
+		static bool isSigned() { return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+	template<>
+	class TypesInfos<unsigned long> {
+	public:
+		typedef unsigned long T;
+		typedef unsigned long long Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(0); }
+		static T getMax() { return T(ULONG_MAX); }
+		static bool isSigned() { return false; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+
+	template<>
+	class TypesInfos<long long> {
+	public:
+		typedef long long T;
+		typedef long long Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(LLONG_MIN); }
+		static T getMax() { return T(LLONG_MAX); }
+		static bool isSigned() { return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+	template<>
+	class TypesInfos<unsigned long long> {
+	public:
+		typedef unsigned long long T;
+		typedef unsigned long long Bigger;
+
+		static bool isInteger() { return true; }
+		static T getMin() { return T(0); }
+		static T getMax() { return T(ULLONG_MAX); }
+		static bool isSigned() { return false; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+	};
+
+
+	template<>
+	class TypesInfos<float> {
+	public:
+		typedef float T;
+
+		static bool isInteger()		{ return false; }
+		static T getMin()			{ return T(FLT_MIN); }
+		static T getMax()			{ return T(FLT_MAX); }
+		static bool isSigned()		{ return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+
+	};
+
+	template<>
+	class TypesInfos<double> {
+	public:
+		typedef double T;
+
+		static bool isInteger() { return false; }
+		static T getMin() { return T(DBL_MIN); }
+		static T getMax() { return T(DBL_MAX); }
+		static bool isSigned() { return true; }
+		static size_t getNbBits() { return sizeof(T) * 8; }
+
+
+
+
+	};
+
+
+
+
+
 
 
 

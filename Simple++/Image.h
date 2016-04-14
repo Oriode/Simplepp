@@ -23,12 +23,472 @@ namespace Graphic {
 	template<typename T>
 	using ColorR = T;
 
-
-
 	typedef Math::Vec2<int> Point;
 	typedef Math::Rectangle<int> Rectangle;
 
 	enum class Format : unsigned int { R = 1, RGB = 3, RGBA = 4 };
+	enum class LoadingFormat { R, RGB, BGR, RGBA, BGRA };
+
+
+
+
+	namespace BlendingFunc {
+
+		class Normal {
+		public:
+			//WITHOUT MASK
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorR<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGB<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorR<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+
+			//WITH MASK
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorR<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGB<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+
+
+			/************************************************************************/
+			/* R -> R                                                               */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorR<I> & colorSrc) {
+				colorDest = colorSrc;
+			}
+			/************************************************************************/
+			/* R -> RGB                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorR<I> & colorSrc) {
+				colorDest.r = colorSrc;
+				colorDest.g = colorSrc;
+				colorDest.b = colorSrc;
+			}
+			/************************************************************************/
+			/* R -> RGBA                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc) {
+				colorDest.r = colorSrc;
+				colorDest.g = colorSrc;
+				colorDest.b = colorSrc;
+				colorDest.a = _Image<I>::getComponentMaxValue();
+			}
+
+			/************************************************************************/
+			/* RGB -> R                                                               */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorRGB<I> & colorSrc) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				colorDest = I(( Bigger(colorSrc.r) + Bigger(colorSrc.g) + Bigger(colorSrc.b) ) / Bigger(3));
+			}
+			inline static void blendColor(ColorR<float> & colorDest, const ColorRGB<float> & colorSrc) {
+				colorDest = (colorSrc.r + colorSrc.g + colorSrc.b) / float(3);
+			}
+			inline static void blendColor(ColorR<double> & colorDest, const ColorRGB<double> & colorSrc) {
+				colorDest = ( colorSrc.r + colorSrc.g + colorSrc.b ) / double(3);
+			}
+			/************************************************************************/
+			/* RGB -> RGB                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc) {
+				colorDest.r = colorSrc.r;
+				colorDest.g = colorSrc.g;
+				colorDest.b = colorSrc.b;
+			}
+			/************************************************************************/
+			/* RGB -> RGBA                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc) {
+				colorDest.r = colorSrc.r;
+				colorDest.g = colorSrc.g;
+				colorDest.b = colorSrc.b;
+				colorDest.a = _Image<I>::getComponentMaxValue();
+			}
+
+			/************************************************************************/
+			/* RGBA -> R                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorSrc.a);
+				Bigger sum = Bigger(colorSrc.r) + Bigger(colorSrc.g) + Bigger(colorSrc.b);
+
+				colorDest = ( colorDest * oneMinusAlpha + ( sum / Bigger(3) ) * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+			}
+
+			inline static void blendColor(ColorR<float> & colorDest, const ColorRGBA<float> & colorSrc) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorSrc.a;
+				F sum = colorSrc.r + colorSrc.g + colorSrc.b;
+
+				colorDest = colorDest * oneMinusAlpha + ( sum / F(3.0) ) * colorSrc.a;
+			}
+			inline static void blendColor(ColorR<double> & colorDest, const ColorRGBA<double> & colorSrc) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorSrc.a;
+				F sum = colorSrc.r + colorSrc.g + colorSrc.b;
+
+				colorDest = colorDest * oneMinusAlpha + ( sum / F(3.0) ) * colorSrc.a;
+			}
+
+
+			/************************************************************************/
+			/* RGBA -> RGB                                                          */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorSrc.a);
+
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+
+			}
+			inline static void blendColor(ColorRGB<float> & colorDest, const ColorRGBA<float> & colorSrc) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorSrc.a;
+				F sum = colorSrc.r + colorSrc.g + colorSrc.b;
+
+				colorDest.r = colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a;
+				colorDest.g = colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a;
+				colorDest.b = colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a;
+			}
+			inline static void blendColor(ColorRGB<double> & colorDest, const ColorRGBA<double> & colorSrc) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorSrc.a;
+				F sum = colorSrc.r + colorSrc.g + colorSrc.b;
+
+				colorDest.r = colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a;
+				colorDest.g = colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a;
+				colorDest.b = colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a;
+			}
+			/************************************************************************/
+			/* RGBA -> RGBA                                                         */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorSrc.a);
+
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.a = ( colorDest.a * oneMinusAlpha ) >> Utility::TypesInfos<I>::getNbBits() + colorSrc.a;
+
+
+			}
+			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorRGBA<float> & colorSrc) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorSrc.a;
+				F sum = colorSrc.r + colorSrc.g + colorSrc.b;
+
+				colorDest.r = colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a;
+				colorDest.g = colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a;
+				colorDest.b = colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a;
+				colorDest.a = colorDest.a * oneMinusAlpha + colorSrc.a;
+
+			}
+			inline static void blendColor(ColorRGBA<double> & colorDest, const ColorRGBA<double> & colorSrc) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorSrc.a;
+				F sum = colorSrc.r + colorSrc.g + colorSrc.b;
+
+				colorDest.r = colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a;
+				colorDest.g = colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a;
+				colorDest.b = colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a;
+				colorDest.a = colorDest.a * oneMinusAlpha + colorSrc.a;
+			}
+
+
+			/************************************************************************/
+			/* WITH MASK                                                            */
+			/************************************************************************/
+			/************************************************************************/
+			/* R -> R                                                               */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorR<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				colorDest = (Bigger(colorDest) * oneMinusAlpha + Bigger(colorSrc) * Bigger(colorMask)) >> Utility::TypesInfos<I>::getNbBits();
+			}
+			inline static void blendColor(ColorR<float> & colorDest, const ColorR<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				colorDest = colorDest * oneMinusAlpha + colorSrc * colorMask;
+			}
+			inline static void blendColor(ColorR<double> & colorDest, const ColorR<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				colorDest = colorDest * oneMinusAlpha + colorSrc * colorMask;
+			}
+			/************************************************************************/
+			/* R -> RGB                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+
+				Bigger tmp = Bigger(colorSrc) * Bigger(colorMask);
+
+				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+			}
+			inline static void blendColor(ColorRGB<float> & colorDest, const ColorR<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				F tmp = colorSrc * colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + tmp );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + tmp );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + tmp );
+			}
+			inline static void blendColor(ColorRGB<double> & colorDest, const ColorR<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				F tmp = colorSrc * colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + tmp );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + tmp );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + tmp );
+			}
+			/************************************************************************/
+			/* R -> RGBA                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+
+				Bigger tmp = Bigger(colorSrc) * Bigger(colorMask);
+
+				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.a = ( Bigger(colorDest.a) * oneMinusAlpha ) >> Utility::TypesInfos<I>::getNbBits() + colorMask;
+
+			}
+			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorR<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				F tmp = colorSrc * colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + tmp );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + tmp );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + tmp );
+				colorDest.a = ( colorDest.a * oneMinusAlpha + colorMask );
+			}
+			inline static void blendColor(ColorRGBA<double> & colorDest, const ColorR<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				F tmp = colorSrc * colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + tmp );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + tmp );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + tmp );
+				colorDest.a = ( colorDest.a * oneMinusAlpha + colorMask );
+			}
+
+			/************************************************************************/
+			/* RGB -> R                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				Bigger sum = ( Bigger(colorSrc.r) + Bigger(colorSrc.g) + Bigger(colorSrc.b) ) / Bigger(3);
+				colorDest = ( Bigger(colorDest) * oneMinusAlpha + sum * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+			}
+			inline static void blendColor(ColorR<float> & colorDest, const ColorRGB<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				F sum = (colorSrc.r + colorSrc.g + colorSrc.b) / F(3);
+				colorDest = ( colorDest * oneMinusAlpha + sum * colorMask );
+			}
+			inline static void blendColor(ColorR<double> & colorDest, const ColorRGB<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				F sum = ( colorSrc.r + colorSrc.g + colorSrc.b ) / F(3);
+				colorDest = ( colorDest * oneMinusAlpha + sum * colorMask );
+			}
+			/************************************************************************/
+			/* RGB -> RGB                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + colorSrc.r * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + colorSrc.g * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + colorSrc.b * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+			}
+			inline static void blendColor(ColorRGB<float> & colorDest, const ColorRGB<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorMask );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorMask );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorMask );
+			}
+			inline static void blendColor(ColorRGB<double> & colorDest, const ColorRGB<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorMask );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorMask );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorMask );
+			}
+			/************************************************************************/
+			/* RGB -> RGBA                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + colorSrc.r * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + colorSrc.g * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + colorSrc.b * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.a = ( Bigger(colorDest.a) * oneMinusAlpha ) >> Utility::TypesInfos<I>::getNbBits() + colorMask;
+			}
+			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorRGB<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorMask );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorMask );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorMask );
+				colorDest.a = ( colorDest.a * oneMinusAlpha ) + colorMask;
+
+			}
+			inline static void blendColor(ColorRGBA<double> & colorDest, const ColorRGB<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F oneMinusAlpha = F(1.0) - colorMask;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorMask );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorMask );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorMask );
+				colorDest.a = ( colorDest.a * oneMinusAlpha ) + colorMask;
+			}
+
+			/************************************************************************/
+			/* RGBA -> R                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
+
+				SuperBigger alpha = SuperBigger(colorMask) * SuperBigger(colorSrc.a);
+				SuperBigger oneMinusAlpha = ( 1 << Utility::TypesInfos<Bigger>::getNbBits() ) - alpha;
+				SuperBigger sum = ( SuperBigger(colorSrc.r) + SuperBigger(colorSrc.g) + SuperBigger(colorSrc.b) ) / SuperBigger(3);
+				colorDest = ( SuperBigger(colorDest) * oneMinusAlpha + sum * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+			}
+			inline static void blendColor(ColorR<float> & colorDest, const ColorRGBA<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F alpha = colorMask * colorSrc.a;
+				F oneMinusAlpha = F(1.0) - alpha;
+				F sum = ( colorSrc.r + colorSrc.g + colorSrc.b ) / F(3);
+				colorDest = ( colorDest * oneMinusAlpha + sum * alpha );
+			}
+			inline static void blendColor(ColorR<double> & colorDest, const ColorRGBA<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F alpha = colorMask * colorSrc.a;
+				F oneMinusAlpha = F(1.0) - alpha;
+				F sum = ( colorSrc.r + colorSrc.g + colorSrc.b ) / F(3);
+				colorDest = ( colorDest * oneMinusAlpha + sum * alpha );
+			}
+			/************************************************************************/
+			/* RGBA -> RGB                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
+				SuperBigger alpha = SuperBigger(colorMask) * SuperBigger(colorSrc.a);
+				SuperBigger oneMinusAlpha = ( 1 << Utility::TypesInfos<Bigger>::getNbBits() ) - alpha;
+				colorDest.r = ( SuperBigger(colorDest.r) * oneMinusAlpha + colorSrc.r * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				colorDest.g = ( SuperBigger(colorDest.g) * oneMinusAlpha + colorSrc.g * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				colorDest.b = ( SuperBigger(colorDest.b) * oneMinusAlpha + colorSrc.b * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+			}
+			inline static void blendColor(ColorRGB<float> & colorDest, const ColorRGBA<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F alpha = colorMask * colorSrc.a;
+				F oneMinusAlpha = F(1.0) - alpha;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * alpha );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * alpha );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * alpha );
+			}
+			inline static void blendColor(ColorRGB<double> & colorDest, const ColorRGBA<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F alpha = colorMask * colorSrc.a;
+				F oneMinusAlpha = F(1.0) - alpha;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * alpha );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * alpha );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * alpha );
+			}
+			/************************************************************************/
+			/* RGBA -> RGBA                                                         */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, const ColorR<I> & colorMask) {
+				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
+				SuperBigger alpha = SuperBigger(colorMask) * SuperBigger(colorSrc.a);
+				SuperBigger oneMinusAlpha = ( 1 << Utility::TypesInfos<Bigger>::getNbBits() ) - alpha;
+				colorDest.r = ( SuperBigger(colorDest.r) * oneMinusAlpha + colorSrc.r * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				colorDest.g = ( SuperBigger(colorDest.g) * oneMinusAlpha + colorSrc.g * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				colorDest.b = ( SuperBigger(colorDest.b) * oneMinusAlpha + colorSrc.b * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				colorDest.a = ( SuperBigger(colorDest.a) * oneMinusAlpha ) >> Utility::TypesInfos<Bigger>::getNbBits() + alpha;
+			}
+			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorRGBA<float> & colorSrc, const ColorR<float> & colorMask) {
+				typedef float F;
+				F alpha = colorMask * colorSrc.a;
+				F oneMinusAlpha = F(1.0) - alpha;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * alpha );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * alpha );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * alpha );
+				colorDest.a = ( colorDest.a * oneMinusAlpha ) + alpha;
+
+			}
+			inline static void blendColor(ColorRGBA<double> & colorDest, const ColorRGBA<double> & colorSrc, const ColorR<double> & colorMask) {
+				typedef double F;
+				F alpha = colorMask * colorSrc.a;
+				F oneMinusAlpha = F(1.0) - alpha;
+				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * alpha );
+				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * alpha );
+				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * alpha );
+				colorDest.a = ( colorDest.a * oneMinusAlpha ) + alpha;
+			}
+
+		};
+	}
+
+
+
+
+
+
+
+
+
 
 
 	///@brief Image Class
@@ -38,7 +498,6 @@ namespace Graphic {
 	class _Image : public BasicIO {
 	public:
 
-		enum class LoadingFormat { R, RGB, BGR, RGBA, ABGR };
 		enum class ConvolutionMode {NormalSize, ExtendedSize};
 		enum class ConversionMode {Luminance, Trunquate, Alpha};
 
@@ -69,7 +528,7 @@ namespace Graphic {
 		///@param size size of the new image
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		_Image(const T * data, const Math::vec2ui & size, Format format = Format::RGB, bool invertY = false);
+		_Image(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 		///@brief copy constructor
 		_Image(const _Image<T> & image);
@@ -111,7 +570,7 @@ namespace Graphic {
 		///@param data Data buffer to copy
 		///@param size size of the new image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas(const T * data, const Math::vec2ui & size, Format format = Format::RGB, bool invertY = false);
+		void setDatas(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief create a new image from this one with a size of width / 2 and height / 2
@@ -208,6 +667,14 @@ namespace Graphic {
 		///@return Image based of this one with a new format
 		_Image<T> toFormat(Format newFormat, ConversionMode conversionMode = ConversionMode::Luminance) const;
 
+
+
+		///@brief get the maximum value of a color component
+		///@param maximum value of a component depending of the template type T
+		inline static T getComponentMaxValue();
+
+
+
 		/************************************************************************/
 		/* Drawing methods                                                      */
 		/************************************************************************/
@@ -291,9 +758,21 @@ namespace Graphic {
 		///@param point Position where to draw.
 		///@param rectangle rectangle of the second image to draw. (The rectangle HAS TO BE smaller or equal of the given image)
 		///@param image Another image to draw
-		///@param blending function of type (template<typename C> void blendingFunc(Format destFormat, Format sourceFormat, C * destPixel, const C * sourcePixel) )
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
+		///
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
+		///
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
+
 		template<typename Func>
-		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, Func blendingFunc);
+		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Func & functor);
 
 
 
@@ -385,7 +864,7 @@ namespace Graphic {
 
 
 
-
+		
 
 
 		
@@ -394,6 +873,9 @@ namespace Graphic {
 
 
 	private:
+		void _allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+
+		static Format loadingFormat2Format(LoadingFormat loadingFormat);
 
 		inline Math::Rectangle<unsigned int> _clampRectangle(const Rectangle & rectangle) const;
 
@@ -423,122 +905,15 @@ namespace Graphic {
 		inline static void _castComponment(double * dest, const unsigned char * source);
 
 
-		template<typename C>
-		inline static void _blendPixelRtoR(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRtoR(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRtoR(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRtoR(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-
-
-		template<typename C>
-		inline static void _blendPixelRtoRGB(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRtoRGB(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRtoRGB(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-
-		template<typename C>
-		inline static void _blendPixelRtoRGBA(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRtoRGBA(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRtoRGBA(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-
-		template<typename C>
-		inline static void _blendPixelRGBtoR(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRGBtoR(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRGBtoR(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRGBtoR(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-		template<typename C>
-		inline static void _blendPixelRGBtoRGB(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRGBtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRGBtoRGB(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRGBtoRGB(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-		template<typename C>
-		inline static void _blendPixelRGBtoRGBA(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRGBtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRGBtoRGBA(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRGBtoRGBA(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-
-
-		template<typename C>
-		inline static void _blendPixelRGBAtoR(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRGBAtoR(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRGBAtoR(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRGBAtoR(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-		template<typename C>
-		inline static void _blendPixelRGBAtoRGB(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRGBAtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRGBAtoRGB(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRGBAtoRGB(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-		template<typename C>
-		inline static void _blendPixelRGBAtoRGBA(C * pixelDest, const C * pixelSource, const C * maskPixel);
-		inline static void _blendPixelRGBAtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel);
-		inline static void _blendPixelRGBAtoRGBA(float * pixelDest, const float * pixelSource, const float * maskPixel);
-		inline static void _blendPixelRGBAtoRGBA(double * pixelDest, const double * pixelSource, const double * maskPixel);
-
-
-
-
-
-		template<typename C>
-		inline static void _blendPixelRtoRGBA(C * pixelDest, const C * pixelSource);
-		inline static void _blendPixelRtoRGBA(float * pixelDest, const float * pixelSource);
-		inline static void _blendPixelRtoRGBA(double * pixelDest, const double * pixelSource);
-
-		template<typename C>
-		inline static void _blendPixelRGBtoRGBA(C * pixelDest, const C * pixelSource);
-		inline static void _blendPixelRGBtoRGBA(float * pixelDest, const float * pixelSource);
-		inline static void _blendPixelRGBtoRGBA(double * pixelDest, const double * pixelSource);
-
-		template<typename C>
-		inline static void _blendPixelRGBAtoRGBA(C * pixelDest, const C * pixelSource);
-		inline static void _blendPixelRGBAtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource);
-		inline static void _blendPixelRGBAtoRGBA(float * pixelDest, const float * pixelSource);
-		inline static void _blendPixelRGBAtoRGBA(double * pixelDest, const double * pixelSource);
-
-		template<typename C>
-		inline static void _blendPixelRtoRGB(C * pixelDest, const C * pixelSource);
-
-		template<typename C>
-		inline static void _blendPixelRGBtoR(C * pixelDest, const C * pixelSource);
-		inline static void _blendPixelRGBtoR(unsigned char * pixelDest, const unsigned char * pixelSource);
-		inline static void _blendPixelRGBtoR(float * pixelDest, const float * pixelSource);
-		inline static void _blendPixelRGBtoR(double * pixelDest, const double * pixelSource);
-
-		template<typename C>
-		inline static void _blendPixelRGBAtoRGB(C * pixelDest, const C * pixelSource);
-		inline static void _blendPixelRGBAtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource);
-		inline static void _blendPixelRGBAtoRGB(float * pixelDest, const float * pixelSource);
-		inline static void _blendPixelRGBAtoRGB(double * pixelDest, const double * pixelSource);
-
-		template<typename C>
-		inline static void _blendPixelRGBAtoR(C * pixelDest, const C * pixelSource);
-		inline static void _blendPixelRGBAtoR(unsigned char * pixelDest, const unsigned char * pixelSource);
-		inline static void _blendPixelRGBAtoR(float * pixelDest, const float * pixelSource);
-		inline static void _blendPixelRGBAtoR(double * pixelDest, const double * pixelSource);
-
-
-		
-
-
-		inline static T _getComponmentMaxValue();
-
-		template<typename C>
-		inline static void sumComponmentsRGB(const C * destBuffer, const T * inBuffer, size_t numPixels);
-
 		Format format;
 		Math::vec2ui size;
 		size_t nbPixels;
 		T * buffer;
 
 	};
+
+
+
 
 
 

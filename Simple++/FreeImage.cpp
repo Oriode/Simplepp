@@ -254,9 +254,8 @@ void FreeImage::loadFromDatas( unsigned char * datas, const Math::vec2ui & size,
 	this -> loadingType = LoadingType::EMPTY;
 	this -> fileName.clear();			//we have no reason to keep a filepath now.
 
+	this -> freeImage = FreeImage_ConvertFromRawBits(datas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, this -> invertY);
 
-	this -> freeImage = FreeImage_ConvertFromRawBits(datas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_BLUE_MASK, FI_RGBA_GREEN_MASK, this -> invertY);
-	
 	setLoading(false);
 	setLoaded(true);
 	unlock();

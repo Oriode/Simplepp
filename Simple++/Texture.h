@@ -38,7 +38,7 @@ namespace Graphic {
 		///@param size size of the image to copy.
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		Texture(const T * dataBuffer, const Math::vec2ui & size, typename Format format = Format::RGB, bool invertY = false);
+		Texture(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief move constructor
@@ -62,7 +62,7 @@ namespace Graphic {
 		///@param data Data buffer to copy
 		///@param size size of the new image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas(const T * data, const Math::vec2ui & size, typename Format format = Format::RGB, bool invertY = false);
+		void setDatas(const T * data, const Math::vec2ui & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief reset this image with a new size.

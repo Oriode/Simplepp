@@ -33,8 +33,8 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	Texture<T>::Texture(const T * dataBuffer, const Math::vec2ui & size, typename Format format, bool invertY) {
-		this -> datas.push(new _Image<T>(dataBuffer, size, format, invertY));
+	Texture<T>::Texture(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat, bool invertY) {
+		this -> datas.push(new _Image<T>(dataBuffer, size, loadingFormat, invertY));
 	}
 
 	template<typename T>
@@ -131,9 +131,9 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	void Texture<T>::setDatas(const T * data, const Math::vec2ui & size, typename Format format /*= Format::RGB*/, bool invertY /*= false*/) {
+	void Texture<T>::setDatas(const T * data, const Math::vec2ui & size, typename LoadingFormat loadingFormat /*= LoadingFormat::RGB*/, bool invertY /*= false*/) {
 		_unload();
-		this -> datas.push(new _Image<T>(data, size, format, invertY));
+		this -> datas.push(new _Image<T>(data, size, loadingFormat, invertY));
 	}
 
 

@@ -70,32 +70,116 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::_Image(const T * data, const Math::vec2ui & size, Format format, bool invertY) :
-		format(format),
-		size(size),
-		nbPixels(size.x * size.y)
-	{
-		assert(this -> nbPixels);			//just in case we putted an empty size
-		size_t nbComponents = this -> nbPixels * this -> getNbComponents();
-		this -> buffer = new T[nbComponents];
+	_Image<T>::_Image(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat, bool invertY) {
+		_allocateAndCopy(data, size, loadingFormat, invertY);
+	}
 
-		if ( invertY ) {
-			//Copy row per row.
-			size_t nbComponentsPerRow = size.x * getNbComponents();
-			size_t offset = nbComponentsPerRow * sizeof(T);
-			const T * pDescend = data + offset * ( size.y - 1 );
-			T * pAscend = this -> buffer;
-			for ( unsigned int y = 0; y < size.y; y++ ) {
-				Vector<T>::copy(pAscend, pDescend, nbComponentsPerRow);
-				pAscend += nbComponentsPerRow;
-				pDescend -= nbComponentsPerRow;
+
+	template<typename T /*= unsigned char*/>
+	void _Image<T>::_allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat /*= LoadingFormat::RGB*/, bool invertY /*= false*/) {
+		this -> size = size;
+		this -> nbPixels = size.x * size.y;
+
+		if ( this -> nbPixels > 0 && data ) {
+			this -> format = loadingFormat2Format(loadingFormat);
+			size_t nbComponentsTotal = this -> nbPixels * this -> getNbComponents();
+			this -> buffer = new T[nbComponentsTotal];
+
+
+			switch ( loadingFormat ) {
+			case LoadingFormat::BGR: {
+				if ( invertY ) {
+					size_t nbComponentsPerRow = size.x * getNbComponents();
+					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
+					auto thisIt = getDatas();
+					for ( unsigned int y = 0; y < size.y; y++ ) {
+						auto thisIt2 = thisIt;
+						auto otherIt2 = otherIt;
+						for ( unsigned int x = 0; x < size.x; x++ ) {
+							thisIt2[0] = otherIt2[2];
+							thisIt2[1] = otherIt2[1];
+							thisIt2[2] = otherIt2[0];
+
+							thisIt2 += getNbComponents();
+							otherIt += getNbComponents();
+						}
+						thisIt += nbComponentsPerRow;
+						otherIt -= nbComponentsPerRow;
+					}
+				} else {
+					auto otherIt = data;
+					auto thisIt = getDatas();
+					for ( size_t i = 0; i < this -> nbPixels; i++ ) {
+						thisIt[0] = otherIt[2];
+						thisIt[1] = otherIt[1];
+						thisIt[2] = otherIt[0];
+
+						thisIt += getNbComponents();
+						otherIt += getNbComponents();
+					}
+				}
+				break;
+			}
+			case LoadingFormat::BGRA: {
+				if ( invertY ) {
+					size_t nbComponentsPerRow = size.x * getNbComponents();
+					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
+					auto thisIt = getDatas();
+					for ( unsigned int y = 0; y < size.y; y++ ) {
+						auto thisIt2 = thisIt;
+						auto otherIt2 = otherIt;
+						for ( unsigned int x = 0; x < size.x; x++ ) {
+							thisIt2[0] = otherIt2[2];
+							thisIt2[1] = otherIt2[1];
+							thisIt2[2] = otherIt2[0];
+							thisIt2[3] = otherIt2[3];
+
+							thisIt2 += getNbComponents();
+							otherIt += getNbComponents();
+						}
+						thisIt += nbComponentsPerRow;
+						otherIt -= nbComponentsPerRow;
+					}
+				} else {
+					auto otherIt = data;
+					auto thisIt = getDatas();
+					for ( size_t i = 0; i < this -> nbPixels; i++ ) {
+						thisIt[0] = otherIt[2];
+						thisIt[1] = otherIt[1];
+						thisIt[2] = otherIt[0];
+						thisIt[3] = otherIt[3];
+
+						thisIt += getNbComponents();
+						otherIt += getNbComponents();
+					}
+				}
+				break;
+			}
+			default: {
+				if ( invertY ) {
+					//Copy row per row.
+					size_t nbComponentsPerRow = size.x * getNbComponents();
+					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
+					auto thisIt = getDatas();
+					for ( unsigned int y = 0; y < size.y; y++ ) {
+						Vector<T>::copy(thisIt, otherIt, nbComponentsPerRow);
+						thisIt += nbComponentsPerRow;
+						otherIt -= nbComponentsPerRow;
+					}
+				} else {
+					//Copy the whole data
+					Vector<T>::copy(this -> buffer, data, nbComponentsTotal);
+				}
+			}
 			}
 		} else {
-			//Copy the whole data
-			Vector<T>::copy(this -> buffer, data, nbComponents);
+			this -> nbPixels = 0;
+			this -> size.x = 0;
+			this -> size.y = 0;
+			this -> buffer = NULL;
 		}
-		
 	}
+
 
 
 	template<typename T>
@@ -169,32 +253,9 @@ namespace Graphic {
 
 
 	template<typename T>
-	void _Image<T>::setDatas(const T * data, const Math::vec2ui & size, Format format, bool invertY) {
-		this -> size = size;
-		this -> nbPixels = size.x * size.y;
-		this -> format = format;
-		size_t nbComponents = this -> nbPixels * this -> getNbComponents();
-
-		assert(this -> nbPixels);			//just in case we putted an empty size
-		delete [] this -> buffer;
-		this -> buffer = new T[nbComponents];
-
-
-		if ( invertY ) {
-			//Copy row per row.
-			size_t nbComponentsPerLine = size.x * getNbComponents();
-			size_t offset = nbComponentsPerLine * sizeof(T);
-			const T * pDescend = data + offset * ( size.y - 1 );
-			T * pAscend = this -> buffer;
-			for ( unsigned int y = 0; y < size.y; y++ ) {
-				Vector<T>::copy(pAscend, pDescend, nbComponentsPerLine);
-				pAscend += nbComponentsPerLine;
-				pDescend -= nbComponentsPerLine;
-			}
-		} else {
-			//Copy the whole data
-			Vector<T>::copy(this -> buffer, data, nbComponents);
-		}
+	void _Image<T>::setDatas(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat, bool invertY) {
+		delete[] this -> buffer;
+		_allocateAndCopy(data, size, loadingFormat, invertY);
 	}
 
 
@@ -535,7 +596,7 @@ namespace Graphic {
 				*( it + 0 ) = color;
 				*( it + 1 ) = color;
 				*( it + 2 ) = color;
-				*( it + 3 ) = _getComponmentMaxValue();
+				*( it + 3 ) = getComponentMaxValue();
 				it += getNbComponents();
 			}
 			break;
@@ -571,7 +632,7 @@ namespace Graphic {
 				*( it + 0 ) = color.r;
 				*( it + 1 ) = color.g;
 				*( it + 2 ) = color.b;
-				*( it + 3 ) = _getComponmentMaxValue();
+				*( it + 3 ) = getComponentMaxValue();
 				it += getNbComponents();
 			}
 			break;
@@ -742,7 +803,7 @@ namespace Graphic {
 					it2[0] = color;
 					it2[1] = color;
 					it2[2] = color;
-					it2[4] = _getComponmentMaxValue();
+					it2[4] = getComponentMaxValue();
 				}
 				it += nbComponentsPerLine;
 			}
@@ -790,7 +851,7 @@ namespace Graphic {
 					it2[0] = color.r;
 					it2[1] = color.g;
 					it2[2] = color.b;
-					it2[3] = _getComponmentMaxValue();
+					it2[3] = getComponentMaxValue();
 				}
 				it += nbComponentsPerLine;
 			}
@@ -929,18 +990,16 @@ namespace Graphic {
 		//Point end(begin + size);
 		//Point otherImageEnd(otherImageBegin + size);
 
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		auto otherIt = image.getDatas(otherImageBegin.x, otherImageBegin.y);
+		auto otherImageOffset = image.getSize().x * image.getNbComponents();
 
 		switch ( this -> format ) {
 		case Format::R: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 1;
-			auto thisImageOffset = this -> size.x * 1;
-
-
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> R
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 1;
-				auto otherImageOffset = image.size.x * 1;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					Vector<T>::copy(thisIt, otherIt, size.x * 1);
@@ -951,16 +1010,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> R
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 3;
-				auto otherImageOffset = image.size.x * 3;
-
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBtoR(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 3;
@@ -972,16 +1027,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> R
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 4;
-				auto otherImageOffset = image.size.x * 4;
-
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBAtoR(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 4;
@@ -997,11 +1048,6 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 3;
-			auto thisImageOffset = this -> size.x * 3;
-
-
-
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGB
 				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 1;
@@ -1012,7 +1058,7 @@ namespace Graphic {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRtoRGB(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 1;
@@ -1024,9 +1070,6 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGB
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 3;
-				auto otherImageOffset = image.size.x * 3;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					Vector<T>::copy(thisIt, otherIt, size.x * 3);
@@ -1038,15 +1081,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGB
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 4;
-				auto otherImageOffset = image.size.x * 4;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBAtoRGB(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
 						thisIt2 += 3;
 						otherIt2 += 4;
 					}
@@ -1062,20 +1102,14 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 4;
-			auto thisImageOffset = this -> size.x * 4;
-
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGBA
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 1;
-				auto otherImageOffset = image.size.x * 1;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRtoRGBA(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 1;
@@ -1087,15 +1121,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGBA
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 3;
-				auto otherImageOffset = image.size.x * 3;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBtoRGBA(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 3;
@@ -1108,15 +1139,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGBA
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 4;
-				auto otherImageOffset = image.size.x * 4;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBAtoRGBA(thisIt2, otherIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
 						thisIt2 += 4;
 						otherIt2 += 4;
 					}
@@ -1155,7 +1183,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename Func>
-	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, Func blendingFunc) {
+	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Func & functor) {
 		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
 		Point otherImageBegin;
 		Point size;
@@ -1187,29 +1215,173 @@ namespace Graphic {
 		//Point end(begin + size);
 		//Point otherImageEnd(otherImageBegin + size);
 
-
-		auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * this -> getNbComponents();
+		
+		auto thisIt = getDatas(begin.x, begin.y);
 		auto thisImageOffset = this -> size.x * getNbComponents();
 
+		auto otherIt = image.getDatas(otherImageBegin.x, otherImageBegin.y);
+		auto otherImageOffset = image.getSize().x * image.getNbComponents();
 
 
-		auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * (unsigned char) image.getFormat();
-		auto otherImageOffset = image.size.x * (unsigned char) image.getFormat();
 
-		Point i;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
-			auto thisIt2 = thisIt;
-			auto otherIt2 = otherIt;
-			for ( i.x = 0; i.x < size.x; i.x++ ) {
-				blendingFunc(this -> format, image.getFormat(), thisIt2, otherIt2);
 
-				thisIt2 += this -> getNbComponents();
-				otherIt2 += (unsigned char) image.getFormat();
+		switch ( getFormat() ) {
+		case Format::R: {
+			switch ( image.getFormat() ) {
+			case Format::R: {			//Blend R -> R
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*((ColorR<T>*)thisIt2), *((ColorR<T>*)otherIt2));
+						thisIt2 += 1;
+						otherIt2 += 1;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
 			}
-			thisIt += thisImageOffset;
-			otherIt += otherImageOffset;
-		}
+			case Format::RGB: {		//Blend RGB -> R
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* )otherIt2 ));
+						thisIt2 += 1;
+						otherIt2 += 3;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			case Format::RGBA: {		//Blend RGBA -> R
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* )otherIt2 ));
+						thisIt2 += 1;
+						otherIt2 += 4;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			}
 
+			break;
+		}
+		case Format::RGB: {
+			switch ( image.getFormat() ) {
+			case Format::R: {			//Blend R -> RGB
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* )otherIt2 ));
+						thisIt2 += 3;
+						otherIt2 += 1;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			case Format::RGB: {		//Blend RGB -> RGB
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* )otherIt2 ));
+						thisIt2 += 3;
+						otherIt2 += 3;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			case Format::RGBA: {		//Blend RGBA -> RGB
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* )otherIt2 ));
+						thisIt2 += 3;
+						otherIt2 += 4;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			}
+
+
+			break;
+		}
+		case Format::RGBA: {
+			switch ( image.getFormat() ) {
+			case Format::R: {			//Blend R -> RGBA
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* )otherIt2 ));
+						thisIt2 += 4;
+						otherIt2 += 1;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			case Format::RGB: {		//Blend RGB -> RGBA
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* )otherIt2 ));
+						thisIt2 += 4;
+						otherIt2 += 3;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			case Format::RGBA: {		//Blend RGBA -> RGBA
+				Point i;
+				for ( i.y = 0; i.y < size.y; i.y++ ) {
+					auto thisIt2 = thisIt;
+					auto otherIt2 = otherIt;
+					for ( i.x = 0; i.x < size.x; i.x++ ) {
+						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* )otherIt2 ));
+						thisIt2 += 4;
+						otherIt2 += 4;
+					}
+					thisIt += thisImageOffset;
+					otherIt += otherImageOffset;
+				}
+				break;
+			}
+			}
+
+
+			break;
+		}
+		}
 	}
 
 
@@ -1279,37 +1451,31 @@ namespace Graphic {
 		
 
 
-		auto maskIt = maskImage.buffer + ( maskImage.size.x * maskBegin.y + maskBegin.x ) * (unsigned char) maskImage.format;
-		auto maskImageOffset = maskImage.size.x * (unsigned char) maskImage.format;
+		auto maskIt = maskImage.getDatas(maskBegin.x, maskBegin.y);
+		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
+
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		auto otherIt = image.getDatas(otherImageBegin.x, otherImageBegin.y);
+		auto otherImageOffset = image.getSize().x * image.getNbComponents();
 
 
-
-
-
-
-
-		switch ( this -> format ) {
+		switch ( getFormat() ) {
 		case Format::R: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 1;
-			auto thisImageOffset = this -> size.x * 1;
-
-
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> R
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x) * 1;
-				auto otherImageOffset = image.size.x * 1;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRtoR(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 1;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1319,21 +1485,17 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> R
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 3;
-				auto otherImageOffset = image.size.x * 3;
-
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBtoR(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 3;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1343,21 +1505,17 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> R
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 4;
-				auto otherImageOffset = image.size.x * 4;
-
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBAtoR(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 4;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1371,27 +1529,19 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 3;
-			auto thisImageOffset = this -> size.x * 3;
-
-
-
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGB
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 1;
-				auto otherImageOffset = image.size.x * 1;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRtoRGB(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 1;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1401,20 +1551,17 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGB
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 3;
-				auto otherImageOffset = image.size.x * 3;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBtoRGB(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 3;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1425,20 +1572,17 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGB
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 4;
-				auto otherImageOffset = image.size.x * 4;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBAtoRGB(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 4;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1453,25 +1597,19 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 4;
-			auto thisImageOffset = this -> size.x * 4;
-
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGBA
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 1;
-				auto otherImageOffset = image.size.x * 1;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRtoRGBA(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 1;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1481,20 +1619,17 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGBA
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 3;
-				auto otherImageOffset = image.size.x * 3;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBtoRGBA(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 3;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1505,20 +1640,17 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGBA
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 4;
-				auto otherImageOffset = image.size.x * 4;
-
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						_blendPixelRGBAtoRGBA(thisIt2, otherIt2, maskIt2);
+						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 4;
-						maskIt2 += (unsigned char) maskImage.format;
+						maskIt2 += maskImage.getNbComponents();
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
@@ -1549,105 +1681,89 @@ namespace Graphic {
 
 
 		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
+		Point maskImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
-			otherImageBegin.x = -point.x + rectangle.getLeft();
+			maskImageBegin.x = -point.x + rectangle.getLeft();
 			size.x = Math::min<typename Point::Type>(this -> size.x, rectangle.getRight() - rectangle.getLeft() + point.x);
 		} else if ( point.x >(typename Point::Type) this -> size.x ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.x = point.x;
-			otherImageBegin.x = rectangle.getLeft();
+			maskImageBegin.x = rectangle.getLeft();
 			size.x = Math::min<typename Point::Type>(this -> size.x - point.x, rectangle.getRight() - rectangle.getLeft());
 		}
 
 		if ( point.y < 0 ) {
 			begin.y = 0;
-			otherImageBegin.y = -point.y + rectangle.getBottom();
+			maskImageBegin.y = -point.y + rectangle.getBottom();
 			size.y = Math::min<typename Point::Type>(this -> size.y, rectangle.getTop() - rectangle.getBottom() + point.y);
 		} else if ( point.y >(typename Point::Type) this -> size.y ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.y = point.y;
-			otherImageBegin.y = rectangle.getBottom();
+			maskImageBegin.y = rectangle.getBottom();
 			size.y = Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom());
 		}
 
 
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
 
+		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
+		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
-
-		auto otherIt = maskImage.buffer + ( maskImage.size.x * otherImageBegin.y + otherImageBegin.y ) * (unsigned char) maskImage.format;
-		auto otherImageOffset = maskImage.size.x * (unsigned char) maskImage.format;
 
 		switch ( this -> format ) {
 		case Format::R: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 1;
-			auto thisImageOffset = this -> size.x * 1;
-
-
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRGBAtoR(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 1;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		case Format::RGB: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 3;
-			auto thisImageOffset = this -> size.x * 3;
-
-
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRGBAtoRGB(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 3;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
 
 
 			break;
 		}
 		case Format::RGBA: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 4;
-			auto thisImageOffset = this -> size.x * 4;
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRGBAtoRGBA(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 4;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		}
@@ -1676,25 +1792,25 @@ namespace Graphic {
 
 
 		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
+		Point maskImageBegin;
 		if ( point.x < 0 ) {
 			begin.x = 0;
-			otherImageBegin.x = -point.x + rectangle.getLeft();
+			maskImageBegin.x = -point.x + rectangle.getLeft();
 		} else if ( point.x >(typename Point::Type) this -> size.x ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.x = point.x;
-			otherImageBegin.x = rectangle.getLeft();
+			maskImageBegin.x = rectangle.getLeft();
 		}
 
 		if ( point.y < 0 ) {
 			begin.y = 0;
-			otherImageBegin.y = -point.y + rectangle.getBottom();
+			maskImageBegin.y = -point.y + rectangle.getBottom();
 		} else if ( point.y >(typename Point::Type) this -> size.y ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.y = point.y;
-			otherImageBegin.y = rectangle.getBottom();
+			maskImageBegin.y = rectangle.getBottom();
 		}
 
 		Point size(
@@ -1702,75 +1818,63 @@ namespace Graphic {
 			Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom()));
 
 
-		auto otherIt = maskImage.buffer + ( maskImage.size.x * otherImageBegin.y + otherImageBegin.y ) * (unsigned char) maskImage.format;
-		auto otherImageOffset = maskImage.size.x * (unsigned char) maskImage.format;
+
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
+		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
+
 
 		switch ( this -> format ) {
 		case Format::R: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 1;
-			auto thisImageOffset = this -> size.x * 1;
-
-
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRtoR(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 1;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		case Format::RGB: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 3;
-			auto thisImageOffset = this -> size.x * 3;
-
-
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRtoRGB(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 3;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
 
 
 			break;
 		}
 		case Format::RGBA: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 4;
-			auto thisImageOffset = this -> size.x * 4;
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRtoRGBA(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 4;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		}
@@ -1797,25 +1901,25 @@ namespace Graphic {
 
 
 		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
+		Point maskImageBegin;
 		if ( point.x < 0 ) {
 			begin.x = 0;
-			otherImageBegin.x = -point.x + rectangle.getLeft();
+			maskImageBegin.x = -point.x + rectangle.getLeft();
 		} else if ( point.x >(typename Point::Type) this -> size.x ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.x = point.x;
-			otherImageBegin.x = rectangle.getLeft();
+			maskImageBegin.x = rectangle.getLeft();
 		}
 
 		if ( point.y < 0 ) {
 			begin.y = 0;
-			otherImageBegin.y = -point.y + rectangle.getBottom();
+			maskImageBegin.y = -point.y + rectangle.getBottom();
 		} else if ( point.y >(typename Point::Type) this -> size.y ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.y = point.y;
-			otherImageBegin.y = rectangle.getBottom();
+			maskImageBegin.y = rectangle.getBottom();
 		}
 
 		Point size(
@@ -1823,75 +1927,59 @@ namespace Graphic {
 			Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom()));
 
 
-		auto otherIt = maskImage.buffer + ( maskImage.size.x * otherImageBegin.y + otherImageBegin.y ) * (unsigned char) maskImage.format;
-		auto otherImageOffset = maskImage.size.x * (unsigned char) maskImage.format;
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
+		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
 		switch ( this -> format ) {
 		case Format::R: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 1;
-			auto thisImageOffset = this -> size.x * 1;
-
-
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRGBtoR(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 1;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		case Format::RGB: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 3;
-			auto thisImageOffset = this -> size.x * 3;
-
-
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRGBtoRGB(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 3;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		case Format::RGBA: {
-			auto thisIt = this -> buffer + ( this -> size.x * begin.y + begin.x ) * 4;
-			auto thisImageOffset = this -> size.x * 4;
-
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
-				auto otherIt2 = otherIt;
+				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					_blendPixelRGBtoRGBA(thisIt2, (const T*) &color, otherIt2);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 4;
-					otherIt2 += (unsigned char) maskImage.format;
+					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
-				otherIt += otherImageOffset;
+				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		}
@@ -1904,732 +1992,18 @@ namespace Graphic {
 
 
 
-
-
-
 	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBAtoRGBA(C * pixelDest, const C * pixelSource) {
-		float alpha = float(*( pixelSource + 3 )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + *( pixelSource + 0 ) * alpha;
-		*( pixelDest + 1 ) = *( pixelDest + 1 ) * oneMinusAlpha + *( pixelSource + 1 ) * alpha;
-		*( pixelDest + 2 ) = *( pixelDest + 2 ) * oneMinusAlpha + *( pixelSource + 2 ) * alpha;
-		*( pixelDest + 3 ) = *( pixelDest + 3 ) * oneMinusAlpha + *( pixelSource + 3 );
+	T _Image<T>::getComponentMaxValue() {
+		return Utility::TypesInfos<T>::getMax();
 	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource) {
-		unsigned short alpha = pixelSource[3];
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-
-		pixelDest[0] = ( ( (unsigned short) pixelDest[0] ) * oneMinusAlpha + ( (unsigned short) pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[1] = ( ( (unsigned short) pixelDest[1] ) * oneMinusAlpha + ( (unsigned short) pixelSource[1] ) * alpha ) >> 8;
-		pixelDest[2] = ( ( (unsigned short) pixelDest[2] ) * oneMinusAlpha + ( (unsigned short) pixelSource[2] ) * alpha ) >> 8;
-		pixelDest[3] = (( ( (unsigned short) pixelDest[3] ) * oneMinusAlpha ) >> 8 )+ ( (unsigned short) pixelSource[3] );
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoRGBA(float * pixelDest, const float * pixelSource) {
-		float alpha = *( pixelSource + 3 );
-		float oneMinusAlpha = 1.0f - alpha;
-
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + *( pixelSource + 0 ) * alpha;
-		*( pixelDest + 1 ) = *( pixelDest + 1 ) * oneMinusAlpha + *( pixelSource + 1 ) * alpha;
-		*( pixelDest + 2 ) = *( pixelDest + 2 ) * oneMinusAlpha + *( pixelSource + 2 ) * alpha;
-		*( pixelDest + 3 ) = *( pixelDest + 3 ) * oneMinusAlpha + *( pixelSource + 3 );
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoRGBA(double * pixelDest, const double * pixelSource) {
-		double alpha = *( pixelSource + 3 );
-		double oneMinusAlpha = 1.0 - alpha;
-
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + *( pixelSource + 0 ) * alpha;
-		*( pixelDest + 1 ) = *( pixelDest + 1 ) * oneMinusAlpha + *( pixelSource + 1 ) * alpha;
-		*( pixelDest + 2 ) = *( pixelDest + 2 ) * oneMinusAlpha + *( pixelSource + 2 ) * alpha;
-		*( pixelDest + 3 ) = *( pixelDest + 3 ) * oneMinusAlpha + *( pixelSource + 3 );
-	}
-
-
-
-	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBtoRGBA(C * pixelDest, const C * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 1 );
-		*( pixelDest + 2 ) = *( pixelSource + 2 );
-		*( pixelDest + 3 ) = C(-1);
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBtoRGBA(float * pixelDest, const float * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 1 );
-		*( pixelDest + 2 ) = *( pixelSource + 2 );
-		*( pixelDest + 3 ) = 1.0f;
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBtoRGBA(double * pixelDest, const double * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 1 );
-		*( pixelDest + 2 ) = *( pixelSource + 2 );
-		*( pixelDest + 3 ) = 1.0;
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRtoRGBA(C * pixelDest, const C * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 0 );
-		*( pixelDest + 2 ) = *( pixelSource + 0 );
-		*( pixelDest + 3 ) = C(-1);
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRtoRGBA(float * pixelDest, const float * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 0 );
-		*( pixelDest + 2 ) = *( pixelSource + 0 );
-		*( pixelDest + 3 ) = 1.0f;
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRtoRGBA(double * pixelDest, const double * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 0 );
-		*( pixelDest + 2 ) = *( pixelSource + 0 );
-		*( pixelDest + 3 ) = 1.0;
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRtoRGB(C * pixelDest, const C * pixelSource) {
-
-		*( pixelDest + 0 ) = *( pixelSource + 0 );
-		*( pixelDest + 1 ) = *( pixelSource + 0 );
-		*( pixelDest + 2 ) = *( pixelSource + 0 );
-	}
-
-	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBAtoRGB(C * pixelDest, const C * pixelSource) {
-		float alpha = float(*( pixelSource + 3 )) / float(T(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + *( pixelSource + 0 ) * alpha;
-		*( pixelDest + 1 ) = *( pixelDest + 1 ) * oneMinusAlpha + *( pixelSource + 1 ) * alpha;
-		*( pixelDest + 2 ) = *( pixelDest + 2 ) * oneMinusAlpha + *( pixelSource + 2 ) * alpha;
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource) {
-		unsigned short alpha = pixelSource[3];
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-
-		pixelDest[0] = ( ( (unsigned short) pixelDest[0] ) * oneMinusAlpha + ( (unsigned short) pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[1] = ( ( (unsigned short) pixelDest[1] ) * oneMinusAlpha + ( (unsigned short) pixelSource[1] ) * alpha ) >> 8;
-		pixelDest[2] = ( ( (unsigned short) pixelDest[2] ) * oneMinusAlpha + ( (unsigned short) pixelSource[2] ) * alpha ) >> 8;
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoRGB(float * pixelDest, const float * pixelSource) {
-		float alpha = *( pixelSource + 3 );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + *( pixelSource + 0 ) * alpha;
-		*( pixelDest + 1 ) = *( pixelDest + 1 ) * oneMinusAlpha + *( pixelSource + 1 ) * alpha;
-		*( pixelDest + 2 ) = *( pixelDest + 2 ) * oneMinusAlpha + *( pixelSource + 2 ) * alpha;
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoRGB(double * pixelDest, const double * pixelSource) {
-		double alpha = *( pixelSource + 3 );
-		double oneMinusAlpha = 1.0 - alpha;
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + *( pixelSource + 0 ) * alpha;
-		*( pixelDest + 1 ) = *( pixelDest + 1 ) * oneMinusAlpha + *( pixelSource + 1 ) * alpha;
-		*( pixelDest + 2 ) = *( pixelDest + 2 ) * oneMinusAlpha + *( pixelSource + 2 ) * alpha;
-	}
-
-
-
-
-	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBAtoR(C * pixelDest, const C * pixelSource) {
-		float alpha = float(*( pixelSource + 3 )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		unsigned int sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + (sum / 3) * alpha;
-	}
-
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoR(unsigned char * pixelDest, const unsigned char * pixelSource) {
-		unsigned short alpha = *( pixelSource + 3 );
-		unsigned short oneMinusAlpha = 256 - alpha;
-		unsigned short sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-
-		*( pixelDest + 0 ) = (*( pixelDest + 0 ) * oneMinusAlpha + ( sum / 3 ) * alpha) >> 8;
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoR(float * pixelDest, const float * pixelSource) {
-		auto alpha = *( pixelSource + 3 );
-		auto oneMinusAlpha = 1.0f - alpha;
-		auto sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + (sum / 3.0f) * alpha;
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBAtoR(double * pixelDest, const double * pixelSource) {
-		auto alpha = *( pixelSource + 3 );
-		auto oneMinusAlpha = 1.0 - alpha;
-		auto sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-
-		*( pixelDest + 0 ) = *( pixelDest + 0 ) * oneMinusAlpha + ( sum / 3.0 ) * alpha;
-
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBtoR(C * pixelDest, const C * pixelSource) {
-		unsigned int sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = C(sum / 3);
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBtoR(unsigned char * pixelDest, const unsigned char * pixelSource) {
-		unsigned short sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = unsigned char(sum / 3);
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBtoR(float * pixelDest, const float * pixelSource) {
-		auto sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = float(sum / 3.0f);
-	}
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_blendPixelRGBtoR(double * pixelDest, const double * pixelSource) {
-		auto sum = *( pixelSource + 0 ) + *( pixelSource + 1 ) + *( pixelSource + 2 );
-		*( pixelDest ) = double(sum / 3.0);
-	}
-
-	/*
-	template<typename T / *= unsigned char* />
-	void _Image<T>::drawText(const Font & font, const Point & point, const UTF8String & text) {
-		
-
-
-
-	}
-	*/
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRtoR(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = float(*( maskPixel )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		*( pixelDest ) = float(*( pixelDest )) * oneMinusAlpha + float(*( pixelSource )) * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoR(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned short alpha = *( maskPixel );
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-		*( pixelDest ) = ( *(pixelDest) * oneMinusAlpha + *(pixelSource) * alpha ) >> 8;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoR(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel );
-		float oneMinusAlpha = float(1.0) - alpha;
-
-		*( pixelDest ) = *(pixelDest) * oneMinusAlpha + *(pixelSource) * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoR(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel );
-		double oneMinusAlpha = double(1.0) - alpha;
-
-		*( pixelDest ) = *(pixelDest) * oneMinusAlpha + *(pixelSource) * alpha;
-	}
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRtoRGB(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = float(*( maskPixel )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float tmp = float(pixelSource[0]) * alpha;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + tmp;
-		pixelDest[1] = float(pixelDest[1]) * oneMinusAlpha + tmp;
-		pixelDest[2] = float(pixelDest[2]) * oneMinusAlpha + tmp;
-
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned short alpha = *( maskPixel );
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-		pixelDest[0] = ( ( pixelDest[0] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[1] = ( ( pixelDest[1] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[2] = ( ( pixelDest[2] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoRGB(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float tmp = pixelSource[0] * alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + tmp;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + tmp;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + tmp;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoRGB(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel );
-		double oneMinusAlpha = 1.0 - alpha;
-
-		double tmp = pixelSource[0] * alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + tmp;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + tmp;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + tmp;
-	}
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRtoRGBA(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = float(*( maskPixel )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float tmp = float(pixelSource[0]) * alpha;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + tmp;
-		pixelDest[1] = float(pixelDest[1]) * oneMinusAlpha + tmp;
-		pixelDest[2] = float(pixelDest[2]) * oneMinusAlpha + tmp;
-		pixelDest[3] = float(pixelDest[3]) * oneMinusAlpha + *( maskPixel );
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned short alpha = *( maskPixel );
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-		pixelDest[0] = ( ( pixelDest[0] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[1] = ( ( pixelDest[1] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[2] = ( ( pixelDest[2] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[3] = ( ( pixelDest[3] ) * oneMinusAlpha ) >> 8 + alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoRGBA(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float tmp = pixelSource[0] * alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + tmp;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + tmp;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + tmp;
-		pixelDest[3] = pixelDest[3] * oneMinusAlpha + alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRtoRGBA(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel );
-		double oneMinusAlpha = 1.0 - alpha;
-
-		double tmp = pixelSource[0] * alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + tmp;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + tmp;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + tmp;
-		pixelDest[3] = pixelDest[3] * oneMinusAlpha + alpha;
-	}
-
-
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBtoR(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = float(*( maskPixel )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float sum = ( float(pixelSource[0]) + float(pixelSource[1]) + float(pixelSource[2]) ) / 3.0f;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + sum * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoR(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned short alpha = *( maskPixel );
-		unsigned short oneMinusAlpha = 256 - alpha;
-		unsigned short sum = pixelSource[0] + pixelSource[1] + pixelSource[2];
-
-		pixelDest[0] = ( ( pixelDest[0] ) * oneMinusAlpha + (sum / 3) * alpha ) >> 8;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoR(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float sum = ( pixelSource[0] + pixelSource[1] + pixelSource[2] ) / 3.0f;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + sum * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoR(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel );
-		double oneMinusAlpha = 1.0 - alpha;
-		double sum = ( pixelSource[0] + pixelSource[1] + pixelSource[2] ) / 3.0;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + tmp * alpha;
-	}
-
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBtoRGB(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = float(*( maskPixel )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + float(pixelSource[0]) * alpha;
-		pixelDest[1] = float(pixelDest[1]) * oneMinusAlpha + float(pixelSource[1]) * alpha;
-		pixelDest[2] = float(pixelDest[2]) * oneMinusAlpha + float(pixelSource[2]) * alpha;
-
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned short alpha = *( maskPixel );
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-		pixelDest[0] = ( pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha ) >> 8;
-		pixelDest[1] = ( pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha ) >> 8;
-		pixelDest[2] = ( pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha ) >> 8;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoRGB(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoRGB(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel );
-		double oneMinusAlpha = 1.0 - alpha;
-		
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-	}
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBtoRGBA(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = float(*( maskPixel )) / float(C(-1));
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + float(pixelSource[0]) * alpha;
-		pixelDest[1] = float(pixelDest[1]) * oneMinusAlpha + float(pixelSource[1]) * alpha;
-		pixelDest[2] = float(pixelDest[2]) * oneMinusAlpha + float(pixelSource[2]) * alpha;
-		pixelDest[3] = float(pixelDest[3]) * oneMinusAlpha + *( maskPixel );
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned short alpha = *( maskPixel );
-		unsigned short oneMinusAlpha = 256 - alpha;
-
-		pixelDest[0] = ( ( pixelDest[0] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 8;
-		pixelDest[1] = ( ( pixelDest[1] ) * oneMinusAlpha + ( pixelSource[1] ) * alpha ) >> 8;
-		pixelDest[2] = ( ( pixelDest[2] ) * oneMinusAlpha + ( pixelSource[2] ) * alpha ) >> 8;
-		pixelDest[3] = ( ( pixelDest[3] ) * oneMinusAlpha ) >> 8 + alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoRGBA(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-		pixelDest[3] = pixelDest[3] * oneMinusAlpha + alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBtoRGBA(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel );
-		double oneMinusAlpha = 1.0 - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-		pixelDest[3] = pixelDest[3] * oneMinusAlpha + alpha;
-	}
-
-
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBAtoR(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = (float(*( maskPixel )) / float(C(-1))) * ( float(pixelSource[3]) / float(C(-1)) );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		float sum = ( float(pixelSource[0]) + float(pixelSource[1]) + float(pixelSource[2]) ) / 3.0f;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + sum * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoR(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned int alpha = (*( maskPixel ) * pixelSource[3]);
-		unsigned int oneMinusAlpha = 65536 - alpha;
-		unsigned int sum = pixelSource[0] + pixelSource[1] + pixelSource[2];
-
-		pixelDest[0] = ( ( pixelDest[0] ) * oneMinusAlpha + ( sum / 3 ) * alpha ) >> 16;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoR(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel ) * pixelSource[3];
-		float oneMinusAlpha = 1.0f - alpha;
-		float sum = ( pixelSource[0] + pixelSource[1] + pixelSource[2] ) / 3.0f;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + sum * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoR(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel ) * pixelSource[3];
-		double oneMinusAlpha = 1.0 - alpha;
-		double sum = ( pixelSource[0] + pixelSource[1] + pixelSource[2] ) / 3.0;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + tmp * alpha;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBAtoRGB(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = (float(*( maskPixel )) / float(C(-1))) * ( float(pixelSource[3]) / float(C(-1)) );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + float(pixelSource[0]) * alpha;
-		pixelDest[1] = float(pixelDest[1]) * oneMinusAlpha + float(pixelSource[1]) * alpha;
-		pixelDest[2] = float(pixelDest[2]) * oneMinusAlpha + float(pixelSource[2]) * alpha;
-
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoRGB(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned int alpha = *( maskPixel ) * pixelSource[3];
-		unsigned int oneMinusAlpha = 65536 - alpha;
-
-		pixelDest[0] = ( pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha ) >> 16;
-		pixelDest[1] = ( pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha ) >> 16;
-		pixelDest[2] = ( pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha ) >> 16;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoRGB(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel ) * pixelSource[3];
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoRGB(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel ) * pixelSource[3];
-		double oneMinusAlpha = 1.0 - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-	}
-
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	template<typename C>
-	void _Image<T>::_blendPixelRGBAtoRGBA(C * pixelDest, const C * pixelSource, const C * maskPixel) {
-		float alpha = (float(*( maskPixel )) / float(C(-1))) * ( float(pixelSource[3]) / float(C(-1)) );
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = float(pixelDest[0]) * oneMinusAlpha + float(pixelSource[0]) * alpha;
-		pixelDest[1] = float(pixelDest[1]) * oneMinusAlpha + float(pixelSource[1]) * alpha;
-		pixelDest[2] = float(pixelDest[2]) * oneMinusAlpha + float(pixelSource[2]) * alpha;
-		pixelDest[3] = float(pixelDest[3]) * oneMinusAlpha + alpha * float(C(-1));
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoRGBA(unsigned char * pixelDest, const unsigned char * pixelSource, const unsigned char * maskPixel) {
-		unsigned int alpha = *( maskPixel ) * pixelSource[3];
-		unsigned int oneMinusAlpha = 65536 - alpha;
-
-		pixelDest[0] = ( ( pixelDest[0] ) * oneMinusAlpha + ( pixelSource[0] ) * alpha ) >> 16;
-		pixelDest[1] = ( ( pixelDest[1] ) * oneMinusAlpha + ( pixelSource[1] ) * alpha ) >> 16;
-		pixelDest[2] = ( ( pixelDest[2] ) * oneMinusAlpha + ( pixelSource[2] ) * alpha ) >> 16;
-		pixelDest[3] = ( ( pixelDest[3] ) * oneMinusAlpha ) >> 16 + alpha >> 8;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoRGBA(float * pixelDest, const float * pixelSource, const float * maskPixel) {
-		float alpha = *( maskPixel ) * pixelSource[3];
-		float oneMinusAlpha = 1.0f - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-		pixelDest[3] = pixelDest[3] * oneMinusAlpha + alpha;
-	}
-
-	template<typename T>
-	void _Image<T>::_blendPixelRGBAtoRGBA(double * pixelDest, const double * pixelSource, const double * maskPixel) {
-		double alpha = *( maskPixel ) * pixelSource[3];
-		double oneMinusAlpha = 1.0 - alpha;
-
-		pixelDest[0] = pixelDest[0] * oneMinusAlpha + pixelSource[0] * alpha;
-		pixelDest[1] = pixelDest[1] * oneMinusAlpha + pixelSource[1] * alpha;
-		pixelDest[2] = pixelDest[2] * oneMinusAlpha + pixelSource[2] * alpha;
-		pixelDest[3] = pixelDest[3] * oneMinusAlpha + alpha;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-	template<typename T>
-	T _Image<T>::_getComponmentMaxValue() {
-		return T(-1);
-	}
-
 
 	template<>
-	float _Image<float>::_getComponmentMaxValue() {
+	float _Image<float>::getComponentMaxValue() {
 		return 1.0f;
 	}
 
 	template<>
-	double _Image<double>::_getComponmentMaxValue() {
+	double _Image<double>::getComponentMaxValue() {
 		return 1.0;
 	}
 
@@ -3254,7 +2628,7 @@ namespace Graphic {
 					otherIt[0] = thisIt[0];
 					otherIt[1] = thisIt[0];
 					otherIt[2] = thisIt[0];
-					otherIt[3] = _getComponmentMaxValue();
+					otherIt[3] = getComponentMaxValue();
 
 					thisIt += getNbComponents();
 					otherIt += newImage.getNbComponents();
@@ -3277,7 +2651,7 @@ namespace Graphic {
 				switch ( conversionMode ) {
 				case ConversionMode::Alpha:
 					for ( ; thisIt < maxIt; ) {
-						otherIt[0] = _getComponmentMaxValue();
+						otherIt[0] = getComponentMaxValue();
 						thisIt += getNbComponents();
 						otherIt += newImage.getNbComponents();
 					}
@@ -3285,7 +2659,7 @@ namespace Graphic {
 					break;
 				case ConversionMode::Luminance: {
 					for ( ; thisIt < maxIt; ) {
-						_blendPixelRGBtoR(otherIt, thisIt);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )otherIt ), *( ( ColorRGB<T>* )thisIt ));
 						thisIt += getNbComponents();
 						otherIt += newImage.getNbComponents();
 					}
@@ -3314,7 +2688,7 @@ namespace Graphic {
 				auto maxIt = thisIt + getNbPixels() * getNbComponents();
 
 				for ( ; thisIt < maxIt; ) {
-					_blendPixelRGBtoRGBA(otherIt, thisIt);
+					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )otherIt ), *( ( ColorRGB<T>* )thisIt ));
 					thisIt += getNbComponents();
 					otherIt += newImage.getNbComponents();
 				}
@@ -3342,7 +2716,7 @@ namespace Graphic {
 					break;
 				case ConversionMode::Luminance: {
 					for ( ; thisIt < maxIt; ) {
-						_blendPixelRGBtoR(otherIt, thisIt);
+						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )otherIt ), *( ( ColorRGB<T>* )thisIt ));
 						thisIt += getNbComponents();
 						otherIt += newImage.getNbComponents();
 					}
@@ -3398,19 +2772,28 @@ namespace Graphic {
 	}
 
 
-	template<typename T>
-	template<typename C>
-	void _Image<T>::sumComponmentsRGB(const C * destBuffer, const T * inBuffer, size_t numPixels) {
 
-		destBuffer[0] = C(0);
 
-		for ( size_t i = 0; i < numPixels; i++ ) {
-			destBuffer[i] += inBuffer[i];
-			buffer++;
+
+
+
+	template<typename T /*= unsigned char*/>
+	Format _Image<T>::loadingFormat2Format(LoadingFormat loadingFormat) {
+		switch ( loadingFormat ) {
+		case LoadingFormat::R:
+			return Format::R;
+		case LoadingFormat::RGB:
+			return Format::RGB;
+		case LoadingFormat::RGBA:
+			return Format::RGBA;
+		case LoadingFormat::BGR:
+			return Format::RGB;
+		case LoadingFormat::BGRA:
+			return Format::RGBA;
+		default:
+			return Format::RGB;
 		}
-
 	}
-
 
 
 

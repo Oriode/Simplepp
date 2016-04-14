@@ -46,7 +46,7 @@ namespace Graphic {
 		///@param size size of the new image
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas(const T * dataBuffer, const Math::vec2ui & size, typename Format format = Format::RGB, bool invertY = false);
+		void setDatas(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief clear this texture with a new size

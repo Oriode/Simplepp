@@ -369,46 +369,92 @@ namespace Graphic {
 
 
 
+	template<typename I, size_t N, typename C = unsigned char>
+	I computeGaussianKernel(I(&kernel)[N], const float & sigma) {
+		float kernelf[N];
+		_computeGaussianKernelf<float, N>(kernelf, sigma);
+		float newWeight = float(std::numeric_limits<I>::max() / Utility::TypesInfos<C>::getMax());
+
+		for ( size_t i = 0; i < N; i++ ) {
+			kernel[i] = I(kernelf[i] * newWeight);
+		}
+		return newWeight;
+
+	}
 
 
 
 
+	template<size_t N>
+	float computeGaussianKernel(float(&kernel)[N], const float & sigma) {
+		return _computeGaussianKernelf<float, N>(kernel, sigma);
+	}
 
-
+	template<size_t N>
+	double computeGaussianKernel(double(&kernel)[N], const double & sigma) {
+		return _computeGaussianKernelf<double, N>(kernel, sigma);
+	}
 
 
 
 	template<typename T, size_t N>
-	T * computeGaussianKernel(T(&kernel)[N], const T & sigmaL) {
+	T _computeGaussianKernelf(T(&kernel)[N], const T & sigma) {
 		assert(N % 2 == 1);
 		const size_t NHalfed = N / 2;
-		const T sigma = NHalfed / T(2);
 
+		T sigma2Square = T(2) * ( sigma * sigma );
+		T sum(1);
+		kernel[NHalfed] = T(1);
 		for ( size_t i = 0; i < NHalfed; i++ ) {
 			size_t i2 = NHalfed - i;
 
-			T sigma2Square = T(2) * ( sigma * sigma );
-			kernel[i] = Math::exp(-( ( i2 * i2 ) / sigma2Square ));
+			T v = Math::exp(-( ( T(i2 * i2) ) / sigma2Square ));
+			kernel[i] = v;
+			kernel[N - i - 1] = v;
 
-			//apply symmetric
-			kernel[N - i - 1] = kernel[i];
+			sum += v * T(2);
 		}
 
-		kernel[NHalfed] = T(1);
+		//normalize datas
+		T oneOnSum = T(1) / sum;
+		for ( size_t i = 0; i < N; i++ )
+			kernel[i] *= oneOnSum;
 
-
-		T sum(0);
-		for ( size_t i = 0; i < N; i++ ) {
-			sum += kernel[i];
-		}
-
-		for ( size_t i = 0; i < N; i++ ) {
-			kernel[i] *= T(1) / sum;
-		}
-
-		return kernel;
+		return sum;
+		
 	}
 
+
+
+	template<size_t N>
+	unsigned int computeGaussianKernel(unsigned int(&kernel)[N]) {
+		assert(N % 2 == 1);
+
+		constexpr size_t NHalfed = N / 2;
+
+		static const size_t kernelOffsets[] = { 0,1,4,9,16,25,36,49,64,81,100 };
+		static const unsigned int kernels[] = {
+		 16843008 ,
+		 3799952, 9243102, 3799952 ,
+		 1556650, 4065498, 5598710, 4065498, 1556650 ,
+		 922672, 2087247, 3406352, 4010465, 3406352, 2087247, 922672 ,
+		 643095, 1283892, 2103754, 2829273, 3122973, 2829273, 2103754, 1283892, 643095 ,
+		 489598, 887694, 1410129, 1962580, 2393142, 2556714, 2393142, 1962580, 1410129, 887694, 489598 ,
+		 393717, 662714, 1014731, 1413381, 1790815, 2064076, 2164134, 2064076, 1790815, 1413381, 1014731, 662714, 393717 ,
+		 328544, 521597, 771245, 1062103, 1362253, 1627293, 1810466, 1875997, 1810466, 1627293, 1362253, 1062103, 771245, 521597, 328544 ,
+		 281534, 426443, 611148, 828683, 1063131, 1290449, 1482008, 1610336, 1655536, 1610336, 1482008, 1290449, 1063131, 828683, 611148, 426443, 281534 ,
+		 246101, 358696, 500138, 667123, 851280, 1039180, 1213558, 1355757, 1448954, 1481423, 1448954, 1355757, 1213558, 1039180, 851280, 667123, 500138, 358696, 246101 ,
+		 218479, 308389, 419789, 551069, 697630, 851701, 1002749, 1138520, 1246616, 1316339, 1340436, 1316339, 1246616, 1138520, 1002749, 851701, 697630, 551069, 419789, 308389, 218479 
+		};
+		
+		if ( NHalfed <= 10 ) {
+			memcpy(kernel, kernels + kernelOffsets[NHalfed], sizeof(unsigned int) * N);
+			return 16843008;
+		} else {
+			return computeGaussianKernel<unsigned int, N>(kernel);
+
+		}
+	}
 
 
 }

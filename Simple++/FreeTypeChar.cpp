@@ -42,7 +42,7 @@ namespace Graphic {
 
 		FT_Bitmap * ftBitmap = &ftGlyph -> bitmap;
 
-		this -> setDatas(ftBitmap -> buffer, Math::vec2ui(ftBitmap -> width, ftBitmap -> rows), Format::R, true);
+		this -> setDatas(ftBitmap -> buffer, Math::vec2ui(ftBitmap -> width, ftBitmap -> rows), LoadingFormat::R, true);
 	}
 
 

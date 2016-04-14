@@ -174,12 +174,12 @@ namespace Graphic {
 
 
 	template<typename T>
-	void TextureLoadable<T>::setDatas(const T * dataBuffer, const Math::vec2ui & size, typename Format format, bool invertY) {
+	void TextureLoadable<T>::setDatas(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat, bool invertY) {
 		unload();
 		lock();
 		setLoading(true);
 
-		this -> datas.push(new _Image<T>(dataBuffer, size, format, invertY));
+		this -> datas.push(new _Image<T>(dataBuffer, size, loadingFormat, invertY));
 
 		setLoaded(true);
 		setLoading(false);

@@ -25,6 +25,10 @@
 #include "Test.h"
 #include "TextureLoadable.h"
 #include "FontLoadable.h"
+#include "Utility.h"
+
+
+
 
 class A {
 public:
@@ -69,6 +73,11 @@ public:
 };
 
 
+
+
+
+
+
 int main(int argc, char * argv[]){
 	const unsigned long long G1 =		1000000000;
 	const unsigned long long M100 =	100000000;
@@ -104,7 +113,7 @@ int main(int argc, char * argv[]){
 
 	
 	Graphic::TextureLoadable<unsigned char> imageTest;
-	imageTest.setDatas((unsigned char * ) image.getDatas(), image.getSize(), Graphic::Format::RGB);
+	imageTest.setDatas((unsigned char * ) image.getDatas(), image.getSize(), Graphic::LoadingFormat::BGR);
 	imageTest.generateMipmaps();
 	imageTest.writeToFile("myImageTest.cimage");
 	
@@ -138,42 +147,36 @@ int main(int argc, char * argv[]){
 	UTF8String testStr("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin finibus eu risus vitae feugiat.  ");
 
 
-	Graphic::Image testBlend(Math::vec2ui(200, 200), Graphic::Format::RGBA);
-	Graphic::Image testBlend2(Math::vec2ui(100, 100), Graphic::Format::RGB);
+	Graphic::Image testBlendRGBA(Math::vec2ui(200, 200), Graphic::Format::RGBA);
+	Graphic::Image testBlendRGB(Math::vec2ui(200, 200), Graphic::Format::RGB);
 
-	testBlend.fill(colorWhite);
-	testBlend2.fill(colorWhite);
-	//testBlend.drawImage(Graphic::Point(50, 50), testBlend2);
-	//imageTest2[0] -> drawImage(Graphic::Point(-50, 250), *imageTest2[1]);
+	testBlendRGBA.fill(colorWhite);
+	testBlendRGB.fill(colorWhite);
 
-	//log(String(Math::pi<float>()));
 
-	constexpr size_t KERNELRADIUS = 20;
-	float mySuperKernel[KERNELRADIUS * 2 + 1];
-	Graphic::computeGaussianKernel(mySuperKernel, 5.0f);
+	constexpr size_t KERNELRADIUS = 10;
+	unsigned int mySuperKernel[KERNELRADIUS * 2 + 1];
+	unsigned int filterWeight = Graphic::computeGaussianKernel(mySuperKernel);
 
-	//0.035822	0.05879	0.086425	0.113806	0.13424	0.141836	0.13424	0.113806	0.086425	0.05879	0.035822
+	unsigned int testDR[1];
 
-	//float gaussianKernel[] = { 0.011254,	0.016436,	0.023066,	0.031105,	0.040306,	0.050187,	0.060049,	0.069041,	0.076276,	0.080977,	0.082607,	0.080977,	0.076276,	0.069041,	0.060049,	0.050187,	0.040306,	0.031105,	0.023066,	0.016436,	0.011254 };
-
-	unsigned int filterWeight = unsigned int(-1) / ( (KERNELRADIUS * 2 + 1) * 256);
-	unsigned int filter[KERNELRADIUS * 2 + 1];
-
+	log(String() << Vector<unsigned int>(mySuperKernel));
+	log(String("Weight : ") << filterWeight);
 	Graphic::_Image<float> imageFloated(*imageTest2[0]);
 
-	for ( size_t i = 0; i < ( KERNELRADIUS * 2 + 1 ); i++ ) {
-		filter[i] = mySuperKernel[i] * float(filterWeight);
-	}
 
 	//switch to luminance
-	Graphic::Image imageBlurred = imageTest2[0] -> toFormat(Graphic::Format::R).toFormat(Graphic::Format::RGBA);
+	Graphic::Image imageBlurred = *(imageTest2[0]);
 
-	//imageBlurred.fill(colorTransluscient);
-	*( imageTest2[0] ) = imageBlurred.applyFilter(filter, Graphic::Image::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	//imageBlurred.fill(colorRed);
+	*( imageTest2[0] ) = imageBlurred.applyFilter(mySuperKernel, Graphic::Image::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
 	//apply functor
 	//imageBlurred.setPixels(ImageFunctor<unsigned char>());
 
+	
+	std::numeric_limits<float>::min();
+	log(Utility::TypesInfos<int>::getMin() + 1);
 
 	//*( imageTest2[0] ) = imageBlurred.applyFilter(filter, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 	//*( imageTest2[0] ) = imageBlurred;
@@ -182,7 +185,7 @@ int main(int argc, char * argv[]){
 
 
 
-	//Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
+	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
 
 	//Graphic::Image textImage(Math::vec2ui(textRectangle.getRight() - textRectangle.getLeft(), textRectangle.getTop() - textRectangle.getBottom()), Graphic::Format::RGBA);
 	//textImage.fill(colorWhite);
@@ -193,42 +196,61 @@ int main(int argc, char * argv[]){
 	imageTest2.generateMipmaps();
 
 	for ( size_t i = 1; i < imageTest2.getNumMipmaps(); i++ ) {
-		//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
+		imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 	}
 
 
 	FreeImage freeImage2;
-	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGBA);
+	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGB);
 	freeImage2.saveToFile("ultimateTest2.png", FreeImage::SavingFormat::PNG);
 
 
-	Graphic::_Image<float> testBlend1Float(Math::vec2ui(100, 100), Graphic::Format::RGBA);
-	Graphic::_Image<float> testBlend2Float(Math::vec2ui(100, 100), Graphic::Format::RGB);
+	Graphic::_Image<float> testBlendRGBAFloat(Math::vec2ui(100, 100), Graphic::Format::RGBA);
+	Graphic::_Image<float> testBlendRGBFloat(Math::vec2ui(100, 100), Graphic::Format::RGB);
 
 
 	Math::vec4f colorWhiteF(1.0, 1.0, 1.0, 1.0);
-	Math::vec4f colorRedF(1.0, 0.0, 0.0, 1.0/255.0);
+	Math::vec4f colorRedF(1.0, 1.0, 0.0, 1.0/255.0);
 
-	testBlend1Float.fill((const float *) &colorRedF);
-	testBlend2Float.fill((const float *) &colorWhiteF);
+	testBlendRGBAFloat.fill((const float *) &colorRedF);
+	testBlendRGBFloat.fill((const float *) &colorWhiteF);
 
 	
 
+
+	return 0;
+
 	Log::startChrono();
-	for ( size_t i = 0; i < 1; i++ ) {
-		testBlend2.drawImage(Graphic::Point(0, 0), testBlend);
+	for ( size_t i = 0; i < 10000; i++ ) {
+		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA);
 	}
 	Log::getChrono("INT BLENDING");
 
 
 	Log::startChrono();
-	for ( size_t i = 0; i < 1; i++ ) {
-		testBlend2Float.drawImage(Graphic::Point(0, 0), testBlend1Float);
+	for ( size_t i = 0; i < 10000; i++ ) {
+		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat);
 	}
 	Log::getChrono("FLOAT BLENDING");
 
 
-	Graphic::Image testblendCasted(testBlend2Float);
+	Log::startChrono();
+	for ( size_t i = 0; i < 10000; i++ ) {
+		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA, Graphic::BlendingFunc::Normal());
+	}
+	Log::getChrono("INT BLENDING FUNCTOR");
+
+
+	Log::startChrono();
+	for ( size_t i = 0; i < 10000; i++ ) {
+		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat, Graphic::BlendingFunc::Normal());
+	}
+	Log::getChrono("FLOAT BLENDING FUNCTOR");
+
+
+
+
+	Graphic::Image testblendCasted(testBlendRGBFloat);
 
 	FreeImage freeImage3;
 	freeImage2.loadFromDatas((unsigned char *) testblendCasted.getDatas(), testblendCasted.getSize(), FreeImage::Format::RGB);
