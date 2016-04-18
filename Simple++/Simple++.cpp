@@ -56,19 +56,18 @@ template<typename T>
 class ImageFunctor {
 public:
 	ImageFunctor() {};
-	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> * color) { return *this; }
-	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> * color) {
-		Graphic::ColorRGB<T> & colorR = *color;
+	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> & color) { return *this; }
+	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> & color) {
 
 		unsigned int len = Math::length(p);
 
-		colorR.r += len;
-		colorR.g -= len;
-		colorR.b += colorR.r + colorR.g;
+		color.r += len;
+		color.g -= len;
+		color.b += color.r + color.g;
 
 		
 		return *this; }
-	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> * color) { return *this; }
+	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & color) { return *this; }
 
 };
 
@@ -129,7 +128,7 @@ int main(int argc, char * argv[]){
 	/************************************************************************/
 
 	Graphic::ColorRGBA<unsigned char> colorWhite(255,255,255,100);
-	Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 100); 
+	Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 255); 
 	Graphic::ColorRGB<unsigned char> colorMagenta(255, 0, 150);
 	Graphic::ColorRGBA<unsigned char> colorBlack(0, 0, 0, 150);
 	Graphic::ColorRGBA<unsigned char> colorTransluscient(0, 0, 0, 0);
@@ -155,12 +154,12 @@ int main(int argc, char * argv[]){
 
 
 	constexpr size_t KERNELRADIUS = 10;
-	unsigned int mySuperKernel[KERNELRADIUS * 2 + 1];
-	unsigned int filterWeight = Graphic::computeGaussianKernel(mySuperKernel);
+	unsigned int mySuperKernel10[KERNELRADIUS * 2 + 1];
+	unsigned int filterWeight = Graphic::computeGaussianKernel(mySuperKernel10);
 
 	unsigned int testDR[1];
 
-	log(String() << Vector<unsigned int>(mySuperKernel));
+	log(String() << Vector<unsigned int>(mySuperKernel10));
 	log(String("Weight : ") << filterWeight);
 	Graphic::_Image<float> imageFloated(*imageTest2[0]);
 
@@ -169,20 +168,28 @@ int main(int argc, char * argv[]){
 	Graphic::Image imageBlurred = *(imageTest2[0]);
 
 	//imageBlurred.fill(colorRed);
-	*( imageTest2[0] ) = imageBlurred.applyFilter(mySuperKernel, Graphic::Image::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	//*( imageTest2[0] ) = imageBlurred.applyFilter(mySuperKernel, Graphic::Image::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
 	//apply functor
-	//imageBlurred.setPixels(ImageFunctor<unsigned char>());
 
 	
 	std::numeric_limits<float>::min();
 	log(Utility::TypesInfos<int>::getMin() + 1);
 
-	//*( imageTest2[0] ) = imageBlurred.applyFilter(filter, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	*( imageTest2[0] ) = imageBlurred.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 	//*( imageTest2[0] ) = imageBlurred;
 
 
 
+	imageTest2[0] -> setPixels(ImageFunctor<unsigned char>());
+	unsigned int mySuperKernel2[5];
+	unsigned int filterWeight2 = Graphic::computeGaussianKernel(mySuperKernel2);
+
+	*( imageTest2[0] ) = imageTest2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+
+
+	auto maskTest = fontTest['A'];
+	imageTest2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
 
 
 	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));

@@ -369,7 +369,7 @@ namespace Graphic {
 
 
 
-	template<typename I, size_t N, typename C = unsigned char>
+	template<typename I, size_t N, typename C>
 	I computeGaussianKernel(I(&kernel)[N], const float & sigma) {
 		float kernelf[N];
 		_computeGaussianKernelf<float, N>(kernelf, sigma);

@@ -10,7 +10,10 @@ namespace Math {
 	template <typename T>
 	class Rectangle {
 	public:
+		typedef T Type;
+
 		Rectangle();
+		Rectangle(const Vec2<T> & rightTop);
 		Rectangle(const Vec2<T> & leftBottom,
 				const Vec2<T> & rightTop);
 		Rectangle(const T & left, const T & bottom, const T & right, const T & top);
@@ -48,6 +51,7 @@ namespace Math {
 		Vec2<T> pointLeftBottom;
 		Vec2<T> pointRightTop;
 	};
+
 
 
 

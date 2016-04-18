@@ -309,6 +309,9 @@
     <ClInclude Include="TickRate.h">
       <Filter>Header Files\Time</Filter>
     </ClInclude>
+    <ClInclude Include="BlendingFunc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

@@ -703,7 +703,7 @@ namespace Graphic {
 			for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
 				auto it2 = it;
 				for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
-					functor(i, ( ColorR<T> * ) it2);
+					functor(i, *(( ColorR<T> * ) it2));
 					it2 += 1;
 				}
 				it += nbComponentsPerLine;
@@ -714,7 +714,7 @@ namespace Graphic {
 			for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
 				auto it2 = it;
 				for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
-					functor(i, ( ColorRGB<T> * ) it2);
+					functor(i, *( ( ColorRGB<T> * ) it2 ));
 					it2 += 3;
 				}
 				it += nbComponentsPerLine;
@@ -725,7 +725,7 @@ namespace Graphic {
 			for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
 				auto it2 = it;
 				for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
-					functor(i, ( ColorRGBA<T> * ) it2);
+					functor(i, *( ( ColorRGBA<T> * ) it2 ));
 					it2 += 4;
 				}
 				it += nbComponentsPerLine;
@@ -910,34 +910,32 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::drawImage(const Point & point, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage) {
-		drawImage(point, Rectangle(Math::Vec2<typename Point::Type>::null, image.getSize()), image, maskPoint, maskImage);
+		drawImage(point, Rectangle(image.getSize()), image, maskPoint, maskImage);
 	}
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::drawImage(const Point & point, const _Image<T> & image, const _Image<T> & maskImage) {
-		drawImage(point, Rectangle(Math::Vec2<typename Point::Type>::null, image.getSize()), image, Point::null, maskImage);
+		drawImage(point, Rectangle(image.getSize()), image, Point::null, maskImage);
 	}
-
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::drawImage(const Point & point, const _Image<T> & image) {
-		drawImage(point, Rectangle(Math::Vec2<typename Point::Type>::null, image.getSize()), image);
+		drawImage(point, Rectangle(image.getSize()), image);
 	}
-
 
 	template<typename T /*= unsigned char*/>
 	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const _Image<T> & maskImage) {
-		drawImage(point, color, Rectangle(Math::Vec2<typename Point::Type>::null, maskImage.getSize()), maskImage);
+		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage);
 	}
 
 	template<typename T /*= unsigned char*/>
 	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const _Image<T> & maskImage) {
-		drawImage(point, color, Rectangle(Math::Vec2<typename Point::Type>::null, maskImage.getSize()), maskImage);
+		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage);
 	}
 
 	template<typename T /*= unsigned char*/>
 	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const _Image<T> & maskImage) {
-		drawImage(point, color, Rectangle(Math::Vec2<typename Point::Type>::null, maskImage.getSize()), maskImage);
+		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage);
 	}
 
 
@@ -1389,29 +1387,22 @@ namespace Graphic {
 
 
 
-
-
-
-
-
-
-
-
 	template<typename T /*= unsigned char */>
-	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage) {
+	template<typename Func>
+	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const Func & functor) {
 		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
 		Point otherImageBegin;
 		Point maskBegin;
 		Point size;
 
-		
+
 		if ( maskPoint.x < 0 ) {
 			begin.x = point.x - maskPoint.x;
 			maskBegin.x = 0;
 		} else {
 			begin.x = point.x;
 			maskBegin.x = maskPoint.x;
-		} 
+		}
 
 		if ( maskPoint.y < 0 ) {
 			begin.y = point.y - maskPoint.y;
@@ -1448,7 +1439,7 @@ namespace Graphic {
 			size.y = Math::min<typename Point::Type>(this -> size.y - point.y, maskImage.getSize().y - maskPoint.y);
 		}
 
-		
+
 
 
 		auto maskIt = maskImage.getDatas(maskBegin.x, maskBegin.y);
@@ -1471,8 +1462,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
-
+						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 						thisIt2 += 1;
 						otherIt2 += 1;
 						maskIt2 += maskImage.getNbComponents();
@@ -1491,7 +1481,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 3;
@@ -1511,7 +1501,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 1;
 						otherIt2 += 4;
@@ -1537,7 +1527,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 1;
@@ -1557,7 +1547,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 3;
@@ -1578,7 +1568,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 3;
 						otherIt2 += 4;
@@ -1605,7 +1595,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 1;
@@ -1625,7 +1615,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 3;
@@ -1646,7 +1636,7 @@ namespace Graphic {
 					auto otherIt2 = otherIt;
 					auto maskIt2 = maskIt;
 					for ( i.x = 0; i.x < size.x; i.x++ ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 
 						thisIt2 += 4;
 						otherIt2 += 4;
@@ -1673,7 +1663,206 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage) {
+	template<typename Func>
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor) {
+
+		//Rectangle is signed, check if the bottom left is positive.
+		//rectangle.setLeft(Math::max(rectangle.getLeft(), 0));
+		//rectangle.setBottom(Math::max(rectangle.getBottom(), 0));
+
+
+		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Point maskImageBegin;
+		if ( point.x < 0 ) {
+			begin.x = 0;
+			maskImageBegin.x = -point.x + rectangle.getLeft();
+		} else if ( point.x >(typename Point::Type) this -> size.x ) {
+			return;			//We are drawing outside, nothing will be changed.
+		} else {
+			begin.x = point.x;
+			maskImageBegin.x = rectangle.getLeft();
+		}
+
+		if ( point.y < 0 ) {
+			begin.y = 0;
+			maskImageBegin.y = -point.y + rectangle.getBottom();
+		} else if ( point.y >(typename Point::Type) this -> size.y ) {
+			return;			//We are drawing outside, nothing will be changed.
+		} else {
+			begin.y = point.y;
+			maskImageBegin.y = rectangle.getBottom();
+		}
+
+		Point size(
+			Math::min<typename Point::Type>(this -> size.x - point.x, rectangle.getRight() - rectangle.getLeft()),
+			Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom()));
+
+
+
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
+		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
+
+
+		switch ( this -> format ) {
+		case Format::R: {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = maskIt;
+				for ( i.x = 0; i.x < size.x; i.x++ ) {
+					functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+
+					thisIt2 += 1;
+					otherIt2 += maskImage.getNbComponents();
+				}
+				thisIt += thisImageOffset;
+				maskIt += maskImageOffset;
+			}
+			break;
+		}
+		case Format::RGB: {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = maskIt;
+				for ( i.x = 0; i.x < size.x; i.x++ ) {
+					functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+
+					thisIt2 += 3;
+					otherIt2 += maskImage.getNbComponents();
+				}
+				thisIt += thisImageOffset;
+				maskIt += maskImageOffset;
+			}
+
+
+			break;
+		}
+		case Format::RGBA: {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = maskIt;
+				for ( i.x = 0; i.x < size.x; i.x++ ) {
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+
+					thisIt2 += 4;
+					otherIt2 += maskImage.getNbComponents();
+				}
+				thisIt += thisImageOffset;
+				maskIt += maskImageOffset;
+			}
+			break;
+		}
+		}
+	}
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename Func>
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor) {
+
+		//Rectangle is signed, check if the bottom left is positive.
+		//rectangle.setLeft(Math::max(rectangle.getLeft(), 0));
+		//rectangle.setBottom(Math::max(rectangle.getBottom(), 0));
+
+
+		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Point maskImageBegin;
+		if ( point.x < 0 ) {
+			begin.x = 0;
+			maskImageBegin.x = -point.x + rectangle.getLeft();
+		} else if ( point.x >(typename Point::Type) this -> size.x ) {
+			return;			//We are drawing outside, nothing will be changed.
+		} else {
+			begin.x = point.x;
+			maskImageBegin.x = rectangle.getLeft();
+		}
+
+		if ( point.y < 0 ) {
+			begin.y = 0;
+			maskImageBegin.y = -point.y + rectangle.getBottom();
+		} else if ( point.y >(typename Point::Type) this -> size.y ) {
+			return;			//We are drawing outside, nothing will be changed.
+		} else {
+			begin.y = point.y;
+			maskImageBegin.y = rectangle.getBottom();
+		}
+
+		Point size(
+			Math::min<typename Point::Type>(this -> size.x - point.x, rectangle.getRight() - rectangle.getLeft()),
+			Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom()));
+
+
+		auto thisIt = getDatas(begin.x, begin.y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
+		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
+
+		switch ( this -> format ) {
+		case Format::R: {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = maskIt;
+				for ( i.x = 0; i.x < size.x; i.x++ ) {
+					functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+
+					thisIt2 += 1;
+					otherIt2 += maskImage.getNbComponents();
+				}
+				thisIt += thisImageOffset;
+				maskIt += maskImageOffset;
+			}
+			break;
+		}
+		case Format::RGB: {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = maskIt;
+				for ( i.x = 0; i.x < size.x; i.x++ ) {
+					functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+
+					thisIt2 += 3;
+					otherIt2 += maskImage.getNbComponents();
+				}
+				thisIt += thisImageOffset;
+				maskIt += maskImageOffset;
+			}
+			break;
+		}
+		case Format::RGBA: {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = maskIt;
+				for ( i.x = 0; i.x < size.x; i.x++ ) {
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+
+					thisIt2 += 4;
+					otherIt2 += maskImage.getNbComponents();
+				}
+				thisIt += thisImageOffset;
+				maskIt += maskImageOffset;
+			}
+			break;
+		}
+		}
+	}
+
+
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename Func>
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor) {
 
 		//Rectangle is signed, check if the bottom left is positive.
 		//rectangle.setLeft(Math::max(rectangle.getLeft(), 0));
@@ -1722,7 +1911,7 @@ namespace Graphic {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+					functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 1;
 					otherIt2 += maskImage.getNbComponents();
@@ -1738,7 +1927,7 @@ namespace Graphic {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+					functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 3;
 					otherIt2 += maskImage.getNbComponents();
@@ -1756,7 +1945,7 @@ namespace Graphic {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
 
 					thisIt2 += 4;
 					otherIt2 += maskImage.getNbComponents();
@@ -1768,228 +1957,6 @@ namespace Graphic {
 		}
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage) {
-
-		//Rectangle is signed, check if the bottom left is positive.
-		//rectangle.setLeft(Math::max(rectangle.getLeft(), 0));
-		//rectangle.setBottom(Math::max(rectangle.getBottom(), 0));
-
-
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point maskImageBegin;
-		if ( point.x < 0 ) {
-			begin.x = 0;
-			maskImageBegin.x = -point.x + rectangle.getLeft();
-		} else if ( point.x >(typename Point::Type) this -> size.x ) {
-			return;			//We are drawing outside, nothing will be changed.
-		} else {
-			begin.x = point.x;
-			maskImageBegin.x = rectangle.getLeft();
-		}
-
-		if ( point.y < 0 ) {
-			begin.y = 0;
-			maskImageBegin.y = -point.y + rectangle.getBottom();
-		} else if ( point.y >(typename Point::Type) this -> size.y ) {
-			return;			//We are drawing outside, nothing will be changed.
-		} else {
-			begin.y = point.y;
-			maskImageBegin.y = rectangle.getBottom();
-		}
-
-		Point size(
-			Math::min<typename Point::Type>(this -> size.x - point.x, rectangle.getRight() - rectangle.getLeft()),
-			Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom()));
-
-
-
-		auto thisIt = getDatas(begin.x, begin.y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
-
-		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
-		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
-
-
-		switch ( this -> format ) {
-		case Format::R: {
-			Point i;
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto thisIt2 = thisIt;
-				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 1;
-					otherIt2 += maskImage.getNbComponents();
-				}
-				thisIt += thisImageOffset;
-				maskIt += maskImageOffset;
-			}
-			break;
-		}
-		case Format::RGB: {
-			Point i;
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto thisIt2 = thisIt;
-				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 3;
-					otherIt2 += maskImage.getNbComponents();
-				}
-				thisIt += thisImageOffset;
-				maskIt += maskImageOffset;
-			}
-
-
-			break;
-		}
-		case Format::RGBA: {
-			Point i;
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto thisIt2 = thisIt;
-				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 4;
-					otherIt2 += maskImage.getNbComponents();
-				}
-				thisIt += thisImageOffset;
-				maskIt += maskImageOffset;
-			}
-			break;
-		}
-		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage) {
-
-		//Rectangle is signed, check if the bottom left is positive.
-		//rectangle.setLeft(Math::max(rectangle.getLeft(), 0));
-		//rectangle.setBottom(Math::max(rectangle.getBottom(), 0));
-
-
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point maskImageBegin;
-		if ( point.x < 0 ) {
-			begin.x = 0;
-			maskImageBegin.x = -point.x + rectangle.getLeft();
-		} else if ( point.x >(typename Point::Type) this -> size.x ) {
-			return;			//We are drawing outside, nothing will be changed.
-		} else {
-			begin.x = point.x;
-			maskImageBegin.x = rectangle.getLeft();
-		}
-
-		if ( point.y < 0 ) {
-			begin.y = 0;
-			maskImageBegin.y = -point.y + rectangle.getBottom();
-		} else if ( point.y >(typename Point::Type) this -> size.y ) {
-			return;			//We are drawing outside, nothing will be changed.
-		} else {
-			begin.y = point.y;
-			maskImageBegin.y = rectangle.getBottom();
-		}
-
-		Point size(
-			Math::min<typename Point::Type>(this -> size.x - point.x, rectangle.getRight() - rectangle.getLeft()),
-			Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom()));
-
-
-		auto thisIt = getDatas(begin.x, begin.y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
-
-		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
-		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
-
-		switch ( this -> format ) {
-		case Format::R: {
-			Point i;
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto thisIt2 = thisIt;
-				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 1;
-					otherIt2 += maskImage.getNbComponents();
-				}
-				thisIt += thisImageOffset;
-				maskIt += maskImageOffset;
-			}
-			break;
-		}
-		case Format::RGB: {
-			Point i;
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto thisIt2 = thisIt;
-				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 3;
-					otherIt2 += maskImage.getNbComponents();
-				}
-				thisIt += thisImageOffset;
-				maskIt += maskImageOffset;
-			}
-			break;
-		}
-		case Format::RGBA: {
-			Point i;
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto thisIt2 = thisIt;
-				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 4;
-					otherIt2 += maskImage.getNbComponents();
-				}
-				thisIt += thisImageOffset;
-				maskIt += maskImageOffset;
-			}
-			break;
-		}
-		}
-	}
-
-
-
-
-
-
 
 
 	template<typename T /*= unsigned char*/>

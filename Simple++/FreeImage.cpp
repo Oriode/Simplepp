@@ -254,7 +254,32 @@ void FreeImage::loadFromDatas( unsigned char * datas, const Math::vec2ui & size,
 	this -> loadingType = LoadingType::EMPTY;
 	this -> fileName.clear();			//we have no reason to keep a filepath now.
 
+
+#ifdef WIN32 
+	if ( format == Format::RGB || format == Format::RGBA ) {
+		//because FreeImage do not care of MASK and use BGR on Windows
+		size_t numPixels = this -> size.x * this -> size.y;
+		size_t offsetPerPixel = ( this -> BPP / 8 );
+		unsigned char * newDatas = new unsigned char[offsetPerPixel * numPixels];
+
+		auto otherIt = datas;
+		auto thisIt = newDatas;
+		for ( size_t i = 0; i < numPixels; i++ ) {
+			thisIt[0] = otherIt[2];
+			thisIt[1] = otherIt[1];
+			thisIt[2] = otherIt[0];
+
+			otherIt += offsetPerPixel;
+			thisIt += offsetPerPixel;
+		}
+		this -> freeImage = FreeImage_ConvertFromRawBits(newDatas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, this -> invertY);
+		delete[] newDatas;
+	} else {
+		this -> freeImage = FreeImage_ConvertFromRawBits(datas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, this -> invertY);
+	}
+#else
 	this -> freeImage = FreeImage_ConvertFromRawBits(datas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, this -> invertY);
+#endif
 
 	setLoading(false);
 	setLoaded(true);

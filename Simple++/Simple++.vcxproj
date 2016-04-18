@@ -149,6 +149,7 @@
     <ClInclude Include="BasicIO.hpp" />
     <ClInclude Include="BasicSimpleIO.h" />
     <ClInclude Include="BasicSimpleLoadableIO.h" />
+    <ClInclude Include="BlendingFunc.hpp" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontLoadable.h" />
     <ClInclude Include="FreeTypeChar.h" />

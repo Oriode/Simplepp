@@ -17,6 +17,13 @@ namespace Math {
 		this -> pointRightTop = rightTop;
 	}
 
+
+	template <typename T>
+	Rectangle<T>::Rectangle(const Vec2<T> & rightTop) {
+		this -> pointLeftBottom = Vec2<T>::null;
+		this -> pointRightTop = rightTop;
+	}
+
 	template <typename T>
 	Rectangle<T>::Rectangle(){
 
