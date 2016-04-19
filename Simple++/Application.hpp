@@ -71,3 +71,8 @@ const BasicString<T> & Application<T>::getApplicationName() const {
 template<typename T>
 Application<T>::~Application() {
 }
+
+template<typename T>
+const BasicString<T> * Application<T>::operator[](const BasicString<T> & argName) const {
+	return this -> argMap[argName];
+}

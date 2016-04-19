@@ -87,7 +87,7 @@ int main(int argc, char * argv[]){
 	const unsigned long long K1 =		1000;
 
 
-
+	Application<char> app(argc, argv);
 
 
 	Graphic::FontLoadable fontTest(L"consola.ttf", 15);
@@ -190,7 +190,7 @@ int main(int argc, char * argv[]){
 
 	auto maskTest = fontTest['A'];
 	imageTest2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
-
+	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
 
 	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
 
@@ -203,7 +203,7 @@ int main(int argc, char * argv[]){
 	imageTest2.generateMipmaps();
 
 	for ( size_t i = 1; i < imageTest2.getNumMipmaps(); i++ ) {
-		imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
+		//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 	}
 
 
@@ -217,42 +217,41 @@ int main(int argc, char * argv[]){
 
 
 	Math::vec4f colorWhiteF(1.0, 1.0, 1.0, 1.0);
-	Math::vec4f colorRedF(1.0, 1.0, 0.0, 1.0/255.0);
+	Math::vec4f colorRedF(1.0, 0.0, 0.0, 0.0001);
 
 	testBlendRGBAFloat.fill((const float *) &colorRedF);
 	testBlendRGBFloat.fill((const float *) &colorWhiteF);
 
 	
-
-
 	return 0;
+
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA);
 	}
-	Log::getChrono("INT BLENDING");
+	Log::getChrono("INT BLENDING RGBA -> RGB (last 1083ms)");
 
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat);
 	}
-	Log::getChrono("FLOAT BLENDING");
+	Log::getChrono("FLOAT BLENDING RGBA -> RGB (last 209ms)");
 
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA, Graphic::BlendingFunc::Normal());
 	}
-	Log::getChrono("INT BLENDING FUNCTOR");
+	Log::getChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 1077ms)");
 
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat, Graphic::BlendingFunc::Normal());
 	}
-	Log::getChrono("FLOAT BLENDING FUNCTOR");
+	Log::getChrono("FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)");
 
 
 

@@ -1,3 +1,8 @@
+///@file Date.h
+///@brief Date Class
+///@author Cl�ment Gerber
+///@date 19/04/2016 (DMY) 
+
 #pragma once
 
 

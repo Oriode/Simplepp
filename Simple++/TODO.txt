@@ -1,0 +1,5 @@
+Add Gradient support for drawing methods
+Add drawRectangle() method in Image()
+Add Polygons drawing with/without antialisasing
+Add Contrast/Saturation/Vibrance modification....
+Fill old classes with comments

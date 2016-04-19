@@ -198,72 +198,15 @@ bool OrderedMap<I, T, Compare>::existsIndex( const I & index ){
 
 
 template<typename I, typename T, typename Compare>
-T & OrderedMap<I, T, Compare>::operator[]( const I & index ){
-	if (!this -> isOrdered)
-		_sort();
-
-
-	if (this -> size <= 1){
-		if (this -> size == 0){
-			inserti(0, index, T());
-			return getValuei(0);
-		} else {
-			if ( getIndexi(0) == index)
-				return getValuei(0);
-			else {
-				if (this -> sortFunction(getIndexi(0), index)){
-					inserti(1, index, T());
-					return getValuei(0);
-				} else {
-					inserti(0, index, T());
-					return getValuei(0);
-				}
-			}
-		}
-	}
-
-	
-
-
-	Size maxIndex = this -> size - 1;
-	Size minIndex = 0;
-	Size deltaIndex = maxIndex - minIndex;
-
-
-	while (deltaIndex > 1){		
-		Size thisIndex = minIndex + deltaIndex / 2;
-		if (this -> sortFunction(getIndexi(thisIndex), index))
-			minIndex = thisIndex;
-		else 
-			maxIndex = thisIndex;
-		deltaIndex = maxIndex - minIndex;
-	}
-
-
-	if (getIndexi(minIndex) == index)
-		return getValuei(minIndex);
-	else if (getIndexi(maxIndex) == index)
-		return getValuei(maxIndex);
-	else {
-		if (this -> sortFunction(getIndexi(minIndex), index)){
-			inserti(maxIndex, index, T());
-			return getValuei(maxIndex);
-		} else {
-			inserti(minIndex, index, T());
-			return getValuei(minIndex);
-		}
-	}
+T * OrderedMap<I, T, Compare>::operator[]( const I & index ){
+	return getValue(index);
 }
 
 
 template<typename I, typename T, typename Compare>
-const T & OrderedMap<I, T, Compare>::operator[](const I & index) const{
-	return const_cast<OrderedMap<I, T, Compare> *>( this ) -> operator[](index);
+const T * OrderedMap<I, T, Compare>::operator[](const I & index) const{
+	return getValue(index);
 }
-
-
-
-
 
 
 template<typename I, typename T, typename Compare>

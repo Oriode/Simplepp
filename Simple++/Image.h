@@ -1,3 +1,10 @@
+///@file Image.h
+///@brief Image Class with some drawing methods
+///@author Clément Gerber
+///@date 19/04/2016 (DMY) 
+
+
+
 #pragma once
 
 
@@ -8,6 +15,7 @@
 #include "String.h"
 #include "Utility.h"
 #include "BasicIO.h"
+#include "Gradient.h"
 #include "BlendingFunc.hpp"
 
 
@@ -15,23 +23,6 @@
 
 
 namespace Graphic {
-
-	
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
 	///@brief Image Class
 	///@template T Type of one pixel
 	///@template F Format of the image
@@ -241,6 +232,37 @@ namespace Graphic {
 		template<typename Func>
 		void setPixels(Func & functor);
 
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param color Color to draw.
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		template<typename Func = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const ColorR<T> & color, const Func & functor = BlendingFunc::Normal());
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param color Color to draw.
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		template<typename Func = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const ColorRGB<T> & color, const Func & functor = BlendingFunc::Normal());
+
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param color Color to draw.
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		template<typename Func = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const Func & functor = BlendingFunc::Normal());
 
 		///@brief fill the complete image with a color.
 		///param color pointer to a color with the same number of component of this image
@@ -476,6 +498,7 @@ namespace Graphic {
 		T * buffer;
 
 	};
+
 
 
 

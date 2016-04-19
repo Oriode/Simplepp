@@ -5,6 +5,9 @@ namespace Math {
 
 	template <typename T>
 	Rectangle<T>::Rectangle(const T & left, const T & bottom, const T & right, const T & top){
+		assert(right >= left);
+		assert(top >= bottom);
+
 		this -> pointLeftBottom.x = left;
 		this -> pointLeftBottom.y = bottom;
 		this -> pointRightTop.x = right;
@@ -13,6 +16,9 @@ namespace Math {
 
 	template <typename T>
 	Rectangle<T>::Rectangle(const Vec2<T> & leftBottom, const Vec2<T> & rightTop){
+		assert(rightTop.x >= leftBottom.x);
+		assert(rightTop.y >= leftBottom.y);
+
 		this -> pointLeftBottom = leftBottom;
 		this -> pointRightTop = rightTop;
 	}
@@ -114,8 +120,6 @@ namespace Math {
 	bool Rectangle<T>::isInside(const Vec2<T> & p) const{
 		return (this -> pointRightTop.x <= p.x && this -> pointRightTop.y <= p.y &&
 			this -> pointLeftBottom.x >= p.x && this -> pointLeftBottom.y >= p.y);
-
-
 	}
 
 

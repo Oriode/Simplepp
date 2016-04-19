@@ -30,9 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -312,6 +309,9 @@
     <ClInclude Include="BlendingFunc.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Gradient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -395,5 +395,8 @@
     <ClCompile Include="Network\Server.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
   </ItemGroup>
 </Project>

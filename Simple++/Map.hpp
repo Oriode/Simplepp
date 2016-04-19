@@ -112,14 +112,13 @@ bool MapObject<I, T>::read(std::fstream * fileStream) {
 
 
 template<typename I, typename T>
-bool Map<I, T>::getValue(const I & index, T ** data){
+T * Map<I, T>::getValue(const I & index){
 	for (typename Map<I,T>::Size i = 0; i < this -> size; i++){
 		if (this -> dataTable[i].index == index){
-			*data = &(this -> dataTable[i].value);
-			return true;
+			return &( this -> dataTable[i].value );
 		}
 	}
-	return false;
+	return NULL;
 }
 
 
@@ -246,15 +245,15 @@ Map<I, T> & Map<I, T>::operator=(Map<I, T> && map) {
 
 
 template<typename I, typename T>
-T & Map<I, T>::operator[](const I & index){
-	for ( auto it = getBegin(); it != getEnd() it++) {
-		if (getIndexit(it))
-			return getValueit(it);
-	}
-	T newData;
-	insert(index, newData);
-	return getLastValue();
+T * Map<I, T>::operator[](const I & index){
+	return getValue(index);
 }
+
+template<typename I, typename T>
+const T * Map<I, T>::operator[](const I & index) const {
+	return getValue(index);
+}
+
 
 
 template<typename I, typename T>

@@ -15,12 +15,20 @@ public:
 
 	~OrderedMap(void);
 
-	T & operator[](const I & index);
-	const T & operator[](const I & index) const;
+
+	///@brief Operator [] return the value for a specified index (can be NULL if the value is not found)
+	///@param index Index
+	///@return pointer to the value we are looking for (NULL if not found)
+	T * operator[](const I & index);
+
+
+	///@brief Operator [] return the value for a specified index (can be NULL if the value is not found)
+	///@param index Index
+	///@return pointer to the value we are looking for (NULL if not found)
+	const T * operator[](const I & index) const;
 
 
 	using Map<I, T>::Size;
-
 	using Map<I, T>::operator();
 	using Map<I, T>::getValuei;
 	using Map<I, T>::getValueit;
@@ -33,20 +41,13 @@ public:
 	using Map<I, T>::end;
 	using Map<I, T>::begin;
 
-	//set size = 0
 	using Map<I, T>::clear;
-	//Set size = 0 AND free memory
 	using Map<I, T>::reset;
-
-	//allocate the memory with the specified size (used method in push when the size isn't enough)
 	using Map<I, T>::reserve;
-	//return the size of this vector (push will increment it)
 	using Map<I, T>::getSize;
 	using Map<I, T>::size;
 	using Map<I, T>::pop;
-	//it will totally fill all the buffer with the specified value 
 	using Map<I, T>::fill;
-	//delete a value and rearrange others data
 	using Map<I, T>::eraseFirst;
 	using Map<I, T>::eraseAll;
 

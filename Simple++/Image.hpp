@@ -975,7 +975,8 @@ namespace Graphic {
 			size.y = Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom());
 		}
 
-	
+		if ( size.x <= 0 || size.y <= 0 ) return;
+
 
 		//verification if the given rectangle is correctly inside the given image
 		//size.x = Math::min<typename Point::Type>(size.x, image.getSize().x - rectangle.getLeft());
@@ -1004,41 +1005,38 @@ namespace Graphic {
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> R
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 1 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ));
-
-						thisIt2 += 1;
 						otherIt2 += 3;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> R
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 1 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
-
-						thisIt2 += 1;
 						otherIt2 += 4;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			}
@@ -1048,23 +1046,19 @@ namespace Graphic {
 		case Format::RGB: {
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGB
-				auto otherIt = image.buffer + ( image.size.x * otherImageBegin.y + otherImageBegin.x ) * 1;
-				auto otherImageOffset = image.size.x * 1;
-
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 3 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ));
-
-						thisIt2 += 3;
 						otherIt2 += 1;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGB
@@ -1074,24 +1068,22 @@ namespace Graphic {
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
-
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGB
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 3 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
-						thisIt2 += 3;
 						otherIt2 += 4;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			}
@@ -1103,53 +1095,50 @@ namespace Graphic {
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGBA
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ));
-
-						thisIt2 += 4;
 						otherIt2 += 1;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGBA
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ));
-
-						thisIt2 += 4;
 						otherIt2 += 3;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
-
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGBA
 				Point i;
+				size_t sizeOffset = size.x * getNbComponents();
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxit = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
 						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
-						thisIt2 += 4;
 						otherIt2 += 4;
 					}
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
-
 				break;
 			}
 			}
@@ -1210,30 +1199,31 @@ namespace Graphic {
 			size.y = Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom());
 		}
 
+		if ( size.x <= 0 || size.y <= 0 ) return;
+
 		//Point end(begin + size);
 		//Point otherImageEnd(otherImageBegin + size);
 
 		
 		auto thisIt = getDatas(begin.x, begin.y);
 		auto thisImageOffset = this -> size.x * getNbComponents();
+		size_t sizeOffset = size.x * getNbComponents();
 
 		auto otherIt = image.getDatas(otherImageBegin.x, otherImageBegin.y);
 		auto otherImageOffset = image.getSize().x * image.getNbComponents();
 
 
-
-
+		Point i;
 		switch ( getFormat() ) {
 		case Format::R: {
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> R
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 1 ) {
 						functor(*((ColorR<T>*)thisIt2), *((ColorR<T>*)otherIt2));
-						thisIt2 += 1;
 						otherIt2 += 1;
 					}
 					thisIt += thisImageOffset;
@@ -1242,13 +1232,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> R
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 1 ) {
 						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* )otherIt2 ));
-						thisIt2 += 1;
 						otherIt2 += 3;
 					}
 					thisIt += thisImageOffset;
@@ -1257,13 +1246,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> R
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 1 ) {
 						functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* )otherIt2 ));
-						thisIt2 += 1;
 						otherIt2 += 4;
 					}
 					thisIt += thisImageOffset;
@@ -1278,13 +1266,12 @@ namespace Graphic {
 		case Format::RGB: {
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGB
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 3 ) {
 						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* )otherIt2 ));
-						thisIt2 += 3;
 						otherIt2 += 1;
 					}
 					thisIt += thisImageOffset;
@@ -1293,13 +1280,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGB
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 3 ) {
 						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* )otherIt2 ));
-						thisIt2 += 3;
 						otherIt2 += 3;
 					}
 					thisIt += thisImageOffset;
@@ -1308,13 +1294,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGB
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 3 ) {
 						functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* )otherIt2 ));
-						thisIt2 += 3;
 						otherIt2 += 4;
 					}
 					thisIt += thisImageOffset;
@@ -1330,13 +1315,12 @@ namespace Graphic {
 		case Format::RGBA: {
 			switch ( image.getFormat() ) {
 			case Format::R: {			//Blend R -> RGBA
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 4 ) {
 						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* )otherIt2 ));
-						thisIt2 += 4;
 						otherIt2 += 1;
 					}
 					thisIt += thisImageOffset;
@@ -1345,13 +1329,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGB: {		//Blend RGB -> RGBA
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 4 ) {
 						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* )otherIt2 ));
-						thisIt2 += 4;
 						otherIt2 += 3;
 					}
 					thisIt += thisImageOffset;
@@ -1360,13 +1343,12 @@ namespace Graphic {
 				break;
 			}
 			case Format::RGBA: {		//Blend RGBA -> RGBA
-				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
 					auto thisIt2 = thisIt;
 					auto otherIt2 = otherIt;
-					for ( i.x = 0; i.x < size.x; i.x++ ) {
+					auto maxIt = thisIt + sizeOffset;
+					for ( ; thisIt2 < maxIt; thisIt2 += 4 ) {
 						functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* )otherIt2 ));
-						thisIt2 += 4;
 						otherIt2 += 4;
 					}
 					thisIt += thisImageOffset;
@@ -1650,8 +1632,6 @@ namespace Graphic {
 				break;
 			}
 			}
-
-
 			break;
 		}
 		}
@@ -1705,17 +1685,15 @@ namespace Graphic {
 		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
 		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
-
+		Point i;
 		switch ( this -> format ) {
 		case Format::R: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 1;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 1 ) {
+					functor(*( ( ColorR<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -1724,32 +1702,26 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 3;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 3 ) {
+					functor(*( ( ColorRGB<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
 				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		case Format::RGBA: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 4;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 4 ) {
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -1804,16 +1776,15 @@ namespace Graphic {
 		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
 		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
+		Point i;
 		switch ( this -> format ) {
 		case Format::R: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 1;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 1 ) {
+					functor(*( ( ColorR<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -1822,14 +1793,12 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 3;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 3 ) {
+					functor(*( ( ColorRGB<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -1838,14 +1807,12 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 4;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 4 ) {
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -1896,6 +1863,8 @@ namespace Graphic {
 			size.y = Math::min<typename Point::Type>(this -> size.y - point.y, rectangle.getTop() - rectangle.getBottom());
 		}
 
+		if ( size.x <= 0 || size.y <= 0 ) return;
+
 
 		auto thisIt = getDatas(begin.x, begin.y);
 		auto thisImageOffset = this -> size.x * getNbComponents();
@@ -1903,17 +1872,15 @@ namespace Graphic {
 		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
 		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
-
+		Point i;
 		switch ( this -> format ) {
 		case Format::R: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 1;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2+= 1 ) {
+					functor(*( ( ColorR<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -1922,32 +1889,26 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 3;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 3 ) {
+					functor(*( ( ColorRGB<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
 				maskIt += maskImageOffset;
 			}
-
-
 			break;
 		}
 		case Format::RGBA: {
-			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
-				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					functor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) &color ), *( ( ColorR<T>* ) otherIt2 ));
-
-					thisIt2 += 4;
+				auto maxIt = thisIt + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 4 ) {
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
 					otherIt2 += maskImage.getNbComponents();
 				}
 				thisIt += thisImageOffset;
@@ -2763,5 +2724,142 @@ namespace Graphic {
 	}
 
 
+
+	template<typename T /*= unsigned char*/>
+	template<typename Func = BlendingFunc::Normal>
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorR<T> & color, const Func & functor) {
+		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
+		Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+
+		Point i;
+		switch ( this -> format ) {
+		case Format::R: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2+= 1 ) 
+					functor(*( ( ColorR<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		case Format::RGB: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 3 )
+					functor(*( ( ColorRGB<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		case Format::RGBA: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 4 )
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename Func = BlendingFunc::Normal>
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorRGB<T> & color, const Func & functor) {
+		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
+		Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		Point i;
+		switch ( this -> format ) {
+		case Format::R: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 1 )
+					functor(*( ( ColorR<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		case Format::RGB: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 3 )
+					functor(*( ( ColorRGB<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		case Format::RGBA: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 4 )
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		}
+	}
+
+
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename Func = BlendingFunc::Normal>
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const Func & functor) {
+		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
+		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
+		auto thisImageOffset = this -> size.x * getNbComponents();
+
+		Point i;
+		switch ( this -> format ) {
+		case Format::R: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 1 )
+					functor(*( ( ColorR<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		case Format::RGB: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 3 )
+					functor(*( ( ColorRGB<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		case Format::RGBA: {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto maxIt = thisIt2 + size.x * getNbComponents();
+				for ( ; thisIt2 < maxIt; thisIt2 += 4 )
+					functor(*( ( ColorRGBA<T>* )thisIt2 ), color);
+				thisIt += thisImageOffset;
+			}
+			break;
+		}
+		}
+	}
 
 }

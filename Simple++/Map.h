@@ -66,8 +66,17 @@ public:
 	Map<I, T> & operator=(const Map<I2, T2> & map);
 	Map<I, T> & operator=(Map && m);
 
-	T & operator[](const I & index);
-	
+	///@brief Operator [] return the value for a specified index (can be NULL if the value is not found)
+	///@param index Index
+	///@return pointer to the value we are looking for (NULL if not found)
+	T * operator[](const I & index);
+
+
+	///@brief Operator [] return the value for a specified index (can be NULL if the value is not found)
+	///@param index Index
+	///@return pointer to the value we are looking for (NULL if not found)
+	const T * operator[](const I & index) const;
+
 	
 	//T & operator[](RandomAccessIterator i);				//DISABLE FOR AMBIGOUS
 	MapObject<I, T> & operator()(Size i);
@@ -103,7 +112,7 @@ public:
 
 	T & getValuei(Size i);
 	const T & getValuei(Size i) const;
-	bool getValue(const I & index, T ** value);
+	T * getValue(const I & index);
 
 
 	//retrieve the last data in the map
