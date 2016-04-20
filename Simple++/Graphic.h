@@ -21,23 +21,39 @@ namespace Graphic {
 	template<size_t N>
 	unsigned int computeGaussianKernel(unsigned int(&kernel)[N]);
 
+	unsigned int computeGaussianKernel(unsigned int * kernel, size_t size);
+
+
 	///@brief compute the Vertical/Horizontal Gaussian Kernel (I : Type of Values in your Kernel, N : Size of your kernel (has to be odd), C : Type of the data of the image (only for integer types) )
 	///@param kernel table to be filled (has to be already allocated)
 	///@param sigma Sigma used during the computation
 	///@return The weight computed
 	template<typename I, size_t N, typename C = unsigned char>
 	I computeGaussianKernel(I(&kernel)[N], const float & sigma = float(N) / float(4));
+
+	///@brief compute the Vertical/Horizontal Gaussian Kernel (I : Type of Values in your Kernel, C : Type of the data of the image (only for integer types) )
+	///@param kernel table to be filled (has to be already allocated)
+	///@param size Size of the kernel table (has to be odd)
+	///@param sigma Sigma used during the computation
+	///@return The weight computed
+	template<typename I, typename C = unsigned char>
+	I computeGaussianKernel(I * kernel, size_t size, const float & sigma);
+
 	template<size_t N>
 	float computeGaussianKernel(float(&kernel)[N], const float & sigma = float(N) / float(4));
 	template<size_t N>
 	double computeGaussianKernel(double(&kernel)[N], const double & sigma = double(N) / double(4));
 
-
+	float computeGaussianKernel(float * kernel, size_t size, const float & sigma);
+	double computeGaussianKernel(double * kernel, size_t size, const double & sigma);
 
 
 
 	template<typename T, size_t N>
 	T _computeGaussianKernelf(T(&kernel)[N], const T & sigma = T(N) / T(4));
+
+	template<typename T>
+	T _computeGaussianKernelf(T * kernel, size_t size, const T & sigma = T(N) / T(4));
 
 
 	///@brief draw the text to the specified position

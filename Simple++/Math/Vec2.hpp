@@ -225,11 +225,11 @@ namespace Math {
 
 
 	template<typename T /*= float*/>
-	template<typename C /*= char*/>
-	MATH_FUNC_QUALIFIER BasicString<C> Vec2<T>::toString() const {
-		BasicString<C> newString;
+	template<typename U /*= char*/>
+	MATH_FUNC_QUALIFIER BasicString<U> Vec2<T>::toString() const {
+		BasicString<U> newString;
 		newString.reserve(40);
-		newString << C('[') << this -> x << C('\t') << this -> y << C(']');
+		newString << U('[') << this -> x << U('\t') << this -> y << U(']');
 		return newString;
 	}
 
@@ -238,13 +238,13 @@ namespace Math {
 		return Vec2<T>(v1.x + v2.x, v1.y + v2.y);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator+(const Vec2<T> & v1, const T & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator+(const Vec2<T> & v1, const U & v2){
 		return Vec2<T>(v1.x + v2, v1.y + v2);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator+(const T & v1, const Vec2<T> & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator+(const U & v1, const Vec2<T> & v2){
 		return Vec2<T>(v1 + v2.x, v1 + v2.y);
 	}
 
@@ -253,13 +253,13 @@ namespace Math {
 		return Vec2<T>(v1.x - v2.x, v1.y - v2.y);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator-(const Vec2<T> & v1, const T & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator-(const Vec2<T> & v1, const U & v2){
 		return Vec2<T>(v1.x - v2, v1.y - v2);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator-(const T & v1, const Vec2<T> & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator-(const U & v1, const Vec2<T> & v2){
 		return Vec2<T>(v1 - v2.x, v1 - v2.y);
 	}
 
@@ -268,13 +268,13 @@ namespace Math {
 		return Vec2<T>(v1.x / v2.x, v1.y / v2.y);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator/(const Vec2<T> & v1, const T & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator/(const Vec2<T> & v1, const U & v2){
 		return Vec2<T>(v1.x / v2, v1.y / v2);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator/(const T & v1, const Vec2<T> & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator/(const U & v1, const Vec2<T> & v2){
 		return Vec2<T>(v1 / v2.x, v1 / v2.y);
 	}
 
@@ -283,13 +283,13 @@ namespace Math {
 		return Vec2<T>(v1.x * v2.x, v1.y * v2.y);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator*(const Vec2<T> & v1, const T & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator*(const Vec2<T> & v1, const U & v2){
 		return Vec2<T>(v1.x * v2, v1.y * v2);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator*(const T & v1, const Vec2<T> & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator*(const U & v1, const Vec2<T> & v2){
 		return Vec2<T>(v1 * v2.x, v1 * v2.y);
 	}
 
@@ -298,13 +298,13 @@ namespace Math {
 		return Vec2<T>(v1.x >> v2.x, v1.y >> v2.y);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator>>(const Vec2<T> & v1, const T & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator>>(const Vec2<T> & v1, const U & v2){
 		return Vec2<T>(v1.x >> v2, v1.y >> v2);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator>>(const T & v1, const Vec2<T> & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator>>(const U & v1, const Vec2<T> & v2){
 		return Vec2<T>(v1 >> v2.x, v1 >> v2.y);
 	}
 
@@ -313,13 +313,13 @@ namespace Math {
 		return Vec2<T>(v1.x << v2.x, v1.y << v2.y);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator<<(const Vec2<T> & v1, const T & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator<<(const Vec2<T> & v1, const U & v2){
 		return Vec2<T>(v1.x << v2, v1.y << v2);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Vec2<T> operator<<(const T & v1, const Vec2<T> & v2){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> operator<<(const U & v1, const Vec2<T> & v2){
 		return Vec2<T>(v1 << v2.x, v1 << v2.y);
 	}
 
@@ -330,9 +330,9 @@ namespace Math {
 	}
 
 
-	template<typename T, typename C>
-	MATH_FUNC_QUALIFIER BasicString<C> & operator<<(BasicString<C> & string, const Vec2<T> & v) {
-		string << C('[') << v.x << C('\t') << v.y << C(']');
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER BasicString<U> & operator<<(BasicString<U> & string, const Vec2<T> & v) {
+		string << U('[') << v.x << U('\t') << v.y << U(']');
 		return string;
 	}
 

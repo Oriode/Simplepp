@@ -141,6 +141,11 @@ int main(int argc, char * argv[]){
 
 
 
+	Graphic::Gradient<Graphic::ColorRGBA<unsigned char>> gradient(Graphic::Gradient<Graphic::ColorRGBA<unsigned char>>::Type::Vertical);
+	gradient.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,0));
+	gradient.addPoint(0.5f, Graphic::ColorRGBA<unsigned char>(255,0,0,255));
+	gradient.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,50,100,255));
+
 
 
 	UTF8String testStr("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin finibus eu risus vitae feugiat.  ");
@@ -149,8 +154,8 @@ int main(int argc, char * argv[]){
 	Graphic::Image testBlendRGBA(Math::vec2ui(200, 200), Graphic::Format::RGBA);
 	Graphic::Image testBlendRGB(Math::vec2ui(200, 200), Graphic::Format::RGB);
 
-	testBlendRGBA.fill(colorWhite);
-	testBlendRGB.fill(colorWhite);
+	testBlendRGBA.fillImage(colorWhite);
+	testBlendRGB.fillImage(colorWhite);
 
 
 	constexpr size_t KERNELRADIUS = 10;
@@ -180,7 +185,6 @@ int main(int argc, char * argv[]){
 	//*( imageTest2[0] ) = imageBlurred;
 
 
-
 	imageTest2[0] -> setPixels(ImageFunctor<unsigned char>());
 	unsigned int mySuperKernel2[5];
 	unsigned int filterWeight2 = Graphic::computeGaussianKernel(mySuperKernel2);
@@ -193,6 +197,8 @@ int main(int argc, char * argv[]){
 	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
 
 	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
+
+	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradient);
 
 	//Graphic::Image textImage(Math::vec2ui(textRectangle.getRight() - textRectangle.getLeft(), textRectangle.getTop() - textRectangle.getBottom()), Graphic::Format::RGBA);
 	//textImage.fill(colorWhite);
@@ -219,8 +225,8 @@ int main(int argc, char * argv[]){
 	Math::vec4f colorWhiteF(1.0, 1.0, 1.0, 1.0);
 	Math::vec4f colorRedF(1.0, 0.0, 0.0, 0.0001);
 
-	testBlendRGBAFloat.fill((const float *) &colorRedF);
-	testBlendRGBFloat.fill((const float *) &colorWhiteF);
+	testBlendRGBAFloat.fillImage((const float *) &colorRedF);
+	testBlendRGBFloat.fillImage((const float *) &colorWhiteF);
 
 	
 	return 0;

@@ -312,6 +312,9 @@
     <ClInclude Include="Gradient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Gradient.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

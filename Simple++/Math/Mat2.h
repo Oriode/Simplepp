@@ -108,11 +108,11 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T> operator*(const Mat2<T> & m1, const Mat2<T> & m2);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator*(const Mat2<T> & m, const T & v);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator*(const Mat2<T> & m, const U & v);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator*(const T & v, const Mat2<T> & m);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator*(const U & v, const Mat2<T> & m);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER typename Mat2<T>::colType operator*(const typename Mat2<T>::colType & v, const Mat2<T> & m);
@@ -123,47 +123,47 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T> operator/(const Mat2<T> & m1, const Mat2<T> & m2);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator/(const Mat2<T> & m, const T & v);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator/(const Mat2<T> & m, const U & v);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator/(const T & v, const Mat2<T> & m);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator/(const U & v, const Mat2<T> & m);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T> operator+(const Mat2<T> & m1, const Mat2<T> & m2);
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator+(const Mat2<T> & m, const T & v);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator+(const Mat2<T> & m, const U & v);
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator+(const T & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator+(const U & v, const Mat2<T> & m);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T> operator-(const Mat2<T> & m1, const Mat2<T> & m2);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator-(const Mat2<T> & m, const T & v);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator-(const Mat2<T> & m, const U & v);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator-(const T & v, const Mat2<T> & m);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator-(const U & v, const Mat2<T> & m);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T> operator>>(const Mat2<T> & m1, const Mat2<T> & m2);
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator>>(const Mat2<T> & m, const T & v);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator>>(const Mat2<T> & m, const U & v);
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator>>(const T & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator>>(const U & v, const Mat2<T> & m);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const Mat2<T> & m1, const Mat2<T> & m2);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const Mat2<T> & m, const T & v);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const Mat2<T> & m, const U & v);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const T & v, const Mat2<T> & m);
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const U & v, const Mat2<T> & m);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER std::ostream & operator<<(std::ostream & stream, const Mat2<T> & v);

@@ -503,13 +503,13 @@ namespace Math {
 		return newMat;
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator*(const Mat4<T> & m, const T & v){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator*(const Mat4<T> & m, const U & v){
 		return Mat4<T>(m[0] * v, m[1] * v, m[2] * v, m[3] * v);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator*(const T & v, const Mat4<T> & m){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator*(const U & v, const Mat4<T> & m){
 		return Mat4<T>(v * m[0], v * m[1], v * m[2], v * m[3]);
 	}
 
@@ -542,13 +542,13 @@ namespace Math {
 		return m1 * m2.inverse();
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator/(const Mat4<T> & m, const T & v){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator/(const Mat4<T> & m, const U & v){
 		return Mat4<T>(m[0] / v, m[1] / v, m[2] / v, m[3] / v);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator/(const T & v, const Mat4<T> & m){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator/(const U & v, const Mat4<T> & m){
 		return Mat4<T>(v / m[0], v / m[1], v / m[2], v / m[3]);
 	}
 
@@ -558,13 +558,13 @@ namespace Math {
 		return Mat4<T>(m1[0] + m2[0], m1[1] + m2[1], m1[2] + m2[2], m1[3] + m2[3]);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator+(const Mat4<T> & m, const T & v){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator+(const Mat4<T> & m, const U & v){
 		return Mat4<T>(m[0] + v, m[1] + v, m[2] + v, m[3] + v);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator+(const T & v, const Mat4<T> & m){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator+(const U & v, const Mat4<T> & m){
 		return Mat4<T>(v + m[0], v + m[1], v + m[2], v + m[3]);
 	}
 
@@ -573,13 +573,13 @@ namespace Math {
 		return Mat4<T>(m1[0] - m2[0], m1[1] - m2[1], m1[2] - m2[2], m1[3] - m2[3]);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator-(const Mat4<T> & m, const T & v){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator-(const Mat4<T> & m, const U & v){
 		return Mat4<T>(m[0] - v, m[1] - v, m[2] - v, m[3] - v);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator-(const T & v, const Mat4<T> & m){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator-(const U & v, const Mat4<T> & m){
 		return Mat4<T>(v - m[0], v - m[1], v - m[2], v - m[3]);
 	}
 
@@ -588,13 +588,13 @@ namespace Math {
 		return Mat4<T>(m1[0] >> m2[0], m1[1] >> m2[1], m1[2] >> m2[2], m1[3] >> m2[3]);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator>>(const Mat4<T> & m, const T & v){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator>>(const Mat4<T> & m, const U & v){
 		return Mat4<T>(m[0] >> v, m[1] >> v, m[2] >> v, m[3] >> v);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator>>(const T & v, const Mat4<T> & m){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator>>(const U & v, const Mat4<T> & m){
 		return Mat4<T>(v >> m[0], v >> m[1], v >> m[2], v >> m[3]);
 	}
 
@@ -603,13 +603,13 @@ namespace Math {
 		return Mat4<T>(m1[0] << m2[0], m1[1] << m2[1], m1[2] << m2[2], m1[3] << m2[3]);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator<<(const Mat4<T> & m, const T & v){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator<<(const Mat4<T> & m, const U & v){
 		return Mat4<T>(m[0] << v, m[1] << v, m[2] << v, m[3] << v);
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> operator<<(const T & v, const Mat4<T> & m){
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> operator<<(const U & v, const Mat4<T> & m){
 		return Mat4<T>(v << m[0], v << m[1], v << m[2], v << m[3]);
 	}
 

@@ -151,6 +151,7 @@
     <ClInclude Include="FontLoadable.h" />
     <ClInclude Include="FreeTypeChar.h" />
     <ClInclude Include="Gradient.h" />
+    <ClInclude Include="Gradient.hpp" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Image.h" />

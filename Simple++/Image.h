@@ -264,46 +264,116 @@ namespace Graphic {
 		template<typename Func = BlendingFunc::Normal>
 		void drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const Func & functor = BlendingFunc::Normal());
 
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param gradient Gradient to draw.
+		void drawRectangle(const Rectangle & rectangle, const Gradient<ColorR<T>> & gradient);
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param gradient Gradient to draw.
+		void drawRectangle(const Rectangle & rectangle, const Gradient<ColorRGB<T>> & gradient);
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param gradient Gradient to draw.
+		void drawRectangle(const Rectangle & rectangle, const Gradient<ColorRGBA<T>> & gradient);
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param gradient Gradient to draw.
+		///@param functor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		template<typename Func = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const Gradient<ColorR<T>> & gradient, const Func & functor);
+
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param colorFunctor functor that wille generate the color for each pixels, overloaded with operator() :
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> & c);"
+		///@param blendingFunctor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangleR(const Rectangle & rectangle, const ColorFunc & colorFunctorR, const BlendFunc & blendingFunctor = BlendingFunc::Normal());
+
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param colorFunctor functor that wille generate the color for each pixels, overloaded with operator() :
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> & c);"
+		///@param blendingFunctor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangleRGB(const Rectangle & rectangle, const ColorFunc & colorFunctorRGB, const BlendFunc & blendingFunctor = BlendingFunc::Normal());
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param colorFunctor functor that wille generate the color for each pixels, overloaded with operator() :
+		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & c);"
+		///@param blendingFunctor Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangleRGBA(const Rectangle & rectangle, const ColorFunc & colorFunctorRGBA, const BlendFunc & blendingFunctor = BlendingFunc::Normal());
+
 		///@brief fill the complete image with a color.
 		///param color pointer to a color with the same number of component of this image
-		void fill(const T * color);
+		void fillImage(const T * color);
 
 		///@brief fill the complete image with a color.
 		///@param color pointer to a color with the same number of component of this image
 		///@param rectangle Rectangle where to fill the color
-		void fill(const T * color, const Rectangle & rectangle);
-
-
+		void fillImage(const T * color, const Rectangle & rectangle);
 
 		///@brief fill the complete image with a color.
 		///@param color R color
-		void fill(const ColorR<T> & color);
+		void fillImage(const ColorR<T> & color);
 
 		///@brief fill the complete image with a color.
 		///@param color RGB color
-		void fill(const ColorRGB<T> & color);
+		void fillImage(const ColorRGB<T> & color);
 
 		///@brief fill the complete image with a color.
 		///@param color RGBA color
-		void fill(const ColorRGBA<T> & color);
+		void fillImage(const ColorRGBA<T> & color);
 
 
 		///@brief fill the complete image with a color.
 		///@param color R color
 		///@param rectangle Rectangle where to fill the color
-		void fill(const ColorR<T> & color, const Rectangle & rectangle);
+		void fillImage(const ColorR<T> & color, const Rectangle & rectangle);
 
 		///@brief fill the complete image with a color.
 		///@param color RGB color
 		///@param rectangle Rectangle where to fill the color
-		void fill(const ColorRGB<T> & color, const Rectangle & rectangle);
+		void fillImage(const ColorRGB<T> & color, const Rectangle & rectangle);
 
 		///@brief fill the complete image with a color.
 		///@param color RGBA color
 		///@param rectangle Rectangle where to fill the color
-		void fill(const ColorRGBA<T> & color, const Rectangle & rectangle);
+		void fillImage(const ColorRGBA<T> & color, const Rectangle & rectangle);
 
 
+		///@brief fill an another image into this one (no blending will be applied)
+		///@param point Position where to draw.
+		///@param rectangle rectangle of the second image to draw. (The rectangle HAS TO BE smaller or equal of the given image)
+		///@param image Another image to draw
+		void fillImage(const Point & point, const _Image<T> & image);
+
+		///@brief fill an another image into this one (no blending will be applied)
+		///@param point Position where to draw.
+		///@param rectangle rectangle of the second image to draw. (The rectangle HAS TO BE smaller or equal of the given image)
+		///@param image Another image to draw
+		void fillImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image);
 
 		
 		///@brief draw an another image into this one
@@ -447,36 +517,44 @@ namespace Graphic {
 		///@param color Color of the background
 		///@return Image with the filter applied
 		template<typename C, int N>
-		_Image<T> applyFilter(const C(&filter)[N],  ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null) const;
+		_Image<T> applyFilter(const C(&filter)[N], ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null) const;
 
 
 
-		
+		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
+		///@param filter Filter table (the table has to have an odd size)
+		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
+		///@param color Color of the background
+		///@return Image with the filter applied
+		template<typename C>
+		_Image<T> applyFilter(const C * filter, size_t size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null) const;
 
-
-		
 
 	protected:
 
 
 	private:
+		template<typename C, size_t N>
+		void _drawRectangle(const Rectangle & rectangle, const Gradient<C> & gradient);
+
+
 		void _allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 		static Format loadingFormat2Format(LoadingFormat loadingFormat);
 
 		inline Math::Rectangle<unsigned int> _clampRectangle(const Rectangle & rectangle) const;
 
-		template<typename C, int N>
-		_Image<T> _applyFilter(const C(&filter)[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
+		template<typename C>
+		_Image<T> _applyFilter(const C * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
 
-		template<typename C, int N>
-		_Image<T> _applyFilterf(const C(&filter)[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
-
-		template<int N>
-		_Image<T> _applyFilter(const float(&filter)[N], ConvolutionMode convolutionMode , const ColorRGBA<T> & color) const;
+		template<typename C>
+		_Image<T> _applyFilterf(const C * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
 
 		template<int N>
-		_Image<T> _applyFilter(const double(&filter)[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
+		_Image<T> _applyFilter(const float * filter, size_t size, ConvolutionMode convolutionMode , const ColorRGBA<T> & color) const;
+
+		template<int N>
+		_Image<T> _applyFilter(const double * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;
 
 		template<typename C = Math::vec3ui, typename PIX>
 		_Image<T> * _createMipmap(_Image<T> * destinationImage);
@@ -498,6 +576,7 @@ namespace Graphic {
 		T * buffer;
 
 	};
+
 
 
 

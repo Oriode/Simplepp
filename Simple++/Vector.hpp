@@ -499,10 +499,9 @@ void Vector<T>::sortDesc(){
 }
 
 template<typename T>
-template<typename Compare>
-void Vector<T>::sort( Compare func ){
-	if (this -> size)
-		quicksort(this -> dataTable, this -> iteratorEnd - 1, func);
+template<typename Func>
+void Vector<T>::sort( Func functor ){
+	if (this -> size) quicksort(this -> dataTable, this -> iteratorEnd - 1, functor);
 }
 
 template<typename T>

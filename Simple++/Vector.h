@@ -189,8 +189,11 @@ public:
 	void sortDesc();
 	void sortAsc();
 
-	template<typename Compare>
-	void sort( Compare func );
+	///@brief sort the elements of this vector using the quicksort algorithm
+	///@param functor Functor with operator () overloaded with :
+	///				bool operator()(const T & v1, const T & v2) const;
+	template<typename Func>
+	void sort( Func functor );
 
 	//Copy from the input vector to this one
 	void copy(Vector vector, Size indexSrc, Size indexDest, Size size);
