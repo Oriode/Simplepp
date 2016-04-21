@@ -141,10 +141,13 @@ int main(int argc, char * argv[]){
 
 
 
-	Graphic::Gradient<Graphic::ColorRGBA<unsigned char>> gradient(Graphic::Gradient<Graphic::ColorRGBA<unsigned char>>::Type::Vertical);
-	gradient.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,0));
-	gradient.addPoint(0.5f, Graphic::ColorRGBA<unsigned char>(255,0,0,255));
-	gradient.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,50,100,255));
+	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>> gradient;
+	gradient.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,255));
+	gradient.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
+	gradient.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
+	gradient.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	gradient.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	gradient.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,255,255,255));
 
 
 

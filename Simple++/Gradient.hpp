@@ -61,10 +61,11 @@ namespace Graphic {
 
 
 	template<typename C>
-	Gradient<C>::Gradient(Type type /*= Type::Vertical*/) :
-		type(type) {
+	Gradient<C>::Gradient(){
 
 	}
+
+
 
 	template<typename C>
 	Gradient<C>::~Gradient() {
@@ -147,9 +148,64 @@ namespace Graphic {
 
 
 
+
+
+
 	template<typename C>
-	typename Gradient<C>::Type Gradient<C>::getType() const {
-		return this -> type;
+	GradientHorizontal<C>::GradientHorizontal() :
+		Gradient() {
+
 	}
+
+	template<typename C>
+	GradientVertical<C>::GradientVertical() {
+
+	}
+
+	template<typename C>
+	void GradientLinear<C>::setAngle(float angle) {
+		this -> angle = angle;
+		this -> angleRad = angle * 0.0174533f;
+	}
+
+	template<typename C>
+	unsigned int GradientLinear<C>::getLength() const {
+		return this -> length;
+	}
+
+	template<typename C>
+	const Math::Vec2<float> & GradientLinear<C>::getPoint() const {
+		return this -> p;
+	}
+
+	template<typename C>
+	float GradientLinear<C>::getAngle() const {
+		return this -> angle;
+	}
+
+	template<typename C>
+	void GradientLinear<C>::setLength(unsigned int length) {
+		this -> length = length;
+	}
+
+	template<typename C>
+	void GradientLinear<C>::setPoint(const Math::Vec2<float> & p) {
+		this -> p = p;
+	}
+
+	template<typename C>
+	GradientLinear<C>::GradientLinear(float angle, const Math::Vec2<float> & p /*= Point::null*/, unsigned int length /*= 100*/) :
+		angle(angle),
+		angleRad( angle * 0.0174533 ),
+		p(p),
+		length(length) {
+
+	}
+
+	template<typename C>
+	float GradientLinear<C>::getAngleRad() const {
+		return this -> angleRad;
+	}
+
 }
 
