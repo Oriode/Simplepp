@@ -76,7 +76,7 @@ namespace Graphic {
 				colorDest = ( colorSrc.r + colorSrc.g + colorSrc.b ) / double(3);
 			}
 			/************************************************************************/
-			/* RGB -> RGB                                                             */
+			/* RGB -> RGB                                                           */
 			/************************************************************************/
 			template<typename I>
 			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc) {
@@ -85,7 +85,7 @@ namespace Graphic {
 				colorDest.b = colorSrc.b;
 			}
 			/************************************************************************/
-			/* RGB -> RGBA                                                            */
+			/* RGB -> RGBA                                                          */
 			/************************************************************************/
 			template<typename I>
 			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc) {
@@ -102,10 +102,10 @@ namespace Graphic {
 			inline static void blendColor(ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
 
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorSrc.a);
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorSrc.a);
 				Bigger sum = Bigger(colorSrc.r) + Bigger(colorSrc.g) + Bigger(colorSrc.b);
 
-				colorDest = ( colorDest * oneMinusAlpha + ( sum / Bigger(3) ) * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest = I(( colorDest * oneMinusAlpha + ( sum / Bigger(3) ) * colorSrc.a ) / Utility::TypesInfos<I>::getMax());
 			}
 
 			inline static void blendColor(ColorR<float> & colorDest, const ColorRGBA<float> & colorSrc) {
@@ -130,12 +130,20 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
+				
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorSrc.a);
 
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorSrc.a);
+				colorDest.r = I(( Bigger(colorDest.r) * oneMinusAlpha + Bigger(colorSrc.r) * Bigger(colorSrc.a) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.g = I(( Bigger(colorDest.g) * oneMinusAlpha + Bigger(colorSrc.g) * Bigger(colorSrc.a) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.b = I(( Bigger(colorDest.b) * oneMinusAlpha + Bigger(colorSrc.b) * Bigger(colorSrc.a) ) / Utility::TypesInfos<I>::getMax());
 
-				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
+				/*
+				float alpha = float(colorSrc.a);
+				float oneMinusAlpha = 255.0f - alpha;
+				colorDest.r = I(( float(colorDest.r) * oneMinusAlpha + float(colorSrc.r) * alpha ) / 255.0f);
+				colorDest.g = I(( float(colorDest.g) * oneMinusAlpha + float(colorSrc.g) * alpha ) / 255.0f);
+				colorDest.b = I(( float(colorDest.b) * oneMinusAlpha + float(colorSrc.b) * alpha ) / 255.0f);
+				*/
 
 			}
 			inline static void blendColor(ColorRGB<float> & colorDest, const ColorRGBA<float> & colorSrc) {
@@ -163,12 +171,12 @@ namespace Graphic {
 			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
 
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorSrc.a);
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorSrc.a);
 
-				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * colorSrc.a ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.a = ( colorDest.a * oneMinusAlpha ) >> Utility::TypesInfos<I>::getNbBits() + colorSrc.a;
+				colorDest.r = I(( Bigger(colorDest.r) * oneMinusAlpha + Bigger(colorSrc.r) * Bigger(colorSrc.a) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.g = I(( Bigger(colorDest.g) * oneMinusAlpha + Bigger(colorSrc.g) * Bigger(colorSrc.a) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.b = I(( Bigger(colorDest.b) * oneMinusAlpha + Bigger(colorSrc.b) * Bigger(colorSrc.a) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.a = I(( Bigger(colorDest.a) * oneMinusAlpha ) / Utility::TypesInfos<I>::getMax() + Bigger(colorSrc.a));
 
 
 			}
@@ -204,8 +212,8 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorR<I> & colorDest, const ColorR<I> & colorSrc, const ColorR<I> & colorMask) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
-				colorDest = ( Bigger(colorDest) * oneMinusAlpha + Bigger(colorSrc) * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorMask);
+				colorDest = I(( Bigger(colorDest) * oneMinusAlpha + Bigger(colorSrc) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
 			}
 			inline static void blendColor(ColorR<float> & colorDest, const ColorR<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -223,13 +231,13 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, const ColorR<I> & colorMask) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorMask);
 
 				Bigger tmp = Bigger(colorSrc) * Bigger(colorMask);
 
-				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest.r = I(( Bigger(colorDest.r) * oneMinusAlpha + tmp ) / Utility::TypesInfos<I>::getMax());
+				colorDest.g = I(( Bigger(colorDest.g) * oneMinusAlpha + tmp ) / Utility::TypesInfos<I>::getMax());
+				colorDest.b = I(( Bigger(colorDest.b) * oneMinusAlpha + tmp ) / Utility::TypesInfos<I>::getMax());
 			}
 			inline static void blendColor(ColorRGB<float> & colorDest, const ColorR<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -253,14 +261,14 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, const ColorR<I> & colorMask) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorMask);
 
 				Bigger tmp = Bigger(colorSrc) * Bigger(colorMask);
 
-				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + tmp ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.a = ( Bigger(colorDest.a) * oneMinusAlpha ) >> Utility::TypesInfos<I>::getNbBits() + colorMask;
+				colorDest.r = I(( Bigger(colorDest.r) * oneMinusAlpha + tmp ) / Utility::TypesInfos<I>::getMax());
+				colorDest.g = I(( Bigger(colorDest.g) * oneMinusAlpha + tmp ) / Utility::TypesInfos<I>::getMax());
+				colorDest.b = I(( Bigger(colorDest.b) * oneMinusAlpha + tmp ) / Utility::TypesInfos<I>::getMax());
+				colorDest.a = I(( Bigger(colorDest.a) * oneMinusAlpha ) / Utility::TypesInfos<I>::getMax() + colorMask);
 
 			}
 			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorR<float> & colorSrc, const ColorR<float> & colorMask) {
@@ -288,9 +296,9 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, const ColorR<I> & colorMask) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorMask);
 				Bigger sum = ( Bigger(colorSrc.r) + Bigger(colorSrc.g) + Bigger(colorSrc.b) ) / Bigger(3);
-				colorDest = ( Bigger(colorDest) * oneMinusAlpha + sum * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				colorDest = I(( Bigger(colorDest) * oneMinusAlpha + sum * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
 			}
 			inline static void blendColor(ColorR<float> & colorDest, const ColorRGB<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -310,10 +318,10 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, const ColorR<I> & colorMask) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
-				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + colorSrc.r * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + colorSrc.g * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + colorSrc.b * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorMask);
+				colorDest.r = I(( Bigger(colorDest.r) * oneMinusAlpha + Bigger(colorSrc.r) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.g = I(( Bigger(colorDest.g) * oneMinusAlpha + Bigger(colorSrc.g) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.b = I(( Bigger(colorDest.b) * oneMinusAlpha + Bigger(colorSrc.b) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
 			}
 			inline static void blendColor(ColorRGB<float> & colorDest, const ColorRGB<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -335,11 +343,11 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, const ColorR<I> & colorMask) {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
-				Bigger oneMinusAlpha = ( 1 << Utility::TypesInfos<I>::getNbBits() ) - Bigger(colorMask);
-				colorDest.r = ( Bigger(colorDest.r) * oneMinusAlpha + colorSrc.r * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.g = ( Bigger(colorDest.g) * oneMinusAlpha + colorSrc.g * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.b = ( Bigger(colorDest.b) * oneMinusAlpha + colorSrc.b * Bigger(colorMask) ) >> Utility::TypesInfos<I>::getNbBits();
-				colorDest.a = ( Bigger(colorDest.a) * oneMinusAlpha ) >> Utility::TypesInfos<I>::getNbBits() + colorMask;
+				Bigger oneMinusAlpha = Utility::TypesInfos<I>::getMax() - Bigger(colorMask);
+				colorDest.r = I(( Bigger(colorDest.r) * oneMinusAlpha + Bigger(colorSrc.r) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.g = I(( Bigger(colorDest.g) * oneMinusAlpha + Bigger(colorSrc.g) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.b = I(( Bigger(colorDest.b) * oneMinusAlpha + Bigger(colorSrc.b) * Bigger(colorMask) ) / Utility::TypesInfos<I>::getMax());
+				colorDest.a = I(( Bigger(colorDest.a) * oneMinusAlpha ) / Utility::TypesInfos<I>::getMax() + colorMask);
 			}
 			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorRGB<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -368,9 +376,9 @@ namespace Graphic {
 				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
 
 				SuperBigger alpha = SuperBigger(colorMask) * SuperBigger(colorSrc.a);
-				SuperBigger oneMinusAlpha = ( 1 << Utility::TypesInfos<Bigger>::getNbBits() ) - alpha;
+				SuperBigger oneMinusAlpha = Utility::TypesInfos<Bigger>::getMax() - alpha;
 				SuperBigger sum = ( SuperBigger(colorSrc.r) + SuperBigger(colorSrc.g) + SuperBigger(colorSrc.b) ) / SuperBigger(3);
-				colorDest = ( SuperBigger(colorDest) * oneMinusAlpha + sum * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				colorDest = I(( SuperBigger(colorDest) * oneMinusAlpha + sum * alpha ) / Utility::TypesInfos<Bigger>::getMax());
 			}
 			inline static void blendColor(ColorR<float> & colorDest, const ColorRGBA<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -394,10 +402,10 @@ namespace Graphic {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
 				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
 				SuperBigger alpha = SuperBigger(colorMask) * SuperBigger(colorSrc.a);
-				SuperBigger oneMinusAlpha = ( 1 << Utility::TypesInfos<Bigger>::getNbBits() ) - alpha;
-				colorDest.r = ( SuperBigger(colorDest.r) * oneMinusAlpha + colorSrc.r * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
-				colorDest.g = ( SuperBigger(colorDest.g) * oneMinusAlpha + colorSrc.g * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
-				colorDest.b = ( SuperBigger(colorDest.b) * oneMinusAlpha + colorSrc.b * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
+				SuperBigger oneMinusAlpha = Utility::TypesInfos<Bigger>::getMax() - alpha;
+				colorDest.r = I(( SuperBigger(colorDest.r) * oneMinusAlpha + SuperBigger(colorSrc.r) * alpha ) / Utility::TypesInfos<Bigger>::getMax());
+				colorDest.g = I(( SuperBigger(colorDest.g) * oneMinusAlpha + SuperBigger(colorSrc.g) * alpha ) / Utility::TypesInfos<Bigger>::getMax());
+				colorDest.b = I(( SuperBigger(colorDest.b) * oneMinusAlpha + SuperBigger(colorSrc.b) * alpha ) / Utility::TypesInfos<Bigger>::getMax());
 			}
 			inline static void blendColor(ColorRGB<float> & colorDest, const ColorRGBA<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;
@@ -423,11 +431,11 @@ namespace Graphic {
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
 				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
 				SuperBigger alpha = SuperBigger(colorMask) * SuperBigger(colorSrc.a);
-				SuperBigger oneMinusAlpha = ( 1 << Utility::TypesInfos<Bigger>::getNbBits() ) - alpha;
-				colorDest.r = ( SuperBigger(colorDest.r) * oneMinusAlpha + colorSrc.r * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
-				colorDest.g = ( SuperBigger(colorDest.g) * oneMinusAlpha + colorSrc.g * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
-				colorDest.b = ( SuperBigger(colorDest.b) * oneMinusAlpha + colorSrc.b * alpha ) >> Utility::TypesInfos<Bigger>::getNbBits();
-				colorDest.a = ( SuperBigger(colorDest.a) * oneMinusAlpha ) >> Utility::TypesInfos<Bigger>::getNbBits() + alpha;
+				SuperBigger oneMinusAlpha =  Utility::TypesInfos<Bigger>::getMax() - alpha;
+				colorDest.r = I(( SuperBigger(colorDest.r) * oneMinusAlpha + SuperBigger(colorSrc.r) * alpha ) / Utility::TypesInfos<Bigger>::getMax());
+				colorDest.g = I(( SuperBigger(colorDest.g) * oneMinusAlpha + SuperBigger(colorSrc.g) * alpha ) / Utility::TypesInfos<Bigger>::getMax());
+				colorDest.b = I(( SuperBigger(colorDest.b) * oneMinusAlpha + SuperBigger(colorSrc.b) * alpha ) / Utility::TypesInfos<Bigger>::getMax());
+				colorDest.a = I(( SuperBigger(colorDest.a) * oneMinusAlpha ) / Utility::TypesInfos<Bigger>::getMax() + alpha);
 			}
 			inline static void blendColor(ColorRGBA<float> & colorDest, const ColorRGBA<float> & colorSrc, const ColorR<float> & colorMask) {
 				typedef float F;

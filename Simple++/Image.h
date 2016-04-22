@@ -219,8 +219,8 @@ namespace Graphic {
 		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & c);"
 		///														
 		///@param rectangle Rectangle where to apply the functor.
-		template<typename Func>
-		void setPixels(Func & functor, const Rectangle & rectangle);
+		template<typename BlendFunc>
+		void setPixels(BlendFunc & functor, const Rectangle & rectangle);
 
 
 
@@ -229,8 +229,8 @@ namespace Graphic {
 		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> & c);"
 		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> & c);"
 		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & c);"
-		template<typename Func>
-		void setPixels(Func & functor);
+		template<typename BlendFunc>
+		void setPixels(BlendFunc & functor);
 
 
 		///@brief draw a rectangle inside this image.
@@ -240,8 +240,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawRectangle(const Rectangle & rectangle, const ColorR<T> & color, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const ColorR<T> & color, const BlendFunc & functor = BlendingFunc::Normal());
 
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
@@ -250,8 +250,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawRectangle(const Rectangle & rectangle, const ColorRGB<T> & color, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const ColorRGB<T> & color, const BlendFunc & functor = BlendingFunc::Normal());
 
 
 		///@brief draw a rectangle inside this image.
@@ -261,14 +261,14 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const BlendFunc & functor = BlendingFunc::Normal());
 
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
 		///@param gradient Gradient to draw.
-		template<typename C>
-		void drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C> & gradient);
+		template<typename C, typename InterFunc>
+		void drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient);
 
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
@@ -277,8 +277,18 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
-		template<typename C, typename Func = BlendingFunc::Normal>
-		void drawRectangle(const Rectangle & rectangle, const GradientLinear<C> & gradient, const Func & functor = BlendingFunc::Normal());
+		template<typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const GradientLinear<C, InterFunc> & gradient, const BlendFunc & functor = BlendingFunc::Normal());
+
+		///@brief draw a rectangle inside this image.
+		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
+		///@param gradient Gradient to draw.
+		///@param functor Blending functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
+		template<typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const GradientRadial<C, InterFunc> & gradient, const BlendFunc & functor = BlendingFunc::Normal());
 
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
@@ -287,8 +297,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
-		template<typename C, typename Func>
-		void drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C> & gradient, const Func & functor);
+		template<typename C, typename InterFunc, typename BlendFunc>
+		void drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & functor);
 
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
@@ -296,8 +306,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
-		template<typename C, typename Func = BlendingFunc::Normal>
-		void drawRectangle(const Rectangle & rectangle, const GradientVertical<C> & gradient, const Func & functor = BlendingFunc::Normal());
+		template<typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawRectangle(const Rectangle & rectangle, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & functor = BlendingFunc::Normal());
 
 
 		///@brief draw a rectangle inside this image.
@@ -414,8 +424,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & functor = BlendingFunc::Normal());
 
 
 
@@ -447,8 +457,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawImage(const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawImage(const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
@@ -460,8 +470,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawImage(const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawImage(const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
@@ -473,8 +483,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawImage(const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawImage(const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 		
 
 		///@brief draw an another image into this one with a mask image
@@ -509,8 +519,8 @@ namespace Graphic {
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		template<typename Func = BlendingFunc::Normal>
-		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 
 
 
@@ -538,35 +548,38 @@ namespace Graphic {
 
 
 	private:
-		template<typename Func, typename C1, typename C2>
-		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc, typename C1, typename C2>
+		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 
-		template<typename Func, typename C1, typename C2>
-		void _drawImage(const Point & point, const C2 & color, const Rectangle & rectangle, const _Image<T> & maskImage, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc, typename C1, typename C2>
+		void _drawImage(const Point & point, const C2 & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 
-		template<typename Func, typename C1, typename C2>
-		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Func & functor);
+		template<typename BlendFunc, typename C1, typename C2>
+		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & functor);
 
 		template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
 		void _drawRectangleFunctor(const Rectangle & rectangle, const ColorFunc & colorFunctor, const BlendFunc & blendingFunctor = BlendingFunc::Normal());
 
-		template<typename Func, typename C1, typename C2>
-		void _drawRectangle(const Rectangle & rectangle, const C2 & color, const Func & functor = BlendingFunc::Normal());
+		template<typename BlendFunc, typename C1, typename C2>
+		void _drawRectangle(const Rectangle & rectangle, const C2 & color, const BlendFunc & functor = BlendingFunc::Normal());
 
-		template<typename Func, typename C>
-		void _setPixels(Func & functor, const Rectangle & rectangle);
+		template<typename BlendFunc, typename C>
+		void _setPixels(BlendFunc & functor, const Rectangle & rectangle);
 
-		template<typename C>
-		void _drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C> & gradient);
+		template<typename C, typename InterFunc>
+		void _drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient);
 
-		template<typename Func, typename C1, typename C2>
-		void _drawRectangle(const Rectangle & rectangle, const GradientLinear<C2> & gradient, const Func & blendingFunctor);
+		template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
+		void _drawRectangle(const Rectangle & rectangle, const GradientLinear<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor);
 
-		template<typename Func, typename C1, typename C2>
-		void _drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C2> & gradient, const Func & blendingFunctor);
+		template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
+		void _drawRectangle(const Rectangle & rectangle, const GradientRadial<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor);
 
-		template<typename Func, typename C, typename C2>
-		void _drawRectangle(const Rectangle & rectangle, const GradientVertical<C2> & gradient, const Func & blendingFunctor);
+		template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
+		void _drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor);
+
+		template<typename BlendFunc, typename C, typename C2, typename InterFunc>
+		void _drawRectangle(const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor);
 
 		void _allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 

@@ -392,7 +392,7 @@ namespace Graphic {
 			kernel[i] = I(kernelf[i] * newWeight);
 		}
 		delete[] kernelf;
-		return newWeight;
+		return I(newWeight);
 	}
 
 

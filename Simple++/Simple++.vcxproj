@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
+    <ClInclude Include="BasicGraphic.h" />
     <ClInclude Include="BasicIO.h" />
     <ClInclude Include="BasicIO.hpp" />
     <ClInclude Include="BasicSimpleIO.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Image.hpp" />
+    <ClInclude Include="InterpolationFunc.hpp" />
     <ClInclude Include="IO.h" />
     <ClInclude Include="IO.hpp" />
     <ClInclude Include="BasicLoadable.h" />

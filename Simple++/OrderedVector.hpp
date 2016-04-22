@@ -73,7 +73,7 @@ template<typename T, typename Compare>
 OrderedVector<T, Compare> & OrderedVector<T,Compare>::operator=( const OrderedVector<T, Compare> & vector ){
 	Vector::operator =(vector);
 	this -> isOrdered = vector.isOrdered;
-	//this -> sortFunction = vector.sortFunction;
+	this -> sortFunction = vector.sortFunction;
 	return *this;
 }
 
@@ -81,24 +81,29 @@ template<typename T, typename Compare /*= Logical::less<T>*/>
 OrderedVector<T, Compare> && OrderedVector<T, Compare>::operator=(OrderedVector<T, Compare> && vector) {
 	Vector::operator=(Utility::toRValue(vector));
 	this -> isOrdered = Utility::toRValue(vector.isOrdered);
+	this -> sortFunction = Utility::toRValue(vector.sortFunction);
 }
 
 template<typename T, typename Compare /*= Logical::less<T>*/>
 OrderedVector<T, Compare>::OrderedVector(const OrderedVector & vector) :
 	Vector(vector),
-	isOrdered(isOrdered)
+	isOrdered(isOrdered),
+	sortFunction(vector.sortFunction)
 {
 }
 
 template<typename T, typename Compare>
-OrderedVector<T, Compare>::~OrderedVector( void ){
+OrderedVector<T, Compare>::~OrderedVector(const Compare & compareFunc) :
+	sortFunction(compareFunc)
+{
 
 }
 
 template<typename T, typename Compare>
 OrderedVector<T, Compare>::OrderedVector(const OrderedVector<T, Compare> & v) :
 Vector(v),
-isOrdered(v.isOrdered)
+isOrdered(v.isOrdered),
+sortFunction(sortFunction)
 {
 
 }

@@ -6,7 +6,7 @@
 template<typename T, typename Compare = Logical::less<T>>
 class OrderedVector : private Vector<T> {
 public:
-	OrderedVector(void);
+	OrderedVector(const Compare & compareFunc = Compare());
 	OrderedVector(const OrderedVector & vector);
 	OrderedVector(OrderedVector && v);
 
@@ -64,7 +64,7 @@ public:
 
 
 private:
-	Compare sortFunction;
+	const Compare & sortFunction;
 	bool isOrdered;
 
 	void insert(Size index, const T & data);

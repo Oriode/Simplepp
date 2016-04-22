@@ -141,7 +141,7 @@ int main(int argc, char * argv[]){
 
 
 
-	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>> gradient;
+	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradient;
 	gradient.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,255));
 	gradient.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
 	gradient.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
@@ -234,26 +234,24 @@ int main(int argc, char * argv[]){
 	
 	return 0;
 
-
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA);
 	}
-	Log::getChrono("INT BLENDING RGBA -> RGB (last 1083ms)");
+	Log::getChrono("INT BLENDING RGBA -> RGB (last 2288ms)");
 
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat);
 	}
-	Log::getChrono("FLOAT BLENDING RGBA -> RGB (last 209ms)");
-
+	Log::getChrono("FLOAT BLENDING RGBA -> RGB (last 205ms)");
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
 		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA, Graphic::BlendingFunc::Normal());
 	}
-	Log::getChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 1077ms)");
+	Log::getChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 2337ms)");
 
 
 	Log::startChrono();

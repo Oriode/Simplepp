@@ -7,11 +7,10 @@
 template<typename I, typename T, typename Compare = Logical::less<I>>
 class OrderedMap : protected Map<I,T>{
 public:
-	OrderedMap(void);
+	OrderedMap(const Compare & compareFunc = Compare());
 	OrderedMap(const OrderedMap & map);
 	OrderedMap(OrderedMap && map);
-	template<typename I2, typename T2, typename Compare2>
-	OrderedMap(const OrderedMap<I2, T2, Compare2> & map);
+
 
 	~OrderedMap(void);
 
@@ -59,8 +58,6 @@ public:
 	/* OPERATOR EQUAL                                                       */
 	/************************************************************************/
 	OrderedMap & operator=(const OrderedMap & map);
-	template<typename I2, typename T2, typename Compare2>
-	OrderedMap & operator=(const OrderedMap<I2, T2, Compare2> & map);
 	OrderedMap & operator=(OrderedMap && map);
 
 	void eraseIndex(const I & index);

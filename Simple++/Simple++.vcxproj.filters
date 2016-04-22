@@ -315,6 +315,12 @@
     <ClInclude Include="Gradient.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BasicGraphic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InterpolationFunc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

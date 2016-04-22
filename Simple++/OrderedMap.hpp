@@ -275,16 +275,10 @@ template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=(const OrderedMap<I, T, Compare> & map){
 	Map::operator =(map);
 	this -> isOrdered = map.isOrdered;
+	this -> sortFunction = map.sortFunction;
 	return *this;
 }
 
-template<typename I, typename T, typename Compare>
-template<typename I2, typename T2, typename Compare2>
-OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=(const OrderedMap<I2, T2, Compare2> & map) {
-	Map::operator =(map);
-	this -> isOrdered = map.isOrdered;
-	return *this;
-}
 
 template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare>::~OrderedMap(void){
@@ -292,8 +286,9 @@ OrderedMap<I, T, Compare>::~OrderedMap(void){
 }
 
 template<typename I, typename T, typename Compare>
-OrderedMap<I, T, Compare>::OrderedMap(void) : 
-isOrdered(true)
+OrderedMap<I, T, Compare>::OrderedMap(const Compare & compareFunc) :
+isOrdered(true),
+sortFunction(compareFunc)
 {
 }
 
@@ -301,7 +296,8 @@ isOrdered(true)
 template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare>::OrderedMap(const OrderedMap<I, T, Compare> & map) :
 Map(map),
-isOrdered(map.isOrdered)
+isOrdered(map.isOrdered),
+sortFunction(map.sortFunction)
 {
 
 }
@@ -310,17 +306,13 @@ isOrdered(map.isOrdered)
 template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare>::OrderedMap(OrderedMap<I, T, Compare> && map) :
 	Map(Utility::toRValue(map)),
-	isOrdered(Utility::toRValue(map.isOrdered)) {
+	isOrdered(Utility::toRValue(map.isOrdered)),
+	sortFunction(Utility::toRValue(map.sortFunction))
+{
 
 }
 
-template<typename I, typename T, typename Compare>
-template<typename I2, typename T2, typename Compare2>
-OrderedMap<I, T, Compare>::OrderedMap(const OrderedMap<I2, T2, Compare2> & map) :
-	Map(map),
-	isOrdered(map.isOrdered) {
 
-}
 
 
 
