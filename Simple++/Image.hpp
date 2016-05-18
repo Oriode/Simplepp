@@ -481,198 +481,77 @@ namespace Graphic {
 	template<typename T>
 	void _Image<T>::fillImage(const T * color) {
 		switch ( this -> format ) {
-		case Format::R: {			//Blend R -> R
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = *( color + 0 );
-				it += getNbComponents();
-			}
-			break;
-		}
-		case Format::RGB: {		//Blend RGB -> RGB
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = *( color + 0 );
-				*( it + 1 ) = *( color + 1 );
-				*( it + 2 ) = *( color + 2 );
-				it += getNbComponents();
-			}
-			break;
-		}
-		case Format::RGBA: {		//Blend RGB -> RGB
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = *( color + 0 );
-				*( it + 1 ) = *( color + 1 );
-				*( it + 2 ) = *( color + 2 );
-				*( it + 3 ) = *( color + 3 );
-				it += getNbComponents();
-			}
-			break;
-		}
+		case Format::R: 		//Blend RGBA -> R
+			return _fillImage<ColorR<T>, ColorR<T>>(*((ColorR<T> *) color));
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _fillImage<ColorRGB<T>, ColorRGB<T>>(*( (ColorRGB<T> *) color ));
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _fillImage<ColorRGBA<T>, ColorRGBA<T>>(*( (ColorRGBA<T> *) color ));
 		}
 	}
 
 	template<typename T>
 	void _Image<T>::fillImage(const T * color, const Rectangle & rectangle) {
 		switch ( this -> format ) {
-		case Format::R: {			//Blend R -> R
-			auto it = this -> buffer + (rectangle.getBottom() * this -> size.x + rectangle.getLeft()) * this -> getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
-				auto maxIt = it + nbComponentsPerLineRectangle;
-				for ( auto it2 = it; it2 < maxIt; it2+= 1) {
-					it2[0] = color[0];
-				}
-				it += nbComponentsPerLine;
-			}
-			break;
-		}
-		case Format::RGB: {		//Blend RGB -> RGB
-			auto it = this -> buffer + ( rectangle.getBottom() * this -> size.x + rectangle.getLeft() ) * getNbComponents();
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
-				auto maxIt = it + nbComponentsPerLineRectangle;
-				for ( auto it2 = it; it2 < maxIt; it2 += 3 ) {
-					it2[0] = color[0];
-					it2[1] = color[1];
-					it2[2] = color[2];
-				}
-				it += nbComponentsPerLine;
-			}
-			break;
-		}
-		case Format::RGBA: {		//Blend RGB -> RGB
-			auto it = this -> buffer;
-			typename Math::vec2ui::Type width = rectangle.getRight() - rectangle.getLeft();
-			size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-			size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
-			for ( typename Math::vec2ui::Type y = rectangle.getBottom(); y < rectangle.getTop(); y++ ) {
-				auto maxIt = it + nbComponentsPerLineRectangle;
-				for ( auto it2 = it; it2 < maxIt; it2 += 4 ) {
-					it2[0] = color[0];
-					it2[1] = color[1];
-					it2[2] = color[2];
-					it2[3] = color[3];
-				}
-				it += nbComponentsPerLine;
-			}
-			break;
-		}
-		}
-	}
-
-
-
-
-	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage(const ColorR<T> & color) {
-		switch ( this -> format ) {
-		case Format::R: {		//Blend R -> R
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color;
-				it += getNbComponents();
-			}
-			break;
-		}
-		case Format::RGB: {	//Blend R -> RGB
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color;
-				*( it + 1 ) = color;
-				*( it + 2 ) = color;
-				it += getNbComponents();
-			}
-			break;
-		}
-		case Format::RGBA: {	//Blend R -> RGBA
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color;
-				*( it + 1 ) = color;
-				*( it + 2 ) = color;
-				*( it + 3 ) = getComponentMaxValue();
-				it += getNbComponents();
-			}
-			break;
-		}
+		case Format::R: 		//Blend RGBA -> R
+			return _fillImage<ColorR<T>, ColorRGBA<T>>(*( (ColorR<T> *) color ), rectangle);
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _fillImage<ColorRGB<T>, ColorRGBA<T>>(*( (ColorRGB<T> *) color ), rectangle);
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _fillImage<ColorRGBA<T>, ColorRGBA<T>>(*( (ColorRGBA<T> *) color ), rectangle);
 		}
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage(const ColorRGB<T> & color) {
+	void _Image<T>::fillImage(const ColorR<T> & color) {
 		switch ( this -> format ) {
-		case Format::R: {		//Blend RGB -> R
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color.r;
-				it += getNbComponents();
-			}
-			break;
-		}
-		case Format::RGB: {	//Blend RGB -> RGB
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color.r;
-				*( it + 1 ) = color.g;
-				*( it + 2 ) = color.b;
-				it += getNbComponents();
-			}
-			break;
-		}
-		case Format::RGBA: {	//Blend RGB -> RGBA
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color.r;
-				*( it + 1 ) = color.g;
-				*( it + 2 ) = color.b;
-				*( it + 3 ) = getComponentMaxValue();
-				it += getNbComponents();
-			}
-			break;
-		}
+		case Format::R: 		//Blend RGBA -> R
+			return _fillImage<ColorR<T>, ColorR<T>>(color);
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _fillImage<ColorRGB<T>, ColorR<T>>(color);
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _fillImage<ColorRGBA<T>, ColorR<T>>(color);
 		}
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage(const ColorRGBA<T> & color) {
+	void _Image<T>::fillImage(const ColorRGB<T> & color) {
 		switch ( this -> format ) {
-		case Format::R: {		//Blend RGBA -> R
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color.r;
-				it += getNbComponents();
-			}
-			break;
+		case Format::R: 		//Blend RGBA -> R
+			return _fillImage<ColorR<T>, ColorRGB<T>>(color);
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _fillImage<ColorRGB<T>, ColorRGB<T>>(color);
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _fillImage<ColorRGBA<T>, ColorRGB<T>>(color);
 		}
-		case Format::RGB: {	//Blend RGBA -> RGB
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color.r;
-				*( it + 1 ) = color.g;
-				*( it + 2 ) = color.b;
-				it += getNbComponents();
-			}
-			break;
+	}
+
+
+	template<typename T /*= unsigned char*/>
+	void _Image<T>::fillImage(const ColorRGBA<T> & color) {
+		switch ( this -> format ) {
+		case Format::R: 		//Blend RGBA -> R
+			return _fillImage<ColorR<T>, ColorRGBA<T>>(color);
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _fillImage<ColorRGB<T>, ColorRGBA<T>>(color);
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _fillImage<ColorRGBA<T>, ColorRGBA<T>>(color);
 		}
-		case Format::RGBA: {	//Blend RGBA -> RGBA
-			auto it = this -> buffer;
-			for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-				*( it + 0 ) = color.r;
-				*( it + 1 ) = color.g;
-				*( it + 2 ) = color.b;
-				*( it + 3 ) = color.a;
-				it += getNbComponents();
-			}
-			break;
-		}
+	}
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename C1, typename C2>
+	void _Image<T>::_fillImage(const C2 & color) {
+		constexpr size_t N1 = sizeof(C1) / sizeof(T);
+
+		auto it = this -> buffer;
+		for ( size_t i = 0; i < this -> nbPixels; i++ ) {
+			BlendingFunc::None::blendColor(*( ( C1 * ) it ), color);
+			it += N1;
 		}
 	}
 
@@ -680,28 +559,28 @@ namespace Graphic {
 	////////////////////
 
 	template<typename T /*= unsigned char*/>
-	template<typename BlendFunc>
-	void _Image<T>::setPixels(BlendFunc & functor) {
-		return setPixels(functor, Rectangle(0, getSize()));
+	template<typename ColorFunc>
+	void _Image<T>::setPixels(ColorFunc & colorFunc) {
+		return setPixels(colorFunc, Rectangle(0, getSize()));
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	template<typename BlendFunc>
-	void _Image<T>::setPixels(BlendFunc & functor, const Rectangle & rectangle) {
+	template<typename ColorFunc>
+	void _Image<T>::setPixels(ColorFunc & colorFunc, const Rectangle & rectangle) {
 		switch ( this -> format ) {
 		case Format::R: 		//Blend R -> R
-			return _setPixels<BlendFunc, ColorR<T>>(functor, rectangle);
+			return _setPixels<ColorFunc, ColorR<T>>(colorFunc, rectangle);
 		case Format::RGB: 	//Blend R -> RGB
-			return _setPixels<BlendFunc, ColorRGB<T>>(functor, rectangle);
+			return _setPixels<ColorFunc, ColorRGB<T>>(colorFunc, rectangle);
 		case Format::RGBA: 	//Blend R -> RGBA
-			return _setPixels<BlendFunc, ColorRGBA<T>>(functor, rectangle);
+			return _setPixels<ColorFunc, ColorRGBA<T>>(colorFunc, rectangle);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
-	template<typename BlendFunc, typename C>
-	void _Image<T>::_setPixels(BlendFunc & functor, const Rectangle & rectangle) {
+	template<typename ColorFunc, typename C>
+	void _Image<T>::_setPixels(ColorFunc & colorFunc, const Rectangle & rectangle) {
 		constexpr size_t N = sizeof(C) / sizeof(T);
 
 		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
@@ -713,7 +592,7 @@ namespace Graphic {
 		for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
 			auto it2 = it;
 			for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
-				functor(i, *( (C *) it2 ));
+				colorFunc(i, *( (C *) it2 ));
 				it2 += N;
 			}
 			it += nbComponentsPerLine;
@@ -746,70 +625,99 @@ namespace Graphic {
 	}
 
 
-
-
-
 	////////////////////
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage(const ColorR<T> & color, const Rectangle & rectangle) {
-		fillImage(ColorRGBA<T>(color, color, color, getComponentMaxValue()));
+	void _Image<T>::fillImage(const ColorR<T> & color, const Rectangle & rectangle) {
+		switch ( this -> format ) {
+		case Format::R:
+			return _drawRectangle<BlendingFunc::None, ColorR<T>, ColorR<T>>(rectangle, color, BlendingFunc::None());
+		case Format::RGB:
+			return _drawRectangle<BlendingFunc::None, ColorRGB<T>, ColorR<T>>(rectangle, color, BlendingFunc::None());
+		case Format::RGBA:
+			return _drawRectangle<BlendingFunc::None, ColorRGBA<T>, ColorR<T>>(rectangle, color, BlendingFunc::None());
+		}
 	}
-
 
 	template<typename T /*= unsigned char*/>
 	void Graphic::_Image<T>::fillImage(const ColorRGB<T> & color, const Rectangle & rectangle) {
-		fillImage(ColorRGBA<T>(color.r, color.g, color.b, getComponentMaxValue()));
+		switch ( this -> format ) {
+		case Format::R:
+			return _drawRectangle<BlendingFunc::None, ColorR<T>, ColorRGB<T>>(rectangle, color, BlendingFunc::None());
+		case Format::RGB:
+			return _drawRectangle<BlendingFunc::None, ColorRGB<T>, ColorRGB<T>>(rectangle, color, BlendingFunc::None());
+		case Format::RGBA:
+			return _drawRectangle<BlendingFunc::None, ColorRGBA<T>, ColorRGB<T>>(rectangle, color, BlendingFunc::None());
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	void Graphic::_Image<T>::fillImage(const ColorRGBA<T> & color, const Rectangle & rectangle) {
+		switch ( this -> format ) {
+		case Format::R:
+			return _drawRectangle<BlendingFunc::None, ColorR<T>, ColorRGBA<T>>(rectangle, color, BlendingFunc::None());
+		case Format::RGB:
+			return _drawRectangle<BlendingFunc::None, ColorRGB<T>, ColorRGBA<T>>(rectangle, color, BlendingFunc::None());
+		case Format::RGBA:
+			return _drawRectangle<BlendingFunc::None, ColorRGBA<T>, ColorRGBA<T>>(rectangle, color, BlendingFunc::None());
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename C, typename InterFunc>
+	void Graphic::_Image<T>::fillImage(const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle) {
+		switch ( this -> format ) {
+		case Format::R: 		//Blend RGBA -> R
+			return _fillImage<ColorR<T>, C, InterFunc>(gradient, rectangle);
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _fillImage<ColorRGB<T>, C, InterFunc>(gradient, rectangle);
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _fillImage<ColorRGBA<T>, C, InterFunc>(gradient, rectangle);
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename C, typename InterFunc>
+	void Graphic::_Image<T>::fillImage(const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle) {
+		switch ( this -> format ) {
+		case Format::R: 		//Blend RGBA -> R
+			return _drawRectangle<BlendingFunc::None, ColorR<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _drawRectangle<BlendingFunc::None, ColorRGB<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _drawRectangle<BlendingFunc::None, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		}
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage(const ColorRGBA<T> & color, const Rectangle & rectangle) {
-		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
-		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
-		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
-		size_t nbComponentsPerLineRectangle = getNbComponents() * width;
-		size_t nbComponentsPerLine = getNbComponents() * this -> size.x;
+	template<typename C, typename InterFunc>
+	void Graphic::_Image<T>::fillImage(const GradientLinear<C, InterFunc> & gradient, const Rectangle & rectangle) {
 		switch ( this -> format ) {
-		case Format::R: {		//Blend RGBA -> R
-			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
-				auto maxIt = it + nbComponentsPerLineRectangle;
-				for ( auto it2 = it; it2 < maxIt; it2 += 1 ) {
-					it2[0] = color.r;
-				}
-				it += nbComponentsPerLine;
-			}
-			break;
-		}
-		case Format::RGB: {	//Blend RGBA -> RGB
-			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
-				auto maxIt = it + nbComponentsPerLineRectangle;
-				for ( auto it2 = it; it2 < maxIt; it2 += 3 ) {
-					it2[0] = color.r;
-					it2[1] = color.g;
-					it2[2] = color.b;
-				}
-				it += nbComponentsPerLine;
-			}
-			break;
-		}
-		case Format::RGBA: {	//Blend RGBA -> RGBA
-			for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
-				auto maxIt = it + nbComponentsPerLineRectangle;
-				for ( auto it2 = it; it2 < maxIt; it2 += 4 ) {
-					it2[0] = color.r;
-					it2[1] = color.g;
-					it2[2] = color.b;
-					it2[3] = color.a;
-				}
-				it += nbComponentsPerLine;
-			}
-			break;
-		}
+		case Format::R: 		//Blend RGBA -> R
+			return _drawRectangle<BlendingFunc::None, ColorR<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _drawRectangle<BlendingFunc::None, ColorRGB<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _drawRectangle<BlendingFunc::None, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
 		}
 	}
 
-	
 
+	template<typename T /*= unsigned char*/>
+	template<typename C, typename InterFunc>
+	void Graphic::_Image<T>::fillImage(const GradientRadial<C, InterFunc> & gradient, const Rectangle & rectangle) {
+		switch ( this -> format ) {
+		case Format::R: 		//Blend RGBA -> R
+			return _drawRectangle<BlendingFunc::None, ColorR<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		case Format::RGB: 	//Blend RGBA -> RGB
+			return _drawRectangle<BlendingFunc::None, ColorRGB<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		case Format::RGBA: 	//Blend RGBA -> RGBA
+			return _drawRectangle<BlendingFunc::None, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, BlendingFunc::None());
+		}
+	}
+
+
+	
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::fillImage(const Point & point, const _Image<T> & image) {
@@ -818,8 +726,50 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::fillImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image) {
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
+		switch ( this -> format ) {
+		case Format::R: {
+			switch ( image.getFormat() ) {
+			case Format::R: 		//Blend R -> R
+				return _fillImage<ColorR<T>, ColorR<T>>(point, rectangle, image);
+			case Format::RGB: 	//Blend RGB -> R
+				return _fillImage<ColorR<T>, ColorRGB<T>>(point, rectangle, image);
+			case Format::RGBA: 	//Blend RGBA -> R
+				return _fillImage<ColorR<T>, ColorRGBA<T>>(point, rectangle, image);
+			}
+		}
+		case Format::RGB: {
+			switch ( image.getFormat() ) {
+			case Format::R: 		//Blend R -> RGB
+				return _fillImage<ColorRGB<T>, ColorR<T>>(point, rectangle, image);
+			case Format::RGB: 	//Blend RGB -> RGB
+				return _fillImage<ColorRGB<T>, ColorRGB<T>>(point, rectangle, image);
+			case Format::RGBA: 	//Blend RGBA -> RGB
+				return _fillImage<ColorRGB<T>, ColorRGBA<T>>(point, rectangle, image);
+			}
+		}
+		case Format::RGBA: {
+			switch ( image.getFormat() ) {
+			case Format::R: 		//Blend R -> RGBA
+				return _fillImage<ColorRGBA<T>, ColorR<T>>(point, rectangle, image);
+			case Format::RGB: 	//Blend RGB -> RGBA
+				return _fillImage<ColorRGBA<T>, ColorRGB<T>>(point, rectangle, image);
+			case Format::RGBA: 	//Blend RGBA -> RGBA
+				return _fillImage<ColorRGBA<T>, ColorRGBA<T>>(point, rectangle, image);
+			}
+		}
+		}
+	}
+
+	
+
+	template<typename T /*= unsigned char*/>
+	template<typename C1, typename C2>
+	void _Image<T>::_fillImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image) {
+		constexpr size_t N1 = sizeof(C1) / sizeof(T);
+		constexpr size_t N2 = sizeof(C2) / sizeof(T);
+
+		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<unsigned int> otherImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
@@ -848,167 +798,42 @@ namespace Graphic {
 		if ( size.x <= 0 || size.y <= 0 ) return;
 
 		auto thisIt = getDatas(begin.x, begin.y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		auto thisImageOffset = this -> size.x * N1;
 
 		auto otherIt = image.getDatas(otherImageBegin.x, otherImageBegin.y);
-		auto otherImageOffset = image.getSize().x * image.getNbComponents();
+		auto otherImageOffset = image.getSize().x * N2;
 
-		switch ( this -> format ) {
-		case Format::R: {
-			switch ( image.getFormat() ) {
-			case Format::R: {			//Blend R -> R
-				Point i;
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy(thisIt, otherIt, size.x * 1);
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
+		if ( N1 == N2 ) {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				Vector<T>::copy(thisIt, otherIt, size.x * N1);
+				thisIt += thisImageOffset;
+				otherIt += otherImageOffset;
+			}
+		} else {
+			Point i;
+			size_t sizeOffset = size.x * N1;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = otherIt;
+				auto maxit = thisIt + sizeOffset;
+				for ( ; thisIt2 < maxit; ) {
+					BlendingFunc::None::blendColor(*( ( C1 * )thisIt2 ), *( ( C2 * ) otherIt2 ));
+					thisIt2 += N1;
+					otherIt2 += N2;
 				}
-				break;
+				thisIt += thisImageOffset;
+				otherIt += otherImageOffset;
 			}
-			case Format::RGB: {		//Blend RGB -> R
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 1 ) {
-						thisIt2[0] = otherIt2[0];
-						otherIt2 += 3;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGBA: {		//Blend RGBA -> R
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 1 ) {
-						thisIt2[0] = otherIt2[0];
-						otherIt2 += 4;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			}
-
-			break;
-		}
-		case Format::RGB: {
-			switch ( image.getFormat() ) {
-			case Format::R: {			//Blend R -> RGB
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 3 ) {
-						thisIt2[0] = otherIt2[0];
-						thisIt2[1] = otherIt2[0];
-						thisIt2[2] = otherIt2[0];
-						otherIt2 += 1;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGB: {		//Blend RGB -> RGB
-				Point i;
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy(thisIt, otherIt, size.x * 3);
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGBA: {		//Blend RGBA -> RGB
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 3 ) {
-						thisIt2[0] = otherIt2[0];
-						thisIt2[1] = otherIt2[1];
-						thisIt2[2] = otherIt2[2];
-						otherIt2 += 4;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			}
-
-
-			break;
-		}
-		case Format::RGBA: {
-			switch ( image.getFormat() ) {
-			case Format::R: {			//Blend R -> RGBA
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
-						thisIt2[0] = otherIt2[0];
-						thisIt2[1] = otherIt2[0];
-						thisIt2[2] = otherIt2[0];
-						thisIt2[3] = getComponentMaxValue();
-						otherIt2 += 1;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGB: {		//Blend RGB -> RGBA
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
-						thisIt2[0] = otherIt2[0];
-						thisIt2[1] = otherIt2[1];
-						thisIt2[2] = otherIt2[2];
-						thisIt2[3] = getComponentMaxValue();
-						otherIt2 += 3;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGBA: {		//Blend RGBA -> RGBA
-				Point i;
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy(thisIt, otherIt, size.x * 4);
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			}
-			break;
-		}
 		}
 	}
 
-	
+
+
+
+
+
+
 
 
 	template<typename T /*= unsigned char*/>
@@ -1027,37 +852,80 @@ namespace Graphic {
 	}
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const _Image<T> & maskImage) {
-		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage);
+	template<typename BlendFunc>
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage, blendFunc);
 	}
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const _Image<T> & maskImage) {
-		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage);
+	template<typename BlendFunc>
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage, blendFunc);
 	}
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const _Image<T> & maskImage) {
-		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage);
+	template<typename BlendFunc>
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		drawImage(point, color, Rectangle(maskImage.getSize()), maskImage, blendFunc);
 	}
 
 
 
 	template<typename T /*= unsigned char*/>
 	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image) {
-		
-		//Rectangle is signed, check if the bottom left is positive.
-		//rectangle.setLeft(Math::max(rectangle.getLeft(), 0));
-		//rectangle.setBottom(Math::max(rectangle.getBottom(), 0));
+		switch ( getFormat() ) {
+		case Format::R: {
+			switch ( image.getFormat() ) {
+			case Format::R: 			//Blend R -> R
+				return _drawImage<ColorR<T>, ColorR<T>>(point, rectangle, image);
+			case Format::RGB:			//Blend RGB -> R
+				return _drawImage<ColorR<T>, ColorRGB<T>>(point, rectangle, image);
+			case Format::RGBA:		//Blend RGBA -> R
+				return _drawImage<ColorR<T>, ColorRGBA<T>>(point, rectangle, image);
+			}
+			break;
+		}
+		case Format::RGB: {
+			switch ( image.getFormat() ) {
+			case Format::R: 			//Blend R -> R
+				return _drawImage<ColorRGB<T>, ColorR<T>>(point, rectangle, image);
+			case Format::RGB:			//Blend RGB -> R
+				return _drawImage<ColorRGB<T>, ColorRGB<T>>(point, rectangle, image);
+			case Format::RGBA:		//Blend RGBA -> R
+				return _drawImage<ColorRGB<T>, ColorRGBA<T>>(point, rectangle, image);
+			}
+			break;
+		}
+		case Format::RGBA: {
+			switch ( image.getFormat() ) {
+			case Format::R: 			//Blend R -> R
+				return _drawImage<ColorRGBA<T>, ColorR<T>>(point, rectangle, image);
+			case Format::RGB:			//Blend RGB -> R
+				return _drawImage<ColorRGBA<T>, ColorRGB<T>>(point, rectangle, image);
+			case Format::RGBA:		//Blend RGBA -> R
+				return _drawImage<ColorRGBA<T>, ColorRGBA<T>>(point, rectangle, image);
+			}
+			break;
+		}
+		}
+	}
 
 
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
+
+	template<typename T /*= unsigned char*/>
+	template<typename C1, typename C2>
+	void _Image<T>::_drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image) {
+		constexpr size_t N1 = sizeof(C1) / sizeof(T);
+		constexpr size_t N2 = sizeof(C2) / sizeof(T);
+
+
+		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<unsigned int> otherImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
 			otherImageBegin.x = -point.x + rectangle.getLeft();
-			size.x = Math::min<typename Point::Type>(this -> size.x , rectangle.getRight() - rectangle.getLeft() + point.x);
+			size.x = Math::min<typename Point::Type>(this -> size.x, rectangle.getRight() - rectangle.getLeft() + point.x);
 		} else if ( point.x > (typename Point::Type) this -> size.x ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
@@ -1070,7 +938,7 @@ namespace Graphic {
 			begin.y = 0;
 			otherImageBegin.y = -point.y + rectangle.getBottom();
 			size.y = Math::min<typename Point::Type>(this -> size.y, rectangle.getTop() - rectangle.getBottom() + point.y);
-		} else if ( point.y >(typename Point::Type) this -> size.y ) {
+		} else if ( point.y > (typename Point::Type) this -> size.y ) {
 			return;			//We are drawing outside, nothing will be changed.
 		} else {
 			begin.y = point.y;
@@ -1080,231 +948,74 @@ namespace Graphic {
 
 		if ( size.x <= 0 || size.y <= 0 ) return;
 
-
-		//verification if the given rectangle is correctly inside the given image
-		//size.x = Math::min<typename Point::Type>(size.x, image.getSize().x - rectangle.getLeft());
-		//size.y = Math::min<typename Point::Type>(size.y, image.getSize().y - rectangle.getTop());
-
-		//end.x = Math::clamp<typename Point::Type>(point.x + image.size.x, 0, this -> size.x);	//0 <= endX <= size.x
-		//end.y = Math::clamp<typename Point::Type>(point.y + image.size.y, 0, this -> size.y);	//0 <= endY <= size.y
-
-		//Point size(end.x - begin.x, end.y - begin.y);
-		//Point end(begin + size);
-		//Point otherImageEnd(otherImageBegin + size);
-
 		auto thisIt = getDatas(begin.x, begin.y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		auto thisImageOffset = this -> size.x * N1;
 
 		auto otherIt = image.getDatas(otherImageBegin.x, otherImageBegin.y);
-		auto otherImageOffset = image.getSize().x * image.getNbComponents();
+		auto otherImageOffset = image.getSize().x * N2;
 
-		switch ( this -> format ) {
-		case Format::R: {
-			switch ( image.getFormat() ) {
-			case Format::R: {			//Blend R -> R
-				Point i;
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy(thisIt, otherIt, size.x * 1);
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
+		if ( N1 != 4 && N1 == N2 ) {
+			Point i;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				Vector<T>::copy(thisIt, otherIt, size.x * N1);
+				thisIt += thisImageOffset;
+				otherIt += otherImageOffset;
+			}
+		} else {
+			Point i;
+			size_t sizeOffset = size.x * N1;
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto thisIt2 = thisIt;
+				auto otherIt2 = otherIt;
+				auto maxit = thisIt + sizeOffset;
+				for ( ; thisIt2 < maxit; ) {
+					BlendingFunc::Normal::blendColor(*( ( C1* )thisIt2 ), *( ( C2* ) otherIt2 ));
+					thisIt2 += N1;
+					otherIt2 += N2;
 				}
-				break;
+				thisIt += thisImageOffset;
+				otherIt += otherImageOffset;
 			}
-			case Format::RGB: {		//Blend RGB -> R
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 1 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ));
-						otherIt2 += 3;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGBA: {		//Blend RGBA -> R
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 1 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorR<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
-						otherIt2 += 4;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			}
-
-			break;
 		}
-		case Format::RGB: {
-			switch ( image.getFormat() ) {
-			case Format::R: {			//Blend R -> RGB
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 3 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ));
-						otherIt2 += 1;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGB: {		//Blend RGB -> RGB
-				Point i;
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy(thisIt, otherIt, size.x * 3);
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGBA: {		//Blend RGBA -> RGB
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 3 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
-						otherIt2 += 4;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			}
-
-
-			break;
-		}
-		case Format::RGBA: {
-			switch ( image.getFormat() ) {
-			case Format::R: {			//Blend R -> RGBA
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorR<T>* ) otherIt2 ));
-						otherIt2 += 1;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGB: {		//Blend RGB -> RGBA
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGB<T>* ) otherIt2 ));
-						otherIt2 += 3;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			case Format::RGBA: {		//Blend RGBA -> RGBA
-				Point i;
-				size_t sizeOffset = size.x * getNbComponents();
-				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					auto thisIt2 = thisIt;
-					auto otherIt2 = otherIt;
-					auto maxit = thisIt + sizeOffset;
-					for ( ; thisIt2 < maxit; thisIt2 += 4 ) {
-						BlendingFunc::Normal::blendColor(*( ( ColorRGBA<T>* )thisIt2 ), *( ( ColorRGBA<T>* ) otherIt2 ));
-						otherIt2 += 4;
-					}
-					thisIt += thisImageOffset;
-					otherIt += otherImageOffset;
-				}
-				break;
-			}
-			}
-
-
-			break;
-		}
-		}
-
-
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & functor) {
+	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
 		case Format::R: {
 			switch ( image.getFormat() ) {
 			case Format::R: 			//Blend R -> R
-				return _drawImage<BlendFunc, ColorR<T>, ColorR<T>>(point, rectangle, image,  functor);
+				return _drawImage<BlendFunc, ColorR<T>, ColorR<T>>(point, rectangle, image,  blendFunc);
 			case Format::RGB:			//Blend RGB -> R
-				return _drawImage<BlendFunc, ColorR<T>, ColorRGB<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorR<T>, ColorRGB<T>>(point, rectangle, image, blendFunc);
 			case Format::RGBA:		//Blend RGBA -> R
-				return _drawImage<BlendFunc, ColorR<T>, ColorRGBA<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorR<T>, ColorRGBA<T>>(point, rectangle, image, blendFunc);
 			}
 			break;
 		}
 		case Format::RGB: {
 			switch ( image.getFormat() ) {
 			case Format::R: 			//Blend R -> R
-				return _drawImage<BlendFunc, ColorRGB<T>, ColorR<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorRGB<T>, ColorR<T>>(point, rectangle, image, blendFunc);
 			case Format::RGB:			//Blend RGB -> R
-				return _drawImage<BlendFunc, ColorRGB<T>, ColorRGB<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorRGB<T>, ColorRGB<T>>(point, rectangle, image, blendFunc);
 			case Format::RGBA:		//Blend RGBA -> R
-				return _drawImage<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(point, rectangle, image, blendFunc);
 			}
 			break;
 		}
 		case Format::RGBA: {
 			switch ( image.getFormat() ) {
 			case Format::R: 			//Blend R -> R
-				return _drawImage<BlendFunc, ColorRGBA<T>, ColorR<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorRGBA<T>, ColorR<T>>(point, rectangle, image, blendFunc);
 			case Format::RGB:			//Blend RGB -> R
-				return _drawImage<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(point, rectangle, image, blendFunc);
 			case Format::RGBA:		//Blend RGBA -> R
-				return _drawImage<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(point, rectangle, image, functor);
+				return _drawImage<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(point, rectangle, image, blendFunc);
 			}
 			break;
 		}
@@ -1314,12 +1025,12 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & functor) {
+	void _Image<T>::_drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc) {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
+		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<unsigned int> otherImageBegin;
 		Point size;
 
 		if ( point.x < 0 ) {
@@ -1361,7 +1072,7 @@ namespace Graphic {
 			auto otherIt2 = otherIt;
 			auto maxIt = thisIt + sizeOffset;
 			for ( ; thisIt2 < maxIt; thisIt2 += N1 ) {
-				functor(*( ( C1* )thisIt2 ), *( ( C2* )otherIt2 ));
+				blendFunc(*( ( C1* )thisIt2 ), *( ( C2* )otherIt2 ));
 				otherIt2 += N2;
 			}
 			thisIt += thisImageOffset;
@@ -1374,38 +1085,38 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char */>
 	template<typename BlendFunc>
-	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & functor) {
+	void _Image<T>::drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
 		case Format::R: {
 			switch ( image.getFormat() ) {
 			case Format::R: 			//Blend R -> R
-				return _drawImage<ColorR<T>, ColorR<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorR<T>, ColorR<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			case Format::RGB:			//Blend RGB -> R
-				return _drawImage<ColorR<T>, ColorRGB<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorR<T>, ColorRGB<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			case Format::RGBA:		//Blend RGBA -> R
-				return _drawImage<ColorR<T>, ColorRGBA<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorR<T>, ColorRGBA<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			}
 			break;
 		}
 		case Format::RGB: {
 			switch ( image.getFormat() ) {
 			case Format::R: 			//Blend R -> R
-				return _drawImage<ColorRGB<T>, ColorR<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorRGB<T>, ColorR<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			case Format::RGB:			//Blend RGB -> R
-				return _drawImage<ColorRGB<T>, ColorRGB<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorRGB<T>, ColorRGB<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			case Format::RGBA:		//Blend RGBA -> R
-				return _drawImage<ColorRGB<T>, ColorRGBA<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorRGB<T>, ColorRGBA<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			}
 			break;
 		}
 		case Format::RGBA: {
 			switch ( image.getFormat() ) {
 			case Format::R: 			//Blend R -> R
-				return _drawImage<ColorRGBA<T>, ColorR<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorRGBA<T>, ColorR<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			case Format::RGB:			//Blend RGB -> R
-				return _drawImage<ColorRGBA<T>, ColorRGB<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorRGBA<T>, ColorRGB<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			case Format::RGBA:		//Blend RGBA -> R
-				return _drawImage<ColorRGBA<T>, ColorRGBA<T>>(point, rectangle, image, maskPoint, maskImage, functor);
+				return _drawImage<ColorRGBA<T>, ColorRGBA<T>>(point, rectangle, image, maskPoint, maskImage, blendFunc);
 			}
 			break;
 		}
@@ -1417,13 +1128,13 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char */>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & functor) {
+	void _Image<T>::_drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point otherImageBegin;
-		Point maskBegin;
+		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<unsigned int> otherImageBegin;
+		Math::Vec2<unsigned int> maskBegin;
 		Point size;
 
 		if ( maskPoint.x < 0 ) {
@@ -1487,7 +1198,7 @@ namespace Graphic {
 			auto maskIt2 = maskIt;
 			auto maxIt = thisIt + sizeOffset;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
-				functor(*( (C1*) thisIt2 ), *( (C2*) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
+				blendFunc(*( (C1*) thisIt2 ), *( (C2*) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ));
 				thisIt2 += N1;
 				otherIt2 += N2;
 				maskIt2 += maskImage.getNbComponents();
@@ -1504,54 +1215,115 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor) {
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		class MyColorFunc {
+		public:
+			MyColorFunc(const ColorR<T> & color) : color(color) {}
+			inline ColorR<T> operator()(const Math::Vec2<unsigned int> & p) const { return this -> color; }
+			const ColorR<T> & color;
+		};
+
 		switch ( getFormat() ) {
 		case Format::R: 			//Blend R -> R
-			return _drawImage<ColorR<T>, ColorR<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorR<T>, ColorR<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		case Format::RGB:			//Blend RGB -> R
-			return _drawImage<ColorRGB<T>, ColorR<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorRGB<T>, ColorR<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		case Format::RGBA:		//Blend RGBA -> R
-			return _drawImage<ColorRGBA<T>, ColorR<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorRGBA<T>, ColorR<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor) {
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		class MyColorFunc {
+		public:
+			MyColorFunc(const ColorRGB<T> & color) : color(color) {}
+			inline ColorRGB<T> operator()(const Math::Vec2<unsigned int> & p) const { return this -> color; }
+			const ColorRGB<T> & color;
+		};
+
 		switch ( getFormat() ) {
 		case Format::R: 			//Blend R -> R
-			return _drawImage<ColorR<T>, ColorRGB<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorR<T>, ColorRGB<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		case Format::RGB:			//Blend RGB -> R
-			return _drawImage<ColorRGB<T>, ColorRGB<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorRGB<T>, ColorRGB<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		case Format::RGBA:		//Blend RGBA -> R
-			return _drawImage<ColorRGBA<T>, ColorRGB<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorRGBA<T>, ColorRGB<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor) {
+	void Graphic::_Image<T>::drawImage(const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		class MyColorFunc {
+		public:
+			MyColorFunc(const ColorRGBA<T> & color) : color(color) {}
+			inline ColorRGBA<T> operator()(const Math::Vec2<unsigned int> & p) const { return this -> color; }
+			const ColorRGBA<T> & color;
+		};
+
 		switch ( getFormat() ) {
 		case Format::R: 			//Blend R -> R
-			return _drawImage<BlendFunc, ColorR<T>, ColorRGBA<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorR<T>, ColorRGBA<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		case Format::RGB:			//Blend RGB -> R
-			return _drawImage<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorRGB<T>, ColorRGBA<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		case Format::RGBA:		//Blend RGBA -> R
-			return _drawImage<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(point, color, rectangle, maskImage, functor);
+			return _drawImage<MyColorFunc, BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(point, MyColorFunc(color), rectangle, maskImage, blendFunc);
 		}
 	}
 
 
 
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawImageR(const Point & point, const ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		switch ( getFormat() ) {
+		case Format::R: 			//Blend R -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorR<T>, ColorR<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		case Format::RGB:			//Blend RGB -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorRGB<T>, ColorR<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		case Format::RGBA:		//Blend RGBA -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorRGBA<T>, ColorR<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		}
+	}
 
 	template<typename T /*= unsigned char*/>
-	template<typename BlendFunc, typename C1, typename C2>
-	void Graphic::_Image<T>::_drawImage(const Point & point, const C2 & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & functor) {
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawImageRGB(const Point & point, const ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		switch ( getFormat() ) {
+		case Format::R: 			//Blend R -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorR<T>, ColorRGB<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		case Format::RGB:			//Blend RGB -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorRGB<T>, ColorRGB<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		case Format::RGBA:		//Blend RGBA -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorRGBA<T>, ColorRGB<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawImageRGBA(const Point & point, const ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
+		switch ( getFormat() ) {
+		case Format::R: 			//Blend R -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorR<T>, ColorRGBA<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		case Format::RGB:			//Blend RGB -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorRGB<T>, ColorRGBA<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		case Format::RGBA:		//Blend RGBA -> R
+			return _drawImage<ColorFunc, BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(point, colorFunc, rectangle, maskImage, blendFunc);
+		}
+	}
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
+	void Graphic::_Image<T>::_drawImage(const Point & point, const ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc) {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Point begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Point maskImageBegin;
+		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<unsigned int> maskImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
@@ -1585,14 +1357,18 @@ namespace Graphic {
 		auto maskIt = maskImage.getDatas(maskImageBegin.x, maskImageBegin.y);
 		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
-		Point i;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
+
+		Math::Vec2<unsigned int> end(begin.x + size.x, begin.y + size.y);
+		Math::Vec2<unsigned int> i;
+		for ( i.y = begin.y; i.y < end.y; i.y++ ) {
 			auto thisIt2 = thisIt;
 			auto otherIt2 = maskIt;
-			auto maxIt = thisIt + size.x * getNbComponents();
-			for ( ; thisIt2 < maxIt; thisIt2 += N1 ) {
-				functor(*( (C1*) thisIt2 ), color, *( ( ColorR<T>* ) otherIt2 ));
+			for ( i.x = begin.x; i.x < end.x; i.x++ ) {
+				if ( *( ( ColorR<T>* ) otherIt2 ) != T(0) ) {
+					blendFunc(*( (C1*) thisIt2 ), colorFunc(i), *( ( ColorR<T>* ) otherIt2 ));
+				}
 				otherIt2 += maskImage.getNbComponents();
+				thisIt2 += N1;
 			}
 			thisIt += thisImageOffset;
 			maskIt += maskImageOffset;
@@ -2359,11 +2135,6 @@ namespace Graphic {
 	}
 
 
-
-
-
-
-
 	template<typename T /*= unsigned char*/>
 	Format _Image<T>::loadingFormat2Format(LoadingFormat loadingFormat) {
 		switch ( loadingFormat ) {
@@ -2382,44 +2153,42 @@ namespace Graphic {
 		}
 	}
 
-
-
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorR<T> & color, const BlendFunc & functor) {
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorR<T> & color, const BlendFunc & blendFunc) {
 		switch ( this -> format ) {
 		case Format::R: 
-			return _drawRectangle<BlendFunc, ColorR<T>, ColorR<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorR<T>, ColorR<T>>(rectangle, color, blendFunc);
 		case Format::RGB: 
-			return _drawRectangle<BlendFunc, ColorRGB<T>, ColorR<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorRGB<T>, ColorR<T>>(rectangle, color, blendFunc);
 		case Format::RGBA: 
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, ColorR<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, ColorR<T>>(rectangle, color, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorRGB<T> & color, const BlendFunc & functor) {
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorRGB<T> & color, const BlendFunc & blendFunc) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangle<BlendFunc, ColorR<T>, ColorRGB<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorR<T>, ColorRGB<T>>(rectangle, color, blendFunc);
 		case Format::RGB:
-			return _drawRectangle<BlendFunc, ColorRGB<T>, ColorRGB<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorRGB<T>, ColorRGB<T>>(rectangle, color, blendFunc);
 		case Format::RGBA:
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(rectangle, color, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const BlendFunc & functor) {
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const ColorRGBA<T> & color, const BlendFunc & blendFunc) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangle<BlendFunc, ColorR<T>, ColorRGBA<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorR<T>, ColorRGBA<T>>(rectangle, color, blendFunc);
 		case Format::RGB:
-			return _drawRectangle<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(rectangle, color, blendFunc);
 		case Format::RGBA:
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(rectangle, color, functor);
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(rectangle, color, blendFunc);
 		}
 	}
 
@@ -2430,75 +2199,73 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
+		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		size_t nbComponentsPerLineRectangle = N1 * width;
+		size_t nbComponentsPerLine = N1 * this -> size.x;
 
-		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
-		auto thisImageOffset = this -> size.x * N1;
 
-		Math::Vec2<unsigned int> i;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
-			auto thisIt2 = thisIt;
-			auto maxIt = thisIt2 + size.x * getNbComponents();
-			for ( ; thisIt2 < maxIt; thisIt2 += N1 )
-				functor(*( ( C1* )thisIt2 ), color);
-			thisIt += thisImageOffset;
+		for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
+			auto maxIt = it + nbComponentsPerLineRectangle;
+			for ( auto it2 = it; it2 < maxIt; it2 += N1 ) {
+				functor(*( (C1 *) it2 ), color);
+			}
+			it += nbComponentsPerLine;
 		}
 	}
 
 
-	
-
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientLinear<C, InterFunc> & gradient, const BlendFunc & blendingFunc) {
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientLinear<C, InterFunc> & gradient, const BlendFunc & blendFunc) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		case Format::RGB:
-			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		case Format::RGBA:
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
-		}
-	}
-
-	template<typename T /*= unsigned char*/>
-	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientRadial<C, InterFunc> & gradient, const BlendFunc & blendingFunc) {
-		switch ( this -> format ) {
-		case Format::R:
-			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
-		case Format::RGB:
-			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
-		case Format::RGBA:
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendingFunc) {
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientRadial<C, InterFunc> & gradient, const BlendFunc & blendFunc) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		case Format::RGB:
-			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		case Format::RGBA:
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendingFunc) {
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		case Format::RGB:
-			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		case Format::RGBA:
-			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendingFunc);
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendFunc);
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename C, typename InterFunc, typename BlendFunc>
+	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc) {
+		switch ( this -> format ) {
+		case Format::R:
+			return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>(rectangle, gradient, blendFunc);
+		case Format::RGB:
+			return _drawRectangle<BlendFunc, ColorRGB<T>, C, InterFunc>(rectangle, gradient, blendFunc);
+		case Format::RGBA:
+			return _drawRectangle<BlendFunc, ColorRGBA<T>, C, InterFunc>(rectangle, gradient, blendFunc);
 		}
 	}
 
@@ -2506,66 +2273,97 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc>
 	void _Image<T>::drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient) {
-		return _drawRectangle<C, InterFunc>(rectangle, gradient);
+		switch ( getFormat() ) {
+			case Format::R:
+				return _drawRectangle<ColorR<T>, C, InterFunc>(rectangle, gradient);
+			case Format::RGB:
+				return _drawRectangle<ColorRGB<T>, C, InterFunc>(rectangle, gradient);
+			case Format::RGBA:
+				return _drawRectangle<ColorRGBA<T>, C, InterFunc>(rectangle, gradient);
+		}
 	}
 
 
 
 
 	template<typename T /*= unsigned char*/>
-	template<typename C, typename InterFunc>
-	void _Image<T>::_drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient) {
-		constexpr size_t N = sizeof(C) / sizeof(T);
+	template<typename C1, typename C2, typename InterFunc>
+	void _Image<T>::_drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient) {
+		constexpr size_t N1 = sizeof(C1) / sizeof(T);
+		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
 		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
 		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
-		auto thisImageOffset = this -> size.x * N;
+		auto thisImageOffset = this -> size.x * N1;
 
 		//generate the gradient
-		T * gradientArray = new T[size.x * N];
-		gradient.computeInterpolation((C *) gradientArray, size.x);
+		C2 * gradientArray = new C2[size.x];
+		gradient.computeInterpolation(gradientArray, size.x);
 
 		Math::Vec2<unsigned int> i;
-		switch ( this -> format ) {
-		case Format::R: {			//C -> R
+		if ((N1 != 4) && (N1 == N2)) {
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				Vector<T>::copy(thisIt, gradientArray, size.x * N);
+				Vector<T>::copy(thisIt, gradientArray, size.x * N1);
 				thisIt += thisImageOffset;
 			}
-			break;
-		}
-		case Format::RGB: {		//C -> RGB
+		} else {
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto maxIt = thisIt + size.x * N;
 				auto gradientIt = gradientArray;
-				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += 3 ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( (C*) gradientIt ));
-					gradientIt += N;
+				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
+					BlendingFunc::Normal::blendColor(*( ( C1* )thisIt2 ), *( (C2*) gradientIt ));
+					thisIt2 += N1
+					gradientIt += N2;
 				}
 				thisIt += thisImageOffset;
 			}
-			break;
-		}
-		case Format::RGBA: {		//C -> RGBA
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto maxIt = thisIt + size.x * N;
-				auto gradientIt = gradientArray;
-				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += 4 ) {
-					BlendingFunc::Normal::blendColor(*( ( ColorRGB<T>* )thisIt2 ), *( (C*) gradientIt ));
-					gradientIt += N;
-				}
-				thisIt += thisImageOffset;
-			}
-			break;
-		}
 		}
 
 		//free the buffer
 		delete[] gradientArray;
 	}
 
+
+	template<typename T /*= unsigned char*/>
+	template<typename C1, typename C2, typename InterFunc>
+	void _Image<T>::_fillImage(const GradientHorizontal<C2, InterFunc> & gradient, const Rectangle & rectangle){
+		constexpr size_t N1 = sizeof(C1) / sizeof(T);
+		constexpr size_t N2 = sizeof(C2) / sizeof(T);
+
+		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
+		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
+		auto thisImageOffset = this -> size.x * N1;
+
+		//generate the gradient
+		C2 * gradientArray = new C2[size.x];
+		gradient.computeInterpolation(gradientArray, size.x);
+
+		Math::Vec2<unsigned int> i;
+		if ( ( N1 == N2 ) ) {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				Vector<T>::copy(thisIt, gradientArray, size.x * N1);
+				thisIt += thisImageOffset;
+			}
+		} else {
+			for ( i.y = 0; i.y < size.y; i.y++ ) {
+				auto maxIt = thisIt + size.x * N1;
+				auto gradientIt = gradientArray;
+				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
+					BlendingFunc::None::blendColor(*( (C1*) thisIt2 ), *( (C2*) gradientIt ));
+					thisIt2 += N1;
+					gradientIt += N2;
+				}
+				thisIt += thisImageOffset;
+			}
+		}
+
+		//free the buffer
+		delete[] gradientArray;
+	}
 
 
 
@@ -2583,16 +2381,16 @@ namespace Graphic {
 		auto thisImageOffset = this -> size.x * getNbComponents();
 
 		//generate the gradient
-		T * gradientArray = new T[size.x * N2];
-		gradient.computeInterpolation((C2 *) gradientArray, size.x);
+		C2 * gradientArray = new T[size.x];
+		gradient.computeInterpolation(gradientArray, size.x);
 
-		Math::Vec2<unsigned int> i;
+		Point i;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto maxIt = thisIt + size.x * N1;
 			auto gradientIt = gradientArray;
 			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
-				blendingFunctor(*( ( C1* )thisIt2 ), *( (C2*) gradientIt ));
-				gradientIt += N2;
+				blendingFunctor(*( ( C1* )thisIt2 ), *( gradientIt ));
+				gradientIt++;
 			}
 			thisIt += thisImageOffset;
 		}
@@ -2614,17 +2412,17 @@ namespace Graphic {
 		auto thisImageOffset = this -> size.x * getNbComponents();
 
 		//generate the gradient
-		T * gradientArray = new T[size.x * N2];
-		gradient.computeInterpolation((C2 *) gradientArray, size.x);
+		C2 * gradientArray = new C2[size.x];
+		gradient.computeInterpolation(gradientArray, size.x);
 
-		Math::Vec2<unsigned int> i;
+		Point i;
 		auto gradientIt = gradientArray;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto maxIt = thisIt + size.x * getNbComponents();
 			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
-				blendingFunctor(*( ( C1* )thisIt2 ), *( (C2*) gradientIt ));
+				blendingFunctor(*( ( C1* )thisIt2 ), *( gradientIt ));
 			}
-			gradientIt += N2;
+			gradientIt++;
 			thisIt += thisImageOffset;
 		}
 		//free the buffer
@@ -2645,7 +2443,7 @@ namespace Graphic {
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * getNbComponents();
 
-		Math::Vec2<float> origin(gradient.getPoint().x * float(size.x), gradient.getPoint().y * float(size.y));
+		Point origin(gradient.getPoint().x * float(size.x), gradient.getPoint().y * float(size.y));
 		Math::Vec2<float> v(Math::cos(gradient.getAngleRad()), Math::sin(gradient.getAngleRad()));
 
 		int gradientSize;
@@ -2656,18 +2454,15 @@ namespace Graphic {
 		
 		int gradientSizeMinusOne = gradientSize - 1;
 
-		T * gradientArray = new T[gradientSize * N2];
-		gradient.computeInterpolation((C2 *) gradientArray, gradientSize);
+		C2 * gradientArray = new C2[gradientSize];
+		gradient.computeInterpolation(gradientArray, gradientSize);
 
-
-		Math::Vec2<unsigned int> i;
+		Point i;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
-				Math::Vec2<float> BA(Math::Vec2<float>(i) - origin);
-				int BH = (int) Math::dot(BA, v);
-				BH = Math::clamp<int>(BH, 0, gradientSizeMinusOne);
-				blendingFunctor(*( (C1*) thisIt2 ), *( (C2*) ( gradientArray + BH * N2 ) ));
+				auto index = GradientLinear<C2, InterFunc>::computeIndex(i - origin, gradientSizeMinusOne, gradient.getDirection());
+				blendingFunctor(*( (C1*) thisIt2 ), gradientArray[index]);
 				thisIt2 += N1;
 			}
 			thisIt += thisImageOffset;
@@ -2693,34 +2488,20 @@ namespace Graphic {
 		auto thisImageOffset = this -> size.x * getNbComponents();
 
 
+		Point center(gradient.getCenter().x * float(size.x), gradient.getCenter().y * float(size.y));
 
-		Math::Vec2<float> radius(gradient.getRadius().x , gradient.getRadius().y );
-		Math::Vec2<float> center(gradient.getCenter().x * float(size.x), gradient.getCenter().y * float(size.y));
-
-
-
-		int gradientSize = int(Math::max<float>(radius.x * float(size.x), radius.y * float(size.y)));
+		int gradientSize = int(Math::max<float>(gradient.getRadius().x * float(size.x), gradient.getRadius().y * float(size.y)));
 		int gradientSizeMinusOne = gradientSize - 1;
 
-		T * gradientArray = new T[gradientSize * N2];
-		gradient.computeInterpolation((C2 *) gradientArray, gradientSize);
+		C2 * gradientArray = new C2[gradientSize];
+		gradient.computeInterpolation(gradientArray, gradientSize);
 
-
-		Math::Vec2<unsigned int> i;
+		Point i;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
-
-
-				Math::Vec2<float> v(Math::Vec2<float>(i) - center);
-				v.x *= radius.x;
-				v.y *= radius.y;
-
-				int index = int(Math::sqrt(v.x * v.x + v.y * v.y));
-
-
-				index = Math::clamp<int>(index, 0, gradientSizeMinusOne);
-				blendingFunctor(*( (C1*) thisIt2 ), *( (C2*) ( gradientArray + index * N2 ) ));
+				auto index = GradientRadial<C2, InterFunc>::computeIndex(i - center, gradientSizeMinusOne, gradient.getRadius());
+				blendingFunctor(*( (C1*) thisIt2 ), gradientArray[index]);
 				thisIt2 += N1;
 			}
 			thisIt += thisImageOffset;
@@ -2739,11 +2520,11 @@ namespace Graphic {
 	void _Image<T>::drawRectangleR(const Rectangle & rectangle, const ColorFunc & colorFunctorR, const BlendFunc & blendingFunctor) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangleFunctor<ColorR<T>, ColorR<T>>(rectangle, colorFunctorR, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorR<T>, ColorR<T>>(rectangle, colorFunctorR, blendingFunctor);
 		case Format::RGB:
-			return _drawRectangleFunctor<ColorRGB<T>, ColorR<T>>(rectangle, colorFunctorR, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorRGB<T>, ColorR<T>>(rectangle, colorFunctorR, blendingFunctor);
 		case Format::RGBA:
-			return _drawRectangleFunctor<ColorRGBA<T>, ColorR<T>>(rectangle, colorFunctorR, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorRGBA<T>, ColorR<T>>(rectangle, colorFunctorR, blendingFunctor);
 		}
 	}
 
@@ -2752,11 +2533,11 @@ namespace Graphic {
 	void _Image<T>::drawRectangleRGB(const Rectangle & rectangle, const ColorFunc & colorFunctorRGB, const BlendFunc & blendingFunctor) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangleFunctor<ColorR<T>, ColorRGB<T>>(rectangle, colorFunctorRGB, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorR<T>, ColorRGB<T>>(rectangle, colorFunctorRGB, blendingFunctor);
 		case Format::RGB:
-			return _drawRectangleFunctor<ColorRGB<T>, ColorRGB<T>>(rectangle, colorFunctorRGB, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorRGB<T>, ColorRGB<T>>(rectangle, colorFunctorRGB, blendingFunctor);
 		case Format::RGBA:
-			return _drawRectangleFunctor<ColorRGBA<T>, ColorRGB<T>>(rectangle, colorFunctorRGB, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorRGBA<T>, ColorRGB<T>>(rectangle, colorFunctorRGB, blendingFunctor);
 		}
 	}
 
@@ -2765,11 +2546,11 @@ namespace Graphic {
 	void _Image<T>::drawRectangleRGBA(const Rectangle & rectangle, const ColorFunc & colorFunctorRGBA, const BlendFunc & blendingFunctor) {
 		switch ( this -> format ) {
 		case Format::R:
-			return _drawRectangleFunctor<ColorR<T>, ColorRGBA<T>>(rectangle, colorFunctorRGBA, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorR<T>, ColorRGBA<T>>(rectangle, colorFunctorRGBA, blendingFunctor);
 		case Format::RGB:
-			return _drawRectangleFunctor<ColorRGB<T>, ColorRGBA<T>>(rectangle, colorFunctorRGBA, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorRGB<T>, ColorRGBA<T>>(rectangle, colorFunctorRGBA, blendingFunctor);
 		case Format::RGBA:
-			return _drawRectangleFunctor<ColorRGBA<T>, ColorRGBA<T>>(rectangle, colorFunctorRGBA, blendingFunctor);
+			return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(rectangle, colorFunctorRGBA, blendingFunctor);
 		}
 	}
 
@@ -2791,8 +2572,7 @@ namespace Graphic {
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
-				colorFunctor(i, color);
-				blendingFunctor(*( ( C1* )thisIt2 ), color);
+				blendingFunctor(*( ( C1* )thisIt2 ), colorFunctor(i));
 				thisIt2 += N1;
 			}
 			thisIt += thisImageOffset;

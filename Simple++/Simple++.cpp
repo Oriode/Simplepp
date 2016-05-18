@@ -141,17 +141,33 @@ int main(int argc, char * argv[]){
 
 
 
-	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradient;
-	gradient.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,255));
-	gradient.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
-	gradient.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
-	gradient.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-	gradient.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
-	gradient.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,255,255,255));
+	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientVertical;
+	gradientVertical.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,255));
+	gradientVertical.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
+	gradientVertical.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
+	gradientVertical.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	gradientVertical.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	gradientVertical.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,255,255,255));
 
 
+	Graphic::GradientLinear<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientLinear(45);
+	gradientLinear.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientLinear.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
+	gradientLinear.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
+	gradientLinear.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	gradientLinear.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	gradientLinear.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
-	UTF8String testStr("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin finibus eu risus vitae feugiat.  ");
+
+	Graphic::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientRadial;
+	gradientRadial.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientRadial.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
+	gradientRadial.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
+	gradientRadial.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	gradientRadial.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+
+	UTF8String testStr("Hello World");
 
 
 	Graphic::Image testBlendRGBA(Math::vec2ui(200, 200), Graphic::Format::RGBA);
@@ -194,14 +210,26 @@ int main(int argc, char * argv[]){
 
 	*( imageTest2[0] ) = imageTest2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
+                                                        
+
+
 
 	auto maskTest = fontTest['A'];
 	imageTest2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
 	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
 
-	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, colorBlack, Math::Vec2<bool>(true, true));
 
-	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradient);
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Text										//
+	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, Graphic::ColorR<unsigned char>(255), Math::Vec2<bool>(true, true));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Gradient										//
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientVertical);					//Vertical
+	imageTest2[0] -> fillImage(gradientVertical, Graphic::Rectangle(0, 0, 500, 500));						//Vertical
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientLinear);				//Linear
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientRadial);				//Radial
+
 
 	//Graphic::Image textImage(Math::vec2ui(textRectangle.getRight() - textRectangle.getLeft(), textRectangle.getTop() - textRectangle.getBottom()), Graphic::Format::RGBA);
 	//textImage.fill(colorWhite);

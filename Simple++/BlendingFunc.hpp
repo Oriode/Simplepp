@@ -458,6 +458,146 @@ namespace Graphic {
 			}
 
 		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		class None {
+		public:
+			//WITHOUT MASK
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorR<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGB<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorR<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc) const { blendColor(colorDest, colorSrc); }
+
+			//WITH MASK
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorR<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGB<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+			template<typename T> void operator()(ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc, const ColorR<T> & colorMask) const { blendColor(colorDest, colorSrc, colorMask); }
+
+
+			/************************************************************************/
+			/* R -> R                                                               */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorR<I> & colorSrc) {
+				colorDest = colorSrc;
+			}
+			/************************************************************************/
+			/* R -> RGB                                                             */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorR<I> & colorSrc) {
+				colorDest.r = colorSrc;
+				colorDest.g = colorSrc;
+				colorDest.b = colorSrc;
+			}
+			/************************************************************************/
+			/* R -> RGBA                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc) {
+				colorDest.r = colorSrc;
+				colorDest.g = colorSrc;
+				colorDest.b = colorSrc;
+				colorDest.a = _Image<I>::getComponentMaxValue();
+			}
+
+			/************************************************************************/
+			/* RGB -> R                                                               */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorRGB<I> & colorSrc) {
+				colorDest = colorSrc.r;
+			}
+			/************************************************************************/
+			/* RGB -> RGB                                                           */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc) {
+				colorDest.r = colorSrc.r;
+				colorDest.g = colorSrc.g;
+				colorDest.b = colorSrc.b;
+			}
+			/************************************************************************/
+			/* RGB -> RGBA                                                          */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc) {
+				colorDest.r = colorSrc.r;
+				colorDest.g = colorSrc.g;
+				colorDest.b = colorSrc.b;
+				colorDest.a = _Image<I>::getComponentMaxValue();
+			}
+
+			/************************************************************************/
+			/* RGBA -> R                                                            */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc) {
+				colorDest = colorSrc.r;
+			}
+			/************************************************************************/
+			/* RGBA -> RGB                                                          */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc) {
+				colorDest.r = colorSrc.r;
+				colorDest.g = colorSrc.g;
+				colorDest.b = colorSrc.b;
+			}
+			/************************************************************************/
+			/* RGBA -> RGBA                                                         */
+			/************************************************************************/
+			template<typename I>
+			inline static void blendColor(ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc) {
+				colorDest.r = colorSrc.r;
+				colorDest.g = colorSrc.g;
+				colorDest.b = colorSrc.b;
+				colorDest.a = colorSrc.a;
+
+
+			}
+		};
+
+
+
+
+
+
+
 	}
 
 

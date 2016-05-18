@@ -111,6 +111,18 @@ namespace Graphic {
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
 		GradientHorizontal(const Func & functor = Func());
 
+
+		///@brief Compute the index in the interpolated array
+		///@param p Point relative of this gradient.
+		///@return Computed index.
+		static int computeIndex(const Point & p);
+
+		///@brief Compute the index in the interpolated array
+		///@param p Point relative of this gradient.
+		///@param maxIndex maximal value of an interpolation table index.
+		///@return Computed index.
+		static int computeIndex(const Point & p, int maxIndex);
+
 	private:
 
 
@@ -124,11 +136,24 @@ namespace Graphic {
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
 		GradientVertical(const Func & functor = Func());
 
+
+		///@brief Compute the index in the interpolated array
+		///@param p Point relative of this gradient.
+		///@return Computed index.
+		static int computeIndex(const Point & p);
+
+		///@brief Compute the index in the interpolated array
+		///@param p Point relative of this gradient.
+		///@param maxIndex maximal value of an interpolation table index.
+		///@return Computed index.
+		static int computeIndex(const Point & p, int maxIndex);
+
 	private:
 
 
 
 	};
+
 
 
 	template<typename C, typename Func = InterpolationFunc::Linear>
@@ -161,12 +186,18 @@ namespace Graphic {
 			///@return Radius of this gradient
 			const Math::Vec2<float> & getRadius() const;
 
-
+			///@brief Compute the index in the interpolated array
+			///@param p Point relative of this gradient.
+			///@param maxIndex maximal value of an interpolation table index.
+			///@param radius Radius of the gradient (between 0.0 and 1.0)
+			///@return Computed index.
+			static int computeIndex(const Point & p, int maxIndex, const Math::Vec2<float> & radius);
 
 	private:
 		Math::Vec2<float> center;
 		Math::Vec2<float> radius;
 	};
+
 
 
 
@@ -210,14 +241,25 @@ namespace Graphic {
 		///@brief get the length of this gradient
 		///@return Length in pixels
 		unsigned int getLength() const;
+
+		///@brief get the unitary vector representing the direction of this gradient.
+		///@return Unitary vector
+		const Math::Vec2<float> & getDirection() const;
+
+
+		///@brief Compute the index in the interpolated array
+		///@param p Point relative of this gradient.
+		///@param maxIndex maximal value of an interpolation table index.
+		///@param direction Unitary vector representing the direction if this gradient.
+		///@return Computed index.
+		static int computeIndex(const Point & p, int maxIndex, const Math::Vec2<float> & direction);
 	private:
 		unsigned int length;
 		Math::Vec2<float> p;
 		float angle;
 		float angleRad;
+		Math::Vec2<float> v;
 	};
-
-	
 
 
 	

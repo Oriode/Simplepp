@@ -157,16 +157,43 @@ namespace Graphic {
 
 	}
 
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	int GradientHorizontal<C, Func>::computeIndex(const Point & p) {
+		return p.x;
+	}
+
+
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	int GradientHorizontal<C, Func>::computeIndex(const Point & p, int maxIndex) {
+		return Math::clamp(p.x, 0, maxIndex);
+	}
+
+
+
 	template<typename C, typename Func>
 	GradientVertical<C, Func>::GradientVertical(const Func & functor) :
 		Gradient(functor) {
 
 	}
 
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	int GradientVertical<C, Func>::computeIndex(const Point & p) {
+		return p.y;
+	}
+
+
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	int GradientVertical<C, Func>::computeIndex(const Point & p, int maxIndex) {
+		return Math::clamp(p.y, 0, maxIndex);
+	}
+
+
 	template<typename C, typename Func>
 	void GradientLinear<C, Func>::setAngle(float angle) {
 		this -> angle = angle;
 		this -> angleRad = angle * 0.0174533f;
+		this -> v.x = Math::cos(gradient.getAngleRad());
+		this -> v.y = Math::sin(gradient.getAngleRad());
 	}
 
 	template<typename C, typename Func>
@@ -195,14 +222,29 @@ namespace Graphic {
 	}
 
 	template<typename C, typename Func>
-	GradientLinear<C, Func>::GradientLinear(float angle, const Math::Vec2<float> & p /*= Point::null*/, unsigned int length /*= 100*/, const Func & functor) :
-		Gradient(functor)
+	GradientLinear<C, Func>::GradientLinear(float angle, const Math::Vec2<float> & p /*= Math::Vec2<float>::null*/, unsigned int length /*= 0*/, const Func & functor /*= Func()*/) :
+		Gradient(functor),
 		angle(angle),
 		angleRad( angle * 0.0174533 ),
 		p(p),
-		length(length) {
+		length(length),
+		v(Math::cos(angleRad), Math::sin(angleRad))
+	
+	{
 
 	}
+
+
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	int GradientLinear<C, Func>::computeIndex(const Point & p, int maxIndex, const Math::Vec2<float> & direction) {
+		return Math::clamp<int>((int) Math::dot(Math::Vec2<float>(p), direction), 0, maxIndex);
+	}
+
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	const Math::Vec2<float> & GradientLinear<C, Func>::getDirection() const {
+		return this -> v;
+	}
+
 
 	template<typename C, typename Func>
 	float GradientLinear<C, Func>::getAngleRad() const {
@@ -237,6 +279,11 @@ namespace Graphic {
 
 	}
 
+
+	template<typename C, typename Func /*= InterpolationFunc::Linear*/>
+	int GradientRadial<C, Func>::computeIndex(const Point & p, int maxIndex, const Math::Vec2<float> & radius) {
+		return int(Math::length(Math::Vec2<float>(p) * radius));
+	}
 
 }
 
