@@ -625,6 +625,11 @@ namespace Graphic {
 		_Image<T> applyFilter(const C * filter, size_t size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null) const;
 
 
+		///@brief Clamp a rectangle inside the image
+		///@param rectangle rectangle to be clamped
+		///@return an unsigned rectangle clamped inside the image
+		inline Math::Rectangle<unsigned int> clampRectangle(const Rectangle & rectangle) const;
+
 	protected:
 
 		
@@ -676,9 +681,8 @@ namespace Graphic {
 
 		void _allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
-		static Format loadingFormat2Format(LoadingFormat loadingFormat);
+		static Format _loadingFormat2Format(LoadingFormat loadingFormat);
 
-		inline Math::Rectangle<unsigned int> _clampRectangle(const Rectangle & rectangle) const;
 
 		template<typename C>
 		_Image<T> _applyFilter(const C * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const;

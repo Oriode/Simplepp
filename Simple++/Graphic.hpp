@@ -41,42 +41,102 @@ namespace Graphic {
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
 	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
 		struct Functor {
-
-
-			//TODO
 			struct ColorFunctor {
-				ColorFunctor(){}
-				inline void operator()(const Math::Vec2<unsigned int> & p, C & c) const { c = C(42); }
-
+				ColorFunctor(C * interpolatedArray, const Math::Rectangle<unsigned int> & clampedRectangle) : clampedRectangle(clampedRectangle) {}
+				inline C operator()(const Math::Vec2<unsigned int> & p) const {
+					unsigned int index = p.x - this -> clampedRectangle.getLeft();
+					return this -> interpolatedArray[index];
+				}
+				C * interpolatedArray;
+				const Math::Rectangle<unsigned int> & clampedRectangle;
 			};
+			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc) : colorFunctor(this -> interpolatedArray, this -> clampedRectangle), image(image), gradient(gradient), blendFunc(blendFunc) {}
+			void onBegin(const Rectangle & rectangle) {
+				unsigned int size = rectangle.getRight() - rectangle.getLeft();
+				this -> clampedRectangle = this -> image -> clampRectangle(rectangle);
+				unsigned int clampedSize = this -> clampedRectangle.getRight() - this -> clampedRectangle.getLeft();
 
+				float begin = float(int(this -> clampedRectangle.getLeft()) - rectangle.getLeft()) / float(size);
+				float end = 1.0f - float(rectangle.getRight() - int(this -> clampedRectangle.getRight())) / float(size);
 
+				this -> interpolatedArray = new C[clampedSize];
+				this -> gradient.computeInterpolation(this -> interpolatedArray, clampedSize, begin, end);
+				this -> colorFunctor.interpolatedArray = this -> interpolatedArray;
+				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
+			}
+			void operator()(float x, float y, const _Image<T> & c) { 
+				constexpr size_t N = sizeof(C) / sizeof(T);
+				switch ( N ) {		//switch on a constexpr, will be interpreted during compilation
+				case 1:			//R -> ?
+					return this -> image -> drawImageR<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 3:			//R -> ?
+					return this -> image -> drawImageRGB<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 4:			//R -> ?
+					return this -> image -> drawImageRGBA<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				}
+			}
 
-			Functor(_Image<T> * image, const GradientHorizontal<T> & gradient, const BlendFunc & blendFunc) : image(image), gradient(gradient), blendFunc(blendFunc) {}
-			void onBegin(const Math::Vec2<float> & size) { this -> gradient.computeInterpolation(this -> interpolatedArray, size.x); }
-			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), this , c, this -> blendFunc); }
+			~Functor() { delete[] this -> interpolatedArray; }
 		private:
+			ColorFunctor colorFunctor;
 			_Image<T> * image;
 			const BlendFunc & blendFunc;
-			const GradientHorizontal<T> & gradient;
-			T * interpolatedArray;
+			const GradientHorizontal<C, InterFunc> & gradient;
+			C * interpolatedArray;
+			Math::Rectangle<unsigned int> clampedRectangle;
 		};
 		Functor functor(image, gradient, blendFunc);
-		_drawText(font, rectangle, text, centered, functor);
+		_drawTextWBB(font, point, text, centered, functor);
 	}
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
 		struct Functor {
-			Functor(_Image<T> * image, const C & color, const BlendFunc & blendFunc) : image(image), color(color), blendFunc(blendFunc) {}
-			void onBegin(const Math::Vec2<float> & size) {}
-			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), this -> color, c, this -> blendFunc); }
+			struct ColorFunctor {
+				ColorFunctor(const Math::Rectangle<unsigned int> & clampedRectangle) : clampedRectangle(clampedRectangle) {}
+				inline C operator()(const Math::Vec2<unsigned int> & p) const {
+					unsigned int index = p.x - this -> clampedRectangle.getLeft();
+					return this -> interpolatedArray[index];
+				}
+				C * interpolatedArray;
+				const Math::Rectangle<unsigned int> & clampedRectangle;
+			};
+			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc) : colorFunctor(this -> clampedRectangle), image(image), gradient(gradient), blendFunc(blendFunc) {
+				unsigned int size = rectangle.getRight() - rectangle.getLeft();
+				this -> clampedRectangle = this -> image -> clampRectangle(rectangle);
+				unsigned int clampedSize = this -> clampedRectangle.getRight() - this -> clampedRectangle.getLeft();
+
+				float begin = float(int(this -> clampedRectangle.getLeft()) - rectangle.getLeft()) / float(size);
+				float end = 1.0f - float(rectangle.getRight() - int(this -> clampedRectangle.getRight())) / float(size);
+
+				this -> interpolatedArray = new C[clampedSize];
+				this -> gradient.computeInterpolation(this -> interpolatedArray, clampedSize, begin, end);
+				this -> colorFunctor.interpolatedArray = this -> interpolatedArray;
+				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
+			}
+
+			void operator()(float x, float y, const _Image<T> & c) {
+				constexpr size_t N = sizeof(C) / sizeof(T);
+				switch ( N ) {		//switch on a constexpr, will be interpreted during compilation
+				case 1:			//R -> ?
+					return this -> image -> drawImageR<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 3:			//R -> ?
+					return this -> image -> drawImageRGB<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 4:			//R -> ?
+					return this -> image -> drawImageRGBA<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				}
+			}
+
+			~Functor() { delete[] this -> interpolatedArray; }
 		private:
+			ColorFunctor colorFunctor;
 			_Image<T> * image;
-			const C & color;
 			const BlendFunc & blendFunc;
+			const GradientHorizontal<C, InterFunc> & gradient;
+			C * interpolatedArray;
+			Math::Rectangle<unsigned int> clampedRectangle;
 		};
-		Functor functor(image, color, blendFunc);
+		Functor functor(image, gradient, rectangle, blendFunc);
 		_drawText(font, rectangle, text, centered, functor);
 	}
 
@@ -85,7 +145,7 @@ namespace Graphic {
 	void _drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
 		struct Functor {
 			Functor(_Image<T> * image, const C & color, const BlendFunc & blendFunc) : image(image), color(color), blendFunc(blendFunc) {}
-			void onBegin(const Math::Vec2<float> & size) {}
+			void onBegin(const Rectangle & size) {}
 			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), this -> color, c, this -> blendFunc); }
 		private:
 			_Image<T> * image;
@@ -118,7 +178,7 @@ namespace Graphic {
 	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/) {
 		struct Functor {
 			Functor(_Image<T> * image) : image(image) {}
-			void onBegin(const Math::Vec2<float> & size) {}
+			void onBegin(const Rectangle & size) {}
 			void operator()(float x, float y, const _Image<T> & c) { this -> image ->  drawImage(Point(x, y), c); }
 		private:
 			_Image<T> * image;
@@ -131,7 +191,7 @@ namespace Graphic {
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/) {
 		struct Functor {
 			Functor(_Image<T> * image) : image(image) {}
-			void onBegin(const Math::Vec2<float> & size) {}
+			void onBegin(const Rectangle & size) {}
 			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), c); }
 		private:
 			_Image<T> * image;
@@ -142,6 +202,106 @@ namespace Graphic {
 
 
 
+
+
+	template<typename Func>
+	void _drawTextWBB(const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func) {
+		Math::Vec2<float> initPoint(point);
+		UCodePoint codePoint;
+
+		Vector<float> lineWidth;
+		lineWidth.reserve(10);
+		float currentPosX = 0.0f;
+		float rectangleHeight = font.getLineHeight();
+		float maxLineWidth = 0.0f;
+		Rectangle rectangle(0,0,0,0);
+
+
+		for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+			if ( codePoint == '\n' ) {
+				rectangleHeight += font.getLineHeight();
+				lineWidth.push(currentPosX / 2.0f);
+
+				//
+				maxLineWidth = Math::max<float>(maxLineWidth, currentPosX);
+				//
+
+				currentPosX = 0;
+			} else if ( codePoint == ' ' ) {
+				currentPosX += font.getWordSpace();
+			} else {
+				const FreeTypeChar * c = font[codePoint];
+				if ( c ) {
+					currentPosX += c -> getHoriAdvance();
+				}
+			}
+		}
+		lineWidth.push(currentPosX / 2.0f);
+		maxLineWidth = Math::max<float>(maxLineWidth, currentPosX);
+
+
+
+		float marginY = font.getLineHeight() * 0.7f;
+		if ( centered.y ) {
+			float rectangleHeightHalfed = rectangleHeight * 0.5f;
+			rectangle.setTop(initPoint.y + rectangleHeightHalfed);				//update BB
+			rectangle.setBottom(initPoint.y - rectangleHeightHalfed);				//update BB
+			initPoint.y = initPoint.y - marginY + rectangleHeightHalfed;
+
+		} else {
+			rectangle.setTop(initPoint.y + marginY);										//update BB
+			rectangle.setBottom(initPoint.y + marginY - rectangleHeight);						//update BB
+		}
+
+
+
+		if ( centered.x ) {
+			rectangle.setLeft(initPoint.x - maxLineWidth * 0.5f);
+			rectangle.setRight(initPoint.x + maxLineWidth * 0.5f);
+
+			func.onBegin(rectangle);
+
+			Math::Vec2<float> currentPos(initPoint.x - lineWidth[0], initPoint.y);
+			unsigned int currentLine = 1;
+
+			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+				if ( codePoint == '\n' ) {
+					currentPos.y -= font.getLineHeight();
+					currentPos.x = initPoint.x - lineWidth[currentLine];
+					currentLine++;
+				} else if ( codePoint == ' ' ) {
+					currentPos.x += font.getWordSpace();
+				} else {
+					const FreeTypeChar * c = font[codePoint];
+					if ( c ) {
+						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						currentPos.x += c -> getHoriAdvance();
+					}
+				}
+			}
+		} else {
+			rectangle.setLeft(initPoint.x);
+			rectangle.setRight(initPoint.x + maxLineWidth);
+
+			func.onBegin(rectangle);
+
+			Math::Vec2<float> currentPos(initPoint);
+			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+				if ( codePoint == '\n' ) {
+					currentPos.y -= font.getLineHeight();
+					currentPos.x = initPoint.x;
+				} else if ( codePoint == ' ' ) {
+					currentPos.x += font.getWordSpace();
+				} else {
+					const FreeTypeChar * c = font[codePoint];
+					if ( c ) {
+						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						currentPos.x += c -> getHoriAdvance();
+					}
+				}
+			}
+		}
+	}
 
 
 
@@ -219,7 +379,6 @@ namespace Graphic {
 
 
 		} else {
-
 			if ( centered.y ) {
 				float rectangleTop = font.getLineHeight();
 				for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
@@ -229,10 +388,7 @@ namespace Graphic {
 				initPoint.y = initPoint.y - font.getLineHeight() * 0.7f + rectangleTop * 0.5f;
 			}
 
-
-
 			Math::Vec2<float> currentPos(initPoint);
-
 			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
@@ -266,7 +422,6 @@ namespace Graphic {
 
 
 		if ( centered.x ) {
-
 			Vector<float> lineWidth;
 			lineWidth.reserve(10);
 			float currentPosX = 0.0f;
@@ -281,7 +436,9 @@ namespace Graphic {
 				float tmpPosX = currentPosX;
 				auto it2 = it;
 				for ( ; textCopy.iterate(&it2, &codePoint); ) {
-					if ( codePoint == ' ' ) {
+					if ( codePoint == '\n' ) {
+						goto drawText_afterIterate;	//if we reached the end of the word
+					} else if ( codePoint == ' ' ) {
 						tmpPosX += font.getWordSpace();
 						goto drawText_afterIterate;	//if we reached the end of the word
 					} else {
@@ -289,6 +446,10 @@ namespace Graphic {
 						if ( c ) tmpPosX += c -> getHoriAdvance();
 					}
 				}
+
+				currentPosX = tmpPosX;
+
+
 				break;
 				drawText_afterIterate:
 
@@ -305,11 +466,16 @@ namespace Graphic {
 					currentPosX = newSize;
 					*( lastIt ) = '\n';
 					rectangleTop += font.getLineHeight();
-
+					lastIt = it2 - 1;
 				} else {
 					currentPosX = tmpPosX;
+					lastIt = it2 - 1;
+					if ( *lastIt == '\n' ) {
+						lineWidth.push(currentPosX / 2.0f);
+						currentPosX = 0.0f;
+						rectangleTop += font.getLineHeight();
+					}
 				}
-				lastIt = it2 - 1;
 				it = it2;
 			}
 			lineWidth.push(currentPosX / 2.0f);
@@ -359,7 +525,9 @@ namespace Graphic {
 				float tmpPosX = currentPosX;
 				auto it2 = it;
 				for ( ; textCopy.iterate(&it2, &codePoint); ) {
-					if ( codePoint == ' ' ) {
+					if ( codePoint == '\n' ) {
+						goto drawText_afterIterate2;	//if we reached the end of the word
+					} else if ( codePoint == ' ' ) {
 						tmpPosX += font.getWordSpace();
 						goto drawText_afterIterate2;	//if we reached the end of the word
 					} else {
@@ -383,18 +551,23 @@ namespace Graphic {
 
 					*( lastIt ) = '\n';
 					rectangleTop += font.getLineHeight();
+					lastIt = it2 - 1;
 
 				} else {
 					currentPosX = tmpPosX;
+					lastIt = it2 - 1;
+					if ( *lastIt == '\n' ) {
+						currentPosX = 0.0f;
+						rectangleTop += font.getLineHeight();
+					}
 				}
-				lastIt = it2 - 1;
 				it = it2;
 			}
 
 
 
 			if ( centered.y ) {
-				initPoint.y = rectangle.getTop() - font.getLineHeight() * 0.7f - ( rectangleSize.y - rectangleTop) * 0.5f;
+				initPoint.y = rectangle.getTop() - (rectangleSize.y - rectangleTop) * 0.5f - font.getLineHeight() * 0.7f;
 			} else {
 				initPoint.y = rectangle.getTop() - font.getLineHeight();
 			}

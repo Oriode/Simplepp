@@ -184,10 +184,11 @@ namespace Graphic {
 	template<typename T>
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false));
 
-
+	///@brief private function do not touch this.
 	template<typename T, typename C, typename BlendFunc>
 	void _drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc);
 
+	///@brief private function do not touch this.
 	template<typename T, typename C, typename BlendFunc>
 	void _drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc);
 
@@ -195,6 +196,9 @@ namespace Graphic {
 	template<typename Func>
 	void _drawText(const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func);
 
+	///@brief private function do not touch this.
+	template<typename Func>
+	void _drawTextWBB(const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func);
 
 	///@brief private function do not touch this.
 	template<typename Func>

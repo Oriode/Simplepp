@@ -150,6 +150,12 @@ int main(int argc, char * argv[]){
 	gradientVertical.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,255,255,255));
 
 
+
+	Graphic::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
+	gradientHorizontal.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientHorizontal.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
+
+
 	Graphic::GradientLinear<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientLinear(45);
 	gradientLinear.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
 	gradientLinear.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
@@ -167,7 +173,7 @@ int main(int argc, char * argv[]){
 	gradientRadial.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
-	UTF8String testStr("Hello World");
+	UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
 
 
 	Graphic::Image testBlendRGBA(Math::vec2ui(200, 200), Graphic::Format::RGBA);
@@ -205,7 +211,7 @@ int main(int argc, char * argv[]){
 
 
 	imageTest2[0] -> setPixels(ImageFunctor<unsigned char>());
-	unsigned int mySuperKernel2[5];
+	unsigned int mySuperKernel2[11];
 	unsigned int filterWeight2 = Graphic::computeGaussianKernel(mySuperKernel2);
 
 	*( imageTest2[0] ) = imageTest2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
@@ -221,14 +227,18 @@ int main(int argc, char * argv[]){
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Text										//
-	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, Graphic::ColorR<unsigned char>(255), Math::Vec2<bool>(true, true));
+	Graphic::drawText(imageTest2[0], fontTest, Graphic::Rectangle(0, 0, 250, 250), testStr, gradientHorizontal, Math::Vec2<bool>(true, true));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Gradient										//
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientVertical);					//Vertical
-	imageTest2[0] -> fillImage(gradientVertical, Graphic::Rectangle(0, 0, 500, 500));						//Vertical
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientLinear);				//Linear
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientRadial);				//Radial
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, -250, 500, 250), gradientVertical);					//Vertical
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientHorizontal);						//Horizontal
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(250, 0, 750, 500), gradientHorizontal);					//Horizontal
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientHorizontal);					//Horizontal
+
+	//imageTest2[0] -> fillImage(gradientVertical, Graphic::Rectangle(0, 0, 500, 500));						//Vertical
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientLinear);					//Linear
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientRadial);					//Radial
 
 
 	//Graphic::Image textImage(Math::vec2ui(textRectangle.getRight() - textRectangle.getLeft(), textRectangle.getTop() - textRectangle.getBottom()), Graphic::Format::RGBA);

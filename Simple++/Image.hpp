@@ -81,7 +81,7 @@ namespace Graphic {
 		this -> nbPixels = size.x * size.y;
 
 		if ( this -> nbPixels > 0 && data ) {
-			this -> format = loadingFormat2Format(loadingFormat);
+			this -> format = _loadingFormat2Format(loadingFormat);
 			size_t nbComponentsTotal = this -> nbPixels * this -> getNbComponents();
 			this -> buffer = new T[nbComponentsTotal];
 
@@ -583,7 +583,7 @@ namespace Graphic {
 	void _Image<T>::_setPixels(ColorFunc & colorFunc, const Rectangle & rectangle) {
 		constexpr size_t N = sizeof(C) / sizeof(T);
 
-		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		Math::Rectangle<unsigned int> rectangleUI = clampRectangle(rectangle);
 		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
 		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
 		size_t nbComponentsPerLine = N * this -> size.x;
@@ -600,7 +600,7 @@ namespace Graphic {
 	}
 
 	template<typename T /*= unsigned char*/>
-	Math::Rectangle<unsigned int> _Image<T>::_clampRectangle(const Rectangle & rectangle) const {
+	Math::Rectangle<unsigned int> _Image<T>::clampRectangle(const Rectangle & rectangle) const {
 		Math::Rectangle<unsigned int> rectangleUI;
 
 		if ( rectangle.getBottom() < 0 ) 		rectangleUI.setBottom(0);
@@ -1163,7 +1163,6 @@ namespace Graphic {
 			begin.x = point.x;
 			otherImageBegin.x = rectangle.getLeft();
 			size.x = Math::min<typename Point::Type>(this -> size.x - point.x, maskImage.getSize().x - maskPoint.x);
-
 		}
 
 		if ( begin.y < 0 ) {
@@ -2136,7 +2135,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	Format _Image<T>::loadingFormat2Format(LoadingFormat loadingFormat) {
+	Format _Image<T>::_loadingFormat2Format(LoadingFormat loadingFormat) {
 		switch ( loadingFormat ) {
 		case LoadingFormat::R:
 			return Format::R;
@@ -2199,7 +2198,7 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> rectangleUI = _clampRectangle(rectangle);
+		Math::Rectangle<unsigned int> rectangleUI = clampRectangle(rectangle);
 		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
 		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
 		size_t nbComponentsPerLineRectangle = N1 * width;
@@ -2292,30 +2291,35 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		float size = rectangle.getRight() - rectangle.getLeft();
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		float begin = float(int(clampedRectangle.getLeft()) - rectangle.getLeft()) / size;
+		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle.getRight())) / size;
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
 		//generate the gradient
-		C2 * gradientArray = new C2[size.x];
-		gradient.computeInterpolation(gradientArray, size.x);
+		C2 * gradientArray = new C2[clampedSize.x];
+		gradient.computeInterpolation(gradientArray, clampedSize.x, begin, end);
 
 		Math::Vec2<unsigned int> i;
 		if ((N1 != 4) && (N1 == N2)) {
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				Vector<T>::copy(thisIt, gradientArray, size.x * N1);
+			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
+				Vector<T>::copy((C2*)thisIt, gradientArray, clampedSize.x);
 				thisIt += thisImageOffset;
 			}
 		} else {
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto maxIt = thisIt + size.x * N;
+			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
+				auto maxIt = thisIt + clampedSize.x * N1;
 				auto gradientIt = gradientArray;
 				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
 					BlendingFunc::Normal::blendColor(*( ( C1* )thisIt2 ), *( (C2*) gradientIt ));
-					thisIt2 += N1
-					gradientIt += N2;
+					thisIt2 += N1;
+					gradientIt ++;
 				}
 				thisIt += thisImageOffset;
 			}
@@ -2332,30 +2336,34 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		float size = rectangle.getRight() - rectangle.getLeft();
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		float begin = float(int(clampedRectangle.getLeft()) - rectangle.getLeft()) / size;
+		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle.getRight())) / size;
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
 		//generate the gradient
-		C2 * gradientArray = new C2[size.x];
-		gradient.computeInterpolation(gradientArray, size.x);
+		C2 * gradientArray = new C2[clampedSize.x];
+		gradient.computeInterpolation(gradientArray, clampedSize.x, end, begin);
 
 		Math::Vec2<unsigned int> i;
 		if ( ( N1 == N2 ) ) {
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				Vector<T>::copy(thisIt, gradientArray, size.x * N1);
+			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
+				Vector<T>::copy((C2*)thisIt, gradientArray, clampedSize.x);
 				thisIt += thisImageOffset;
 			}
 		} else {
-			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				auto maxIt = thisIt + size.x * N1;
+			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
+				auto maxIt = thisIt + clampedSize.x * N1;
 				auto gradientIt = gradientArray;
 				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
 					BlendingFunc::None::blendColor(*( (C1*) thisIt2 ), *( (C2*) gradientIt ));
 					thisIt2 += N1;
-					gradientIt += N2;
+					gradientIt ++;
 				}
 				thisIt += thisImageOffset;
 			}
@@ -2374,19 +2382,23 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		float size = rectangle.getRight() - rectangle.getLeft();
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		float begin = float(int(clampedRectangle.getLeft()) - rectangle.getLeft()) / size;
+		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle.getRight())) / size;
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		auto thisImageOffset = this -> size.x * N1;
 
 		//generate the gradient
-		C2 * gradientArray = new T[size.x];
-		gradient.computeInterpolation(gradientArray, size.x);
+		C2 * gradientArray = new T[clampedSize.x];
+		gradient.computeInterpolation(gradientArray, clampedSize.x, begin, end);
 
 		Point i;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
-			auto maxIt = thisIt + size.x * N1;
+		for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
+			auto maxIt = thisIt + clampedSize.x * N1;
 			auto gradientIt = gradientArray;
 			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
 				blendingFunctor(*( ( C1* )thisIt2 ), *( gradientIt ));
@@ -2405,20 +2417,24 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		float size = rectangle.getTop() - rectangle.getBottom();
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		float begin = float(int(clampedRectangle.getBottom()) - rectangle.getBottom()) / size;
+		float end = 1.0f - float(rectangle.getTop() - int(clampedRectangle.getTop())) / size;
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		auto thisImageOffset = this -> size.x * N1;
 
 		//generate the gradient
-		C2 * gradientArray = new C2[size.x];
-		gradient.computeInterpolation(gradientArray, size.x);
+		C2 * gradientArray = new C2[clampedSize.y];
+		gradient.computeInterpolation(gradientArray, clampedSize.y, begin, end);
 
 		Point i;
 		auto gradientIt = gradientArray;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
-			auto maxIt = thisIt + size.x * getNbComponents();
+		for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
+			auto maxIt = thisIt + clampedSize.x * getNbComponents();
 			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
 				blendingFunctor(*( ( C1* )thisIt2 ), *( gradientIt ));
 			}
@@ -2437,11 +2453,12 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<unsigned int> sizeClamped = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		auto thisImageOffset = this -> size.x * N1;
 
 		Point origin(gradient.getPoint().x * float(size.x), gradient.getPoint().y * float(size.y));
 		Math::Vec2<float> v(Math::cos(gradient.getAngleRad()), Math::sin(gradient.getAngleRad()));
@@ -2458,9 +2475,9 @@ namespace Graphic {
 		gradient.computeInterpolation(gradientArray, gradientSize);
 
 		Point i;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
+		for ( i.y = 0; i.y < sizeClamped.y; i.y++ ) {
 			auto thisIt2 = thisIt;
-			for ( i.x = 0; i.x < size.x; i.x++ ) {
+			for ( i.x = 0; i.x < sizeClamped.x; i.x++ ) {
 				auto index = GradientLinear<C2, InterFunc>::computeIndex(i - origin, gradientSizeMinusOne, gradient.getDirection());
 				blendingFunctor(*( (C1*) thisIt2 ), gradientArray[index]);
 				thisIt2 += N1;
@@ -2481,8 +2498,9 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
+		Math::Vec2<unsigned int> sizeClamped = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * getNbComponents();
@@ -2497,9 +2515,9 @@ namespace Graphic {
 		gradient.computeInterpolation(gradientArray, gradientSize);
 
 		Point i;
-		for ( i.y = 0; i.y < size.y; i.y++ ) {
+		for ( i.y = 0; i.y < sizeClamped.y; i.y++ ) {
 			auto thisIt2 = thisIt;
-			for ( i.x = 0; i.x < size.x; i.x++ ) {
+			for ( i.x = 0; i.x < sizeClamped.x; i.x++ ) {
 				auto index = GradientRadial<C2, InterFunc>::computeIndex(i - center, gradientSizeMinusOne, gradient.getRadius());
 				blendingFunctor(*( (C1*) thisIt2 ), gradientArray[index]);
 				thisIt2 += N1;
@@ -2561,7 +2579,7 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = _clampRectangle(rectangle);
+		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
 		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);

@@ -56,13 +56,13 @@ namespace Graphic {
 	
 
 	///@brief Represent a 2D Gradient for 2D image processing.
-	template<typename C, typename Func = InterpolationFunc::Linear>
+	template<typename C, typename InterFunc = InterpolationFunc::Linear>
 	class Gradient {
 	public:
 		///@brief Create a new gradient.
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-		Gradient(const Func & functor = Func());
+		Gradient(const InterFunc & functor = InterFunc());
 
 		///@brief destructor
 		~Gradient();
@@ -79,37 +79,52 @@ namespace Graphic {
 		///@param i index of the points (in the order added first is 0)
 		GradientPoint<C> & operator[](typename Vector<GradientPoint<C> *>::Size i);
 
+		///@brief Operator [] to direct access points inside this gradient.
+		///@param i index of the points (in the order added first is 0)
+		const GradientPoint<C> & operator[](typename Vector<GradientPoint<C> *>::Size i) const;
+
 
 		///@brief Compute the interpolation of every color of this gradient in an 1D array
 		///@param out kernel Already allocated buffer to be filled with the interpolation of this gradient.
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-		template<size_t N, typename Func2 = Func>
-		void computeInterpolation(C(&buffer)[N], const Func2 & functor = Func()) const;
+		///@param begin beginning of the interpolation (between 0.0 and 1.0)
+		///@param end ending of the interpolation (between 0.0 and 1.0)
+		template<size_t N, typename InterFunc2 = InterFunc>
+		void computeInterpolation(C(&buffer)[N], const InterFunc2 & functor = InterFunc(), float begin = 0.0f, float end = 1.0f) const;
 
 		///@brief Compute the interpolation of every color of this gradient in an 1D array
 		///@param out kernel Already allocated buffer to be filled with the interpolation of this gradient.
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-		template<typename Func2 = Func>
-		void computeInterpolation(C * buffer, size_t size, const Func2 & functor = Func()) const;
+		///@param begin beginning of the interpolation (between 0.0 and 1.0)
+		///@param end ending of the interpolation (between 0.0 and 1.0)
+		template<typename InterFunc2 = InterFunc>
+		void computeInterpolation(C * buffer, size_t size, const InterFunc2 & functor = InterFunc(), float begin = 0.0f, float end = 1.0f) const;
 
 		///@brief Compute the interpolation of every color of this gradient in an 1D array
 		///@param out kernel Already allocated buffer to be filled with the interpolation of this gradient.
-		void computeInterpolation(C * buffer, size_t size) const;
+		///@param begin beginning of the interpolation (between 0.0 and 1.0)
+		///@param end ending of the interpolation (between 0.0 and 1.0)
+		void computeInterpolation(C * buffer, size_t size, float begin = 0.0f, float end = 1.0f) const;
 	private:
+
 		Vector<GradientPoint<C> * > pointsVector;
-		Func functor;
+		Vector<GradientPoint<C> * > pointsVectorOrdered;
+
+		bool isOrdered;
+
+		InterFunc functor;
 	};
 
 
-	template<typename C, typename Func = InterpolationFunc::Linear>
-	class GradientHorizontal : public Gradient<C, Func> {
+	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	class GradientHorizontal : public Gradient<C, InterFunc> {
 	public:
 		///@brief Create a new Horizontal gradient.
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-		GradientHorizontal(const Func & functor = Func());
+		GradientHorizontal(const InterFunc & functor = InterFunc());
 
 
 		///@brief Compute the index in the interpolated array
@@ -128,13 +143,13 @@ namespace Graphic {
 
 	};
 
-	template<typename C, typename Func = InterpolationFunc::Linear>
-	class GradientVertical : public Gradient<C, Func> {
+	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	class GradientVertical : public Gradient<C, InterFunc> {
 	public:
 		///@brief Create a new Horizontal gradient.
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-		GradientVertical(const Func & functor = Func());
+		GradientVertical(const InterFunc & functor = InterFunc());
 
 
 		///@brief Compute the index in the interpolated array
@@ -156,15 +171,15 @@ namespace Graphic {
 
 
 
-	template<typename C, typename Func = InterpolationFunc::Linear>
-	class GradientRadial : public Gradient<C, Func> {
+	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	class GradientRadial : public Gradient<C, InterFunc> {
 		public:
 			///@brief Create a new Radial Gradient
 			///@param center Point of the center relatively of the surface applied (between 0 and 1)
 			///@param radius Radius horizontal and vertical relatively to the size of the surface applied (between 0 and 1)
 			///@param functor Functor used to interpolate the colors overloaded with :
 			///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-			GradientRadial(const Math::Vec2<float> & center = Math::Vec2<float>(0.5f), const Math::Vec2<float> & radius = Math::Vec2<float>(1.0f), const Func & functor = Func());
+			GradientRadial(const Math::Vec2<float> & center = Math::Vec2<float>(0.5f), const Math::Vec2<float> & radius = Math::Vec2<float>(1.0f), const InterFunc & functor = InterFunc());
 
 
 			///@brief Set the center of the radial gradient (between 0 and 1)
@@ -203,8 +218,8 @@ namespace Graphic {
 
 
 
-	template<typename C, typename Func = InterpolationFunc::Linear>
-	class GradientLinear : public Gradient<C, Func> {
+	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	class GradientLinear : public Gradient<C, InterFunc> {
 	public:
 		///@brief Create a new Linear Gradient
 		///@param angle Angle in degree
@@ -212,7 +227,7 @@ namespace Graphic {
 		///@param length Length of this gradient (0 mean auto computed)
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
-		GradientLinear(float angle, const Math::Vec2<float> & p = Math::Vec2<float>::null, unsigned int length = 0, const Func & functor = Func());
+		GradientLinear(float angle, const Math::Vec2<float> & p = Math::Vec2<float>::null, unsigned int length = 0, const InterFunc & functor = InterFunc());
 
 		///@brief set the angle of this linear gradient
 		///@param angle Angle in Degree of this gradient (0 mean left to right) then it's anti clockwise
