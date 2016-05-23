@@ -5,6 +5,7 @@
 #include "Image.h"
 #include "Font.h"
 #include "FreeImage.h"
+#include "GradientInterpolated.h"
 
 
 
@@ -82,6 +83,34 @@ namespace Graphic {
 	///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 	template<typename T, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false), const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+
+	///@brief draw the text to the specified position
+	///@param font Font object to use
+	///@param point Position where to draw (left bottom anchor of the text)
+	///@param text Text to draw
+	///@param gradient to use to draw the text
+	///@param centered If the text has to be centered vertically or horizontally.
+	///@param blendFunc Functor with operator() overloaded with 
+	///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	template<typename T, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
+	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false), const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+
+	///@brief draw the text to the specified position
+	///@param font Font object to use
+	///@param rectangle Rectangle where the text will be.
+	///@param text Text to draw
+	///@param gradient to use to draw the text
+	///@param centered If the text has to be centered vertically or horizontally.
+	///@param blendFunc Functor with operator() overloaded with 
+	///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	template<typename T, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
+	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>(false), const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
 	///@brief draw the text to the specified position

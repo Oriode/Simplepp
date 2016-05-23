@@ -28,7 +28,7 @@ namespace Graphic {
 		///@brief Constructor to create an not initialized image of specified size.
 		///@param size size of the image to create.
 		///@param format of the image
-		TextureLoadable(const Math::vec2ui & size, typename Format format = Format::RGB);
+		TextureLoadable(const Math::Vec2<Size> & size, typename Format format = Format::RGB);
 
 		///@brief create a new image using a path to a file (only support official file format)
 		TextureLoadable(const WString & filePath);
@@ -46,18 +46,18 @@ namespace Graphic {
 		///@param size size of the new image
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+		void setDatas(const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief clear this texture with a new size
 		///@param size New size from the mipmap 0
-		void clear(const Math::vec2ui & size);
+		void clear(const Math::Vec2<Size> & size);
 
 
 		///@brief reset this image with a new size and a new format
 		///@param size new size
 		///@param format new format of the image
-		void clear(const Math::vec2ui & size, typename Format format);
+		void clear(const Math::Vec2<Size> & size, typename Format format);
 
 		///@brief generate the mipmaps from the actual lod 0
 		///@template C type able to handle the sum of 4 type T
@@ -125,7 +125,7 @@ namespace Graphic {
 
 
 	private:
-		Math::vec2ui size;	//If not loaded we have to keep the size of the mipmap 0
+		Math::Vec2<Size> size;	//If not loaded we have to keep the size of the mipmap 0
 		typename Format format;
 		WString fileName;
 		LoadingType loadingType;

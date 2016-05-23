@@ -47,7 +47,7 @@ namespace Graphic {
 		///@brief Constructor to create an initialized image of specified size.
 		///@param size size of the image to create.
 		///@param format of the image
-		_Image(const Math::vec2ui & size, Format format = Format::RGB);
+		_Image(const Math::Vec2<Size> & size, Format format = Format::RGB);
 
 		///@brief create a new image data from a file stream.
 		///@param fileStream Stream to read
@@ -60,7 +60,7 @@ namespace Graphic {
 		///@param size size of the new image
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		_Image(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+		_Image(const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 		///@brief copy constructor
 		_Image(const _Image<T> & image);
@@ -72,15 +72,15 @@ namespace Graphic {
 
 		///@brief get the actual size (width:height) of the image
 		///@return the actual size of this image
-		const Math::vec2ui & getSize() const;
+		const Math::Vec2<Size> & getSize() const;
 
 		///@brief get the actual width of the image
 		///@return actual width of this image
-		unsigned int getWidth() const;
+		Size getWidth() const;
 
 		///@brief get the actual height of the image
 		///@return actual height of this image
-		unsigned int getHeight() const;
+		Size getHeight() const;
 
 		
 		///@brief get the number of pixels of this image
@@ -89,20 +89,20 @@ namespace Graphic {
 
 		///@brief reset this image with a new size.
 		///@param size new size
-		void clear(const Math::vec2ui & size);
+		void clear(const Math::Vec2<Size> & size);
 
 
 		///@brief reset this image with a new size and a new format
 		///@param size new size
 		///@param format new format of the image
-		void clear(const Math::vec2ui & size, Format format);
+		void clear(const Math::Vec2<Size> & size, Format format);
 
 
 		///@brief set the data from an another data buffer.
 		///@param data Data buffer to copy
 		///@param size size of the new image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+		void setDatas(const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief create a new image from this one with a size of width / 2 and height / 2
@@ -123,31 +123,31 @@ namespace Graphic {
 
 		///@brief get the data buffer of this image starting with the selected pixel
 		///@return data buffer
-		const T * getDatas(unsigned int x, unsigned int y) const;
+		const T * getDatas(Size x, Size y) const;
 
 		///@brief get the data buffer of this image starting with the selected pixel
 		///@return data buffer
-		T * getDatas(unsigned int x, unsigned int y);
+		T * getDatas(Size x, Size y);
 
 
 		///@brief get a pixel from this image
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@return the pixel from the picture at the specified 2D coordinate.
-		const T * getPixel(unsigned int x, unsigned int y) const;
+		const T * getPixel(Size x, Size y) const;
 
 		///@brief get a pixel from this image
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@return the pixel from the picture at the specified 2D coordinate.
-		T * getPixel(unsigned int x, unsigned int y);
+		T * getPixel(Size x, Size y);
 
 
 		///@brief get the offset of pixel from the beginning of the data
 		///@param x X coordinate
 		///@param y Y coordinate
 		///@return offset to be added to go from the begining of the data (getData()) and the selected pixel
-		size_t getDataOffset(unsigned int x, unsigned int y) const;
+		size_t getDataOffset(Size x, Size y) const;
 
 
 
@@ -155,7 +155,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@param p The pixel to set.
-		void setPixel(unsigned int x, unsigned int y, const T * p);
+		void setPixel(Size x, Size y, const T * p);
 
 
 
@@ -206,7 +206,42 @@ namespace Graphic {
 		inline static T getComponentMaxValue();
 
 
+		/************************************************************************/
+		/* Gradient                                                             */
+		/************************************************************************/
+		///@brief Compute the interpolation for horizontal gradient
+		///@param out buffer Pointer to a buffer that will be allocated (will be deletable with delete [])
+		///@param in rectangle used to specify the size of the gradient
+		///@param out clampedRectangle Rectangle clamped inside this image
+		///return size of the freshly allocated buffer
+		template<typename C, typename InterFunc>
+		size_t computeInterpolation(const GradientHorizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const;
 
+
+		///@brief Compute the interpolation for vertical gradient
+		///@param out buffer Pointer to a buffer that will be allocated (will be deletable with delete [])
+		///@param in rectangle used to specify the size of the gradient
+		///@param out clampedRectangle Rectangle clamped inside this image
+		///return size of the freshly allocated buffer
+		template<typename C, typename InterFunc>
+		size_t computeInterpolation(const GradientVertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const;
+
+
+		///@brief Compute the interpolation for Linear gradient
+		///@param out buffer Pointer to a buffer that will be allocated (will be deletable with delete [])
+		///@param in rectangle used to specify the size of the gradient
+		///@param out clampedRectangle Rectangle clamped inside this image
+		///return size of the freshly allocated buffer
+		template<typename C, typename InterFunc>
+		size_t computeInterpolation(const GradientLinear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const;
+
+		///@brief Compute the interpolation for Radial gradient
+		///@param out buffer Pointer to a buffer that will be allocated (will be deletable with delete [])
+		///@param in rectangle used to specify the size of the gradient
+		///@param out clampedRectangle Rectangle clamped inside this image
+		///return size of the freshly allocated buffer
+		template<typename C, typename InterFunc>
+		size_t computeInterpolation(const GradientRadial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const;
 
 		/************************************************************************/
 		/* Drawing methods                                                      */
@@ -214,9 +249,9 @@ namespace Graphic {
 
 		///@brief Set a functor to each pixels in the rectangle of this image
 		///@param colorFunc Functor with operator() overloaded with 
-		///					"inline void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> & c);"
-		///					"inline void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> & c);"
-		///					"inline void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & c);"
+		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);"
+		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGB<T> & c);"
+		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGBA<T> & c);"
 		///														
 		///@param rectangle Rectangle where to apply the functor.
 		template<typename ColorFunc>
@@ -226,9 +261,9 @@ namespace Graphic {
 
 		///@brief Set a functor to each pixels of this image
 		///@param colorFunc Functor with operator() overloaded with 
-		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> & c);"
-		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> & c);"
-		///					"void operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & c);"
+		///					"void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);"
+		///					"void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGB<T> & c);"
+		///					"void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGBA<T> & c);"
 		template<typename ColorFunc>
 		void setPixels(ColorFunc & colorFunc);
 
@@ -314,7 +349,7 @@ namespace Graphic {
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
 		///@param colorFunc functor that wille generate the color for each pixels, overloaded with operator() :
-		///					"inline Graphic::ColorR<T> operator()(const Math::Vec2<unsigned int> & p);"
+		///					"inline Graphic::ColorR<T> operator()(const Math::Vec2<Size> & p);"
 		///@param blendFunc Functor with operator() overloaded with 
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
@@ -326,7 +361,7 @@ namespace Graphic {
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
 		///@param colorFunc functor that wille generate the color for each pixels, overloaded with operator() :
-		///					"inline Graphic::ColorRGB<T> operator()(const Math::Vec2<unsigned int> & p);"
+		///					"inline Graphic::ColorRGB<T> operator()(const Math::Vec2<Size> & p);"
 		///@param blendFunc Functor with operator() overloaded with 
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
@@ -337,7 +372,7 @@ namespace Graphic {
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
 		///@param colorFunc functor that wille generate the color for each pixels, overloaded with operator() :
-		///					"inline Graphic::ColorRGBA<T> operator()(const Math::Vec2<unsigned int> & p);"
+		///					"inline Graphic::ColorRGBA<T> operator()(const Math::Vec2<Size> & p);"
 		///@param blendFunc Functor with operator() overloaded with 
 		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
 		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
@@ -529,7 +564,7 @@ namespace Graphic {
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
 		///@param point Position where to draw.
 		///@param colorFunc Functor with operator() overloaded with 
-		///					"inline Graphic::ColorR<T> operator()(const Math::Vec2<unsigned int> & p) const;"
+		///					"inline Graphic::ColorR<T> operator()(const Math::Vec2<Size> & p) const;"
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
@@ -543,7 +578,7 @@ namespace Graphic {
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
 		///@param point Position where to draw.
 		///@param colorFunc Functor with operator() overloaded with 
-		///					"inline Graphic::ColorRGB<T> operator()(const Math::Vec2<unsigned int> & p) const;"
+		///					"inline Graphic::ColorRGB<T> operator()(const Math::Vec2<Size> & p) const;"
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
@@ -557,7 +592,7 @@ namespace Graphic {
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
 		///@param point Position where to draw.
 		///@param colorFunc Functor with operator() overloaded with 
-		///					"inline Graphic::ColorRGBA<T> operator()(const Math::Vec2<unsigned int> & p) const;"
+		///					"inline Graphic::ColorRGBA<T> operator()(const Math::Vec2<Size> & p) const;"
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
@@ -628,7 +663,7 @@ namespace Graphic {
 		///@brief Clamp a rectangle inside the image
 		///@param rectangle rectangle to be clamped
 		///@return an unsigned rectangle clamped inside the image
-		inline Math::Rectangle<unsigned int> clampRectangle(const Rectangle & rectangle) const;
+		inline Math::Rectangle<Size> clampRectangle(const Rectangle & rectangle) const;
 
 	protected:
 
@@ -679,7 +714,7 @@ namespace Graphic {
 		template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 		void _drawRectangle(const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor);
 
-		void _allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+		void _allocateAndCopy(const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 		static Format _loadingFormat2Format(LoadingFormat loadingFormat);
 
@@ -711,13 +746,11 @@ namespace Graphic {
 
 
 		Format format;
-		Math::vec2ui size;
+		Math::Vec2<Size> size;
 		size_t nbPixels;
 		T * buffer;
 
 	};
-
-
 
 
 

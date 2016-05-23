@@ -171,7 +171,7 @@ namespace Graphic {
 	}
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
-	int GradientHorizontal<C, InterFunc>::computeIndex(const Point & p) {
+	int GradientHorizontal<C, InterFunc>::computeIndex(const Math::Vec2<Size> & p) {
 		return p.x;
 	}
 
@@ -190,7 +190,7 @@ namespace Graphic {
 	}
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
-	int GradientVertical<C, InterFunc>::computeIndex(const Point & p) {
+	int GradientVertical<C, InterFunc>::computeIndex(const Math::Vec2<Size> & p) {
 		return p.y;
 	}
 
@@ -249,8 +249,13 @@ namespace Graphic {
 
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
-	int GradientLinear<C, InterFunc>::computeIndex(const Point & p, int maxIndex, const Math::Vec2<float> & direction) {
-		return Math::clamp<int>((int) Math::dot(Math::Vec2<float>(p), direction), 0, maxIndex);
+	int GradientLinear<C, InterFunc>::computeIndex(const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & direction) {
+		return Math::clamp<int>((int) Math::dot(p, direction), 0, maxIndex);
+	}
+
+	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
+	int GradientLinear<C, InterFunc>::computeIndex(const Math::Vec2<float> & p, int maxIndex) const {
+		return GradientLinear<C, InterFunc>::computeIndex(p, maxIndex, getDirection());
 	}
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
@@ -294,8 +299,14 @@ namespace Graphic {
 
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
-	int GradientRadial<C, InterFunc>::computeIndex(const Point & p, int maxIndex, const Math::Vec2<float> & radius) {
-		return int(Math::length(Math::Vec2<float>(p) * radius));
+	int GradientRadial<C, InterFunc>::computeIndex(const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & radius) {
+		return Math::clamp<int>(int(Math::length(p * radius)), 0, maxIndex);
+	}
+
+
+	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
+	int GradientRadial<C, InterFunc>::computeIndex(const Math::Vec2<float> & p, int maxIndex) const {
+		return GradientRadial<C, InterFunc>::computeIndex(p, maxIndex, getRadius());
 	}
 
 }

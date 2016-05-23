@@ -5,7 +5,7 @@ namespace Graphic {
 	TextureLoadable<T>::TextureLoadable(typename Format format) :
 		Texture<T>(null),
 		loadingType(LoadingType::EMPTY),
-		size(Math::vec2ui::null),
+		size(Math::Vec2<Size>::null),
 		format(format)
 	{
 
@@ -15,7 +15,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	TextureLoadable<T>::TextureLoadable(const Math::vec2ui & size, typename Format format) :
+	TextureLoadable<T>::TextureLoadable(const Math::Vec2<Size> & size, typename Format format) :
 		Texture<T>(null),
 		loadingType(LoadingType::EMPTY),
 		size(size),
@@ -32,7 +32,7 @@ namespace Graphic {
 		Texture<T>(null),
 		fileName(filePath),
 		loadingType(LoadingType::FILE),
-		size(Math::vec2ui::null)
+		size(Math::Vec2<Size>::null)
 	{
 
 	}
@@ -156,7 +156,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void TextureLoadable<T>::clear(const Math::vec2ui & size) {
+	void TextureLoadable<T>::clear(const Math::Vec2<Size> & size) {
 		this -> loadingType = LoadingType::EMPTY;
 		this -> fileName.clear();
 		this -> size = size;
@@ -164,7 +164,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	void TextureLoadable<T>::clear(const Math::vec2ui & size, typename Format format) {
+	void TextureLoadable<T>::clear(const Math::Vec2<Size> & size, typename Format format) {
 		this -> loadingType = LoadingType::EMPTY;
 		this -> format = format;
 		this -> fileName.clear();
@@ -174,7 +174,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void TextureLoadable<T>::setDatas(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat, bool invertY) {
+	void TextureLoadable<T>::setDatas(const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat, bool invertY) {
 		unload();
 		lock();
 		setLoading(true);

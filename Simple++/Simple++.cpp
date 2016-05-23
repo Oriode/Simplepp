@@ -56,8 +56,8 @@ template<typename T>
 class ImageFunctor {
 public:
 	ImageFunctor() {};
-	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorR<T> & color) { return *this; }
-	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGB<T> & color) {
+	ImageFunctor & operator()(const Math::Vec2<Graphic::Size> & p, Graphic::ColorR<T> & color) { return *this; }
+	ImageFunctor & operator()(const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGB<T> & color) {
 
 		unsigned int len = Math::length(p);
 
@@ -67,7 +67,7 @@ public:
 
 		
 		return *this; }
-	ImageFunctor & operator()(const Math::Vec2<unsigned int> & p, Graphic::ColorRGBA<T> & color) { return *this; }
+	ImageFunctor & operator()(const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGBA<T> & color) { return *this; }
 
 };
 
@@ -86,7 +86,6 @@ int main(int argc, char * argv[]){
 	const unsigned long long K10 =	10000;
 	const unsigned long long K1 =		1000;
 
-
 	Application<char> app(argc, argv);
 
 
@@ -98,19 +97,16 @@ int main(int argc, char * argv[]){
 	Graphic::FontLoadable fontTest2(L"myFont.cfont");
 	fontTest2.load();
 
-
-
 	fontTest.writeToFile(L"myFont2.cfont");
 
-	FreeImage glyphFreeImage;
-	glyphFreeImage.loadFromDatas((unsigned char *) fontTest2['A'] -> getDatas(), fontTest2['A'] -> getSize(), FreeImage::Format::R);
-	glyphFreeImage.saveToFile("glyphTest.png", FreeImage::SavingFormat::PNG);
+	Graphic::FreeImage glyphFreeImage;
+	glyphFreeImage.loadFromDatas((unsigned char *) fontTest2['A'] -> getDatas(), fontTest2['A'] -> getSize(), Graphic::FreeImage::Format::R);
+	glyphFreeImage.saveToFile("glyphTest.png", Graphic::FreeImage::SavingFormat::PNG);
 
 
-	FreeImage image("sanctum.png", FreeImage::Format::RGB);
+	Graphic::FreeImage image("sanctum.png", Graphic::FreeImage::Format::RGB);
 	image.load();
 
-	
 	Graphic::TextureLoadable<unsigned char> imageTest;
 	imageTest.setDatas((unsigned char * ) image.getDatas(), image.getSize(), Graphic::LoadingFormat::BGR);
 	imageTest.generateMipmaps();
@@ -119,8 +115,6 @@ int main(int argc, char * argv[]){
 	Graphic::TextureLoadable<unsigned char> imageTest2(WString("myImageTest.cimage"));
 	imageTest2.load();
 	imageTest2.writeToFile("myImageTest2.cimage");
-
-
 
 
 	/************************************************************************/
@@ -134,20 +128,9 @@ int main(int argc, char * argv[]){
 	Graphic::ColorRGBA<unsigned char> colorTransluscient(0, 0, 0, 0);
 
 
-	//imageTest2[1] -> fill((const unsigned char *) &myColor);
-	//imageTest2[1] -> drawText(fontTest, Graphic::Point(100,100), "Hello World");
-
-	//imageTest2[1] -> fill((const unsigned char *) &myColor);
-
-
-
 	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientVertical;
-	gradientVertical.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0,0,0,255));
-	gradientVertical.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
-	gradientVertical.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
-	gradientVertical.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-	gradientVertical.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
-	gradientVertical.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0,255,255,255));
+	gradientVertical.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientVertical.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
 
 
 
@@ -165,7 +148,7 @@ int main(int argc, char * argv[]){
 	gradientLinear.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
 
-	Graphic::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientRadial;
+	Graphic::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientRadial(Math::Vec2<float>(0,0.5));
 	gradientRadial.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
 	gradientRadial.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
 	gradientRadial.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
@@ -173,61 +156,48 @@ int main(int argc, char * argv[]){
 	gradientRadial.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
-	UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
 
 
-	Graphic::Image testBlendRGBA(Math::vec2ui(200, 200), Graphic::Format::RGBA);
-	Graphic::Image testBlendRGB(Math::vec2ui(200, 200), Graphic::Format::RGB);
+	//////////////////////////////////////////////////////////////////////////
+	// Copy Image										//
+	Graphic::Image imageCopy = *(imageTest2[0]);
 
-	testBlendRGBA.fillImage(colorWhite);
-	testBlendRGB.fillImage(colorWhite);
+	//////////////////////////////////////////////////////////////////////////
+	// Blur Image										//
+	unsigned int mySuperKernel10[21];
+	Graphic::computeGaussianKernel(mySuperKernel10);
+	*( imageTest2[0] ) = imageCopy.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
-
-	constexpr size_t KERNELRADIUS = 10;
-	unsigned int mySuperKernel10[KERNELRADIUS * 2 + 1];
-	unsigned int filterWeight = Graphic::computeGaussianKernel(mySuperKernel10);
-
-	unsigned int testDR[1];
-
-	log(String() << Vector<unsigned int>(mySuperKernel10));
-	log(String("Weight : ") << filterWeight);
-	Graphic::_Image<float> imageFloated(*imageTest2[0]);
-
-
-	//switch to luminance
-	Graphic::Image imageBlurred = *(imageTest2[0]);
-
-	//imageBlurred.fill(colorRed);
-	//*( imageTest2[0] ) = imageBlurred.applyFilter(mySuperKernel, Graphic::Image::ConvolutionMode::ExtendedSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-
-	//apply functor
-
-	
-	std::numeric_limits<float>::min();
-	log(Utility::TypesInfos<int>::getMin() + 1);
-
-	*( imageTest2[0] ) = imageBlurred.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-	//*( imageTest2[0] ) = imageBlurred;
-
-
+	//////////////////////////////////////////////////////////////////////////
+	// Apply Functor										//
 	imageTest2[0] -> setPixels(ImageFunctor<unsigned char>());
-	unsigned int mySuperKernel2[11];
-	unsigned int filterWeight2 = Graphic::computeGaussianKernel(mySuperKernel2);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Blur Image										//
+	unsigned int mySuperKernel2[11];
+	Graphic::computeGaussianKernel(mySuperKernel2);
 	*( imageTest2[0] ) = imageTest2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
                                                         
-
-
-
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Text Glyph									//
 	auto maskTest = fontTest['A'];
 	imageTest2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Rectangle RGBA									//
 	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
 
 
 	//////////////////////////////////////////////////////////////////////////
-	// Draw Text										//
-	Graphic::drawText(imageTest2[0], fontTest, Graphic::Rectangle(0, 0, 250, 250), testStr, gradientHorizontal, Math::Vec2<bool>(true, true));
+	// Draw Text Point									//
+	UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
+	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Text Rectangle									//
+	//Graphic::drawText(imageTest2[0], fontTest, Graphic::Rectangle(0,0, 250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Gradient										//
@@ -237,40 +207,95 @@ int main(int argc, char * argv[]){
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientHorizontal);					//Horizontal
 
 	//imageTest2[0] -> fillImage(gradientVertical, Graphic::Rectangle(0, 0, 500, 500));						//Vertical
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientLinear);					//Linear
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientRadial);					//Radial
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientLinear);					//Linear
+	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientRadial);					//Radial
 
 
-	//Graphic::Image textImage(Math::vec2ui(textRectangle.getRight() - textRectangle.getLeft(), textRectangle.getTop() - textRectangle.getBottom()), Graphic::Format::RGBA);
-	//textImage.fill(colorWhite);
 
-	//imageTest2[0] -> drawImage(Graphic::Point(250 + textRectangle.getLeft(), 250 + textRectangle.getBottom()), textImage);
-
-
+	//////////////////////////////////////////////////////////////////////////
+	// Generate Mipmaps									//
 	imageTest2.generateMipmaps();
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Mipmaps									//
 	for ( size_t i = 1; i < imageTest2.getNumMipmaps(); i++ ) {
 		//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 	}
 
 
-	FreeImage freeImage2;
-	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), FreeImage::Format::RGB);
-	freeImage2.saveToFile("ultimateTest2.png", FreeImage::SavingFormat::PNG);
+	//////////////////////////////////////////////////////////////////////////
+	// Saving to file										//
+	Graphic::FreeImage freeImage2;
+	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), Graphic::FreeImage::Format::RGB);
+	freeImage2.saveToFile("ultimateTest2.png", Graphic::FreeImage::SavingFormat::PNG);
 
 
-	Graphic::_Image<float> testBlendRGBAFloat(Math::vec2ui(100, 100), Graphic::Format::RGBA);
-	Graphic::_Image<float> testBlendRGBFloat(Math::vec2ui(100, 100), Graphic::Format::RGB);
 
+	return 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// INT VS UINT Array access times.							//
+	
+	int * testArray = new int[10000000];
+	int sum = 0;
+	int iteratorInt;
+	int iteratorAdd = Math::random(0, 100);
+	size_t j;
+	Log::startChrono();
+	for (  j = 0; j < 10000000; j++ ) {
+		for ( iteratorInt = 0; iteratorInt < 1000; iteratorInt++ ) {
+			sum += *(testArray + iteratorInt * iteratorAdd );
+		}
+	}
+	Log::getChrono("INT ARRAY ACCESS" + sum);
+
+	sum = 0;
+	unsigned int iteratorUInt;
+	Log::startChrono();
+	for (  j = 0; j < 10000000; j++ ) {
+		for ( iteratorUInt = 0; iteratorUInt < 1000; iteratorUInt++ ) {
+			sum += *(testArray + iteratorUInt * iteratorAdd );
+		}
+	}
+	Log::getChrono("UINT ARRAY ACCESS" + sum);
+
+	sum = 0;
+	size_t iteratorSizeT;
+	Log::startChrono();
+	for ( j = 0; j < 10000000; j++ ) {
+		for ( iteratorSizeT = 0; iteratorSizeT < 1000; iteratorSizeT++ ) {
+			sum += *(testArray + iteratorSizeT * iteratorAdd );
+		}
+	}
+	Log::getChrono("SIZE_T ARRAY ACCESS" + sum);
+
+	//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
+	delete[] testArray;
+
+
+
+	return 0;
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Testing RGBA Blending times float VS unsigned char				//
+
+
+	Graphic::Image testBlendRGBA(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGBA);
+	Graphic::Image testBlendRGB(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGB);
+
+	testBlendRGBA.fillImage(colorWhite);
+	testBlendRGB.fillImage(colorWhite);
+
+	Graphic::_Image<float> testBlendRGBAFloat(Math::Vec2<unsigned int>(100, 100), Graphic::Format::RGBA);
+	Graphic::_Image<float> testBlendRGBFloat(Math::Vec2<unsigned int>(100, 100), Graphic::Format::RGB);
 
 	Math::vec4f colorWhiteF(1.0, 1.0, 1.0, 1.0);
 	Math::vec4f colorRedF(1.0, 0.0, 0.0, 0.0001);
 
 	testBlendRGBAFloat.fillImage((const float *) &colorRedF);
 	testBlendRGBFloat.fillImage((const float *) &colorWhiteF);
-
-	
-	return 0;
 
 	Log::startChrono();
 	for ( size_t i = 0; i < 10000; i++ ) {
@@ -303,9 +328,9 @@ int main(int argc, char * argv[]){
 
 	Graphic::Image testblendCasted(testBlendRGBFloat);
 
-	FreeImage freeImage3;
-	freeImage2.loadFromDatas((unsigned char *) testblendCasted.getDatas(), testblendCasted.getSize(), FreeImage::Format::RGB);
-	freeImage2.saveToFile("testBlend2.png", FreeImage::SavingFormat::PNG);
+	Graphic::FreeImage freeImage3;
+	freeImage2.loadFromDatas((unsigned char *) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGB);
+	freeImage2.saveToFile("testBlend2.png", Graphic::FreeImage::SavingFormat::PNG);
 
 
 	

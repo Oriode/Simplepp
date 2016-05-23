@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math.h"
 
 namespace Graphic {
 
@@ -9,6 +10,8 @@ namespace Graphic {
 	using ColorRGB = Math::Vec3<T>;
 	template<typename T>
 	using ColorR = T;
+
+	typedef int Size;
 
 	typedef Math::Vec2<int> Point;
 	typedef Math::Rectangle<int> Rectangle;

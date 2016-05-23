@@ -38,30 +38,24 @@ namespace Graphic {
 	}
 
 
+	/************************************************************************/
+	/* Horizontal Gradient                                                  */
+	/************************************************************************/
+
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
 	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
 		struct Functor {
 			struct ColorFunctor {
-				ColorFunctor(C * interpolatedArray, const Math::Rectangle<unsigned int> & clampedRectangle) : clampedRectangle(clampedRectangle) {}
-				inline C operator()(const Math::Vec2<unsigned int> & p) const {
-					unsigned int index = p.x - this -> clampedRectangle.getLeft();
-					return this -> interpolatedArray[index];
+				ColorFunctor() {}
+				inline C operator()(const Math::Vec2<Size> & p) const {
+					auto index = p.x - this -> gradientInterpolation -> getClampedRectangle().getLeft();
+					return this -> gradientInterpolation -> getInterpolatedDatas()[index];
 				}
-				C * interpolatedArray;
-				const Math::Rectangle<unsigned int> & clampedRectangle;
+				GradientHorizontalInterpolation<T, C, InterFunc> * gradientInterpolation;
 			};
-			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc) : colorFunctor(this -> interpolatedArray, this -> clampedRectangle), image(image), gradient(gradient), blendFunc(blendFunc) {}
+			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc) : colorFunctor(), image(image), gradient(gradient), blendFunc(blendFunc) {}
 			void onBegin(const Rectangle & rectangle) {
-				unsigned int size = rectangle.getRight() - rectangle.getLeft();
-				this -> clampedRectangle = this -> image -> clampRectangle(rectangle);
-				unsigned int clampedSize = this -> clampedRectangle.getRight() - this -> clampedRectangle.getLeft();
-
-				float begin = float(int(this -> clampedRectangle.getLeft()) - rectangle.getLeft()) / float(size);
-				float end = 1.0f - float(rectangle.getRight() - int(this -> clampedRectangle.getRight())) / float(size);
-
-				this -> interpolatedArray = new C[clampedSize];
-				this -> gradient.computeInterpolation(this -> interpolatedArray, clampedSize, begin, end);
-				this -> colorFunctor.interpolatedArray = this -> interpolatedArray;
+				this -> colorFunctor.gradientInterpolation = new GradientHorizontalInterpolation<T, C, InterFunc>(this -> gradient, *this -> image, rectangle);
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 			void operator()(float x, float y, const _Image<T> & c) { 
@@ -76,14 +70,12 @@ namespace Graphic {
 				}
 			}
 
-			~Functor() { delete[] this -> interpolatedArray; }
+			~Functor() { delete this -> colorFunctor.gradientInterpolation; }
 		private:
 			ColorFunctor colorFunctor;
 			_Image<T> * image;
 			const BlendFunc & blendFunc;
 			const GradientHorizontal<C, InterFunc> & gradient;
-			C * interpolatedArray;
-			Math::Rectangle<unsigned int> clampedRectangle;
 		};
 		Functor functor(image, gradient, blendFunc);
 		_drawTextWBB(font, point, text, centered, functor);
@@ -93,25 +85,15 @@ namespace Graphic {
 	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
 		struct Functor {
 			struct ColorFunctor {
-				ColorFunctor(const Math::Rectangle<unsigned int> & clampedRectangle) : clampedRectangle(clampedRectangle) {}
-				inline C operator()(const Math::Vec2<unsigned int> & p) const {
-					unsigned int index = p.x - this -> clampedRectangle.getLeft();
-					return this -> interpolatedArray[index];
+				ColorFunctor() {}
+				inline C operator()(const Math::Vec2<Size> & p) const {
+					auto index = p.x - this -> gradientInterpolation -> getClampedRectangle().getLeft();
+					return this -> gradientInterpolation -> getInterpolatedDatas()[index];
 				}
-				C * interpolatedArray;
-				const Math::Rectangle<unsigned int> & clampedRectangle;
+				GradientHorizontalInterpolation<T, C, InterFunc> * gradientInterpolation;
 			};
-			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc) : colorFunctor(this -> clampedRectangle), image(image), gradient(gradient), blendFunc(blendFunc) {
-				unsigned int size = rectangle.getRight() - rectangle.getLeft();
-				this -> clampedRectangle = this -> image -> clampRectangle(rectangle);
-				unsigned int clampedSize = this -> clampedRectangle.getRight() - this -> clampedRectangle.getLeft();
-
-				float begin = float(int(this -> clampedRectangle.getLeft()) - rectangle.getLeft()) / float(size);
-				float end = 1.0f - float(rectangle.getRight() - int(this -> clampedRectangle.getRight())) / float(size);
-
-				this -> interpolatedArray = new C[clampedSize];
-				this -> gradient.computeInterpolation(this -> interpolatedArray, clampedSize, begin, end);
-				this -> colorFunctor.interpolatedArray = this -> interpolatedArray;
+			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc) : colorFunctor(), image(image), blendFunc(blendFunc) {
+				this -> colorFunctor.gradientInterpolation = new GradientHorizontalInterpolation<T, C, InterFunc>(gradient, *image, rectangle);
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 
@@ -127,18 +109,97 @@ namespace Graphic {
 				}
 			}
 
-			~Functor() { delete[] this -> interpolatedArray; }
+			~Functor() { delete this -> colorFunctor.gradientInterpolation; }
 		private:
-			ColorFunctor colorFunctor;
 			_Image<T> * image;
 			const BlendFunc & blendFunc;
-			const GradientHorizontal<C, InterFunc> & gradient;
-			C * interpolatedArray;
-			Math::Rectangle<unsigned int> clampedRectangle;
+			ColorFunctor colorFunctor;
 		};
 		Functor functor(image, gradient, rectangle, blendFunc);
 		_drawText(font, rectangle, text, centered, functor);
 	}
+
+	/************************************************************************/
+	/* Vertical Gradient	                                                */
+	/************************************************************************/
+
+	template<typename T, typename C, typename InterFunc, typename BlendFunc>
+	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+		struct Functor {
+			struct ColorFunctor {
+				ColorFunctor() {}
+				inline C operator()(const Math::Vec2<Size> & p) const {
+					auto index = p.y - this -> gradientInterpolation -> getClampedRectangle().getBottom();
+					return this -> gradientInterpolation -> getInterpolatedDatas()[index];
+				}
+				GradientVerticalInterpolation<T, C, InterFunc> * gradientInterpolation;
+			};
+			Functor(_Image<T> * image, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc) : colorFunctor(), image(image), gradient(gradient), blendFunc(blendFunc) {}
+			void onBegin(const Rectangle & rectangle) {
+				this -> colorFunctor.gradientInterpolation = new GradientVerticalInterpolation<T, C, InterFunc>(this -> gradient, *this -> image, rectangle);
+				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
+			}
+			void operator()(float x, float y, const _Image<T> & c) {
+				constexpr size_t N = sizeof(C) / sizeof(T);
+				switch ( N ) {		//switch on a constexpr, will be interpreted during compilation
+				case 1:			//R -> ?
+					return this -> image -> drawImageR<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 3:			//R -> ?
+					return this -> image -> drawImageRGB<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 4:			//R -> ?
+					return this -> image -> drawImageRGBA<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				}
+			}
+
+			~Functor() { delete this -> colorFunctor.gradientInterpolation; }
+		private:
+			ColorFunctor colorFunctor;
+			_Image<T> * image;
+			const BlendFunc & blendFunc;
+			const GradientVertical<C, InterFunc> & gradient;
+		};
+		Functor functor(image, gradient, blendFunc);
+		_drawTextWBB(font, point, text, centered, functor);
+	}
+
+	template<typename T, typename C, typename InterFunc, typename BlendFunc>
+	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+		struct Functor {
+			struct ColorFunctor {
+				ColorFunctor() {}
+				inline C operator()(const Math::Vec2<Size> & p) const {
+					auto index = p.y - this -> gradientInterpolation -> getClampedRectangle().getBottom();
+					return this -> gradientInterpolation -> getInterpolatedDatas()[index];
+				}
+				GradientVerticalInterpolation<T, C, InterFunc> * gradientInterpolation;
+			};
+			Functor(_Image<T> * image, const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc) : colorFunctor(), image(image), blendFunc(blendFunc) {
+				this -> colorFunctor.gradientInterpolation = new GradientVerticalInterpolation<T, C, InterFunc>(gradient, *image, rectangle);
+				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
+			}
+
+			void operator()(float x, float y, const _Image<T> & c) {
+				constexpr size_t N = sizeof(C) / sizeof(T);
+				switch ( N ) {		//switch on a constexpr, will be interpreted during compilation
+				case 1:			//R -> ?
+					return this -> image -> drawImageR<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 3:			//R -> ?
+					return this -> image -> drawImageRGB<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				case 4:			//R -> ?
+					return this -> image -> drawImageRGBA<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				}
+			}
+
+			~Functor() { delete this -> colorFunctor.gradientInterpolation; }
+		private:
+			_Image<T> * image;
+			const BlendFunc & blendFunc;
+			ColorFunctor colorFunctor;
+		};
+		Functor functor(image, gradient, rectangle, blendFunc);
+		_drawText(font, rectangle, text, centered, functor);
+	}
+
 
 
 	template<typename T, typename C, typename BlendFunc>

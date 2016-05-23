@@ -310,16 +310,22 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gradient.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Gradient.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="BasicGraphic.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GradientInterpolated.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="GradientInterpolated.hpp">
+      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="InterpolationFunc.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicGraphic.h">
+      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

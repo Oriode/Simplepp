@@ -21,7 +21,7 @@ namespace Graphic {
 		///@brief Constructor to create an not initialized image of specified size.
 		///@param size size of the image to create.
 		///@param format of the image
-		Texture(const Math::vec2ui & size, typename Format format = Format::RGB);
+		Texture(const Math::Vec2<Size> & size, typename Format format = Format::RGB);
 
 		///@brief create a new image using a path to a file (only support official file format)
 		Texture(const WString & filePath);
@@ -38,7 +38,7 @@ namespace Graphic {
 		///@param size size of the image to copy.
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		Texture(const T * dataBuffer, const Math::vec2ui & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+		Texture(const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief move constructor
@@ -47,14 +47,17 @@ namespace Graphic {
 		~Texture();
 
 		///@brief get the actual size (width:height) of the image
+		///@param i num of the mipmap
 		///@return the actual size of this image
-		const Math::vec2ui & getSize(typename Vector<_Image<T>>::Size i = 0) const;
+		const Math::Vec2<Size> & getSize(typename Vector<_Image<T>>::Size i = 0) const;
 
 		///@brief get the actual width of the image
+		///@param i num of the mipmap
 		///@return actual width of this image
 		unsigned int getWidth(typename Vector<_Image<T>>::Size i = 0) const;
 
 		///@brief get the actual height of the image
+		///@param i num of the mipmap
 		///@return actual height of this image
 		unsigned int getHeight(typename Vector<_Image<T>>::Size i = 0) const;
 
@@ -62,18 +65,18 @@ namespace Graphic {
 		///@param data Data buffer to copy
 		///@param size size of the new image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas(const T * data, const Math::vec2ui & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
+		void setDatas(const T * data, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false);
 
 
 		///@brief reset this image with a new size.
 		///@param size new size
-		void clear(const Math::vec2ui & size);
+		void clear(const Math::Vec2<Size> & size);
 		
 
 		///@brief reset this image with a new size and a new format
 		///@param size new size
 		///@param format new format of the image
-		void clear(const Math::vec2ui & size, typename Format format);
+		void clear(const Math::Vec2<Size> & size, typename Format format);
 
 
 		///@brief get a mipmap from this texture
@@ -83,7 +86,7 @@ namespace Graphic {
 
 
 		///@brief get a mipmap from this texture
-		///@param i mipmap number (0 meanthe original size)
+		///@param i mipmap number (0 mean the original size)
 		///@return pointer to the mipmap
 		_Image<T> * operator[](typename Vector<_Image<T>>::Size i);
 

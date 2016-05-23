@@ -6,12 +6,12 @@ namespace Graphic {
 	_Image<T>::_Image(Format format) :
 		format(format),
 		buffer(NULL),
-		size(Math::vec2ui::null),
+		size(Math::Vec2<Size>::null),
 		nbPixels(0) {
 	}
 
 	template<typename T>
-	Graphic::_Image<T>::_Image(const Math::vec2ui & size, Format format) :
+	Graphic::_Image<T>::_Image(const Math::Vec2<Size> & size, Format format) :
 		format(format),
 		size(size),
 		nbPixels(size.x * size.y),
@@ -70,13 +70,13 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::_Image(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat, bool invertY) {
+	_Image<T>::_Image(const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY) {
 		_allocateAndCopy(data, size, loadingFormat, invertY);
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::_allocateAndCopy(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat /*= LoadingFormat::RGB*/, bool invertY /*= false*/) {
+	void _Image<T>::_allocateAndCopy(const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat /*= LoadingFormat::RGB*/, bool invertY /*= false*/) {
 		this -> size = size;
 		this -> nbPixels = size.x * size.y;
 
@@ -92,10 +92,10 @@ namespace Graphic {
 					size_t nbComponentsPerRow = size.x * getNbComponents();
 					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
 					auto thisIt = getDatas();
-					for ( unsigned int y = 0; y < size.y; y++ ) {
+					for ( Size y = 0; y < size.y; y++ ) {
 						auto thisIt2 = thisIt;
 						auto otherIt2 = otherIt;
-						for ( unsigned int x = 0; x < size.x; x++ ) {
+						for ( Size x = 0; x < size.x; x++ ) {
 							thisIt2[0] = otherIt2[2];
 							thisIt2[1] = otherIt2[1];
 							thisIt2[2] = otherIt2[0];
@@ -125,10 +125,10 @@ namespace Graphic {
 					size_t nbComponentsPerRow = size.x * getNbComponents();
 					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
 					auto thisIt = getDatas();
-					for ( unsigned int y = 0; y < size.y; y++ ) {
+					for ( Size y = 0; y < size.y; y++ ) {
 						auto thisIt2 = thisIt;
 						auto otherIt2 = otherIt;
-						for ( unsigned int x = 0; x < size.x; x++ ) {
+						for ( Size x = 0; x < size.x; x++ ) {
 							thisIt2[0] = otherIt2[2];
 							thisIt2[1] = otherIt2[1];
 							thisIt2[2] = otherIt2[0];
@@ -161,7 +161,7 @@ namespace Graphic {
 					size_t nbComponentsPerRow = size.x * getNbComponents();
 					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
 					auto thisIt = getDatas();
-					for ( unsigned int y = 0; y < size.y; y++ ) {
+					for ( Size y = 0; y < size.y; y++ ) {
 						Vector<T>::copy(thisIt, otherIt, nbComponentsPerRow);
 						thisIt += nbComponentsPerRow;
 						otherIt -= nbComponentsPerRow;
@@ -189,7 +189,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void Graphic::_Image<T>::setPixel(unsigned int x, unsigned int y, const T * p) {
+	void Graphic::_Image<T>::setPixel(Size x, Size y, const T * p) {
 		switch ( this -> format ) {
 		case Format::R:
 			getDatas()[(this -> size.x * y + x) * this -> format] = *p;
@@ -211,7 +211,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	const T * _Image<T>::getPixel(unsigned int x, unsigned int y) const {
+	const T * _Image<T>::getPixel(Size x, Size y) const {
 		return getDatas(x, y);
 	}
 
@@ -219,7 +219,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	T * Graphic::_Image<T>::getPixel(unsigned int x, unsigned int y) {
+	T * Graphic::_Image<T>::getPixel(Size x, Size y) {
 		return getDatas(x, y);
 	}
 
@@ -227,7 +227,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	size_t _Image<T>::getDataOffset(unsigned int x, unsigned int y) const {
+	size_t _Image<T>::getDataOffset(Size x, Size y) const {
 		return ( y * this -> size.x + x ) * getNbComponents();
 	}
 
@@ -253,7 +253,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void _Image<T>::setDatas(const T * data, const Math::vec2ui & size, LoadingFormat loadingFormat, bool invertY) {
+	void _Image<T>::setDatas(const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY) {
 		delete[] this -> buffer;
 		_allocateAndCopy(data, size, loadingFormat, invertY);
 	}
@@ -357,35 +357,35 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	T * _Image<T>::getDatas(unsigned int x, unsigned int y) {
+	T * _Image<T>::getDatas(Size x, Size y) {
 		return this -> buffer + getDataOffset(x, y);
 
 	}
 
 	template<typename T>
-	const T * _Image<T>::getDatas(unsigned int x, unsigned int y) const {
+	const T * _Image<T>::getDatas(Size x, Size y) const {
 		return this -> buffer + getDataOffset(x, y);
 	}
 
 
 	template<typename T>
-	unsigned int _Image<T>::getHeight() const {
+	Size _Image<T>::getHeight() const {
 		return this -> size.y;
 	}
 
 	template<typename T>
-	unsigned int _Image<T>::getWidth() const {
+	Size _Image<T>::getWidth() const {
 		return this -> size.x;
 	}
 
 	template<typename T>
-	const Math::vec2ui & _Image<T>::getSize() const {
+	const Math::Vec2<Size> & _Image<T>::getSize() const {
 		return this -> size;
 	}
 
 
 	template<typename T>
-	void _Image<T>::clear(const Math::vec2ui & size) {
+	void _Image<T>::clear(const Math::Vec2<Size> & size) {
 		this -> size = size;
 		this -> nbPixels = this -> size.x * this -> size.y;
 		delete[] this -> buffer;
@@ -395,7 +395,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void _Image<T>::clear(const Math::vec2ui & size, Format format) {
+	void _Image<T>::clear(const Math::Vec2<Size> & size, Format format) {
 		this -> size = size;
 		this -> format = format;
 		this -> nbPixels = this -> size.x * this -> size.y;
@@ -409,7 +409,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename C /* = unsigned short */>
 	_Image<T> * _Image<T>::createMipmap() {
-		Math::vec2ui newSize = getSize() / Math::vec2ui(2);
+		Math::Vec2<Size> newSize = getSize() / Math::Vec2<Size>(2);
 		if ( newSize.x == 0 || newSize.y == 0 )
 			return NULL;
 
@@ -432,7 +432,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename C /*= unsigned short */, typename PIX>
 	_Image<T> * _Image<T>::_createMipmap(_Image<T> * newImage) {
-		Math::vec2ui i(0);
+		Math::Vec2<Size> i(0);
 
 		auto newSize = newImage -> getSize();
 		PIX * newImageData = (PIX *) newImage -> getDatas();
@@ -583,12 +583,12 @@ namespace Graphic {
 	void _Image<T>::_setPixels(ColorFunc & colorFunc, const Rectangle & rectangle) {
 		constexpr size_t N = sizeof(C) / sizeof(T);
 
-		Math::Rectangle<unsigned int> rectangleUI = clampRectangle(rectangle);
+		Math::Rectangle<Size> rectangleUI = clampRectangle(rectangle);
 		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
-		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		typename Math::Vec2<Size>::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
 		size_t nbComponentsPerLine = N * this -> size.x;
 
-		Math::Vec2<typename Math::vec2ui::Type> i;
+		Math::Vec2<typename Math::Vec2<Size>::Type> i;
 		for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
 			auto it2 = it;
 			for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
@@ -600,8 +600,8 @@ namespace Graphic {
 	}
 
 	template<typename T /*= unsigned char*/>
-	Math::Rectangle<unsigned int> _Image<T>::clampRectangle(const Rectangle & rectangle) const {
-		Math::Rectangle<unsigned int> rectangleUI;
+	Math::Rectangle<Size> _Image<T>::clampRectangle(const Rectangle & rectangle) const {
+		Math::Rectangle<Size> rectangleUI;
 
 		if ( rectangle.getBottom() < 0 ) 		rectangleUI.setBottom(0);
 		else							rectangleUI.setBottom(rectangle.getBottom());
@@ -768,8 +768,8 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<unsigned int> otherImageBegin;
+		Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<Size> otherImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
@@ -919,8 +919,8 @@ namespace Graphic {
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
 
-		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<unsigned int> otherImageBegin;
+		Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<Size> otherImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
@@ -1029,8 +1029,8 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<unsigned int> otherImageBegin;
+		Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<Size> otherImageBegin;
 		Point size;
 
 		if ( point.x < 0 ) {
@@ -1132,9 +1132,9 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<unsigned int> otherImageBegin;
-		Math::Vec2<unsigned int> maskBegin;
+		Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<Size> otherImageBegin;
+		Math::Vec2<Size> maskBegin;
 		Point size;
 
 		if ( maskPoint.x < 0 ) {
@@ -1218,7 +1218,7 @@ namespace Graphic {
 		class MyColorFunc {
 		public:
 			MyColorFunc(const ColorR<T> & color) : color(color) {}
-			inline ColorR<T> operator()(const Math::Vec2<unsigned int> & p) const { return this -> color; }
+			inline ColorR<T> operator()(const Math::Vec2<Size> & p) const { return this -> color; }
 			const ColorR<T> & color;
 		};
 
@@ -1238,7 +1238,7 @@ namespace Graphic {
 		class MyColorFunc {
 		public:
 			MyColorFunc(const ColorRGB<T> & color) : color(color) {}
-			inline ColorRGB<T> operator()(const Math::Vec2<unsigned int> & p) const { return this -> color; }
+			inline ColorRGB<T> operator()(const Math::Vec2<Size> & p) const { return this -> color; }
 			const ColorRGB<T> & color;
 		};
 
@@ -1258,7 +1258,7 @@ namespace Graphic {
 		class MyColorFunc {
 		public:
 			MyColorFunc(const ColorRGBA<T> & color) : color(color) {}
-			inline ColorRGBA<T> operator()(const Math::Vec2<unsigned int> & p) const { return this -> color; }
+			inline ColorRGBA<T> operator()(const Math::Vec2<Size> & p) const { return this -> color; }
 			const ColorRGBA<T> & color;
 		};
 
@@ -1321,8 +1321,8 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Vec2<unsigned int> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<unsigned int> maskImageBegin;
+		Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<Size> maskImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
@@ -1357,8 +1357,8 @@ namespace Graphic {
 		auto maskImageOffset = maskImage.getSize().x * maskImage.getNbComponents();
 
 
-		Math::Vec2<unsigned int> end(begin.x + size.x, begin.y + size.y);
-		Math::Vec2<unsigned int> i;
+		Math::Vec2<Size> end(begin.x + size.x, begin.y + size.y);
+		Math::Vec2<Size> i;
 		for ( i.y = begin.y; i.y < end.y; i.y++ ) {
 			auto thisIt2 = thisIt;
 			auto otherIt2 = maskIt;
@@ -1457,11 +1457,11 @@ namespace Graphic {
 	_Image<T> _Image<T>::_applyFilter(const C * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color) const {
 		assert(size % 2 == 1);
 
-		typename Math::vec2ui::Type NHalfed = ( size / 2 );
-		typename Math::vec2ui::Type NEven = NHalfed * 2;
+		typename Math::Vec2<Size>::Type NHalfed = ( size / 2 );
+		typename Math::Vec2<Size>::Type NEven = NHalfed * 2;
 
-		typename Math::vec2ui::Type borderSize1;
-		typename Math::vec2ui::Type borderSize2;
+		typename Math::Vec2<Size>::Type borderSize1;
+		typename Math::Vec2<Size>::Type borderSize2;
 
 		switch ( convolutionMode ) {
 		case ConvolutionMode::ExtendedSize:
@@ -1473,11 +1473,11 @@ namespace Graphic {
 			borderSize2 = 0;
 		}
 		
-		typename Math::vec2ui::Type borderSize = borderSize1 + borderSize2;
+		typename Math::Vec2<Size>::Type borderSize = borderSize1 + borderSize2;
 
 
-		Math::vec2ui sizeExtended(this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2);
-		Math::vec2ui sizeBorder(this -> size.x + borderSize * 2, this -> size.y + borderSize * 2);
+		Math::Vec2<Size> sizeExtended(this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2);
+		Math::Vec2<Size> sizeBorder(this -> size.x + borderSize * 2, this -> size.y + borderSize * 2);
 
 		_Image<T> imageBorder(sizeBorder, this -> getFormat());
 		_Image<T> imageHori(imageBorder.getSize(), this -> getFormat());
@@ -1500,7 +1500,7 @@ namespace Graphic {
 		//copy the old image into a bigger one to handle border correctly without overflow
 		auto thisIt = this -> getDatas();
 		auto imageBorderIt = imageBorder.getDatas() + imageBorder.getDataOffset(borderSize, borderSize);
-		for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+		for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 			Vector<T>::copy(imageBorderIt, thisIt, nbComponentsPerRow);
 
 			thisIt += nbComponentsPerRow;
@@ -1520,10 +1520,10 @@ namespace Graphic {
 		switch ( this -> format ) {
 		case Format::R: {
 			C sum;
-			for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 
 					sum = C(0);
@@ -1544,10 +1544,10 @@ namespace Graphic {
 
 			imageHoriIt = imageHori.getDatas() + imageHori.getDataOffset(borderSize1, borderSize1);
 			NOffset = NHalfed * nbComponentsPerRowWithBorder;
-			for ( typename Math::vec2ui::Type y = 0; y < imageVert.getSize().y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
 				auto imageVertIt2 = imageVertIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 
 					auto resultHoriIt3 = imageHoriIt2 - NOffset;
 
@@ -1570,10 +1570,10 @@ namespace Graphic {
 		}
 		case Format::RGB: {
 			C sum[3];
-			for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 
 					sum[0] = C(0);
@@ -1602,10 +1602,10 @@ namespace Graphic {
 
 			imageHoriIt = imageHori.getDatas() + imageHori.getDataOffset(borderSize1, borderSize1);
 			NOffset = NHalfed * nbComponentsPerRowWithBorder;
-			for ( typename Math::vec2ui::Type y = 0; y < imageVert.getSize().y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
 				auto imageVertIt2 = imageVertIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 
 					auto resultHoriIt3 = imageHoriIt2 - NOffset;
 
@@ -1635,10 +1635,10 @@ namespace Graphic {
 		}
 		case Format::RGBA: {
 			C sum[4];
-			for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 
 					sum[0] = C(0);
@@ -1670,10 +1670,10 @@ namespace Graphic {
 
 			imageHoriIt = imageHori.getDatas() + imageHori.getDataOffset(borderSize1, borderSize1);
 			NOffset = NHalfed * nbComponentsPerRowWithBorder;
-			for ( typename Math::vec2ui::Type y = 0; y < imageVert.getSize().y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
 				auto imageVertIt2 = imageVertIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 
 					auto resultHoriIt3 = imageHoriIt2 - NOffset;
 
@@ -1723,11 +1723,11 @@ namespace Graphic {
 		assert(size % 2 == 1);
 		assert((Utility::isSame<T, C>::value));
 
-		typename Math::vec2ui::Type NHalfed = ( size / 2 );
-		typename Math::vec2ui::Type NEven = NHalfed * 2;
+		typename Math::Vec2<Size>::Type NHalfed = ( size / 2 );
+		typename Math::Vec2<Size>::Type NEven = NHalfed * 2;
 
-		typename Math::vec2ui::Type borderSize1;
-		typename Math::vec2ui::Type borderSize2;
+		typename Math::Vec2<Size>::Type borderSize1;
+		typename Math::Vec2<Size>::Type borderSize2;
 
 		switch ( convolutionMode ) {
 		case ConvolutionMode::ExtendedSize:
@@ -1738,11 +1738,11 @@ namespace Graphic {
 			borderSize1 = NHalfed;
 			borderSize2 = 0;
 		}
-		typename Math::vec2ui::Type borderSize = borderSize1 + borderSize2;
+		typename Math::Vec2<Size>::Type borderSize = borderSize1 + borderSize2;
 
 
-		Math::vec2ui sizeExtended(this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2);
-		Math::vec2ui sizeBorder(this -> size.x + borderSize * 2, this -> size.y + borderSize * 2);
+		Math::Vec2<Size> sizeExtended(this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2);
+		Math::Vec2<Size> sizeBorder(this -> size.x + borderSize * 2, this -> size.y + borderSize * 2);
 
 		_Image<T> imageBorder(sizeBorder, this -> getFormat());
 		_Image<T> imageHori(imageBorder.getSize(), this -> getFormat());
@@ -1765,7 +1765,7 @@ namespace Graphic {
 		//copy the old image into a bigger one to handle border correctly without overflow
 		auto thisIt = this -> getDatas();
 		auto imageBorderIt = imageBorder.getDatas() + imageBorder.getDataOffset(borderSize, borderSize);
-		for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+		for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 			Vector<T>::copy(imageBorderIt, thisIt, nbComponentsPerRow);
 
 			thisIt += nbComponentsPerRow;
@@ -1781,10 +1781,10 @@ namespace Graphic {
 
 		switch ( this -> format ) {
 		case Format::R: {
-			for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 
 					imageHoriIt2[0] = C(0);
@@ -1803,10 +1803,10 @@ namespace Graphic {
 
 			imageHoriIt = imageHori.getDatas() + imageHori.getDataOffset(borderSize1, borderSize1);
 			NOffset = NHalfed * nbComponentsPerRowWithBorder;
-			for ( typename Math::vec2ui::Type y = 0; y < imageVert.getSize().y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
 				auto imageVertIt2 = imageVertIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 
 					auto resultHoriIt3 = imageHoriIt2 - NOffset;
 
@@ -1826,10 +1826,10 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGB: {
-			for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 
 					imageHoriIt2[0] = C(0);
@@ -1854,10 +1854,10 @@ namespace Graphic {
 
 			imageHoriIt = imageHori.getDatas() + imageHori.getDataOffset(borderSize1, borderSize1);
 			NOffset = NHalfed * nbComponentsPerRowWithBorder;
-			for ( typename Math::vec2ui::Type y = 0; y < imageVert.getSize().y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
 				auto imageVertIt2 = imageVertIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 
 					auto resultHoriIt3 = imageHoriIt2 - NOffset;
 
@@ -1884,10 +1884,10 @@ namespace Graphic {
 			break;
 		}
 		case Format::RGBA: {
-			for ( typename Math::vec2ui::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 					imageHoriIt2[0] = C(0);
 					imageHoriIt2[1] = C(1);
@@ -1914,10 +1914,10 @@ namespace Graphic {
 
 			imageHoriIt = imageHori.getDatas() + imageHori.getDataOffset(borderSize1, borderSize1);
 			NOffset = NHalfed * nbComponentsPerRowWithBorder;
-			for ( typename Math::vec2ui::Type y = 0; y < imageVert.getSize().y; y++ ) {
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
 				auto imageVertIt2 = imageVertIt;
 				auto imageHoriIt2 = imageHoriIt;
-				for ( typename Math::vec2ui::Type x = 0; x < imageVert.getSize().x; x++ ) {
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 					auto resultHoriIt3 = imageHoriIt2 - NOffset;
 					imageVertIt2[0] = C(0);
 					imageVertIt2[1] = C(1);
@@ -2198,14 +2198,14 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> rectangleUI = clampRectangle(rectangle);
+		Math::Rectangle<Size> rectangleUI = clampRectangle(rectangle);
 		auto it = getDatas(rectangleUI.getLeft(), rectangleUI.getBottom());
-		typename Math::vec2ui::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		typename Math::Vec2<Size>::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
 		size_t nbComponentsPerLineRectangle = N1 * width;
 		size_t nbComponentsPerLine = N1 * this -> size.x;
 
 
-		for ( typename Math::vec2ui::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
+		for ( typename Math::Vec2<Size>::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
 			auto maxIt = it + nbComponentsPerLineRectangle;
 			for ( auto it2 = it; it2 < maxIt; it2 += N1 ) {
 				functor(*( (C1 *) it2 ), color);
@@ -2285,36 +2285,50 @@ namespace Graphic {
 
 
 
+	template<typename T>
+	template<typename C, typename InterFunc>
+	size_t _Image<T>::computeInterpolation(const GradientHorizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle)  const {
+		constexpr size_t N = sizeof(C) / sizeof(T);
+
+		float size = rectangle.getRight() - rectangle.getLeft();
+		*clampedRectangle = clampRectangle(rectangle);
+		Size clampedSize = clampedRectangle -> getRight() - clampedRectangle -> getLeft();
+
+		float begin = float(int(clampedRectangle -> getLeft()) - rectangle.getLeft()) / size;
+		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle -> getRight())) / size;
+
+		//generate the gradient
+		*buffer = new C[clampedSize];
+		gradient.computeInterpolation(*buffer, clampedSize, begin, end);
+
+		return clampedSize;
+	}
+
+
+
+
 	template<typename T /*= unsigned char*/>
 	template<typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient) {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-
-		float size = rectangle.getRight() - rectangle.getLeft();
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
-
-		float begin = float(int(clampedRectangle.getLeft()) - rectangle.getLeft()) / size;
-		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle.getRight())) / size;
+		C2 * gradientArray;
+		Math::Rectangle<Size> clampedRectangle;
+		size_t size = computeInterpolation(gradient, &gradientArray, rectangle, &clampedRectangle);
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
-		//generate the gradient
-		C2 * gradientArray = new C2[clampedSize.x];
-		gradient.computeInterpolation(gradientArray, clampedSize.x, begin, end);
-
-		Math::Vec2<unsigned int> i;
+		Math::Vec2<Size> i;
 		if ((N1 != 4) && (N1 == N2)) {
-			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
-				Vector<T>::copy((C2*)thisIt, gradientArray, clampedSize.x);
+			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
+				Vector<T>::copy((C2*)thisIt, gradientArray, size);
 				thisIt += thisImageOffset;
 			}
 		} else {
-			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
-				auto maxIt = thisIt + clampedSize.x * N1;
+			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
+				auto maxIt = thisIt + size * N1;
 				auto gradientIt = gradientArray;
 				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
 					BlendingFunc::Normal::blendColor(*( ( C1* )thisIt2 ), *( (C2*) gradientIt ));
@@ -2336,29 +2350,22 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		float size = rectangle.getRight() - rectangle.getLeft();
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
-
-		float begin = float(int(clampedRectangle.getLeft()) - rectangle.getLeft()) / size;
-		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle.getRight())) / size;
+		C2 * gradientArray;
+		Math::Rectangle<Size> clampedRectangle;
+		size_t size = computeInterpolation(gradient, &gradientArray, rectangle, &clampedRectangle);
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
-		//generate the gradient
-		C2 * gradientArray = new C2[clampedSize.x];
-		gradient.computeInterpolation(gradientArray, clampedSize.x, end, begin);
-
-		Math::Vec2<unsigned int> i;
+		Math::Vec2<Size> i;
 		if ( ( N1 == N2 ) ) {
-			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
-				Vector<T>::copy((C2*)thisIt, gradientArray, clampedSize.x);
+			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
+				Vector<T>::copy((C2*)thisIt, gradientArray, size);
 				thisIt += thisImageOffset;
 			}
 		} else {
-			for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
-				auto maxIt = thisIt + clampedSize.x * N1;
+			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
+				auto maxIt = thisIt + size * N1;
 				auto gradientIt = gradientArray;
 				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
 					BlendingFunc::None::blendColor(*( (C1*) thisIt2 ), *( (C2*) gradientIt ));
@@ -2382,23 +2389,16 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		float size = rectangle.getRight() - rectangle.getLeft();
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
-
-		float begin = float(int(clampedRectangle.getLeft()) - rectangle.getLeft()) / size;
-		float end = 1.0f - float(rectangle.getRight() - int(clampedRectangle.getRight())) / size;
+		C2 * gradientArray;
+		Math::Rectangle<Size> clampedRectangle;
+		size_t size = computeInterpolation(gradient, &gradientArray, rectangle, &clampedRectangle);
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
-		//generate the gradient
-		C2 * gradientArray = new T[clampedSize.x];
-		gradient.computeInterpolation(gradientArray, clampedSize.x, begin, end);
-
-		Point i;
-		for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
-			auto maxIt = thisIt + clampedSize.x * N1;
+		Math::Vec2<Size> i;
+		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
+			auto maxIt = thisIt + size * N1;
 			auto gradientIt = gradientArray;
 			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
 				blendingFunctor(*( ( C1* )thisIt2 ), *( gradientIt ));
@@ -2411,32 +2411,46 @@ namespace Graphic {
 		delete[] gradientArray;
 	}
 
+
+	template<typename T>
+	template<typename C, typename InterFunc>
+	size_t _Image<T>::computeInterpolation(const GradientVertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const {
+		constexpr size_t N = sizeof(C) / sizeof(T);
+
+		float size = rectangle.getTop() - rectangle.getBottom();
+		*clampedRectangle = clampRectangle(rectangle);
+		Size clampedSize = clampedRectangle -> getTop() - clampedRectangle -> getBottom();
+
+		float begin = float(int(clampedRectangle -> getBottom()) - rectangle.getBottom()) / size;
+		float end = 1.0f - float(rectangle.getTop() - int(clampedRectangle -> getTop())) / size;
+
+		//generate the gradient
+		*buffer = new C[clampedSize];
+		gradient.computeInterpolation(*buffer, clampedSize, begin, end);
+
+		return clampedSize;
+	}
+
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle(const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor) {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		float size = rectangle.getTop() - rectangle.getBottom();
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<unsigned int> clampedSize = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
-
-		float begin = float(int(clampedRectangle.getBottom()) - rectangle.getBottom()) / size;
-		float end = 1.0f - float(rectangle.getTop() - int(clampedRectangle.getTop())) / size;
+		C2 * gradientArray;
+		Math::Rectangle<Size> clampedRectangle;
+		size_t size = computeInterpolation(gradient, &gradientArray, rectangle, &clampedRectangle);
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
-		//generate the gradient
-		C2 * gradientArray = new C2[clampedSize.y];
-		gradient.computeInterpolation(gradientArray, clampedSize.y, begin, end);
-
-		Point i;
+		Math::Vec2<Size> i;
 		auto gradientIt = gradientArray;
-		for ( i.y = 0; i.y < clampedSize.y; i.y++ ) {
-			auto maxIt = thisIt + clampedSize.x * getNbComponents();
-			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
-				blendingFunctor(*( ( C1* )thisIt2 ), *( gradientIt ));
+		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
+			auto thisIt2 = thisIt;
+			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
+				blendingFunctor(*( (C1*) thisIt2 ), *( gradientIt ));
+				thisIt2 += N1;
 			}
 			gradientIt++;
 			thisIt += thisImageOffset;
@@ -2447,38 +2461,52 @@ namespace Graphic {
 
 
 
+	template<typename T>
+	template<typename C, typename InterFunc>
+	size_t _Image<T>::computeInterpolation(const GradientLinear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const {
+		constexpr size_t N = sizeof(C) / sizeof(T);
+
+		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
+		*clampedRectangle = clampRectangle(rectangle);
+
+		size_t gradientSize;
+		if ( gradient.getLength() == 0 )
+			gradientSize = size.x * Math::abs(gradient.getDirection().x) + size.y * Math::abs(gradient.getDirection().y);
+		else
+			gradientSize = gradient.getLength();
+
+		int gradientSizeMinusOne = gradientSize - 1;
+
+		*buffer = new C[gradientSize];
+		gradient.computeInterpolation(*buffer, gradientSize);
+
+		return gradientSize;
+	}
+
+
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle(const Rectangle & rectangle, const GradientLinear<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor) {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<unsigned int> sizeClamped = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Rectangle<Size> clampedRectangle;
+		C2 * gradientArray;
+		size_t size = computeInterpolation(gradient, &gradientArray, rectangle, &clampedRectangle);
+		int gradientSizeMinusOne = int(size) - 1;
+
+
+		Point origin(rectangle.getLeft() + gradient.getPoint().x * float(rectangle.getRight() - rectangle.getLeft()), 
+			rectangle.getBottom() + gradient.getPoint().y * float(rectangle.getTop() - rectangle.getBottom()));
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * N1;
 
-		Point origin(gradient.getPoint().x * float(size.x), gradient.getPoint().y * float(size.y));
-		Math::Vec2<float> v(Math::cos(gradient.getAngleRad()), Math::sin(gradient.getAngleRad()));
-
-		int gradientSize;
-		if ( gradient.getLength() == 0 ) 
-			gradientSize = size.x * Math::abs(v.x) + size.y * Math::abs(v.y);
-		else 
-			gradientSize = gradient.getLength();
-		
-		int gradientSizeMinusOne = gradientSize - 1;
-
-		C2 * gradientArray = new C2[gradientSize];
-		gradient.computeInterpolation(gradientArray, gradientSize);
-
-		Point i;
-		for ( i.y = 0; i.y < sizeClamped.y; i.y++ ) {
+		Math::Vec2<Size> i;
+		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
-			for ( i.x = 0; i.x < sizeClamped.x; i.x++ ) {
-				auto index = GradientLinear<C2, InterFunc>::computeIndex(i - origin, gradientSizeMinusOne, gradient.getDirection());
+			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
+				auto index = gradient.computeIndex(Math::Vec2<float>(( ( typename Point::Type ) i.x ) - origin.x, ( ( typename Point::Type ) i.y ) - origin.y), gradientSizeMinusOne);
 				blendingFunctor(*( (C1*) thisIt2 ), gradientArray[index]);
 				thisIt2 += N1;
 			}
@@ -2488,7 +2516,22 @@ namespace Graphic {
 	}
 
 
+	template<typename T>
+	template<typename C, typename InterFunc>
+	size_t _Image<T>::computeInterpolation(const GradientRadial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle) const {
+		constexpr size_t N = sizeof(C) / sizeof(T);
 
+		*clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
+		Math::Vec2<Size> sizeClamped = clampedRectangle -> getRightTop() - clampedRectangle -> getLeftBottom();
+
+		size_t gradientSize = int(Math::max<float>(gradient.getRadius().x * float(size.x), gradient.getRadius().y * float(size.y)));
+
+		*buffer = new C[gradientSize];
+		gradient.computeInterpolation(*buffer, gradientSize);
+
+		return gradientSize;
+	}
 
 
 
@@ -2498,27 +2541,23 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
-		Math::Vec2<unsigned int> sizeClamped = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+
+		Math::Rectangle<Size> clampedRectangle;
+		C2 * gradientArray;
+		size_t size = computeInterpolation(gradient, &gradientArray, rectangle, &clampedRectangle);
+		int gradientSizeMinusOne = int(size) - 1;
+
+		Point center(rectangle.getLeft() + gradient.getCenter().x * float(rectangle.getRight() - rectangle.getLeft()), 
+			rectangle.getBottom() + gradient.getCenter().y * float(rectangle.getTop() - rectangle.getBottom()));
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		auto thisImageOffset = this -> size.x * N1;
 
-
-		Point center(gradient.getCenter().x * float(size.x), gradient.getCenter().y * float(size.y));
-
-		int gradientSize = int(Math::max<float>(gradient.getRadius().x * float(size.x), gradient.getRadius().y * float(size.y)));
-		int gradientSizeMinusOne = gradientSize - 1;
-
-		C2 * gradientArray = new C2[gradientSize];
-		gradient.computeInterpolation(gradientArray, gradientSize);
-
-		Point i;
-		for ( i.y = 0; i.y < sizeClamped.y; i.y++ ) {
+		Math::Vec2<Size> i;
+		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
-			for ( i.x = 0; i.x < sizeClamped.x; i.x++ ) {
-				auto index = GradientRadial<C2, InterFunc>::computeIndex(i - center, gradientSizeMinusOne, gradient.getRadius());
+			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
+				auto index = gradient.computeIndex(Math::Vec2<float>(( ( typename Point::Type ) i.x ) - center.x, ( ( typename Point::Type ) i.y ) - center.y), gradientSizeMinusOne);
 				blendingFunctor(*( (C1*) thisIt2 ), gradientArray[index]);
 				thisIt2 += N1;
 			}
@@ -2579,14 +2618,14 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof(C1) / sizeof(T);
 		constexpr size_t N2 = sizeof(C2) / sizeof(T);
 
-		Math::Rectangle<unsigned int> clampedRectangle = clampRectangle(rectangle);
-		Math::Vec2<unsigned int> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Rectangle<Size> clampedRectangle = clampRectangle(rectangle);
+		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 		auto thisIt = getDatas(clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y);
 		auto thisImageOffset = this -> size.x * getNbComponents();
 
 		C2 color;
-		Math::Vec2<unsigned int> i;
+		Math::Vec2<Size> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
