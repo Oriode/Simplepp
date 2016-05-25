@@ -247,6 +247,39 @@ namespace Graphic {
 		/* Drawing methods                                                      */
 		/************************************************************************/
 
+		///@brief draw an anti aliased line from point p1 to point p2
+		///@see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+		///@param l Line
+		///@param color Color to draw
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawLine(const Line & l, const ColorR<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+		///@brief draw an anti aliased line from point p1 to point p2
+		///@see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+		///@param l Line
+		///@param color Color to draw
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawLine(const Line & l, const ColorRGB<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+		///@brief draw an anti aliased line from point p1 to point p2
+		///@see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+		///@param l Line
+		///@param color Color to draw
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawLine(const Line & l, const ColorRGBA<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
 		///@brief Set a functor to each pixels in the rectangle of this image
 		///@param colorFunc Functor with operator() overloaded with 
 		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);"
@@ -669,6 +702,10 @@ namespace Graphic {
 
 		
 	private:
+		template<typename BlendFunc, typename C1, typename C2>
+		void _drawLine(const Line & l, const C2 & color, const BlendFunc & blendFunc);
+
+
 		template<typename C1, typename C2>
 		void _fillImage(const C2 & color);
 
@@ -751,7 +788,6 @@ namespace Graphic {
 		T * buffer;
 
 	};
-
 
 
 

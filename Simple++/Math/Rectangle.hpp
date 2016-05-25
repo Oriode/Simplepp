@@ -123,6 +123,23 @@ namespace Math {
 	}
 
 
+	template <typename T>
+	unsigned int Math::Rectangle<T>::getZone(const Vec2<T> & p) const {
+		//see https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm#Example_C.2FC.2B.2B_implementation
+		unsigned int outCode = (unsigned int) Position::Inside;		// initialized as being inside of clip window
+
+		if ( p.x < this -> pointLeftBottom.x )			// to the left of clip window
+			outCode |= (unsigned int) Position::Left;
+		else if ( p.x > this -> pointRightTop.x )			// to the right of clip window
+			outCode |= (unsigned int) Position::Right;
+		if ( p.y < this -> pointLeftBottom.y )			// below the clip window
+			outCode |= (unsigned int) Position::Bottom;
+		else if ( p.y > this -> pointRightTop.y )			// above the clip window
+			outCode |= (unsigned int) Position::Top;
+
+		return outCode;
+	}
+
 
 	template<typename T>
 	Rectangle<T> operator+(const Rectangle<T> & r, const Vec2<T> & p){
@@ -142,6 +159,12 @@ namespace Math {
 	template<typename T>
 	Rectangle<T> operator-(const Vec2<T> & p, const Rectangle<T> & r){
 		return Rectangle<T>(p - r.getLeftBottom(), p - r.getRightTop());
+	}
+
+	template<typename T, typename U = char>
+	BasicString<U> & operator<<(BasicString<U> & string, const Rectangle<T> & r) {
+		string << "[\t\t\t" << r.getRightTop() << " ]\n[ " << r.getLeftBottom() << "\t\t\t]";
+		return string;
 	}
 
 

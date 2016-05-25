@@ -2636,4 +2636,170 @@ namespace Graphic {
 		}
 			
 	}
+
+
+
+
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename BlendFunc>
+	void _Image<T>::drawLine(const Line & l, const ColorR<T> & color, const BlendFunc & blendFunc) {
+		switch ( getFormat() ) {
+			case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorR<T>>(l, color, blendFunc);
+			case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorR<T>>(l, color, blendFunc);
+			case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorR<T>>(l, color, blendFunc);
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename BlendFunc>
+	void _Image<T>::drawLine(const Line & l, const ColorRGB<T> & color, const BlendFunc & blendFunc) {
+		switch ( getFormat() ) {
+		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGB<T>>(l, color, blendFunc);
+		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGB<T>>(l, color, blendFunc);
+		case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(l, color, blendFunc);
+		}
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename BlendFunc>
+	void _Image<T>::drawLine(const Line & l, const ColorRGBA<T> & color, const BlendFunc & blendFunc) {
+		switch ( getFormat() ) {
+		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGBA<T>>(l, color, blendFunc);
+		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(l, color, blendFunc);
+		case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(l, color, blendFunc);
+		}
+	}
+
+
+
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename BlendFunc, typename C1, typename C2>
+	void _Image<T>::_drawLine(const Line & l, const C2 & color, const BlendFunc & blendFunc) {
+		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+
+		class Plot {
+		public:
+			Plot(T * buffer, const Math::Vec2<unsigned int> & size, const BlendFunc & blendFunc, const C2 & color) : buffer(buffer), size(size), blendFunc(blendFunc), color(color) {}
+			void operator()(const Math::Vec2<unsigned int> p, float alpha) { 
+				constexpr size_t N1 = sizeof(C1) / sizeof(T);
+				this -> blendFunc(*(((C1 *) this -> buffer) + ( this -> size.x * p.y + p.x ) ), *( (C2 *) ( &this -> color ) ), alpha); 
+			}
+			void operator()(unsigned int x, unsigned int y, float alpha) { 
+				constexpr size_t N1 = sizeof(C1) / sizeof(T);
+				this -> blendFunc(*(( (C1 *) this -> buffer) + ( this -> size.x * y + x ) ), *( (C2 *) ( &this -> color ) ), alpha);
+			}
+		private:
+			T * buffer;
+			Math::Vec2<unsigned int> size;
+			const BlendFunc & blendFunc;
+			const C2 & color;
+		};
+
+		Plot plot(getDatas(), getSize(), blendFunc, color);
+
+
+		Line lineClamped(l);
+		Math::clamp(&lineClamped, Rectangle(getSize()));
+
+		Point p0(lineClamped.getP0());
+		Point p1(lineClamped.getP1());
+
+		bool steep = Math::abs(p1.y - p0.y) > Math::abs(p1.x - p0.x);
+
+		if ( steep ) {
+			Utility::swap(p0.x, p0.y);
+			Utility::swap(p1.x, p1.y);
+		}
+		if ( p0.x > p1.x ) {
+			Utility::swap(p0.x, p1.x);
+			Utility::swap(p0.y, p1.y);
+		}
+					
+		int dx = p1.x - p0.x;
+		int dy = p1.y - p0.y;
+		float gradient = float(dy) / float(dx);
+
+		// handle first endpoint
+		float xend = p0.x;
+		float yend = p0.y + gradient * ( xend - p0.x );
+		float xgap = 0.5f;
+
+		unsigned int xpxl1 = xend;		// this will be used in the main loop
+		unsigned int ypxl1 = yend;		// this will be used in the main loop
+
+
+		float yendFPart = Math::fpart(yend);
+		float yendFPartOne = 1.0f - yendFPart;
+
+
+		if ( steep ) {
+			plot(ypxl1, xpxl1, yendFPartOne * xgap);
+			plot(ypxl1 + 1, xpxl1, yendFPart * xgap);
+		} else {
+			plot(xpxl1, ypxl1, yendFPartOne * xgap);
+			plot(xpxl1, ypxl1 + 1, yendFPart * xgap);
+		}
+						
+						
+		float intery = yend + gradient;		// first y-intersection for the main loop
+
+		// handle second endpoint
+		xend = Math::round(p1.x);
+		yend = p1.y + gradient * ( xend - p1.x );
+		xgap = 1.0f - Math::fpart(p1.x + 0.5f);
+		
+		unsigned int xpxl2 = unsigned int(xend);				//this will be used in the main loop
+		unsigned int ypxl2 = unsigned int (yend);				//this will be used in the main loop
+
+
+		yendFPart = Math::fpart(yend);
+		yendFPartOne = 1.0f - yendFPart;
+
+		// Main loop
+		if ( steep ) {
+			plot(ypxl2, xpxl2, yendFPartOne * xgap);
+			plot(ypxl2 + 1, xpxl2, yendFPart * xgap);
+
+			for ( unsigned int x = xpxl1 + 1; x < xpxl2; x++ ) {
+				float interyFPart = Math::fpart(intery);
+				unsigned int interyUI = unsigned int(intery);
+
+				plot(interyUI, x, 1.0f - interyFPart);
+				plot(interyUI + 1, x, interyFPart);
+
+				intery += gradient;
+			}
+		} else {
+			plot(xpxl2, ypxl2, yendFPartOne * xgap);
+			plot(xpxl2, ypxl2 + 1, yendFPart * xgap);
+
+			for ( unsigned int x = xpxl1 + 1; x < xpxl2; x++ ) {
+				float interyFPart = Math::fpart(intery);
+				unsigned int interyUI = unsigned int(intery);
+
+				plot(x, interyUI, 1.0f - interyFPart);
+				plot(x, interyUI + 1, interyFPart);
+				
+				intery += gradient;
+			}
+		}
+							
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
 }

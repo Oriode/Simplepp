@@ -1491,4 +1491,68 @@ namespace Math {
 		return max(min(v, maximus), minus);
 	}
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER T fpart(const T & x) {
+		if ( x < T(0) ) return - ( Math::trunc(x) - x );
+		else return x - Math::trunc(x);
+	}
+
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER bool clamp(Line<T> * l, const Rectangle<T> & r) {
+		Line<T> & line = *l;
+
+		// compute outcodes for P0, P1, and whatever point lies outside the clip rectangle
+		unsigned int outcode0 = r.getZone(line.getP0());
+		unsigned int outcode1 = r.getZone(line.getP1());
+		bool accept = false;
+
+		while ( true ) {
+			if ( !( outcode0 | outcode1 ) ) { // Bitwise OR is 0. Trivially accept and get out of loop
+				accept = true;
+				break;
+			} else if ( outcode0 & outcode1 ) { // Bitwise AND is not 0. Trivially reject and get out of loop
+				break;
+			} else {
+				// failed both tests, so calculate the line segment to clip
+				// from an outside point to an intersection with clip edge
+				Vec2<T> p;
+
+				// use reference for simpler formulas
+				const Vec2<T> & p0 = line.getP0();
+				const Vec2<T> & p1 = line.getP1();
+
+				// At least one endpoint is outside the clip rectangle; pick it.
+				unsigned int outcodeOut = outcode0 ? outcode0 : outcode1;
+
+				// Now find the intersection point;
+				// use formulas y = y0 + slope * (x - x0), x = x0 + (1 / slope) * (y - y0)
+				if ( outcodeOut & (unsigned int) Rectangle<T>::Position::Top ) {           // point is above the clip rectangle
+					p.x = p0.x + ( p1.x - p0.x ) * ( r.getTop() - p0.y ) / ( p1.y - p0.y );
+					p.y = r.getTop();
+				} else if ( outcodeOut & (unsigned int) Rectangle<T>::Position::Bottom ) { // point is below the clip rectangle
+					p.x = p0.x + ( p1.x - p0.x ) * ( r.getBottom() - p0.y ) / ( p1.y - p0.y );
+					p.y = r.getBottom();
+				} else if ( outcodeOut & (unsigned int) Rectangle<T>::Position::Right ) {  // point is to the right of clip rectangle
+					p.y = p0.y + ( p1.y - p0.y ) * ( r.getRight() - p0.x ) / ( p1.x - p0.x );
+					p.x = r.getRight();
+				} else if ( outcodeOut & (unsigned int) Rectangle<T>::Position::Left ) {   // point is to the left of clip rectangle
+					p.y = p0.y + ( p1.y - p0.y ) * ( r.getLeft() - p0.x ) / ( p1.x - p0.x );
+					p.x = r.getLeft();
+				}
+
+				// Now we move outside point to intersection point to clip
+				// and get ready for next pass.
+				if ( outcodeOut == outcode0 ) {
+					line.setP0(p);
+					outcode0 = r.getZone(line.getP0());
+				} else {
+					line.setP1(p);
+					outcode1 = r.getZone(line.getP1());
+				}
+			}
+		}
+		return accept;
+	}
+
 }

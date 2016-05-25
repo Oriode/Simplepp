@@ -3,7 +3,7 @@ namespace Utility {
 
 	template<typename T>
 	void swap( T & v1,  T & v2){
-		const T tmp = v1;
+		T tmp = v1;
 		v1 = v2;
 		v2 = tmp;
 	}
@@ -11,7 +11,7 @@ namespace Utility {
 
 	template<typename T>
 	void swap(T * v1, T * v2){
-		const T tmp = *v1;
+		T tmp = *v1;
 		*v1 = *v2;
 		*v2 = tmp;
 	}

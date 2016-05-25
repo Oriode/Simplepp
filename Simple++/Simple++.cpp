@@ -158,6 +158,7 @@ int main(int argc, char * argv[]){
 
 
 
+
 	//////////////////////////////////////////////////////////////////////////
 	// Copy Image										//
 	Graphic::Image imageCopy = *(imageTest2[0]);
@@ -210,6 +211,9 @@ int main(int argc, char * argv[]){
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientLinear);					//Linear
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientRadial);					//Radial
 
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Line										//
+	imageTest2[0] -> drawLine(Graphic::Line(-50,0,500,499), Graphic::ColorR<unsigned char>(100));
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -235,7 +239,17 @@ int main(int argc, char * argv[]){
 	return 0;
 
 	//////////////////////////////////////////////////////////////////////////
-	// INT VS UINT Array access times.							//
+	// SPEED TEST : Draw Lines								//
+	Log::startChrono();
+	for ( size_t i = 0; i < M1; i++ ) {
+		imageTest2[0] -> drawLine(Graphic::Line(0, 0, 500, 499), Graphic::ColorR<unsigned char>(100));
+	}
+	Log::getChrono("DRAW LINES R -> RGB (Last Result: 9.3s for M1)");
+
+	return 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : INT VS UINT Array access times.					//
 	
 	int * testArray = new int[10000000];
 	int sum = 0;
@@ -279,7 +293,7 @@ int main(int argc, char * argv[]){
 
 
 	//////////////////////////////////////////////////////////////////////////
-	// Testing RGBA Blending times float VS unsigned char				//
+	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
 
 
 	Graphic::Image testBlendRGBA(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGBA);
@@ -334,10 +348,8 @@ int main(int argc, char * argv[]){
 
 
 	
-	/*Application<char> a(argc, argv);
 
-
-
+	/*
 	log(String::format("hello % %", 15, 20));
 
 	

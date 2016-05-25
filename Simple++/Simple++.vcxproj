@@ -177,6 +177,8 @@
     <ClInclude Include="Duration.h" />
     <ClInclude Include="Duration.hpp" />
     <ClInclude Include="FreeImage.h" />
+    <ClInclude Include="Math\Line.h" />
+    <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="SimpleIO.h" />
     <ClInclude Include="SimpleIO.hpp" />
     <ClInclude Include="Texture.h" />

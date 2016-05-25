@@ -327,6 +327,12 @@
     <ClInclude Include="BasicGraphic.h">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="Math\Line.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Line.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

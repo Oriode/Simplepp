@@ -21,7 +21,7 @@
 #include "Math/Mat4.h"
 #include "Math/BoundingBox2D.h"
 #include "Math/Rectangle.h"
-
+#include "Math/Line.h"
 
 namespace Math {
 
@@ -468,18 +468,31 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> normalize(const Vec4<T> & v);
 
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> right(const Vec3<T> & v);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T pow(const T & v, double e);
 
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER T clamp(const T & v, const T & min, const T & max);
 
 
+	///@brief Clip a line from p0 to p1 against this rectangle
+	///@see https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm#Example_C.2FC.2B.2B_implementation
+	///@param l Line to be clipped
+	///@param r Rectangle
+	///@return true if a part of the line was inside the rectangle, false instead.
+	template<typename T>
+	MATH_FUNC_QUALIFIER bool clamp(Line<T> * l, const Rectangle<T> & r);
+
+
+
+	///@brief Get the fractional part of a float
+	///@param x Floating number
+	///@return the Fractional part of the specified number
+	template<typename T>
+	MATH_FUNC_QUALIFIER T fpart(const T & x);
 
 
 	/************************************************************************/
@@ -498,9 +511,9 @@ namespace Math {
 	using std::min;
 	using std::ceil;
 	using std::floor;
+	using std::trunc;
 	using std::exp;
-
-
+	using std::round;
 
 
 	/************************************************************************/
