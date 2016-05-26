@@ -3,7 +3,7 @@ namespace Graphic {
 
 	template<typename T>
 	TextureLoadable<T>::TextureLoadable(typename Format format) :
-		Texture<T>(null),
+		Texture<T>(ctor::null),
 		loadingType(LoadingType::EMPTY),
 		size(Math::Vec2<Size>::null),
 		format(format)
@@ -16,7 +16,7 @@ namespace Graphic {
 
 	template<typename T>
 	TextureLoadable<T>::TextureLoadable(const Math::Vec2<Size> & size, typename Format format) :
-		Texture<T>(null),
+		Texture<T>(ctor::null),
 		loadingType(LoadingType::EMPTY),
 		size(size),
 		format(format)
@@ -29,7 +29,7 @@ namespace Graphic {
 
 	template<typename T>
 	TextureLoadable<T>::TextureLoadable(const WString & filePath) : 
-		Texture<T>(null),
+		Texture<T>(ctor::null),
 		fileName(filePath),
 		loadingType(LoadingType::FILE),
 		size(Math::Vec2<Size>::null)

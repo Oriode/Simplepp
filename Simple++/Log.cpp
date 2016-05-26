@@ -1,6 +1,8 @@
 #include "Log.h"
 
-std::chrono::high_resolution_clock::time_point Log::lastDelay;
+std::chrono::high_resolution_clock::time_point Log::startTime;
+std::chrono::high_resolution_clock::time_point Log::endTime;
+
 void(*Log::mErrorHandlerFn)(
 	const String &,
 	MessageSeverity,
@@ -30,13 +32,15 @@ void Log::displayLog(const String & message){
 }
 
 void Log::startChrono(){
-	Log::lastDelay = std::chrono::high_resolution_clock::now();
-	displayLog("Starting Chrono !");
+	Log::startTime = std::chrono::high_resolution_clock::now();
 }
 
-void Log::getChrono(const String & text){
-	auto now = std::chrono::high_resolution_clock::now();
-	displayLog(text + " : " + (std::chrono::duration_cast<std::chrono::duration<double>>(now - Log::lastDelay).count() * 1000.0) + " ms");
+void Log::stopChrono() {
+	Log::endTime = std::chrono::high_resolution_clock::now();
+}
+
+void Log::displayChrono(const String & text){
+	displayLog(text + " : " + (std::chrono::duration_cast<std::chrono::duration<double>>(Log::endTime - Log::startTime).count() * 1000.0) + " ms");
 }
 
 

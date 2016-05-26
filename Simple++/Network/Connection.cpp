@@ -34,20 +34,20 @@ namespace Network {
 	}*/
 
 
-	Connection::Connection(ctor) : Address(null) {
+	Connection::Connection(ctor) : Address(ctor::null) {
 
 	}
 
 
 
 	Connection::Connection(Connection && connection) : 
-		Address(null)
+		Address(ctor::null)
 	{
 		*this = Utility::toRValue(connection);
 	}
 
 	Connection::Connection() :
-		Address(null),
+		Address(ctor::null),
 		mSocket(0),
 		mIsCreated(false),
 		mIsListening(false)

@@ -2645,31 +2645,31 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine(const Line & l, const ColorR<T> & color, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLine(const Line & l, const ColorR<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
-			case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorR<T>>(l, color, blendFunc);
-			case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorR<T>>(l, color, blendFunc);
-			case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorR<T>>(l, color, blendFunc);
+			case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorR<T>>(l, color, thickness, blendFunc);
+			case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorR<T>>(l, color, thickness, blendFunc);
+			case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorR<T>>(l, color, thickness, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine(const Line & l, const ColorRGB<T> & color, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLine(const Line & l, const ColorRGB<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
-		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGB<T>>(l, color, blendFunc);
-		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGB<T>>(l, color, blendFunc);
-		case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(l, color, blendFunc);
+		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGB<T>>(l, color, thickness, blendFunc);
+		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGB<T>>(l, color, thickness, blendFunc);
+		case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(l, color, thickness, blendFunc);
 		}
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine(const Line & l, const ColorRGBA<T> & color, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLine(const Line & l, const ColorRGBA<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
-		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGBA<T>>(l, color, blendFunc);
-		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(l, color, blendFunc);
-		case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(l, color, blendFunc);
+		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGBA<T>>(l, color, thickness, blendFunc);
+		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(l, color, thickness, blendFunc);
+		case Format::RGBA: return _drawLine<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(l, color, thickness, blendFunc);
 		}
 	}
 
@@ -2679,19 +2679,19 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawLine(const Line & l, const C2 & color, const BlendFunc & blendFunc) {
+	void _Image<T>::_drawLine(const Line & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
 
 		class Plot {
 		public:
 			Plot(T * buffer, const Math::Vec2<unsigned int> & size, const BlendFunc & blendFunc, const C2 & color) : buffer(buffer), size(size), blendFunc(blendFunc), color(color) {}
-			void operator()(const Math::Vec2<unsigned int> p, float alpha) { 
-				constexpr size_t N1 = sizeof(C1) / sizeof(T);
-				this -> blendFunc(*(((C1 *) this -> buffer) + ( this -> size.x * p.y + p.x ) ), *( (C2 *) ( &this -> color ) ), alpha); 
-			}
 			void operator()(unsigned int x, unsigned int y, float alpha) { 
 				constexpr size_t N1 = sizeof(C1) / sizeof(T);
 				this -> blendFunc(*(( (C1 *) this -> buffer) + ( this -> size.x * y + x ) ), *( (C2 *) ( &this -> color ) ), alpha);
+			}
+			void operator()(unsigned int x, unsigned int y) {
+				constexpr size_t N1 = sizeof(C1) / sizeof(T);
+				this -> blendFunc(*( ( ( C1 * ) this -> buffer ) + ( this -> size.x * y + x ) ), *( (C2 *) ( &this -> color ) ));
 			}
 		private:
 			T * buffer;
@@ -2700,73 +2700,165 @@ namespace Graphic {
 			const C2 & color;
 		};
 
-		Plot plot(getDatas(), getSize(), blendFunc, color);
 
+#define USETHICKNESS
+#ifdef USETHICKNESS
 
-		Line lineClamped(l);
-		Math::clamp(&lineClamped, Rectangle(getSize()));
+		unsigned int thicknessHalfed = thickness / 2;
 
-		Point p0(lineClamped.getP0());
-		Point p1(lineClamped.getP1());
+		Point p0;
+		Point p1;
 
-		bool steep = Math::abs(p1.y - p0.y) > Math::abs(p1.x - p0.x);
+		bool steep = Math::abs(l.getP1().y - l.getP0().y) > Math::abs(l.getP1().x - l.getP0().x);
 
 		if ( steep ) {
+			Line lineClamped(l);
+			Math::clamp(&lineClamped, Rectangle(thicknessHalfed, 0, getSize().x - thicknessHalfed - 1, getSize().y - 1));
+			p0 = lineClamped.getP0();
+			p1 = lineClamped.getP1();
+			p0.x -= thicknessHalfed;
+			p1.x -= thicknessHalfed;
+
 			Utility::swap(p0.x, p0.y);
 			Utility::swap(p1.x, p1.y);
+
+		} else {
+			Line lineClamped(l);
+			Math::clamp(&lineClamped, Rectangle(0, thicknessHalfed, getSize().x - 1, getSize().y - thicknessHalfed - 1));
+			p0 = lineClamped.getP0();
+			p1 = lineClamped.getP1();
+
+			p0.y -= thicknessHalfed;
+			p1.y -= thicknessHalfed;
 		}
 		if ( p0.x > p1.x ) {
 			Utility::swap(p0.x, p1.x);
 			Utility::swap(p0.y, p1.y);
+
 		}
-					
+
+		Math::Vec2<unsigned int> p0UI(p0);
+		Math::Vec2<unsigned int> p1UI(p1);
+
+		//creating the functor
+		Plot plot(getDatas(), getSize(), blendFunc, color);
+
+		if ( p0UI.y == p1UI.y ) {	// We are drawing an horizontal or vertical line
+			if ( steep ) {
+				for ( auto x = p0UI.x; x <= p1UI.x; x++ ) {
+					for ( unsigned int i = 0; i < thickness; i++ ) plot(p0UI.y + i, x);
+				}
+			} else {
+				for ( auto x = p0UI.x; x <= p1UI.x; x++ ) {
+					for ( unsigned int i = 0; i < thickness; i++ ) plot(x, p0UI.y + i);
+				}
+			}
+			return;
+		}
+
+
 		int dx = p1.x - p0.x;
 		int dy = p1.y - p0.y;
 		float gradient = float(dy) / float(dx);
+		float intery = float(p0.y) - 0.25f;
 
-		// handle first endpoint
-		float xend = p0.x;
-		float yend = p0.y + gradient * ( xend - p0.x );
-		float xgap = 0.5f;
-
-		unsigned int xpxl1 = xend;		// this will be used in the main loop
-		unsigned int ypxl1 = yend;		// this will be used in the main loop
-
-
-		float yendFPart = Math::fpart(yend);
-		float yendFPartOne = 1.0f - yendFPart;
-
-
-		if ( steep ) {
-			plot(ypxl1, xpxl1, yendFPartOne * xgap);
-			plot(ypxl1 + 1, xpxl1, yendFPart * xgap);
-		} else {
-			plot(xpxl1, ypxl1, yendFPartOne * xgap);
-			plot(xpxl1, ypxl1 + 1, yendFPart * xgap);
-		}
-						
-						
-		float intery = yend + gradient;		// first y-intersection for the main loop
-
-		// handle second endpoint
-		xend = Math::round(p1.x);
-		yend = p1.y + gradient * ( xend - p1.x );
-		xgap = 1.0f - Math::fpart(p1.x + 0.5f);
-		
-		unsigned int xpxl2 = unsigned int(xend);				//this will be used in the main loop
-		unsigned int ypxl2 = unsigned int (yend);				//this will be used in the main loop
-
-
-		yendFPart = Math::fpart(yend);
-		yendFPartOne = 1.0f - yendFPart;
 
 		// Main loop
 		if ( steep ) {
-			plot(ypxl2, xpxl2, yendFPartOne * xgap);
-			plot(ypxl2 + 1, xpxl2, yendFPart * xgap);
+			for ( unsigned int x = p0UI.x; x <= p1UI.x; x++ ) {
+				float interyFPart = intery - Math::trunc(intery);
+				unsigned int interyUI = unsigned int(intery);
 
-			for ( unsigned int x = xpxl1 + 1; x < xpxl2; x++ ) {
-				float interyFPart = Math::fpart(intery);
+				plot(interyUI, x, 1.0f - interyFPart);
+				unsigned int max = thickness + interyUI;
+				for ( interyUI++; interyUI < max; interyUI++ )
+					plot(interyUI, x);
+				plot(interyUI, x, interyFPart);
+
+				intery += gradient;
+			}
+		} else {
+			for ( unsigned int x = p0UI.x; x <= p1UI.x; x++ ) {
+				float interyFPart = intery - Math::trunc(intery);
+				unsigned int interyUI = unsigned int(intery);
+
+				plot(x, interyUI, 1.0f - interyFPart);
+				unsigned int max = thickness + interyUI;
+				for ( interyUI++; interyUI < max; interyUI++ )
+					plot(x, interyUI);
+				plot(x, interyUI, interyFPart);
+
+				intery += gradient;
+			}
+		}
+
+#else 
+
+
+
+
+
+		Point p0;
+		Point p1;
+
+		bool steep = Math::abs(l.getP1().y - l.getP0().y) > Math::abs(l.getP1().x - l.getP0().x);
+
+		if ( steep ) {
+			Line lineClamped(l);
+			Math::clamp(&lineClamped, Rectangle(0, 0, getSize().x - 1, getSize().y));
+			p0 = lineClamped.getP0();
+			p1 = lineClamped.getP1();
+
+			Utility::swap(p0.x, p0.y);
+			Utility::swap(p1.x, p1.y);
+
+		} else {
+			Line lineClamped(l);
+			Math::clamp(&lineClamped, Rectangle(0, 0, getSize().x, getSize().y - 1));
+			p0 = lineClamped.getP0();
+			p1 = lineClamped.getP1();
+		}
+		if ( p0.x > p1.x ) {
+			Utility::swap(p0.x, p1.x);
+			Utility::swap(p0.y, p1.y);
+
+		}
+
+		Math::Vec2<unsigned int> p0UI(p0);
+		Math::Vec2<unsigned int> p1UI(p1);
+
+		//creating the functor
+		Plot plot(getDatas(), getSize(), blendFunc, color);
+
+		if ( p0UI.y == p1UI.y ) {	// We are drawing an horizontal or vertical line
+			if ( steep ) {
+				for ( auto x = p0UI.x; x < p1UI.x; x++ ) 
+						plot(p0UI.y, x);
+					
+
+				
+			} else {
+				for ( auto x = p0UI.x; x < p1UI.x; x++ ) 
+						plot(x, p0UI.y);
+					
+
+				
+			}
+			return;
+		}
+
+
+		int dx = p1.x - p0.x;
+		int dy = p1.y - p0.y;
+		float gradient = float(dy) / float(dx);
+		float intery = float(p0.y) + gradient - 0.25f;
+
+
+		// Main loop
+		if ( steep ) {
+
+			for ( unsigned int x = p0UI.x; x < p1UI.x; x++ ) {
+				float interyFPart = intery - Math::trunc(intery);
 				unsigned int interyUI = unsigned int(intery);
 
 				plot(interyUI, x, 1.0f - interyFPart);
@@ -2775,19 +2867,21 @@ namespace Graphic {
 				intery += gradient;
 			}
 		} else {
-			plot(xpxl2, ypxl2, yendFPartOne * xgap);
-			plot(xpxl2, ypxl2 + 1, yendFPart * xgap);
 
-			for ( unsigned int x = xpxl1 + 1; x < xpxl2; x++ ) {
-				float interyFPart = Math::fpart(intery);
+			for ( unsigned int x = p0UI.x; x < p1UI.x; x++ ) {
+				float interyFPart = intery - Math::trunc(intery);
 				unsigned int interyUI = unsigned int(intery);
 
 				plot(x, interyUI, 1.0f - interyFPart);
 				plot(x, interyUI + 1, interyFPart);
-				
+
 				intery += gradient;
 			}
 		}
+
+#endif
+
+		
 							
 		
 	}

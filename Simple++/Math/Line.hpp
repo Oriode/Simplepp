@@ -23,6 +23,7 @@ namespace Math {
 		return this -> p0;
 	}
 
+
 	template<typename T>
 	Math::Line<T>::Line() {
 

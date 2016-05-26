@@ -70,13 +70,13 @@ String(c)
 }
 
 UTF8String::UTF8String(const String & str) :
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, str.getSize());
 }
 
 UTF8String::UTF8String(const std::string & str) : 
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, str.size());
 }
@@ -87,14 +87,14 @@ String(str)
 }
 
 UTF8String::UTF8String(const char * str, Size size) :
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, size);
 }
 
 
 UTF8String::UTF8String(const char * str) :
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, String::getSize(str));
 }

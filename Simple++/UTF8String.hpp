@@ -104,14 +104,14 @@ UTF8String & UTF8String::operator=(const BasicString<C> & str){
 
 template<typename C>
 UTF8String::UTF8String(const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str) :
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, str.size());
 }
 
 template<typename C>
 UTF8String::UTF8String(const BasicString<C> & str) :
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, str.getSize());
 
@@ -119,7 +119,7 @@ String(null)
 
 template<typename C>
 UTF8String::UTF8String(const C * str, Size size) :
-String(null)
+String(ctor::null)
 {
 	_contructorEQUAL(str, size);
 }

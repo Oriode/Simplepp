@@ -42,7 +42,7 @@ const BasicString<T> BasicString<T>::null = BasicString<T>("");
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString(const C * str) :
-Vector(null)
+Vector(ctor::null)
 {
 	this -> size = BasicString<C>::getSize(str);
 	this -> maxSize = this -> size + 1;
@@ -56,7 +56,7 @@ Vector(null)
 template<typename T>
 template<typename C, size_t N>
 BasicString<T>::BasicString(const C(&s)[N]) :
-Vector(null)
+Vector(ctor::null)
 {	
 	this -> size = N - 1;
 	this -> maxSize = N;
@@ -238,7 +238,7 @@ Vector(Utility::toRValue(str))
 
 
 template<typename T>
-BasicString<T>::BasicString(ctor) : Vector(null){
+BasicString<T>::BasicString(ctor) : Vector(ctor::null){
 
 }
 

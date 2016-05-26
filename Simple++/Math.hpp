@@ -1555,4 +1555,21 @@ namespace Math {
 		return accept;
 	}
 
+
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER T trunc(const T & x) {
+		return x;
+	}
+
+	template<>
+	MATH_FUNC_QUALIFIER float trunc(const float & x) {
+		return float(int(x));
+	}
+
+	template<>
+	MATH_FUNC_QUALIFIER double trunc(const double & x) {
+		return double(long(x));
+	}
+
 }

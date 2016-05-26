@@ -9,7 +9,7 @@ namespace Graphic {
 
 
 	FontLoadable::FontLoadable(const WString & fileName) : 
-		Font(null),
+		Font(ctor::null),
 		loadingType(LoadingType::FILE),
 		fileName(fileName)
 	{
@@ -17,7 +17,7 @@ namespace Graphic {
 	}
 
 	FontLoadable::FontLoadable(const WString & fileName, int pixSize) :
-		Font(null),
+		Font(ctor::null),
 		loadingType(LoadingType::FTFILE),
 		fileName(fileName)
 	{

@@ -1,9 +1,21 @@
-// Simple++.cpp : Defines the entry point for the console application.
-//
+///@file Simple++.cpp
+///@brief Main file used for doing some test
+///@author Clément Gerber
+///@date 26/05/2016 (DMY) 
 
-//Main only exists if we are in debug (.exe) and not in release (.lib)
+#define SPEEDTEST_DRAWLINE
+//#define SPEEDTEST_ARRAYACCESS
+//#define SPEEDTEST_LOGICAL
+//#define SPEEDTEST_BLENDING
+//#define SPEEDTEST_DATE
+//#define SPEEDTEST_STRING_CONCAT
+//#define SPEEDTEST_STRING_CAST
+//#define SPEEDTEST_REGEX
+//#define SPEEDTEST_VECTOR
+//#define SPEEDTEST_MAP
+//#define SPEEDTEST_NETWORK
+
 #ifndef _LIB 
-
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -26,30 +38,7 @@
 #include "TextureLoadable.h"
 #include "FontLoadable.h"
 #include "Utility.h"
-
-
-
-
-class A {
-public:
-	A(){}
-
-private:
-	int a;
-	
-	
-};
-
-
-
-class B : public A {
-public:
-	B(){}
-
-private:
-	int b[2];
-};
-
+#include "Regex.h"
 
 
 template<typename T>
@@ -58,36 +47,24 @@ public:
 	ImageFunctor() {};
 	ImageFunctor & operator()(const Math::Vec2<Graphic::Size> & p, Graphic::ColorR<T> & color) { return *this; }
 	ImageFunctor & operator()(const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGB<T> & color) {
-
 		unsigned int len = Math::length(p);
-
 		color.r += len;
 		color.g -= len;
 		color.b += color.r + color.g;
-
-		
-		return *this; }
+		return *this; 
+	}
 	ImageFunctor & operator()(const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGBA<T> & color) { return *this; }
-
 };
 
 
 
-
-
-
-
 int main(int argc, char * argv[]){
-	const unsigned long long G1 =		1000000000;
-	const unsigned long long M100 =	100000000;
-	const unsigned long long M10 =	10000000;
-	const unsigned long long M1 =		1000000;
-	const unsigned long long K100 =	100000;
-	const unsigned long long K10 =	10000;
-	const unsigned long long K1 =		1000;
+#ifdef DEBUG
+	/************************************************************************/
+	/* DEBUG PART			                                          */
+	/************************************************************************/
 
 	Application<char> app(argc, argv);
-
 
 	Graphic::FontLoadable fontTest(L"consola.ttf", 15);
 	fontTest.load();
@@ -157,8 +134,6 @@ int main(int argc, char * argv[]){
 	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
 
-
-
 	//////////////////////////////////////////////////////////////////////////
 	// Copy Image										//
 	Graphic::Image imageCopy = *(imageTest2[0]);
@@ -178,6 +153,43 @@ int main(int argc, char * argv[]){
 	unsigned int mySuperKernel2[11];
 	Graphic::computeGaussianKernel(mySuperKernel2);
 	*( imageTest2[0] ) = imageTest2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Line										//
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 400), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 300), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 250), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 200), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 100), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
+
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 500), Graphic::ColorRGBA<unsigned char>(255, 0, 100, 150), 10);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 400), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 300), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 250), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 200), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 100), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
+
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 100, 0), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 200, 0), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 250, 0), Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 300, 0), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 400, 0), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
+
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 100, 500), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 200, 500), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 250, 500), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 300, 500), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 400, 500), Graphic::ColorR<unsigned char>(100), 5);
+	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
+
+	imageTest2[0] -> drawLine(Graphic::Line(0, 0, 500, 499), Graphic::ColorRGB<unsigned char>(255,255,255));
 
                                                         
 	//////////////////////////////////////////////////////////////////////////
@@ -211,10 +223,7 @@ int main(int argc, char * argv[]){
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientLinear);					//Linear
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientRadial);					//Radial
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Line										//
-	imageTest2[0] -> drawLine(Graphic::Line(-50,0,500,499), Graphic::ColorR<unsigned char>(100));
-
+	
 
 	//////////////////////////////////////////////////////////////////////////
 	// Generate Mipmaps									//
@@ -233,445 +242,371 @@ int main(int argc, char * argv[]){
 	Graphic::FreeImage freeImage2;
 	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), Graphic::FreeImage::Format::RGB);
 	freeImage2.saveToFile("ultimateTest2.png", Graphic::FreeImage::SavingFormat::PNG);
+#else		//DEBUG
+	const unsigned long long G10 = 10000000000;
+	const unsigned long long G1 = 1000000000;
+	const unsigned long long M100 = 100000000;
+	const unsigned long long M10 = 10000000;
+	const unsigned long long M1 = 1000000;
+	const unsigned long long K100 = 100000;
+	const unsigned long long K10 = 10000;
+	const unsigned long long K1 = 1000;
 
+#ifdef SPEEDTEST_DRAWLINE
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// SPEED TEST : Draw Lines								//
 
+		Graphic::_Image<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::RGB);
 
-	return 0;
+		Log::startChrono();
+		for ( size_t i = 0; i < M1; i++ ) {
+			image.drawLine(Graphic::Line(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 1);
+		}
+		Log::stopChrono();
+		Log::displayChrono("DRAW LINES R -> RGB (Last Result: 5.3s for M1)");
 
-	//////////////////////////////////////////////////////////////////////////
-	// SPEED TEST : Draw Lines								//
-	Log::startChrono();
-	for ( size_t i = 0; i < M1; i++ ) {
-		imageTest2[0] -> drawLine(Graphic::Line(0, 0, 500, 499), Graphic::ColorR<unsigned char>(100));
+		Graphic::FreeImage freeImage;
+		freeImage.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImage.saveToFile("drawline.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
-	Log::getChrono("DRAW LINES R -> RGB (Last Result: 9.3s for M1)");
+#endif
 
-	return 0;
+#ifdef SPEEDTEST_LOGICAL
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Logicals								//
+	{
+		size_t sum = 0;
+		Log::startChrono();
+		for ( size_t i = 0; i < G10; i++ ) {
+			sum += ( i < i + 2 ) ? 1 : 0;
+		}
+		Log::stopChrono();
+		Log::displayChrono(String("LOGICAL < (Last : 5914ms) ") + sum);
 
+		sum = 0;
+		Log::startChrono();
+		for ( size_t i = 0; i < G10; i++ ) {
+			sum += ( i <= i + 2 ) ? 1 : 0;
+		}
+		Log::stopChrono();
+		Log::displayChrono(String("LOGICAL <= (Last : 8281ms) ") + sum);
+	}
+#endif
+
+#ifdef SPEEDTEST_ARRAYACCESS
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : INT VS UINT Array access times.					//
-	
-	int * testArray = new int[10000000];
-	int sum = 0;
-	int iteratorInt;
-	int iteratorAdd = Math::random(0, 100);
-	size_t j;
-	Log::startChrono();
-	for (  j = 0; j < 10000000; j++ ) {
-		for ( iteratorInt = 0; iteratorInt < 1000; iteratorInt++ ) {
-			sum += *(testArray + iteratorInt * iteratorAdd );
+	{
+		int * testArray = new int[10000000];
+		int sum = 0;
+		int iteratorInt;
+		int iteratorAdd = Math::random(0, 100);
+		size_t j;
+		Log::startChrono();
+		for ( j = 0; j < M10; j++ ) {
+			for ( iteratorInt = 0; iteratorInt < 1000; iteratorInt++ ) {
+				sum += *( testArray + iteratorInt * iteratorAdd );
+			}
 		}
-	}
-	Log::getChrono("INT ARRAY ACCESS" + sum);
+		Log::stopChrono();
+		Log::displayChrono("INT ARRAY ACCESS" + sum);
 
-	sum = 0;
-	unsigned int iteratorUInt;
-	Log::startChrono();
-	for (  j = 0; j < 10000000; j++ ) {
-		for ( iteratorUInt = 0; iteratorUInt < 1000; iteratorUInt++ ) {
-			sum += *(testArray + iteratorUInt * iteratorAdd );
+		sum = 0;
+		unsigned int iteratorUInt;
+		Log::startChrono();
+		for ( j = 0; j < M10; j++ ) {
+			for ( iteratorUInt = 0; iteratorUInt < 1000; iteratorUInt++ ) {
+				sum += *( testArray + iteratorUInt * iteratorAdd );
+			}
 		}
-	}
-	Log::getChrono("UINT ARRAY ACCESS" + sum);
+		Log::stopChrono();
+		Log::displayChrono("UINT ARRAY ACCESS" + sum);
 
-	sum = 0;
-	size_t iteratorSizeT;
-	Log::startChrono();
-	for ( j = 0; j < 10000000; j++ ) {
-		for ( iteratorSizeT = 0; iteratorSizeT < 1000; iteratorSizeT++ ) {
-			sum += *(testArray + iteratorSizeT * iteratorAdd );
+		sum = 0;
+		size_t iteratorSizeT;
+		Log::startChrono();
+		for ( j = 0; j < M10; j++ ) {
+			for ( iteratorSizeT = 0; iteratorSizeT < 1000; iteratorSizeT++ ) {
+				sum += *( testArray + iteratorSizeT * iteratorAdd );
+			}
 		}
+		Log::stopChrono();
+		Log::displayChrono("SIZE_T ARRAY ACCESS" + sum);
+
+		//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
+		delete[] testArray;
 	}
-	Log::getChrono("SIZE_T ARRAY ACCESS" + sum);
+#endif
 
-	//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
-	delete[] testArray;
-
-
-
-	return 0;
-
-
+#ifdef SPEEDTEST_BLENDING
 	//////////////////////////////////////////////////////////////////////////
 	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
+	{
+		Graphic::ColorRGBA<unsigned char> colorWhite(255, 255, 255, 100);
 
+		Graphic::Image testBlendRGBA(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGBA);
+		Graphic::Image testBlendRGB(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGB);
 
-	Graphic::Image testBlendRGBA(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGBA);
-	Graphic::Image testBlendRGB(Math::Vec2<unsigned int>(200, 200), Graphic::Format::RGB);
+		testBlendRGBA.fillImage(colorWhite);
+		testBlendRGB.fillImage(colorWhite);
 
-	testBlendRGBA.fillImage(colorWhite);
-	testBlendRGB.fillImage(colorWhite);
+		Graphic::_Image<float> testBlendRGBAFloat(Math::Vec2<unsigned int>(100, 100), Graphic::Format::RGBA);
+		Graphic::_Image<float> testBlendRGBFloat(Math::Vec2<unsigned int>(100, 100), Graphic::Format::RGB);
 
-	Graphic::_Image<float> testBlendRGBAFloat(Math::Vec2<unsigned int>(100, 100), Graphic::Format::RGBA);
-	Graphic::_Image<float> testBlendRGBFloat(Math::Vec2<unsigned int>(100, 100), Graphic::Format::RGB);
+		Math::vec4f colorWhiteF(1.0, 1.0, 1.0, 1.0);
+		Math::vec4f colorRedF(1.0, 0.0, 0.0, 0.0001);
 
-	Math::vec4f colorWhiteF(1.0, 1.0, 1.0, 1.0);
-	Math::vec4f colorRedF(1.0, 0.0, 0.0, 0.0001);
+		testBlendRGBAFloat.fillImage((const float *) &colorRedF);
+		testBlendRGBFloat.fillImage((const float *) &colorWhiteF);
 
-	testBlendRGBAFloat.fillImage((const float *) &colorRedF);
-	testBlendRGBFloat.fillImage((const float *) &colorWhiteF);
-
-	Log::startChrono();
-	for ( size_t i = 0; i < 10000; i++ ) {
-		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA);
-	}
-	Log::getChrono("INT BLENDING RGBA -> RGB (last 2288ms)");
-
-
-	Log::startChrono();
-	for ( size_t i = 0; i < 10000; i++ ) {
-		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat);
-	}
-	Log::getChrono("FLOAT BLENDING RGBA -> RGB (last 205ms)");
-
-	Log::startChrono();
-	for ( size_t i = 0; i < 10000; i++ ) {
-		testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA, Graphic::BlendingFunc::Normal());
-	}
-	Log::getChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 2337ms)");
-
-
-	Log::startChrono();
-	for ( size_t i = 0; i < 10000; i++ ) {
-		testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat, Graphic::BlendingFunc::Normal());
-	}
-	Log::getChrono("FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)");
-
-
-
-
-	Graphic::Image testblendCasted(testBlendRGBFloat);
-
-	Graphic::FreeImage freeImage3;
-	freeImage2.loadFromDatas((unsigned char *) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGB);
-	freeImage2.saveToFile("testBlend2.png", Graphic::FreeImage::SavingFormat::PNG);
-
-
-	
-
-	/*
-	log(String::format("hello % %", 15, 20));
-
-	
-
-	std::fstream testFile;
-	testFile.open("test.txt", std::ios::out);
-
-	Vector<A> testFileVector;
-	testFileVector.resize(10);
-	testFileVector.write(&testFile);
-
-
-
-
-	String dateStr = Time::getDate().toString<char>();
-	log(dateStr);
-
-	
-	using shakes = std::chrono::duration<int, std::ratio<1, 100000000>>;
-
-	auto r = Math::Ratio<1000, 10>();
-
-	Time::Duration<Math::Ratio<10, 1000>> d1(500);
-	Time::Duration<Math::Ratio<2, 4>> d2(d1);
-
-	auto c1 = Time::getClock();
-
-	Time::sleep(10);
-
-	auto d3 = d1 + d2;
-
-	log(Time::Duration<Time::MilliSecond>(Time::getClock() - c1).getValue());
-
-	//Vector<int> testVectorInt({ 42,56 });
-
-
-
-
-	OrderedMap<Math::Vec3<size_t>, CoordinateChunk<float, size_t, 1000> *> chunkMap;
-	Log::startChrono();
-	for ( unsigned long i = 0; i < K1; i++ ) {
-		chunkMap.insert(Math::Vec3<size_t>(Math::random(), Math::random(), Math::random()), new CoordinateChunk<float, size_t, 1000>(i));
-	}
-	Log::getChrono(String() << "CHUNK INSERT MAP");
-	*/
-
-	/*CoordinateChunk<float, size_t, 1000> * zeroChunk = new CoordinateChunk<float, size_t, 1000>(0);
-	Log::startChrono();
-	for ( unsigned long i = 0; i < 15000; i++ ) {
-		zeroChunk -> insertChunk(Math::Vec3<size_t>(Math::random(), Math::random(), Math::random()));
-	}
-	Log::getChrono(String() << "CHUNK INSERT");
-	*/
-
-
-	/************************************************************************/
-	/* TESTING DATE		                                                */
-	/************************************************************************/
-	/*
-	struct tm timeinfo;
-	Time::Date date;
-	Log::startChrono();
-	for ( unsigned long i = 0; i < M1$0; i++ ) {
-		date = Time::Date(Time::getTime());
-	}
-	Log::getChrono(String() << "Date");
-
-	Log::startChrono();
-	for ( unsigned long i = 0; i < M10; i++ ) {
-		time_t now = time(NULL);
-		localtime_s(&timeinfo, &now);
-	}
-	Log::getChrono(String() << "localtime_s");
-	*/
-
-	/************************************************************************/
-	/* TESTING STRING STREAM                                                */
-	/************************************************************************/
-	/*String testStr("STRING STREAM : ");
-	std::string testStr2("STRING : ");
-
-	String strConcat("Hello World!");
-	std::string strConcat2("Hello World!");
-
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < 10000000; i++) {
-		testStr += String("Hello World!");
-	}
-	Log::getChrono(testStr.getSubStr(0, 30));
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < 10000000; i++) {
-		testStr2 += std::string("Hello World!");
-	}
-	Log::getChrono(testStr2.substr(0,30));*/
-
-
-
-	/************************************************************************/
-	/* TESTING CONVERTION STRING -> NUMBER                                  */
-	/************************************************************************/
-	/*float sum = 0;
-	Log::startChrono();
-	for (unsigned long i = 0; i < 10000000; i++) {
-		sum += atof("42.054217");
-	}
-	Log::getChrono("ATOF : " + String(sum)); 
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < 10000000; i++) {
-		sum += String::toFloat("42.054217");
-	}
-	Log::getChrono("toFloat : " + String(sum));*/
-/*
-
-
-
-
-	/************************************************************************/
-	/* TESTING REGEX EXACTITUDE                                             */
-	/************************************************************************/
-	/*
-	//log(preg_match("259", "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$"));
-
-	//return 0;
-	for (unsigned int i = 0; i < 260; i++) {
-		log(String(i) + " : " + preg_match(i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$"));
-	}
-	//log(preg_match("257", "2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0"));
-	//return 0;
-	for (unsigned int i = 0; i < 260; i++) {
-		log(String(i) + " : " + preg_match(i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$"));
-	}
-	//log(preg_match("256", "2([0-4][0-9]?|5[0-5]?|[6-9])?|[1-9][0-9]?[0-9]?|0"));
-	log(String(std::regex_match("ab", std::regex("(a|ab)+"))));
-	//log(preg_match("foo.txt", "[a-z]+\\.txt"));
-
-	
-	/************************************************************************/
-	/* TESTING REGEX MATCH                                                  */
-	/************************************************************************/
-	/*
-	//std::string stdString =  "256" ;
-	std::string stdString = "________255";
-
-	bool stdResult = true;
-
-	//std::string txt_regex("^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$");
-	std::string txt_regex("2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$");
-	std::regex stdRegex(txt_regex, std::regex_constants::optimize );
-	Log::startChrono();
-	for (unsigned long i = 0; i < 1000000; i++) {
-		stdResult &= std::regex_search(stdString, stdRegex);
-	}
-	Log::getChrono("Regex .regex_match(); STD : " + String(stdResult));
-
-
-	bool mineResult = true;
-	//String mineRegex = "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$";
-	String mineRegex = "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$";
-	//String mineString = "256";
-	String mineString = "________255";
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < 1000000; i++) {
-		mineResult &= preg_match(mineString, mineRegex);
-	}
-	Log::getChrono("Vector .regex_match(); Mine : " + String(mineResult));
-
-
-
-	
-	*/
-	/************************************************************************/
-	/* TESTING VECTORS SPEED                                                */
-	/************************************************************************/
-	
-	/*Vector<unsigned long> vectorMine;
-	std::vector<unsigned long> vectorSTD;
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < 10000000; i++){
-		vectorMine.push(i);
-	}
-	Log::getChrono("Vector .push_back(); Mine");
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < 10000000; i++){
-		vectorSTD.push_back(i);
-	}
-	Log::getChrono("Vector .push_back(); STD");*/
-
-	
-	/************************************************************************/
-	/* TESTING MAPS SPEED													*/
-	/************************************************************************/
-
-	/*OrderedMap<unsigned long, unsigned long> mapMine;
-	std::map<unsigned long, unsigned long> mapSTD;
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < M1; i++){
-		mapSTD.insert(std::pair<unsigned long, unsigned long>(Math::random(0, 100000), i));
-	}
-	Log::getChrono("Map .insert(); STD");
-
-	Log::startChrono();
-	for (unsigned long i = 0; i < M1; i++){
-		mapMine.insertFast(Math::random(0, 100000), i);
-	}
-	unsigned long _4572 = mapMine[10];
-	Log::getChrono(String("Map .insert(); Mine ") + _4572);
-	for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
-		Log::displayLog(String(it -> getIndex()) + " : " + it -> getValue());
-	}*/
-
-
-
-
-
-
-	/************************************************************************/
-	/* TESTING STRINGS                                                      */
-	/************************************************************************/
-/*
-	UTF8String utf8String;
-	utf8String = 50.2f;
-
-	std::cout << utf8String << std::endl;
-	std::cout << String("test concat ") + 'L' << std::endl;
-
-	std::cout << String(UTF8String("MDR")) << std::endl;
-	//log(String("HELLO WORLD").getSubStr(6, 5));
-
-	std::cout << String("http://www.amazon.fr/product-reviews/B005FEGYCO/ref.php").getFileName() << std::endl;
-
-	String testHello("Hello World");
-	testHello += 'X';
-	testHello.replace("Hello", "___XX___");
-
-
-	std::cout << testHello << std::endl;
-
-	std::cout << String("HELLO WORLD").split(' ') << std::endl;
-
-
-	String test8;
-	//test8.allocate(1000000);
-	String testLOL("LOL");
-	std::string testLOLSTD("LOL");
-
-	std::string test8std;
-
-	int i = 50;
-	std::cout << String::toString(i, 16) << std::endl;
-	std::cout << String('c') + 50 + "mdr" + L"MDR" << std::endl;
-
-	Log::startChrono();
-	for (unsigned int i = 0; i < 10000000; i++){
-		test8 += testLOL;
-	}
-	Log::getChrono("MINE");
-
-
-	Log::startChrono();
-	for (unsigned int i = 0; i < 10000000; i++){
-		test8std += testLOLSTD;
-	}
-	Log::getChrono("STD");*/
-
-	
-
-	/************************************************************************/
-	/* TESTING NETWORK API                                                  */
-	/************************************************************************/
-/*
-
-	int result;
-	std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
-	scanf_s("%d", &result);
-
-	char testData[50] = "Hello World";
-	char testData2[50] = "";
-
-	if (result == 0){
-		/////CLIENT
-		Network::Server myUDPServer;
-		myUDPServer.listen(5001, Network::SockType::UDP, Network::IpFamily::Undefined);
-
-		Network::Connection myTCPConnection;
-		myTCPConnection.connect("::1", 5001, Network::SockType::TCP);
-
-		Network::Address addressFrom;
-		if (myUDPServer.receive(testData2, sizeof(testData2), &addressFrom))
-			Log::displayLog(String() << "We got an UDP message from the server " << testData2);
-
-	} else if (result == 1) {
-		//SERVER
-		Network::Server myTCPServer;
-		myTCPServer.listen(5001, Network::SockType::TCP, Network::IpFamily::Undefined);
-		myTCPServer.listen(5002, Network::SockType::TCP, Network::IpFamily::Undefined);
-
-		Network::Connection clientConnection;
-		while (myTCPServer.accept(&clientConnection)){
-			clientConnection.setSockType(Network::SockType::UDP);
-			clientConnection.connect();
-
-			Log::displayLog("Sending UDP Message to client.");
-
-			clientConnection.send(testData, sizeof(testData));
+		Log::startChrono();
+		for ( size_t i = 0; i < 10000; i++ ) {
+			testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA);
 		}
-	} else {
-		/////GOOGLE TEST
-		Network::Connection myTCPConnection;
-		
-		if ( myTCPConnection.connect("www.google.fr", 80, Network::SockType::TCP) ) {
-			Log::displayLog(String("Connected to Google ! IP:") << myTCPConnection.getIp());
+		Log::stopChrono();
+		Log::displayChrono("INT BLENDING RGBA -> RGB (last 2288ms)");
+
+
+		Log::startChrono();
+		for ( size_t i = 0; i < 10000; i++ ) {
+			testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat);
+		}
+		Log::stopChrono();
+		Log::displayChrono("FLOAT BLENDING RGBA -> RGB (last 205ms)");
+
+		Log::startChrono();
+		for ( size_t i = 0; i < 10000; i++ ) {
+			testBlendRGB.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBA, Graphic::BlendingFunc::Normal());
+		}
+		Log::stopChrono();
+		Log::displayChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 2337ms)");
+
+
+		Log::startChrono();
+		for ( size_t i = 0; i < 10000; i++ ) {
+			testBlendRGBFloat.drawImage(Graphic::Point(0, 0), Graphic::Rectangle(0, testBlendRGB.getSize()), testBlendRGBAFloat, Graphic::BlendingFunc::Normal());
+		}
+		Log::stopChrono();
+		Log::displayChrono("FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)");
+
+		Graphic::Image testblendCasted(testBlendRGBFloat);
+
+		Graphic::FreeImage freeImage;
+		freeImage.loadFromDatas((unsigned char *) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImage.saveToFile("blending.png", Graphic::FreeImage::SavingFormat::PNG);
+	}
+#endif
+
+#ifdef SPEEDTEST_DATE
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Dates									//
+	{
+		struct tm timeinfo;
+		Time::Date date;
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M10; i++ ) {
+			date = Time::Date(Time::getTime());
+		}
+		Log::stopChrono();
+		Log::displayChrono(String() << "Date");
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M10; i++ ) {
+			time_t now = time(NULL);
+			localtime_s(&timeinfo, &now);
+		}
+		Log::stopChrono();
+		Log::displayChrono(String() << "localtime_s");
+	}
+#endif
+
+#ifdef SPEEDTEST_STRING_CONCAT
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Concat Strings							//
+	{
+		String testStr("STRING STREAM : ");
+		std::string testStr2("STRING : ");
+
+		String strConcat("Hello World!");
+		std::string strConcat2("Hello World!");
+
+
+		Log::startChrono();
+		for ( size_t i = 0; i < M10; i++ ) {
+			testStr += String("Hello World!");
+		}
+		Log::stopChrono();
+		Log::displayChrono(testStr.getSubStr(0, 30));
+
+		Log::startChrono();
+		for ( size_t i = 0; i < M10; i++ ) {
+			testStr2 += std::string("Hello World!");
+		}
+		Log::stopChrono();
+		Log::displayChrono(testStr2.substr(0, 30));
+	}
+#endif
+
+#ifdef SPEEDTEST_STRING_CAST
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Cast Strings								//
+	{
+		float sum = 0;
+		Log::startChrono();
+		for ( unsigned long i = 0; i < 10000000; i++ ) {
+			sum += atof("42.054217");
+		}
+		Log::stopChrono();
+		Log::displayChrono("ATOF : " + String(sum));
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < 10000000; i++ ) {
+			sum += String::toFloat("42.054217");
+		}
+		Log::stopChrono();
+		Log::displayChrono("toFloat : " + String(sum));
+	}
+#endif
+
+#ifdef SPEEDTEST_REGEX
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Regex									//
+	{
+		for ( unsigned int i = 0; i < 260; i++ ) {
+			log(String(i) + " : " + Regex::match(i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$"));
+		}
+		for ( unsigned int i = 0; i < 260; i++ ) {
+			log(String(i) + " : " + Regex::match(i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$"));
+		}
+
+		std::string stdString = "________255";
+
+		bool stdResult = true;
+
+		std::string txt_regex("2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$");
+		std::regex stdRegex(txt_regex, std::regex_constants::optimize);
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M1; i++ ) {
+			stdResult &= std::regex_search(stdString, stdRegex);
+		}
+		Log::stopChrono();
+		Log::displayChrono("Regex .regex_match(); STD : " + String(stdResult));
+
+
+		bool mineResult = true;
+		String mineRegex = "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$";
+		String mineString = "________255";
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M1; i++ ) {
+			mineResult &= Regex::match(mineString, mineRegex);
+		}
+		Log::stopChrono();
+		Log::displayChrono("Vector .regex_match(); Mine : " + String(mineResult));
+	}
+#endif
+
+#ifdef SPEEDTEST_VECTOR
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Vectors									//
+	{
+		Vector<unsigned long> vectorMine;
+		std::vector<unsigned long> vectorSTD;
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < 10000000; i++ ) {
+			vectorMine.push(i);
+		}
+		Log::stopChrono();
+		Log::displayChrono("Vector .push_back(); Mine");
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < 10000000; i++ ) {
+			vectorSTD.push_back(i);
+		}
+		Log::stopChrono();
+		Log::displayChrono("Vector .push_back(); STD");
+	}
+#endif
+
+#ifdef SPEEDTEST_MAP
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Maps									//
+	{
+		OrderedMap<unsigned long, unsigned long> mapMine;
+		std::map<unsigned long, unsigned long> mapSTD;
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M1; i++ ) {
+			mapSTD.insert(std::pair<unsigned long, unsigned long>(Math::random(0, 100000), i));
+		}
+		Log::stopChrono();
+		Log::displayChrono("Map .insert(); STD");
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M1; i++ ) {
+			mapMine.insertFast(Math::random(0, 100000), i);
+		}
+		Log::stopChrono();
+		unsigned long _4572 = *mapMine[10];
+		Log::displayChrono(String("Map .insert(); Mine ") + _4572);
+		for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
+			Log::displayLog(String(it -> getIndex()) + " : " + it -> getValue());
 		}
 	}
+#endif
 
-	*/
+#ifdef SPEEDTEST_NETWORK
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Network									//
+	{
+		int result;
+		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
+		scanf_s("%d", &result);
+
+		char testData[50] = "Hello World";
+		char testData2[50] = "";
+
+		if ( result == 0 ) {
+			/////CLIENT
+			Network::Server myUDPServer;
+			myUDPServer.listen(5001, Network::SockType::UDP, Network::IpFamily::Undefined);
+
+			Network::Connection myTCPConnection;
+			myTCPConnection.connect("::1", 5001, Network::SockType::TCP);
+
+			Network::Address addressFrom;
+			if ( myUDPServer.receive(testData2, sizeof(testData2), &addressFrom) )
+				Log::displayLog(String() << "We got an UDP message from the server " << testData2);
+
+		} else if ( result == 1 ) {
+			//SERVER
+			Network::Server myTCPServer;
+			myTCPServer.listen(5001, Network::SockType::TCP, Network::IpFamily::Undefined);
+			myTCPServer.listen(5002, Network::SockType::TCP, Network::IpFamily::Undefined);
+
+			Network::Connection clientConnection;
+			while ( myTCPServer.accept(&clientConnection) ) {
+				clientConnection.setSockType(Network::SockType::UDP);
+				clientConnection.connect();
+
+				Log::displayLog("Sending UDP Message to client.");
+
+				clientConnection.send(testData, sizeof(testData));
+			}
+		} else {
+			/////GOOGLE TEST
+			Network::Connection myTCPConnection;
+
+			if ( myTCPConnection.connect("www.google.fr", 80, Network::SockType::TCP) ) {
+				Log::displayLog(String("Connected to Google ! IP:") << myTCPConnection.getIp());
+			}
+		}
+	}
+#endif
+
+#endif	//DEBUG
 	return 0;
 }
 

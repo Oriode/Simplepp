@@ -269,7 +269,7 @@ Map<I, T>::Map(void) :
 
 template<typename I, typename T>
 Map<I, T>::Map(ctor) :
-	Vector(null) {
+	Vector(ctor::null) {
 
 }
 

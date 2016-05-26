@@ -4,7 +4,7 @@
 ///
 /// @file	Log.h
 /// @brief	Logging functions.
-/// @author	Clément Gerber
+/// @author	Clï¿½ment Gerber
 /// @date	20/05/15
 /// @version	1.0
 ///
@@ -77,7 +77,9 @@ public:
 	static void displayError(const String & text);
 
 	static void startChrono();
-	static void getChrono(const String & text = "Elapsed Time");
+	static void stopChrono();
+
+	static void displayChrono(const String & text = "Elapsed Time");
 
 
 	static void setErrorHandler(void(*errorHandlerFn) (
@@ -113,7 +115,9 @@ private:
 		MessageSeverity,
 		const String &,
 		unsigned int);
-	static std::chrono::high_resolution_clock::time_point lastDelay;
+	static std::chrono::high_resolution_clock::time_point startTime;
+	static std::chrono::high_resolution_clock::time_point endTime;
+
 };
 
 

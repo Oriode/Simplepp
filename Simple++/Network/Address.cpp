@@ -35,7 +35,7 @@ namespace Network {
 		_update();
 	}
 
-	Address::Address(ctor) : AddrInfo(null) {
+	Address::Address(ctor) : AddrInfo(ctor::null) {
 
 	}
 
@@ -46,7 +46,7 @@ namespace Network {
 	}
 
 	Address::Address(Address && address) : 
-		AddrInfo(null)
+		AddrInfo(ctor::null)
 	{
 		*this = Utility::toRValue(address);
 	}

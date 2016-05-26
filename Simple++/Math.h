@@ -54,7 +54,6 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Mat3<T> getNormalMat( const Mat4<T> & mat );
 
 
-
 	/************************************************************************/
 	/* Local Space Scale                                                    */
 	/************************************************************************/
@@ -494,6 +493,13 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T fpart(const T & x);
 
+	///@brief Truncate a number
+	///@param x Number to truncate
+	///@return Truncated number
+	template<typename T>
+	MATH_FUNC_QUALIFIER T trunc(const T & x);
+
+
 
 	/************************************************************************/
 	/* STD OVERRIDE                                                         */
@@ -506,15 +512,12 @@ namespace Math {
 	using std::tan;
 	using std::atan;
 	using std::sqrt;
-	//using std::pow;
 	using std::max;
 	using std::min;
 	using std::ceil;
 	using std::floor;
-	using std::trunc;
 	using std::exp;
 	using std::round;
-
 
 	/************************************************************************/
 	/* FULL Template                                                        */
