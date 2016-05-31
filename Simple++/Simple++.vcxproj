@@ -264,6 +264,7 @@
     <ClCompile Include="Network\Network.cpp" />
     <ClCompile Include="Network\Connection.cpp" />
     <ClCompile Include="SimpleLog.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Tick.cpp" />
     <ClCompile Include="TickRate.cpp" />

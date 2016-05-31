@@ -3,7 +3,10 @@
 ///@author Clément Gerber
 ///@date 26/05/2016 (DMY) 
 
-#define SPEEDTEST_DRAWLINE
+
+//#define SPEEDTEST_DRAWLINE
+#define SPEEDTEST_STROKE
+//#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
@@ -39,6 +42,7 @@
 #include "FontLoadable.h"
 #include "Utility.h"
 #include "Regex.h"
+#include "GradientInterpolated.h"
 
 
 template<typename T>
@@ -59,39 +63,39 @@ public:
 
 
 int main(int argc, char * argv[]){
-#ifdef DEBUG
+#ifdef DEBUG 
 	/************************************************************************/
 	/* DEBUG PART			                                          */
 	/************************************************************************/
 
 	Application<char> app(argc, argv);
 
-	Graphic::FontLoadable fontTest(L"consola.ttf", 15);
-	fontTest.load();
-	fontTest.loadGlyph(Graphic::Font::Template::Ascii);
-	fontTest.writeToFile(L"myFont.cfont");
+	Graphic::FontLoadable font(L"consola.ttf", 15);
+	font.load();
+	font.loadGlyph(Graphic::Font::Template::Ascii);
+	font.writeToFile(L"consola.cfont");
 
-	Graphic::FontLoadable fontTest2(L"myFont.cfont");
-	fontTest2.load();
+	Graphic::FontLoadable font2(L"consola.cfont");
+	font2.load();
 
-	fontTest.writeToFile(L"myFont2.cfont");
+	font.writeToFile(L"consola2.cfont");
 
 	Graphic::FreeImage glyphFreeImage;
-	glyphFreeImage.loadFromDatas((unsigned char *) fontTest2['A'] -> getDatas(), fontTest2['A'] -> getSize(), Graphic::FreeImage::Format::R);
-	glyphFreeImage.saveToFile("glyphTest.png", Graphic::FreeImage::SavingFormat::PNG);
+	glyphFreeImage.loadFromDatas((unsigned char *) font2['A'] -> getDatas(), font2['A'] -> getSize(), Graphic::FreeImage::Format::R);
+	glyphFreeImage.saveToFile("glyph_A.png", Graphic::FreeImage::SavingFormat::PNG);
 
 
-	Graphic::FreeImage image("sanctum.png", Graphic::FreeImage::Format::RGB);
-	image.load();
+	Graphic::FreeImage freeImage("sanctum.png", Graphic::FreeImage::Format::RGB);
+	freeImage.load();
 
-	Graphic::TextureLoadable<unsigned char> imageTest;
-	imageTest.setDatas((unsigned char * ) image.getDatas(), image.getSize(), Graphic::LoadingFormat::BGR);
-	imageTest.generateMipmaps();
-	imageTest.writeToFile("myImageTest.cimage");
+	Graphic::TextureLoadable<unsigned char> texture;
+	texture.setDatas((unsigned char * ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR);
+	texture.generateMipmaps();
+	texture.writeToFile("sanctum.ctexture");
 	
-	Graphic::TextureLoadable<unsigned char> imageTest2(WString("myImageTest.cimage"));
-	imageTest2.load();
-	imageTest2.writeToFile("myImageTest2.cimage");
+	Graphic::TextureLoadable<unsigned char> texture2(WString("sanctum.ctexture"));
+	texture2.load();
+	texture2.writeToFile("sanctum2.ctexture");
 
 
 	/************************************************************************/
@@ -136,77 +140,86 @@ int main(int argc, char * argv[]){
 
 	//////////////////////////////////////////////////////////////////////////
 	// Copy Image										//
-	Graphic::Image imageCopy = *(imageTest2[0]);
+	Graphic::Image imageCopy = *(texture2[0]);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Blur Image										//
 	unsigned int mySuperKernel10[21];
 	Graphic::computeGaussianKernel(mySuperKernel10);
-	*( imageTest2[0] ) = imageCopy.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	*( texture2[0] ) = imageCopy.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Apply Functor										//
-	imageTest2[0] -> setPixels(ImageFunctor<unsigned char>());
+	//texture2[0] -> setPixels(ImageFunctor<unsigned char>());
+
+	//////////////////////////////////////////////////////////////////////////
+	// Thresholding the image								//
+	texture2[0] -> threshold(Graphic::ColorRGBA<unsigned char>(255), Graphic::ColorRGBA<unsigned char>(0), Graphic::ColorRGBA<unsigned char>(128, 0, 0, 0));
+
+	
 
 	//////////////////////////////////////////////////////////////////////////
 	// Blur Image										//
 	unsigned int mySuperKernel2[11];
 	Graphic::computeGaussianKernel(mySuperKernel2);
-	*( imageTest2[0] ) = imageTest2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	*( texture2[0] ) = texture2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 
-
+	//////////////////////////////////////////////////////////////////////////
+	// Stroke											//
+	texture2[0] -> drawStroke(Graphic::Point(0,0), *texture2[0], 8, ImageFunctor<unsigned char>(), Graphic::Image::StrokeType::Middle);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Line										//
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 400), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 300), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 250), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 200), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 100), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 400), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 300), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 250), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 200), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 100), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
 
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 500), Graphic::ColorRGBA<unsigned char>(255, 0, 100, 150), 10);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 400), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 300), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 250), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 200), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 100), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 500), Graphic::ColorRGBA<unsigned char>(255, 0, 100, 150), 10);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 400), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 300), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 250), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 200), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 100), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
 
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 100, 0), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 200, 0), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 250, 0), Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 300, 0), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 400, 0), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 100, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 200, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 250, 0), Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 300, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 400, 0), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
 
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 100, 500), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 200, 500), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 250, 500), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 300, 500), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 400, 500), Graphic::ColorR<unsigned char>(100), 5);
-	imageTest2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 100, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 200, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 250, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 300, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 400, 500), Graphic::ColorR<unsigned char>(100), 5);
+	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
 
-	imageTest2[0] -> drawLine(Graphic::Line(0, 0, 500, 499), Graphic::ColorRGB<unsigned char>(255,255,255));
+	texture2[0] -> drawLine(Graphic::Line(0, 0, 499, 499), Graphic::ColorRGB<unsigned char>(255,255,255));
 
-                                                        
+	                                                  
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Text Glyph									//
-	auto maskTest = fontTest['A'];
-	imageTest2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
+	auto maskTest = font['A'];
+	texture2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
+
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Rectangle RGBA									//
-	imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
+	texture2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Text Point									//
 	UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
-	Graphic::drawText(imageTest2[0], fontTest, Graphic::Point(250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+	Graphic::drawText(texture2[0], font, Graphic::Point(250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Text Rectangle									//
@@ -223,16 +236,23 @@ int main(int argc, char * argv[]){
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientLinear);					//Linear
 	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientRadial);					//Radial
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Draw Gradient as Functor								//
+	Graphic::GradientHorizontalInterpolation<unsigned char, Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient(gradientHorizontal, *texture2[0], Graphic::Rectangle(250, 250, 500, 500));
+	texture2[0] -> drawRectangle(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
+
+
 	
 
 	//////////////////////////////////////////////////////////////////////////
 	// Generate Mipmaps									//
-	imageTest2.generateMipmaps();
+	texture2.generateMipmaps();
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// Draw Mipmaps									//
-	for ( size_t i = 1; i < imageTest2.getNumMipmaps(); i++ ) {
+	for ( size_t i = 1; i < texture2.getNumMipmaps(); i++ ) {
 		//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 	}
 
@@ -240,8 +260,9 @@ int main(int argc, char * argv[]){
 	//////////////////////////////////////////////////////////////////////////
 	// Saving to file										//
 	Graphic::FreeImage freeImage2;
-	freeImage2.loadFromDatas((unsigned char *) imageTest2.getDatas(0), imageTest2.getSize(0), Graphic::FreeImage::Format::RGB);
-	freeImage2.saveToFile("ultimateTest2.png", Graphic::FreeImage::SavingFormat::PNG);
+	freeImage2.loadFromDatas((unsigned char *) texture2.getDatas(0), texture2.getSize(0), Graphic::FreeImage::Format::RGB);
+	freeImage2.saveToFile("sanctum3.png", Graphic::FreeImage::SavingFormat::PNG);
+
 #else		//DEBUG
 	const unsigned long long G10 = 10000000000;
 	const unsigned long long G1 = 1000000000;
@@ -271,6 +292,54 @@ int main(int argc, char * argv[]){
 		freeImage.saveToFile("drawline.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
+
+#ifdef SPEEDTEST_FILTER
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Filter											//
+		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
+		freeImageIn.load();
+		Graphic::_Image<unsigned char> image(freeImageIn.getDatas(), Math::Vec2<Graphic::Size>(500), Graphic::LoadingFormat::BGR, false);
+
+		unsigned int gaussianKernel[11];
+		Graphic::computeGaussianKernel(gaussianKernel);
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K1; i++ ) {
+			image = image.applyFilter(gaussianKernel, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+		}
+		Log::stopChrono();
+		Log::displayChrono("FILTER (Last Result: 10.8s for K1)");
+
+		Graphic::FreeImage freeImageOut;
+		freeImageOut.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImageOut.saveToFile("filter.png", Graphic::FreeImage::SavingFormat::PNG);
+	}
+#endif
+
+
+#ifdef SPEEDTEST_STROKE
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Stroke											//
+		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
+		freeImageIn.load();
+		Graphic::_Image<unsigned char> image(freeImageIn.getDatas(), Math::Vec2<Graphic::Size>(500), Graphic::LoadingFormat::RGB, false);
+		image.threshold(Graphic::ColorRGBA<unsigned char>(255), Graphic::ColorRGBA<unsigned char>(0), Graphic::ColorRGBA<unsigned char>(128, 0, 0, 0));
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K1; i++ ) {
+			image.drawStroke(Graphic::Point(0, 0), image, 2, ImageFunctor<unsigned char>(), Graphic::Image::StrokeType::Outside);
+		}
+		Log::stopChrono();
+		Log::displayChrono("STROKE (Last Result: 6000ms for K1)");
+
+		Graphic::FreeImage freeImageOut;
+		freeImageOut.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImageOut.saveToFile("stroke.png", Graphic::FreeImage::SavingFormat::PNG);
+	}
+#endif
+
 
 #ifdef SPEEDTEST_LOGICAL
 	//////////////////////////////////////////////////////////////////////////

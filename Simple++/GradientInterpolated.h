@@ -1,6 +1,6 @@
 ///@file GradientInterpolated.h
 ///@brief All the Interpolated Gradient Classes
-///@author Cl�ment Gerber
+///@author Clément Gerber
 ///@date 23/05/16 (DMY)
 
 
@@ -61,7 +61,14 @@ namespace Graphic {
 		///@param p Point relative to the clamped rectangle (see getClampedRectangle())
 		///@return Color
 		const C & getColor(const Math::Vec2<Size> & p) const;
+
+
+		///@brief operator() to be able to use this object as a color functor
+		///@param p Point relative to the image rectangle
+		///@return Color
+		inline C operator()(const Math::Vec2<Size> & p) const;
 	};
+
 
 
 
@@ -76,6 +83,12 @@ namespace Graphic {
 		///@param p Point relative to the clamped rectangle (see getClampedRectangle())
 		///@return Color
 		const C & getColor(const Math::Vec2<Size> & p) const;
+
+
+		///@brief operator() to be able to use this object as a color functor
+		///@param p Point relative to the image rectangle
+		///@return Color
+		inline C operator()(const Math::Vec2<Size> & p) const;
 	};
 
 	

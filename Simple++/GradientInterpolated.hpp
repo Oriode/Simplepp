@@ -32,6 +32,13 @@ namespace Graphic {
 		return this -> interpolatedArray[GradientHorizontal<C, InterFunc>::computeIndex(p)];
 	}
 
+	template<typename T, typename C, typename InterFunc>
+	C GradientHorizontalInterpolation<T, C, InterFunc>::operator()(const Math::Vec2<Size> & p) const {
+		return this -> interpolatedArray[p.x - this -> clampedRectangle.getLeft()];
+
+	}
+
+
 
 
 
@@ -43,4 +50,12 @@ namespace Graphic {
 	GradientVerticalInterpolation<T, C, InterFunc>::GradientVerticalInterpolation(const GradientVertical<C, InterFunc> & gradient, const _Image<T> & image, const Rectangle & rectangle) {
 		this -> size = image.computeInterpolation(gradient, &this -> interpolatedArray, rectangle, &this -> clampedRectangle);
 	}
+
+
+	template<typename T, typename C, typename InterFunc>
+	C GradientVerticalInterpolation<T, C, InterFunc>::operator()(const Math::Vec2<Size> & p) const {
+		return this -> interpolatedArray[p.y - this -> clampedRectangle.getBottom()];
+	}
+
+
 }

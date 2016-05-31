@@ -418,6 +418,7 @@ namespace Math {
 	MATH_FUNC_QUALIFIER T min(const Vec3<T> & v);
 	template<typename T>
 	MATH_FUNC_QUALIFIER T min(const Vec2<T> & v);
+
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max(const Vec3<T> & v);
 	template<typename T>
@@ -500,6 +501,21 @@ namespace Math {
 	MATH_FUNC_QUALIFIER T trunc(const T & x);
 
 
+	///@brief Get the minimal between two elements
+	///@param x first object
+	///@param y second object
+	///@return minimal between x and y
+	template<typename T>
+	MATH_FUNC_QUALIFIER T min(const T & x, const T & y);
+
+
+	///@brief Get the minimal between two elements
+	///@param x first object
+	///@param y second object
+	///@return minimal between x and y
+	template<typename T>
+	MATH_FUNC_QUALIFIER T max(const T & x, const T & y);
+
 
 	/************************************************************************/
 	/* STD OVERRIDE                                                         */
@@ -512,8 +528,8 @@ namespace Math {
 	using std::tan;
 	using std::atan;
 	using std::sqrt;
-	using std::max;
-	using std::min;
+	//using std::max;
+	//using std::min;
 	using std::ceil;
 	using std::floor;
 	using std::exp;

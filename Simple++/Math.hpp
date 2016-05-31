@@ -1443,19 +1443,25 @@ namespace Math {
 		return min(min(v.x, v.y), v.z);
 	}
 
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER T min(const Vec2<T> & v){
 		return min(v.x, v.y);
 	}
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER T min(const T & x, const T & y) {
+		return ( y < x ) ? y : x;
+	}
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER T max(const T & x, const T & y) {
+		return ( y > x ) ? y : x;
+	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max(const Vec3<T> & v){
 		return max(max(v.x, v.y), v.z);
 	}
-
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max(const Vec2<T> & v){

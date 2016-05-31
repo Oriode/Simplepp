@@ -140,15 +140,7 @@ namespace Graphic {
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 			void operator()(float x, float y, const _Image<T> & c) {
-				constexpr size_t N = sizeof(C) / sizeof(T);
-				switch ( N ) {		//switch on a constexpr, will be interpreted during compilation
-				case 1:			//R -> ?
-					return this -> image -> drawImageR<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
-				case 3:			//R -> ?
-					return this -> image -> drawImageRGB<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
-				case 4:			//R -> ?
-					return this -> image -> drawImageRGBA<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
-				}
+				return this -> image -> drawImage<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
 			}
 
 			~Functor() { delete this -> colorFunctor.gradientInterpolation; }
