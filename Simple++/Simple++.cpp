@@ -137,123 +137,163 @@ int main(int argc, char * argv[]){
 	gradientRadial.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
+	Graphic::Image & image = *( texture2[0] );
 
-	//////////////////////////////////////////////////////////////////////////
-	// Copy Image										//
-	Graphic::Image imageCopy = *(texture2[0]);
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Copy Image										//
+		Graphic::Image imageCopy = image;
+		image = imageCopy;
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Blur Image										//
-	unsigned int mySuperKernel10[21];
-	Graphic::computeGaussianKernel(mySuperKernel10);
-	*( texture2[0] ) = imageCopy.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Blur Image										//
+		unsigned int mySuperKernel10[21];
+		Graphic::computeGaussianKernel(mySuperKernel10);
+		image = image.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Apply Functor										//
-	//texture2[0] -> setPixels(ImageFunctor<unsigned char>());
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Apply Functor										//
+		//image.setPixels(ImageFunctor<unsigned char>());
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Thresholding the image								//
-	texture2[0] -> threshold(Graphic::ColorRGBA<unsigned char>(255), Graphic::ColorRGBA<unsigned char>(0), Graphic::ColorRGBA<unsigned char>(128, 0, 0, 0));
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Thresholding the image								//
+		image.threshold(Graphic::ColorRGBA<unsigned char>(255), Graphic::ColorRGBA<unsigned char>(0), Graphic::ColorRGBA<unsigned char>(128, 0, 0, 0));
+	}
 
 	
 
-	//////////////////////////////////////////////////////////////////////////
-	// Blur Image										//
-	unsigned int mySuperKernel2[11];
-	Graphic::computeGaussianKernel(mySuperKernel2);
-	*( texture2[0] ) = texture2[0] -> applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Blur Image										//
+		unsigned int mySuperKernel2[11];
+		Graphic::computeGaussianKernel(mySuperKernel2);
+		image = image.applyFilter(mySuperKernel2, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Stroke											//
-	texture2[0] -> drawStroke(Graphic::Point(0,0), *texture2[0], 8, ImageFunctor<unsigned char>(), Graphic::Image::StrokeType::Middle);
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Stroke											//
+		image.drawStrokeFunctor(Graphic::Point(0, 0), *texture2[0], 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255)), Graphic::Image::StrokeType::Middle);
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Line										//
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 400), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 300), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 250), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 200), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 100), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
+	
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Line										//
+		Graphic::ColorR<unsigned char> color(0);
 
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 500), Graphic::ColorRGBA<unsigned char>(255, 0, 100, 150), 10);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 400), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 300), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 250), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 200), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 100), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 500), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 400), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 300), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 250), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 200), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 100), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 0), color, 5);
 
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 0, 0), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 100, 0), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 200, 0), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 250, 0), Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 300, 0), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 400, 0), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 0), Graphic::ColorR<unsigned char>(100), 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 500), color, 10);
+		image.drawLine(Graphic::Line(250, 250, 0, 400), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 300), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 250), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 200), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 100), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 0), color, 5);
 
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 100, 500), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 200, 500), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 250, 500), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 300, 500), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 400, 500), Graphic::ColorR<unsigned char>(100), 5);
-	texture2[0] -> drawLine(Graphic::Line(250, 250, 500, 500), Graphic::ColorR<unsigned char>(100), 5);
+		image.drawLine(Graphic::Line(250, 250, 0, 0), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 100, 0), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 200, 0), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 250, 0), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 300, 0), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 400, 0), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 0), color, 5);
 
-	texture2[0] -> drawLine(Graphic::Line(0, 0, 499, 499), Graphic::ColorRGB<unsigned char>(255,255,255));
+		image.drawLine(Graphic::Line(250, 250, 100, 500), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 200, 500), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 250, 500), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 300, 500), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 400, 500), color, 5);
+		image.drawLine(Graphic::Line(250, 250, 500, 500), color, 5);
+	}
+
+
 
 	                                                  
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Text Glyph									//
-	auto maskTest = font['A'];
-	texture2[0] -> drawImage(Graphic::Point(300,300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Text Glyph									//
+		auto maskTest = font['A'];
+		image.drawImage(Graphic::Point(300, 300), colorRed, Graphic::Rectangle(maskTest ->getSize()), *maskTest);
+	}
 
 
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Rectangle RGBA									//
-	texture2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Rectangle RGBA									//
+		image.drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
+	}
 
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Text Point									//
-	UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
-	Graphic::drawText(texture2[0], font, Graphic::Point(250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Text Point									//
+		UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
+		Graphic::drawText(&image, font, Graphic::Point(250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Text Rectangle									//
-	//Graphic::drawText(imageTest2[0], fontTest, Graphic::Rectangle(0,0, 250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Text Rectangle									//
+		//Graphic::drawText(imageTest2[0], fontTest, Graphic::Rectangle(0,0, 250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Gradient										//
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, -250, 500, 250), gradientVertical);					//Vertical
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientHorizontal);						//Horizontal
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(250, 0, 750, 500), gradientHorizontal);					//Horizontal
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientHorizontal);					//Horizontal
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Gradient										//
+		//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, -250, 500, 250), gradientVertical);					//Vertical
+		//imageTest2[0] -> drawRectangle(Graphic::Rectangle(0, 0, 500, 500), gradientHorizontal);						//Horizontal
+		//imageTest2[0] -> drawRectangle(Graphic::Rectangle(250, 0, 750, 500), gradientHorizontal);					//Horizontal
+		//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientHorizontal);					//Horizontal
 
-	//imageTest2[0] -> fillImage(gradientVertical, Graphic::Rectangle(0, 0, 500, 500));						//Vertical
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientLinear);					//Linear
-	//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientRadial);					//Radial
-
-
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Gradient as Functor								//
-	Graphic::GradientHorizontalInterpolation<unsigned char, Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient(gradientHorizontal, *texture2[0], Graphic::Rectangle(250, 250, 500, 500));
-	texture2[0] -> drawRectangle(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
-
-
-	
-
-	//////////////////////////////////////////////////////////////////////////
-	// Generate Mipmaps									//
-	texture2.generateMipmaps();
+		//imageTest2[0] -> fillImage(gradientVertical, Graphic::Rectangle(0, 0, 500, 500));						//Vertical
+		//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientLinear);					//Linear
+		//imageTest2[0] -> drawRectangle(Graphic::Rectangle(-250, 0, 250, 500), gradientRadial);					//Radial
+	}
 
 
-	//////////////////////////////////////////////////////////////////////////
-	// Draw Mipmaps									//
-	for ( size_t i = 1; i < texture2.getNumMipmaps(); i++ ) {
-		//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Gradient as Functor								//
+		Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient(gradientHorizontal);
+		image.drawRectangleFunctor(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
+	}
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Line as Functor									//
+		Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient42(gradientHorizontal);
+		image.drawLineFunctor(Graphic::Line(0, 0, 499, 499), testFunctorGradient42, 5);
+	}
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Generate Mipmaps									//
+		texture2.generateMipmaps();
+	}
+
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Mipmaps										//
+		for ( size_t i = 1; i < texture2.getNumMipmaps(); i++ ) {
+			//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
+		}
 	}
 
 
@@ -278,17 +318,27 @@ int main(int argc, char * argv[]){
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::_Image<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::RGB);
+		Graphic::_Image<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+
+		Graphic::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
+		gradientHorizontal.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+		gradientHorizontal.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
+		Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor(gradientHorizontal);
+
+
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M1; i++ ) {
-			image.drawLine(Graphic::Line(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 1);
+			//image.drawLine(Graphic::Line(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 5);
+			image.drawLineFunctor(Graphic::Line(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(255)) , 1);
+
+			//image.drawLineFunctor(Graphic::Line(0, 20, 500, 480), colorFunctor, 5);
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW LINES R -> RGB (Last Result: 5.3s for M1)");
+		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.9s for M1)");
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImage.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
 		freeImage.saveToFile("drawline.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
@@ -329,10 +379,10 @@ int main(int argc, char * argv[]){
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image.drawStroke(Graphic::Point(0, 0), image, 2, ImageFunctor<unsigned char>(), Graphic::Image::StrokeType::Outside);
+			image.drawStrokeFunctor(Graphic::Point(0, 0), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>(Graphic::ColorRGB<unsigned char>(0, 255, 0)), Graphic::Image::StrokeType::Outside);
 		}
 		Log::stopChrono();
-		Log::displayChrono("STROKE (Last Result: 6000ms for K1)");
+		Log::displayChrono("STROKE (Last Result: 3658ms for K1)");
 
 		Graphic::FreeImage freeImageOut;
 		freeImageOut.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);

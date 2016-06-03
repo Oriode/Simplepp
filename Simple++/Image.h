@@ -17,6 +17,7 @@
 #include "BasicIO.h"
 #include "Gradient.h"
 #include "BlendingFunc.hpp"
+#include "ColorFunc.h"
 
 
 
@@ -306,25 +307,42 @@ namespace Graphic {
 		template<typename BlendFunc = BlendingFunc::Normal>
 		void drawLine(const Line & l, const ColorRGBA<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
+
+		///@brief draw an anti aliased line from point p1 to point p2
+		///@see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+		///@param l Line
+		///@param colorFunc functor that will generate the color for each pixels (see Graphic::ColorFunc::Template), width the methods :
+		///					"inline void init(const Rectangle & rectangle);"
+		///					"inline const C & operator()(const Math::Vec2<Size> & p) const;"
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawLineFunctor(const Line & l, ColorFunc & colorFunc, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
 		///@brief Set a functor to each pixels in the rectangle of this image
-		///@param colorFunc Functor with operator() overloaded with 
+		///@param functor Functor with the methods :
 		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);"
 		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGB<T> & c);"
 		///					"inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGBA<T> & c);"
 		///														
 		///@param rectangle Rectangle where to apply the functor.
-		template<typename ColorFunc>
-		void setPixels(ColorFunc & colorFunc, const Rectangle & rectangle);
+		template<typename Functor>
+		void setPixels(Functor & functor, const Rectangle & rectangle);
 
 
 
 		///@brief Set a functor to each pixels of this image
-		///@param colorFunc Functor with operator() overloaded with 
+		///@param functor Functor with operator() overloaded with 
 		///					"template<typename T> void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);"
 		///					"template<typename T> void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGB<T> & c);"
 		///					"template<typename T> void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGBA<T> & c);"
-		template<typename ColorFunc>
-		void setPixels(ColorFunc & colorFunc);
+		template<typename Functor>
+		void setPixels(Functor & functor);
 
 
 		///@brief draw a rectangle inside this image.
@@ -407,14 +425,15 @@ namespace Graphic {
 
 		///@brief draw a rectangle inside this image.
 		///@param rectangle Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
-		///@param colorFunc functor that wille generate the color for each pixels, overloaded with operator() :
-		///					"inline Graphic::ColorR<T> operator()(const Math::Vec2<Size> & p);"
-		///@param blendFunc Functor with operator() overloaded with 
+		///@param colorFunc functor that will generate the color for each pixels (see Graphic::ColorFunc::Template), width the methods :
+		///					"inline void init(const Rectangle & rectangle);"
+		///					"inline const C & operator()(const Math::Vec2<Size> & p) const;"
+		///@param blendFunc Functor with the methods :
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawRectangle(const Rectangle & rectangle, const ColorFunc & colorFunc, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawRectangleFunctor(const Rectangle & rectangle, ColorFunc & colorFunc, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
 		///@brief fill the complete image with a color.
@@ -600,8 +619,9 @@ namespace Graphic {
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
 		///@param point Position where to draw.
-		///@param colorFunc Functor with operator() overloaded with 
-		///					"inline Graphic::ColorR<T> operator()(const Math::Vec2<Size> & p) const;"
+		///@param colorFunc functor that will generate the color for each pixels (see Graphic::ColorFunc::Template), width the methods :
+		///					"inline void init(const Rectangle & rectangle);"
+		///					"inline const C & operator()(const Math::Vec2<Size> & p) const;"
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
@@ -609,7 +629,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawImage(const Point & point, const ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawImageFunctor(const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
 		///@brief draw an another image into this one with a mask image
@@ -648,10 +668,23 @@ namespace Graphic {
 		void drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
-
-		///@brief Stroke the image with a specified color
+		///@brief Stroke the image with a specified color functor
+		///@param point Point where to draw the stroking
+		///@param image Image used to compute the stroking (R & RGB will use the r channel and RGBA the a channel)
+		///@param thickness Thickness of the stroking
+		///@param colorFunc functor that will generate the color for each pixels, width the methods :
+		///					"inline void init(const Rectangle & rectangle);"
+		///					"inline const C & operator()(const Math::Vec2<Size> & p) const;"
+		///@param strokeType Type of the stroking (Outside, Inside or Middle)
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke(const Point & point, const _Image<T> & image, unsigned int width, const ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawStrokeFunctor(const Point & point, const _Image<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
@@ -683,13 +716,16 @@ namespace Graphic {
 		
 	private:
 		template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
-		void _drawStroke(const Point & point, const _Image<T> & image, unsigned int width, const ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void _drawStroke(const Point & point, const _Image<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 		template<typename ThreshFunc, typename C1, typename C2>
 		void _threshold(const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc);
 
 		template<typename BlendFunc, typename C1, typename C2>
 		void _drawLine(const Line & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc);
+
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawLineFunctor(const Line & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc);
 
 		template<typename C1, typename C2>
 		void _fillImage(const C2 & color);
@@ -704,7 +740,7 @@ namespace Graphic {
 		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal());
 
 		template< typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawImage(const Point & point, const ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void _drawImage(const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 		template<typename BlendFunc, typename C1, typename C2>
 		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc);
@@ -713,13 +749,13 @@ namespace Graphic {
 		void _drawImage(const Point & point, const Rectangle & rectangle, const _Image<T> & image);
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawRectangleFunctor(const Rectangle & rectangle, const ColorFunc & colorFunctor, const BlendFunc & blendingFunctor = BlendingFunc::Normal());
+		void _drawRectangleFunctor(const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor = BlendingFunc::Normal());
 
 		template<typename BlendFunc, typename C1, typename C2>
 		void _drawRectangle(const Rectangle & rectangle, const C2 & color, const BlendFunc & functor = BlendingFunc::Normal());
 
-		template<typename ColorFunc, typename C>
-		void _setPixels(ColorFunc & functor, const Rectangle & rectangle);
+		template<typename Functor, typename C>
+		void _setPixels(Functor & functor, const Rectangle & rectangle);
 
 		template<typename C1, typename C2, typename InterFunc>
 		void _drawRectangle(const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient);

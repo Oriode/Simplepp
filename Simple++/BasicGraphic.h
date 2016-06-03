@@ -20,4 +20,14 @@ namespace Graphic {
 	enum class Format : unsigned int { R = 1, RGB = 3, RGBA = 4 };
 	enum class LoadingFormat { R, RGB, BGR, RGBA, BGRA };
 
+
+
+	/*ColorRGBA<unsigned char> colorWhiteR(255);
+	ColorRGBA<unsigned char> colorWhiteRGB(255, 255, 255);
+	ColorRGBA<unsigned char> colorWhiteRGBA(255, 255, 255, 255);
+
+
+	ColorRGBA<unsigned char> colorBlackR(0);
+	ColorRGBA<unsigned char> colorBlackRGB(0, 0, 0);
+	ColorRGBA<unsigned char> colorBlackRGBA(0, 0, 0, 255);*/
 }

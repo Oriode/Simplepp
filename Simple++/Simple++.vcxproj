@@ -126,6 +126,13 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>$(SolutionDir)includes\freetype\;$(SolutionDir)includes\</AdditionalIncludeDirectories>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <StringPooling>true</StringPooling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +155,7 @@
     <ClInclude Include="BasicSimpleIO.h" />
     <ClInclude Include="BasicSimpleLoadableIO.h" />
     <ClInclude Include="BlendingFunc.hpp" />
+    <ClInclude Include="ColorFunc.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontLoadable.h" />
     <ClInclude Include="FreeTypeChar.h" />

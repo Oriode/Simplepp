@@ -8,16 +8,18 @@
 #include "Math.h"
 #include "BasicGraphic.h"
 #include "InterpolationFunc.hpp"
+#include "ColorFunc.h"
 #include "Gradient.h"
-#include "Image.h"
 
 
 namespace Graphic {
 
 	///@brief base class of an interpolated gradient
-	template<typename T, typename C, typename InterFunc>
+	template<typename C, typename InterFunc>
 	class GradientInterpolation {
 	public:
+		GradientInterpolation();
+
 		///@brief destructor
 		~GradientInterpolation();
 
@@ -35,61 +37,66 @@ namespace Graphic {
 		const C * getInterpolatedDatas() const;
 
 	protected:
-		GradientInterpolation();
 
 		C * interpolatedArray;
 		Math::Rectangle<Size> clampedRectangle;
 		size_t size;
 	};
 
-	template<typename T, typename C, typename InterFunc>
-	size_t Graphic::GradientInterpolation<T, C, InterFunc>::getSize() const {
-		return this -> size;
+
+	
+	namespace ColorFunc {
+
+		///@brief An Horizontal gradient color Functor
+		template<typename C, typename InterFunc>
+		class GradientHorizontal : public GradientInterpolation<C, InterFunc>, protected Template<C> {
+		public:
+			///@brief Create a new Horizontal gradient.
+			GradientHorizontal(const Graphic::GradientHorizontal<C, InterFunc> & gradient);
+
+			///@brief Initialize the gradient with the rectangle where to draw
+			///@param rectangle Rectangle where to draw
+			inline void init(const Math::Rectangle<Size> & rectangle);
+
+
+			///@brief operator() to be able to use this object as a color functor
+			///@param p Point relative to the image rectangle (see init())
+			///@return Color
+			inline C operator()(const Math::Vec2<Size> & p) const;
+
+		private:
+			const Graphic::GradientHorizontal<C, InterFunc> & gradient;
+		};
+
+
+		///@brief A Vertical gradient color Functor
+		template<typename C, typename InterFunc>
+		class GradientVertical : public GradientInterpolation<C, InterFunc>, protected Template<C> {
+		public:
+			///@brief Create a new Horizontal gradient.
+			GradientVertical(const Graphic::GradientVertical<C, InterFunc> & gradient);
+
+
+			///@brief Initialize the gradient with the rectangle where to draw
+			///@param rectangle Rectangle where to draw
+			inline void init(const Math::Rectangle<Size> & rectangle);
+
+
+			///@brief operator() to be able to use this object as a color functor
+			///@param p Point relative to the image rectangle (see init())
+			///@return Color
+			inline C operator()(const Math::Vec2<Size> & p) const;
+
+		private:
+			const Graphic::GradientVertical<C, InterFunc> & gradient;
+		};
+
+
 	}
 	
+
+
 	
-
-
-	///@brief An Horizontal gradient already interpolated for a specified image
-	template<typename T, typename C, typename InterFunc>
-	class GradientHorizontalInterpolation : public GradientInterpolation<T, C, InterFunc> {
-	public:
-		///@brief Create a new Horizontal gradient.
-		GradientHorizontalInterpolation(const GradientHorizontal<C, InterFunc> & gradient, const _Image<T> & image, const Rectangle & rectangle);
-
-		///@brief Get a color for this gradient
-		///@param p Point relative to the clamped rectangle (see getClampedRectangle())
-		///@return Color
-		const C & getColor(const Math::Vec2<Size> & p) const;
-
-
-		///@brief operator() to be able to use this object as a color functor
-		///@param p Point relative to the image rectangle
-		///@return Color
-		inline C operator()(const Math::Vec2<Size> & p) const;
-	};
-
-
-
-
-	///@brief A Vertical gradient already interpolated for a specified image
-	template<typename T, typename C, typename InterFunc>
-	class GradientVerticalInterpolation : public GradientInterpolation<T, C, InterFunc> {
-	public:
-		///@brief Create a new Horizontal gradient.
-		GradientVerticalInterpolation(const GradientVertical<C, InterFunc> & gradient, const _Image<T> & image, const Rectangle & rectangle);
-
-		///@brief Get a color for this gradient
-		///@param p Point relative to the clamped rectangle (see getClampedRectangle())
-		///@return Color
-		const C & getColor(const Math::Vec2<Size> & p) const;
-
-
-		///@brief operator() to be able to use this object as a color functor
-		///@param p Point relative to the image rectangle
-		///@return Color
-		inline C operator()(const Math::Vec2<Size> & p) const;
-	};
 
 	
 
