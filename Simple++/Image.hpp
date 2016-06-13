@@ -2575,7 +2575,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine(const Line & l, const ColorR<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLine(const LineF & l, const ColorR<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
 		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorR<T>>(l, color, thickness, blendFunc);
 		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorR<T>>(l, color, thickness, blendFunc);
@@ -2585,7 +2585,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine(const Line & l, const ColorRGB<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLine(const LineF & l, const ColorRGB<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
 		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGB<T>>(l, color, thickness, blendFunc);
 		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGB<T>>(l, color, thickness, blendFunc);
@@ -2595,7 +2595,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine(const Line & l, const ColorRGBA<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLine(const LineF & l, const ColorRGBA<T> & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
 		case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGBA<T>>(l, color, thickness, blendFunc);
 		case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(l, color, thickness, blendFunc);
@@ -2605,7 +2605,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void _Image<T>::drawLineFunctor(const Line & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc) {
+	void _Image<T>::drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc) {
 		switch ( getFormat() ) {
 		case Format::R: return _drawLineFunctor<ColorFunc, BlendFunc, ColorR<T>>(l, colorFunc, thickness, blendFunc);
 		case Format::RGB: return _drawLineFunctor<ColorFunc, BlendFunc, ColorRGB<T>>(l, colorFunc, thickness, blendFunc);
@@ -2615,52 +2615,57 @@ namespace Graphic {
 
 
 
+
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawLineFunctor(const Line & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc) {
+	void _Image<T>::_drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc) {
 		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
 
-		assert((Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value));
+		assert(( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ));
 
 
-		unsigned int thicknessHalfed = thickness / 2;
+		float thicknessHalfed = float(thickness / 2);
 
-		Point p0;
-		Point p1;
+		Math::Vec2<float> p0;
+		Math::Vec2<float> p1;
 
 		bool steep = Math::abs(l.getP1().y - l.getP0().y) > Math::abs(l.getP1().x - l.getP0().x);
 
 		if ( steep ) {
-			Line lineClamped(l);
-			Math::clamp(&lineClamped, Rectangle(thicknessHalfed, 0, getSize().x - thicknessHalfed - 2, getSize().y - 1));
-			p0 = lineClamped.getP0();
-			p1 = lineClamped.getP1();
-			p0.x -= thicknessHalfed;
-			p1.x -= thicknessHalfed;
+			Math::Line<float> lineClamped(l);
+			if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(thicknessHalfed, 0, getSize().x - thicknessHalfed, getSize().y)) )
+				return;
 
-			Utility::swap(p0.x, p0.y);
-			Utility::swap(p1.x, p1.y);
+			p0.y = lineClamped.getP0().x - thicknessHalfed;
+			p0.x = lineClamped.getP0().y;
+
+			p1.y = lineClamped.getP1().x - thicknessHalfed;
+			p1.x = lineClamped.getP1().y;
 		} else {
-			Line lineClamped(l);
-			Math::clamp(&lineClamped, Rectangle(0, thicknessHalfed, getSize().x - 1, getSize().y - thicknessHalfed - 2));
-			p0 = lineClamped.getP0();
-			p1 = lineClamped.getP1();
+			Math::Line<float> lineClamped(l);
+			if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(0, thicknessHalfed, getSize().x, getSize().y - thicknessHalfed)) )
+				return;
 
-			p0.y -= thicknessHalfed;
-			p1.y -= thicknessHalfed;
+			p0.y = lineClamped.getP0().y - thicknessHalfed;
+			p0.x = lineClamped.getP0().x;
+
+			p1.y = lineClamped.getP1().y - thicknessHalfed;
+			p1.x = lineClamped.getP1().x;
 		}
 		if ( p0.x > p1.x ) {
 			Utility::swap(p0.x, p1.x);
 			Utility::swap(p0.y, p1.y);
-
 		}
 
 
+		Math::Vec2<int> p0i(int(p0.x), int(p0.y));
+		Math::Vec2<int> p1i(int(p1.x), int(p1.y));
 
-		int dx = p1.x - p0.x;
-		int dy = p1.y - p0.y;
-		int gradient = (float(dy) / float(dx)) * 255;
-		int intery = gradient + 0;
+		float dx = p1.x - p0.x;
+		float dy = p1.y - p0.y;
+		float gradientF = dy / dx;
+		int gradientI = int( gradientF * 255.0f);
+		int intery = int(( ( p0.y - float(p0i.y) ) + gradientF * ( float(p0i.x) - p0.x ) ) * 255.0f);
 
 		int thisRow = getSize().x;
 		int thicknessMinusOne = int(thickness) - 1;
@@ -2668,11 +2673,7 @@ namespace Graphic {
 
 		int offset;
 
-	
 
-		ColorRGB<T> test(255, 0, 0);
-
-		//TODO finish this
 		// Main loop
 		if ( steep ) {
 			Math::Rectangle<Size> rectangle;
@@ -2680,62 +2681,41 @@ namespace Graphic {
 				offset = p0.y - p1.y;
 				i.x = offset;
 				i.y = 0;
-				rectangle.setLeft(p1.y);
-				rectangle.setBottom(p0.x);
-				rectangle.setRight(p0.y + thickness + 1);
-				rectangle.setTop(p1.x);
+				rectangle.setLeft(p1i.y);
+				rectangle.setBottom(p0i.x);
+				rectangle.setRight(p0i.y + Size(thickness));
+				rectangle.setTop(p1i.x);
 			} else {
 				offset = 0;
 				i.x = 0;
 				i.y = 0;
-				rectangle.setLeft(p0.y);
-				rectangle.setBottom(p0.x);
-				rectangle.setRight(p1.y + thickness + 1);
-				rectangle.setTop(p1.x);
+				rectangle.setLeft(p0i.y);
+				rectangle.setBottom(p0i.x);
+				rectangle.setRight(p1i.y + Size(thickness));
+				rectangle.setTop(p1i.x);
 			}
 
 			colorFunc.init(rectangle);
 			Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
-			C1 * p0It = (C1 *) getDatas(p0.y, p0.x);
+			C1 * p0It = (C1 *) getDatas(p0i.y, p0i.x);
 
-
-
-			if ( p0.y == p1.y ) {	// We are drawing an horizontal or vertical line
-				for ( i.y = 0; i.y <= size.y; i.y++ ) {
-					i.x = 0;
-					for ( auto it0 = p0It ; i.x < thickness; i.x++, it0++ )
-						blendFunc(*it0, colorFunc(i));
-					p0It += thisRow;
-				}
-				return;
-			}
-
-			// First Point
-			auto it0 = p0It;
-			auto max = i.x + thickness;
-			for ( ; i.x < max; i.x++ ) {
-				blendFunc(*it0, colorFunc(i));
-				it0 ++;
-			}
-
-			p0It += thisRow;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				i.x = intery >> 8;
 				int interyFPart = unsigned char(intery);
 
-				it0 = p0It + i.x;
+				auto it0 = p0It + i.x;
 				i.x += offset;
 				blendFunc(*it0, colorFunc(i), 255 - interyFPart);
-				it0 ++;
+				it0++;
 				auto max = i.x + thicknessMinusOne;
 				for ( ; i.x < max; i.x++ ) {
 					blendFunc(*it0, colorFunc(i));
-					it0 ++;
+					it0++;
 				}
 				blendFunc(*it0, colorFunc(i), interyFPart);
 
-				intery += gradient;
-				p0It+=thisRow;
+				intery += gradientI;
+				p0It += thisRow;
 			}
 		} else {
 			Math::Rectangle<Size> rectangle;
@@ -2743,51 +2723,29 @@ namespace Graphic {
 				offset = p0.y - p1.y;
 				i.x = 0;
 				i.y = offset;
-				rectangle.setLeft(p0.x);
-				rectangle.setBottom(p1.y);
-				rectangle.setRight(p1.x);
-				rectangle.setTop(p0.y + thickness + 1);
+				rectangle.setLeft(p0i.x);
+				rectangle.setBottom(p1i.y);
+				rectangle.setRight(p1i.x);
+				rectangle.setTop(p0i.y + Size(thickness));
 			} else {
 				offset = 0;
 				i.x = 0;
 				i.y = 0;
-				rectangle.setLeft(p0.x);
-				rectangle.setBottom(p0.y);
-				rectangle.setRight(p1.x);
-				rectangle.setTop(p1.y + thickness + 1);
+				rectangle.setLeft(p0i.x);
+				rectangle.setBottom(p0i.y);
+				rectangle.setRight(p1i.x);
+				rectangle.setTop(p1i.y + Size(thickness));
 			}
 			colorFunc.init(rectangle);
 			Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
-			C1 * p0It = (C1 *) getDatas(p0.x, p0.y);
+			C1 * p0It = (C1 *) getDatas(p0i.x, p0i.y);
 
-
-			if ( p0.y == p1.y ) {	// We are drawing an horizontal or vertical line
-				for ( i.x = 0; i.x <= size.x; i.x++ ) {
-					i.y = 0;
-					for ( auto it0 = p0It; i.y < thickness; i.y++, it0 += thisRow )
-						blendFunc(*it0, colorFunc(i));
-					p0It ++;
-				}
-				return;
-			}
-
-
-
-			// First Point
-			auto it0 = p0It;
-			auto max = i.y + thickness;
-			for ( ; i.y < max; i.y++ ) {
-				blendFunc(*it0, colorFunc(i));
-				it0 += thisRow;
-			}
-
-			p0It++;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
 				i.y = intery >> 8;
-				int interyFPart = unsigned char(intery) ;
+				int interyFPart = unsigned char(intery);
 
 
-				it0 = p0It + i.y * thisRow;
+				auto it0 = p0It + i.y * thisRow;
 				i.y += offset;
 				blendFunc(*it0, colorFunc(i), 255 - interyFPart);
 				it0 += thisRow;
@@ -2798,18 +2756,16 @@ namespace Graphic {
 				}
 				blendFunc(*it0, colorFunc(i), interyFPart);
 
-				intery += gradient;
+				intery += gradientI;
 				p0It++;
 			}
 		}
 	}
 
 
-
-
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawLine(const Line & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc) {
+	void _Image<T>::_drawLine(const LineF & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc) {
 		return _drawLineFunctor<ColorFunc::SimpleColor<C2>, BlendFunc, C1>(l, ColorFunc::SimpleColor<C2>(color), thickness, blendFunc);
 	}
 
@@ -2858,6 +2814,48 @@ namespace Graphic {
 				BlendingFunc::None::blendColor(*( (C1 *) it ), colorFalse);
 		}
 	}
+
+
+
+	template<typename T>
+	template<typename BlendFunc /*= BlendingFunc::Normal*/>
+	void _Image<T>::drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		switch ( getFormat() ) {
+		case Format::R: 	
+			return _drawStroke<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc, ColorR<T>, ColorR<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorR<T>>(color), strokeType, blendFunc);			//Blend R -> R
+		case Format::RGB: 
+			return _drawStroke<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc, ColorRGB<T>, ColorR<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorR<T>>(color), strokeType, blendFunc);			//Blend R -> RGB
+		case Format::RGBA: 
+			return _drawStroke<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc, ColorRGBA<T>, ColorR<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorR<T>>(color), strokeType, blendFunc);		//Blend R -> RGBA
+		}
+	}
+
+	template<typename T>
+	template<typename BlendFunc /*= BlendingFunc::Normal*/>
+	void _Image<T>::drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		switch ( getFormat() ) {
+		case Format::R:
+			return _drawStroke<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc, ColorR<T>, ColorRGB<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorRGB<T>>(color), strokeType, blendFunc);			//Blend RGB -> R
+		case Format::RGB:
+			return _drawStroke<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc, ColorRGB<T>, ColorRGB<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorRGB<T>>(color), strokeType, blendFunc);			//Blend RGB -> RGB
+		case Format::RGBA:
+			return _drawStroke<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc, ColorRGBA<T>, ColorRGB<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorRGB<T>>(color), strokeType, blendFunc);		//Blend RGB -> RGBA
+		}
+	}
+
+	template<typename T>
+	template<typename BlendFunc /*= BlendingFunc::Normal*/>
+	void _Image<T>::drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		switch ( getFormat() ) {
+		case Format::R:
+			return _drawStroke<ColorFunc::SimpleColor<ColorRGBA<T>>, BlendFunc, ColorR<T>, ColorRGBA<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorRGBA<T>>(color), strokeType, blendFunc);		//Blend RGBA -> R
+		case Format::RGB:
+			return _drawStroke<ColorFunc::SimpleColor<ColorRGBA<T>>, BlendFunc, ColorRGB<T>, ColorRGBA<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorRGBA<T>>(color), strokeType, blendFunc);		//Blend RGBA -> RGB
+		case Format::RGBA:
+			return _drawStroke<ColorFunc::SimpleColor<ColorRGBA<T>>, BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(point, image, thickness, ColorFunc::SimpleColor<ColorRGBA<T>>(color), strokeType, blendFunc);		//Blend RGBA -> RGBA
+		}
+	}
+
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
@@ -3323,6 +3321,81 @@ namespace Graphic {
 		}
 	}
 
+
+	template<typename T>
+	template<typename BlendFunc>
+	void _Image<T>::drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorR<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		switch ( getFormat() ) {
+			case Format::R:
+				return _drawBezierCurve<BlendFunc, ColorR<T>, ColorR<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+			case Format::RGB:
+				return _drawBezierCurve<BlendFunc, ColorRGB<T>, ColorR<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+			case Format::RGBA:
+				return _drawBezierCurve<BlendFunc, ColorRGBA<T>, ColorR<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		}
+	}
+
+
+	template<typename T>
+	template<typename BlendFunc>
+	void _Image<T>::drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGB<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		switch ( getFormat() ) {
+		case Format::R:
+			return _drawBezierCurve<BlendFunc, ColorR<T>, ColorRGB<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		case Format::RGB:
+			return _drawBezierCurve<BlendFunc, ColorRGB<T>, ColorRGB<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		case Format::RGBA:
+			return _drawBezierCurve<BlendFunc, ColorRGBA<T>, ColorRGB<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		}
+	}
+
+
+	template<typename T>
+	template<typename BlendFunc>
+	void _Image<T>::drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGBA<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		switch ( getFormat() ) {
+		case Format::R:
+			return _drawBezierCurve<BlendFunc, ColorR<T>, ColorRGBA<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		case Format::RGB:
+			return _drawBezierCurve<BlendFunc, ColorRGB<T>, ColorRGBA<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		case Format::RGBA:
+			return _drawBezierCurve<BlendFunc, ColorRGBA<T>, ColorRGBA<T>>(p0, p1, p2, p3, thickness, color, blendFunc);
+		}
+	}
+
+
+	template<typename T>
+	template<typename BlendFunc, typename C1, typename C2>
+	void _Image<T>::_drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/) {
+		unsigned int numberPoints = 50;
+
+
+		Math::Vec2<float> p(p0);
+		Math::Vec2<float> p_;
+		float t = 0;
+		float tIncr = 1.0f / float(numberPoints - 1);
+		for ( unsigned int i = 0; i < numberPoints; i++ ) {
+
+			float oneMinusT = 1.0f - t;
+			float oneMinusTSquare = oneMinusT * oneMinusT;
+			float tSquare = t * t;
+
+			float p0Factor = oneMinusTSquare * oneMinusT;
+			float p1Factor = 3.0f * oneMinusTSquare * t;
+			float p2Factor = 3.0f * oneMinusT * tSquare;
+			float p3Factor = tSquare * t;
+
+			p_.x = p0.x * p0Factor + p1.x * p1Factor + p2.x * p2Factor + p3.x * p3Factor;
+			p_.y = p0.y * p0Factor + p1.y * p1Factor + p2.y * p2Factor + p3.y * p3Factor;
+
+			drawLineFunctor(Math::Line<float>(p, p_), ColorFunc::SimpleColor<C2>(color), thickness, blendFunc);
+			p = p_;
+			t += tIncr;
+		}
+
+
+
+	}
 
 
 

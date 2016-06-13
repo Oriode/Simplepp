@@ -5,7 +5,7 @@
 
 
 //#define SPEEDTEST_DRAWLINE
-#define SPEEDTEST_STROKE
+//#define SPEEDTEST_STROKE
 //#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
@@ -188,36 +188,36 @@ int main(int argc, char * argv[]){
 		// Draw Line										//
 		Graphic::ColorR<unsigned char> color(0);
 
-		image.drawLine(Graphic::Line(250, 250, 500, 500), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 400), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 300), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 250), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 200), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 100), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 400), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 300), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 250), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 200), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 100), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 0), color, 5);
 
-		image.drawLine(Graphic::Line(250, 250, 0, 500), color, 10);
-		image.drawLine(Graphic::Line(250, 250, 0, 400), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 0, 300), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 0, 250), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 0, 200), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 0, 100), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 0, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 500), color, 10);
+		image.drawLine(Graphic::LineF(250, 250, 0, 400), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 300), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 250), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 200), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 100), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 0), color, 5);
 
-		image.drawLine(Graphic::Line(250, 250, 0, 0), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 100, 0), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 200, 0), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 250, 0), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 300, 0), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 400, 0), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 100, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 200, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 250, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 300, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 400, 0), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 0), color, 5);
 
-		image.drawLine(Graphic::Line(250, 250, 100, 500), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 200, 500), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 250, 500), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 300, 500), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 400, 500), color, 5);
-		image.drawLine(Graphic::Line(250, 250, 500, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 100, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 200, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 250, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 300, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 400, 500), color, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 500), color, 5);
 	}
 
 
@@ -278,7 +278,13 @@ int main(int argc, char * argv[]){
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Line as Functor									//
 		Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient42(gradientHorizontal);
-		image.drawLineFunctor(Graphic::Line(0, 0, 499, 499), testFunctorGradient42, 5);
+		image.drawLineFunctor(Graphic::LineF(0, 0, 500, 500), testFunctorGradient42, 5);
+	}
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Bezier Curve									//
+		image.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, Graphic::ColorRGBA<unsigned char>(0,0,0,128));
 	}
 
 	{
@@ -329,19 +335,22 @@ int main(int argc, char * argv[]){
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M1; i++ ) {
-			//image.drawLine(Graphic::Line(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 5);
-			image.drawLineFunctor(Graphic::Line(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(255)) , 1);
+			//image.drawLine(Graphic::LineF(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 5);
+			image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(255)) , 1);
 
-			//image.drawLineFunctor(Graphic::Line(0, 20, 500, 480), colorFunctor, 5);
+			//image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), colorFunctor, 5);
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.9s for M1)");
+		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.6s for M1)");
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
 		freeImage.saveToFile("drawline.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
+
+
+
 
 #ifdef SPEEDTEST_FILTER
 	{

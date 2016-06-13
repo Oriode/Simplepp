@@ -277,7 +277,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawLine(const Line & l, const ColorR<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawLine(const LineF & l, const ColorR<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 		///@brief draw an anti aliased line from point p1 to point p2
 		///@see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
@@ -291,7 +291,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawLine(const Line & l, const ColorRGB<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawLine(const LineF & l, const ColorRGB<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 		///@brief draw an anti aliased line from point p1 to point p2
 		///@see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
@@ -305,7 +305,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawLine(const Line & l, const ColorRGBA<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawLine(const LineF & l, const ColorRGBA<T> & color, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
 		///@brief draw an anti aliased line from point p1 to point p2
@@ -322,7 +322,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawLineFunctor(const Line & l, ColorFunc & colorFunc, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
+		void drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness = 1, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 		///@brief Set a functor to each pixels in the rectangle of this image
 		///@param functor Functor with the methods :
@@ -333,8 +333,6 @@ namespace Graphic {
 		///@param rectangle Rectangle where to apply the functor.
 		template<typename Functor>
 		void setPixels(Functor & functor, const Rectangle & rectangle);
-
-
 
 		///@brief Set a functor to each pixels of this image
 		///@param functor Functor with operator() overloaded with 
@@ -687,6 +685,78 @@ namespace Graphic {
 		void drawStrokeFunctor(const Point & point, const _Image<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
+		///@brief Stroke the image with a specified color
+		///@param point Point where to draw the stroking
+		///@param image Image used to compute the stroking (R & RGB will use the r channel and RGBA the a channel)
+		///@param thickness Thickness of the stroking
+		///@param color color to be used
+		///@param strokeType Type of the stroking (Outside, Inside or Middle)
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+		///@brief Stroke the image with a specified color
+		///@param point Point where to draw the stroking
+		///@param image Image used to compute the stroking (R & RGB will use the r channel and RGBA the a channel)
+		///@param thickness Thickness of the stroking
+		///@param color color to be used
+		///@param strokeType Type of the stroking (Outside, Inside or Middle)
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+		///@brief Stroke the image with a specified color
+		///@param point Point where to draw the stroking
+		///@param image Image used to compute the stroking (R & RGB will use the r channel and RGBA the a channel)
+		///@param thickness Thickness of the stroking
+		///@param color color to be used
+		///@param strokeType Type of the stroking (Outside, Inside or Middle)
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+
+		///@brief Draw a Cubic Bezier curve
+		///@param p0 Point 0
+		///@param p1 Point 1
+		///@param p2 Point 2
+		///@param p3 Point 3
+		///@param thickness Thickness of the curve
+		///@param color Color to be used
+		///@param blendFunc Functor with operator() overloaded with 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;" 
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorR<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGB<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
+		template<typename BlendFunc = BlendingFunc::Normal>
+		void drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGBA<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
 		///@param filter Filter table (the table has to have an odd size)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
@@ -694,8 +764,6 @@ namespace Graphic {
 		///@return Image with the filter applied
 		template<typename C, int N>
 		_Image<T> applyFilter(const C(&filter)[N], ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null) const;
-
-
 
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
 		///@param filter Filter table (the table has to have an odd size)
@@ -715,6 +783,9 @@ namespace Graphic {
 
 		
 	private:
+		template<typename BlendFunc, typename C1, typename C2>
+		void _drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
+
 		template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
 		void _drawStroke(const Point & point, const _Image<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
@@ -722,10 +793,10 @@ namespace Graphic {
 		void _threshold(const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc);
 
 		template<typename BlendFunc, typename C1, typename C2>
-		void _drawLine(const Line & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc);
+		void _drawLine(const LineF & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc);
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawLineFunctor(const Line & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc);
+		void _drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc);
 
 		template<typename C1, typename C2>
 		void _fillImage(const C2 & color);
@@ -809,10 +880,7 @@ namespace Graphic {
 		T * buffer;
 
 	};
-
-
-
-	typedef _Image<unsigned char> Image;
+typedef _Image<unsigned char> Image;
 	typedef _Image<float> ImageF;
 
 
