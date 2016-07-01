@@ -5,7 +5,8 @@
 
 
 //#define SPEEDTEST_DRAWLINE
-#define SPEEDTEST_DRAWLINE_FLOAT
+//#define SPEEDTEST_DRAWLINE_FLOAT
+#define SPEEDTEST_GRAPH
 //#define SPEEDTEST_STROKE
 //#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
@@ -185,7 +186,8 @@ int main(int argc, char * argv[]){
 	}*/
 
 	
-	/*{
+/*
+	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Line										//
 		Graphic::ColorR<unsigned char> colorBlack(0);
@@ -200,7 +202,7 @@ int main(int argc, char * argv[]){
 		image.drawLine(Graphic::LineF(250, 250, 500, 100), colorBlack, 5);
 		image.drawLine(Graphic::LineF(250, 250, 500, 0), colorBlack, 5);
 
-		image.drawLine(Graphic::LineF(250, 250, 0, 500), colorBlack, 10);
+		image.drawLine(Graphic::LineF(250, 250, 0, 500), colorBlack, 5);
 		image.drawLine(Graphic::LineF(250, 250, 0, 400), colorBlack, 5);
 		image.drawLine(Graphic::LineF(250, 250, 0, 300), colorBlack, 5);
 		image.drawLine(Graphic::LineF(250, 250, 0, 250), colorBlack, 5);
@@ -223,14 +225,22 @@ int main(int argc, char * argv[]){
 		image.drawLine(Graphic::LineF(250, 250, 400, 500), colorBlack, 5);
 		image.drawLine(Graphic::LineF(250, 250, 500, 500), colorBlack, 5);
 
-		image.drawLine(Graphic::LineF(1.0f, 1.5f, 100, 499), colorRed, 1);
+	}*/
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Bezier UChar									//
+
+
+		Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 128);
+		image.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, colorRed);
+		image.drawBezierCurve(Graphic::PointF(0, 499), Graphic::PointF(100, 100), Graphic::PointF(400, 400), Graphic::PointF(500, 0), 3, colorRed);
 
 	}*/
 
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
-		// Draw float										//
+		// Draw Bezier float									//
 
 		Graphic::_Image<float> imageF(image);
 
@@ -243,11 +253,11 @@ int main(int argc, char * argv[]){
 
 		image = imageF;
 
-	}
+	}*/
 
 
 	{
-		/*image._drawLineFunctorFilledBottom<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>(Graphic::LineF(1, 1, 450, 100),Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>(Graphic::ColorRGB<unsigned char>(0,0,255)), Graphic::Rectangle(0,0,500,500), Graphic::BlendingFunc::Normal());*/
+		image._drawLineFunctorFilledBottom<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>(Graphic::LineF(10, 10, 100, 50),Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0,0,255,128)), Graphic::Rectangle(0,0,500,500), Graphic::BlendingFunc::Normal());
 
 	}
 
@@ -319,9 +329,9 @@ int main(int argc, char * argv[]){
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Graph Points									//
-		//Math::Vec2<float> vStatic[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
-		//Vector<Math::Vec2<float>> v(vStatic);
-		//image.drawGraphValuesFunctor(v, Graphic::Rectangle(250,250,500,500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255,0,0,128)));
+		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
+		Vector<Math::Vec2<float>> v(vStatic);
+		image.drawGraphValuesFunctor(v, Graphic::Rectangle(250, 250, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
 	}
 
 	{
@@ -378,7 +388,7 @@ int main(int argc, char * argv[]){
 			//image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), colorFunctor, 5);
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.6s for M1)");
+		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.581s for M1)");
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
@@ -409,6 +419,31 @@ int main(int argc, char * argv[]){
 
 #endif
 
+#ifdef SPEEDTEST_GRAPH
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// SPEED TEST : Graph									//
+
+		Graphic::_Image<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+
+
+		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
+		Vector<Math::Vec2<float>> v(vStatic);
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K10; i++ ) {
+			image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(128)));
+		}
+		Log::stopChrono();
+		Log::displayChrono("DRAW GRAPH R -> R (Last Result: 6.0s for K100)");
+
+		Graphic::FreeImage freeImage;
+		freeImage.loadFromDatas((unsigned char *) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("graph.png", Graphic::FreeImage::SavingFormat::PNG);
+	}
+#endif
+
+	
 
 
 

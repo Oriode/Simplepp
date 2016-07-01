@@ -2644,7 +2644,7 @@ namespace Graphic {
 
 		if ( steep ) {
 			Math::Line<float> lineClamped(l);
-			if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(thicknessHalfed, 0.0f, getSize().x - thicknessHalfed - 1.0f, getSize().y)) )
+			if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(thicknessHalfed + 1.0f, 0.0f, getSize().x - thicknessHalfed - 2.0f, getSize().y)) )
 				return;
 
 			p0.y = lineClamped.getP0().x - thicknessHalfed;
@@ -2654,7 +2654,7 @@ namespace Graphic {
 			p1.x = lineClamped.getP1().y;
 		} else {
 			Math::Line<float> lineClamped(l);
-			if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(0.0f, thicknessHalfed, getSize().x, getSize().y - thicknessHalfed - 1.0f)) )
+			if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(0.0f, thicknessHalfed + 1.0f, getSize().x, getSize().y - thicknessHalfed - 2.0f)) )
 				return;
 
 			p0.y = lineClamped.getP0().y - thicknessHalfed;
@@ -2671,14 +2671,25 @@ namespace Graphic {
 		typedef Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Signed>::Bigger>::Bigger Bigger;
 
 
-		Math::Vec2<int> p0i(int(p0.x), int(p0.y));
-		Math::Vec2<int> p1i(int(p1.x), int(p1.y));
 
 		float dx = p1.x - p0.x;
 		float dy = p1.y - p0.y;
 		float gradientF = dy / dx;
+
+		float tmp = float(int(p0.x));
+		p0.y = p0.y - gradientF * ( p0.x - tmp );
+		p0.x = tmp;
+
+		tmp = float(int(p1.x));
+		p1.y = p1.y + gradientF * ( p1.x - tmp );
+		p1.x = tmp;
+
+
+		Math::Vec2<int> p0i(int(p0.x), int(p0.y));
+		Math::Vec2<int> p1i(int(p1.x), int(p1.y));
+
 		Bigger gradientI = Bigger( gradientF * float(1 << Utility::TypesInfos<T>::getNbBits()));
-		Bigger intery = Bigger(( ( p0.y - float(p0i.y) ) + gradientF * (  float(p0i.x) - p0.x ) ) * float(1 << Utility::TypesInfos<T>::getNbBits()));
+		Bigger intery = Bigger( (p0.y - float(p0i.y)) * float(1 << Utility::TypesInfos<T>::getNbBits()));
 
 
 		int thisRow = getSize().x;
@@ -2687,25 +2698,28 @@ namespace Graphic {
 
 		// Main loop
 		if ( steep ) {
-			C1 * p0It = (C1 *) getDatas(p0i.y, p0i.x);
 
 			if ( dy < 0 ) {
 				//////////////////////////////////////////////////////////////////////////
 				///// STEEP & dy < 0								   /////
 				//////////////////////////////////////////////////////////////////////////
 
-				int offset = p0.y - p1.y;
-				i.y = 0;
+				C1 * p0It = (C1 *) getDatas(p1i.y, p0i.x);
+
 				Math::Rectangle<Size> rectangle(p1i.y, p0i.x, p0i.y + Size(thickness) + 1, p1i.x);
+				assert(rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y);
 				Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
 
 				colorFunc.init(rectangle);
 
+				Bigger intery = Bigger(( ( p0.y - float(p0i.y) ) + ( p0i.y - p1i.y ) ) * float(1 << Utility::TypesInfos<T>::getNbBits()));
+
+				i.y = 0;
 				i.x = intery >> Utility::TypesInfos<T>::getNbBits();
 				T interyFPart = T(intery);
+
 				auto it0 = p0It;
 				it0 = p0It + i.x;
-				i.x += offset;
 
 				if ( i.x >= 0 ) {
 					assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
@@ -2732,7 +2746,6 @@ namespace Graphic {
 					interyFPart = T(intery);
 
 					it0 = p0It + i.x;
-					i.x += offset;
 					assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
 					blendFunc(*it0, colorFunc(i), Utility::TypesInfos<T>::getMax() - interyFPart);
 					it0++;
@@ -2755,14 +2768,20 @@ namespace Graphic {
 				///// STEEP & dy >= 0								   /////
 				//////////////////////////////////////////////////////////////////////////
 
-				i.y = 0;
+				C1 * p0It = (C1 *) getDatas(p0i.y, p0i.x);
+
 				Math::Rectangle<Size> rectangle(p0i.y, p0i.x, p1i.y + Size(thickness) + 1, p1i.x);
+				assert(rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y);
 				Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
 
 				colorFunc.init(rectangle);
 
+				Bigger intery = Bigger(( p0.y - float(p0i.y) ) * float(1 << Utility::TypesInfos<T>::getNbBits()));
+
+				i.y = 0;
 				i.x = intery >> Utility::TypesInfos<T>::getNbBits();
 				T interyFPart = T(intery);
+
 				auto it0 = p0It;
 				it0 = p0It + i.x;
 
@@ -2810,18 +2829,21 @@ namespace Graphic {
 				}
 			}
 		} else {
-			C1 * p0It = (C1 *) getDatas(p0i.x, p0i.y);
-
 			if ( dy < 0 ) {
 				//////////////////////////////////////////////////////////////////////////
 				///// NO STEEP & dy < 0								   /////
 				//////////////////////////////////////////////////////////////////////////
 
-				int offset = p0.y - p1.y;
+				C1 * p0It = (C1 *) getDatas(p0i.x, p1i.y);
+
 				Math::Rectangle<Size> rectangle(p0i.x, p1i.y, p1i.x, p0i.y + Size(thickness) + 1);
+				assert(rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y);
 				Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
 
 				colorFunc.init(rectangle);
+
+
+				Bigger intery = Bigger(( ( p0.y - float(p0i.y) ) + ( p0i.y - p1i.y ) ) * float(1 << Utility::TypesInfos<T>::getNbBits()));
 
 				i.x = 0;
 				i.y = intery >> Utility::TypesInfos<T>::getNbBits();
@@ -2829,7 +2851,6 @@ namespace Graphic {
 
 
 				auto it0 = p0It + i.y * thisRow;
-				i.y += offset;
 				if ( i.y >= 0 ) {
 					assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
 					blendFunc(*it0, colorFunc(i), Utility::TypesInfos<T>::getMax() - interyFPart);
@@ -2855,7 +2876,6 @@ namespace Graphic {
 					interyFPart = T(intery);
 
 					it0 = p0It + i.y * thisRow;
-					i.y += offset;
 					assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
 					blendFunc(*it0, colorFunc(i), Utility::TypesInfos<T>::getMax() - interyFPart);
 					it0 += thisRow;
@@ -2879,10 +2899,16 @@ namespace Graphic {
 				///// NO STEEP & dy >= 0							   /////
 				//////////////////////////////////////////////////////////////////////////
 
+				C1 * p0It = (C1 *) getDatas(p0i.x, p0i.y);
+
 				Math::Rectangle<Size> rectangle(p0i.x, p0i.y, p1i.x, p1i.y + Size(thickness) + 1);
+				assert(rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y);
 				Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
 
 				colorFunc.init(rectangle);
+
+
+				Bigger intery = Bigger(( p0.y - float(p0i.y) ) * float(1 << Utility::TypesInfos<T>::getNbBits()));
 
 				i.x = 0;
 				i.y = intery >> Utility::TypesInfos<T>::getNbBits();
@@ -3313,215 +3339,186 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void _Image<T>::_drawLineFunctorFilledBottom(const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc) {
+		typedef Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Signed>::Bigger>::Bigger Bigger;
+
+
 		assert(( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ));
 
-		Math::Vec2<typename Rectangle::Type> size(rectangle.getRightTop() - rectangle.getLeftBottom());
+		debug(Math::Vec2<typename Rectangle::Type> size(rectangle.getRightTop() - rectangle.getLeftBottom()););
 
 		Math::Vec2<float> p0;
 		Math::Vec2<float> p1;
 
-		bool steep = Math::abs(l.getP1().y - l.getP0().y) > Math::abs(l.getP1().x - l.getP0().x);
 
-		
-		Math::Line<float> lineClamped(l);
-		if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(rectangle.getLeft(), rectangle.getBottom(), rectangle.getRight(), rectangle.getTop())) )
-			return;
+		p0.y = l.getP0().y;
+		p0.x = l.getP0().x;
 
-		p0.y = lineClamped.getP0().y;
-		p0.x = lineClamped.getP0().x;
+		p1.y = l.getP1().y;
+		p1.x = l.getP1().x;
 
-		p1.y = lineClamped.getP1().y;
-		p1.x = lineClamped.getP1().x;
-		
-		if ( p0.x > p1.x ) {
-			Utility::swap(p0.x, p1.x);
-			Utility::swap(p0.y, p1.y);
-		}
+		float dx = p1.x - p0.x;
+		float dy = p1.y - p0.y;
+
+		bool steep = Math::abs(dy) > Math::abs(dx);
+
+// 		if ( !Math::clamp(&lineClamped, Math::Rectangle<float>(rectangle.getLeft(), rectangle.getBottom(), rectangle.getRight(), rectangle.getTop())) )
+// 			return;
+
+
+
 
 
 		Math::Vec2<int> p0i(int(p0.x), int(p0.y));
 		Math::Vec2<int> p1i(int(p1.x), int(p1.y));
 
-		float dx = p1.x - p0.x;
-		float dy = p1.y - p0.y;
-		float gradientF = dx / dy;
-		int gradientI = int(gradientF * 256.0f);
-		int intery = int(( p0.y - float(p0i.y) ) + gradientF * ( float(p0i.x) - p0.x ));
 
+		//log(String(p0i.x) << " > " << String(p1i.x));
 
 
 		int thisRow = getSize().x;
-		Math::Vec2<int> i;
-
-		int offset;
-
-
-		i.x = p0i.x - rectangle.getLeft();
-		i.y = p0i.y - rectangle.getBottom();
-
-		int yMin = i.y;
-
+		Math::Vec2<int> i(p0i.x - rectangle.getLeft(), p0i.y - rectangle.getBottom());
 		int xMax = p1i.x - rectangle.getLeft();
-
 		C1 * p0It = (C1 *) getDatas(rectangle.getLeft(), rectangle.getBottom());
-		auto it = p0It + thisRow * i.y + i.x;
 
-		for ( ; i.x < xMax; i.x++ ) {
-			int lastX = ( intery >> 8 );
-			int newX = lastX;
-			while ( lastX == newX ) {
-				unsigned char opacity = unsigned char(intery);
-				blendFunc(*it, colorFunc(i), 255 - opacity);
-
-				intery += gradientI;
-				newX = ( intery >> 8 );
-
-
-
-				it += thisRow;
-				i.y++;
-			}
-			it++;
-		}
-
-
-
-
-
-
-
-
-		return;
-
-/*
-
-
-		// Main loop
 		if ( steep ) {
-			if ( dy < 0 ) {
-				return;
-				int intery = int( ( p0.y - float(p0i.y) ) + gradientF * ( float(p0i.x) - p0.x ) );
-				float interyMax = float(int(intery) - 1);
+			float gradientF = dx / dy;
+			Bigger gradientI = -Bigger(gradientF * float(1 << Utility::TypesInfos<T>::getNbBits()));
 
-				C1 * p0It = (C1 *) getDatas(p0i.y - 1, p0i.x);
+			if ( dy < 0.0f ) {
 
-				i.x = p1i.y - rectangle.getLeft() - 1;
-				i.y = p0i.x - rectangle.getBottom();
-				max = p0i.y - p1i.y;
+				auto it = p0It + thisRow * i.y + i.x;
 
-				for ( auto j = 0; j < max; j++ ) {
-					auto tmp = i.y;
-					auto it = p0It - thisRow;
-					for ( ; i.y > 0; ) {
-						i.y--;
-						blendFunc(*it, colorFunc(i));
-						it -= thisRow;
-					}
-					i.y = tmp;
+				Bigger intery = Bigger(0);
+				for ( ; i.x < xMax; ) {
+					int lastX = ( intery >> 8 );
+					int newX;
+					do {
+						unsigned char opacity = unsigned char(intery);
+						assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+						blendFunc(*it, colorFunc(i), opacity);
 
-					while ( intery > interyMax ) {
-						float interyFPart = intery - float(int(intery) - 1);
-						blendFunc(*p0It, colorFunc(i), interyFPart);
-
-						intery += gradientF;
-
-						p0It += thisRow;
-						i.y++;
-					}
-					p0It--;
-					i.x--;
-					interyMax--;
-				}
-
-			} else {
-				int intery = int(( ( p0.y - float(p0i.y) ) + gradientF * ( float(p0i.x) - p0.x ) ) * 256.0f);
-				int interyMax = ((intery >> 8) + 1) << 8;
-
-				int lol;
-				int lol_;
-
-				C1 * p0It = (C1 *) getDatas(p0i.y, p0i.x);
-
-				int xMin = Math::max<int>(p0i.y - rectangle.getLeft(), 0);
-				i.x = xMin;
-				i.y = p0i.x - rectangle.getBottom();
-				max = p1i.y - rectangle.getLeft();
-
-				for ( ; i.x < max; ) {
-					auto tmp = i.y;
-					auto it = p0It - thisRow;
-					for ( ; i.y > 0; ) {
-						i.y--;
-						blendFunc(*it, colorFunc(i));
-						it -= thisRow;
-					}
-					i.y = tmp;
-
-
-					lol = intery >> 8;
-					lol_ = lol;
-					while ( lol == lol_ ) {
-						int interyFPartChar = unsigned char(intery);
-						float interyFPart = float(interyFPartChar) / 255.0f;
-						blendFunc(*p0It, colorFunc(i), 255 - interyFPartChar);
 
 						intery += gradientI;
-						lol = intery >> 8;
+						newX = ( intery >> 8 );
 
-						p0It += thisRow;
-						i.y++;
+						it -= thisRow;
+						i.y--;
+					} while ( lastX == newX );
+
+
+					auto it2 = it;
+					auto tmp = i.y;
+					while ( i.y >= 0 ) {
+						assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+						blendFunc(*it2, colorFunc(i));
+
+						it2 -= thisRow;
+						i.y--;
 					}
-					p0It ++;
+					i.y = tmp;
+
 					i.x++;
-					interyMax++;
+					it++;
 				}
-			}
-			
 
-
-				
-			
-		} else {
-			return;
-			Math::Rectangle<Size> rectangle;
-			if ( dy < 0 ) {
-				offset = p0.y - p1.y;
-				i.x = 0;
-				i.y = offset;
-				rectangle.setLeft(p0i.x);
-				rectangle.setBottom(p1i.y);
-				rectangle.setRight(p1i.x);
-				rectangle.setTop(p0i.y);
 			} else {
-				offset = 0;
-				i.x = 0;
-				i.y = 0;
-				rectangle.setLeft(p0i.x);
-				rectangle.setBottom(p0i.y);
-				rectangle.setRight(p1i.x);
-				rectangle.setTop(p1i.y);
+				auto it = p0It + thisRow * i.y + i.x;
+
+				Bigger intery = Bigger (-1);
+				for ( ; i.x < xMax; ) {
+					auto it2 = it;
+					auto tmp = i.y;
+					while ( i.y > 0 ) {
+						it2 -= thisRow;
+						i.y--;
+						assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+						blendFunc(*it2, colorFunc(i));
+					}
+					i.y = tmp;
+
+					int lastX = ( intery >> 8 );
+					int newX;
+					do {
+						unsigned char opacity = unsigned char(intery);
+						assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+						blendFunc(*it, colorFunc(i), opacity);
+
+
+						intery += gradientI;
+						newX = ( intery >> 8 );
+
+						it += thisRow;
+						i.y++;
+					} while ( lastX == newX );
+					i.x++;
+					it++;
+				}
 			}
-			colorFunc.init(rectangle);
-			Math::Vec2<Size> size(rectangle.getRightTop() - rectangle.getLeftBottom());
-			C1 * p0It = (C1 *) getDatas(p0i.x, p0i.y);
-
-			for ( i.x = 0; i.x < size.x; i.x++ ) {
-				i.y = intery >> 8;
-				int interyFPart = unsigned char(intery);
+		
 
 
-				auto it0 = p0It + i.y * thisRow;
-				i.y += offset;
-				blendFunc(*it0, colorFunc(i), interyFPart);
-				for ( ; i.y >= bottomLimit; i.y-- ) {
-					blendFunc(*it0, colorFunc(i));
-					it0 -= thisRow;
+		} else {
+			float gradientF = dy / dx;
+			Bigger gradientI = Bigger(gradientF * float(1 << Utility::TypesInfos<T>::getNbBits()));
+
+			if ( dy < 0.0f ) {
+				Bigger intery = Bigger(( p0.y - float(rectangle.getBottom()) ) * ( 1 << Utility::TypesInfos<T>::getNbBits() ));
+
+
+				for ( ; i.x < xMax; ) {
+					i.y = ( intery >> 8 );
+					auto it = p0It + thisRow * i.y + i.x;
+
+					unsigned char opacity = unsigned char(intery);
+					assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+					blendFunc(*it, colorFunc(i), opacity);
+
+
+					while ( i.y > 0 ) {
+						it -= thisRow;
+						i.y--;
+						assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+						blendFunc(*it, colorFunc(i));
+					}
+
+					intery += gradientI;
+
+					i.x++;
+					it++;
 				}
 
-				intery += gradientI;
-				p0It++;
+
+
+			} else {
+				Bigger intery = Bigger((p0.y - float(rectangle.getBottom())) * float(1 << Utility::TypesInfos<T>::getNbBits()));
+
+
+				for ( ; i.x < xMax; ) {
+					i.y = ( intery >> 8 );
+					auto it = p0It + thisRow * i.y + i.x;
+
+
+					auto it2 = it;
+					auto tmp = i.y;
+					while ( i.y > 0 ) {
+						it2 -= thisRow;
+						i.y--;
+						assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+						blendFunc(*it2, colorFunc(i));
+					}
+					i.y = tmp;
+
+					unsigned char opacity = unsigned char(intery);
+					assert(i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y);
+					blendFunc(*it, colorFunc(i), opacity);
+
+					intery += gradientI;
+
+					i.x++;
+					it++;
+				}
 			}
-		}*/
+		}
 	}
 
 
@@ -4176,11 +4173,7 @@ namespace Graphic {
 		if ( values.getSize() <= 2 ) {
 			return;
 		}
-		unsigned int resolution = 50000;
-
-		if ( true ) {
-			resolution = 2;
-		}
+		unsigned int resolution = 10;
 
 
 		Math::Rectangle<Size> clampedRectangle = clampRectangle(rectangle);
@@ -4220,21 +4213,26 @@ namespace Graphic {
 			const Math::Vec2<float> & m0 = tangents[i - 1];
 			const Math::Vec2<float> & m1 = tangents[i];
 
-			auto pixelBeginX = p0.x * size.x + clampedRectangle.getLeft();
-			auto pixelEndX = p1.x * size.x + clampedRectangle.getLeft();
-			auto numPixelstoDraw = pixelEndX - pixelBeginX;
-			unsigned int numSamples = Math::max<unsigned int>(numPixelstoDraw / resolution, 1);
-			float tIncr = 1.0f / ( float(numSamples) );
-			float t = tIncr;
+
 
 			//for each pixel
 			Math::Vec2<Size> j;
 			PointF p, p_;
-			p_.x = p0.x * float(size.x) + float(clampedRectangle.getLeft());
+			p_.x = int(p0.x * float(size.x) + float(clampedRectangle.getLeft()));
 			p_.y = p0.y * float(size.y) + float(clampedRectangle.getBottom());
 
+			auto pixelBeginX = int(p_.x);
+			auto pixelEndX = int(p1.x * float(size.x) + float(clampedRectangle.getLeft()));
+			auto numPixelstoDraw = pixelEndX - pixelBeginX;
+			unsigned int numSamples = Math::min<unsigned int>(resolution, numPixelstoDraw);
+			float tIncr = 1.0f / ( float(numSamples) );
+			float t = tIncr;
+
+
+			j.x = pixelBeginX;
+
 			for ( size_t k = 0; k < numSamples; k ++  ) {
-				j.x = pixelBeginX + t * float(numPixelstoDraw);
+				j.x = pixelBeginX + ( pixelEndX - pixelBeginX ) * (k + 1) / numSamples;
 
 				float t2 = t * t;
 				float t3 = t2 * t;
@@ -4248,37 +4246,14 @@ namespace Graphic {
 
 				float y = p0.y * p0Factor + m0.y * m0Factor + p1.y * p1Factor + m1.y * m1Factor;
 
-				//j.y = y * float(size.y) + clampedRectangle.getBottom();
 
 				p.x = j.x;
 				p.y = y * float(size.y) + float(clampedRectangle.getBottom());
 
 
-/*
-				Point pi(p), p_i(p_);
-				auto lineSize = pi.x - p_i.x;
 
-
-				for ( size_t l = 0; l < lineSize; l++ ) {
-					
-
-
-					Size gradient = pi.y - p_i.y;
-
-
-
-					blendFunc(*( (C1 *) getDatas(j.x, j.y) ), colorFunc(j));
-
-				}*/
-
-				_drawLineFunctor<Graphic::ColorFunc::SimpleColor<ColorRGBA<T>>, BlendFunc, C1>(LineF(p_, p), Graphic::ColorFunc::SimpleColor<ColorRGBA<T>>(ColorRGBA<T>(0, 255, 0, 255)), 1, blendFunc);
 
 				_drawLineFunctorFilledBottom<ColorFunc, BlendFunc, C1>(LineF(p_, p), colorFunc, clampedRectangle, blendFunc);
-
-
-
-
-				//blendFunc(*( (C1 *) getDatas(j.x, j.y) ), colorFunc(j));
 
 				t += tIncr;
 				p_ = p;
