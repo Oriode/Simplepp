@@ -97,6 +97,9 @@ namespace Utility {
 	class TypesInfos {
 	public:
 		typedef T Bigger;
+		typedef T Signed;
+		typedef T Unsigned;
+
 		static bool isInteger() { return false; }
 		static T getMin() { return T(); }
 		static T getMax() { return T(); }
@@ -110,6 +113,8 @@ namespace Utility {
 	public:
 		typedef char T;
 		typedef short Bigger;
+		typedef char Signed;
+		typedef unsigned char Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(CHAR_MIN); }
@@ -123,7 +128,8 @@ namespace Utility {
 	public:
 		typedef unsigned char T;
 		typedef unsigned short Bigger;
-
+		typedef char Signed;
+		typedef unsigned char Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(0); }
@@ -141,6 +147,8 @@ namespace Utility {
 	public:
 		typedef short T;
 		typedef int Bigger;
+		typedef short Signed;
+		typedef unsigned short Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(SHRT_MIN); }
@@ -155,6 +163,8 @@ namespace Utility {
 	public:
 		typedef unsigned short T;
 		typedef unsigned int Bigger;
+		typedef short Signed;
+		typedef unsigned short Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(0); }
@@ -170,6 +180,8 @@ namespace Utility {
 	public:
 		typedef int T;
 		typedef long Bigger;
+		typedef int Signed;
+		typedef unsigned int Unsigned;
 
 		static bool isInteger()		{ return true; }
 		static T getMin()			{ return T(INT_MIN); }
@@ -184,6 +196,8 @@ namespace Utility {
 	public:
 		typedef unsigned int T;
 		typedef unsigned long Bigger;
+		typedef int Signed;
+		typedef unsigned int Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(0); }
@@ -199,6 +213,8 @@ namespace Utility {
 	public:
 		typedef long T;
 		typedef long long Bigger;
+		typedef long Signed;
+		typedef unsigned long Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(LONG_MIN); }
@@ -213,6 +229,8 @@ namespace Utility {
 	public:
 		typedef unsigned long T;
 		typedef unsigned long long Bigger;
+		typedef long Signed;
+		typedef unsigned long Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(0); }
@@ -228,6 +246,8 @@ namespace Utility {
 	public:
 		typedef long long T;
 		typedef long long Bigger;
+		typedef long long Signed;
+		typedef unsigned long long Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(LLONG_MIN); }
@@ -242,6 +262,8 @@ namespace Utility {
 	public:
 		typedef unsigned long long T;
 		typedef unsigned long long Bigger;
+		typedef long long Signed;
+		typedef unsigned long long Unsigned;
 
 		static bool isInteger() { return true; }
 		static T getMin() { return T(0); }
@@ -256,6 +278,9 @@ namespace Utility {
 	class TypesInfos<float> {
 	public:
 		typedef float T;
+		typedef double Bigger;
+		typedef float Signed;
+		typedef float Unsigned;
 
 		static bool isInteger()		{ return false; }
 		static T getMin()			{ return T(FLT_MIN); }
@@ -270,6 +295,9 @@ namespace Utility {
 	class TypesInfos<double> {
 	public:
 		typedef double T;
+		typedef double Bigger;
+		typedef double Signed;
+		typedef double Unsigned;
 
 		static bool isInteger() { return false; }
 		static T getMin() { return T(DBL_MIN); }

@@ -734,6 +734,7 @@ namespace Graphic {
 		void drawStroke(const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
+		///@method drawBezierCurve
 		///@brief Draw a Cubic Bezier curve
 		///@param p0 Point 0
 		///@param p1 Point 1
@@ -757,6 +758,11 @@ namespace Graphic {
 		template<typename BlendFunc = BlendingFunc::Normal>
 		void drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGBA<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
+
+		///@brief 
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawGraphValuesFunctor(const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal());
+
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
 		///@param filter Filter table (the table has to have an odd size)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
@@ -779,10 +785,18 @@ namespace Graphic {
 		///@return an unsigned rectangle clamped inside the image
 		inline Math::Rectangle<Size> clampRectangle(const Rectangle & rectangle) const;
 
+
+
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawLineFunctorFilledBottom(const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc);
+
 	protected:
 
 		
 	private:
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawGraphValuesFunctor(const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal());
+
 		template<typename BlendFunc, typename C1, typename C2>
 		void _drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
@@ -795,8 +809,17 @@ namespace Graphic {
 		template<typename BlendFunc, typename C1, typename C2>
 		void _drawLine(const LineF & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc);
 
+		template<typename ColorFunc, typename BlendFunc, typename C1, typename I>
+		void _drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const I * t);
+
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc);
+		void _drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const float * t);
+
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawLineFunctor(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const double * t);
+
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawLineFunctorf(const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc);
 
 		template<typename C1, typename C2>
 		void _fillImage(const C2 & color);
@@ -880,7 +903,9 @@ namespace Graphic {
 		T * buffer;
 
 	};
-typedef _Image<unsigned char> Image;
+
+
+	typedef _Image<unsigned char> Image;
 	typedef _Image<float> ImageF;
 
 
