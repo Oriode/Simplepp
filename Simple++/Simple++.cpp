@@ -256,10 +256,7 @@ int main(int argc, char * argv[]){
 	}*/
 
 
-	{
-		image._drawLineFunctorFilledBottom<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>(Graphic::LineF(10, 10, 100, 50),Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0,0,255,128)), Graphic::Rectangle(0,0,500,500), Graphic::BlendingFunc::Normal());
 
-	}
 
 	                                                  
 
@@ -326,13 +323,24 @@ int main(int argc, char * argv[]){
 		//image.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, Graphic::ColorRGBA<unsigned char>(0,0,0,128));
 	}
 
+
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Draw Graph Points									//
-		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
-		Vector<Math::Vec2<float>> v(vStatic);
-		image.drawGraphValuesFunctor(v, Graphic::Rectangle(250, 250, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
+		// Draw Circle Quad 1									//
+
+		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc(Graphic::ColorR<unsigned char>(0));
+		image._drawRectangleRounded<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>(Graphic::Point(250, 250), 100, Graphic::Rectangle(100, 100, 400, 400), colorFunc);
+
 	}
+
+
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Graph Points									//
+		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(-2.0f, 0.0f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
+		Vector<Math::Vec2<float>> v(vStatic);
+		image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
+	}*/
 
 	{
 		//////////////////////////////////////////////////////////////////////////

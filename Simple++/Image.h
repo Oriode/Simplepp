@@ -759,7 +759,11 @@ namespace Graphic {
 		void drawBezierCurve(const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGBA<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal());
 
 
-		///@brief 
+		///@brief draw points (x,y) as a graph inside a rectangle
+		///@param values Vector of floating points (points has to be between 0.0 and 1.0) (the points has to be ascending ordered using their x coordinate)
+		///@param rectangle Rectangle where to draw the graph
+		///@param colorFunc Color Functor used to draw
+		///@param blendFunc Blending Functor used to draw
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
 		void drawGraphValuesFunctor(const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal());
 
@@ -788,12 +792,17 @@ namespace Graphic {
 
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawLineFunctorFilledBottom(const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc);
+		void _drawRectangleRounded(const Point & point, float radius, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal());
 
 	protected:
 
 		
 	private:
+
+
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawLineFunctorFilledBottom(const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc);
+
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawGraphValuesFunctor(const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal());
 
@@ -903,6 +912,8 @@ namespace Graphic {
 		T * buffer;
 
 	};
+
+
 
 
 	typedef _Image<unsigned char> Image;
