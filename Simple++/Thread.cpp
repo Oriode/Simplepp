@@ -1,44 +1,43 @@
 #include "Thread.h"
 
 
-Thread::Thread() : 
-bIsRunning(false)
-{
+Thread::Thread() :
+	bIsRunning( false ) {
 
 
 }
 
 
-Thread::~Thread(){
+Thread::~Thread() {
 	join();
 }
 
-void Thread::start(){
-	if (isRunning())
+void Thread::start() {
+	if ( isRunning() )
 		join();
 
 
 	this -> mutex.lock();
 	this -> bIsRunning = true;
-	this -> thread = new std::thread(Thread::_staticRun, this);
+	this -> thread = new std::thread( Thread::_staticRun, this );
 	this -> mutex.unlock();
 
-	log("Thread started !");
+	log( "Thread started !" );
 }
 
-void Thread::sleep(unsigned int ms){
-	Time::sleep(ms);
+void Thread::sleep( unsigned int ms ) {
+	Time::sleep( ms );
 }
 
-bool Thread::isRunning(){
+bool Thread::isRunning() {
 	this -> mutex.lock();
 	bool b = this -> bIsRunning;
 	this -> mutex.unlock();
 	return b;
 }
 
-void Thread::join(){
-	if (!isRunning())
+void Thread::join() {
+	if ( !isRunning() )
 		return;
 
 	this -> mutex.lock();
@@ -50,35 +49,35 @@ void Thread::join(){
 
 	this -> mutex.unlock();
 
-	log("Thread stopped.");
+	log( "Thread stopped." );
 
 }
 
-void Thread::_staticRun(Thread * t){
+void Thread::_staticRun( Thread * t ) {
 	t -> _run();
 }
 
-void Thread::_run(){
+void Thread::_run() {
 	run();
-	
+
 	this -> mutex.lock();
 	this -> bIsRunning = false;
 	this -> mutex.unlock();
 }
 
-void Thread::lock(){
+void Thread::lock() {
 	this -> mutex.lock();
 }
 
-void Thread::unlock(){
+void Thread::unlock() {
 	this -> mutex.unlock();
 }
 
-Thread::Id Thread::getCurrentThreadId(){
-#ifdef WIN32
+Thread::Id Thread::getCurrentThreadId() {
+	#ifdef WIN32
 	return GetCurrentThreadId();
-#else
+	#else
 	return std::this_thread::get_id().hash();
-#endif
+	#endif
 }
 

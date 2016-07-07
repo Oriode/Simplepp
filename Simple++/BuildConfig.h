@@ -6,21 +6,21 @@
 
 
 /************************************************************************/
-/*  specify the default floating type		                        */
+/*  specify the default floating type									*/
 /************************************************************************/
 #define MATH_FLOAT_DEFAULT float
 
 /************************************************************************/
-/*  Enable or disable the fast blending optimization				*/
+/*  Enable or disable the fast blending optimization					*/
 /*  The blending will have some error when used with int types but will */
-/*  at least two times faster								*/
+/*  at least two times faster											*/
 /************************************************************************/
 #define GRAPHIC_FAST_BLENDING
 
 
 
 /************************************************************************/
-/* Enable or disable blending branching optimizations				*/
+/* Enable or disable blending branching optimizations					*/
 /************************************************************************/
 #define GRAPHIC_BRANCHING_BLENDING
 

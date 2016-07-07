@@ -36,7 +36,7 @@ public:
 
 
 
-	/* 
+	/*
 	 * Virtual function, should be overloaded to do something with the thread
 	 */
 	virtual void run() = 0;
@@ -49,7 +49,7 @@ public:
 	bool isRunning();
 
 
-	void sleep(unsigned int ms);
+	void sleep( unsigned int ms );
 
 
 	void lock();
@@ -57,10 +57,10 @@ public:
 
 
 	static Thread::Id getCurrentThreadId();
-	
+
 
 	void _run();
-	static void _staticRun(Thread * t);
+	static void _staticRun( Thread * t );
 
 
 private:

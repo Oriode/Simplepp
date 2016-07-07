@@ -8,33 +8,33 @@ namespace Graphic {
 
 
 	template<typename T, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
-		_drawText<T, ColorR<T>, BlendFunc>(image, font, point, text, color, centered, blendFunc);
+	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+		_drawText<T, ColorR<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
-		_drawText<T, ColorR<T>, BlendFunc>(image, font, rectangle, text, color, centered, blendFunc);
+	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+		_drawText<T, ColorR<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
-		_drawText<T, ColorRGB<T>, BlendFunc>(image, font, point, text, color, centered, blendFunc);
+	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+		_drawText<T, ColorRGB<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
-		_drawText<T, ColorRGB<T>, BlendFunc>(image, font, rectangle, text, color, centered, blendFunc);
+	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+		_drawText<T, ColorRGB<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
-		_drawText<T, ColorRGBA<T>, BlendFunc>(image, font, point, text, color, centered, blendFunc);
+	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+		_drawText<T, ColorRGBA<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
-		_drawText<T, ColorRGBA<T>, BlendFunc>(image, font, rectangle, text, color, centered, blendFunc);
+	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+		_drawText<T, ColorRGBA<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 
@@ -43,29 +43,29 @@ namespace Graphic {
 	/************************************************************************/
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
-				inline C operator()(const Math::Vec2<Size> & p) const {
+				inline C operator()( const Math::Vec2<Size> & p ) const {
 					auto index = p.x + offset;
 					return this -> interpolationDatas[index];
 				}
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc) : colorFunctor(), image(image), gradient(gradient), blendFunc(blendFunc) {}
-			void onBegin(const Rectangle & rectangle) {
-				this -> image -> computeInterpolation(gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle);
+			Functor( _Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
+			void onBegin( const Rectangle & rectangle ) {
+				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
-			void operator()(float x, float y, const _Image<T> & c) { 
+			void operator()( float x, float y, const _Image<T> & c ) {
 				this -> colorFunctor.offset = x - this -> clampedRectangle.getLeft();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
-				
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+
 			}
 
-			~Functor() { delete [] this -> colorFunctor.interpolationDatas; }
+			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			ColorFunctor colorFunctor;
 			_Image<T> * image;
@@ -73,41 +73,41 @@ namespace Graphic {
 			const GradientHorizontal<C, InterFunc> & gradient;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		Functor functor(image, gradient, blendFunc);
-		_drawTextWBB(font, point, text, centered, functor);
+		Functor functor( image, gradient, blendFunc );
+		_drawTextWBB( font, point, text, centered, functor );
 	}
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
-				inline C operator()(const Math::Vec2<Size> & p) const {
+				inline C operator()( const Math::Vec2<Size> & p ) const {
 					auto index = p.x + offset;
 					return this -> interpolationDatas[index];
 				}
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor(_Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc) : colorFunctor(), image(image), blendFunc(blendFunc) {
-				this -> image -> computeInterpolation(gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle);
+			Functor( _Image<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
+				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 
-			void operator()(float x, float y, const _Image<T> & c) {
+			void operator()( float x, float y, const _Image<T> & c ) {
 				this -> colorFunctor.offset = x - this -> clampedRectangle.getLeft();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
-			~Functor() { delete [] this -> colorFunctor.interpolationDatas; }
+			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			_Image<T> * image;
 			const BlendFunc & blendFunc;
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		Functor functor(image, gradient, rectangle, blendFunc);
-		_drawText(font, rectangle, text, centered, functor);
+		Functor functor( image, gradient, rectangle, blendFunc );
+		_drawText( font, rectangle, text, centered, functor );
 	}
 
 	/************************************************************************/
@@ -115,28 +115,28 @@ namespace Graphic {
 	/************************************************************************/
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
-				inline C operator()(const Math::Vec2<Size> & p) const {
+				inline C operator()( const Math::Vec2<Size> & p ) const {
 					auto index = p.y + offset;
 					return this -> interpolationDatas[index];
 				}
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor(_Image<T> * image, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc) : colorFunctor(), image(image), gradient(gradient), blendFunc(blendFunc) {}
-			void onBegin(const Rectangle & rectangle) {
-				this -> image -> computeInterpolation(gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle);
+			Functor( _Image<T> * image, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
+			void onBegin( const Rectangle & rectangle ) {
+				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
-			void operator()(float x, float y, const _Image<T> & c) {
+			void operator()( float x, float y, const _Image<T> & c ) {
 				this -> colorFunctor.offset = y - this -> clampedRectangle.getBottom();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
-			~Functor() { delete [] this -> colorFunctor.interpolationDatas; }
+			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			ColorFunctor colorFunctor;
 			_Image<T> * image;
@@ -144,102 +144,102 @@ namespace Graphic {
 			const GradientVertical<C, InterFunc> & gradient;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		Functor functor(image, gradient, blendFunc);
-		_drawTextWBB(font, point, text, centered, functor);
+		Functor functor( image, gradient, blendFunc );
+		_drawTextWBB( font, point, text, centered, functor );
 	}
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
-				inline C operator()(const Math::Vec2<Size> & p) const {
+				inline C operator()( const Math::Vec2<Size> & p ) const {
 					auto index = p.y + offset;
 					return this -> interpolationDatas[index];
 				}
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor(_Image<T> * image, const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc) : colorFunctor(), image(image), blendFunc(blendFunc) {
-				this -> image -> computeInterpolation(gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle);
+			Functor( _Image<T> * image, const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
+				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 
-			void operator()(float x, float y, const _Image<T> & c) {
+			void operator()( float x, float y, const _Image<T> & c ) {
 				this -> colorFunctor.offset = y - this -> clampedRectangle.getBottom();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>(Point(x, y), this -> colorFunctor, Rectangle(c.getSize()), c, this -> blendFunc);
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
-			~Functor() { delete [] this -> colorFunctor.interpolationDatas; }
+			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			_Image<T> * image;
 			const BlendFunc & blendFunc;
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		Functor functor(image, gradient, rectangle, blendFunc);
-		_drawText(font, rectangle, text, centered, functor);
+		Functor functor( image, gradient, rectangle, blendFunc );
+		_drawText( font, rectangle, text, centered, functor );
 	}
 
 
 
 	template<typename T, typename C, typename BlendFunc>
-	void _drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+	void _drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
-			Functor(_Image<T> * image, const C & color, const BlendFunc & blendFunc) : image(image), color(color), blendFunc(blendFunc) {}
-			void onBegin(const Rectangle & size) {}
-			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), this -> color, c, this -> blendFunc); }
+			Functor( _Image<T> * image, const C & color, const BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
+			void onBegin( const Rectangle & size ) {}
+			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage( Point( x, y ), this -> color, c, this -> blendFunc ); }
 		private:
 			_Image<T> * image;
 			const C & color;
 			const BlendFunc & blendFunc;
 		};
-		Functor functor(image, color, blendFunc);
-		_drawText(font, rectangle, text, centered, functor);
+		Functor functor( image, color, blendFunc );
+		_drawText( font, rectangle, text, centered, functor );
 	}
 
 
 	template<typename T, typename C, typename BlendFunc>
-	void _drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc) {
+	void _drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
-			Functor(_Image<T> * image, const C & color, const BlendFunc & blendFunc) : image(image), color(color), blendFunc(blendFunc) {}
-			void onBegin(const Math::Vec2<float> & size) {}
-			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), this -> color, c, this -> blendFunc); }
+			Functor( _Image<T> * image, const C & color, const BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
+			void onBegin( const Math::Vec2<float> & size ) {}
+			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage( Point( x, y ), this -> color, c, this -> blendFunc ); }
 		private:
 			_Image<T> * image;
 			const C & color;
 			const BlendFunc & blendFunc;
 		};
-		Functor functor(image, color, blendFunc);
-		_drawText(font, point, text, centered, functor);
+		Functor functor( image, color, blendFunc );
+		_drawText( font, point, text, centered, functor );
 	}
 
 
 
 	template<typename T>
-	void drawText(_Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/) {
+	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
 		struct Functor {
-			Functor(_Image<T> * image) : image(image) {}
-			void onBegin(const Rectangle & size) {}
-			void operator()(float x, float y, const _Image<T> & c) { this -> image ->  drawImage(Point(x, y), c); }
+			Functor( _Image<T> * image ) : image( image ) {}
+			void onBegin( const Rectangle & size ) {}
+			void operator()( float x, float y, const _Image<T> & c ) { this -> image ->  drawImage( Point( x, y ), c ); }
 		private:
 			_Image<T> * image;
 		};
-		Functor functor(image);
-		_drawText(font, point, text, centered, functor);
+		Functor functor( image );
+		_drawText( font, point, text, centered, functor );
 	}
 
 	template<typename T>
-	void drawText(_Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/) {
+	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
 		struct Functor {
-			Functor(_Image<T> * image) : image(image) {}
-			void onBegin(const Rectangle & size) {}
-			void operator()(float x, float y, const _Image<T> & c) { this -> image -> drawImage(Point(x, y), c); }
+			Functor( _Image<T> * image ) : image( image ) {}
+			void onBegin( const Rectangle & size ) {}
+			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage( Point( x, y ), c ); }
 		private:
 			_Image<T> * image;
 		};
-		Functor functor(image);
-		_drawText(font, rectangle, text, centered, functor);
+		Functor functor( image );
+		_drawText( font, rectangle, text, centered, functor );
 	}
 
 
@@ -247,25 +247,25 @@ namespace Graphic {
 
 
 	template<typename Func>
-	void _drawTextWBB(const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func) {
-		Math::Vec2<float> initPoint(point);
+	void _drawTextWBB( const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
+		Math::Vec2<float> initPoint( point );
 		UCodePoint codePoint;
 
 		Vector<float> lineWidth;
-		lineWidth.reserve(10);
+		lineWidth.reserve( 10 );
 		float currentPosX = 0.0f;
 		float rectangleHeight = font.getLineHeight();
 		float maxLineWidth = 0.0f;
-		Rectangle rectangle(0,0,0,0);
+		Rectangle rectangle( 0, 0, 0, 0 );
 
 
-		for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+		for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 			if ( codePoint == '\n' ) {
 				rectangleHeight += font.getLineHeight();
-				lineWidth.push(currentPosX / 2.0f);
+				lineWidth.push( currentPosX / 2.0f );
 
 				//
-				maxLineWidth = Math::max<float>(maxLineWidth, currentPosX);
+				maxLineWidth = Math::max<float>( maxLineWidth, currentPosX );
 				//
 
 				currentPosX = 0;
@@ -278,35 +278,35 @@ namespace Graphic {
 				}
 			}
 		}
-		lineWidth.push(currentPosX / 2.0f);
-		maxLineWidth = Math::max<float>(maxLineWidth, currentPosX);
+		lineWidth.push( currentPosX / 2.0f );
+		maxLineWidth = Math::max<float>( maxLineWidth, currentPosX );
 
 
 
 		float marginY = font.getLineHeight() * 0.7f;
 		if ( centered.y ) {
 			float rectangleHeightHalfed = rectangleHeight * 0.5f;
-			rectangle.setTop(initPoint.y + rectangleHeightHalfed);				//update BB
-			rectangle.setBottom(initPoint.y - rectangleHeightHalfed);				//update BB
+			rectangle.setTop( initPoint.y + rectangleHeightHalfed );				//update BB
+			rectangle.setBottom( initPoint.y - rectangleHeightHalfed );				//update BB
 			initPoint.y = initPoint.y - marginY + rectangleHeightHalfed;
 
 		} else {
-			rectangle.setTop(initPoint.y + marginY);										//update BB
-			rectangle.setBottom(initPoint.y + marginY - rectangleHeight);						//update BB
+			rectangle.setTop( initPoint.y + marginY );										//update BB
+			rectangle.setBottom( initPoint.y + marginY - rectangleHeight );						//update BB
 		}
 
 
 
 		if ( centered.x ) {
-			rectangle.setLeft(initPoint.x - maxLineWidth * 0.5f);
-			rectangle.setRight(initPoint.x + maxLineWidth * 0.5f);
+			rectangle.setLeft( initPoint.x - maxLineWidth * 0.5f );
+			rectangle.setRight( initPoint.x + maxLineWidth * 0.5f );
 
-			func.onBegin(rectangle);
+			func.onBegin( rectangle );
 
-			Math::Vec2<float> currentPos(initPoint.x - lineWidth[0], initPoint.y);
+			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0], initPoint.y );
 			unsigned int currentLine = 1;
 
-			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x - lineWidth[currentLine];
@@ -316,19 +316,19 @@ namespace Graphic {
 				} else {
 					const FreeTypeChar * c = font[codePoint];
 					if ( c ) {
-						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						currentPos.x += c -> getHoriAdvance();
 					}
 				}
 			}
 		} else {
-			rectangle.setLeft(initPoint.x);
-			rectangle.setRight(initPoint.x + maxLineWidth);
+			rectangle.setLeft( initPoint.x );
+			rectangle.setRight( initPoint.x + maxLineWidth );
 
-			func.onBegin(rectangle);
+			func.onBegin( rectangle );
 
-			Math::Vec2<float> currentPos(initPoint);
-			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+			Math::Vec2<float> currentPos( initPoint );
+			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x;
@@ -337,7 +337,7 @@ namespace Graphic {
 				} else {
 					const FreeTypeChar * c = font[codePoint];
 					if ( c ) {
-						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						currentPos.x += c -> getHoriAdvance();
 					}
 				}
@@ -350,25 +350,25 @@ namespace Graphic {
 
 
 	template<typename Func>
-	void _drawText(const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func) {
-		Math::Vec2<float> initPoint(point);
+	void _drawText( const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
+		Math::Vec2<float> initPoint( point );
 		UCodePoint codePoint;
 
 		if ( centered.x ) {
 			Vector<float> lineWidth;
-			lineWidth.reserve(10);
+			lineWidth.reserve( 10 );
 			float currentPosX = 0.0f;
 			float rectangleTop = font.getLineHeight();
 			float maxLineWidth = 0.0f;
 
 
-			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					rectangleTop += font.getLineHeight();
-					lineWidth.push(currentPosX / 2.0f);
+					lineWidth.push( currentPosX / 2.0f );
 
 					//
-					maxLineWidth = Math::max<float>(maxLineWidth, currentPosX);
+					maxLineWidth = Math::max<float>( maxLineWidth, currentPosX );
 					//
 
 					currentPosX = 0;
@@ -381,25 +381,25 @@ namespace Graphic {
 					}
 				}
 			}
-			lineWidth.push(currentPosX / 2.0f);
-			maxLineWidth = Math::max<float>(maxLineWidth, currentPosX);
+			lineWidth.push( currentPosX / 2.0f );
+			maxLineWidth = Math::max<float>( maxLineWidth, currentPosX );
 
 
 			if ( centered.y ) {
 				float rectangleTopHalfed = rectangleTop * 0.5f;
 				initPoint.y = initPoint.y - font.getLineHeight() * 0.7f + rectangleTopHalfed;
 
-			} 
-			
-
-		
+			}
 
 
 
-			Math::Vec2<float> currentPos(initPoint.x - lineWidth[0], initPoint.y);
+
+
+
+			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0], initPoint.y );
 			unsigned int currentLine = 1;
 
-			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x - lineWidth[currentLine];
@@ -411,7 +411,7 @@ namespace Graphic {
 				} else {
 					const FreeTypeChar * c = font[codePoint];
 					if ( c ) {
-						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
 						currentPos.x += c -> getHoriAdvance();
 					}
@@ -423,15 +423,15 @@ namespace Graphic {
 		} else {
 			if ( centered.y ) {
 				float rectangleTop = font.getLineHeight();
-				for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+				for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 					if ( codePoint == '\n' ) rectangleTop += font.getLineHeight();
 				}
 
 				initPoint.y = initPoint.y - font.getLineHeight() * 0.7f + rectangleTop * 0.5f;
 			}
 
-			Math::Vec2<float> currentPos(initPoint);
-			for ( auto it = text.getBegin(); text.iterate(&it, &codePoint); ) {
+			Math::Vec2<float> currentPos( initPoint );
+			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x;
@@ -440,7 +440,7 @@ namespace Graphic {
 				} else {
 					const FreeTypeChar * c = font[codePoint];
 					if ( c ) {
-						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
 						currentPos.x += c -> getHoriAdvance();
 					}
@@ -455,29 +455,29 @@ namespace Graphic {
 
 
 	template<typename Func>
-	void _drawText(const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func) {
+	void _drawText( const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
 		UCodePoint codePoint;
-		Math::Vec2<int> rectangleSize(rectangle.getRight() - rectangle.getLeft(), rectangle.getTop() - rectangle.getBottom());
-		UTF8String textCopy(text);
+		Math::Vec2<int> rectangleSize( rectangle.getRight() - rectangle.getLeft(), rectangle.getTop() - rectangle.getBottom() );
+		UTF8String textCopy( text );
 		Math::Vec2<float> initPoint;
 
 
 
 		if ( centered.x ) {
 			Vector<float> lineWidth;
-			lineWidth.reserve(10);
+			lineWidth.reserve( 10 );
 			float currentPosX = 0.0f;
 			float rectangleTop = font.getLineHeight();
 
 
 			auto it = textCopy.getBegin();
 			auto lastIt = it;
-			while (true) {
-				
+			while ( true ) {
+
 				//check if the next word will enter in the square.
 				float tmpPosX = currentPosX;
 				auto it2 = it;
-				for ( ; textCopy.iterate(&it2, &codePoint); ) {
+				for ( ; textCopy.iterate( &it2, &codePoint ); ) {
 					if ( codePoint == '\n' ) {
 						goto drawText_afterIterate;	//if we reached the end of the word
 					} else if ( codePoint == ' ' ) {
@@ -493,13 +493,13 @@ namespace Graphic {
 
 
 				break;
-				drawText_afterIterate:
+drawText_afterIterate:
 
 				if ( tmpPosX > rectangleSize.x ) {
 					//problem, the word is too big to enter in this line. replace the space with a new line.
 
 					float newSize = tmpPosX - currentPosX - font.getWordSpace();
-					lineWidth.push(currentPosX / 2.0f);
+					lineWidth.push( currentPosX / 2.0f );
 					if ( rectangleTop + font.getLineHeight() > rectangleSize.y ) {
 						*( lastIt ) = '\0';
 						//rectangle to small
@@ -513,14 +513,14 @@ namespace Graphic {
 					currentPosX = tmpPosX;
 					lastIt = it2 - 1;
 					if ( *lastIt == '\n' ) {
-						lineWidth.push(currentPosX / 2.0f);
+						lineWidth.push( currentPosX / 2.0f );
 						currentPosX = 0.0f;
 						rectangleTop += font.getLineHeight();
 					}
 				}
 				it = it2;
 			}
-			lineWidth.push(currentPosX / 2.0f);
+			lineWidth.push( currentPosX / 2.0f );
 
 
 
@@ -534,10 +534,10 @@ namespace Graphic {
 			initPoint.x = rectangle.getLeft() + rectangleSize.x / 2;
 
 
-			Math::Vec2<float> currentPos(initPoint.x - lineWidth[0], initPoint.y);
+			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0], initPoint.y );
 			unsigned int currentLine = 1;
 
-			for ( auto it = textCopy.getBegin(); textCopy.iterate(&it, &codePoint); ) {
+			for ( auto it = textCopy.getBegin(); textCopy.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x - lineWidth[currentLine];
@@ -547,7 +547,7 @@ namespace Graphic {
 				} else {
 					const FreeTypeChar * c = font[codePoint];
 					if ( c ) {
-						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
 						currentPos.x += c -> getHoriAdvance();
 					}
@@ -566,7 +566,7 @@ namespace Graphic {
 				//check if the next word will enter in the square.
 				float tmpPosX = currentPosX;
 				auto it2 = it;
-				for ( ; textCopy.iterate(&it2, &codePoint); ) {
+				for ( ; textCopy.iterate( &it2, &codePoint ); ) {
 					if ( codePoint == '\n' ) {
 						goto drawText_afterIterate2;	//if we reached the end of the word
 					} else if ( codePoint == ' ' ) {
@@ -578,12 +578,12 @@ namespace Graphic {
 					}
 				}
 				break;
-				drawText_afterIterate2:
+drawText_afterIterate2:
 
 				if ( tmpPosX > rectangleSize.x ) {
 					//problem, the word is too big to enter in this line. replace the space with a new line.
 
-	
+
 					if ( rectangleTop + font.getLineHeight() > rectangleSize.y ) {
 						*( lastIt ) = '\0';
 						//rectangle to small
@@ -609,16 +609,16 @@ namespace Graphic {
 
 
 			if ( centered.y ) {
-				initPoint.y = rectangle.getTop() - (rectangleSize.y - rectangleTop) * 0.5f - font.getLineHeight() * 0.7f;
+				initPoint.y = rectangle.getTop() - ( rectangleSize.y - rectangleTop ) * 0.5f - font.getLineHeight() * 0.7f;
 			} else {
 				initPoint.y = rectangle.getTop() - font.getLineHeight();
 			}
 			initPoint.x = rectangle.getLeft();
 
 
-			Math::Vec2<float> currentPos(initPoint);
+			Math::Vec2<float> currentPos( initPoint );
 
-			for ( auto it = textCopy.getBegin(); textCopy.iterate(&it, &codePoint); ) {
+			for ( auto it = textCopy.getBegin(); textCopy.iterate( &it, &codePoint ); ) {
 				if ( codePoint == '\n' ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x;
@@ -628,7 +628,7 @@ namespace Graphic {
 					const FreeTypeChar * c = font[codePoint];
 					if ( c ) {
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
-						func(currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c);
+						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						currentPos.x += c -> getHoriAdvance();
 					}
 				}
@@ -640,100 +640,100 @@ namespace Graphic {
 
 
 	template<typename I, size_t N, typename C>
-	I computeGaussianKernel(I(&kernel)[N], const float & sigma) {
+	I computeGaussianKernel( I( &kernel )[N], const float & sigma ) {
 		float kernelf[N];
-		_computeGaussianKernelf<float, N>(kernelf, sigma);
-		float newWeight = float(std::numeric_limits<I>::max() / Utility::TypesInfos<C>::getMax());
+		_computeGaussianKernelf<float, N>( kernelf, sigma );
+		float newWeight = float( 1 << _Image<C>::getKernelSumNbBits<I>() );
 
 		for ( size_t i = 0; i < N; i++ ) {
-			kernel[i] = I(kernelf[i] * newWeight);
+			kernel[i] = I( kernelf[i] * newWeight );
 		}
 		return newWeight;
 	}
 
 
 	template<typename I, typename C>
-	I computeGaussianKernel(I * kernel, size_t size, const float & sigma) {
+	I computeGaussianKernel( I * kernel, size_t size, const float & sigma ) {
 		float * kernelf = new float[size];
-		_computeGaussianKernelf<float>(kernelf, size, sigma);
-		float newWeight = float(std::numeric_limits<I>::max() / Utility::TypesInfos<C>::getMax());
+		_computeGaussianKernelf<float>( kernelf, size, sigma );
+		float newWeight = float( 1 << _Image<C>::getKernelSumNbBits<I>() );
 
 		for ( size_t i = 0; i < size; i++ ) {
-			kernel[i] = I(kernelf[i] * newWeight);
+			kernel[i] = I( kernelf[i] * newWeight );
 		}
 		delete[] kernelf;
-		return I(newWeight);
+		return I( newWeight );
 	}
 
 
 
 	template<size_t N>
-	float computeGaussianKernel(float(&kernel)[N], const float & sigma) {
-		return _computeGaussianKernelf<float, N>(kernel, sigma);
+	float computeGaussianKernel( float( &kernel )[N], const float & sigma ) {
+		return _computeGaussianKernelf<float, N>( kernel, sigma );
 	}
 
 	template<size_t N>
-	double computeGaussianKernel(double(&kernel)[N], const double & sigma) {
-		return _computeGaussianKernelf<double, N>(kernel, sigma);
+	double computeGaussianKernel( double( &kernel )[N], const double & sigma ) {
+		return _computeGaussianKernelf<double, N>( kernel, sigma );
 	}
 
-	float computeGaussianKernel(float * kernel, size_t size, const float & sigma) {
-		return _computeGaussianKernelf<float>(kernel, size, sigma);
+	float computeGaussianKernel( float * kernel, size_t size, const float & sigma ) {
+		return _computeGaussianKernelf<float>( kernel, size, sigma );
 	}
 
-	double computeGaussianKernel(double * kernel, size_t size, const double & sigma) {
-		return _computeGaussianKernelf<double>(kernel, size, sigma);
+	double computeGaussianKernel( double * kernel, size_t size, const double & sigma ) {
+		return _computeGaussianKernelf<double>( kernel, size, sigma );
 	}
 
 
 
 	template<typename T, size_t N>
-	T _computeGaussianKernelf(T(&kernel)[N], const T & sigma) {
-		assert(N % 2 == 1);
-		const size_t NHalfed = N / 2;
+	T _computeGaussianKernelf( T( &kernel )[N], const T & sigma ) {
+		assert( N % 2 == 1 );
+		constexpr size_t NHalfed = N / 2;
 
-		T sigma2Square = T(2) * ( sigma * sigma );
-		T sum(1);
-		kernel[NHalfed] = T(1);
+		T sigma2Square = T( 2 ) * ( sigma * sigma );
+		T sum( 1 );
+		kernel[NHalfed] = T( 1 );
 		for ( size_t i = 0; i < NHalfed; i++ ) {
 			size_t i2 = NHalfed - i;
 
-			T v = Math::exp(-( ( T(i2 * i2) ) / sigma2Square ));
+			T v = Math::exp( -( ( T( i2 * i2 ) ) / sigma2Square ) );
 			kernel[i] = v;
 			kernel[N - i - 1] = v;
 
-			sum += v * T(2);
+			sum += v * T( 2 );
 		}
 
 		//normalize datas
-		T oneOnSum = T(1) / sum;
+		T oneOnSum = T( 1 ) / sum;
 		for ( size_t i = 0; i < N; i++ )
 			kernel[i] *= oneOnSum;
 
 		return sum;
-		
+
 	}
 
 	template<typename T>
-	T _computeGaussianKernelf(T * kernel, size_t size, const T & sigma) {
-		assert(size % 2 == 1);
+	T _computeGaussianKernelf( T * kernel, size_t size, const T & sigma ) {
+		assert( size % 2 == 1 );
 		const size_t NHalfed = size / 2;
 
-		T sigma2Square = T(2) * ( sigma * sigma );
-		T sum(1);
-		kernel[NHalfed] = T(1);
+		T sigma2Square = T( 2 ) * ( sigma * sigma );
+		T sum( 1 );
+		kernel[NHalfed] = T( 1 );
 		for ( size_t i = 0; i < NHalfed; i++ ) {
 			size_t i2 = NHalfed - i;
 
-			T v = Math::exp(-( ( T(i2 * i2) ) / sigma2Square ));
+			T v = Math::exp( -( ( T( i2 * i2 ) ) / sigma2Square ) );
 			kernel[i] = v;
 			kernel[size - i - 1] = v;
 
-			sum += v * T(2);
+			sum += v * T( 2 );
 		}
 
 		//normalize datas
-		T oneOnSum = T(1) / sum;
+		T oneOnSum = T( 1 ) / sum;
 		for ( size_t i = 0; i < size; i++ )
 			kernel[i] *= oneOnSum;
 
@@ -743,7 +743,7 @@ namespace Graphic {
 
 
 
-	template<size_t N>
+	/*template<size_t N>
 	unsigned int computeGaussianKernel(unsigned int(&kernel)[N]) {
 		return computeGaussianKernel(kernel, N);
 	}
@@ -773,8 +773,7 @@ namespace Graphic {
 			return 16843008;
 		} else {
 			return computeGaussianKernel<unsigned int>(kernel, size, float(size) / 4.0f);
-
 		}
-	}
+	}*/
 
 }

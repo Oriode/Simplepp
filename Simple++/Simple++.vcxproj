@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
+    <ProjectConfiguration Include="Debug Runable|x64">
+      <Configuration>Debug Runable</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release EXE|x64">
-      <Configuration>Release EXE</Configuration>
+    <ProjectConfiguration Include="Release Runable|x64">
+      <Configuration>Release Runable</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
+    <ProjectConfiguration Include="Release Lib|x64">
+      <Configuration>Release Lib</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -20,20 +20,20 @@
     <RootNamespace>Simple++</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Runable|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Lib|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -43,31 +43,31 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Runable|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Lib|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Runable|x64'">
     <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Lib|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Runable|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -88,7 +88,7 @@
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Lib|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -112,7 +112,7 @@
       <AdditionalDependencies>FreeImage.lib;freetype250.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -149,48 +149,41 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
-    <ClInclude Include="BasicGraphic.h" />
     <ClInclude Include="BasicIO.h" />
     <ClInclude Include="BasicIO.hpp" />
     <ClInclude Include="BasicSimpleIO.h" />
     <ClInclude Include="BasicSimpleLoadableIO.h" />
     <ClInclude Include="BlendingFunc.hpp" />
-    <ClInclude Include="ColorFunc.h" />
-    <ClInclude Include="Font.h" />
-    <ClInclude Include="FontLoadable.h" />
-    <ClInclude Include="FreeTypeChar.h" />
-    <ClInclude Include="Gradient.h" />
-    <ClInclude Include="Gradient.hpp" />
-    <ClInclude Include="GradientInterpolated.h" />
-    <ClInclude Include="GradientInterpolated.hpp" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Graphic.hpp" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="Image.hpp" />
-    <ClInclude Include="InterpolationFunc.hpp" />
+    <ClInclude Include="Graphic\BasicGraphic.h" />
+    <ClInclude Include="Graphic\BlendingFunc.hpp" />
+    <ClInclude Include="Graphic\ColorFunc.h" />
+    <ClInclude Include="Graphic\Font.h" />
+    <ClInclude Include="Graphic\FontLoadable.h" />
+    <ClInclude Include="Graphic\FreeImage.h" />
+    <ClInclude Include="Graphic\FreeTypeChar.h" />
+    <ClInclude Include="Graphic\Gradient.h" />
+    <ClInclude Include="Graphic\Gradient.hpp" />
+    <ClInclude Include="Graphic\GradientInterpolated.h" />
+    <ClInclude Include="Graphic\GradientInterpolated.hpp" />
+    <ClInclude Include="Graphic\Image.h" />
+    <ClInclude Include="Graphic\Image.hpp" />
+    <ClInclude Include="Graphic\InterpolationFunc.hpp" />
+    <ClInclude Include="Graphic\Texture.h" />
+    <ClInclude Include="Graphic\Texture.hpp" />
+    <ClInclude Include="Graphic\TextureLoadable.h" />
+    <ClInclude Include="Graphic\TextureLoadable.hpp" />
     <ClInclude Include="IO.h" />
     <ClInclude Include="IO.hpp" />
     <ClInclude Include="BasicLoadable.h" />
     <ClInclude Include="BasicLoadableIO.h" />
     <ClInclude Include="BuildConfig.h" />
-    <ClInclude Include="CoordinateChunk.h" />
-    <ClInclude Include="CoordinateChunk.hpp" />
-    <ClInclude Include="CoordinateSystem.h" />
-    <ClInclude Include="CoordinateSystem.hpp" />
-    <ClInclude Include="CoordinateSystemObject.h" />
-    <ClInclude Include="CoordinateSystemObject.hpp" />
-    <ClInclude Include="Date.h" />
-    <ClInclude Include="Date.hpp" />
     <ClInclude Include="Debug.h" />
-    <ClInclude Include="Duration.h" />
-    <ClInclude Include="Duration.hpp" />
-    <ClInclude Include="FreeImage.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="SimpleIO.h" />
     <ClInclude Include="SimpleIO.hpp" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Logical.h" />
     <ClInclude Include="Map.h" />
@@ -221,7 +214,7 @@
     <ClInclude Include="Network\Address.h" />
     <ClInclude Include="Network\AddrInfo.h" />
     <ClInclude Include="Network\Server.h" />
-    <ClInclude Include="Network\Network.h" />
+    <ClInclude Include="Network\BasicNetwork.h" />
     <ClInclude Include="Network\Connection.h" />
     <ClInclude Include="OrderedMap.h" />
     <ClInclude Include="OrderedMap.hpp" />
@@ -230,19 +223,18 @@
     <ClInclude Include="Regex.h" />
     <ClInclude Include="Regex.hpp" />
     <ClInclude Include="SimpleLog.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="String.hpp" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="Test.h" />
-    <ClInclude Include="TextureLoadable.h" />
-    <ClInclude Include="TextureLoadable.hpp" />
     <ClInclude Include="Thread.h" />
-    <ClInclude Include="Tick.h" />
-    <ClInclude Include="TickRate.h" />
     <ClInclude Include="Time.h" />
-    <ClInclude Include="TimePoint.h" />
-    <ClInclude Include="TimePoint.hpp" />
+    <ClInclude Include="Time\Date.h" />
+    <ClInclude Include="Time\Date.hpp" />
+    <ClInclude Include="Time\Duration.h" />
+    <ClInclude Include="Time\Duration.hpp" />
+    <ClInclude Include="Time\Tick.h" />
+    <ClInclude Include="Time\TickRate.h" />
+    <ClInclude Include="Time\TimePoint.h" />
+    <ClInclude Include="Time\TimePoint.hpp" />
     <ClInclude Include="UTF8String.h" />
     <ClInclude Include="UTF8String.hpp" />
     <ClInclude Include="Utility.h" />
@@ -254,30 +246,30 @@
     <ClCompile Include="BasicIO.cpp" />
     <ClCompile Include="BasicSimpleIO.cpp" />
     <ClCompile Include="BasicSimpleLoadableIO.cpp" />
-    <ClCompile Include="Font.cpp" />
-    <ClCompile Include="FontLoadable.cpp" />
-    <ClCompile Include="FreeTypeChar.cpp" />
+    <ClCompile Include="Graphic\Font.cpp" />
+    <ClCompile Include="Graphic\FontLoadable.cpp" />
+    <ClCompile Include="Graphic\FreeImage.cpp" />
+    <ClCompile Include="Graphic\FreeTypeChar.cpp" />
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="BasicLoadable.cpp" />
     <ClCompile Include="BasicLoadableIO.cpp" />
     <ClCompile Include="Simple++.cpp" />
-    <ClCompile Include="Date.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="FreeImage.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Mutex.cpp" />
     <ClCompile Include="Network\Address.cpp" />
     <ClCompile Include="Network\AddrInfo.cpp" />
     <ClCompile Include="Network\Server.cpp" />
-    <ClCompile Include="Network\Network.cpp" />
+    <ClCompile Include="Network\BasicNetwork.cpp" />
     <ClCompile Include="Network\Connection.cpp" />
     <ClCompile Include="SimpleLog.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Thread.cpp" />
-    <ClCompile Include="Tick.cpp" />
-    <ClCompile Include="TickRate.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="TimePoint.cpp" />
+    <ClCompile Include="Time\Date.cpp" />
+    <ClCompile Include="Time\Tick.cpp" />
+    <ClCompile Include="Time\TickRate.cpp" />
+    <ClCompile Include="Time\TimePoint.cpp" />
     <ClCompile Include="UTF8String.cpp" />
   </ItemGroup>
   <ItemGroup>

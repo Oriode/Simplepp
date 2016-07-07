@@ -37,28 +37,28 @@
 #endif
 
 #if defined DEBUG || !defined NDEBUG
-	#ifndef debug
-		#define debug(code); code
-	#endif
-	#define error(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Error, __FILE__, __LINE__);
-	#define log(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Info, __FILE__, __LINE__);
-	#define warn(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Warning, __FILE__, __LINE__);
-	#define assert(condition); if (!(condition)) Log::callErrorHandler("Assertion failed : "#condition, Log::MessageSeverity::Error, __FILE__, __LINE__);
+#ifndef debug
+#define debug(code); code
+#endif
+#define error(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Error, __FILE__, __LINE__);
+#define log(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Info, __FILE__, __LINE__);
+#define warn(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Warning, __FILE__, __LINE__);
+#define assert(condition); if (!(condition)) Log::callErrorHandler("Assertion failed : "#condition, Log::MessageSeverity::Error, __FILE__, __LINE__);
 
 #ifdef WIN32
-		#define windowsDebug(msg); Log::displayWindowsDebug(msg, __FILE__, __LINE__);
-	#else	
-		#define windowsDebug(msg);
-	#endif
+#define windowsDebug(msg); Log::displayWindowsDebug(msg, __FILE__, __LINE__);
+#else	
+#define windowsDebug(msg);
+#endif
 #else
-	#ifndef debug
-		#define debug(code);
-	#endif
-	#define log(msg);
-	#define warn(msg);
-	#define error(msg);
-	#define windowsDebug(msg);
-	#define assert(condition);
+#ifndef debug
+#define debug(code);
+#endif
+#define log(msg);
+#define warn(msg);
+#define error(msg);
+#define windowsDebug(msg);
+#define assert(condition);
 #endif
 
 
@@ -66,34 +66,34 @@
 #include "SimpleLog.h"
 #include "String.h"
 
-class Log : public SimpleLog{
+class Log : public SimpleLog {
 public:
-	 Log(void);
-	~Log(void);
+	Log( void );
+	~Log( void );
 
 
-	static void displayLog(const String & text);
-	static void displayWarning(const String & text);
-	static void displayError(const String & text);
+	static void displayLog( const String & text );
+	static void displayWarning( const String & text );
+	static void displayError( const String & text );
 
 	static void startChrono();
 	static void stopChrono();
 
-	static void displayChrono(const String & text = "Elapsed Time");
+	static void displayChrono( const String & text = "Elapsed Time" );
 
 
-	static void setErrorHandler(void(*errorHandlerFn) (
+	static void setErrorHandler( void( *errorHandlerFn ) (
 		const String &,
 		MessageSeverity,
 		const String &,
-		unsigned int));
+		unsigned int ) );
 
 
 	static void errorHandler(
 		const String &,
-		MessageSeverity severity = MessageSeverity::Error, 
+		MessageSeverity severity = MessageSeverity::Error,
 		const String & fileName = "",
-		unsigned int lineNumber = 0);
+		unsigned int lineNumber = 0 );
 
 
 	static void callErrorHandler(
@@ -101,20 +101,20 @@ public:
 		MessageSeverity severity = MessageSeverity::Error,
 		const String & fileName = "",
 		unsigned int lineNumber = 0
-		);
+	);
 
 
-#ifdef WIN32
-	static void displayWindowsDebug(const String & message, const String & fileName, unsigned int lineNumber);
-#endif
+	#ifdef WIN32
+	static void displayWindowsDebug( const String & message, const String & fileName, unsigned int lineNumber );
+	#endif
 
 private:
 
-	static void (*mErrorHandlerFn) (
+	static void( *mErrorHandlerFn ) (
 		const String &,
 		MessageSeverity,
 		const String &,
-		unsigned int);
+		unsigned int );
 	static std::chrono::high_resolution_clock::time_point startTime;
 	static std::chrono::high_resolution_clock::time_point endTime;
 

@@ -6,17 +6,17 @@ namespace Time {
 
 
 	template<class ratio>
-	void sleep(const Duration<ratio> & d) {
-		sleep(Duration<MilliSecond>(d).getValue());
+	void sleep( const Duration<ratio> & d ) {
+		sleep( Duration<MilliSecond>( d ).getValue() );
 	}
 
 
-	void Time::sleep(unsigned long ms) {
-#ifdef WIN32
-		Sleep((DWORD) ms);
-#else
-		usleep(ms * 1000);
-#endif
+	void Time::sleep( unsigned long ms ) {
+		#ifdef WIN32
+		Sleep( ( DWORD ) ms );
+		#else
+		usleep( ms * 1000 );
+		#endif
 	}
 
 

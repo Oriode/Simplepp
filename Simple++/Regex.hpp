@@ -5,7 +5,7 @@ namespace Regex {
 
 
 	template<typename T>
-	bool match(const BasicString<T> & str, const BasicString<T> & regExp) {
+	bool match( const BasicString<T> & str, const BasicString<T> & regExp ) {
 		typedef struct stackItem {
 			BasicString<T>::RandomAccessIterator strIt;
 			BasicString<T>::RandomAccessIterator regIt;
@@ -14,13 +14,13 @@ namespace Regex {
 
 		//init the explicit stack.
 		Vector<StackItem> stack;
-		stack.reserve(20);
+		stack.reserve( 20 );
 
 		//stack.clear();
 
 		//Init the stack and the current position.
 		StackItem currentItem = { str.getBegin(), regExp.getBegin(), 0 };
-		stack.push(currentItem);
+		stack.push( currentItem );
 
 		//Init this bool because the management of bracket is a bit different.
 		bool insideBracket = false;
@@ -28,7 +28,7 @@ namespace Regex {
 
 		//Now check if we have the FORCE BEGIN char.
 		bool forceBeginStr;
-		if ( *currentItem.regIt == T('^') ) {
+		if ( *currentItem.regIt == T( '^' ) ) {
 			forceBeginStr = true;
 			currentItem.regIt++;
 			if ( currentItem.regIt == regExp.getEnd() )
@@ -45,17 +45,17 @@ namespace Regex {
 
 
 			if ( insideBracket ) {
-				if ( *currentItem.regIt == T('\\') ) {
+				if ( *currentItem.regIt == T( '\\' ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
 					goto insideBracketLabel;
-				} else if ( *currentItem.regIt == T(']') ) {		//If we are closing the bracket.
+				} else if ( *currentItem.regIt == T( ']' ) ) {		//If we are closing the bracket.
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
 
-					if ( *currentItem.regIt == T('+') || *currentItem.regIt == T('*') ) {
+					if ( *currentItem.regIt == T( '+' ) || *currentItem.regIt == T( '*' ) ) {
 						currentItem.regIt = stack.getLast().regIt;
 						stack.getLast().strIt = currentItem.strIt;
 						stack.getLast().actualIteration++;
@@ -64,21 +64,21 @@ namespace Regex {
 						insideBracket = false;
 					}
 				} else {
-				insideBracketLabel:
+insideBracketLabel:
 					if ( currentItem.strIt == str.getEnd() )		//if the string is finished, error anyway
 						goto noMatchBracket;
 					//We are inside a bracket, test are a bit tricky
-					if ( *currentItem.regIt == T('^') ) {	//If the first character is a NO
+					if ( *currentItem.regIt == T( '^' ) ) {	//If the first character is a NO
 						currentItem.regIt++;
 						while ( currentItem.regIt != regExp.getEnd() ) {
-							if ( *currentItem.regIt == T('\\') ) {
+							if ( *currentItem.regIt == T( '\\' ) ) {
 								currentItem.regIt++;
 								if ( currentItem.regIt == regExp.getEnd() )
 									return true;
 								goto backetNoNormalChar;
-							} else if ( *currentItem.regIt == T('-') && currentItem.regIt + 1 != regExp.getEnd() && ( *( currentItem.regIt - 1 ) < *currentItem.strIt && *( currentItem.regIt + 1 ) > *currentItem.strIt ) ) {
+							} else if ( *currentItem.regIt == T( '-' ) && currentItem.regIt + 1 != regExp.getEnd() && ( *( currentItem.regIt - 1 ) < *currentItem.strIt && *( currentItem.regIt + 1 ) > *currentItem.strIt ) ) {
 								goto noMatchBracket;
-							} else if ( *currentItem.regIt == T(']') ) {
+							} else if ( *currentItem.regIt == T( ']' ) ) {
 								currentItem.strIt++;
 								goto bracketSuccess;
 							} else backetNoNormalChar: if ( *currentItem.strIt == *currentItem.regIt ) {
@@ -90,15 +90,15 @@ namespace Regex {
 						}
 					} else {
 						while ( currentItem.regIt != regExp.getEnd() ) {
-							if ( *currentItem.regIt == T('\\') ) {
+							if ( *currentItem.regIt == T( '\\' ) ) {
 								currentItem.regIt++;
 								if ( currentItem.regIt == regExp.getEnd() )
 									return true;
 								goto backetNormalChar;
-							} else if ( *currentItem.regIt == T('-') && currentItem.regIt + 1 != regExp.getEnd() && ( *( currentItem.regIt - 1 ) < *currentItem.strIt && *( currentItem.regIt + 1 ) > *currentItem.strIt ) ) {
+							} else if ( *currentItem.regIt == T( '-' ) && currentItem.regIt + 1 != regExp.getEnd() && ( *( currentItem.regIt - 1 ) < *currentItem.strIt && *( currentItem.regIt + 1 ) > *currentItem.strIt ) ) {
 								currentItem.strIt++;
 								goto bracketSuccess;
-							} else if ( *currentItem.regIt == T(']') ) {
+							} else if ( *currentItem.regIt == T( ']' ) ) {
 								insideBracket = false;
 								goto noMatchBracket;
 							} else backetNormalChar: if ( *currentItem.strIt == *currentItem.regIt ) {
@@ -112,9 +112,9 @@ namespace Regex {
 
 					return true;
 
-				bracketSuccess:
-					while ( *currentItem.regIt != T(']') ) {
-						if ( *currentItem.regIt == T('\\') ) {
+bracketSuccess:
+					while ( *currentItem.regIt != T( ']' ) ) {
+						if ( *currentItem.regIt == T( '\\' ) ) {
 							currentItem.regIt++;
 							if ( currentItem.regIt == regExp.getEnd() )
 								return true;
@@ -130,66 +130,66 @@ namespace Regex {
 
 
 			} else {
-				if ( *currentItem.regIt == T('\\') ) {
+				if ( *currentItem.regIt == T( '\\' ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
 					goto normalChar;
-				} else if ( *currentItem.regIt == T('[') ) {
+				} else if ( *currentItem.regIt == T( '[' ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
-					stack.push({ currentItem.strIt, currentItem.regIt, 0 });
+					stack.push( { currentItem.strIt, currentItem.regIt, 0 } );
 					insideBracket = true;
-				} else if ( *currentItem.regIt == T('$') ) {
+				} else if ( *currentItem.regIt == T( '$' ) ) {
 					if ( currentItem.strIt == str.getEnd() )
 						return true;
 					else
 						return false;
-				} else if ( *currentItem.regIt == T('(') ) {
+				} else if ( *currentItem.regIt == T( '(' ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
-					stack.push({ currentItem.strIt, currentItem.regIt, 0 });
-				} else if ( *currentItem.regIt == T(')') ) {
+					stack.push( { currentItem.strIt, currentItem.regIt, 0 } );
+				} else if ( *currentItem.regIt == T( ')' ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
-					if ( *currentItem.regIt == T('+') || *currentItem.regIt == T('*') ) {
+					if ( *currentItem.regIt == T( '+' ) || *currentItem.regIt == T( '*' ) ) {
 						currentItem.regIt = stack.getLast().regIt;
 						stack.getLast().strIt = currentItem.strIt;
 						stack.getLast().actualIteration++;
 					} else
 						stack.pop();
 
-				} else if ( *currentItem.regIt == T('+') ) {
+				} else if ( *currentItem.regIt == T( '+' ) ) {
 					currentItem.regIt--;
 					currentItem.actualIteration++;
-				} else if ( *currentItem.regIt == T('*') ) {
+				} else if ( *currentItem.regIt == T( '*' ) ) {
 					currentItem.regIt--;
 					currentItem.actualIteration++;
-				} else if ( *currentItem.regIt == T('?') ) {
+				} else if ( *currentItem.regIt == T( '?' ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
-				} else if ( *currentItem.regIt == T('|') ) {			//We have reached a pipe but we matched until this
+				} else if ( *currentItem.regIt == T( '|' ) ) {			//We have reached a pipe but we matched until this
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
 					for ( int level = 0; true; currentItem.regIt++ ) {
 						if ( currentItem.regIt == regExp.getEnd() )
 							return true;
-						else if ( *currentItem.regIt == T('\\') ) {
+						else if ( *currentItem.regIt == T( '\\' ) ) {
 							currentItem.regIt++;
 							if ( currentItem.regIt == regExp.getEnd() )
 								return true;
-						} else if ( *currentItem.regIt == T('(') ) {
+						} else if ( *currentItem.regIt == T( '(' ) ) {
 							level++;
-						} else if ( *currentItem.regIt == T(')') ) {
+						} else if ( *currentItem.regIt == T( ')' ) ) {
 							if ( level == 0 )
 								break;
 							level--;
-						} else if ( *currentItem.regIt == T('$') ) {
+						} else if ( *currentItem.regIt == T( '$' ) ) {
 							if ( currentItem.strIt == str.getEnd() )
 								return true;
 							else {
@@ -212,7 +212,7 @@ namespace Regex {
 							}
 						}
 					}
-				} else normalChar:if ( currentItem.strIt != str.getEnd() && ( *currentItem.strIt == *currentItem.regIt || *currentItem.regIt == T('.') ) ) {	//The character is Correct
+				} else normalChar:if ( currentItem.strIt != str.getEnd() && ( *currentItem.strIt == *currentItem.regIt || *currentItem.regIt == T( '.' ) ) ) {	//The character is Correct
 					currentItem.regIt++;
 					currentItem.strIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
@@ -227,12 +227,12 @@ namespace Regex {
 			continue;
 
 
-		noMatch:
+noMatch:
 			//Check if we have direct +, *, ? after the current char
 			if ( currentItem.regIt + 1 != regExp.getEnd() ) {
 				currentItem.regIt++;
 
-				if ( *currentItem.regIt == T('?') || *currentItem.regIt == T('*') || ( *currentItem.regIt == T('+') && currentItem.actualIteration ) ) {
+				if ( *currentItem.regIt == T( '?' ) || *currentItem.regIt == T( '*' ) || ( *currentItem.regIt == T( '+' ) && currentItem.actualIteration ) ) {
 					currentItem.regIt++;
 					if ( currentItem.regIt == regExp.getEnd() )
 						return true;
@@ -240,7 +240,7 @@ namespace Regex {
 				}
 				currentItem.regIt--;
 			}
-		noMatchBracket:
+noMatchBracket:
 			unsigned int level = 0;
 
 			int usefullLevel = 0;
@@ -265,19 +265,19 @@ namespace Regex {
 					}
 
 				}
-				if ( *it == T('\\') ) {		//A backslash is not interpreted, dont care
+				if ( *it == T( '\\' ) ) {		//A backslash is not interpreted, dont care
 					it++;
 					if ( it == regExp.getEnd() )
 						return false;
-				} else if ( *it == T('[') ) {
+				} else if ( *it == T( '[' ) ) {
 					level++;
 					insideBracket2 = true;
-				} else if ( *it == T(']') ) {
+				} else if ( *it == T( ']' ) ) {
 					if ( level == usefullLevel && level == 0 ) {
 						auto itIncr = it + 1;
 						if ( itIncr == regExp.getEnd() )
 							return false;
-						if ( *itIncr == T('?') || *itIncr == T('*') || ( *itIncr == T('+') && stack.getLast().actualIteration ) ) {
+						if ( *itIncr == T( '?' ) || *itIncr == T( '*' ) || ( *itIncr == T( '+' ) && stack.getLast().actualIteration ) ) {
 
 							it = itIncr;
 							itIncr++;
@@ -301,9 +301,9 @@ namespace Regex {
 						//do some test like a-z....
 						//Or not.
 					}
-				} else if ( *it == T('(') ) {
+				} else if ( *it == T( '(' ) ) {
 					level++;
-				} else if ( *it == T('|') && level == usefullLevel ) {
+				} else if ( *it == T( '|' ) && level == usefullLevel ) {
 					//Houra with a condition branch, test it !
 					auto itIncr = it + 1;
 					if ( itIncr == regExp.getEnd() )
@@ -311,13 +311,13 @@ namespace Regex {
 					currentItem.strIt = stack.getLast().strIt;
 					currentItem.regIt = itIncr;
 					break;
-				} else if ( *it == T(')') ) {
+				} else if ( *it == T( ')' ) ) {
 
 					if ( level == usefullLevel ) {
 						auto itIncr = it + 1;
 						if ( itIncr == regExp.getEnd() )
 							return false;
-						if ( *itIncr == T('?') || *itIncr == T('*') || ( *itIncr == T('+') && stack.getLast().actualIteration ) ) {
+						if ( *itIncr == T( '?' ) || *itIncr == T( '*' ) || ( *itIncr == T( '+' ) && stack.getLast().actualIteration ) ) {
 
 							it = itIncr;
 							itIncr++;

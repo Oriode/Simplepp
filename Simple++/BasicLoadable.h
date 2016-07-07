@@ -2,7 +2,7 @@
 
 #include <mutex>
 
-class BasicLoadable{
+class BasicLoadable {
 public:
 	///@brief Empty constructor initialized at NOT loaded and NOT loading.
 	BasicLoadable();
@@ -10,7 +10,7 @@ public:
 
 	///@brief copy constructor
 	///@param loadable Another loadable object to be copied.
-	BasicLoadable(const BasicLoadable & loadable);
+	BasicLoadable( const BasicLoadable & loadable );
 
 	~BasicLoadable();
 
@@ -43,7 +43,7 @@ public:
 	///@brief copy operator
 	///@param loadable another object to be copied.
 	///@return reference to this object
-	BasicLoadable & operator = (const BasicLoadable & loadable);
+	BasicLoadable & operator = ( const BasicLoadable & loadable );
 
 
 
@@ -51,12 +51,12 @@ protected:
 
 	///@brief set if the current object is loaded or not. (use with caution)
 	///@param loaded Boolean to set if the current object is loaded or not.
-	void setLoaded(bool loaded);
+	void setLoaded( bool loaded );
 
 
 	///@brief set if the current object is currently loading (use with caution)
 	///@param isLoading if the current object is loading or not.
-	void setLoading(bool isLoading);
+	void setLoading( bool isLoading );
 
 	///@brief function to be overloaded to add action during the loading process.
 	virtual void onLoad();
@@ -69,9 +69,9 @@ private:
 	bool bIsLoading;
 	std::mutex mutex;
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	bool isLocked;
-#endif
+	#endif
 
 };
 

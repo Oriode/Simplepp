@@ -10,20 +10,20 @@
 #include <ctime>
 
 #include "Math.h"
-#include "TimePoint.h"
-#include "Tick.h"
-#include "Duration.h"
-#include "Date.h"
+#include "Time/TimePoint.h"
+#include "Time/Tick.h"
+#include "Time/Duration.h"
+#include "Time/Date.h"
 
 namespace Time {
 
 
 
 
-	void sleep(unsigned long ms);
+	void sleep( unsigned long ms );
 
 	template<class ratio>
-	void sleep(const Duration<ratio> & d);
+	void sleep( const Duration<ratio> & d );
 
 
 

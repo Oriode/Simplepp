@@ -2,18 +2,17 @@
 
 
 template<typename T>
-Application<T>::Application() : 
-argc(0),
-argv(NULL)
-{
+Application<T>::Application() :
+	argc( 0 ),
+	argv( NULL ) {
 }
 
 
 template<typename T>
-Application<T>::Application(int argc, T * argv[]) :
-	argc(argc),
-	argv(argv),
-	applicationName(argv[0]) {
+Application<T>::Application( int argc, T * argv[] ) :
+	argc( argc ),
+	argv( argv ),
+	applicationName( argv[0] ) {
 
 	bool isNewArg = true;
 
@@ -21,22 +20,22 @@ Application<T>::Application(int argc, T * argv[]) :
 	for ( size_t i = 1; i < argc; i++ ) {
 		auto it = argv[i];
 
-		if ( *it == T('-') ) {
+		if ( *it == T( '-' ) ) {
 			it++;
-			if ( *it == T('-') ) {		//EXTENDED
+			if ( *it == T( '-' ) ) {		//EXTENDED
 				it++;
 				isNewArg = false;
-				this -> argMap.insert(BasicString<T>(it), BasicString<T>());
+				this -> argMap.insert( BasicString<T>( it ), BasicString<T>() );
 			} else {				//SIMPLE
 				isNewArg = true;
 				//for each char
-				for ( ; *it != T('\0'); it++ ) {
-					this -> argMap.insert(BasicString<T>(*it), BasicString<T>());
+				for ( ; *it != T( '\0' ); it++ ) {
+					this -> argMap.insert( BasicString<T>( *it ), BasicString<T>() );
 				}
 			}
 		} else {
 			if ( isNewArg ) {
-				this -> argMap.insert(BasicString<T>(), BasicString<T>(it));
+				this -> argMap.insert( BasicString<T>(), BasicString<T>( it ) );
 			} else {
 				this -> argMap.getLastValue() = it;
 			}
@@ -73,6 +72,6 @@ Application<T>::~Application() {
 }
 
 template<typename T>
-const BasicString<T> * Application<T>::operator[](const BasicString<T> & argName) const {
+const BasicString<T> * Application<T>::operator[]( const BasicString<T> & argName ) const {
 	return this -> argMap[argName];
 }

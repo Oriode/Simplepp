@@ -11,18 +11,18 @@ namespace Math {
 	public:
 		typedef Vec2<T> colType;
 
-		
-		MATH_FUNC_QUALIFIER Mat2(void);
 
-		MATH_FUNC_QUALIFIER Mat2(const Mat2<T> & m);
+		MATH_FUNC_QUALIFIER Mat2( void );
+
+		MATH_FUNC_QUALIFIER Mat2( const Mat2<T> & m );
 
 		template<typename U>
-		MATH_FUNC_QUALIFIER Mat2(const Mat2<U> & m);
+		MATH_FUNC_QUALIFIER Mat2( const Mat2<U> & m );
 
-		MATH_FUNC_QUALIFIER Mat2(const T & v);
-		MATH_FUNC_QUALIFIER Mat2(const T & v11, const T & v21, 
-			const T & v12, const T & v22);
-		MATH_FUNC_QUALIFIER Mat2(const colType & col0, const colType & col1);
+		MATH_FUNC_QUALIFIER Mat2( const T & v );
+		MATH_FUNC_QUALIFIER Mat2( const T & v11, const T & v21,
+								  const T & v12, const T & v22 );
+		MATH_FUNC_QUALIFIER Mat2( const colType & col0, const colType & col1 );
 
 		MATH_FUNC_QUALIFIER Vec2<T> & operator[]( unsigned int index );
 		MATH_FUNC_QUALIFIER const Vec2<T> & operator[]( unsigned int index ) const;
@@ -32,60 +32,60 @@ namespace Math {
 		/* Multiply                                                             */
 		/************************************************************************/
 
-		MATH_FUNC_QUALIFIER Mat2<T> & operator*=( const Mat2<T> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator*=( const colType & v);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator*=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator*=( const Mat2<T> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator*=( const colType & v );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator*=( const T & v );
 
 		/************************************************************************/
 		/* Divide                                                               */
 		/************************************************************************/
-		MATH_FUNC_QUALIFIER Mat2<T> & operator/=( const Mat2<T> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator/=( const colType & v);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator/=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator/=( const Mat2<T> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator/=( const colType & v );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator/=( const T & v );
 
 
 		/************************************************************************/
 		/* Add                                                                  */
 		/************************************************************************/
 
-		MATH_FUNC_QUALIFIER Mat2<T> & operator+=( const Mat2<T> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator+=( const colType & v);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator+=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator+=( const Mat2<T> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator+=( const colType & v );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator+=( const T & v );
 
 
 		/************************************************************************/
 		/* Minus                                                                */
 		/************************************************************************/
 
-		MATH_FUNC_QUALIFIER Mat2<T> & operator-=( const Mat2<T> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator-=( const colType & v);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator-=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator-=( const Mat2<T> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator-=( const colType & v );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator-=( const T & v );
 
 		/************************************************************************/
 		/* Others                                                               */
 		/************************************************************************/
-		MATH_FUNC_QUALIFIER Mat2<T> & operator>>=( const Mat2<T> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator>>=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator>>=( const Mat2<T> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator>>=( const T & v );
 
-		MATH_FUNC_QUALIFIER Mat2<T> & operator<<=( const Mat2<T> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator<<=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator<<=( const Mat2<T> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator<<=( const T & v );
 
-		MATH_FUNC_QUALIFIER Mat2<T> & operator++( );
-		MATH_FUNC_QUALIFIER Mat2<T> & operator--( );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator++();
+		MATH_FUNC_QUALIFIER Mat2<T> & operator--();
 
-		MATH_FUNC_QUALIFIER Mat2<T> & operator=(const Mat2<T> & m);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator=( const Mat2<T> & m );
 		template<typename U>
-		MATH_FUNC_QUALIFIER Mat2<T> & operator=(const Mat2<U> & m);
-		MATH_FUNC_QUALIFIER Mat2<T> & operator=( const T & v);
+		MATH_FUNC_QUALIFIER Mat2<T> & operator=( const Mat2<U> & m );
+		MATH_FUNC_QUALIFIER Mat2<T> & operator=( const T & v );
 
-		MATH_FUNC_QUALIFIER bool operator==(const Mat2<T> & m) const;
-		MATH_FUNC_QUALIFIER bool operator!=(const Mat2<T> & m) const;
+		MATH_FUNC_QUALIFIER bool operator==( const Mat2<T> & m ) const;
+		MATH_FUNC_QUALIFIER bool operator!=( const Mat2<T> & m ) const;
 
-		MATH_FUNC_QUALIFIER bool operator<(const Mat2<T> & m) const;
-		MATH_FUNC_QUALIFIER bool operator<=(const Mat2<T> & m) const;
+		MATH_FUNC_QUALIFIER bool operator<( const Mat2<T> & m ) const;
+		MATH_FUNC_QUALIFIER bool operator<=( const Mat2<T> & m ) const;
 
-		MATH_FUNC_QUALIFIER bool operator>(const Mat2<T> & m) const;
-		MATH_FUNC_QUALIFIER bool operator>=(const Mat2<T> & m) const;
+		MATH_FUNC_QUALIFIER bool operator>( const Mat2<T> & m ) const;
+		MATH_FUNC_QUALIFIER bool operator>=( const Mat2<T> & m ) const;
 
 
 		MATH_FUNC_QUALIFIER Mat2<T> inverse() const;
@@ -106,70 +106,70 @@ namespace Math {
 	};
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator*(const Mat2<T> & m1, const Mat2<T> & m2);
+	MATH_FUNC_QUALIFIER Mat2<T> operator*( const Mat2<T> & m1, const Mat2<T> & m2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator*(const Mat2<T> & m, const U & v);
+	MATH_FUNC_QUALIFIER Mat2<T> operator*( const Mat2<T> & m, const U & v );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator*(const U & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T> operator*( const U & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat2<T>::colType operator*(const typename Mat2<T>::colType & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER typename Mat2<T>::colType operator*( const typename Mat2<T>::colType & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat2<T>::colType operator*(const Mat2<T> & m, const typename Mat2<T>::colType & v);
+	MATH_FUNC_QUALIFIER typename Mat2<T>::colType operator*( const Mat2<T> & m, const typename Mat2<T>::colType & v );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator/(const Mat2<T> & m1, const Mat2<T> & m2);
+	MATH_FUNC_QUALIFIER Mat2<T> operator/( const Mat2<T> & m1, const Mat2<T> & m2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator/(const Mat2<T> & m, const U & v);
+	MATH_FUNC_QUALIFIER Mat2<T> operator/( const Mat2<T> & m, const U & v );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator/(const U & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T> operator/( const U & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator+(const Mat2<T> & m1, const Mat2<T> & m2);
+	MATH_FUNC_QUALIFIER Mat2<T> operator+( const Mat2<T> & m1, const Mat2<T> & m2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator+(const Mat2<T> & m, const U & v);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator+( const Mat2<T> & m, const U & v );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator+(const U & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator+( const U & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator-(const Mat2<T> & m1, const Mat2<T> & m2);
+	MATH_FUNC_QUALIFIER Mat2<T> operator-( const Mat2<T> & m1, const Mat2<T> & m2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator-(const Mat2<T> & m, const U & v);
+	MATH_FUNC_QUALIFIER Mat2<T> operator-( const Mat2<T> & m, const U & v );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator-(const U & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T> operator-( const U & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator>>(const Mat2<T> & m1, const Mat2<T> & m2);
+	MATH_FUNC_QUALIFIER Mat2<T> operator >> ( const Mat2<T> & m1, const Mat2<T> & m2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator>>(const Mat2<T> & m, const U & v);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator >> ( const Mat2<T> & m, const U & v );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator>>(const U & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T, typename U> operator >> ( const U & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const Mat2<T> & m1, const Mat2<T> & m2);
+	MATH_FUNC_QUALIFIER Mat2<T> operator<<( const Mat2<T> & m1, const Mat2<T> & m2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const Mat2<T> & m, const U & v);
+	MATH_FUNC_QUALIFIER Mat2<T> operator<<( const Mat2<T> & m, const U & v );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat2<T> operator<<(const U & v, const Mat2<T> & m);
+	MATH_FUNC_QUALIFIER Mat2<T> operator<<( const U & v, const Mat2<T> & m );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<(std::ostream & stream, const Mat2<T> & v);
+	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Mat2<T> & v );
 
 	template<typename T, typename C = char>
-	MATH_FUNC_QUALIFIER BasicString<C> & operator<<(BasicString<C> & stream, const Mat2<T> & v);
+	MATH_FUNC_QUALIFIER BasicString<C> & operator<<( BasicString<C> & stream, const Mat2<T> & v );
 
 	typedef Mat2<MATH_FLOAT_DEFAULT> mat2;
 	typedef Mat2<float> mat2f;

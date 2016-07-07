@@ -2,19 +2,18 @@
 
 
 BasicLoadable::BasicLoadable() :
-mIsloaded(false)
-{
+	mIsloaded( false ) {
 }
 
-BasicLoadable::BasicLoadable(const BasicLoadable & loadable){
+BasicLoadable::BasicLoadable( const BasicLoadable & loadable ) {
 	*this = loadable;
 }
 
 
-BasicLoadable::~BasicLoadable(){
+BasicLoadable::~BasicLoadable() {
 }
 
-void BasicLoadable::load(){
+void BasicLoadable::load() {
 	lock();
 	if ( this -> mIsloaded ) {
 		unlock();
@@ -30,10 +29,10 @@ void BasicLoadable::load(){
 
 }
 
-void BasicLoadable::unload(){
+void BasicLoadable::unload() {
 	lock();
 
-	if (!this -> mIsloaded) {
+	if ( !this -> mIsloaded ) {
 		unlock();
 		return;
 	}
@@ -42,54 +41,54 @@ void BasicLoadable::unload(){
 	unlock();
 }
 
-void BasicLoadable::onLoad(){
+void BasicLoadable::onLoad() {
 
 }
 
-void BasicLoadable::onUnload(){
+void BasicLoadable::onUnload() {
 
 }
 
-bool BasicLoadable::isLoaded() const{
+bool BasicLoadable::isLoaded() const {
 	return this -> mIsloaded;
 }
 
-void BasicLoadable::setLoaded(bool loaded){
+void BasicLoadable::setLoaded( bool loaded ) {
 	this -> mIsloaded = loaded;
 }
 
-void BasicLoadable::setLoading(bool isLoading) {
+void BasicLoadable::setLoading( bool isLoading ) {
 	this -> bIsLoading = isLoading;
 }
 
 void BasicLoadable::reload() {
-	if (isLoaded()){
+	if ( isLoaded() ) {
 		unload();
 		load();
 	}
 
 }
 
-bool BasicLoadable::isLoading() const{
+bool BasicLoadable::isLoading() const {
 	return this -> bIsLoading;
 }
 
 
 void BasicLoadable::lock() {
 	this -> mutex.lock();
-#ifdef DEBUG
+	#ifdef DEBUG
 	this -> isLocked = true;
-#endif
+	#endif
 }
 
 void BasicLoadable::unlock() {
-#ifdef DEBUG
+	#ifdef DEBUG
 	this -> isLocked = false;
-#endif
+	#endif
 	this -> mutex.unlock();
 }
 
-BasicLoadable & BasicLoadable::operator=(const BasicLoadable & loadable) {
+BasicLoadable & BasicLoadable::operator=( const BasicLoadable & loadable ) {
 	this ->  bIsLoading = loadable.bIsLoading;
 	this ->  mIsloaded = loadable.mIsloaded;
 	return *this;

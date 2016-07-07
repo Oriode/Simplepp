@@ -6,7 +6,7 @@
 namespace Regex {
 
 	template<typename T>
-	bool match(const BasicString<T> & str, const BasicString<T> & regExp);
+	bool match( const BasicString<T> & str, const BasicString<T> & regExp );
 
 
 };

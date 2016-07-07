@@ -14,28 +14,28 @@ BasicSimpleLoadableIO::~BasicSimpleLoadableIO() {
 }
 
 
-bool BasicSimpleLoadableIO::read(std::fstream * fileStream) {
+bool BasicSimpleLoadableIO::read( std::fstream * fileStream ) {
 	unload();
 	lock();
-	setLoading(true);
+	setLoading( true );
 
-	if ( onRead(fileStream) ) {
-		setLoading(false);
-		setLoaded(true);
+	if ( onRead( fileStream ) ) {
+		setLoading( false );
+		setLoaded( true );
 		unlock();
 		return true;
 	} else {
-		setLoading(false);
-		setLoaded(false);
+		setLoading( false );
+		setLoaded( false );
 		unlock();
 		return false;
 	}
 }
 
-bool BasicSimpleLoadableIO::write(std::fstream * fileStream) {
+bool BasicSimpleLoadableIO::write( std::fstream * fileStream ) {
 	lock();
-	_assert(isLoaded());
-	if ( !onWrite(fileStream) ) {
+	_assert( isLoaded() );
+	if ( !onWrite( fileStream ) ) {
 		unlock();
 		return false;
 	}
@@ -45,10 +45,10 @@ bool BasicSimpleLoadableIO::write(std::fstream * fileStream) {
 
 
 
-bool BasicSimpleLoadableIO::onRead(std::fstream * fileStream) {
-	return BasicSimpleIO::read(fileStream);
+bool BasicSimpleLoadableIO::onRead( std::fstream * fileStream ) {
+	return BasicSimpleIO::read( fileStream );
 }
 
-bool BasicSimpleLoadableIO::onWrite(std::fstream * fileStream) const {
-	return BasicSimpleIO::write(fileStream);
+bool BasicSimpleLoadableIO::onWrite( std::fstream * fileStream ) const {
+	return BasicSimpleIO::write( fileStream );
 }

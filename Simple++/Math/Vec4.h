@@ -4,30 +4,30 @@
 #include "IO.h"
 
 
-namespace Math  {
+namespace Math {
 
 	template<typename T = float>
 	class Vec4 {
 	public:
-		MATH_FUNC_QUALIFIER Vec4(void);
-		MATH_FUNC_QUALIFIER Vec4(const T & v);
+		MATH_FUNC_QUALIFIER Vec4( void );
+		MATH_FUNC_QUALIFIER Vec4( const T & v );
 		template<typename U>
-		MATH_FUNC_QUALIFIER Vec4(const U & v);
-		MATH_FUNC_QUALIFIER Vec4(const T & x, const T & y, const T & z, const T & w);
-		MATH_FUNC_QUALIFIER Vec4(const Vec4<T> & v);
+		MATH_FUNC_QUALIFIER Vec4( const U & v );
+		MATH_FUNC_QUALIFIER Vec4( const T & x, const T & y, const T & z, const T & w );
+		MATH_FUNC_QUALIFIER Vec4( const Vec4<T> & v );
 		template<typename U>
-		MATH_FUNC_QUALIFIER Vec4(const Vec4<U> & v);
+		MATH_FUNC_QUALIFIER Vec4( const Vec4<U> & v );
 
-		MATH_FUNC_QUALIFIER Vec4(const Vec3<T> & v);
-		MATH_FUNC_QUALIFIER Vec4(const Vec3<T> & v, const T & w);
-		MATH_FUNC_QUALIFIER Vec4(const Vec2<T> & v);
-		MATH_FUNC_QUALIFIER Vec4(const Vec2<T> & v, const T & z, const T & w);
-
-
+		MATH_FUNC_QUALIFIER Vec4( const Vec3<T> & v );
+		MATH_FUNC_QUALIFIER Vec4( const Vec3<T> & v, const T & w );
+		MATH_FUNC_QUALIFIER Vec4( const Vec2<T> & v );
+		MATH_FUNC_QUALIFIER Vec4( const Vec2<T> & v, const T & z, const T & w );
 
 
-		MATH_FUNC_QUALIFIER T & operator[](unsigned int index);
-		MATH_FUNC_QUALIFIER const T & operator[](unsigned int index) const;
+
+
+		MATH_FUNC_QUALIFIER T & operator[]( unsigned int index );
+		MATH_FUNC_QUALIFIER const T & operator[]( unsigned int index ) const;
 
 
 		/************************************************************************/
@@ -41,39 +41,39 @@ namespace Math  {
 		/* Multiply                                                             */
 		/************************************************************************/
 
-		MATH_FUNC_QUALIFIER Vec4<T> & operator*=(const Vec4<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator*=(const T & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator*=( const Vec4<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator*=( const T & v );
 
 		/************************************************************************/
 		/* Divide                                                               */
 		/************************************************************************/
 
-		MATH_FUNC_QUALIFIER Vec4<T> & operator/=(const Vec4<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator/=(const T & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator/=( const Vec4<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator/=( const T & v );
 
 
 		/************************************************************************/
 		/* Add                                                                  */
 		/************************************************************************/
-		MATH_FUNC_QUALIFIER Vec4<T> & operator+=(const Vec4<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator+=(const T & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator+=( const Vec4<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator+=( const T & v );
 
 
 		/************************************************************************/
 		/* Minus                                                                */
 		/************************************************************************/
-		MATH_FUNC_QUALIFIER Vec4<T> & operator-=(const Vec4<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator-=(const T & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator-=( const Vec4<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator-=( const T & v );
 		MATH_FUNC_QUALIFIER Vec4<T> operator-() const;
 
 
 		/************************************************************************/
 		/* Others                                                              */
 		/************************************************************************/
-		MATH_FUNC_QUALIFIER Vec4<T> & operator>>=(const Vec4<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator>>=(const T & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator<<=(const Vec4<T>  & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator<<=(const T & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator>>=( const Vec4<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator>>=( const T & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator<<=( const Vec4<T>  & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator<<=( const T & v );
 
 		MATH_FUNC_QUALIFIER Vec4<T> & operator++();
 		MATH_FUNC_QUALIFIER Vec4<T> & operator--();
@@ -82,27 +82,27 @@ namespace Math  {
 		/************************************************************************/
 		/* Assignments                                                          */
 		/************************************************************************/
-		MATH_FUNC_QUALIFIER Vec4<T> & operator=(const Vec4<T> & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const Vec4<T> & v );
 		template<typename U>
-		MATH_FUNC_QUALIFIER Vec4<T> & operator=(const Vec4<U> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator=(const Vec3<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator=(const Vec2<T> & v);
-		MATH_FUNC_QUALIFIER Vec4<T> & operator=(const T & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const Vec4<U> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const Vec3<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const Vec2<T> & v );
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const T & v );
 		template<typename U>
-		MATH_FUNC_QUALIFIER Vec4<T> & operator=(const U & v);
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const U & v );
 
 		/************************************************************************/
 		/* Logical                                                              */
 		/************************************************************************/
 
-		MATH_FUNC_QUALIFIER bool operator==(const Vec4<T> & v) const;
-		MATH_FUNC_QUALIFIER bool operator!=(const Vec4<T> & v) const;
+		MATH_FUNC_QUALIFIER bool operator==( const Vec4<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool operator!=( const Vec4<T> & v ) const;
 
-		MATH_FUNC_QUALIFIER bool operator<(const Vec4<T> & v) const;
-		MATH_FUNC_QUALIFIER bool operator<=(const Vec4<T> & v) const;
+		MATH_FUNC_QUALIFIER bool operator<( const Vec4<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool operator<=( const Vec4<T> & v ) const;
 
-		MATH_FUNC_QUALIFIER bool operator>(const Vec4<T> & v) const;
-		MATH_FUNC_QUALIFIER bool operator>=(const Vec4<T> & v) const;
+		MATH_FUNC_QUALIFIER bool operator>( const Vec4<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool operator>=( const Vec4<T> & v ) const;
 
 		MATH_FUNC_QUALIFIER void inverse();
 
@@ -110,88 +110,88 @@ namespace Math  {
 		MATH_FUNC_QUALIFIER BasicString<U> toString() const;
 
 		union {
-			struct{T r, g, b, a;};
-			struct{T x, y, z, w;};
-			struct{T values[4];};
+			struct { T r, g, b, a; };
+			struct { T x, y, z, w; };
+			struct { T values[4]; };
 		};
 
 		static const Vec4<T> null;
 	private:
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND(Compare func, const Vec4<T> & v) const;
+		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare func, const Vec4<T> & v ) const;
 
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR(Compare func, const Vec4<T> & v) const;
+		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare func, const Vec4<T> & v ) const;
 
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER  Vec4<T> & _MathOperator(Compare func, const Vec4<T> & v);
+		MATH_FUNC_QUALIFIER  Vec4<T> & _MathOperator( Compare func, const Vec4<T> & v );
 
 		template<typename Compare, typename U>
-		MATH_FUNC_QUALIFIER  Vec4<T> & _MathOperator(Compare func, const U & v);
+		MATH_FUNC_QUALIFIER  Vec4<T> & _MathOperator( Compare func, const U & v );
 
 	};
 
 
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> operator+(const Vec4<T> & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator+( const Vec4<T> & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator+(const U & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator+( const U & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator+(const Vec4<T> & v1, const U & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator+( const Vec4<T> & v1, const U & v2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> operator-(const Vec4<T> & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator-( const Vec4<T> & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator-(const Vec4<T> & v1, const U & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator-( const Vec4<T> & v1, const U & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator-(const U & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator-( const U & v1, const Vec4<T> & v2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> operator*(const Vec4<T> & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator*( const Vec4<T> & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator*(const Vec4<T> & v1, const U & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator*( const Vec4<T> & v1, const U & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator*(const U & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator*( const U & v1, const Vec4<T> & v2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> operator/(const Vec4<T> & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator/( const Vec4<T> & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator/(const Vec4<T> & v1, const U & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator/( const Vec4<T> & v1, const U & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator/(const U & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator/( const U & v1, const Vec4<T> & v2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> operator>>(const Vec4<T> & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator >> ( const Vec4<T> & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator>>(const Vec4<T> & v1, const U & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator >> ( const Vec4<T> & v1, const U & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator>>(const U & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator >> ( const U & v1, const Vec4<T> & v2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> operator<<(const Vec4<T> & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator<<( const Vec4<T> & v1, const Vec4<T> & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator<<(const Vec4<T> & v1, const U & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator<<( const Vec4<T> & v1, const U & v2 );
 
 	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Vec4<T> operator<<(const U & v1, const Vec4<T> & v2);
+	MATH_FUNC_QUALIFIER Vec4<T> operator<<( const U & v1, const Vec4<T> & v2 );
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<(std::ostream & stream, const Vec4<T> & v);
+	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Vec4<T> & v );
 
 	template<typename T, typename U = char>
-	MATH_FUNC_QUALIFIER BasicString<U> & operator<<(BasicString<U> & stream, const Vec4<T> & v);
+	MATH_FUNC_QUALIFIER BasicString<U> & operator<<( BasicString<U> & stream, const Vec4<T> & v );
 
 	typedef Vec4<MATH_FLOAT_DEFAULT> vec4;
 	typedef Vec4<float> vec4f;

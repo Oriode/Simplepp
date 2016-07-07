@@ -21,7 +21,7 @@ public:
 	///@brief Create an Application with args (one character arg should be preceded by an "-" and multiple characters args with "--")
 	///@param argc Number of args (size of the argv table)
 	///@param argv values of args
-	Application(int argc, T * argv[]);
+	Application( int argc, T * argv[] );
 
 	///@brief destructor
 	~Application();
@@ -30,7 +30,7 @@ public:
 	///@brief Operator [] to access an arg using his name
 	///@param argName Name of the arg to retrieve.
 	///@return Pointer to the string representing the value of the arg.
-	const BasicString<T> * operator[](const BasicString<T> & argName) const;
+	const BasicString<T> * operator[]( const BasicString<T> & argName ) const;
 
 	///@brief get the application name (argv[0])
 	///@return Name of this application
