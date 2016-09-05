@@ -4,7 +4,7 @@
 ///
 /// @file	Log.h
 /// @brief	Logging functions.
-/// @author	Cl�ment Gerber
+/// @author	Clément Gerber
 /// @date	20/05/15
 /// @version	1.0
 ///
@@ -35,15 +35,18 @@
 #ifdef WIN32
 #include <Windows.h>
 #endif
+ 
 
 #if defined DEBUG || !defined NDEBUG
 #ifndef debug
 #define debug(code); code
 #endif
-#define error(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Error, __FILE__, __LINE__);
-#define log(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Info, __FILE__, __LINE__);
-#define warn(msg); Log::callErrorHandler(msg, Log::MessageSeverity::Warning, __FILE__, __LINE__);
-#define assert(condition); if (!(condition)) Log::callErrorHandler("Assertion failed : "#condition, Log::MessageSeverity::Error, __FILE__, __LINE__);
+#define error(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Error, __FILE__, __LINE__);
+#define log(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Info, __FILE__, __LINE__);
+#define warn(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Warning, __FILE__, __LINE__);
+
+#define assert(condition); if (!(condition)) Log::callErrorHandler("Assertion Failed! : ("#condition") => false", Log::MessageSeverity::Error, __FILE__, __LINE__);
+#define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler("Assertion Failed! : "#msg, Log::MessageSeverity::Error, __FILE__, __LINE__);
 
 #ifdef WIN32
 #define windowsDebug(msg); Log::displayWindowsDebug(msg, __FILE__, __LINE__);
@@ -52,13 +55,15 @@
 #endif
 #else
 #ifndef debug
-#define debug(code);
+#define debug( ... );
 #endif
-#define log(msg);
-#define warn(msg);
-#define error(msg);
-#define windowsDebug(msg);
-#define assert(condition);
+#define log( ... );
+#define warn( ... );
+#define error( ... );
+#define windowsDebug( ... );
+#define assert( ... );
+#define assertstr( ... );
+
 #endif
 
 
@@ -66,46 +71,66 @@
 #include "SimpleLog.h"
 #include "String.h"
 
+
+
 class Log : public SimpleLog {
 public:
 	Log( void );
 	~Log( void );
 
 
+	///@brief Display a log message even if we are in debug build or not.
+	///@param text Text to display
 	static void displayLog( const String & text );
+
+	///@brief Display a warning message even if we are in debug build or not.
+	///@param text Text to display
 	static void displayWarning( const String & text );
+
+
+
+	///@brief Display a error message even if we are in debug build or not.
+	///@param text Text to display
 	static void displayError( const String & text );
 
+	///@brief Start the chrono, see stopChrono();
 	static void startChrono();
+
+	///@brief stop chrono, see displayChrono();
 	static void stopChrono();
 
+	///@brief Display the last chrono result computed with startChrono() and displayChrono();
+	///@param text Text to display with the time result.
 	static void displayChrono( const String & text = "Elapsed Time" );
 
 
+	///@brief Set the error handler to be called
+	///@param msg Message to be displayed
+	///@param 
 	static void setErrorHandler( void( *errorHandlerFn ) (
-		const String &,
-		MessageSeverity,
-		const String &,
-		unsigned int ) );
+		const String & msg,
+		MessageSeverity severity,
+		const char * file,
+		unsigned int line) );
 
 
 	static void errorHandler(
 		const String &,
 		MessageSeverity severity = MessageSeverity::Error,
-		const String & fileName = "",
+		const char * fileName = "",
 		unsigned int lineNumber = 0 );
 
 
 	static void callErrorHandler(
 		const String & message,
 		MessageSeverity severity = MessageSeverity::Error,
-		const String & fileName = "",
+		const char * fileName = "",
 		unsigned int lineNumber = 0
 	);
 
 
 	#ifdef WIN32
-	static void displayWindowsDebug( const String & message, const String & fileName, unsigned int lineNumber );
+	static void displayWindowsDebug( const String & message, const char * fileName, unsigned int lineNumber );
 	#endif
 
 private:
@@ -113,8 +138,10 @@ private:
 	static void( *mErrorHandlerFn ) (
 		const String &,
 		MessageSeverity,
-		const String &,
+		const char *,
 		unsigned int );
+
+
 	static std::chrono::high_resolution_clock::time_point startTime;
 	static std::chrono::high_resolution_clock::time_point endTime;
 

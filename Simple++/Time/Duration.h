@@ -1,15 +1,24 @@
+///@file Time.h
+///@brief Time Class
+///@author Clément Gerber
+///@date 11/07/2016 (DMY) 
+
 #pragma once
 
 
 
 
-#include "../IO.h"
-#include "../Math.h"
+#include "../Math/BasicMath.h"
 #include "Tick.h"
 
 namespace Time {
 	typedef time_t TimeT;
 
+
+
+
+	///@brief Class representing a time duration, 
+	///@template ratio fractional number representing the number of seconds of one unit in this object
 	template<class ratio = Math::Ratio<1, 1>>
 	class Duration {
 	public:
@@ -68,11 +77,32 @@ namespace Time {
 		template<typename T>
 		Duration<ratio> & operator/=( const T & d );
 
+		///@brief get the number of milliseconds of this duration
+		///@return duration in milliseconds
+		unsigned long long getMilliSeconds() const;
+
+		///@brief get the number of seconds of this duration
+		///@return seconds
+		unsigned long long getSeconds() const;
+
+		///@brief get the number of Minutes of this duration
+		///@return minutes
+		unsigned long long getMinutes() const;
+
+		///@brief get the number of Hours of this duration
+		///@return hours
+		unsigned long long getHours() const;
+
+
+		///@brief get the number of Days of this duration
+		///@return duration in days
+		unsigned long long getDays() const;
 
 
 
 
-
+		///@brief Get the value of this duration without any conversion
+		///@return number of unit of time of this duration
 		TimeT getValue() const;
 
 
@@ -80,6 +110,7 @@ namespace Time {
 		TimeT d;
 
 	};
+
 
 
 
@@ -126,7 +157,6 @@ namespace Time {
 	typedef Math::Ratio<1, 1000> MilliSecond;
 	typedef Math::Ratio<1, 1000000> NanoSecond;
 	typedef Math::Ratio<1, 1000000000> PicoSecond;
-
 }
 
 

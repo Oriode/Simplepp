@@ -180,8 +180,12 @@
     <ClInclude Include="BasicLoadableIO.h" />
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Math\BasicMath.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Math\Line.hpp" />
+    <ClInclude Include="Math\BasicMath.hpp" />
+    <ClInclude Include="Math\Transformations.h" />
+    <ClInclude Include="Math\Transformations.hpp" />
     <ClInclude Include="SimpleIO.h" />
     <ClInclude Include="SimpleIO.hpp" />
     <ClInclude Include="Log.h" />
@@ -253,9 +257,9 @@
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="BasicLoadable.cpp" />
     <ClCompile Include="BasicLoadableIO.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Mutex.cpp" />
     <ClCompile Include="Network\Address.cpp" />
     <ClCompile Include="Network\AddrInfo.cpp" />
@@ -263,7 +267,6 @@
     <ClCompile Include="Network\BasicNetwork.cpp" />
     <ClCompile Include="Network\Connection.cpp" />
     <ClCompile Include="SimpleLog.cpp" />
-    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Time\Date.cpp" />

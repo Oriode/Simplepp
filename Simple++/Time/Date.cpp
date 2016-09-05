@@ -7,7 +7,7 @@ namespace Time {
 	const unsigned char Date::MonthTableLeapYear[12] = { 6, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
 
 
-	const unsigned long long Date::localUTCBias = Date::_retrieveLocalUTCBias();
+	const long long Date::localUTCBias = Date::_retrieveLocalUTCBias();
 
 
 	/************************************************************************/
@@ -28,6 +28,8 @@ namespace Time {
 
 
 
+	
+
 	/************************************************************************/
 	/* OPERATOR =	                                                      */
 	/************************************************************************/
@@ -40,6 +42,7 @@ namespace Time {
 		this -> minutes = date.minutes;
 		this -> seconds = date.seconds;
 
+
 		return *this;
 	}
 	Date & Date::operator=( const tm & date ) {
@@ -51,6 +54,8 @@ namespace Time {
 		this -> minutes = date.tm_min;
 		this -> seconds = date.tm_sec;
 
+
+
 		return *this;
 	}
 
@@ -60,13 +65,13 @@ namespace Time {
 		this -> year = 1970;
 		this -> month = 0;
 
-
+		auto test = getLocalUTCBias();
 		TimeT unixTime = timePoint.getTime() - getLocalUTCBias();
-		bool isLeapYear = false;
+		bool isLeapYear = true;
 
 		//Get the Year Number
 		while ( true ) {
-			isLeapYear = isYearLeapYear( this -> year );
+			bool isLeapYear = isYearLeapYear( this -> year );
 			TimeT numSeconds;
 			if ( isLeapYear )
 				numSeconds = 3600 * 24 * 366;
@@ -78,6 +83,8 @@ namespace Time {
 				this -> year++;
 				if ( unixTime < numSeconds )
 					break;
+			} else {
+				break;
 			}
 		}
 
@@ -98,6 +105,8 @@ namespace Time {
 				this -> month++;
 				if ( unixTime < numSeconds )
 					break;
+			} else {
+				break;
 			}
 		}
 
@@ -118,6 +127,9 @@ namespace Time {
 	void Date::setNow() {
 		operator=( TimePoint::getNow() );
 	}
+
+
+	
 
 	unsigned char Date::getSeconds() const {
 		return this -> seconds;
@@ -353,16 +365,19 @@ namespace Time {
 	}
 
 
-	const unsigned long long Date::getLocalUTCBias() {
-		return localUTCBias;
+	const long long Date::getLocalUTCBias() {
+		return Date::localUTCBias;
 	}
 
-	const unsigned long long Date::_retrieveLocalUTCBias() {
+	const long long Date::_retrieveLocalUTCBias() {
 		#ifdef WIN32
-		TIME_ZONE_INFORMATION tzi;
+		DYNAMIC_TIME_ZONE_INFORMATION dtzi;
 
-		DWORD r = GetTimeZoneInformation( &tzi );
-		return tzi.Bias * 60;
+		DWORD r = GetDynamicTimeZoneInformation( &dtzi );
+		if ( dtzi.DynamicDaylightTimeDisabled )
+			return dtzi.Bias * 60;
+		else
+			return ( dtzi.Bias + dtzi.DaylightBias ) * 60 ;
 
 
 		#else
@@ -381,6 +396,329 @@ namespace Time {
 		Date newDate;
 		newDate.setNow();
 		return newDate;
+	}
+
+
+	/************************************************************************/
+	/* OPERATOR ARITHMETIC                                                  */
+	/************************************************************************/
+
+	Date & Date::operator+=( TimeT timeT ) {
+		bool isLeapYear;
+
+		//Get the Year Number
+		while ( true ) {
+			isLeapYear = isYearLeapYear( this -> year );
+			TimeT numSeconds;
+			if ( isLeapYear )
+				numSeconds = 3600 * 24 * 366;
+			else
+				numSeconds = 3600 * 24 * 365;
+
+			if ( timeT > numSeconds ) {
+				timeT -= numSeconds;
+				this -> year++;
+			} else {
+				break;
+			}
+		}
+
+		static unsigned char numberOfDaysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		static unsigned char numberOfDaysInMonthLeap[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+	
+
+
+		//Get the Month Number
+		TimeT numSecondsOfMonth;
+		unsigned char numberOfDaysInThisMonth;
+		while ( true ) {
+			if ( isLeapYear )
+				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[this -> month];
+			else
+				numberOfDaysInThisMonth = numberOfDaysInMonth[this -> month];
+
+			numSecondsOfMonth = 3600 * 24 * numberOfDaysInThisMonth;
+			if ( timeT > numSecondsOfMonth ) {
+				timeT -= numSecondsOfMonth;
+				if ( this -> month >= 11 ) {
+					this -> month = 0;
+					this -> year++;
+					isLeapYear = isYearLeapYear( this -> year );
+				} else {
+					this -> month++;
+				}
+			} else {
+				break;
+			}
+		}
+
+		unsigned char addedDays = ( unsigned char ) ( timeT / ( 3600 * 24 ) );
+		timeT %= ( 3600 * 24 );
+		unsigned char addedHours = ( unsigned char ) ( timeT / 3600 );
+		timeT %= ( 3600 );
+		unsigned char addedMinutes = ( unsigned char ) ( timeT / 60 );
+		timeT %= ( 60 );
+		unsigned char addedSeconds = ( unsigned char ) ( timeT );
+
+
+		this -> seconds += addedSeconds;
+		if ( this -> seconds >= 60 ) {
+			this -> seconds -= 60;
+			this -> minutes++;
+		}
+
+		this -> minutes += addedMinutes;
+		while ( this -> minutes >= 60 ) {
+			this -> minutes -= 60;
+			this -> hours++;
+		}
+
+
+		this -> hours += addedHours;
+		while ( this -> hours >= 24 ) {
+			this -> hours -= 24;
+			this -> dayInMonth++;
+		}
+
+		this -> dayInMonth += addedDays;
+		while ( this -> dayInMonth > numberOfDaysInThisMonth ) {
+			this -> dayInMonth -= numberOfDaysInThisMonth;
+			this -> month++;
+
+			if ( this -> month >= 12 ) {
+				this -> month -= 12;
+				this -> year++;
+				isLeapYear = isYearLeapYear( this -> year );
+			}
+			if ( isLeapYear )
+				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[this -> month];
+			else
+				numberOfDaysInThisMonth = numberOfDaysInMonth[this -> month];
+		}
+		this -> dayInMonth++;
+		return *this;
+	}
+
+
+
+	Date & Date::operator-=( TimeT timeT ) {
+		bool isLeapYear;
+
+		//Get the Year Number
+		while ( true ) {
+			isLeapYear = isYearLeapYear( this -> year );
+			TimeT numSeconds;
+			if ( isLeapYear )
+				numSeconds = 3600 * 24 * 366;
+			else
+				numSeconds = 3600 * 24 * 365;
+
+			if ( timeT > numSeconds ) {
+				timeT -= numSeconds;
+				this -> year--;
+			} else {
+				break;
+			}
+		}
+
+		static unsigned char numberOfDaysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		static unsigned char numberOfDaysInMonthLeap[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+
+
+
+		//Get the Month Number
+		TimeT numSecondsOfMonth;
+		unsigned char numberOfDaysInThisMonth;
+		while ( true ) {
+			if ( isLeapYear )
+				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[this -> month];
+			else
+				numberOfDaysInThisMonth = numberOfDaysInMonth[this -> month];
+
+			numSecondsOfMonth = 3600 * 24 * numberOfDaysInThisMonth;
+			if ( timeT > numSecondsOfMonth ) {
+				timeT -= numSecondsOfMonth;
+				if ( this -> month == 0 ) {
+					this -> month = 11;
+					this -> year--;
+					isLeapYear = isYearLeapYear( this -> year );
+				} else {
+					this -> month--;
+				}
+			} else {
+				break;
+			}
+		}
+
+		unsigned char subbedDays = ( unsigned char ) ( timeT / ( 3600 * 24 ) );
+		timeT %= ( 3600 * 24 );
+		unsigned char subbedHours = ( unsigned char ) ( timeT / 3600 );
+		timeT %= ( 3600 );
+		unsigned char subbedMinutes = ( unsigned char ) ( timeT / 60 );
+		timeT %= ( 60 );
+		unsigned char subbedSeconds = ( unsigned char ) ( timeT );
+
+
+
+
+		this -> seconds -= subbedSeconds;
+		if ( this -> seconds > 60 ) {
+			this -> seconds += 60;
+			this -> minutes--;
+		}
+
+		this -> minutes -= subbedMinutes;
+		while ( this -> minutes > 60 ) {
+			this -> minutes += 60;
+			this -> hours--;
+		}
+
+
+		this -> hours -= subbedHours;
+		while ( this -> hours > 24 ) {
+			this -> hours += 24;
+			this -> dayInMonth--;
+		}
+
+		this -> dayInMonth -= subbedDays;
+		while ( this -> dayInMonth > numberOfDaysInThisMonth ) {
+			this -> dayInMonth += numberOfDaysInThisMonth;
+			this -> month--;
+
+			if ( this -> month > 12 ) {
+				this -> month += 12;
+				this -> year--;
+				isLeapYear = isYearLeapYear( this -> year );
+			}
+			if ( isLeapYear )
+				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[this -> month];
+			else
+				numberOfDaysInThisMonth = numberOfDaysInMonth[this -> month];
+		}
+		this -> dayInMonth++;
+		return *this;
+	}
+
+
+	Duration<Second> operator-( const Date & d1, const Date & d2 ){
+		bool isLeapYear;
+
+
+		TimeT timeT = 0;
+		auto tmpYear = d1.getYear();
+		auto tmpMonth = d1.getMonth();
+
+		//Get the Year Number
+		while ( true ) {
+			isLeapYear = Date::isYearLeapYear( tmpYear );
+			TimeT numSeconds;
+			if ( isLeapYear )
+				numSeconds = 3600 * 24 * 366;
+			else
+				numSeconds = 3600 * 24 * 365;
+
+			if ( tmpYear > d2.getYear() ) {
+				timeT += numSeconds;
+				tmpYear--;
+			} else {
+				break;
+			}
+		}
+
+		static unsigned char numberOfDaysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		static unsigned char numberOfDaysInMonthLeap[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+		//Get the Month Number
+		TimeT numSecondsOfMonth;
+		unsigned char numberOfDaysInThisMonth;
+		while ( true ) {
+			if ( isLeapYear )
+				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[tmpMonth];
+			else
+				numberOfDaysInThisMonth = numberOfDaysInMonth[tmpMonth];
+
+			numSecondsOfMonth = 3600 * 24 * numberOfDaysInThisMonth;
+			if ( tmpMonth > d2.getMonth() ) {
+				timeT += numSecondsOfMonth;
+				tmpMonth--;
+			} else if ( tmpMonth < d2.getMonth() ) {
+				timeT -= numSecondsOfMonth;
+				tmpMonth++;
+			} else {
+				break;
+			}
+		}
+
+
+		timeT += ( d1.getDay() - d2.getDay() ) * 3600 * 24;
+		timeT += ( d1.getHours() - d2.getHours() ) * 3600;
+		timeT += ( d1.getMinutes() - d2.getMinutes() ) * 60;
+		timeT += ( d1.getSeconds() - d2.getSeconds() );
+
+
+		return timeT;
+	}
+
+
+	/************************************************************************/
+	/* OPERATOR LOGICAL                                                     */
+	/************************************************************************/
+	bool Date::operator==( const Date & d ) {
+		return (this -> getYear() == d.getYear() &&
+				 this -> getMonth() == d.getMonth() &&
+				 this -> getDay() == d.getDay() &&
+				 this -> getHours() == d.getHours() &&
+				 this -> getMinutes() == d.getMinutes() &&
+				 this -> getSeconds() == d.getSeconds() );
+	}
+
+	bool Date::operator!=( const Date & d ) {
+		return ( this -> getYear() != d.getYear() ||
+				 this -> getMonth() != d.getMonth() ||
+				 this -> getDay() != d.getDay() ||
+				 this -> getHours() != d.getHours() ||
+				 this -> getMinutes() != d.getMinutes() ||
+				 this -> getSeconds() != d.getSeconds() );
+	}
+
+	bool Date::operator<( const Date & d ) {
+		return ( this -> getYear() < d.getYear() &&
+				 this -> getMonth() < d.getMonth() &&
+				 this -> getDay() < d.getDay() &&
+				 this -> getHours() < d.getHours() &&
+				 this -> getMinutes() < d.getMinutes() &&
+				 this -> getSeconds() < d.getSeconds() );
+	}
+
+	bool Date::operator>( const Date & d ) {
+		return ( this -> getYear() > d.getYear() &&
+				 this -> getMonth() > d.getMonth() &&
+				 this -> getDay() > d.getDay() &&
+				 this -> getHours() > d.getHours() &&
+				 this -> getMinutes() > d.getMinutes() &&
+				 this -> getSeconds() > d.getSeconds() );
+	}
+
+
+	bool Date::operator>=( const Date & d ) {
+		return ( this -> getYear() >= d.getYear() &&
+				 this -> getMonth() >= d.getMonth() &&
+				 this -> getDay() >= d.getDay() &&
+				 this -> getHours() >= d.getHours() &&
+				 this -> getMinutes() >= d.getMinutes() &&
+				 this -> getSeconds() >= d.getSeconds() );
+	}
+
+
+	bool Date::operator<=( const Date & d ) {
+		return ( this -> getYear() <= d.getYear() &&
+				 this -> getMonth() <= d.getMonth() &&
+				 this -> getDay() <= d.getDay() &&
+				 this -> getHours() <= d.getHours() &&
+				 this -> getMinutes() <= d.getMinutes() &&
+				 this -> getSeconds() <= d.getSeconds() );
 	}
 
 }

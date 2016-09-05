@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Log.h"
+#include "SimpleLog.h"
 #include "Vec2.h"
 
 namespace Math {

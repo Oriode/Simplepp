@@ -5,8 +5,8 @@ namespace Math {
 
 	template <typename T>
 	Rectangle<T>::Rectangle( const T & left, const T & bottom, const T & right, const T & top ) {
-		assert( right >= left );
-		assert( top >= bottom );
+		_assert( right >= left );
+		_assert( top >= bottom );
 
 		this -> pointLeftBottom.x = left;
 		this -> pointLeftBottom.y = bottom;
@@ -16,8 +16,8 @@ namespace Math {
 
 	template <typename T>
 	Rectangle<T>::Rectangle( const Vec2<T> & leftBottom, const Vec2<T> & rightTop ) {
-		assert( rightTop.x >= leftBottom.x );
-		assert( rightTop.y >= leftBottom.y );
+		_assert( rightTop.x >= leftBottom.x );
+		_assert( rightTop.y >= leftBottom.y );
 
 		this -> pointLeftBottom = leftBottom;
 		this -> pointRightTop = rightTop;
@@ -161,9 +161,14 @@ namespace Math {
 		return Rectangle<T>( p - r.getLeftBottom(), p - r.getRightTop() );
 	}
 
-	template<typename T, typename U = char>
+	template<typename T, typename U>
 	BasicString<U> & operator<<( BasicString<U> & string, const Rectangle<T> & r ) {
-		string << "[\t\t\t" << r.getRightTop() << " ]\n[ " << r.getLeftBottom() << "\t\t\t]";
+		static BasicString<U> str1( "[\t\t\t" );
+		static BasicString<U> str2( " ]\n[ " );
+		static BasicString<U> str3( "\t\t\t]" );
+
+
+		string << str2 << r.getRightTop() << str2 << r.getLeftBottom() << str3;
 		return string;
 	}
 

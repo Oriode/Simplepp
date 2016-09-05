@@ -1,11 +1,11 @@
 #pragma once
 
 ///
-/// \file	Log.h
-/// \brief	Simple Logging functions with no other dependencies to be used in the library itself.
-/// \author	Clément Gerber
-/// \date	20/05/15
-/// \version	1.0
+/// @file	Log.h
+/// @brief	Simple Logging functions with no other dependencies to be used in the library itself.
+/// @author	Clï¿½ment Gerber
+/// @date	20/05/15
+/// @version	1.0
 ///
 /// Logging functions.
 /// use log(""); warning(""); error(""); macros to write inside the stdout.
@@ -67,7 +67,14 @@ public:
 		White = 0xF
 	};
 
-	static std::ostream & Out;
+
+	///@brief retrieve the out stream (by default cout)
+	///@return out stream
+	static std::ostream & getOutStream();
+
+	///@brief set the output stream
+	///@param stream Stream to be used to output the log messages
+	static void setOutStream( std::ostream * stream );
 
 	static void errorHandler(
 		const char * message,
@@ -90,6 +97,7 @@ public:
 #endif
 
 protected:
+
 	static void _printMessage(const char * message, const char * fileName, unsigned int lineNumber);
 
 	static void(*mErrorHandlerFn) (
@@ -97,6 +105,10 @@ protected:
 		MessageSeverity,
 		const char *,
 		unsigned int);
+
+private:
+	static std::ostream * Out;
+
 
 };
 

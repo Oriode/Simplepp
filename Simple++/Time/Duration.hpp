@@ -3,7 +3,7 @@
 namespace Time {
 
 	/************************************************************************/
-	/* CONSTRUCTOR	                                                      */
+	/* CONSTRUCTOR															*/
 	/************************************************************************/
 
 
@@ -30,8 +30,30 @@ namespace Time {
 	}
 
 
+	template<class ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<ratio>::getSeconds() const {
+		return this -> d * ratio::num / ratio::den;
+	}
 
+	template<class ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<ratio>::getMilliSeconds() const {
+		return Duration<MilliSecond>( *this ).getValue();
+	}
 
+	template<class ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<ratio>::getMinutes() const {
+		return Duration<Minute>( *this ).getValue();
+	}
+
+	template<class ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<ratio>::getHours() const {
+		return Duration<Hour>( *this ).getValue();
+	}
+
+	template<class ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<ratio>::getDays() const {
+		return Duration<Day>( *this ).getValue();
+	}
 
 	/************************************************************************/
 	/* OPERATOR LOGICAL                                                     */

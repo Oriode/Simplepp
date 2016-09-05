@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Vec3.h"
-#include "IO.h"
 
 
 namespace Math {

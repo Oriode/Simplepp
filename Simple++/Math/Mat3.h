@@ -3,7 +3,6 @@
 #include "../BuildConfig.h"
 #include "Vec3.h"
 #include "Operations.h"
-#include "IO.h"
 
 
 namespace Math {

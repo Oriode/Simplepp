@@ -1,3 +1,8 @@
+///@file Tick.h
+///@brief Tick Class
+///@author Clément Gerber
+///@date 08/07/2016 (DMY) 
+
 #pragma once
 
 
@@ -14,10 +19,13 @@ namespace Time {
 	constexpr ClockT TicksPerSec = CLOCKS_PER_SEC;
 
 
-
+	///@brief Representing a number of CPU ticks
 	class Tick {
 	public:
+		///@brief Empty constructor, see getClock(); for the actual value
 		Tick();
+
+
 		Tick( const Tick & tick );
 		Tick( ClockT tick );
 
@@ -43,6 +51,8 @@ namespace Time {
 		Tick & operator=( const Tick & tick );
 		Tick & operator-=( const Tick & tick );
 
+
+		
 
 		const ClockT & getValue() const;
 

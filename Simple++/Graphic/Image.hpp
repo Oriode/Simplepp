@@ -4484,16 +4484,24 @@ namespace Graphic {
 
 
 		switch ( resamplingMode ) {
+		///////////////////////////////////////////
+		//// NEAREST
+		///////////////////////////////////////////
 		case ResamplingMode::Nearest:
 		{
-			
+
 			if ( newSize.x <= this -> size.x && newSize.y <= this -> size.y ) { // If downscaling
 				Math::Vec2<Size> i, j;
+				Math::Vec2<float> realPosition( 0 );
+
 				C1 * newImageIt = ( C1 * ) newImage.getDatas();
 				C1 * thisImageIt = ( ( C1 * ) ( this -> buffer ) );
 				for ( i.y = 0; i.y < newSize.y; i.y++ ) {
 					auto newImageIt0 = newImageIt;
-					j.y = Size( ( float( i.y ) ) * ratio.y );
+					realPosition.x = 0.0f;
+					j.y = Size( realPosition.y );
+					realPosition.y += ratio.y;
+
 					auto thisImageIt0 = thisImageIt + j.y * this -> size.y;
 
 
@@ -4501,8 +4509,8 @@ namespace Graphic {
 					for ( i.x = 0; i.x < newSize.x; i.x++ ) {
 						C1 & newImagePixel = *newImageIt0;
 
-
-						j.x = Size( (float( i.x )) * ratio.x );
+						j.x = Size( realPosition.x );
+						realPosition.x += ratio.x;
 
 
 						auto thisImageIt1 = thisImageIt0 + j.x;
@@ -4521,23 +4529,24 @@ namespace Graphic {
 				C1 * thisImageIt = ( C1 * ) getDatas();
 				C1 * newImageBeginIt = ( ( C1 * ) ( newImage.getDatas() ) );
 				Math::Vec2<Size> i, j, j0, j1;
+				Math::Vec2<float> realPosition( 0 );
 
 				j0.y = Size( 0 );
 				for ( i.y = 0; i.y < this -> size.y; i.y++ ) {
 					auto thisImageIt0 = thisImageIt;
 					auto newImageBeginIt0 = newImageBeginIt + j0.y * newSize.x;
-					j1.y = Size( float( i.y + 1 ) * ratioInverse.y );
+					realPosition.x = 0.0f;
+					realPosition.y += ratioInverse.y;
+					j1.y = Size( realPosition.y );
 
 					j0.x = Size( 0 );
-
 
 					for ( i.x = 0; i.x < this -> size.x; i.x++ ) {
 						const C1 & thisImagePixel = *thisImageIt0;
 
-
-
 						auto newImageBeginIt1 = newImageBeginIt0 + j0.x;
-						j1.x = Size( float( i.x + 1) * ratioInverse.x );
+						realPosition.x += ratioInverse.x;
+						j1.x = Size( realPosition.x );
 
 						for ( j.y = j0.y; j.y < j1.y; j.y++ ) {
 							auto newImageBeginIt2 = newImageBeginIt1;
@@ -4565,17 +4574,22 @@ namespace Graphic {
 				C1 * thisImageIt = ( C1 * ) getDatas();
 				C1 * newImageBeginIt = ( ( C1 * ) ( newImage.getDatas() ) );
 				Math::Vec2<Size> i, j, j0, j1;
+				Math::Vec2<float> realPosition( 0 );
 
 				j0.y = Size( 0 );
 				for ( i.y = 0; i.y < this -> size.y; i.y++ ) {
 					auto thisImageIt0 = thisImageIt;
 					auto newImageBeginIt0 = newImageBeginIt + j0.y * newSize.x;
-					j1.y = Size( float( i.y + 1 ) * ratioInverse.y );
+					realPosition.x = 0.0f;
+					realPosition.y += ratioInverse.y;
+					j1.y = Size( realPosition.y );
 
 
 					
 					for ( i.x = 0; i.x < newSize.x; i.x++ ) {
-						j.x = Size( ( float( i.x ) ) * ratio.x );
+						j.x = Size( realPosition.x );
+						realPosition.x += ratio.x;
+
 						auto thisImageIt1 = thisImageIt0 + j.x;
 						const C1 & thisImagePixel = *thisImageIt1;
 
@@ -4606,6 +4620,8 @@ namespace Graphic {
 				C1 * thisImageIt = ( C1 * ) getDatas();
 				C1 * newImageBeginIt = ( ( C1 * ) ( newImage.getDatas() ) );
 				Math::Vec2<Size> i, j, j0, j1;
+				Math::Vec2<float> realPosition( 0 );
+
 
 				for ( i.y = 0; i.y < newSize.y; i.y++ ) {
 
@@ -4614,15 +4630,18 @@ namespace Graphic {
 					auto thisImageIt0 = thisImageIt + j.y * this -> size.x;
 					auto newImageBeginIt0 = newImageBeginIt + i.y * newSize.x;
 
-
-					j0.x = Size( 0 );
+					j0.x = Size( realPosition.y );
+					realPosition.x = 0.0f;
+					realPosition.y += ratio.y;
 
 
 					for ( i.x = 0; i.x < this -> size.x; i.x++ ) {
 						const C1 & thisImagePixel = *thisImageIt0;
 
 						auto newImageBeginIt1 = newImageBeginIt0 + j0.x;
-						j1.x = Size( float( i.x + 1 ) * ratioInverse.x );
+						realPosition.x += ratioInverse.x;
+						j1.x = Size( realPosition.x );
+
 
 						for ( j.x = j0.x; j.x < j1.x; j.x++ ) {
 							assert( j.x >= 0 && i.y >= 0 && j.x < newSize.x && i.y < newSize.y );
@@ -4638,108 +4657,200 @@ namespace Graphic {
 						thisImageIt0++;
 					}
 				}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			}
-
-
 			break;
 		}
 
 
-
+		///////////////////////////////////////////
+		//// LINEAR
+		///////////////////////////////////////////
 		case ResamplingMode::Linear:
 		{
-			Math::Vec2<float> ratio( float( this -> size.x ) / float( newSize.x ), float( this -> size.y ) / float( newSize.y ) );
-			C1 * newImageIt = ( C1 * ) newImage.getDatas();
 
-			Math::Vec2<int> i, j0, j1, k;
-			Math::Vec2<float> j;
-			for ( i.y = 0; i.y < newSize.y; i.y++ ) {
-				auto newImageIt0 = newImageIt;
-
-				for ( i.x = 0; i.x < newSize.x; i.x++ ) {
-					C1 & newImagePixel = *newImageIt0;
+			Math::Vec2<int> filterSize( Math::max( ratio.x + 0.5f, 2.0f ), Math::max( ratio.y + 0.5f, 2.0f ) );
+			Math::Vec2<int> filterSize2( Math::max( filterSize.x / 2, 1 ), Math::max( filterSize.y / 2, 1) );
+			
+			float distanceMax = 5;
 
 
 
-					Math::Vec2<int> filterSize( ratio.x + 0.5f, ratio.y + 0.5f );
-					Math::Vec2<int> filterSize2( filterSize.x / 2, filterSize.y / 2 );
+			if ( newSize.x <= this -> size.x && newSize.y <= this -> size.y ) { // If downscaling
 
-					// Real position
-					j.x = ( float( i.x ) ) * ratio.x;
-					j.y = ( float( i.y ) ) * ratio.y;
+				Math::Vec2<int> i, j0, j1, k;
+				Math::Vec2<float> j;
 
-					//j.x = ( float( i.x ) ) * ratio.x;
-					//j.y = ( float( i.y ) ) * ratio.y;
+				C1 * newImageIt = ( C1 * ) newImage.getDatas();
+				for ( i.y = 0; i.y < newSize.y; i.y++ ) {
+					auto newImageIt0 = newImageIt;
 
-					j0.x = int( j.x + 0.5f ) - filterSize2.x;
-					j0.y = int( j.y + 0.5f ) - filterSize2.y;
+					for ( i.x = 0; i.x < newSize.x; i.x++ ) {
+						C1 & newImagePixel = *newImageIt0;
+						// Real position
+						j.x = ( float( i.x ) ) * ratio.x;
+						j.y = ( float( i.y ) ) * ratio.y;
 
-					j1.x = j0.x + filterSize.x;
-					j1.y = j0.y + filterSize.y;
+						k.x = int( j.x );
+						k.y = int( j.y );
 
-					if ( j0.x < 0 || j0.y < 0 || j1.x >= this -> size.x || j1.y >= this -> size.y ) continue;
+						j0.x = Math::max(k.x - filterSize2.x, 0);
+						j0.y = Math::max(k.y - filterSize2.y, 0);
+
+						j1.x = Math::min(j0.x + filterSize.x, this -> size.x);
+						j1.y = Math::min(j0.y + filterSize.y, this -> size.y);
+
+						//if ( j0.x < 0 || j0.y < 0 || j1.x > this -> size.x || j1.y > this -> size.y ) continue ;
+						//assert( j0.x >= 0 && j0.y >= 0 && j1.x < this -> size.x && j1.y < this -> size.y );
+
+						SumType sum( 0 );
+						float sumFactors = ( j1.x - j0.x ) * ( j1.y - j0.y );
+						for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
+							for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
+								//assert( k.x >= 0 && k.y >= 0 && k.x < this -> size.x && k.y < this -> size.y );
+								C1 * thisImageIt = ( ( C1 * ) ( this -> buffer ) ) + k.y  * this -> size.x + k.x;
+								C1 & thisImagePixel = *thisImageIt;
 
 
-					SumType sumX( 0 ), sumY( 0 );
-					float numSamples = 0;
-					k.x = int( j.x + 0.5f );
-					for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-						assert( k.x >= 0 && k.y >= 0 && k.x < this -> size.x && k.y < this -> size.y );
-						C1 * thisImageIt = ( ( C1 * ) ( this -> buffer ) ) + k.y  * this -> size.x + k.x;
-						C1 & thisImagePixel = *thisImageIt;
+								sum += SumType( thisImagePixel );
+							}
+						}
 
-
-						float distanceY = float( k.y ) - j.y;
-
-						float factor = 100.0f / float( float( distanceY * distanceY ) + 1.0f );
-						sumX += SumType( thisImagePixel ) * factor;
-						numSamples += factor;
+						newImagePixel = ( sum ) / sumFactors;
+						newImageIt0++;
 					}
 
-					k.y = int( j.y + 0.5f );
-					for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
+					newImageIt += newSize.x;
+				}
+			} else {  // If Upscaling
 
-						assert( k.x >= 0 && k.y >= 0 && k.x < this -> size.x && k.y < this -> size.y );
-						C1 * thisImageIt = ( ( C1 * ) ( this -> buffer ) ) + k.y  * this -> size.x + k.x;
-						C1 & thisImagePixel = *thisImageIt;
+				Math::Vec2<int> i, j0, j1, k;
+				Math::Vec2<float> j;
+				Math::Vec2<float> realPosition( 0 );
 
+				C1 * newImageDatas = ( C1 * ) newImage.getDatas();
+				C1 *  thisImageIt = ( C1 * ) getDatas();
 
-						float distanceX = float( k.x ) - j.x;
+				auto maxX = this -> size.x - 1;
+				auto maxY = this -> size.y - 1;
 
-						float factor = 100.0f / float( float( distanceX * distanceX ) + 1.0f );
-						sumY += SumType( thisImagePixel ) * factor;
-						numSamples += factor;
+				for ( i.y = 0; i.y < maxX; i.y++ ) {
+					auto thisImageIt0 = thisImageIt;
+
+					for ( i.x = 0; i.x < maxY; i.x++ ) {
+						C1 & thisImagePixel00 = *( thisImageIt0 );
+
+						j.x = float( i.x );
+						j.y = float( i.y );
+
+						j0.x = Size( j.x * ratioInverse.x );
+						j0.y = Size( j.y * ratioInverse.y );
+
+						j1.x = Size( ( j.x + 1.0f ) * ratioInverse.x );
+						j1.y = Size( ( j.x + 1.0f ) * ratioInverse.y );
+
+						Math::Vec2<int> kernelSize( j1.x - j0.x, j1.y - j0.y );
+
+						if ( kernelSize.x == 1 && kernelSize.y == 1 ) {
+							C1 * newImageIt = ( ( C1 * ) ( newImageDatas ) ) + ( j0.y )  * newSize.x + ( j0.x );
+							C1 & newImagePixel = *newImageIt;
+
+							newImagePixel = thisImagePixel00;
+						} else {
+							C1 & thisImagePixel10 = *( thisImageIt0 + 1 );
+							C1 & thisImagePixel01 = *( thisImageIt0 + this -> size.x );
+							C1 & thisImagePixel11 = *( thisImageIt0 + this -> size.x + 1 );
+
+							float yRelativeIncr = 1.0f / float( kernelSize.y );
+							float xRelativeIncr = 1.0f / float( kernelSize.x );
+
+							float yRelative( 0 );
+							auto newImageIt = ( ( C1 * ) ( newImageDatas ) ) + j0.y * newSize.x + j0.x;
+
+							for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
+								auto newImageIt0 = newImageIt;
+								float yRelativeInverse = 1.0f - yRelative;
+								C1 avg1( (thisImagePixel00) * yRelativeInverse + (thisImagePixel01) * yRelative );
+								C1 avg2( (thisImagePixel10) * yRelativeInverse + (thisImagePixel11) * yRelative );
+
+								float xRelative( 0 );
+								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
+									float xRelativeInverse = 1.0f - xRelative;
+									SumType avg3( avg1 * xRelativeInverse + avg2 * xRelative );
+
+									C1 & newImagePixel = *( newImageIt0 );
+									newImagePixel = avg3;
+
+									xRelative += xRelativeIncr;
+									newImageIt0++;
+								}
+								yRelative += yRelativeIncr;
+								newImageIt += newSize.x;
+							}
+						}
+						thisImageIt0++;
 					}
-
-					newImagePixel = ( sumX + sumY ) / numSamples;
-
-					newImageIt0++;
+					thisImageIt += this -> size.x;
 				}
 
-				newImageIt += newSize.x;
 			}
+
+
 
 			break;
 		}
 
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		/*
+		float yRelativeIncr = 1.0f / float( kernelSize.y );
+		float xRelativeIncr = 1.0f / float( kernelSize.x );
+
+		float yRelative(0);
+
+		for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
+		float yRelative = float( k.y - j0.y );
+		float yRelativeInverse = 1.0f - yRelative;
+		assert( yRelative <= 1.0f );
+
+		float xRelative(0);
+		for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
+
+		float xRelativeInverse = 1.0f - xRelative;
+		assert( xRelative <= 1.0f );
+
+		float factor00 = xRelativeInverse * yRelativeInverse;
+		float factor11 = xRelative * yRelative;
+		float factor01 = xRelativeInverse * yRelative;
+		float factor10 = xRelative * yRelativeInverse;
+
+
+		xRelative += xRelativeIncr;
+
+		C1 * newImageIt = ( ( C1 * ) ( newImageDatas ) ) + ( k.y )  * newSize.x + ( k.x );
+		C1 & newImagePixel = *newImageIt;
+
+		newImagePixel = ( thisImagePixel00 ) * factor00 + ( thisImagePixel01 ) * factor01 + ( thisImagePixel10 ) * factor10 + ( thisImagePixel11 ) * factor11;
+		}
+		yRelative += yRelativeIncr;
+		}*/
 
 
 

@@ -392,7 +392,7 @@ namespace Math {
 
 	template<typename T, typename U>
 	MATH_FUNC_QUALIFIER Mat2<T> operator-( const U & v, const Mat2<T> & m ) {
-		return Mat2<T>( v - m[0], v - m[1]] );
+		return Mat2<T>( v - m[0], v - m[1] );
 	}
 
 	template<typename T>

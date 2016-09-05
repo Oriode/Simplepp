@@ -2,7 +2,7 @@
 
 
 
-std::ostream & SimpleLog::Out = std::cout;
+std::ostream * SimpleLog::Out = &(std::cout);
 
 
 void(*SimpleLog::mErrorHandlerFn)(
@@ -12,14 +12,21 @@ void(*SimpleLog::mErrorHandlerFn)(
 	unsigned int) = &SimpleLog::errorHandler;
 
 
+std::ostream & SimpleLog::getOutStream() {
+	return *SimpleLog::Out;
+}
 
-void SimpleLog::errorHandler(const char * message, MessageSeverity severity /*= MessageSeverity::Error*/, const char * fileName /*= ""*/, unsigned int lineNumber /*= 0*/){
+void SimpleLog::setOutStream( std::ostream * stream ) {
+	SimpleLog::Out = stream;
+}
+
+void SimpleLog::errorHandler( const char * message, MessageSeverity severity /*= MessageSeverity::Error*/, const char * fileName /*= ""*/, unsigned int lineNumber /*= 0*/ ) {
 
 	//Cast the time into a standard C time
 	auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	struct tm timeinfo;
 	localtime_s(&timeinfo, &now);
-	char timeBuffer[100];
+	char timeBuffer[50];
 	std::strftime(timeBuffer, sizeof(timeBuffer), "%H:%M:%S", &timeinfo);
 
 
@@ -27,7 +34,7 @@ void SimpleLog::errorHandler(const char * message, MessageSeverity severity /*= 
 	case MessageSeverity::Error:
 #if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
 		setConsoleColor(MessageColor::Red);
-		SimpleLog::Out << "[ " << timeBuffer << " ] Error : ";
+		getOutStream() << "[ " << timeBuffer << " ] Error : ";
 		_printMessage(message, fileName, lineNumber);
 		setConsoleColor();
 #endif
@@ -35,7 +42,7 @@ void SimpleLog::errorHandler(const char * message, MessageSeverity severity /*= 
 	case MessageSeverity::Info:
 #if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
 		setConsoleColor(MessageColor::White);
-		SimpleLog::Out << "[ " << timeBuffer << " ] Info : ";
+		getOutStream() << "[ " << timeBuffer << " ] Info : ";
 		_printMessage(message, fileName, lineNumber);
 		//setConsoleColor();
 #endif
@@ -43,7 +50,7 @@ void SimpleLog::errorHandler(const char * message, MessageSeverity severity /*= 
 	case MessageSeverity::Warning:
 #if LOG_SEVERITY <= 2 || !defined LOG_SEVERITY
 		setConsoleColor(MessageColor::Yellow);
-		SimpleLog::Out << "[ " << timeBuffer << " ] Warning : ";
+		getOutStream() << "[ " << timeBuffer << " ] Warning : ";
 		_printMessage(message, fileName, lineNumber);
 		setConsoleColor();
 		break;
@@ -55,9 +62,9 @@ void SimpleLog::errorHandler(const char * message, MessageSeverity severity /*= 
 
 void SimpleLog::_printMessage(const char * message, const char * fileName, unsigned int lineNumber) {
 	if (strlen(fileName))
-		SimpleLog::Out << "[" << fileName << " @ " << lineNumber << "] : " << message << std::endl;
+		*(SimpleLog::Out) << "[" << fileName << " @ " << lineNumber << "] : " << message << std::endl;
 	else
-		SimpleLog::Out << message << std::endl;
+		*(SimpleLog::Out) << message << std::endl;
 }
 
 

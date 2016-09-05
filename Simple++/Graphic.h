@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "Graphic/Image.h"
-#include "Graphic/Font.h"
+#include "Graphic/TextureLoadable.h"
+#include "Graphic/FontLoadable.h"
 #include "Graphic/FreeImage.h"
 #include "Graphic/GradientInterpolated.h"
 #include "Graphic/Gradient.h"

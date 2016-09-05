@@ -2,7 +2,6 @@
 
 #include <ostream>
 
-#include "IO.h"
 #include "Vec4.h"
 #include "Operations.h"
 

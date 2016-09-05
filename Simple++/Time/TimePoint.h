@@ -1,20 +1,30 @@
+///@file TimePoint.h
+///@brief TimePoint Class
+///@author Clément Gerber
+///@date 11/07/2016 (DMY) 
+
 #pragma once
 
 
 #include <ctime>
 #include "Duration.h"
-#include "../IO.h"
 
 
 namespace Time {
 
-
+	///@brief Class representing a precise moment in the time
 	class TimePoint {
 	public:
 
+		///@brief create an uninitialized TimePoint. See getTime() of getting the timepoint of the current time.
 		TimePoint();
+
+		///@brief Create a TimePoint from an old school time_t object
 		TimePoint( const TimeT & timeT );
 
+
+
+		///@brief set this object to store the current moment.
 		void setNow();
 
 		/************************************************************************/
@@ -65,7 +75,7 @@ namespace Time {
 
 	};
 
-
+	///@brief get the TimePoint of Now
 	TimePoint getTime();
 
 

@@ -75,10 +75,10 @@ namespace Time {
 			newString << getMonthStr( getMonth() );
 			break;
 			case 'm':
-			if ( getMonth() < 10 ) newString << T( '0' ) << T( '0' + getMonth() );
-			else newString << getMonth();
+			if ( getMonth() < 9 ) newString << T( '0' ) << T( '0' + (getMonth() + 1) );
+			else newString << (getMonth() + 1);
 			break;
-			//DAY OF THE YEAR
+			//DAY OF THE MONTH
 			case 'd':
 			if ( getDay() < 10 ) newString << T( '0' ) << T( '0' + getDay() );
 			else newString << getDay();
@@ -91,7 +91,7 @@ namespace Time {
 			newString << getWeekDayStr( Date::getWeekDay( *this ) );
 			break;
 			case 'u':
-			newString << Date::getWeekDay( *this );
+			newString << (Date::getWeekDay( *this ) + 1);
 			break;
 			//HOURS
 			case 'H':
@@ -114,5 +114,39 @@ namespace Time {
 		return newString;
 	}
 
+
+
+	template<typename ratio>
+	Date operator+( const Date & date, const Duration<ratio> & duration ) {
+		Date d( date );
+		d += duration;
+		return d;
+	}
+
+
+	template<typename ratio>
+	Date operator+( const Duration<ratio> & duration, const Date & date ) {
+		Date d( date );
+		d += duration;
+		return d;
+	}
+
+
+	template<typename ratio>
+	Date operator-( const Date & date, const Duration<ratio> & duration ) {
+		Date d( date );
+		d -= duration;
+		return d;
+	}
+
+
+	template<typename ratio>
+	Date & Time::Date::operator+=( const Duration<ratio> & duration ) {
+		return operator+=( Duration<Second>( duration ).getValue() );
+	}
+	template<typename ratio>
+	Date & Time::Date::operator-=( const Duration<ratio> & duration ) {
+		return operator-=( Duration<Second>( duration ).getValue() );
+	}
 
 }

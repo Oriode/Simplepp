@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Log.h"
-#include "BasicLoadableIO.h"
-#include "Math.h"
-#include "Vector.h"
-#include "String.h"
-#include "Utility.h"
+#include "../Log.h"
+#include "../BasicLoadableIO.h"
+#include "../Math.h"
+#include "../Vector.h"
+#include "../String.h"
+#include "../Utility.h"
+
 #include "Image.h"
 #include "Texture.h"
 
