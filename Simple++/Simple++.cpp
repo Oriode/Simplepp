@@ -417,7 +417,7 @@ int main( int argc, char * argv[] ) {
 		Graphic::_Image<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
 		auto imageSmall = texture2[0] -> _resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Linear );
-		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Nearest ) );
+		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Linear ) );
 		image.drawImage( Graphic::Point( 0, 0 ), imageSmall );
 
 		//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
@@ -622,8 +622,8 @@ int main( int argc, char * argv[] ) {
 			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Nearest );
 			image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Nearest );
 
-			//image2 = image;
-			//image = image2;
+			image2 = image;
+			image = image2;
 
 		}
 		Log::stopChrono();
@@ -631,8 +631,8 @@ int main( int argc, char * argv[] ) {
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 300, 300 ), Graphic::Image::ResamplingMode::Linear );
-			image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear );
+			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Linear );
+			image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Linear );
 
 			//image2 = image;
 			//image = image2;
@@ -640,16 +640,16 @@ int main( int argc, char * argv[] ) {
 		//image = image2;
 
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE LINEAR RGB (Last Result: 4.0s for K1)" );
+		Log::displayChrono( "RESAMPLE LINEAR RGB (Last Result: 691ms for K1)" );
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			freeImageIn.resize( Math::Vec2<Graphic::Size>( 300, 300 ), Graphic::FreeImage::Filter::Bilinear );
-			freeImageIn.resize( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::FreeImage::Filter::Bilinear );
+			freeImageIn.resize( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::FreeImage::Filter::Bilinear );
+			freeImageIn.resize( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::FreeImage::Filter::Bilinear );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE FreeImage Bilinear RGB (Last Result: 10.000s for K1)" );
+		Log::displayChrono( "RESAMPLE FreeImage Bilinear RGB (Last Result: 2100ms for K1)" );
 
 
 		Graphic::FreeImage freeImageOut;
