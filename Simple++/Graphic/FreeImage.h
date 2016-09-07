@@ -126,6 +126,10 @@ namespace Graphic {
 		///@brief Retrieve datas has BGRA format
 		unsigned char * getDatas() const;
 
+		///@brief Retrieve the stride (width of one line in bytes)
+		///@return stride
+		size_t getStride() const;
+
 
 		///@brief Save the image to a file, the quality is only for JPG from 0 to 100
 		bool saveToFile( const WString & fileName, SavingFormat savingFormat, unsigned int quality = 100 );
@@ -184,6 +188,7 @@ namespace Graphic {
 		WString fileName;
 		Math::Vec2<Size> size;
 		Filter resampleFilter;
+		size_t stride;
 
 		Format loadingFormat;
 		bool invertY;

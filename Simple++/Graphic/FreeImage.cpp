@@ -8,6 +8,7 @@ namespace Graphic {
 		freeImage( NULL ),
 		size( Math::Vec2<Size>::null ),
 		loadingFormat( Format::R ),
+		stride(0),
 		BPP( getBitsFromFormat( this -> loadingFormat ) ) {
 
 
@@ -36,6 +37,10 @@ namespace Graphic {
 		} else {
 			this -> freeImage = freeImage.freeImage;	//Probably NULL
 		}
+		if ( this -> freeImage )
+			this -> stride = FreeImage_GetPitch( this -> freeImage );
+		else
+			this -> stride = 0;
 	}
 
 	FreeImage::FreeImage( const FreeImage & freeImage ) :
@@ -46,16 +51,29 @@ namespace Graphic {
 		loadingType( freeImage.loadingType ),
 		BPP( freeImage.BPP ),
 		loadingFormat( freeImage.loadingFormat ),
-		resampleFilter( freeImage.resampleFilter ) {
+		resampleFilter( freeImage.resampleFilter ){
 		if ( freeImage.isLoaded() ) {
 			this -> freeImage = FreeImage_Clone( freeImage.freeImage );
 		} else {
 			this -> freeImage = freeImage.freeImage;	//Probably NULL
 		}
+		if ( this -> freeImage )
+			this -> stride = FreeImage_GetPitch( this -> freeImage );
+		else
+			this -> stride = 0;
 	}
 
-	FreeImage::FreeImage( FreeImage && freeImage ) {
-		memcpy( this, &freeImage, sizeof( freeImage ) );		//copy the whole object
+	FreeImage::FreeImage( FreeImage && freeImage ) :
+		BasicLoadable( Utility::toRValue( freeImage ) ),
+		freeImage( Utility::toRValue( freeImage.freeImage ) ),
+		fileName( Utility::toRValue( freeImage.fileName ) ),
+		size( Utility::toRValue( freeImage.size ) ),
+		invertY( invertY ),
+		loadingType( Utility::toRValue( freeImage.loadingType ) ),
+		BPP( Utility::toRValue( freeImage.BPP ) ),
+		loadingFormat( Utility::toRValue( freeImage.loadingFormat ) ),
+		resampleFilter( Utility::toRValue( freeImage.resampleFilter ) ),
+		stride( Utility::toRValue( freeImage.stride ) ) {
 		freeImage.freeImage = NULL;					//set the old buffer to NULL to ensure no other delete
 	}
 
@@ -119,6 +137,7 @@ namespace Graphic {
 
 		}
 
+
 		//if we have to flip vertically.
 		if ( this -> invertY )
 			FreeImage_FlipVertical( this -> freeImage );
@@ -128,6 +147,8 @@ namespace Graphic {
 		//resize
 		if ( this -> size != Math::Vec2<Size>( FreeImage_GetWidth( this -> freeImage ), FreeImage_GetHeight( this -> freeImage ) ) )
 			_updateSize();
+
+		this -> stride = FreeImage_GetPitch( this -> freeImage );
 
 	}
 
@@ -167,6 +188,9 @@ namespace Graphic {
 	unsigned char * FreeImage::getDatas() const {
 		return FreeImage_GetBits( this -> freeImage );
 	}
+
+
+
 
 	void FreeImage::onUnload() {
 		if ( this -> freeImage )
@@ -218,13 +242,10 @@ namespace Graphic {
 		return this -> size;
 	}
 
-
-
-	FreeImage & FreeImage::operator=( FreeImage && image ) {
-		memcpy( this, &freeImage, sizeof( freeImage ) );		//copy the whole object
-		image.freeImage = NULL;						//set the old buffer to NULL to ensure no other delete
-		return *this;
+	size_t FreeImage::getStride() const {
+		return this -> stride;
 	}
+
 
 	void FreeImage::setFile( const WString & fileName, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<Size> & size ) {
 		unload();
@@ -278,6 +299,8 @@ namespace Graphic {
 		this -> freeImage = FreeImage_ConvertFromRawBits( datas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, this -> invertY );
 		#endif
 
+		this -> stride = FreeImage_GetPitch( this -> freeImage );
+
 		setLoading( false );
 		setLoaded( true );
 		unlock();
@@ -301,9 +324,30 @@ namespace Graphic {
 			this -> freeImage = image.freeImage;	//Probably NULL
 			setLoaded( false );
 		}
+		if ( this -> freeImage )
+			this -> stride = FreeImage_GetPitch( this -> freeImage );
+		else
+			this -> stride = 0;
+
 		return *this;
 	}
 
+
+	FreeImage & FreeImage::operator=( FreeImage && image ) {
+		BasicLoadable::operator=( Utility::toRValue( image ) );
+		this -> freeImage = Utility::toRValue( image.freeImage );
+		this -> fileName = Utility::toRValue( image.fileName );
+		this -> size = Utility::toRValue( size );
+		this -> invertY = Utility::toRValue( image.invertY );
+		this -> loadingType = Utility::toRValue( image.loadingType );
+		this -> BPP = Utility::toRValue( image.BPP );
+		this -> loadingFormat = Utility::toRValue( image.loadingFormat );
+		this -> resampleFilter = Utility::toRValue( image.resampleFilter );
+		this -> stride = Utility::toRValue( image.stride );
+
+		image.freeImage = NULL;						//set the old buffer to NULL to ensure no other delete
+		return *this;
+	}
 
 
 	const WString & FreeImage::getFileName() const {
@@ -345,6 +389,7 @@ namespace Graphic {
 		//free this image, not needed now
 		FreeImage_Unload( this -> freeImage );
 		this -> freeImage = newBPPImage;
+		this -> stride = FreeImage_GetPitch( this -> freeImage );
 
 	}
 
@@ -352,6 +397,7 @@ namespace Graphic {
 		FIBITMAP * resizedImage = FreeImage_Rescale( this -> freeImage, this -> size.x, this -> size.y, ( FREE_IMAGE_FILTER ) this -> resampleFilter );
 		FreeImage_Unload( freeImage );
 		freeImage = resizedImage;
+		this -> stride = FreeImage_GetPitch( this -> freeImage );
 	}
 
 	void FreeImage::_updateFormat( Format format ) {

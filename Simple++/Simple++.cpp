@@ -404,9 +404,20 @@ int main( int argc, char * argv[] ) {
 					}*/
 
 
+
+
+
+
+
+
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// re sampling															//
+
+		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
+		freeImageOriginal.load();
+		freeImageOriginal.resize( Graphic::Point( 200, 200 ), Graphic::FreeImage::Filter::Lanczos3 );
+		Graphic::_Image<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
 
 		Graphic::FreeImage freeImageLinearIn( "sanctum200linear.png", Graphic::FreeImage::Format::RGB );
 		freeImageLinearIn.load();
@@ -416,15 +427,13 @@ int main( int argc, char * argv[] ) {
 		freeImageBicubicIn.load();
 		Graphic::_Image<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
-		auto imageSmall = texture2[0] -> _resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Linear );
-		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Linear ) );
+		auto imageSmall = texture2[0] -> _resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<int>>( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
+		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
 		image.drawImage( Graphic::Point( 0, 0 ), imageSmall );
 
 		//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
 		//image.drawImage( Graphic::Point( 0, 200 ), imageExampleBicubic );
-
-
-		//image.drawImage( Graphic::Point( 0, 250 ), texture2[0] -> _resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 400, 250 ), Graphic::Image::ResamplingMode::Linear ) );
+		image.drawImage( Graphic::Point( 0, 200 ), imageLanczos );
 
 
 	}
@@ -614,8 +623,9 @@ int main( int argc, char * argv[] ) {
 
 		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
-		Graphic::_Image<unsigned char> image( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false );
-		Graphic::_Image<unsigned char> image2( freeImageIn.getSize(), Graphic::Format::RGB );
+		Graphic::_Image<unsigned char> imageOriginal( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false );
+		Graphic::_Image<unsigned char> image( imageOriginal );
+		Graphic::_Image<unsigned char> image2( imageOriginal.getSize(), Graphic::Format::RGB );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
@@ -633,23 +643,28 @@ int main( int argc, char * argv[] ) {
 		for ( size_t i = 0; i < K1; i++ ) {
 			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Linear );
 			image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Linear );
-
-			//image2 = image;
-			//image = image2;
 		}
-		//image = image2;
 
 		Log::stopChrono();
 		Log::displayChrono( "RESAMPLE LINEAR RGB (Last Result: 691ms for K1)" );
 
+		Log::startChrono();
+		for ( size_t i = 0; i < K1; i++ ) {
+			image = imageOriginal;
+			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
+			//image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear );
+		}
+
+		Log::stopChrono();
+		Log::displayChrono( "RESAMPLE LANCZOS RGB (Last Result: 2800ms for K1)" );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
 			freeImageIn.resize( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::FreeImage::Filter::Bilinear );
-			freeImageIn.resize( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::FreeImage::Filter::Bilinear );
+			freeImageIn.resize( Math::Vec2<Graphic::Size>( 400, 100 ), Graphic::FreeImage::Filter::Bilinear );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE FreeImage Bilinear RGB (Last Result: 2100ms for K1)" );
+		Log::displayChrono( "RESAMPLE FreeImage LINEAR RGB (Last Result: 1725ms for K1)" );
 
 
 		Graphic::FreeImage freeImageOut;

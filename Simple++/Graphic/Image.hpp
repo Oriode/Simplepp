@@ -63,7 +63,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::_Image( _Image<T> && image ) : 
+	_Image<T>::_Image( _Image<T> && image ) :
 		buffer( Utility::toRValue( image.buffer ) ),
 		format( Utility::toRValue( image.format ) ),
 		size( Utility::toRValue( image.size ) ),
@@ -76,28 +76,53 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY ) {
-		_allocateAndCopy( data, size, loadingFormat, invertY );
+	_Image<T>::_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::_allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat /*= LoadingFormat::RGB*/, bool invertY /*= false*/ ) {
+	void _Image<T>::_allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		this -> size = size;
 		this -> nbPixels = size.x * size.y;
 
 		if ( this -> nbPixels > 0 && data ) {
 			this -> format = _loadingFormat2Format( loadingFormat );
-			size_t nbComponentsTotal = this -> nbPixels * this -> getNbComponents();
+			size_t nbComponentsPerRow = size.x * getNbComponents();
+			size_t nbComponentsTotal = this -> nbPixels * getNbComponents();
 			this -> buffer = new T[nbComponentsTotal];
+
+			size_t strideBytes;
+
+			if ( !stride )
+				strideBytes = nbComponentsPerRow * sizeof( T );
+			else
+				strideBytes = stride;
 
 
 			switch ( loadingFormat ) {
 			case LoadingFormat::BGR:
 			{
 				if ( invertY ) {
-					size_t nbComponentsPerRow = size.x * getNbComponents();
-					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
+
+					auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
+					T * thisIt = getDatas();
+					for ( Size y = 0; y < size.y; y++ ) {
+						auto thisIt2 = thisIt;
+						auto otherIt2 = otherIt;
+						for ( Size x = 0; x < size.x; x++ ) {
+							thisIt2[0] = otherIt2[2];
+							thisIt2[1] = otherIt2[1];
+							thisIt2[2] = otherIt2[0];
+
+							thisIt2 += 3;
+							otherIt2 += 3;
+						}
+						thisIt += nbComponentsPerRow;
+						otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
+					}
+				} else {
+					auto otherIt = data;
 					auto thisIt = getDatas();
 					for ( Size y = 0; y < size.y; y++ ) {
 						auto thisIt2 = thisIt;
@@ -107,22 +132,11 @@ namespace Graphic {
 							thisIt2[1] = otherIt2[1];
 							thisIt2[2] = otherIt2[0];
 
-							thisIt2 += getNbComponents();
-							otherIt += getNbComponents();
+							thisIt2 += 3;
+							otherIt2 += 3;
 						}
+						otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) + strideBytes );
 						thisIt += nbComponentsPerRow;
-						otherIt -= nbComponentsPerRow;
-					}
-				} else {
-					auto otherIt = data;
-					auto thisIt = getDatas();
-					for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-						thisIt[0] = otherIt[2];
-						thisIt[1] = otherIt[1];
-						thisIt[2] = otherIt[0];
-
-						thisIt += getNbComponents();
-						otherIt += getNbComponents();
 					}
 				}
 				break;
@@ -130,8 +144,7 @@ namespace Graphic {
 			case LoadingFormat::BGRA:
 			{
 				if ( invertY ) {
-					size_t nbComponentsPerRow = size.x * getNbComponents();
-					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
+					auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 					auto thisIt = getDatas();
 					for ( Size y = 0; y < size.y; y++ ) {
 						auto thisIt2 = thisIt;
@@ -142,24 +155,31 @@ namespace Graphic {
 							thisIt2[2] = otherIt2[0];
 							thisIt2[3] = otherIt2[3];
 
-							thisIt2 += getNbComponents();
-							otherIt += getNbComponents();
+							thisIt2 += 4;
+							otherIt2 += 4;
 						}
 						thisIt += nbComponentsPerRow;
-						otherIt -= nbComponentsPerRow;
+						otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
 					}
 				} else {
 					auto otherIt = data;
 					auto thisIt = getDatas();
-					for ( size_t i = 0; i < this -> nbPixels; i++ ) {
-						thisIt[0] = otherIt[2];
-						thisIt[1] = otherIt[1];
-						thisIt[2] = otherIt[0];
-						thisIt[3] = otherIt[3];
+					for ( Size y = 0; y < size.y; y++ ) {
+						auto thisIt2 = thisIt;
+						auto otherIt2 = otherIt;
+						for ( Size x = 0; x < size.x; x++ ) {
+							thisIt2[0] = otherIt2[2];
+							thisIt2[1] = otherIt2[1];
+							thisIt2[2] = otherIt2[0];
+							thisIt2[3] = otherIt2[3];
 
-						thisIt += getNbComponents();
-						otherIt += getNbComponents();
+							thisIt2 += 4;
+							otherIt2 += 4;
+						}
+						otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) + strideBytes );
+						thisIt += nbComponentsPerRow;
 					}
+
 				}
 				break;
 			}
@@ -167,17 +187,26 @@ namespace Graphic {
 			{
 				if ( invertY ) {
 					//Copy row per row.
-					size_t nbComponentsPerRow = size.x * getNbComponents();
-					auto otherIt = data + nbComponentsPerRow * ( size.y - 1 );
+					auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 					auto thisIt = getDatas();
 					for ( Size y = 0; y < size.y; y++ ) {
 						Vector<T>::copy( thisIt, otherIt, nbComponentsPerRow );
 						thisIt += nbComponentsPerRow;
-						otherIt -= nbComponentsPerRow;
+						otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
 					}
 				} else {
 					//Copy the whole data
-					Vector<T>::copy( this -> buffer, data, nbComponentsTotal );
+					if ( stride ) {
+						auto otherIt = data;
+						auto thisIt = getDatas();
+						for ( Size y = 0; y < size.y; y++ ) {
+							Vector<T>::copy( thisIt, otherIt, nbComponentsPerRow );
+							thisIt += nbComponentsPerRow;
+							otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) + strideBytes );
+						}
+					} else {
+						Vector<T>::copy( this -> buffer, data, nbComponentsTotal );
+					}
 				}
 			}
 			}
@@ -262,9 +291,9 @@ namespace Graphic {
 
 
 	template<typename T>
-	void _Image<T>::setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY ) {
+	void _Image<T>::setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		delete[] this -> buffer;
-		_allocateAndCopy( data, size, loadingFormat, invertY );
+		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 
@@ -293,7 +322,7 @@ namespace Graphic {
 
 	template<typename T>
 	_Image<T> & _Image<T>::operator=( _Image<T> && image ) {
-		delete [] this -> buffer;
+		delete[] this -> buffer;
 		this -> buffer = Utility::toRValue( image.buffer );
 		this -> format = Utility::toRValue( image.format );
 		this -> size = Utility::toRValue( image.size );
@@ -2235,7 +2264,7 @@ namespace Graphic {
 
 
 		Point origin( rectangle.getLeft() + gradient.getPoint().x * float( rectangle.getRight() - rectangle.getLeft() ),
-				  rectangle.getBottom() + gradient.getPoint().y * float( rectangle.getTop() - rectangle.getBottom() ) );
+					  rectangle.getBottom() + gradient.getPoint().y * float( rectangle.getTop() - rectangle.getBottom() ) );
 
 		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x * N1;
@@ -2286,7 +2315,7 @@ namespace Graphic {
 		int gradientSizeMinusOne = int( size ) - 1;
 
 		Point center( rectangle.getLeft() + gradient.getCenter().x * float( rectangle.getRight() - rectangle.getLeft() ),
-				  rectangle.getBottom() + gradient.getCenter().y * float( rectangle.getTop() - rectangle.getBottom() ) );
+					  rectangle.getBottom() + gradient.getCenter().y * float( rectangle.getTop() - rectangle.getBottom() ) );
 
 		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x * N1;
@@ -4489,9 +4518,9 @@ namespace Graphic {
 
 
 		switch ( resamplingMode ) {
-		///////////////////////////////////////////
-		//// NEAREST
-		///////////////////////////////////////////
+			///////////////////////////////////////////
+			//// NEAREST
+			///////////////////////////////////////////
 		case ResamplingMode::Nearest:
 		{
 			Math::Vec2<float> ratioInverse( float( newSize.x ) / float( this -> size.x ), float( newSize.y ) / float( this -> size.y ) );
@@ -4524,7 +4553,7 @@ namespace Graphic {
 
 					newImageIt0 += newSize.x;
 				}
-			
+
 			} else if ( isUpscaling.x && isUpscaling.y ) { // If upscaling
 
 				Math::Vec2<Size> i, k, j0, j1;
@@ -4593,7 +4622,7 @@ namespace Graphic {
 							assert( i.x >= 0 && k.y >= 0 && i.x < newSize.x && k.y < newSize.y );
 							C1 & newImagePixel = *newImageIt2;
 							newImagePixel = thisImagePixel;
-							
+
 							newImageIt2 += newSize.x;
 						}
 						newImageIt1++;
@@ -4619,9 +4648,12 @@ namespace Graphic {
 					for ( i.x = 0; i.x < this -> size.x; i.x++ ) {
 						const C1 & thisImagePixel = *thisImageIt1;
 
-						auto newImageIt2 = newImageIt1 + j0.x;
+						j0.x = int( realPosition.x );
 						realPosition.x += ratioInverse.x;
 						j1.x = int( realPosition.x );
+
+						auto newImageIt2 = newImageIt1 + j0.x;
+
 
 						for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 							assert( k.x >= 0 && i.y >= 0 && k.x < newSize.x && i.y < newSize.y );
@@ -4630,7 +4662,7 @@ namespace Graphic {
 
 							newImageIt2++;
 						}
-						
+
 						j0.x = j1.x;
 						thisImageIt1++;
 					}
@@ -4711,7 +4743,7 @@ namespace Graphic {
 					kernelSize.y = j1.y - j0.y;
 					float yRelativeIncr = 1.0f / float( kernelSize.y );
 
-					auto newImageIt1 = ( ( C1 * ) ( newImageIt0 ) ) + ( j0.y ) * newSize.x ;
+					auto newImageIt1 = ( ( C1 * ) ( newImageIt0 ) ) + ( j0.y ) * newSize.x;
 
 					realPosition.x = 0.0f;
 					for ( i.x = 0; i.x < maxX; i.x++ ) {
@@ -4741,8 +4773,8 @@ namespace Graphic {
 							for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 								auto newImageIt3 = newImageIt2;
 								float yRelativeInverse = 1.0f - yRelative;
-								C1 avg1( (thisImagePixel00) * yRelativeInverse + (thisImagePixel01) * yRelative );
-								C1 avg2( (thisImagePixel10) * yRelativeInverse + (thisImagePixel11) * yRelative );
+								C1 avg1( ( thisImagePixel00 ) * yRelativeInverse + ( thisImagePixel01 ) * yRelative );
+								C1 avg2( ( thisImagePixel10 ) * yRelativeInverse + ( thisImagePixel11 ) * yRelative );
 
 								float xRelative( 0 );
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
@@ -4920,7 +4952,7 @@ namespace Graphic {
 							C1 & newImagePixel = *( newImageIt2 );
 							newImagePixel = finalAvg;
 							xRelative += xRelativeIncr;
-							newImageIt2 ++;
+							newImageIt2++;
 						}
 
 						lastAvg = avg;
@@ -4932,9 +4964,122 @@ namespace Graphic {
 			break;
 		}
 
+		///////////////////////////////////////////
+		//// LANCZOS
+		///////////////////////////////////////////
+		case ResamplingMode::Lanczos:
+		{
+			Math::Vec2<float> ratioInverse( float( newSize.x ) / float( this -> size.x - 1 ), float( newSize.y ) / float( this -> size.y - 1 ) );
+
+			int kernelSize( Math::max( Math::ceil( ratio.x ), Math::ceil( ratio.y ) ) / 2 );
+			int kernelSize2 = kernelSize * 2 + 1;
+			float distanceDivider = ( 1.0f / float( kernelSize2 ) ) * 1.0f * 50.0f;
+
+			struct Lanczos {
+				Lanczos() {
+					constexpr float A( 3.0f );
+					lanczosValues[0] = 1.0f;
+					for ( int i = 1; i < 100; i++ ) {
+						float x = float( i ) / 50.0f;
+						lanczosValues[i] = ( A * Math::sin( Math::pi() * x ) * Math::sin( ( Math::pi() * x ) / A ) ) / ( Math::pi() * Math::pi() * x * x );
+					}
+				}
+				float operator()( int i ) {
+					assert( i >= 0 && i < 100 );
+					return lanczosValues[i];
+				}
+
+				float lanczosValues[100];
+			};
+
+			static Lanczos lanczosFunc;
+
+
+			if ( !isUpscaling.x && !isUpscaling.y ) { // If downscaling
+				Math::Vec2<int> i, j0, j1, k;
+				Math::Vec2<float> realPosition( 0, 0 );
+				Math::Vec2<float> j;
+				Math::Vec2<float> realPositionInit( ( ratio.x - 1.0f ) / 2.0f, ( ratio.y - 1.0f ) / 2.0f );
+
+
+				j.y = realPositionInit.y;
+				for ( i.y = 0; i.y < newSize.y; i.y++ ) {
+					auto newImageIt1 = newImageIt0;
+
+					j0.y = Math::max( int( j.y + 0.5f ) - kernelSize, 0 );
+					j1.y = Math::min( j0.y + kernelSize2, this -> size.y );
+
+					assert( j1.y <= this -> size.y && j0.y >= 0 );
+					if ( true ) {
+						C1 * thisImageIt1 = ( ( C1 * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
+
+						j.x = realPositionInit.x;
+
+						for ( i.x = 0; i.x < newSize.x; i.x++ ) {
+							C1 & newImagePixel = *newImageIt1;
+
+							j0.x = Math::max( int( j.x + 0.5f ) - kernelSize, 0 );
+							j1.x = Math::min( j0.x + kernelSize2, this -> size.x );
+
+							assert( j1.x <= this -> size.x && j1.x >= 0 );
+							if ( true ) {
+								auto thisImageIt2 = thisImageIt1 + j0.x;
+
+								SumType sum( 0 );
+								float sumFactors( 0 );
+
+								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
+									auto thisImageIt3 = thisImageIt2;
+
+									float disty = ( float( k.y ) - j.y ) * distanceDivider;
+									float factorY( lanczosFunc( Math::abs( int( disty ) ) ) );
+
+
+									for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
+										C1 & thisImagePixel = *thisImageIt3;
+
+										float distx = ( float( k.x ) - j.x ) * distanceDivider;
+										float factorX( lanczosFunc( Math::abs( int( distx ) ) ) );
+
+										float factor = factorY * factorX;
+
+										sum += SumType( thisImagePixel ) * factor;
+										sumFactors += factor;
+										thisImageIt3++;
+									}
+									thisImageIt2 += this -> size.x;
+								}
+								j.x += ratio.x;
+
+								newImagePixel = ( sum ) / sumFactors;
+
+
+
+							}
+							newImageIt1++;
+
+
+						}
+
+
+
+					}
+
+
+
+					j.y += ratio.y;
+
+					newImageIt0 += newSize.x;
+				}
+
+
+
+
+			}
+			break;
 		}
 
-
+		}
 
 
 

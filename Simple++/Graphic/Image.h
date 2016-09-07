@@ -29,7 +29,7 @@ namespace Graphic {
 	template<typename T = unsigned char>
 	class _Image : public BasicIO {
 	public:
-		enum class ResamplingMode { Nearest , Linear};
+		enum class ResamplingMode { Nearest, Linear, Lanczos };
 		enum class ConvolutionMode { NormalSize, ExtendedSize };
 		enum class ConversionMode { Luminance, Trunquate, Alpha };
 		enum class StrokeType { Outside, Inside, Middle };
@@ -60,7 +60,8 @@ namespace Graphic {
 		///@param size size of the new image
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
+		///@param stride width of ONE line of the image data in bytes, if stride == 0, the lines are supposed to be contiguous without any padding
+		_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 		///@brief copy constructor
 		_Image( const _Image<T> & image );
@@ -102,7 +103,8 @@ namespace Graphic {
 		///@param data Data buffer to copy
 		///@param size size of the new image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
+		///@param stride width of ONE line of the image data in bytes, if stride == 0, the lines are supposed to be contiguous without any padding
+		void setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 
 		///@brief create a new image from this one with a size of width / 2 and height / 2
@@ -951,7 +953,7 @@ namespace Graphic {
 		template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 		void _drawRectangle( const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor );
 
-		void _allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
+		void _allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 		static Format _loadingFormat2Format( LoadingFormat loadingFormat );
 
