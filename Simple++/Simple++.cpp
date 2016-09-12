@@ -327,8 +327,8 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Gradient as Functor								//
-		//Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient(gradientHorizontal);
-		//image.drawRectangleFunctor(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
+		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient(gradientRadial);
+		image.drawRectangleFunctor(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
 	}
 
 	{
@@ -367,7 +367,7 @@ int main( int argc, char * argv[] ) {
 			Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.2f, 0.5f ), Math::Vec2<float>( 0.0f, 0.8f ), Math::Vec2<float>( 1.0f, 0.5f )};
 			Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
 
-			image._drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>( vertices, 4, Graphic::Rectangle( 150, 150, 250, 250 ), colorFunc );
+			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 150, 150, 250, 250 ), colorFunc );
 
 		}*/
 
@@ -377,7 +377,7 @@ int main( int argc, char * argv[] ) {
 				Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.5f ), Math::Vec2<float>( 1.0f, 0.2f ), Math::Vec2<float>( 0.8f, 0.5f ), Math::Vec2<float>( 1.0f, 0.8f ) };
 				Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
 
-				image._drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>( vertices, 4, Graphic::Rectangle( 150, 250, 250, 350 ), colorFunc );
+				image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 150, 250, 250, 350 ), colorFunc );
 
 			}*/
 			/*
@@ -386,7 +386,7 @@ int main( int argc, char * argv[] ) {
 					Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.5f, 0.0f ), Math::Vec2<float>( 0.2f, 1.0f ), Math::Vec2<float>( 0.5f, 0.8f ), Math::Vec2<float>( 0.8f, 1.0f ) };
 					Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
 
-					image._drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>( vertices, 4, Graphic::Rectangle( 250, 150, 350, 250 ), colorFunc );
+					image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 150, 350, 250 ), colorFunc );
 
 				}*/
 				/*
@@ -394,13 +394,13 @@ int main( int argc, char * argv[] ) {
 						Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.2f, 0.0f ), Math::Vec2<float>( 0.5f, 0.2f ), Math::Vec2<float>( 0.8f, 0.0f ), Math::Vec2<float>( 0.5f, 1.0f ) };
 						Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
 
-						image._drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>( vertices, 4, Graphic::Rectangle( 250, 250, 350, 350 ), colorFunc );
+						image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 250, 350, 350 ), colorFunc );
 
 					}*/
 					/*{
 						Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
 
-						image._drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorRGB<unsigned char>>( Graphic::Point(250,250), 250, colorFunc );
+						image.drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( Graphic::Point(250,250), 250, colorFunc );
 					}*/
 
 
@@ -427,8 +427,8 @@ int main( int argc, char * argv[] ) {
 		freeImageBicubicIn.load();
 		Graphic::_Image<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
-		auto imageSmall = texture2[0] -> _resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<int>>( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
-		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
+		auto imageSmall = texture2[0] -> resample( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
+		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
 		image.drawImage( Graphic::Point( 0, 0 ), imageSmall );
 
 		//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
@@ -629,8 +629,8 @@ int main( int argc, char * argv[] ) {
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Nearest );
-			image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Nearest );
+			image2 = image.resample( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Nearest );
+			image = image2.resample( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Nearest );
 
 			image2 = image;
 			image = image2;
@@ -641,8 +641,8 @@ int main( int argc, char * argv[] ) {
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Linear );
-			image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Linear );
+			image2 = image.resample( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Linear );
+			image = image2.resample( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Linear );
 		}
 
 		Log::stopChrono();
@@ -651,8 +651,8 @@ int main( int argc, char * argv[] ) {
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
 			image = imageOriginal;
-			image2 = image._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
-			//image = image2._resample<Graphic::ColorRGB<unsigned char>, Graphic::ColorRGB<unsigned int>>( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear );
+			image2 = image.resample( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
+			//image = image2.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear );
 		}
 
 		Log::stopChrono();
@@ -687,7 +687,7 @@ int main( int argc, char * argv[] ) {
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K100; i++ ) {
-			image._drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorR<unsigned char>>( vertices, 4, Graphic::Rectangle( 100, 100, 400, 400 ), colorFunc );
+			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>>( vertices, 4, Graphic::Rectangle( 100, 100, 400, 400 ), colorFunc );
 
 		}
 		Log::stopChrono();

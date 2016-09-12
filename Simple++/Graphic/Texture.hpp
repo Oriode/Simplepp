@@ -3,7 +3,7 @@
 namespace Graphic {
 
 	template<typename T>
-	Texture<T>::Texture( typename Format format ) :
+	Texture<T>::Texture( typename Format format ) 
 	{
 		this -> datas.push( new _Image<T>( format ) );
 	}
@@ -25,7 +25,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	Texture<T>::Texture( const WString & filePath ) :
+	Texture<T>::Texture( const WString & filePath ) 
 	{
 
 	}
@@ -68,7 +68,6 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename C /* = unsigned short */>
 	void Texture<T>::generateMipmaps() {
 		if ( this -> datas.getSize() > 1 ) {
 			for ( auto it = this -> datas.getBegin() + 1; it != this -> datas.getEnd(); it++ ) {
@@ -78,11 +77,11 @@ namespace Graphic {
 		}
 
 		Vector<_Image<T>>::Size i = 0;
-		auto newMipmap = this -> datas[i] -> createMipmap<C>();
+		auto newMipmap = this -> datas[i] -> createMipmap();
 		while ( newMipmap ) {
 			this -> datas.push( newMipmap );
 			i++;
-			newMipmap = this -> datas[i] -> createMipmap<C>();
+			newMipmap = this -> datas[i] -> createMipmap();
 		}
 	}
 

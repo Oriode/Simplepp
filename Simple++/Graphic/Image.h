@@ -109,7 +109,6 @@ namespace Graphic {
 
 		///@brief create a new image from this one with a size of width / 2 and height / 2
 		///@return new image created from this one with an halved size.
-		template<typename C = unsigned short>
 		_Image<T> * createMipmap( );
 
 		///@brief get the data buffer of this image 
@@ -859,22 +858,107 @@ namespace Graphic {
 		void drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
-		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+
+		///@brief Resize the image with re sampling and return the new one
+		///@param newSize size of the resulting image
+		///@param resamplingMode Mode used to compute the resulting pixels 
+		///						Nearest : Faster algorithm available, use the nearest pixel without any transformation.
+		///						Linear : Do a linear interpolation to compute the resulting pixels.
+		///						Lanczos : Use the Lanczos algorithm (@see https://en.wikipedia.org/wiki/Lanczos_resampling) with a constant of 3 (Note : only available for strict reduction, linear will be used instead)
+		_Image<T> resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+
+
+		///@brief Draw a filed Polygon
+		///@param vertices table of vertices to be drawn (vertices have to be between 0.0 and 1.0)
+		///@param nbVertices Number of vertices to draw
+		///@param rectangle Rectangle of the image where to draw the polygon
+		///@param colorFunc Color Functor to be used (@see Graphic::ColorFunc::SimpleColor for a solid color) (@see Graphic::ColorFunc::Template for making your own)
+		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+		void drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
 
-		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
+		///@brief Draw a filed Disk
+		///@param p Center point of the disk
+		///@param radius Radius of the circle in pixels
+		///@param c Color used to fill the disk
+		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc>
+		void drawDiskFunctor( const Point & p, float radius, ColorR<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
+
+		///@brief Draw a filed Disk
+		///@param p Center point of the disk
+		///@param radius Radius of the circle in pixels
+		///@param c Color used to fill the disk
+		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorRGB<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc>
+		void drawDiskFunctor( const Point & p, float radius, ColorRGB<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
+
+		///@brief Draw a filed Disk
+		///@param p Center point of the disk
+		///@param radius Radius of the circle in pixels
+		///@param c Color used to fill the disk
+		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc>
+		void drawDiskFunctor( const Point & p, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
-		template<typename C1, typename SumType>
-		_Image<T> _resample(const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+		///@brief Draw a filed Disk
+		///@param p Center point of the disk
+		///@param radius Radius of the circle in pixels
+		///@param colorFunc Color Functor to be used (@see Graphic::ColorFunc::SimpleColor for a solid color) (@see Graphic::ColorFunc::Template for making your own)
+		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc, float alpha)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
+		template<typename ColorFunc, typename BlendFunc>
+		void drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
+
+
+
+		
 	protected:
 
 
 	private:
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
+
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
+
+		template<typename C1, typename SumType>
+		_Image<T> _resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
@@ -970,7 +1054,7 @@ namespace Graphic {
 		template<typename C1, typename SumType >
 		_Image<T> _applyFilter( const double * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const;
 
-		template<typename C = Math::vec3ui, typename PIX>
+		template<typename SumType, typename C>
 		_Image<T> * _createMipmap( _Image<T> * destinationImage );
 
 		bool _read( std::fstream * fileStream );
@@ -990,7 +1074,11 @@ namespace Graphic {
 		T * buffer;
 
 	};
-typedef _Image<unsigned char> Image;
+
+
+
+
+	typedef _Image<unsigned char> Image;
 	typedef _Image<float> ImageF;
 
 

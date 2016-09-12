@@ -449,7 +449,6 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename C /* = unsigned short */>
 	_Image<T> * _Image<T>::createMipmap() {
 		Math::Vec2<Size> newSize = getSize() / Math::Vec2<Size>( 2 );
 		if ( newSize.x == 0 || newSize.y == 0 )
@@ -459,42 +458,42 @@ namespace Graphic {
 
 		switch ( this -> format ) {
 		case Format::R:
-		return _createMipmap<C, T>( newImage );
+		return _createMipmap<ColorR<Utility::TypesInfos<T>::Bigger>, ColorR<T>>( newImage );
 		break;
 		case Format::RGB:
-		return _createMipmap<Math::Vec3<C>, Math::Vec3<T>>( newImage );
+		return _createMipmap<ColorRGB<Utility::TypesInfos<T>::Bigger>, ColorRGB<T>>( newImage );
 		break;
 		case Format::RGBA:
-		return _createMipmap<Math::Vec4<C>, Math::Vec4<T>>( newImage );
+		return _createMipmap<ColorRGBA<Utility::TypesInfos<T>::Bigger>, ColorRGBA<T>>( newImage );
 		break;
 		}
 		return NULL;
 	}
 
 	template<typename T>
-	template<typename C /*= unsigned short */, typename PIX>
+	template<typename SumType /*= unsigned short */, typename C>
 	_Image<T> * _Image<T>::_createMipmap( _Image<T> * newImage ) {
 		Math::Vec2<Size> i( 0 );
 
 		auto newSize = newImage -> getSize();
-		PIX * newImageData = ( PIX * ) newImage -> getDatas();
-		PIX * p0_1 = ( PIX * ) this -> buffer;
-		PIX * p0_2;
+		C * newImageData = ( C * ) newImage -> getDatas();
+		C * p0_1 = ( C * ) this -> buffer;
+		C * p0_2;
 
 		for ( i.y = 0; i.y < newSize.y; i.y++ ) {
 			p0_2 = p0_1;
 			for ( i.x = 0; i.x < newSize.x; i.x++ ) {
 				//P0	P1
 				//P2	P3
-				PIX * p2 = ( p0_2 + this -> size.x );
+				C * p2 = ( p0_2 + this -> size.x );
 
-				C newP( *p0_2 );
-				newP += *( p0_2 + 1 );
-				newP += *p2;
-				newP += *( p2 + 1 );
+				SumType newP( *p0_2 );
+				newP += SumType(*( p0_2 + 1 ));
+				newP += SumType(*p2);
+				newP += SumType(*( p2 + 1 ));
 				newP >>= 2;			//newP /= 4
 
-				newImageData[0] = PIX( newP );
+				newImageData[0] = C( newP );
 				newImageData++;
 
 				p0_2 += 2;
@@ -2055,8 +2054,6 @@ namespace Graphic {
 	template<typename T>
 	template<typename C, typename InterFunc>
 	size_t _Image<T>::computeInterpolation( const GradientHorizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle )  const {
-		constexpr size_t N = sizeof( C ) / sizeof( T );
-
 		float size = rectangle.getRight() - rectangle.getLeft();
 		*clampedRectangle = clampRectangle( rectangle );
 		Size clampedSize = clampedRectangle -> getRight() - clampedRectangle -> getLeft();
@@ -2084,8 +2081,8 @@ namespace Graphic {
 		Math::Rectangle<Size> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * N1;
+		C1 * thisIt = (C1 * ) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		if ( ( N1 != 4 ) && ( N1 == N2 ) ) {
@@ -2095,11 +2092,11 @@ namespace Graphic {
 			}
 		} else {
 			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
-				auto maxIt = thisIt + size * N1;
+				auto maxIt = thisIt + size;
 				auto gradientIt = gradientArray;
 				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
 					BlendingFunc::Normal::blendColor( *( ( C1* ) thisIt2 ), *( ( C2* ) gradientIt ) );
-					thisIt2 += N1;
+					thisIt2 ++;
 					gradientIt++;
 				}
 				thisIt += thisImageOffset;
@@ -2121,8 +2118,8 @@ namespace Graphic {
 		Math::Rectangle<Size> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * N1;
+		C1 * thisIt = (C1 *) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		if ( ( N1 == N2 ) ) {
@@ -2132,11 +2129,11 @@ namespace Graphic {
 			}
 		} else {
 			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
-				auto maxIt = thisIt + size * N1;
+				auto maxIt = thisIt + size;
 				auto gradientIt = gradientArray;
 				for ( auto thisIt2 = thisIt; thisIt2 < maxIt; ) {
 					BlendingFunc::None::blendColor( *( ( C1* ) thisIt2 ), *( ( C2* ) gradientIt ) );
-					thisIt2 += N1;
+					thisIt2 ++;
 					gradientIt++;
 				}
 				thisIt += thisImageOffset;
@@ -2153,21 +2150,18 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
-		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
-		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
-
 		C2 * gradientArray;
 		Math::Rectangle<Size> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * N1;
+		C1 * thisIt = (C1 *) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
-			auto maxIt = thisIt + size * N1;
+			auto maxIt = thisIt + size;
 			auto gradientIt = gradientArray;
-			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 += N1 ) {
+			for ( auto thisIt2 = thisIt; thisIt2 < maxIt; thisIt2 ++ ) {
 				blendingFunctor( *( ( C1* ) thisIt2 ), *( gradientIt ) );
 				gradientIt++;
 			}
@@ -2182,8 +2176,6 @@ namespace Graphic {
 	template<typename T>
 	template<typename C, typename InterFunc>
 	size_t _Image<T>::computeInterpolation( const GradientVertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
-		constexpr size_t N = sizeof( C ) / sizeof( T );
-
 		float size = rectangle.getTop() - rectangle.getBottom();
 		*clampedRectangle = clampRectangle( rectangle );
 		Size clampedSize = clampedRectangle -> getTop() - clampedRectangle -> getBottom();
@@ -2201,15 +2193,13 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
-		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
-		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
 		C2 * gradientArray;
 		Math::Rectangle<Size> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * N1;
+		C1 * thisIt = (C1 *) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		auto gradientIt = gradientArray;
@@ -2217,7 +2207,7 @@ namespace Graphic {
 			auto thisIt2 = thisIt;
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
 				blendingFunctor( *( ( C1* ) thisIt2 ), *( gradientIt ) );
-				thisIt2 += N1;
+				thisIt2 ++;
 			}
 			gradientIt++;
 			thisIt += thisImageOffset;
@@ -2231,8 +2221,6 @@ namespace Graphic {
 	template<typename T>
 	template<typename C, typename InterFunc>
 	size_t _Image<T>::computeInterpolation( const GradientLinear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
-		constexpr size_t N = sizeof( C ) / sizeof( T );
-
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 		*clampedRectangle = clampRectangle( rectangle );
 
@@ -2241,8 +2229,6 @@ namespace Graphic {
 			gradientSize = size.x * Math::abs( gradient.getDirection().x ) + size.y * Math::abs( gradient.getDirection().y );
 		else
 			gradientSize = gradient.getLength();
-
-		int gradientSizeMinusOne = gradientSize - 1;
 
 		*buffer = new C[gradientSize];
 		gradient.computeInterpolation( *buffer, gradientSize );
@@ -2254,9 +2240,6 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientLinear<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
-		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
-		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
-
 		Math::Rectangle<Size> clampedRectangle;
 		C2 * gradientArray;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
@@ -2266,8 +2249,8 @@ namespace Graphic {
 		Point origin( rectangle.getLeft() + gradient.getPoint().x * float( rectangle.getRight() - rectangle.getLeft() ),
 					  rectangle.getBottom() + gradient.getPoint().y * float( rectangle.getTop() - rectangle.getBottom() ) );
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * N1;
+		C1 * thisIt = (C1 *) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
@@ -2275,7 +2258,7 @@ namespace Graphic {
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
 				auto index = gradient.computeIndex( Math::Vec2<float>( ( ( typename Point::Type ) i.x ) - origin.x, ( ( typename Point::Type ) i.y ) - origin.y ), gradientSizeMinusOne );
 				blendingFunctor( *( ( C1* ) thisIt2 ), gradientArray[index] );
-				thisIt2 += N1;
+				thisIt2 ++;
 			}
 			thisIt += thisImageOffset;
 		}
@@ -2286,8 +2269,6 @@ namespace Graphic {
 	template<typename T>
 	template<typename C, typename InterFunc>
 	size_t _Image<T>::computeInterpolation( const GradientRadial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
-		constexpr size_t N = sizeof( C ) / sizeof( T );
-
 		*clampedRectangle = clampRectangle( rectangle );
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 		Math::Vec2<Size> sizeClamped = clampedRectangle -> getRightTop() - clampedRectangle -> getLeftBottom();
@@ -2305,10 +2286,6 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientRadial<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
-		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
-		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
-
-
 		Math::Rectangle<Size> clampedRectangle;
 		C2 * gradientArray;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
@@ -2317,8 +2294,8 @@ namespace Graphic {
 		Point center( rectangle.getLeft() + gradient.getCenter().x * float( rectangle.getRight() - rectangle.getLeft() ),
 					  rectangle.getBottom() + gradient.getCenter().y * float( rectangle.getTop() - rectangle.getBottom() ) );
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * N1;
+		C1 * thisIt = (C1 *) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
@@ -2326,7 +2303,7 @@ namespace Graphic {
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
 				auto index = gradient.computeIndex( Math::Vec2<float>( ( ( typename Point::Type ) i.x ) - center.x, ( ( typename Point::Type ) i.y ) - center.y ), gradientSizeMinusOne );
 				blendingFunctor( *( ( C1* ) thisIt2 ), gradientArray[index] );
-				thisIt2 += N1;
+				thisIt2 ++;
 			}
 			thisIt += thisImageOffset;
 		}
@@ -2357,21 +2334,19 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void _Image<T>::_drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor ) {
-		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
-
 		Math::Rectangle<Size> clampedRectangle = clampRectangle( rectangle );
 		colorFunctor.init( clampedRectangle );
 		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
-		auto thisIt = getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
-		auto thisImageOffset = this -> size.x * getNbComponents();
+		C1 * thisIt = (C1 *) getDatas( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
+		auto thisImageOffset = this -> size.x;
 
 		Math::Vec2<Size> i;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
 				blendingFunctor( *( ( C1* ) thisIt2 ), colorFunctor( i ) );
-				thisIt2 += N1;
+				thisIt2++;
 			}
 			thisIt += thisImageOffset;
 		}
@@ -4284,6 +4259,38 @@ namespace Graphic {
 	}
 
 
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorR<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+		return drawDiskFunctor<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorR<T>>( c ), blendFunc );
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorRGB<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+		return drawDiskFunctor<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorRGB<T>>( c ), blendFunc );
+	}
+
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+		return drawDiskFunctor<ColorFunc::SimpleColor<ColorRGBAT>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorRGBA<T>>( c ), blendFunc );
+	}
+
+
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+		switch ( getFormat() ) {
+		case Format::R:
+		return _drawDiskFunctor<ColorFunc, BlendFunc, ColorR<T>>( point, radius, colorFunc, blendFunc );
+		case Format::RGB:
+		return _drawDiskFunctor<ColorFunc, BlendFunc, ColorRGB<T>>( point, radius, colorFunc, blendFunc );
+		case Format::RGBA:
+		return _drawDiskFunctor<ColorFunc, BlendFunc, ColorRGBA<T>>( point, radius, colorFunc, blendFunc );
+		}
+	}
+
 
 
 
@@ -4491,7 +4498,17 @@ namespace Graphic {
 
 
 
-
+	template<typename T /*= unsigned char*/>
+	_Image<T> Graphic::_Image<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
+		switch ( getFormat() ) {
+		case Format::R:
+		return _resample<ColorR<T>, ColorR<Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Bigger>::Bigger>::Signed>>( newSize, resamplingMode );
+		case Format::RGB:
+		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Bigger>::Bigger>::Signed>>( newSize, resamplingMode );
+		case Format::RGBA:
+		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Bigger>::Bigger>::Signed>>( newSize, resamplingMode );
+		}
+	}
 
 
 
@@ -4517,10 +4534,16 @@ namespace Graphic {
 
 
 
+		// Lanczos Upscaling is not supported, switched to linear instead
+		if ( isUpscaling.x || isUpscaling.y ) 
+			resamplingMode = ResamplingMode::Linear;
+		
+
+
 		switch ( resamplingMode ) {
-			///////////////////////////////////////////
-			//// NEAREST
-			///////////////////////////////////////////
+		///////////////////////////////////////////
+		//// NEAREST
+		///////////////////////////////////////////
 		case ResamplingMode::Nearest:
 		{
 			Math::Vec2<float> ratioInverse( float( newSize.x ) / float( this -> size.x ), float( newSize.y ) / float( this -> size.y ) );
@@ -4553,7 +4576,6 @@ namespace Graphic {
 
 					newImageIt0 += newSize.x;
 				}
-
 			} else if ( isUpscaling.x && isUpscaling.y ) { // If upscaling
 
 				Math::Vec2<Size> i, k, j0, j1;
@@ -4588,14 +4610,11 @@ namespace Graphic {
 							}
 							newImageIt2 += newSize.x;
 						}
-
-
 						j0.x = j1.x;
 						thisImageIt1++;
 					}
 
 					j0.y = j1.y;
-
 					thisImageIt0 += this -> size.x;
 				}
 			} else if ( !isUpscaling.x && isUpscaling.y ) { //Upscaling Y, Downscaling X
@@ -4627,9 +4646,7 @@ namespace Graphic {
 						}
 						newImageIt1++;
 					}
-
 					j0.y = j1.y;
-
 					thisImageIt0 += this -> size.x;
 				}
 			} else if ( isUpscaling.x && !isUpscaling.y ) { //Upscaling X, Downscaling Y
@@ -4653,13 +4670,10 @@ namespace Graphic {
 						j1.x = int( realPosition.x );
 
 						auto newImageIt2 = newImageIt1 + j0.x;
-
-
 						for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 							assert( k.x >= 0 && i.y >= 0 && k.x < newSize.x && i.y < newSize.y );
 							C1 & newImagePixel = *newImageIt2;
 							newImagePixel = thisImagePixel;
-
 							newImageIt2++;
 						}
 
@@ -4973,7 +4987,7 @@ namespace Graphic {
 
 			int kernelSize( Math::max( Math::ceil( ratio.x ), Math::ceil( ratio.y ) ) / 2 );
 			int kernelSize2 = kernelSize * 2 + 1;
-			float distanceDivider = ( 1.0f / float( kernelSize2 ) ) * 1.0f * 50.0f;
+			float distanceDivider = ( 1.0f / float( kernelSize ) ) * 0.5f * 50.0f;
 
 			struct Lanczos {
 				Lanczos() {
@@ -5143,7 +5157,18 @@ namespace Graphic {
 
 
 
-
+	template<typename T /*= unsigned char*/>
+	template<typename ColorFunc, typename BlendFunc>
+	void Graphic::_Image<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+		switch ( getFormat() ) {
+		case Format::R:
+		return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorR<T>>( rectangle, radius, colorFunc, blendFunc );
+		case Format::RGB:
+		return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorRGB<T>>( rectangle, radius, colorFunc, blendFunc );
+		case Format::RGBA:
+		return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorRGBA<T>>( rectangle, radius, colorFunc, blendFunc );
+		}
+	}
 
 
 

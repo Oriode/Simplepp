@@ -61,8 +61,6 @@ namespace Graphic {
 		void clear(const Math::Vec2<Size> & size, typename Format format);
 
 		///@brief generate the mipmaps from the actual lod 0
-		///@template C type able to handle the sum of 4 type T
-		template<typename C = unsigned short>
 		void generateMipmaps();
 
 

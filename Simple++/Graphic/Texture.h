@@ -93,8 +93,6 @@ namespace Graphic {
 
 
 		///@brief generate the mipmap from the actual lod 0
-		///@template C type able to handle the sum of 4 type T
-		template<typename C = unsigned short>
 		void generateMipmaps();
 
 

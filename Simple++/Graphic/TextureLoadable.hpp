@@ -187,10 +187,9 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	template<typename C /*= unsigned short*/>
 	void TextureLoadable<T>::generateMipmaps( ) {
 		assert(isLoaded());
-		Texture<T>::generateMipmaps<C>();
+		Texture<T>::generateMipmaps();
 	}
 
 
