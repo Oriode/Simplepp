@@ -162,13 +162,11 @@ int main( int argc, char * argv[] ) {
 		image = imageCopy;
 	}
 
-	/*{
+	{
 		//////////////////////////////////////////////////////////////////////////
 		// Blur Image										//
-		unsigned int mySuperKernel10[21];
-		Graphic::computeGaussianKernel(mySuperKernel10);
-		image = image.applyFilter(mySuperKernel10, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-	}*/
+		image = image.applyGaussianBlur(5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	}
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
@@ -176,11 +174,11 @@ int main( int argc, char * argv[] ) {
 		image.setPixels(ImageFunctor<unsigned char>());
 	}*/
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Thresholding the image								//
 		image.threshold( Graphic::ColorRGBA<unsigned char>( 255 ), Graphic::ColorRGBA<unsigned char>( 0 ), Graphic::ColorRGBA<unsigned char>( 128, 0, 0, 0 ) );
-	}
+	}*/
 
 
 

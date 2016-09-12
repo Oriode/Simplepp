@@ -298,7 +298,7 @@ namespace Graphic {
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
 	int GradientRadial<C, InterFunc>::computeIndex( const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & radius ) {
-		return Math::clamp<int>( int( Math::length( p * radius ) ), 0, maxIndex );
+		return Math::clamp<int>( int( Math::length( p * radius ) * 2.0f ), 0, maxIndex );
 	}
 
 

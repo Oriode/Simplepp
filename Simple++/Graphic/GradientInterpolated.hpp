@@ -255,7 +255,7 @@ namespace Graphic {
 		void GradientRadial<C, InterFunc>::init( const Math::Rectangle<Size> & rectangle ) {
 			Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 
-			this -> size = Math::max<float>( gradient.getRadius().x * float( size.x ), gradient.getRadius().y * float( size.y ) );
+			this -> size = Math::max<float>( gradient.getRadius().x * float( size.x ), gradient.getRadius().y * float( size.y ) ) * 2.0f;
 			this -> sizeMinusOne = this -> size - 1;
 
 			delete[] this -> interpolatedArray;

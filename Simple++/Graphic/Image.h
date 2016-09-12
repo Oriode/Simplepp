@@ -23,6 +23,22 @@
 
 
 namespace Graphic {
+
+	///@brief Struct used to retrieve the type of a summation of multiple pixel components
+	template<typename T>
+	struct _ImageSumType {
+		typedef typename Utility::TypesInfos<typename Utility::TypesInfos<T>::Bigger>::Bigger Type;
+	};
+	template<>
+	struct _ImageSumType<float> {
+		typedef float Type;
+	};
+	template<>
+	struct _ImageSumType<double> {
+		typedef double Type;
+	};
+
+
 	///@brief Image Class
 	///@template T Type of one pixel
 	///@template F Format of the image
@@ -34,6 +50,8 @@ namespace Graphic {
 		enum class ConversionMode { Luminance, Trunquate, Alpha };
 		enum class StrokeType { Outside, Inside, Middle };
 
+		///@brief Type used to sum multiple pixels components
+		typedef typename _ImageSumType<T>::Type SumType;
 
 		///@brief copy constructor with an another storage type
 		///@param image image to copy
@@ -774,11 +792,11 @@ namespace Graphic {
 
 		///@brief Get the number of bits of the sum of a kernel depending of the types used
 		///@return number of bits of the sum of a integer kernel (floating kernel will every time has a sum of 1.0)
-		template<typename F>
-		static F getKernelSumNbBits();
+		template<typename K>
+		inline static K getKernelSumNbBits();
 
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
-		///@param filter Filter table (the table has to have an odd size)
+		///@param filter Filter table (the table has to have an odd size) (@see _Image<T>::SumType for an automatically generated Type)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
 		///@return Image with the filter applied
@@ -786,12 +804,20 @@ namespace Graphic {
 		_Image<T> applyFilter( const F( &filter )[N], ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
 
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
-		///@param filter Filter table (the table has to have an odd size)
+		///@param filter Filter table (the table has to have an odd size) (@see _Image<T>::SumType for an automatically generated Type)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
 		///@return Image with the filter applied
 		template<typename F>
 		_Image<T> applyFilter( const F * filter, size_t size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
+
+
+		///@brief apply a Gaussian Blur Filter
+		///@param radius Radius of the blur
+		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
+		///@param color Color of the background
+		///@return Image with the filter applied
+		_Image<T> applyGaussianBlur( size_t radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
 
 
 		///@brief Clamp a rectangle inside the image
@@ -945,11 +971,53 @@ namespace Graphic {
 
 
 
+
+		
+		/************************************************************************/
+		/* Kernels                                                              */
+		/************************************************************************/
+		///@brief compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : Size of your kernel (has to be odd))
+		///@param kernel table to be filled (has to be already allocated)
+		///@param sigma Sigma used during the computation
+		///@return The weight computed
+		template<typename K, size_t N>
+		static K computeGaussianKernel( K( &kernel )[N], const float & sigma );
+
+		///@brief compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : Size of your kernel (has to be odd))
+		///@param kernel table to be filled (has to be already allocated)
+		///@return The weight computed
+		template<typename K, size_t N>
+		static K computeGaussianKernel( K( &kernel )[N] );
+
+		///@brief compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel )
+		///@param kernel table to be filled (has to be already allocated)
+		///@param size (Radius * 2 + 1) of the kernel (must be odd)
+		///@param sigma Sigma used during the computation
+		///@return The weight computed
+		template<typename K>
+		K computeGaussianKernel( K * kernel, size_t size, const float & sigma );
+		static float computeGaussianKernel( float * kernel, size_t size, const float & sigma );
+		static double computeGaussianKernel( double * kernel, size_t size, const double & sigma );
+
+		///@brief compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel )
+		///@param kernel table to be filled (has to be already allocated)
+		///@param size (Radius * 2 + 1) of the kernel (must be odd)
+		///@return The weight computed
+		template<typename K>
+		static K computeGaussianKernel( K * kernel, size_t size );
+		static float computeGaussianKernel( float * kernel, size_t size );
+		static double computeGaussianKernel( double * kernel, size_t size );
+
 		
 	protected:
 
 
 	private:
+		template<typename K>
+		static K _computeGaussianKernelf( K * kernel, size_t size, const K & sigma );
+		template<typename K>
+		static K _computeGaussianKernelf( K * kernel, size_t size );
+
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
@@ -1074,8 +1142,6 @@ namespace Graphic {
 		T * buffer;
 
 	};
-
-
 
 
 	typedef _Image<unsigned char> Image;

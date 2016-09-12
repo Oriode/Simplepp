@@ -94,8 +94,7 @@ namespace Utility {
 
 
 	template<typename T>
-	class TypesInfos {
-	public:
+	struct TypesInfos {
 		typedef T Bigger;
 		typedef T Signed;
 		typedef T Unsigned;
@@ -109,8 +108,7 @@ namespace Utility {
 
 
 	template<>
-	class TypesInfos<char> {
-	public:
+	struct TypesInfos<char> {
 		typedef char T;
 		typedef short Bigger;
 		typedef char Signed;
@@ -124,8 +122,7 @@ namespace Utility {
 	};
 
 	template<>
-	class TypesInfos<unsigned char> {
-	public:
+	struct TypesInfos<unsigned char> {
 		typedef unsigned char T;
 		typedef unsigned short Bigger;
 		typedef char Signed;
@@ -143,8 +140,7 @@ namespace Utility {
 
 
 	template<>
-	class TypesInfos<short> {
-	public:
+	struct TypesInfos<short> {
 		typedef short T;
 		typedef int Bigger;
 		typedef short Signed;
@@ -159,8 +155,7 @@ namespace Utility {
 	};
 
 	template<>
-	class TypesInfos<unsigned short> {
-	public:
+	struct TypesInfos<unsigned short> {
 		typedef unsigned short T;
 		typedef unsigned int Bigger;
 		typedef short Signed;
@@ -176,8 +171,7 @@ namespace Utility {
 
 
 	template<>
-	class TypesInfos<int> {
-	public:
+	struct TypesInfos<int> {
 		typedef int T;
 		typedef long Bigger;
 		typedef int Signed;
@@ -192,8 +186,7 @@ namespace Utility {
 	};
 
 	template<>
-	class TypesInfos<unsigned int> {
-	public:
+	struct TypesInfos<unsigned int> {
 		typedef unsigned int T;
 		typedef unsigned long Bigger;
 		typedef int Signed;
@@ -209,8 +202,7 @@ namespace Utility {
 
 
 	template<>
-	class TypesInfos<long> {
-	public:
+	struct TypesInfos<long> {
 		typedef long T;
 		typedef long long Bigger;
 		typedef long Signed;
@@ -225,8 +217,7 @@ namespace Utility {
 	};
 
 	template<>
-	class TypesInfos<unsigned long> {
-	public:
+	struct TypesInfos<unsigned long> {
 		typedef unsigned long T;
 		typedef unsigned long long Bigger;
 		typedef long Signed;
@@ -242,8 +233,7 @@ namespace Utility {
 
 
 	template<>
-	class TypesInfos<long long> {
-	public:
+	struct TypesInfos<long long> {
 		typedef long long T;
 		typedef long long Bigger;
 		typedef long long Signed;
@@ -258,8 +248,7 @@ namespace Utility {
 	};
 
 	template<>
-	class TypesInfos<unsigned long long> {
-	public:
+	struct TypesInfos<unsigned long long> {
 		typedef unsigned long long T;
 		typedef unsigned long long Bigger;
 		typedef long long Signed;
@@ -275,8 +264,7 @@ namespace Utility {
 
 
 	template<>
-	class TypesInfos<float> {
-	public:
+	struct TypesInfos<float> {
 		typedef float T;
 		typedef double Bigger;
 		typedef float Signed;
@@ -292,8 +280,7 @@ namespace Utility {
 	};
 
 	template<>
-	class TypesInfos<double> {
-	public:
+	struct TypesInfos<double> {
 		typedef double T;
 		typedef double Bigger;
 		typedef double Signed;

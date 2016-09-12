@@ -458,13 +458,13 @@ namespace Graphic {
 
 		switch ( this -> format ) {
 		case Format::R:
-		return _createMipmap<ColorR<Utility::TypesInfos<T>::Bigger>, ColorR<T>>( newImage );
+		return _createMipmap<ColorR<SumType>, ColorR<T>>( newImage );
 		break;
 		case Format::RGB:
-		return _createMipmap<ColorRGB<Utility::TypesInfos<T>::Bigger>, ColorRGB<T>>( newImage );
+		return _createMipmap<ColorRGB<SumType>, ColorRGB<T>>( newImage );
 		break;
 		case Format::RGBA:
-		return _createMipmap<ColorRGBA<Utility::TypesInfos<T>::Bigger>, ColorRGBA<T>>( newImage );
+		return _createMipmap<ColorRGBA<SumType>, ColorRGBA<T>>( newImage );
 		break;
 		}
 		return NULL;
@@ -1438,6 +1438,20 @@ namespace Graphic {
 
 
 
+	template<typename T /*= unsigned char*/>
+	_Image<T> Graphic::_Image<T>::applyGaussianBlur( size_t radius, ConvolutionMode convolutionMode /*= ConvolutionMode::ExtendedSize*/, const ColorRGBA<T> & color /*= ColorRGBA<T>::null */ ) const {
+		size_t diameter = radius * 2 + 1;
+		typename SumType * kernelFilter = new typename SumType[diameter];
+
+		computeGaussianKernel<typename SumType>(kernelFilter, diameter);
+
+
+		return applyFilter<typename SumType>(kernelFilter, diameter, convolutionMode, color);
+	}
+
+
+
+
 	template<typename T>
 	template<typename F, int N>
 	_Image<T> _Image<T>::applyFilter( const F( &filter )[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
@@ -1697,10 +1711,10 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename F>
-	F _Image<T>::getKernelSumNbBits() {
-		assert( Utility::TypesInfos<F>::getNbBits() - Utility::TypesInfos<T>::getNbBits() > 6 );
-		return Utility::TypesInfos<F>::getNbBits() - Utility::TypesInfos<T>::getNbBits() - 6;
+	template<typename K>
+	K _Image<T>::getKernelSumNbBits() {
+		assert( Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() > 6 );
+		return Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() - 6;
 	}
 
 
@@ -2273,7 +2287,7 @@ namespace Graphic {
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 		Math::Vec2<Size> sizeClamped = clampedRectangle -> getRightTop() - clampedRectangle -> getLeftBottom();
 
-		size_t gradientSize = int( Math::max<float>( gradient.getRadius().x * float( size.x ), gradient.getRadius().y * float( size.y ) ) );
+		size_t gradientSize = int( Math::max<float>( gradient.getRadius().x * float( size.x ), gradient.getRadius().y * float( size.y ) ) * 2.0f );
 
 		*buffer = new C[gradientSize];
 		gradient.computeInterpolation( *buffer, gradientSize );
@@ -2454,7 +2468,7 @@ namespace Graphic {
 			Utility::swap( p0.y, p1.y );
 		}
 
-		typedef Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Signed>::Bigger>::Bigger Bigger;
+		typedef Utility::TypesInfos<SumType>::Signed Bigger;
 
 
 
@@ -3125,7 +3139,7 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void _Image<T>::_drawLineFunctorFilledBottom( const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc ) {
-		typedef Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Signed>::Bigger>::Bigger Bigger;
+		typedef Utility::TypesInfos<SumType>::Signed Bigger;
 
 		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
 		debug( Math::Vec2<typename Rectangle::Type> size( rectangle.getRightTop() - rectangle.getLeftBottom() ););
@@ -4502,11 +4516,11 @@ namespace Graphic {
 	_Image<T> Graphic::_Image<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
 		switch ( getFormat() ) {
 		case Format::R:
-		return _resample<ColorR<T>, ColorR<Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Bigger>::Bigger>::Signed>>( newSize, resamplingMode );
+		return _resample<ColorR<T>, ColorR<Utility::TypesInfos<SumType>::Signed>>( newSize, resamplingMode );
 		case Format::RGB:
-		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Bigger>::Bigger>::Signed>>( newSize, resamplingMode );
+		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<SumType>::Signed>>( newSize, resamplingMode );
 		case Format::RGBA:
-		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<Utility::TypesInfos<Utility::TypesInfos<T>::Bigger>::Bigger>::Signed>>( newSize, resamplingMode );
+		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<SumType>::Signed>>( newSize, resamplingMode );
 		}
 	}
 
@@ -5457,6 +5471,164 @@ namespace Graphic {
 
 
 
+
+
+	template<typename T>
+	template<typename K, size_t N>
+	K _Image<T>::computeGaussianKernel( K( &kernel )[N] ) {
+		return computeGaussianKernel( kernel, N );
+	}
+
+	template<typename T>
+	template<typename K>
+	K _Image<T>::computeGaussianKernel( K * kernel, size_t size ) {
+		struct KernelsComputed {
+			KernelsComputed() {
+				for ( size_t i = 0; i < 10; i++ ) {
+					size_t diameter = i * 2 + 1;
+					this -> kernels[i] = new K[diameter];
+					computeKernel( this -> kernels[i], diameter );
+				}
+			}
+
+			void computeKernel( K * kernel, size_t size ) {
+				float * kernelf = new float[size];
+				_computeGaussianKernelf<float>( kernelf, size, float( size ) / 4.0f );
+				float newWeightf = float( 1 << _Image<T>::getKernelSumNbBits<K>() );
+
+				for ( size_t i = 0; i < size; i++ )
+					kernel[i] = K( kernelf[i] * newWeightf );
+
+				delete[] kernelf;
+			}
+
+
+			void setKernel( K * kernel, size_t size ) {
+				size_t radius = size / 2;
+				if ( radius < 10 )
+				for ( size_t i = 0; i < size; i++ )
+					kernel[i] = this -> kernels[radius][i];
+				else {
+					computeKernel( kernel, size );
+				}
+			}
+			~KernelsComputed() {
+				for ( size_t i = 0; i < 10; i++ )
+					delete[] this -> kernels[i];
+			}
+			K * kernels[10];
+		};
+		static KernelsComputed kernelComputed;
+
+		kernelComputed.setKernel( kernel, size );
+		return 1 << _Image<T>::getKernelSumNbBits<K>();
+	}
+
+	template<typename T>
+	float _Image<T>::computeGaussianKernel( float * kernel, size_t size ) {
+		return _computeGaussianKernelf<float>( kernel, size );
+	}
+
+	template<typename T>
+	double _Image<T>::computeGaussianKernel( double * kernel, size_t size ) {
+		return _computeGaussianKernelf<double>( kernel, size );
+	}
+
+	template<typename T>
+	template<typename K>
+	K _Image<T>::_computeGaussianKernelf( K * kernel, size_t size ) {
+		struct KernelsComputed {
+			KernelsComputed() {
+				for ( size_t i = 0; i < 10; i++ ) {
+					size_t diameter = i * 2 + 1;
+					this -> kernel[i] = new K[diameter];
+					computeKernel( this -> kernel[i], diameter );
+				}
+			}
+
+			void computeKernel( K * kernel, size_t size ) {
+				_computeGaussianKernelf<K>( kernel, size, K( size ) / K( 4.0 ) );
+			}
+
+			void setKernel( K * kernel, size_t size ) {
+				size_t radius = size / 2;
+				if ( radius < 10 )
+				for ( size_t i = 0; i < size; i++ )
+					kernel[i] = this -> kernels[radius][i];
+				else {
+					computeKernel( kernel, size );
+				}
+			}
+			~KernelsComputed() {
+				for ( size_t i = 0; i < 10; i++ )
+					delete[] this -> kernels[i];
+			}
+			K * kernels[10];
+		};
+		static KernelsComputed kernelComputed;
+
+		kernelComputed.setKernel( kernel, size );
+		return K( 1.0 );
+	}
+
+	template<typename T>
+	template<typename K, size_t N>
+	K _Image<T>::computeGaussianKernel( K( &kernel )[N], const float & sigma ) {
+		return computeGaussianKernel<K>( (K *) kernel, N, sigma );
+	}
+
+
+	template<typename T>
+	template<typename K>
+	K _Image<T>::computeGaussianKernel( K * kernel, size_t size, const float & sigma ) {
+		float * kernelf = new float[size];
+		_computeGaussianKernelf<float>( kernelf, size, sigma );
+		float newWeight = float( 1 << _Image<T>::getKernelSumNbBits<K>() );
+
+		for ( size_t i = 0; i < size; i++ )
+			kernel[i] = K( kernelf[i] * newWeight );
+
+		delete[] kernelf;
+		return 1 << _Image<T>::getKernelSumNbBits<K>();
+	}
+
+	template<typename T>
+	float _Image<T>::computeGaussianKernel( float * kernel, size_t size, const float & sigma ) {
+		return _computeGaussianKernelf<float>( kernel, size, sigma );
+	}
+
+	template<typename T>
+	double _Image<T>::computeGaussianKernel( double * kernel, size_t size, const double & sigma ) {
+		return _computeGaussianKernelf<double>( kernel, size, sigma );
+	}
+
+	template<typename T>
+	template<typename K>
+	K _Image<T>::_computeGaussianKernelf( K * kernel, size_t size, const K & sigma ) {
+		assert( size % 2 == 1 );
+		const size_t NHalfed = size / 2;
+
+		K sigma2Square = K( 2 ) * ( sigma * sigma );
+		K sum( 1 );
+		kernel[NHalfed] = K( 1 );
+		for ( size_t i = 0; i < NHalfed; i++ ) {
+			size_t i2 = NHalfed - i;
+
+			K v = Math::exp( -( ( K( i2 * i2 ) ) / sigma2Square ) );
+			kernel[i] = v;
+			kernel[size - i - 1] = v;
+
+			sum += v * K( 2 );
+		}
+
+		//normalize datas
+		K oneOnSum = K( 1 ) / sum;
+		for ( size_t i = 0; i < size; i++ )
+			kernel[i] *= oneOnSum;
+
+		return K( 1.0 );
+
+	}
 
 
 }
