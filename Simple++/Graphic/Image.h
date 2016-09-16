@@ -49,6 +49,7 @@ namespace Graphic {
 	public:
 		enum class ResamplingMode { Nearest, Linear, Lanczos };
 		enum class ConvolutionMode { NormalSize, ExtendedSize };
+		enum class ConvolutionOrder { HorizontalVertical, VerticalHorizontal };
 		enum class ConversionMode { Luminance, Trunquate, Alpha };
 		enum class StrokeType { Outside, Inside, Middle };
 
@@ -810,7 +811,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
 		template<typename F, typename KernelFunc = KernelFunc::None>
-		_Image<T> applyFilter( const F * filter, Size size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
+		_Image<T> applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		///@brief Apply a convolution filter
@@ -1015,7 +1016,7 @@ namespace Graphic {
 		///@param sigma Sigma used during the computation
 		///@return The weight computed
 		template<typename K>
-		K computeGaussianKernel( K * kernel, size_t size, const float & sigma );
+		static K computeGaussianKernel( K * kernel, size_t size, const float & sigma );
 		static float computeGaussianKernel( float * kernel, size_t size, const float & sigma );
 		static double computeGaussianKernel( double * kernel, size_t size, const double & sigma );
 
@@ -1025,24 +1026,34 @@ namespace Graphic {
 		///@return The weight computed
 		template<typename K>
 		static K computeGaussianKernel( K * kernel, size_t size );
-		static float computeGaussianKernel( float * kernel, size_t size );
-		static double computeGaussianKernel( double * kernel, size_t size );
 
 
 
+		template<typename K>
+		static K computeSobel1Kernel( K * kernel );
+		static float computeSobel1Kernel( float * kernel );
+		static double computeSobel1Kernel( double * kernel );
 
-		
-
+		template<typename K>
+		static K computeSobel2Kernel( K * kernel );
+		static float computeSobel2Kernel( float * kernel );
+		static double computeSobel2Kernel( double * kernel );
 
 		
 	protected:
 
 
 	private:
+		template<typename K, typename ComputeKernelFunc>
+		static K _kernelFromFloat2Int(K * kernel, size_t size, ComputeKernelFunc & computeKernelFunc);
 		template<typename K>
 		static K _computeGaussianKernelf( K * kernel, size_t size, const K & sigma );
+
 		template<typename K>
-		static K _computeGaussianKernelf( K * kernel, size_t size );
+		static K _computeSobel1Kernelf( K * kernel );
+		template<typename K>
+		static K _computeSobel2Kernelf( K * kernel );
+
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
@@ -1137,16 +1148,16 @@ namespace Graphic {
 
 
 		template<typename C1, typename Sum, typename KernelFunc, typename F>
-		_Image<T> _applyFilter( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		_Image<T> _applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
 		template<typename C1, typename KernelFunc, typename F>
-		_Image<T> _applyFilterf( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		_Image<T> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
 		template<typename C1, typename Sum, typename KernelFunc >
-		_Image<T> _applyFilter( const float * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		_Image<T> _applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
 		template<typename C1, typename Sum, typename KernelFunc >
-		_Image<T> _applyFilter( const double * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		_Image<T> _applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
 
 		template<typename C1, typename Sum, typename KernelFunc, typename F>
@@ -1181,7 +1192,6 @@ namespace Graphic {
 		T * buffer;
 
 	};
-
 
 	typedef _Image<unsigned char> Image;
 	typedef _Image<float> ImageF;

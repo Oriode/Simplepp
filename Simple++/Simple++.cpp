@@ -191,30 +191,37 @@ int main( int argc, char * argv[] ) {
 
 
 
+
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Apply Non symmetrical Filter Image									//
-		constexpr size_t bits(Graphic::Image::getKernelSumNbBits());
-		constexpr size_t mult((1 << Graphic::Image::getKernelSumNbBits()));
-		typename Graphic::Image::KernelType kernel[9] = { -1 * mult, 0 * mult, 1 * mult,      -2 * mult, 0 * mult, 2 * mult,      -1 * mult, 0 * mult, 1 * mult };
-		image = image.applyFilter( kernel, Math::Vec2<Graphic::Size>(3,3), Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
+		constexpr size_t bits( Graphic::Image::getKernelSumNbBits() );
+		constexpr size_t mult( ( 1 << Graphic::Image::getKernelSumNbBits() ) );
+		typename Graphic::Image::KernelType kernelX[3], kernelY[3];
+
+		Graphic::Image::computeSobel1Kernel( kernelX );
+		Graphic::Image::computeSobel2Kernel( kernelY );
+
+		image = image.applyFilter( kernelX, kernelY, 3, Graphic::Image::ConvolutionOrder::VerticalHorizontal,  Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
+		//image = image.applyFilter( kernel, Math::Vec2<Graphic::Size>(3,3), Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
+
 	}
 
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Blur Image										//
+		// Blur Image															//
 		image = image.applyGaussianBlur( 5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
 	}
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
-		// Apply Functor										//
+		// Apply Functor														//
 		image.setPixels(ImageFunctor<unsigned char>());
 	}*/
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
-		// Thresholding the image								//
+		// Thresholding the image												//
 		image.threshold( Graphic::ColorRGBA<unsigned char>( 255 ), Graphic::ColorRGBA<unsigned char>( 0 ), Graphic::ColorRGBA<unsigned char>( 128, 0, 0, 0 ) );
 	}*/
 
@@ -222,7 +229,7 @@ int main( int argc, char * argv[] ) {
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
-		// Blur Image										//
+		// Blur Image															//
 		unsigned int mySuperKernel2[11];
 		Graphic::computeGaussianKernel(mySuperKernel2);
 
