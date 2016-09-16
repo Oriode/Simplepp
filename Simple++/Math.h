@@ -28,17 +28,25 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T length( const Vec4<T> & v );
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER T min( const Vec3<T> & v );
+
 	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec2<T> & v );
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER T max( const Vec3<T> & v );
+	MATH_FUNC_QUALIFIER T min( const Vec3<T> & v );
+
+
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec2<T> & v );
+	template<typename T>
+	MATH_FUNC_QUALIFIER T max( const Vec3<T> & v );
 
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> abs( const Vec2<T> & v );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> abs( const Vec3<T> & v );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> abs( const Vec4<T> & v );
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> sqrt( const Vec2<T> & v );

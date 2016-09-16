@@ -3,10 +3,10 @@
 #include "Vector.h"
 
 
-template<typename T, typename Compare = Logical::less<T>>
+template<typename T, typename Compare = Math::Logical::Less>
 class OrderedVector : private Vector<T> {
 public:
-	OrderedVector( const Compare & compareFunc = Compare() );
+	OrderedVector( Compare & compareFunc = Compare() );
 	OrderedVector( const OrderedVector & vector );
 	OrderedVector( OrderedVector && v );
 
@@ -64,7 +64,7 @@ public:
 
 
 private:
-	const Compare & sortFunction;
+	Compare & sortFunction;
 	bool isOrdered;
 
 	void insert( Size index, const T & data );
@@ -76,8 +76,7 @@ private:
 
 
 
-
-#include "OrderedVector.h"
+#include "OrderedVector.hpp"
 
 
 

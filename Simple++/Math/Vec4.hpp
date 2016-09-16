@@ -69,33 +69,33 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Vec4<T>::operator>=( const Vec4<T> & v ) const {
-		return _logicalOperatorAND( Logical::greaterEqual<T>(), v );
+		return _logicalOperatorAND( Math::Logical::GreaterOrEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Vec4<T>::operator>( const Vec4<T> & v ) const {
-		return _logicalOperatorAND( Logical::greater<T>(), v );
+		return _logicalOperatorAND( Math::Logical::Greater(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Vec4<T>::operator<=( const Vec4<T> & v ) const {
-		return _logicalOperatorAND( Logical::lessEqual<T>(), v );
+		return _logicalOperatorAND( Math::Logical::LessOrEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Vec4<T>::operator<( const Vec4<T> & v ) const {
-		return _logicalOperatorAND( Logical::less<T>(), v );
+		return _logicalOperatorAND( Math::Logical::Less(), v );
 	}
 
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Vec4<T>::operator!=( const Vec4<T> & v ) const {
-		return _logicalOperatorOR( Logical::notEqual<T>(), v );
+		return _logicalOperatorOR( Math::Logical::NotEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Vec4<T>::operator==( const Vec4<T> & v ) const {
-		return _logicalOperatorAND( Logical::equal<T>(), v );
+		return _logicalOperatorAND( Math::Logical::Equal(), v );
 	}
 
 	template<typename T>
@@ -161,12 +161,12 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator-=( const T & v ) {
-		return _MathOperator( Math::subEqual<T>(), v );
+		return _MathOperator( Math::Operations::SubEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator-=( const Vec4<T> & v ) {
-		return _MathOperator( Math::subEqual<T>(), v );
+		return _MathOperator( Math::Operations::SubEqual(), v );
 	}
 
 	template<typename T>
@@ -176,57 +176,57 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator+=( const T & v ) {
-		return _MathOperator( Math::addEqual<T>(), v );
+		return _MathOperator( Math::Operations::AddEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator+=( const Vec4<T> & v ) {
-		return _MathOperator( Math::addEqual<T>(), v );
+		return _MathOperator( Math::Operations::AddEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator*=( const T & v ) {
-		return _MathOperator( Math::mulEqual<T>(), v );
+		return _MathOperator( Math::Operations::MulEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator*=( const Vec4<T> & v ) {
-		return _MathOperator( Math::mulEqual<T>(), v );
+		return _MathOperator( Math::Operations::MulEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator/=( const T & v ) {
-		return _MathOperator( Math::divEqual<T>(), v );
+		return _MathOperator( Math::Operations::DivEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator/=( const Vec4<T> & v ) {
-		return _MathOperator( Math::divEqual<T>(), v );
+		return _MathOperator( Math::Operations::DivEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator>>=( const T & v ) {
-		return _MathOperator( Math::binaryShiftRightEqual<T>(), v );
+		return _MathOperator( Math::Operations::BinaryShiftRightEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator>>=( const Vec4<T> & v ) {
-		return _MathOperator( Math::binaryShiftRightEqual<T>(), v );
+		return _MathOperator( Math::Operations::BinaryShiftRightEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator<<=( const T & v ) {
-		return _MathOperator( Math::binaryShiftLeftEqual<T>(), v );
+		return _MathOperator( Math::Operations::BinaryShiftLeftEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator<<=( const Vec4<T> & v ) {
-		return _MathOperator( Math::binaryShiftLeftEqual<T>(), v );
+		return _MathOperator( Math::Operations::BinaryShiftLeftEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator=( const T & v ) {
-		return _MathOperator( Math::equal<T>(), v );
+		return _MathOperator( Math::Operations::Assign(), v );
 	}
 
 	template<typename T>
@@ -238,7 +238,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator=( const Vec4<T> & v ) {
-		_MathOperator( Math::equal<T>(), v );
+		_MathOperator( Math::Operations::Assign(), v );
 		return *this;
 	}
 

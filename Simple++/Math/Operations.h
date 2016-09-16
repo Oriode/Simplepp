@@ -3,54 +3,60 @@
 
 namespace Math {
 
-	template <class T> struct add {
-		T operator() ( const T& x, const T& y ) const { return x + y; }
-	};
-	template <class T> struct sub {
-		T operator() ( const T& x, const T& y ) const { return x - y; }
-	};
-	template <class T> struct mul {
-		T operator() ( const T& x, const T& y ) const { return x*y; }
-	};
-	template <class T> struct div {
-		T operator() ( const T& x, const T& y ) const { return x / y; }
-	};
-	template <class T> struct modulus {
-		T operator() ( const T& x, const T& y ) const { return x%y; }
-	};
-	template <class T> struct binaryShiftRight {
-		T operator() ( const T& x, const T& y ) const { x >> y; }
-	};
-	template <class T> struct binaryShiftLeft {
-		T operator() ( const T& x, const T& y ) const { x << y; }
-	};
+	namespace Operations {
+
+		struct Add {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { return x + y; }
+		};
+		struct Sub {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { return x - y; }
+		};
+		struct Mul {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { return x * y; }
+		};
+		struct Div {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { return x / y; }
+		};
+		struct Modulus {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { return x % y; }
+		};
+		struct BinaryShiftRight {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { x >> y; }
+		};
+		struct BinaryShiftLeft {
+			template<typename T> inline T operator() ( const T& x, const T& y ) const { x << y; }
+		};
 
 
 
-	template <class T> struct addEqual {
-		T & operator() ( T& x, const T& y ) const { x += y; return x; }
-	};
-	template <class T> struct subEqual {
-		T & operator() ( T& x, const T& y ) const { x -= y; return x; }
-	};
-	template <class T> struct mulEqual {
-		T & operator() ( T& x, const T& y ) const { x *= y; return x; }
-	};
-	template <class T> struct divEqual {
-		T & operator() ( T& x, const T& y ) const { x /= y; return x; }
-	};
-	template <class T> struct modulusEqual {
-		T & operator() ( T& x, const T& y ) const { x %= y; return x; }
-	};
-	template <class T> struct binaryShiftRightEqual {
-		T & operator() ( T& x, const T& y ) const { x >>= y; return x; }
-	};
-	template <class T> struct binaryShiftLeftEqual {
-		T & operator() ( T& x, const T& y ) const { x <<= y; return x; }
-	};
-	template <class T> struct equal {
-		T & operator() ( T& x, const T& y ) const { x = y; return x; }
-	};
+		struct AddEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x += y; return x; }
+		};
+		struct SubEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x -= y; return x; }
+		};
+		struct MulEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x *= y; return x; }
+		};
+		struct DivEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x /= y; return x; }
+		};
+		struct ModulusEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x %= y; return x; }
+		};
+		struct BinaryShiftRightEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x >>= y; return x; }
+		};
+		struct BinaryShiftLeftEqual {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x <<= y; return x; }
+		};
+		struct Assign {
+			template<typename T> inline T & operator() ( T& x, const T& y ) const { x = y; return x; }
+		};
 
+		struct Identity {
+			template<typename T> inline T & operator() ( T & x ) const { return x; }
+		};
+	}
 
 }

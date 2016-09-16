@@ -17,7 +17,7 @@ template<typename T = int>
 class Vector : public BasicSimpleIO { 
 public:
 	typedef T * RandomAccessIterator;
-	typedef T elemType;
+	typedef T ElemType;
 	typedef unsigned long long Size;
 
 
@@ -46,7 +46,7 @@ public:
 	~Vector(void);
 
 
-	bool iterate(RandomAccessIterator * it, elemType ** e);
+	bool iterate(RandomAccessIterator * it, ElemType ** e);
 
 	//allocate the memory with the specified size and copy old datas (used method in push when the size isn't enough)
 	void reserve(Size newMax);
@@ -240,7 +240,7 @@ public:
 	Size search(const T & data) const;
 
 	template<typename Compare>
-	void quicksort(RandomAccessIterator start, RandomAccessIterator end, Compare func = Logical::less<T>);
+	void quicksort(RandomAccessIterator start, RandomAccessIterator end, Compare func = Math::Logical::Less);
 
 	static Size overflow;
 protected:

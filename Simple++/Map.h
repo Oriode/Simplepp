@@ -168,7 +168,7 @@ protected:
 	void _sort( Compare func );
 
 	template<typename Compare>
-	void _quicksort( RandomAccessIterator start, RandomAccessIterator end, Compare func = Logical::less<I> );
+	void _quicksort( RandomAccessIterator start, RandomAccessIterator end, Compare func = Math::Logical::Less<I> );
 };
 
 

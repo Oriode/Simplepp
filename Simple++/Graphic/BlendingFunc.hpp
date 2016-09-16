@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../BuildConfig.h"
+#include "BasicGraphic.h"
 
 namespace Graphic {
 

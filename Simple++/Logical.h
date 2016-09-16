@@ -1,62 +1,65 @@
 #pragma once
 
+namespace Math {
 
-namespace Logical {
+	namespace Logical {
+
+		struct Or {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x || y; }
+		};
+
+		struct Less {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x < y; }
+		};
+
+		struct LessPointer {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return *x < *y; }
+		};
+
+		struct Greater {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x > y; }
+		};
+
+		struct GreaterPointer {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return *x > *y; }
+		};
+
+		struct And {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x && y; }
+		};
+
+		struct LessOrEqual {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x <= y; }
+		};
+
+		struct GreaterOrEqual {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x >= y; }
+		};
+
+		struct LessOrEqualPointer {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return *x <= *y; }
+		};
+
+		struct GreaterOrEqualPointer {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return *x >= *y; }
+		};
+
+		struct Equal {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x == y; }
+		};
+
+		struct NotEqual {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return x != y; }
+		};
+
+		struct EqualPointer {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return *x == *y; }
+		};
+
+		struct NotEqualPointer {
+			template<typename T> inline bool operator() ( const T& x, const T& y ) const { return *x != *y; }
+		};
+	}
 
 
-	template <class T> struct or {
-		bool operator() ( const T& x, const T& y ) const { return x || y; }
-	};
-
-	template <class T> struct less {
-		bool operator() ( const T& x, const T& y ) const { return x < y; }
-	};
-
-	template <class T> struct lessP {
-		bool operator() ( const T& x, const T& y ) const { return *x < *y; }
-	};
-
-	template <class T> struct greater {
-		bool operator() ( const T& x, const T& y ) const { return x > y; }
-	};
-
-	template <class T> struct greaterP {
-		bool operator() ( const T& x, const T& y ) const { return *x > *y; }
-	};
-
-	template <class T> struct and {
-		bool operator() ( const T& x, const T& y ) const { return x&&y; }
-	};
-
-	template <class T> struct lessEqual {
-		bool operator() ( const T& x, const T& y ) const { return x <= y; }
-	};
-
-	template <class T> struct greaterEqual {
-		bool operator() ( const T& x, const T& y ) const { return x >= y; }
-	};
-
-	template <class T> struct lessEqualP {
-		bool operator() ( const T& x, const T& y ) const { return *x <= *y; }
-	};
-
-	template <class T> struct greaterEqualP {
-		bool operator() ( const T& x, const T& y ) const { return *x >= *y; }
-	};
-
-	template <class T> struct equal {
-		bool operator() ( const T& x, const T& y ) const { return x == y; }
-	};
-
-	template <class T> struct notEqual {
-		bool operator() ( const T& x, const T& y ) const { return x != y; }
-	};
-
-	template <class T> struct equalP {
-		bool operator() ( const T& x, const T& y ) const { return *x == *y; }
-	};
-
-	template <class T> struct notEqualP {
-		bool operator() ( const T& x, const T& y ) const { return *x != *y; }
-	};
 }

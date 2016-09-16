@@ -11,7 +11,7 @@
 //#define SPEEDTEST_DISK
 //#define SPEEDTEST_POLYGON
 //#define SPEEDTEST_STROKE
-#define SPEEDTEST_RESAMPLE
+//#define SPEEDTEST_RESAMPLE
 //#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
@@ -21,7 +21,7 @@
 //#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
 //#define SPEEDTEST_VECTOR
-//#define SPEEDTEST_MAP
+#define SPEEDTEST_MAP
 //#define SPEEDTEST_NETWORK
 
 #ifndef _LIB 
@@ -72,6 +72,33 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 
 	Application<char> app( argc, argv );
+
+
+	/************************************************************************/
+	/* MAPS                                                                 */
+	/************************************************************************/
+	/*{
+		OrderedMap<unsigned long, unsigned long> mapMine;
+		std::map<unsigned long, unsigned long> mapSTD;
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < 1000; i++ ) {
+			mapSTD.insert( std::pair<unsigned long, unsigned long>( Math::random( 0, 100000 ), i ) );
+		}
+		Log::stopChrono();
+		Log::displayChrono( "Map .insert(); STD" );
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < 1000; i++ ) {
+			mapMine.insertFast( Math::random( 0, 100000 ), i );
+		}
+		Log::stopChrono();
+		Log::displayChrono( String( "Map .insert(); Mine " ) );
+		for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
+			Log::displayLog( String( it -> getIndex() ) + " : " + it -> getValue() );
+		}
+	}*/
+
 
 
 	/************************************************************************/
@@ -162,10 +189,21 @@ int main( int argc, char * argv[] ) {
 		image = imageCopy;
 	}
 
+
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Apply Non symmetrical Filter Image									//
+		constexpr size_t bits(Graphic::Image::getKernelSumNbBits());
+		constexpr size_t mult((1 << Graphic::Image::getKernelSumNbBits()));
+		typename Graphic::Image::KernelType kernel[9] = { -1 * mult, 0 * mult, 1 * mult,      -2 * mult, 0 * mult, 2 * mult,      -1 * mult, 0 * mult, 1 * mult };
+		image = image.applyFilter( kernel, Math::Vec2<Graphic::Size>(3,3), Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
+	}
+
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Blur Image										//
-		image = image.applyGaussianBlur(5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+		image = image.applyGaussianBlur( 5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
 	}
 
 	/*{
@@ -707,23 +745,19 @@ int main( int argc, char * argv[] ) {
 		Graphic::_Image<float> imagef( image );
 
 
-		unsigned int gaussianKernel[11];
-		Graphic::computeGaussianKernel( gaussianKernel );
 
-		float gaussianKernelf[11];
-		Graphic::computeGaussianKernel( gaussianKernelf );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image = image.applyFilter( gaussianKernel, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
+			image = image.applyGaussianBlur( 5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "FILTER RGB UCHAR (Last Result: 11.2s for K1)" );
+		Log::displayChrono( "FILTER RGB UCHAR (Last Result: 8.7s for K1)" );
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			imagef = imagef.applyFilter( gaussianKernelf, Graphic::_Image<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>( 0, 0, 0, 0 ) );
+			imagef = imagef.applyGaussianBlur( 5, Graphic::_Image<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>( 0, 0, 0, 0 ) );
 		}
 		Log::stopChrono();
 		Log::displayChrono( "FILTER RGB FLOAT (Last Result: 14.6s for K1)" );
@@ -1041,8 +1075,7 @@ int main( int argc, char * argv[] ) {
 			mapMine.insertFast( Math::random( 0, 100000 ), i );
 		}
 		Log::stopChrono();
-		unsigned long _4572 = *mapMine[10];
-		Log::displayChrono( String( "Map .insert(); Mine " ) + _4572 );
+		Log::displayChrono( String( "Map .insert(); Mine " ) );
 		for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
 			Log::displayLog( String( it -> getIndex() ) + " : " + it -> getValue() );
 		}

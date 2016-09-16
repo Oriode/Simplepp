@@ -1386,24 +1386,24 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	T _Image<T>::getComponentMaxValue() {
+	constexpr T _Image<T>::getComponentMaxValue() {
 		return Utility::TypesInfos<T>::getMax();
 	}
 
 	template<>
-	float _Image<float>::getComponentMaxValue() {
+	constexpr float _Image<float>::getComponentMaxValue() {
 		return 1.0f;
 	}
 
 	template<>
-	double _Image<double>::getComponentMaxValue() {
+	constexpr double _Image<double>::getComponentMaxValue() {
 		return 1.0;
 	}
 
 
 
 	template<typename T /*= unsigned char*/>
-	T _Image<T>::getComponentMinValue() {
+	constexpr T _Image<T>::getComponentMinValue() {
 		return T( 0 );
 	}
 
@@ -1439,58 +1439,340 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	_Image<T> Graphic::_Image<T>::applyGaussianBlur( size_t radius, ConvolutionMode convolutionMode /*= ConvolutionMode::ExtendedSize*/, const ColorRGBA<T> & color /*= ColorRGBA<T>::null */ ) const {
-		size_t diameter = radius * 2 + 1;
-		typename SumType * kernelFilter = new typename SumType[diameter];
+	_Image<T> _Image<T>::applyGaussianBlur( Size radius, ConvolutionMode convolutionMode /*= ConvolutionMode::ExtendedSize*/, const ColorRGBA<T> & color /*= ColorRGBA<T>::null */ ) const {
 
-		computeGaussianKernel<typename SumType>(kernelFilter, diameter);
+		typedef KernelType F;
+		struct ApplyGaussian {
+			ApplyGaussian( const _Image<T> & image ) : image(image){
+				for ( Size i = 0; i < 10; i++ ) {
+					Size diameter = i * 2 + 1;
+					kernels[i] = new F[diameter];
+					computeGaussianKernel( kernels[i], diameter );
+				}
+			}
+			inline _Image<T> operator()( Size radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) {
+				Size diameter = radius * 2 + 1;
+				if ( radius < 10 ) return this -> image.applyFilter<F>( this -> kernels[radius] , diameter, convolutionMode, color );
+				else {
+					Size diameter = radius * 2 + 1;
+					F * kernelTmp = new F[diameter];
+					computeGaussianKernel( kernelTmp, diameter );
+					_Image<T> image (this -> image.applyFilter<F>( kernelTmp, diameter, convolutionMode, color ));
+					delete[] kernelTmp;
+					return image;
+				} 
+			}
 
-
-		return applyFilter<typename SumType>(kernelFilter, diameter, convolutionMode, color);
+			~ApplyGaussian(){
+				for ( Size i = 0; i < 10; i++ )
+					delete[] this -> kernels[i];
+			}
+		
+			F * kernels[10];
+			const _Image<T> & image;
+		};
+		static ApplyGaussian applyGaussian(*this);
+		return applyGaussian(radius, convolutionMode, color);
 	}
 
 
 
-
 	template<typename T>
-	template<typename F, int N>
-	_Image<T> _Image<T>::applyFilter( const F( &filter )[N], ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
-		return applyFilter( filter, N, convolutionMode, color );
-	}
-
-	template<typename T>
-	template<typename F>
-	_Image<T> _Image<T>::applyFilter( const F * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
+	template<typename F, typename KernelFunc>
+	_Image<T> _Image<T>::applyFilter( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		switch ( getFormat() ) {
-		case Format::R: return _applyFilter<ColorR<T>, ColorR<F>>( filter, size, convolutionMode, color );
-		case Format::RGB: return _applyFilter<ColorRGB<T>, ColorRGB<F>>( filter, size, convolutionMode, color );
-		case Format::RGBA: return _applyFilter<ColorRGBA<T>, ColorRGBA<F>>( filter, size, convolutionMode, color );
+		case Format::R: return _applyFilter<ColorR<T>, ColorR<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+		case Format::RGB: return _applyFilter<ColorRGB<T>, ColorRGB<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+		case Format::RGBA: return _applyFilter<ColorRGBA<T>, ColorRGBA<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
 		}
 	}
 
 	template<typename T>
-	template<typename C1, typename SumType>
-	_Image<T> _Image<T>::_applyFilter( const float * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
-		return _applyFilterf<C1, float>( filter, size, convolutionMode, color );
+	template<typename C1, typename SumType, typename KernelFunc>
+	_Image<T> _Image<T>::_applyFilter( const float * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		return _applyFilterf<C1, float, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
 	}
 
 	template<typename T>
-	template<typename C1, typename SumType>
-	_Image<T> _Image<T>::_applyFilter( const double * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
-		return _applyFilterf<C1, double>( filter, size, convolutionMode, color );
+	template<typename C1, typename SumType, typename KernelFunc>
+	_Image<T> _Image<T>::_applyFilter( const double * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		return _applyFilterf<C1, double, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
 	}
 
 
 	template<typename T>
-	template<typename C1, typename SumType, typename F>
-	_Image<T> _Image<T>::_applyFilter( const F * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
+	template<typename F, typename KernelFunc>
+	_Image<T> _Image<T>::applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		switch ( getFormat() ) {
+		case Format::R: return _applyFilter<ColorR<T>, ColorR<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+		case Format::RGB: return _applyFilter<ColorRGB<T>, ColorRGB<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+		case Format::RGBA: return _applyFilter<ColorRGBA<T>, ColorRGBA<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+		}
+	}
+
+
+	template<typename T>
+	template<typename C1, typename SumType, typename KernelFunc>
+	_Image<T> _Image<T>::_applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		return _applyFilterf<C1, float, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+	}
+
+	template<typename T>
+	template<typename C1, typename SumType, typename KernelFunc>
+	_Image<T> _Image<T>::_applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		return _applyFilterf<C1, double, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
+	}
+
+	template<typename T>
+	template<typename C1, typename Sum, typename KernelFunc, typename F>
+	_Image<T> _Image<T>::_applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		assert( size.x % 2 == 1 );
+		assert( size.y % 2 == 1 );
+
+		Math::Vec2<typename Size> NHalfed( size.x / 2, size.y / 2 );
+		Math::Vec2<typename Size> NEven( NHalfed * 2 );
+
+		Math::Vec2<typename Size> borderSize1;
+		Math::Vec2<typename Size> borderSize2;
+
+		switch ( convolutionMode ) {
+		case ConvolutionMode::ExtendedSize:
+		borderSize1 = NHalfed;
+		borderSize2 = NHalfed - 1;
+		break;
+		case ConvolutionMode::NormalSize:
+		borderSize1 = NHalfed;
+		borderSize2 = 0;
+		}
+
+		Math::Vec2<typename Size> borderSize = borderSize1 + borderSize2;
+
+
+		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
+		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
+
+		_Image<T> imageBorder( sizeBorder, this -> getFormat() );
+		_Image<T> imageExtended( sizeExtended, this -> getFormat() );
+
+
+		unsigned int nbComponentsPerRow = this -> getSize().x;
+		unsigned int nbComponentsPerRowWithBorder = imageBorder.getSize().x;
+		unsigned int nbComponentsPerRowExtended = sizeExtended.x;
+
+		//drawing the background color 
+		{
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas();
+			C1 * imageBorderEndIt = imageBorderIt + imageBorder.getSize().x * imageBorder.getSize().y;
+
+			// Left
+			for ( auto it = imageBorderIt; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize.x; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+			//Right
+			for ( auto it = imageBorderIt + imageBorder.getSize().x - borderSize.x; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize.x; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+
+			//Top
+			for ( auto it = imageBorderEndIt - borderSize.y * imageBorder.getSize().x; it < imageBorderEndIt; it++ )
+				BlendingFunc::None::blendColor( *it, color );
+
+			//Bottom
+			imageBorderEndIt = imageBorderIt + imageBorder.getSize().x * borderSize.y;
+			for ( auto it = imageBorderIt; it < imageBorderEndIt; it++ )
+				BlendingFunc::None::blendColor( *it, color );
+		}
+
+		//copy the old image into a bigger one to handle border correctly without overflow
+		{
+			C1 * thisIt = ( C1 * ) this -> getDatas();
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas( borderSize.x, borderSize.y );
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+
+				thisIt += nbComponentsPerRow;
+				imageBorderIt += nbComponentsPerRowWithBorder;
+			}
+		}
+
+		{
+			C1 * imageBorderIt = ( ( C1 * ) imageBorder.getDatas() );
+			C1 * imageHoriIt = ( ( C1 * ) imageExtended.getDatas() );
+
+			constexpr F max( ( 1 << getKernelSumNbBits<F>() ) * _Image<T>::getComponentMaxValue() );
+
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				auto imageBorderIt2 = imageBorderIt;
+				auto imageHoriIt2 = imageHoriIt;
+				for ( typename Math::Vec2<Size>::Type x = 0; x < this -> size.x; x++ ) {
+					auto imageBorderIt3 = imageBorderIt2;
+					auto filterIt2 = filter;
+
+					Sum sum( 0 );
+					for ( Size y = 0; y < size.y; y++ ) {
+						auto imageBorderIt4 = imageBorderIt3;
+						for ( Size x = 0; x < size.x; x++ ) {
+							sum += Sum( imageBorderIt4[0] ) * *( filterIt2 );
+
+							imageBorderIt4++;
+							filterIt2++;
+						}
+						imageBorderIt3 += nbComponentsPerRowWithBorder;
+					}
+					kernelFunc( sum, max );
+					imageHoriIt2[0] = C1( sum >> getKernelSumNbBits<F>() );
+					 
+					imageBorderIt2++;
+					imageHoriIt2++;
+				}
+
+
+				imageBorderIt += nbComponentsPerRowWithBorder;
+				imageHoriIt += nbComponentsPerRowExtended;
+			}
+		}
+		return imageExtended;
+	}
+
+
+	template<typename T>
+	template<typename C1, typename KernelFunc, typename F>
+	_Image<T> _Image<T>::_applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+		assert( size.x % 2 == 1 );
+		assert( size.y % 2 == 1 );
+
+		Math::Vec2<typename Size> NHalfed( size.x / 2, size.y / 2 );
+		Math::Vec2<typename Size> NEven( NHalfed * 2 );
+
+		Math::Vec2<typename Size> borderSize1;
+		Math::Vec2<typename Size> borderSize2;
+
+		switch ( convolutionMode ) {
+		case ConvolutionMode::ExtendedSize:
+		borderSize1 = NHalfed;
+		borderSize2 = NHalfed - 1;
+		break;
+		case ConvolutionMode::NormalSize:
+		borderSize1 = NHalfed;
+		borderSize2 = 0;
+		}
+
+		Math::Vec2<typename Size> borderSize = borderSize1 + borderSize2;
+
+
+		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
+		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
+
+		_Image<T> imageBorder( sizeBorder, this -> getFormat() );
+		_Image<T> imageExtended( sizeExtended, this -> getFormat() );
+
+
+		unsigned int nbComponentsPerRow = this -> getSize().x;
+		unsigned int nbComponentsPerRowWithBorder = imageBorder.getSize().x;
+		unsigned int nbComponentsPerRowExtended = sizeExtended.x;
+
+		//drawing the background color 
+		{
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas();
+			C1 * imageBorderEndIt = imageBorderIt + imageBorder.getSize().x * imageBorder.getSize().y;
+
+			// Left
+			for ( auto it = imageBorderIt; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize.x; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+			//Right
+			for ( auto it = imageBorderIt + imageBorder.getSize().x - borderSize.x; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize.x; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+
+			//Top
+			for ( auto it = imageBorderEndIt - borderSize.y * imageBorder.getSize().x; it < imageBorderEndIt; it++ )
+				BlendingFunc::None::blendColor( *it, color );
+
+			//Bottom
+			imageBorderEndIt = imageBorderIt + imageBorder.getSize().x * borderSize.y;
+			for ( auto it = imageBorderIt; it < imageBorderEndIt; it++ )
+				BlendingFunc::None::blendColor( *it, color );
+		}
+
+		//copy the old image into a bigger one to handle border correctly without overflow
+		{
+			C1 * thisIt = ( C1 * ) this -> getDatas();
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas( borderSize.x, borderSize.y );
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+
+				thisIt += nbComponentsPerRow;
+				imageBorderIt += nbComponentsPerRowWithBorder;
+			}
+		}
+
+		{
+			C1 * imageBorderIt = ( ( C1 * ) imageBorder.getDatas() );
+			C1 * imageHoriIt = ( ( C1 * ) imageExtended.getDatas() );
+
+			constexpr F max( 1.0f * _Image<T>::getComponentMaxValue() );
+
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				auto imageBorderIt2 = imageBorderIt;
+				auto imageHoriIt2 = imageHoriIt;
+				for ( typename Math::Vec2<Size>::Type x = 0; x < this -> size.x; x++ ) {
+					auto imageBorderIt3 = imageBorderIt2;
+					auto filterIt2 = filter;
+
+					imageHoriIt2[0] = C1( 0 );
+					for ( Size y = 0; y < size.y; y++ ) {
+						auto imageBorderIt4 = imageBorderIt3;
+						for ( Size x = 0; x < size.x; x++ ) {
+							imageHoriIt2[0] += Sum( imageBorderIt4[0] ) * *( filterIt2 );
+
+							imageBorderIt4++;
+							filterIt2++;
+						}
+						imageBorderIt3 += nbComponentsPerRowWithBorder;
+					}
+					kernelFunc( imageHoriIt2[0], max );
+
+					imageBorderIt2++;
+					imageHoriIt2++;
+				}
+
+
+				imageBorderIt += nbComponentsPerRowWithBorder;
+				imageHoriIt += nbComponentsPerRowExtended;
+			}
+		}
+		return imageExtended;
+	}
+
+
+
+	template<typename T>
+	template<typename C1, typename Sum, typename KernelFunc, typename F>
+	_Image<T> _Image<T>::_applyFilter( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		assert( size % 2 == 1 );
 
-		typename Math::Vec2<Size>::Type NHalfed = ( size / 2 );
-		typename Math::Vec2<Size>::Type NEven = NHalfed * 2;
+		typename Size NHalfed( size / 2 );
+		typename Size NEven(NHalfed * 2);
 
-		typename Math::Vec2<Size>::Type borderSize1;
-		typename Math::Vec2<Size>::Type borderSize2;
+		typename Size borderSize1;
+		typename Size borderSize2;
 
 		switch ( convolutionMode ) {
 		case ConvolutionMode::ExtendedSize:
@@ -1519,78 +1801,112 @@ namespace Graphic {
 
 
 		//drawing the background color 
-		//imageBorder.fillImage( color, Rectangle( 0, borderSize, borderSize, imageBorder.getSize().y - borderSize ) );
-		//imageBorder.fillImage( color, Rectangle( imageBorder.getSize().x - borderSize, borderSize, imageBorder.getSize().x, imageBorder.getSize().y - borderSize ) );
+		{
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas();
+			C1 * imageBorderEndIt = imageBorderIt + imageBorder.getSize().x * imageBorder.getSize().y;
 
-		//imageHori.fillImage( color, Rectangle( 0, 0, imageHori.getSize().x, borderSize ) );
-		//imageHori.fillImage( color, Rectangle( 0, imageHori.getSize().y - borderSize, imageHori.getSize().x, imageHori.getSize().y ) );
+			// Left
+			for ( auto it = imageBorderIt; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+			//Right
+			for ( auto it = imageBorderIt + imageBorder.getSize().x - borderSize; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
 
+			C1 * imageHoriIt = ( C1 * ) imageHori.getDatas();
+			C1 * imageHoriEndIt = imageHoriIt + imageHori.getSize().x * imageHori.getSize().y;
+
+			//Top
+			for ( auto it = imageHoriEndIt - borderSize * imageHori.getSize().x; it < imageHoriEndIt; it ++ ) 
+				BlendingFunc::None::blendColor( *it, color );				
+
+			//Bottom
+			imageHoriEndIt = imageHoriIt + imageHori.getSize().x * borderSize;
+			for ( auto it = imageHoriIt; it < imageHoriEndIt; it++ ) 
+				BlendingFunc::None::blendColor( *it, color );
+		}
 
 		//copy the old image into a bigger one to handle border correctly without overflow
-		C1 * thisIt = ( C1 * ) this -> getDatas();
-		C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas( borderSize, borderSize );
-		for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-			Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+		{
+			C1 * thisIt = ( C1 * ) this -> getDatas();
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas( borderSize, borderSize );
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
-			thisIt += nbComponentsPerRow;
-			imageBorderIt += nbComponentsPerRowWithBorder;
-		}
-
-
-		unsigned int NOffset = ( borderSize1 + borderSize2 ) * imageBorder.getSize().x + borderSize1;
-		imageBorderIt = ( ( C1 * ) imageBorder.getDatas() ) + NOffset;
-		C1 * imageHoriIt = ( ( C1 * ) imageHori.getDatas() ) + NOffset;
-		NOffset = borderSize1;
-		C1 * imageVertIt = ( C1 * ) imageVert.getDatas();
-
-		SumType sum;
-		for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-			auto imageBorderIt2 = imageBorderIt;
-			auto imageHoriIt2 = imageHoriIt;
-			for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
-				auto imageBorderIt3 = imageBorderIt2 - NOffset;
-
-				sum = SumType( 0 );
-				for ( size_t i = 0; i < size; i++ ) {
-					sum += SumType( imageBorderIt3[0] ) * filter[i];
-					imageBorderIt3++;
-				}
-				imageHoriIt2[0] = C1( sum >> getKernelSumNbBits<F>() );
-
-				imageBorderIt2++;
-				imageHoriIt2++;
+				thisIt += nbComponentsPerRow;
+				imageBorderIt += nbComponentsPerRowWithBorder;
 			}
-
-
-			imageBorderIt += nbComponentsPerRowWithBorder;
-			imageHoriIt += nbComponentsPerRowWithBorder;
 		}
+		
+		constexpr F max( ( 1 << getKernelSumNbBits<F>() ) * _Image<T>::getComponentMaxValue() );
 
-		imageHoriIt = ( C1 * ) imageHori.getDatas( borderSize1, borderSize1 );
-		NOffset = NHalfed * nbComponentsPerRowWithBorder;
-		for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
-			auto imageVertIt2 = imageVertIt;
-			auto imageHoriIt2 = imageHoriIt;
-			for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
+		{
+			unsigned int NOffset = ( borderSize1 + borderSize2 ) * imageBorder.getSize().x ;
+			C1 * imageBorderIt = ( ( C1 * ) imageBorder.getDatas() ) + NOffset;
+			C1 * imageHoriIt = ( ( C1 * ) imageHori.getDatas() ) + NOffset + borderSize1;
 
-				auto resultHoriIt3 = imageHoriIt2 - NOffset;
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				auto imageBorderIt2 = imageBorderIt;
+				auto imageHoriIt2 = imageHoriIt;
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
+					auto imageBorderIt3 = imageBorderIt2;
 
-				sum = SumType( 0 );
-				for ( size_t i = 0; i < size; i++ ) {
-					sum += SumType( resultHoriIt3[0] ) * filter[i];
-					resultHoriIt3 += nbComponentsPerRowWithBorder;
+					Sum sum( 0 );
+					for ( Size i = 0; i < size; i++ ) {
+						sum += Sum( imageBorderIt3[0] ) * filter[i];
+						imageBorderIt3++;
+					}
+					kernelFunc( sum, max );
+					imageHoriIt2[0] = C1( sum >> getKernelSumNbBits<F>() );
+
+					imageBorderIt2++;
+					imageHoriIt2++;
 				}
-				imageVertIt2[0] = C1( sum >> getKernelSumNbBits<F>() );
 
-				imageVertIt2++;
-				imageHoriIt2++;
+
+				imageBorderIt += nbComponentsPerRowWithBorder;
+				imageHoriIt += nbComponentsPerRowWithBorder;
 			}
-
-
-			imageVertIt += nbComponentsPerRowExtended;
-			imageHoriIt += nbComponentsPerRowWithBorder;
 		}
 
+		{
+			C1 * imageVertIt = ( C1 * ) imageVert.getDatas();
+			C1 * imageHoriIt = ( C1 * ) imageHori.getDatas( borderSize1, 0 );
+
+
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
+				auto imageVertIt2 = imageVertIt;
+				auto imageHoriIt2 = imageHoriIt;
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
+
+					auto resultHoriIt3 = imageHoriIt2;
+
+					Sum sum( 0 );
+					for ( Size i = 0; i < size; i++ ) {
+						sum += Sum( resultHoriIt3[0] ) * filter[i];
+						resultHoriIt3 += nbComponentsPerRowWithBorder;
+					}
+					kernelFunc( sum, max );
+					imageVertIt2[0] = C1( sum >> getKernelSumNbBits<F>() );
+
+					imageVertIt2++;
+					imageHoriIt2++;
+				}
+
+
+				imageVertIt += nbComponentsPerRowExtended;
+				imageHoriIt += nbComponentsPerRowWithBorder;
+			}
+		}
 		return imageVert;
 	}
 
@@ -1600,8 +1916,8 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename C1, typename SumType, typename F>
-	_Image<T> _Image<T>::_applyFilterf( const F * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
+	template<typename C1, typename KernelFunc, typename F>
+	_Image<T> _Image<T>::_applyFilterf( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		assert( size % 2 == 1 );
 		assert( ( Utility::isSame<T, F>::value ) );
 
@@ -1637,72 +1953,114 @@ namespace Graphic {
 
 
 		//drawing the background color 
-		imageBorder.fillImage( color, Rectangle( 0, borderSize, borderSize, imageBorder.getSize().y - borderSize ) );
-		imageBorder.fillImage( color, Rectangle( imageBorder.getSize().x - borderSize, borderSize, imageBorder.getSize().x, imageBorder.getSize().y - borderSize ) );
+		{
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas();
+			C1 * imageBorderEndIt = imageBorderIt + imageBorder.getSize().x * imageBorder.getSize().y;
 
-		imageHori.fillImage( color, Rectangle( 0, 0, imageHori.getSize().x, borderSize ) );
-		imageHori.fillImage( color, Rectangle( 0, imageHori.getSize().y - borderSize, imageHori.getSize().x, imageHori.getSize().y ) );
+			// Left
+			for ( auto it = imageBorderIt; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+			//Right
+			for ( auto it = imageBorderIt + imageBorder.getSize().x - borderSize; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
+				auto it2 = it;
+				for ( Size x = 0; x < borderSize; x++ ) {
+					BlendingFunc::None::blendColor( *it2, color );
+					it2++;
+				}
+			}
+
+			C1 * imageHoriIt = ( C1 * ) imageHori.getDatas();
+			C1 * imageHoriEndIt = imageHoriIt + imageHori.getSize().x * imageHori.getSize().y;
+
+			//Top
+			for ( auto it = imageHoriEndIt - borderSize * imageHori.getSize().x; it < imageHoriEndIt; it++ )
+				BlendingFunc::None::blendColor( *it, color );
+
+			//Bottom
+			imageHoriEndIt = imageHoriIt + imageHori.getSize().x * borderSize;
+			for ( auto it = imageHoriIt; it < imageHoriEndIt; it++ )
+				BlendingFunc::None::blendColor( *it, color );
+		}
 
 
 		//copy the old image into a bigger one to handle border correctly without overflow
-		C1 * thisIt = ( C1 * ) this -> getDatas();
-		C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas( borderSize, borderSize );
-		for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-			Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+		{
+			C1 * thisIt = ( C1 * ) this -> getDatas();
+			C1 * imageBorderIt = ( C1 * ) imageBorder.getDatas( borderSize, borderSize );
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
-			thisIt += nbComponentsPerRow;
-			imageBorderIt += nbComponentsPerRowWithBorder;
+				thisIt += nbComponentsPerRow;
+				imageBorderIt += nbComponentsPerRowWithBorder;
+			}
 		}
 
-		unsigned int NOffset = ( borderSize1 + borderSize2 ) * imageBorder.getSize().x + borderSize1;
-		imageBorderIt = ( ( C1 * ) imageBorder.getDatas() ) + NOffset;
-		C1 * imageHoriIt = ( ( C1 * ) imageHori.getDatas() ) + NOffset;
-		NOffset = borderSize1;
-		C1 * imageVertIt = ( C1 * ) imageVert.getDatas();
+		constexpr F max( 1.0f * _Image<T>::getComponentMaxValue() );
+
+		{
+			unsigned int NOffset = ( borderSize1 + borderSize2 ) * imageBorder.getSize().x + borderSize1;
+			C1 * imageBorderIt = ( ( C1 * ) imageBorder.getDatas() ) + NOffset;
+			C1 * imageHoriIt = ( ( C1 * ) imageHori.getDatas() ) + NOffset;
+			C1 * imageVertIt = ( C1 * ) imageVert.getDatas();
+			NOffset = borderSize1;
 
 
 
-		for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-			auto imageBorderIt2 = imageBorderIt;
-			auto imageHoriIt2 = imageHoriIt;
-			for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
-				auto imageBorderIt3 = imageBorderIt2 - NOffset;
+			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+				auto imageBorderIt2 = imageBorderIt;
+				auto imageHoriIt2 = imageHoriIt;
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
+					auto imageBorderIt3 = imageBorderIt2 - NOffset;
 
-				imageHoriIt2[0] = C1( 0 );
-				for ( int i = 0; i < size; i++ ) {
-					imageHoriIt2[0] += C1( imageBorderIt3[0] ) * filter[i];
-					imageBorderIt3++;
+					imageHoriIt2[0] = C1( 0 );
+					for ( Size i = 0; i < size; i++ ) {
+						imageHoriIt2[0] += C1( imageBorderIt3[0] ) * filter[i];
+						imageBorderIt3++;
+					}
+					kernelFunc( imageHoriIt2[0], max );
+
+					imageBorderIt2++;
+					imageHoriIt2++;
 				}
-				imageBorderIt2++;
-				imageHoriIt2++;
+
+
+				imageBorderIt += nbComponentsPerRowWithBorder;
+				imageHoriIt += nbComponentsPerRowWithBorder;
 			}
-
-
-			imageBorderIt += nbComponentsPerRowWithBorder;
-			imageHoriIt += nbComponentsPerRowWithBorder;
 		}
 
-		imageHoriIt = ( C1 * ) imageHori.getDatas( borderSize1, borderSize1 );
-		NOffset = NHalfed * nbComponentsPerRowWithBorder;
-		for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
-			auto imageVertIt2 = imageVertIt;
-			auto imageHoriIt2 = imageHoriIt;
-			for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
+		{
+			C1 * imageHoriIt = ( C1 * ) imageHori.getDatas( borderSize1, borderSize1 );
+			C1 * imageVertIt = ( C1 * ) imageVert.getDatas();
+			unsigned int NOffset = NHalfed * nbComponentsPerRowWithBorder;
 
-				auto resultHoriIt3 = imageHoriIt2 - NOffset;
+			for ( typename Math::Vec2<Size>::Type y = 0; y < imageVert.getSize().y; y++ ) {
+				auto imageVertIt2 = imageVertIt;
+				auto imageHoriIt2 = imageHoriIt;
+				for ( typename Math::Vec2<Size>::Type x = 0; x < imageVert.getSize().x; x++ ) {
 
-				imageVertIt2[0] = C1( 0 );
-				for ( size_t i = 0; i < size; i++ ) {
-					imageVertIt2[0] += C1( resultHoriIt3[0] ) * filter[i];
-					resultHoriIt3 += nbComponentsPerRowWithBorder;
+					auto resultHoriIt3 = imageHoriIt2 - NOffset;
+
+					imageVertIt2[0] = C1( 0 );
+					for ( Size i = 0; i < size; i++ ) {
+						imageVertIt2[0] += C1( resultHoriIt3[0] ) * filter[i];
+						resultHoriIt3 += nbComponentsPerRowWithBorder;
+					}
+					kernelFunc( imageHoriIt2[0], max );
+
+					imageVertIt2++;
+					imageHoriIt2++;
 				}
-				imageVertIt2++;
-				imageHoriIt2++;
+
+
+				imageVertIt += nbComponentsPerRowExtended;
+				imageHoriIt += nbComponentsPerRowWithBorder;
 			}
-
-
-			imageVertIt += nbComponentsPerRowExtended;
-			imageHoriIt += nbComponentsPerRowWithBorder;
 		}
 
 		return imageVert;
@@ -1712,7 +2070,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::getKernelSumNbBits() {
+	constexpr K _Image<T>::getKernelSumNbBits() {
 		assert( Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() > 6 );
 		return Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() - 6;
 	}
@@ -1975,20 +2333,17 @@ namespace Graphic {
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2>
 	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const C2 & color, const BlendFunc & functor ) {
-		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
-		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
-
-		Math::Rectangle<Size> rectangleUI = clampRectangle( rectangle );
-		auto it = getDatas( rectangleUI.getLeft(), rectangleUI.getBottom() );
-		typename Math::Vec2<Size>::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
-		size_t nbComponentsPerLineRectangle = N1 * width;
-		size_t nbComponentsPerLine = N1 * this -> size.x;
+		Math::Rectangle<Size> rectangleClamped = clampRectangle( rectangle );
+		C1 * it = (C1 *) getDatas( rectangleClamped.getLeft(), rectangleClamped.getBottom() );
+		typename Math::Vec2<Size>::Type width = rectangleClamped.getRight() - rectangleClamped.getLeft();
+		Size nbComponentsPerLineRectangle = width;
+		Size nbComponentsPerLine = this -> size.x;
 
 
-		for ( typename Math::Vec2<Size>::Type y = rectangleUI.getBottom(); y < rectangleUI.getTop(); y++ ) {
+		for ( typename Math::Vec2<Size>::Type y = rectangleClamped.getBottom(); y < rectangleClamped.getTop(); y++ ) {
 			auto maxIt = it + nbComponentsPerLineRectangle;
-			for ( auto it2 = it; it2 < maxIt; it2 += N1 ) {
-				functor( *( ( C1 * ) it2 ), color );
+			for ( auto it2 = it; it2 < maxIt; it2 ++ ) {
+				functor( *( it2 ), color );
 			}
 			it += nbComponentsPerLine;
 		}
@@ -4275,19 +4630,19 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorR<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::_Image<T>::drawDisk( const Point & point, float radius, ColorR<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		return drawDiskFunctor<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorR<T>>( c ), blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorRGB<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::_Image<T>::drawDisk( const Point & point, float radius, ColorRGB<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		return drawDiskFunctor<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorRGB<T>>( c ), blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::_Image<T>::drawDisk( const Point & point, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		return drawDiskFunctor<ColorFunc::SimpleColor<ColorRGBAT>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorRGBA<T>>( c ), blendFunc );
 	}
 
@@ -4516,11 +4871,11 @@ namespace Graphic {
 	_Image<T> Graphic::_Image<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
 		switch ( getFormat() ) {
 		case Format::R:
-		return _resample<ColorR<T>, ColorR<Utility::TypesInfos<SumType>::Signed>>( newSize, resamplingMode );
+		return _resample<ColorR<T>, ColorR<typename KernelType>>( newSize, resamplingMode );
 		case Format::RGB:
-		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<SumType>::Signed>>( newSize, resamplingMode );
+		return _resample<ColorRGB<T>, ColorRGB<typename KernelType>>( newSize, resamplingMode );
 		case Format::RGBA:
-		return _resample<ColorRGB<T>, ColorRGB<Utility::TypesInfos<SumType>::Signed>>( newSize, resamplingMode );
+		return _resample<ColorRGB<T>, ColorRGB<typename KernelType>>( newSize, resamplingMode );
 		}
 	}
 
@@ -4528,7 +4883,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename C1, typename SumType>
+	template<typename C1, typename Sum>
 	_Image<T> _Image<T>::_resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
 		if ( newSize.x == this -> size.x && newSize.y == this -> size.y )
 			return *this;
@@ -4732,13 +5087,13 @@ namespace Graphic {
 
 						auto thisImageIt2 = thisImageIt1 + j0.x;
 
-						SumType sum( 0 );
+						Sum sum( 0 );
 						T sumFactors = ( j1.x - j0.x ) * ( j1.y - j0.y );
 						for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 							auto thisImageIt3 = thisImageIt2;
 							for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 								C1 & thisImagePixel = *thisImageIt3;
-								sum += SumType( thisImagePixel );
+								sum += Sum( thisImagePixel );
 
 								thisImageIt3++;
 							}
@@ -4807,7 +5162,7 @@ namespace Graphic {
 								float xRelative( 0 );
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 									float xRelativeInverse = 1.0f - xRelative;
-									SumType avg3( avg1 * xRelativeInverse + avg2 * xRelative );
+									Sum avg3( avg1 * xRelativeInverse + avg2 * xRelative );
 
 									C1 & newImagePixel = *( newImageIt3 );
 									newImagePixel = avg3;
@@ -4840,11 +5195,11 @@ namespace Graphic {
 						j1.x = int( realPosition.x );
 
 						auto thisImageIt1 = thisImageIt0 + j0.x;
-						SumType sum( 0 );
+						Sum sum( 0 );
 						T sumFactors = ( j1.x - j0.x );
 						for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 							C1 & thisImagePixel = *thisImageIt1;
-							sum += SumType( thisImagePixel );
+							sum += Sum( thisImagePixel );
 							thisImageIt1++;
 						}
 						*lastAvgIt = C1( sum / sumFactors );
@@ -4878,11 +5233,11 @@ namespace Graphic {
 
 
 						// Now compute the sum of the downscaling.
-						SumType sum( 0 );
+						Sum sum( 0 );
 						T sumFactors = ( j1.x - j0.x );
 						for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 							C1 & thisImagePixel = *thisImageIt2;
-							sum += SumType( thisImagePixel );
+							sum += Sum( thisImagePixel );
 							thisImageIt2++;
 						}
 						avg = C1( sum / sumFactors );
@@ -4938,11 +5293,11 @@ namespace Graphic {
 					{
 						auto thisImageIt2 = thisImageIt1;
 
-						SumType sum( 0 );
+						Sum sum( 0 );
 						T sumFactors = ( j1.y - j0.y );
 						for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 							C1 & thisImagePixel = *thisImageIt2;
-							sum += SumType( thisImagePixel );
+							sum += Sum( thisImagePixel );
 							thisImageIt2 += this -> size.x;
 						}
 						lastAvg = sum / sumFactors;
@@ -4959,11 +5314,11 @@ namespace Graphic {
 
 						auto thisImageIt2 = thisImageIt1;
 						// Now compute the sum of the downscaling.
-						SumType sum( 0 );
+						Sum sum( 0 );
 						T sumFactors = ( j1.y - j0.y );
 						for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 							C1 & thisImagePixel = *thisImageIt2;
-							sum += SumType( thisImagePixel );
+							sum += Sum( thisImagePixel );
 							thisImageIt2 += this -> size.x;
 						}
 						avg = C1( sum / sumFactors );
@@ -5053,7 +5408,7 @@ namespace Graphic {
 							if ( true ) {
 								auto thisImageIt2 = thisImageIt1 + j0.x;
 
-								SumType sum( 0 );
+								Sum sum( 0 );
 								float sumFactors( 0 );
 
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
@@ -5071,7 +5426,7 @@ namespace Graphic {
 
 										float factor = factorY * factorX;
 
-										sum += SumType( thisImagePixel ) * factor;
+										sum += Sum( thisImagePixel ) * factor;
 										sumFactors += factor;
 										thisImageIt3++;
 									}
@@ -5541,8 +5896,8 @@ namespace Graphic {
 			KernelsComputed() {
 				for ( size_t i = 0; i < 10; i++ ) {
 					size_t diameter = i * 2 + 1;
-					this -> kernel[i] = new K[diameter];
-					computeKernel( this -> kernel[i], diameter );
+					this -> kernels[i] = new K[diameter];
+					computeKernel( this -> kernels[i], diameter );
 				}
 			}
 

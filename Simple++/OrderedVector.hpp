@@ -77,14 +77,15 @@ OrderedVector<T, Compare> & OrderedVector<T, Compare>::operator=( const OrderedV
 	return *this;
 }
 
-template<typename T, typename Compare /*= Logical::less<T>*/>
-OrderedVector<T, Compare> && OrderedVector<T, Compare>::operator=( OrderedVector<T, Compare> && vector ) {
+template<typename T, typename Compare /*= Math::Logical::less*/>
+OrderedVector<T, Compare> & OrderedVector<T, Compare>::operator=( OrderedVector<T, Compare> && vector ) {
 	Vector::operator=( Utility::toRValue( vector ) );
 	this -> isOrdered = Utility::toRValue( vector.isOrdered );
 	this -> sortFunction = Utility::toRValue( vector.sortFunction );
+	return *this;
 }
 
-template<typename T, typename Compare /*= Logical::less<T>*/>
+template<typename T, typename Compare /*= Math::Logical::less*/>
 OrderedVector<T, Compare>::OrderedVector( const OrderedVector & vector ) :
 	Vector( vector ),
 	isOrdered( isOrdered ),
@@ -147,7 +148,6 @@ typename OrderedVector<T, Compare>::Size OrderedVector<T, Compare>::search( cons
 		return maxIndex;
 	else
 		return -1;
-
 }
 
 
@@ -199,16 +199,23 @@ void OrderedVector<T, Compare>::insert( const T & data ) {
 		insert( minIndex, data );
 }
 
-template<typename T, typename Compare>
-OrderedVector<T, Compare>::OrderedVector( void ) {
-	//Set the default compare function, Ascent for not pointed data
-	//this -> sortFunction = Compare;
-	this -> isOrdered = true;
+
+template<typename T, typename Compare /*= Math::Logical::Less*/>
+OrderedVector<T, Compare>::OrderedVector( Compare & compareFunc /*= Compare() */ ) : 
+	isOrdered(true),
+	sortFunction( compareFunc )
+{
+
 }
 
 
+template<typename T, typename Compare /*= Math::Logical::Less*/>
+OrderedVector<T, Compare>::~OrderedVector( void ) {
 
-template<typename T, typename Compare /*= Logical::less<T>*/>
+}
+
+
+template<typename T, typename Compare /*= Math::Logical::less*/>
 bool OrderedVector<T, Compare>::write( std::fstream * fileStream ) const {
 	if ( !this -> isOrdered )
 		_sort();
@@ -217,9 +224,10 @@ bool OrderedVector<T, Compare>::write( std::fstream * fileStream ) const {
 	return true;
 }
 
-template<typename T, typename Compare /*= Logical::less<T>*/>
+template<typename T, typename Compare /*= Math::Logical::less*/>
 bool OrderedVector<T, Compare>::read( std::fstream * fileStream ) {
 	this -> isOrdered = true;
 	if ( !Vector<T>::read( fileStream ) )
 		return false;
 	return true;
+}

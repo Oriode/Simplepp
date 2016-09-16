@@ -17,7 +17,7 @@
 #include "Gradient.h"
 #include "BlendingFunc.hpp"
 #include "ColorFunc.h"
-
+#include "KernelFunc.hpp"
 
 
 
@@ -39,6 +39,8 @@ namespace Graphic {
 	};
 
 
+
+
 	///@brief Image Class
 	///@template T Type of one pixel
 	///@template F Format of the image
@@ -52,6 +54,10 @@ namespace Graphic {
 
 		///@brief Type used to sum multiple pixels components
 		typedef typename _ImageSumType<T>::Type SumType;
+
+		///@brief Type used to sum multiple pixels components multiplied with a negative value
+		typedef typename Utility::TypesInfos<typename SumType>::Signed KernelType;
+
 
 		///@brief copy constructor with an another storage type
 		///@param image image to copy
@@ -222,11 +228,11 @@ namespace Graphic {
 
 		///@brief get the maximum value of a color component
 		///@param maximum value of a component depending of the template type T
-		inline static T getComponentMaxValue( );
+		constexpr static T getComponentMaxValue( );
 
 		///@brief get the maximum value of a color component
 		///@param maximum value of a component depending of the template type T
-		inline static T getComponentMinValue( );
+		constexpr static T getComponentMinValue( );
 
 
 		/************************************************************************/
@@ -792,24 +798,31 @@ namespace Graphic {
 
 		///@brief Get the number of bits of the sum of a kernel depending of the types used
 		///@return number of bits of the sum of a integer kernel (floating kernel will every time has a sum of 1.0)
-		template<typename K>
-		inline static K getKernelSumNbBits();
+		template<typename K = typename KernelType>
+		constexpr static K getKernelSumNbBits();
 
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
-		///@param filter Filter table (the table has to have an odd size) (@see _Image<T>::SumType for an automatically generated Type)
+		///@param filter Filter table (the table has to have an odd size)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
+		///@param kernelFunc Function to be used to treat the summation before dividing it (Handle overflow, negatives values etc...)
+		///@see _Image<T>::SumType for an automatically generated Filter Type
+		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
-		template<typename F, int N>
-		_Image<T> applyFilter( const F( &filter )[N], ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
+		template<typename F, typename KernelFunc = KernelFunc::None>
+		_Image<T> applyFilter( const F * filter, Size size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
-		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
-		///@param filter Filter table (the table has to have an odd size) (@see _Image<T>::SumType for an automatically generated Type)
+
+		///@brief Apply a convolution filter
+		///@param filter Filter Matrix of size (size.x * size.y) stored row per row from bottom to top from left to right
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
+		///@param kernelFunc Function to be used to treat the summation before dividing it (Handle overflow, negatives values etc...)
+		///@see _Image<T>::SumType for an automatically generated Filter Type
+		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
-		template<typename F>
-		_Image<T> applyFilter( const F * filter, size_t size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
+		template<typename F, typename KernelFunc = KernelFunc::None>
+		_Image<T> applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		///@brief apply a Gaussian Blur Filter
@@ -817,12 +830,12 @@ namespace Graphic {
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
 		///@return Image with the filter applied
-		_Image<T> applyGaussianBlur( size_t radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
+		_Image<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
 
 
 		///@brief Clamp a rectangle inside the image
 		///@param rectangle rectangle to be clamped
-		///@return an unsigned rectangle clamped inside the image
+		///@return A Rectangle clamped inside the image
 		inline Math::Rectangle<Size> clampRectangle( const Rectangle & rectangle ) const;
 
 
@@ -880,6 +893,8 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
+		///@see Graphic::ColorFunc::SimpleColor for a solid color functor
+		///@see Graphic::ColorFunc::Template for making your own color functor
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
 		void drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
@@ -890,7 +905,8 @@ namespace Graphic {
 		///@param resamplingMode Mode used to compute the resulting pixels 
 		///						Nearest : Faster algorithm available, use the nearest pixel without any transformation.
 		///						Linear : Do a linear interpolation to compute the resulting pixels.
-		///						Lanczos : Use the Lanczos algorithm (@see https://en.wikipedia.org/wiki/Lanczos_resampling) with a constant of 3 (Note : only available for strict reduction, linear will be used instead)
+		///						Lanczos : Use the Lanczos algorithm with a constant of 3 (Note : only available for strict reduction, linear will be used instead)
+		///@see https://en.wikipedia.org/wiki/Lanczos_resampling
 		_Image<T> resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 
@@ -898,7 +914,7 @@ namespace Graphic {
 		///@param vertices table of vertices to be drawn (vertices have to be between 0.0 and 1.0)
 		///@param nbVertices Number of vertices to draw
 		///@param rectangle Rectangle of the image where to draw the polygon
-		///@param colorFunc Color Functor to be used (@see Graphic::ColorFunc::SimpleColor for a solid color) (@see Graphic::ColorFunc::Template for making your own)
+		///@param colorFunc Color Functor to be used (@see Graphic::ColorFunc::Template for making your own)
 		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc, float alpha)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, float alpha)const;"
@@ -906,6 +922,8 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
+		///@see Graphic::ColorFunc::SimpleColor for a solid color functor
+		///@see Graphic::ColorFunc::Template for making your own color functor
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
 		void drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
@@ -923,7 +941,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc>
-		void drawDiskFunctor( const Point & p, float radius, ColorR<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawDisk( const Point & p, float radius, ColorR<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 		///@brief Draw a filed Disk
 		///@param p Center point of the disk
@@ -937,7 +955,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc>
-		void drawDiskFunctor( const Point & p, float radius, ColorRGB<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawDisk( const Point & p, float radius, ColorRGB<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 		///@brief Draw a filed Disk
 		///@param p Center point of the disk
@@ -951,13 +969,13 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc>
-		void drawDiskFunctor( const Point & p, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawDisk( const Point & p, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
 		///@brief Draw a filed Disk
 		///@param p Center point of the disk
 		///@param radius Radius of the circle in pixels
-		///@param colorFunc Color Functor to be used (@see Graphic::ColorFunc::SimpleColor for a solid color) (@see Graphic::ColorFunc::Template for making your own)
+		///@param colorFunc Color Functor to be used
 		///@param blendFunc Blending Functor to be used with operator() overloaded with : 
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc, float alpha)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, float alpha)const;"
@@ -965,6 +983,8 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
+		///@see Graphic::ColorFunc::SimpleColor for a solid color functor
+		///@see Graphic::ColorFunc::Template for making your own color functor
 		template<typename ColorFunc, typename BlendFunc>
 		void drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
@@ -1008,6 +1028,12 @@ namespace Graphic {
 		static float computeGaussianKernel( float * kernel, size_t size );
 		static double computeGaussianKernel( double * kernel, size_t size );
 
+
+
+
+		
+
+
 		
 	protected:
 
@@ -1024,7 +1050,7 @@ namespace Graphic {
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
-		template<typename C1, typename SumType>
+		template<typename C1, typename Sum>
 		_Image<T> _resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
@@ -1110,17 +1136,30 @@ namespace Graphic {
 		static Format _loadingFormat2Format( LoadingFormat loadingFormat );
 
 
-		template<typename C1, typename SumType, typename F>
-		_Image<T> _applyFilter( const F * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const;
+		template<typename C1, typename Sum, typename KernelFunc, typename F>
+		_Image<T> _applyFilter( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
-		template<typename C1, typename SumType, typename F>
-		_Image<T> _applyFilterf( const F * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const;
+		template<typename C1, typename KernelFunc, typename F>
+		_Image<T> _applyFilterf( const F * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
-		template<typename C1, typename SumType >
-		_Image<T> _applyFilter( const float * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const;
+		template<typename C1, typename Sum, typename KernelFunc >
+		_Image<T> _applyFilter( const float * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
-		template<typename C1, typename SumType >
-		_Image<T> _applyFilter( const double * filter, size_t size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const;
+		template<typename C1, typename Sum, typename KernelFunc >
+		_Image<T> _applyFilter( const double * filter, Size size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+
+
+		template<typename C1, typename Sum, typename KernelFunc, typename F>
+		_Image<T> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+
+		template<typename C1, typename Sum, typename KernelFunc>
+		_Image<T> _applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+
+		template<typename C1, typename Sum, typename KernelFunc>
+		_Image<T> _applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+
+		template<typename C1, typename KernelFunc, typename F>
+		_Image<T> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
 		template<typename SumType, typename C>
 		_Image<T> * _createMipmap( _Image<T> * destinationImage );

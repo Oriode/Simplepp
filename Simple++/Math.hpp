@@ -35,6 +35,21 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER  Vec2<T> abs( const Vec2<T> & v ) {
+		return Vec2<T>( abs( v.x ), abs( v.y ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> abs( const Vec3<T> & v ) {
+		return Vec3<T>( abs( v.x ), abs( v.y ), abs( v.z ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> abs( const Vec4<T> & v ) {
+		return Vec4<T>( abs( v.x ), abs( v.y ), abs( v.z ), abs(v.w) );
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> cross( const Vec2<T> & v1, const Vec2<T> & v2 ) {
 		return Vec2<T>( v1.y * v2.x - v2.y * v1.x,
 						v1.x * v2.y - v2.x * v1.y );

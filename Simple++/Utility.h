@@ -99,11 +99,11 @@ namespace Utility {
 		typedef T Signed;
 		typedef T Unsigned;
 
-		static bool isInteger() { return false; }
-		static T getMin() { return T(); }
-		static T getMax() { return T(); }
-		static bool isSigned() { return false; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return false; }
+		constexpr static T getMin() { return T(); }
+		constexpr static T getMax() { return T(); }
+		constexpr static bool isSigned() { return false; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 	};
 
 
@@ -114,11 +114,11 @@ namespace Utility {
 		typedef char Signed;
 		typedef unsigned char Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( CHAR_MIN ); }
-		static T getMax() { return T( CHAR_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( CHAR_MIN ); }
+		constexpr static T getMax() { return T( CHAR_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 	};
 
 	template<>
@@ -128,11 +128,11 @@ namespace Utility {
 		typedef char Signed;
 		typedef unsigned char Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( 0 ); }
-		static T getMax() { return T( UCHAR_MAX ); }
-		static bool isSigned() { return false; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( 0 ); }
+		constexpr static T getMax() { return T( UCHAR_MAX ); }
+		constexpr static bool isSigned() { return false; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -146,11 +146,11 @@ namespace Utility {
 		typedef short Signed;
 		typedef unsigned short Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( SHRT_MIN ); }
-		static T getMax() { return T( SHRT_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( SHRT_MIN ); }
+		constexpr static T getMax() { return T( SHRT_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -161,11 +161,11 @@ namespace Utility {
 		typedef short Signed;
 		typedef unsigned short Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( 0 ); }
-		static T getMax() { return T( USHRT_MAX ); }
-		static bool isSigned() { return false; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( 0 ); }
+		constexpr static T getMax() { return T( USHRT_MAX ); }
+		constexpr static bool isSigned() { return false; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -177,11 +177,11 @@ namespace Utility {
 		typedef int Signed;
 		typedef unsigned int Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( INT_MIN ); }
-		static T getMax() { return T( INT_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( INT_MIN ); }
+		constexpr static T getMax() { return T( INT_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -192,11 +192,11 @@ namespace Utility {
 		typedef int Signed;
 		typedef unsigned int Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( 0 ); }
-		static T getMax() { return T( UINT_MAX ); }
-		static bool isSigned() { return false; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( 0 ); }
+		constexpr static T getMax() { return T( UINT_MAX ); }
+		constexpr static bool isSigned() { return false; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -208,11 +208,11 @@ namespace Utility {
 		typedef long Signed;
 		typedef unsigned long Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( LONG_MIN ); }
-		static T getMax() { return T( LONG_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( LONG_MIN ); }
+		constexpr static T getMax() { return T( LONG_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -223,11 +223,11 @@ namespace Utility {
 		typedef long Signed;
 		typedef unsigned long Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( 0 ); }
-		static T getMax() { return T( ULONG_MAX ); }
-		static bool isSigned() { return false; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( 0 ); }
+		constexpr static T getMax() { return T( ULONG_MAX ); }
+		constexpr static bool isSigned() { return false; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -239,11 +239,11 @@ namespace Utility {
 		typedef long long Signed;
 		typedef unsigned long long Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( LLONG_MIN ); }
-		static T getMax() { return T( LLONG_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( LLONG_MIN ); }
+		constexpr static T getMax() { return T( LLONG_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -254,11 +254,11 @@ namespace Utility {
 		typedef long long Signed;
 		typedef unsigned long long Unsigned;
 
-		static bool isInteger() { return true; }
-		static T getMin() { return T( 0 ); }
-		static T getMax() { return T( ULLONG_MAX ); }
-		static bool isSigned() { return false; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return true; }
+		constexpr static T getMin() { return T( 0 ); }
+		constexpr static T getMax() { return T( ULLONG_MAX ); }
+		constexpr static bool isSigned() { return false; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 	};
 
@@ -270,11 +270,11 @@ namespace Utility {
 		typedef float Signed;
 		typedef float Unsigned;
 
-		static bool isInteger() { return false; }
-		static T getMin() { return T( FLT_MIN ); }
-		static T getMax() { return T( FLT_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return false; }
+		constexpr static T getMin() { return T( FLT_MIN ); }
+		constexpr static T getMax() { return T( FLT_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 
 	};
@@ -286,11 +286,11 @@ namespace Utility {
 		typedef double Signed;
 		typedef double Unsigned;
 
-		static bool isInteger() { return false; }
-		static T getMin() { return T( DBL_MIN ); }
-		static T getMax() { return T( DBL_MAX ); }
-		static bool isSigned() { return true; }
-		static size_t getNbBits() { return sizeof( T ) * 8; }
+		constexpr static bool isInteger() { return false; }
+		constexpr static T getMin() { return T( DBL_MIN ); }
+		constexpr static T getMax() { return T( DBL_MAX ); }
+		constexpr static bool isSigned() { return true; }
+		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 
 

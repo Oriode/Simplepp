@@ -4,10 +4,10 @@
 #include "Map.h"
 
 
-template<typename I, typename T, typename Compare = Logical::less<I>>
+template<typename I, typename T, typename Compare = Math::Logical::Less>
 class OrderedMap : protected Map<I, T> {
 public:
-	OrderedMap( const Compare & compareFunc = Compare() );
+	OrderedMap( Compare & compareFunc = Compare() );
 	OrderedMap( const OrderedMap & map );
 	OrderedMap( OrderedMap && map );
 
@@ -83,7 +83,7 @@ public:
 	bool write( std::fstream * fileStream ) const;
 
 private:
-	Compare sortFunction;
+	Compare & sortFunction;
 	bool isOrdered;
 
 	void inserti( Size i, const I & index, const T & data );

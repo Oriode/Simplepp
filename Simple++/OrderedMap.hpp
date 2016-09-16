@@ -36,7 +36,7 @@ T * OrderedMap<I, T, Compare>::getValue( const I & index ) {
 
 
 
-template<typename I, typename T, typename Compare /*= Logical::less<I>*/>
+template<typename I, typename T, typename Compare /*= Math::Logical::less<I>*/>
 const T * OrderedMap<I, T, Compare>::getValue( const I & index ) const {
 	return const_cast< OrderedMap<I, T, Compare> * >( this ) -> getValue( index );
 }
@@ -278,6 +278,14 @@ OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=( const OrderedM
 	return *this;
 }
 
+template<typename I, typename T, typename Compare>
+OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=( OrderedMap<I, T, Compare> && map ) {
+	Map::operator =( Utility::toRValue(map) );
+	this -> isOrdered = Utility::toRValue( map.isOrdered );
+	this -> sortFunction = Utility::toRValue( map.sortFunction );
+	return *this;
+}
+
 
 template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare>::~OrderedMap( void ) {
@@ -285,7 +293,7 @@ OrderedMap<I, T, Compare>::~OrderedMap( void ) {
 }
 
 template<typename I, typename T, typename Compare>
-OrderedMap<I, T, Compare>::OrderedMap( const Compare & compareFunc ) :
+OrderedMap<I, T, Compare>::OrderedMap( Compare & compareFunc ) :
 	isOrdered( true ),
 	sortFunction( compareFunc ) {
 }
@@ -327,7 +335,7 @@ std::ostream & operator<<( std::ostream & stream, const OrderedMap<I, T, Compare
 
 
 
-template<typename I, typename T, typename Compare /*= Logical::less<I>*/>
+template<typename I, typename T, typename Compare /*= Math::Logical::less<I>*/>
 bool OrderedMap<I, T, Compare>::write( std::fstream * fileStream ) const {
 	if ( !this -> isOrdered )
 		_sort();
@@ -336,7 +344,7 @@ bool OrderedMap<I, T, Compare>::write( std::fstream * fileStream ) const {
 	return true;
 }
 
-template<typename I, typename T, typename Compare /*= Logical::less<I>*/>
+template<typename I, typename T, typename Compare /*= Math::Logical::less<I>*/>
 bool OrderedMap<I, T, Compare>::read( std::fstream * fileStream ) {
 	this -> isOrdered = true;
 	if ( !Map::read( fileStream ) )

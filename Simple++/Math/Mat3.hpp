@@ -321,27 +321,27 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator==( const Mat3<T> & m ) const {
-		return _logicalOperatorAND( Logical::equal<colType>(), m );
+		return _logicalOperatorAND( Math::Logical::Equal(), m );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator!=( const Mat3<T> & m ) const {
-		return _logicalOperatorOR( Logical::notEqual<colType>(), m );
+		return _logicalOperatorOR( Math::Logical::NotEqual(), m );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<( const Mat3<T> & m ) const {
-		return _logicalOperatorAND( Logical::less<colType>(), m );
+		return _logicalOperatorAND( Math::Logical::Less(), m );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<=( const Mat3<T> & m ) const {
-		return _logicalOperatorAND( Logical::lessEqual<colType>(), m );
+		return _logicalOperatorAND( Math::Logical::LessOrEqual(), m );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>( const Mat3<T> & m ) const {
-		return _logicalOperatorAND( Logical::greater<colType>(), m );
+		return _logicalOperatorAND( Math::Logical::Greater(), m );
 	}
 
 
@@ -350,7 +350,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>=( const Mat3<T> & m ) const {
-		return _logicalOperatorAND( Logical::greaterEqual<colType>(), m );
+		return _logicalOperatorAND( Math::Logical::GreaterOrEqual(), m );
 	}
 
 

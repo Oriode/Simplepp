@@ -393,7 +393,7 @@ void Map<I, T>::_sort( Compare func ) {
 
 template<typename I, typename T>
 template<typename Compare>
-void Map<I, T>::_quicksort( RandomAccessIterator start, RandomAccessIterator end, Compare func /*= Logical::less<I>*/ ) {
+void Map<I, T>::_quicksort( RandomAccessIterator start, RandomAccessIterator end, Compare func /*= Math::Logical::less<I>*/ ) {
 	// Create an auxiliary stack
 	typedef struct {
 		RandomAccessIterator start;

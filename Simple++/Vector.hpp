@@ -486,12 +486,12 @@ T & Vector<T>::getFirst() {
 
 template<typename T>
 void Vector<T>::sortAsc() {
-	sort( Logical::less<T>() );
+	sort( Math::Logical::Less<T>() );
 }
 
 template<typename T>
 void Vector<T>::sortDesc() {
-	sort( Logical::greater<T>() );
+	sort( Math::Logical::Greater<T>() );
 }
 
 template<typename T>
@@ -598,7 +598,7 @@ const T * Vector<T>::data() const {
 /* ITERATIONS                                                           */
 /************************************************************************/
 template<typename T>
-bool Vector<T>::iterate( RandomAccessIterator * it, elemType ** e ) {
+bool Vector<T>::iterate( RandomAccessIterator * it, ElemType ** e ) {
 	if ( *it == getEnd() )
 		return false;
 	*e = *it;
