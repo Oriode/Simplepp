@@ -884,7 +884,7 @@ template<typename T>
 template<typename C, typename D>
 void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, const Size & size ) {
 	for ( Size i = 0; i < size; i++ ) {
-		destinationBuffer[i] = ( C ) sourceBuffer[i];
+		destinationBuffer[i] = C(sourceBuffer[i]);
 	}
 }
 

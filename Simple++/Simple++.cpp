@@ -12,7 +12,7 @@
 //#define SPEEDTEST_POLYGON
 //#define SPEEDTEST_STROKE
 //#define SPEEDTEST_RESAMPLE
-//#define SPEEDTEST_FILTER
+#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
@@ -21,7 +21,7 @@
 //#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
 //#define SPEEDTEST_VECTOR
-#define SPEEDTEST_MAP
+//#define SPEEDTEST_MAP
 //#define SPEEDTEST_NETWORK
 
 #ifndef _LIB 
@@ -195,23 +195,26 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Apply Non symmetrical Filter Image									//
-		constexpr size_t bits( Graphic::Image::getKernelSumNbBits() );
-		constexpr size_t mult( ( 1 << Graphic::Image::getKernelSumNbBits() ) );
-		typename Graphic::Image::KernelType kernelX[3], kernelY[3];
+		//constexpr size_t bits( Graphic::Image::getKernelSumNbBits() );
+		//constexpr size_t mult( ( 1 << Graphic::Image::getKernelSumNbBits() ) );
+		//typename Graphic::Image::KernelType kernelX[3], kernelY[3];
 
-		Graphic::Image::computeSobel1Kernel( kernelX );
-		Graphic::Image::computeSobel2Kernel( kernelY );
+		//Graphic::Image::computeSobel1Kernel( kernelX );
+		//Graphic::Image::computeSobel2Kernel( kernelY );
 
-		image = image.applyFilter( kernelX, kernelY, 3, Graphic::Image::ConvolutionOrder::VerticalHorizontal,  Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
+		//image = image.applyFilter( kernelX, kernelY, 3, Graphic::Image::ConvolutionOrder::VerticalHorizontal,  Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
 		//image = image.applyFilter( kernel, Math::Vec2<Graphic::Size>(3,3), Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
+
+		image = image.applySobelFilter();
+
 
 	}
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Blur Image															//
 		image = image.applyGaussianBlur( 5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
-	}
+	}*/
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
@@ -367,12 +370,12 @@ int main( int argc, char * argv[] ) {
 	}
 
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Gradient as Functor								//
-		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient(gradientRadial);
+		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientRadial );
 		image.drawRectangleFunctor(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
-	}
+	}*/
 
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -453,7 +456,7 @@ int main( int argc, char * argv[] ) {
 
 
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// re sampling															//
 
@@ -479,7 +482,7 @@ int main( int argc, char * argv[] ) {
 		image.drawImage( Graphic::Point( 0, 200 ), imageLanczos );
 
 
-	}
+	}*/
 
 
 

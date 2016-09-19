@@ -799,10 +799,11 @@ namespace Graphic {
 
 		///@brief Get the number of bits of the sum of a kernel depending of the types used
 		///@return number of bits of the sum of a integer kernel (floating kernel will every time has a sum of 1.0)
-		template<typename K = typename KernelType>
+		template<typename K>
 		constexpr static K getKernelSumNbBits();
 
 		///@brief apply a symmetrical convolution filter (Gaussian blur for example)
+		///@template T1 Type of the value of this image (most of the time T)
 		///@param filter Filter table (the table has to have an odd size)
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
@@ -810,11 +811,12 @@ namespace Graphic {
 		///@see _Image<T>::SumType for an automatically generated Filter Type
 		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
-		template<typename F, typename KernelFunc = KernelFunc::None>
+		template<typename F, typename KernelFunc = KernelFunc::None, typename T1 = T>
 		_Image<T> applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		///@brief Apply a convolution filter
+		///@template T1 Type of the value of this image (most of the time T)
 		///@param filter Filter Matrix of size (size.x * size.y) stored row per row from bottom to top from left to right
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
@@ -822,7 +824,7 @@ namespace Graphic {
 		///@see _Image<T>::SumType for an automatically generated Filter Type
 		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
-		template<typename F, typename KernelFunc = KernelFunc::None>
+		template<typename F, typename KernelFunc = KernelFunc::None, typename T1 = T>
 		_Image<T> applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
@@ -832,6 +834,11 @@ namespace Graphic {
 		///@param color Color of the background
 		///@return Image with the filter applied
 		_Image<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
+
+		///@brief apply a Sobel filter and return the resulting image (note the final pixels components will be "min(sqrt(x*x + y*y) / 2, MAX)" where x is the sobel filter horizontal and y vertical)
+		///@return Image with the Sobel filter applied
+		///@see https://en.wikipedia.org/wiki/Sobel_operator
+		_Image<T> applySobelFilter();
 
 
 		///@brief Clamp a rectangle inside the image
@@ -1029,11 +1036,20 @@ namespace Graphic {
 
 
 
+
+
+		///@brief compute the the Sobel kernel [-1 0 1] for this image and put it into a buffer
+		///@param kernel buffer to fill with the kernel (already allocated of size 3)
+		///@return pound of this kernel
 		template<typename K>
 		static K computeSobel1Kernel( K * kernel );
 		static float computeSobel1Kernel( float * kernel );
 		static double computeSobel1Kernel( double * kernel );
 
+
+		///@brief compute the the Sobel kernel [1 2 1] for this image and put it into a buffer
+		///@param kernel buffer to fill with the kernel (already allocated of size 3)
+		///@return pound of this kernel
 		template<typename K>
 		static K computeSobel2Kernel( K * kernel );
 		static float computeSobel2Kernel( float * kernel );
@@ -1147,30 +1163,32 @@ namespace Graphic {
 		static Format _loadingFormat2Format( LoadingFormat loadingFormat );
 
 
-		template<typename C1, typename Sum, typename KernelFunc, typename F>
-		_Image<T> _applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
-
-		template<typename C1, typename KernelFunc, typename F>
-		_Image<T> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
-
-		template<typename C1, typename Sum, typename KernelFunc >
-		_Image<T> _applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
-
-		template<typename C1, typename Sum, typename KernelFunc >
-		_Image<T> _applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
 
-		template<typename C1, typename Sum, typename KernelFunc, typename F>
-		_Image<T> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
 
-		template<typename C1, typename Sum, typename KernelFunc>
-		_Image<T> _applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
+		_Image<T2> _applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
-		template<typename C1, typename Sum, typename KernelFunc>
-		_Image<T> _applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
+		_Image<T2> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
-		template<typename C1, typename KernelFunc, typename F>
-		_Image<T> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & func ) const;
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
+		_Image<T2> _applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
+		_Image<T2> _applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
+		_Image<T2> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
+		_Image<T2> _applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
+		_Image<T2> _applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
+		_Image<T2> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename SumType, typename C>
 		_Image<T> * _createMipmap( _Image<T> * destinationImage );
@@ -1192,8 +1210,7 @@ namespace Graphic {
 		T * buffer;
 
 	};
-
-	typedef _Image<unsigned char> Image;
+typedef _Image<unsigned char> Image;
 	typedef _Image<float> ImageF;
 
 
