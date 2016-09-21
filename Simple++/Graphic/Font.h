@@ -15,6 +15,7 @@
 
 namespace Graphic {
 
+	template<typename T = unsigned char>
 	class Font : public BasicIO {
 	public:
 
@@ -43,17 +44,17 @@ namespace Graphic {
 
 
 
-		FreeTypeChar * operator[]( UCodePoint codePoint );
+		FreeTypeChar<T> * operator[]( UCodePoint codePoint );
 
-		const FreeTypeChar * operator[]( UCodePoint codePoint ) const;
+		const FreeTypeChar<T> * operator[]( UCodePoint codePoint ) const;
 
 
-		const OrderedMap<UCodePoint, FreeTypeChar *> & getCharMap() const;
+		const OrderedMap<UCodePoint, FreeTypeChar<T> *> & getCharMap() const;
 
 
 		///@brief load a glyph on this 
 		///@return const pointer of the character just created (NULL if nothing was loaded)
-		const FreeTypeChar * loadGlyph( UCodePoint codePoint );
+		const FreeTypeChar<T> * loadGlyph( UCodePoint codePoint );
 
 		///@brief load all the glyph present inside the string
 		void loadGlyph( const UTF8String & str );
@@ -93,7 +94,9 @@ namespace Graphic {
 		void _setPixSize( unsigned int size );
 		void _unload();
 
-		OrderedMap<UCodePoint, FreeTypeChar *> charsMap;
+		OrderedMap<UCodePoint, FreeTypeChar<T> *> charsMap;
+		FreeTypeChar<T> * asciiMap[256];
+
 		FT_Library ftLib;
 		FT_Face ftFace;
 
@@ -107,3 +110,4 @@ namespace Graphic {
 
 }
 
+#include "Font.hpp"

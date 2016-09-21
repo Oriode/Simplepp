@@ -8,32 +8,32 @@ namespace Graphic {
 
 
 	template<typename T, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		_drawText<T, ColorR<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		_drawText<T, ColorR<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		_drawText<T, ColorRGB<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		_drawText<T, ColorRGB<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		_drawText<T, ColorRGBA<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		_drawText<T, ColorRGBA<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
@@ -43,7 +43,7 @@ namespace Graphic {
 	/************************************************************************/
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -78,7 +78,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -96,7 +96,7 @@ namespace Graphic {
 
 			void operator()( float x, float y, const _Image<T> & c ) {
 				this -> colorFunctor.offset = x - this -> clampedRectangle.getLeft();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, true>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
@@ -106,8 +106,10 @@ namespace Graphic {
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		Functor functor( image, gradient, rectangle, blendFunc );
-		_drawText( font, rectangle, text, centered, functor );
+		auto rectangleClamped( image->clampRectangle( rectangle ) );
+
+		Functor functor( image, gradient, rectangleClamped, blendFunc );
+		_drawText( font, rectangleClamped, text, centered, functor );
 	}
 
 	/************************************************************************/
@@ -115,7 +117,7 @@ namespace Graphic {
 	/************************************************************************/
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -149,7 +151,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -167,7 +169,7 @@ namespace Graphic {
 
 			void operator()( float x, float y, const _Image<T> & c ) {
 				this -> colorFunctor.offset = y - this -> clampedRectangle.getBottom();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, true>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
@@ -177,30 +179,32 @@ namespace Graphic {
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		Functor functor( image, gradient, rectangle, blendFunc );
-		_drawText( font, rectangle, text, centered, functor );
+		auto rectangleClamped( image -> clampRectangle( rectangle ) );
+		Functor functor( image, gradient, rectangleClamped, blendFunc );
+		_drawText( font, rectangleClamped, text, centered, functor );
 	}
 
 
 
 	template<typename T, typename C, typename BlendFunc>
-	void _drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void _drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			Functor( _Image<T> * image, const C & color, const BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage( Point( x, y ), this -> color, c, this -> blendFunc ); }
+			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage<BlendFunc, true>( Point( x, y ), this -> color, c, this -> blendFunc ); }
 		private:
 			_Image<T> * image;
 			const C & color;
 			const BlendFunc & blendFunc;
 		};
+		auto rectangleClamped( image->clampRectangle( rectangle ) );
 		Functor functor( image, color, blendFunc );
-		_drawText( font, rectangle, text, centered, functor );
+		_drawText( font, rectangleClamped, text, centered, functor );
 	}
 
 
 	template<typename T, typename C, typename BlendFunc>
-	void _drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void _drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
 		struct Functor {
 			Functor( _Image<T> * image, const C & color, const BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
 			void onBegin( const Math::Vec2<float> & size ) {}
@@ -217,7 +221,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void drawText( _Image<T> * image, const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
 		struct Functor {
 			Functor( _Image<T> * image ) : image( image ) {}
 			void onBegin( const Rectangle & size ) {}
@@ -230,24 +234,24 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	void drawText( _Image<T> * image, const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
+	void drawText( _Image<T> * image, const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
 		struct Functor {
 			Functor( _Image<T> * image ) : image( image ) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage( Point( x, y ), c ); }
+			void operator()( float x, float y, const _Image<T> & c ) { this -> image -> drawImage<true>( Point( x, y ), c ); }
 		private:
 			_Image<T> * image;
 		};
 		Functor functor( image );
-		_drawText( font, rectangle, text, centered, functor );
+		_drawText( font, image->clampRectangle( rectangle ), text, centered, functor );
 	}
 
 
 
 
 
-	template<typename Func>
-	void _drawTextWBB( const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
+	template<typename T, typename Func>
+	void _drawTextWBB( const Font<T> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
 		Math::Vec2<float> initPoint( point );
 		UCodePoint codePoint;
 
@@ -272,7 +276,7 @@ namespace Graphic {
 			} else if ( codePoint == ' ' ) {
 				currentPosX += font.getWordSpace();
 			} else {
-				const FreeTypeChar * c = font[codePoint];
+				const FreeTypeChar<T> * c = font[codePoint];
 				if ( c ) {
 					currentPosX += c -> getHoriAdvance();
 				}
@@ -314,7 +318,7 @@ namespace Graphic {
 				} else if ( codePoint == ' ' ) {
 					currentPos.x += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						currentPos.x += c -> getHoriAdvance();
@@ -335,7 +339,7 @@ namespace Graphic {
 				} else if ( codePoint == ' ' ) {
 					currentPos.x += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						currentPos.x += c -> getHoriAdvance();
@@ -349,8 +353,8 @@ namespace Graphic {
 
 
 
-	template<typename Func>
-	void _drawText( const Font & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
+	template<typename T, typename Func>
+	void _drawText( const Font<T> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
 		Math::Vec2<float> initPoint( point );
 		UCodePoint codePoint;
 
@@ -375,7 +379,7 @@ namespace Graphic {
 				} else if ( codePoint == ' ' ) {
 					currentPosX += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						currentPosX += c -> getHoriAdvance();
 					}
@@ -409,7 +413,7 @@ namespace Graphic {
 				} else if ( codePoint == ' ' ) {
 					currentPos.x += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
@@ -438,7 +442,7 @@ namespace Graphic {
 				} else if ( codePoint == ' ' ) {
 					currentPos.x += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
@@ -454,8 +458,8 @@ namespace Graphic {
 
 
 
-	template<typename Func>
-	void _drawText( const Font & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
+	template<typename T, typename Func>
+	void _drawText( const Font<T> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func ) {
 		UCodePoint codePoint;
 		Math::Vec2<int> rectangleSize( rectangle.getRight() - rectangle.getLeft(), rectangle.getTop() - rectangle.getBottom() );
 		UTF8String textCopy( text );
@@ -484,7 +488,7 @@ namespace Graphic {
 						tmpPosX += font.getWordSpace();
 						goto drawText_afterIterate;	//if we reached the end of the word
 					} else {
-						const FreeTypeChar * c = font[codePoint];
+						const FreeTypeChar<T> * c = font[codePoint];
 						if ( c ) tmpPosX += c -> getHoriAdvance();
 					}
 				}
@@ -545,7 +549,7 @@ drawText_afterIterate:
 				} else if ( codePoint == ' ' ) {
 					currentPos.x += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
@@ -573,7 +577,7 @@ drawText_afterIterate:
 						tmpPosX += font.getWordSpace();
 						goto drawText_afterIterate2;	//if we reached the end of the word
 					} else {
-						const FreeTypeChar * c = font[codePoint];
+						const FreeTypeChar<T> * c = font[codePoint];
 						if ( c ) tmpPosX += c -> getHoriAdvance();
 					}
 				}
@@ -625,7 +629,7 @@ drawText_afterIterate2:
 				} else if ( codePoint == ' ' ) {
 					currentPos.x += font.getWordSpace();
 				} else {
-					const FreeTypeChar * c = font[codePoint];
+					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );

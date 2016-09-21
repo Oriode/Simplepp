@@ -135,17 +135,30 @@ namespace Graphic {
 				const_cast< Gradient<C, InterFunc> * >( this ) -> isOrdered = true;
 			}
 			float multiplier = float( size ) / ( end - begin );
+
+
+			float startClamped( 0 );
+			int startIndex( 0 );
+			float endClamped( Math::min<float>( end, this -> pointsVectorOrdered[0] -> getPosition() ) );
+			int endIndex( Math::clamp<int>( int( ( endClamped - begin ) * multiplier ), 0, size ) );
+
+			{
+				auto color( this -> pointsVectorOrdered[0] -> getColor() );
+				for ( int i = startIndex; i < endIndex; i++ )
+					buffer[i] = color;
+			}
+			
+
 			for ( typename Vector<GradientPoint<C> * >::Size i = 1; i < this -> pointsVectorOrdered.getSize(); i++ ) {
 				const GradientPoint<C> & p1 = *this -> pointsVectorOrdered[i - 1];
 				const GradientPoint<C> & p2 = *this -> pointsVectorOrdered[i];
 
 				//Now we have to compute the beginning and ending index of the interpolations of the two colors.
-
-				float startClamped = Math::max<float>( begin, p1.getPosition() );
-				float endClamped = Math::min<float>( end, p2.getPosition() );
-
-				int startIndex = Math::clamp<int>( int( ( startClamped - begin ) * multiplier ), 0, size );
-				int endIndex = Math::clamp<int>( int( ( endClamped - begin ) * multiplier ), 0, size );
+				startIndex = endIndex;
+				startClamped = Math::max(endClamped, begin);
+				endClamped = Math::min<float>( end, p2.getPosition() );
+				endIndex =  Math::clamp<int>( int( ( endClamped - begin ) * multiplier ), 0, size ) ;
+				
 
 				float increment = ( 1.0f - ( startClamped - p1.getPosition() + ( p2.getPosition() - endClamped ) ) ) / ( endIndex - startIndex );
 				float x = increment * 0.5f + ( startClamped - p1.getPosition() );
@@ -153,6 +166,15 @@ namespace Graphic {
 					buffer[i] = functor( p1.getColor(), p2.getColor(), x );
 					x += increment;
 				}
+
+
+				{
+					auto color( this -> pointsVectorOrdered.getLast() -> getColor() );
+					for ( int i = endIndex; i < size; i++ )
+						buffer[i] = color;
+				}
+
+
 			}
 		}
 	}
@@ -298,7 +320,7 @@ namespace Graphic {
 
 	template<typename C, typename InterFunc /*= InterpolationFunc::Linear*/>
 	int GradientRadial<C, InterFunc>::computeIndex( const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & radius ) {
-		return Math::clamp<int>( int( Math::length( p * radius ) * 2.0f ), 0, maxIndex );
+		return Math::min<int>( int( Math::length( p ) * 2.0f ), maxIndex );
 	}
 
 

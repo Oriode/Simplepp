@@ -1,13 +1,11 @@
-#include "FreeTypeChar.h"
-
 
 
 
 namespace Graphic {
 
-
-	FreeTypeChar::FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint ) :
-		Image( Format::R ),
+	template<typename T>
+	FreeTypeChar<T>::FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint ) :
+		_Image<T>( Format::R ),
 		uCodePoint( codePoint ) {
 
 		unsigned int glyphindex = FT_Get_Char_Index( ftFace, this -> uCodePoint );
@@ -41,11 +39,11 @@ namespace Graphic {
 
 		FT_Bitmap * ftBitmap = &ftGlyph -> bitmap;
 
-		this -> setDatas( ftBitmap -> buffer, Math::Vec2<Size>( ftBitmap -> width, ftBitmap -> rows ), LoadingFormat::R, true );
+		this -> setDatas( ( unsigned char * ) (ftBitmap -> buffer), Math::Vec2<Size>( ftBitmap -> width, ftBitmap -> rows ), LoadingFormat::R, true );
 	}
 
-
-	FreeTypeChar::FreeTypeChar( const FreeTypeChar & c ) :
+	template<typename T>
+	FreeTypeChar<T>::FreeTypeChar( const FreeTypeChar<T> & c ) :
 		Image( c ),
 		uCodePoint( c.uCodePoint ),
 		size( c.size ),
@@ -55,8 +53,9 @@ namespace Graphic {
 
 	}
 
-	FreeTypeChar::FreeTypeChar( FreeTypeChar && c ) :
-		Image( Utility::toRValue( c ) ),
+	template<typename T>
+	FreeTypeChar<T>::FreeTypeChar( FreeTypeChar<T> && c ) :
+		_Image<T>( Utility::toRValue( c ) ),
 		uCodePoint( Utility::toRValue( c.uCodePoint ) ),
 		size( Utility::toRValue( c.size ) ),
 		horiOffsetY( Utility::toRValue( c.horiOffsetY ) ),
@@ -65,8 +64,9 @@ namespace Graphic {
 
 	}
 
-	FreeTypeChar::FreeTypeChar( std::fstream * fileStream ) :
-		Image( fileStream ) {
+	template<typename T>
+	FreeTypeChar<T>::FreeTypeChar( std::fstream * fileStream ) :
+		_Image<T>( fileStream ) {
 		IO::read( fileStream, &this -> uCodePoint );
 		IO::read( fileStream, &this -> size );
 		IO::read( fileStream, &this -> horiBearing );
@@ -74,11 +74,13 @@ namespace Graphic {
 		IO::read( fileStream, &this -> horiAdvance );
 	}
 
-	FreeTypeChar::~FreeTypeChar() {
+
+	template<typename T>
+	FreeTypeChar<T>::~FreeTypeChar() {
 	}
 
-
-	FreeTypeChar & FreeTypeChar::operator=( const FreeTypeChar & c ) {
+	template<typename T>
+	FreeTypeChar<T> & FreeTypeChar<T>::operator=( const FreeTypeChar<T> & c ) {
 		Image::operator=( c );
 		this -> uCodePoint = c.uCodePoint;
 		this -> size = c.size;
@@ -89,7 +91,8 @@ namespace Graphic {
 		return *this;
 	}
 
-	FreeTypeChar & FreeTypeChar::operator=( FreeTypeChar && c ) {
+	template<typename T>
+	FreeTypeChar<T> & FreeTypeChar<T>::operator=( FreeTypeChar<T> && c ) {
 		Image::operator=( Utility::toRValue( c ) );
 		this -> uCodePoint = Utility::toRValue( c.uCodePoint );
 		this -> size = Utility::toRValue( c.size );
@@ -100,31 +103,38 @@ namespace Graphic {
 		return *this;
 	}
 
-	float FreeTypeChar::getHoriBearingX() const {
+	template<typename T>
+	float FreeTypeChar<T>::getHoriBearingX() const {
 		return this -> horiBearing.x;
 	}
 
-	float FreeTypeChar::getHoriBearingY() const {
+	template<typename T>
+	float FreeTypeChar<T>::getHoriBearingY() const {
 		return this -> horiBearing.y;
 	}
 
-	const Math::vec2f & FreeTypeChar::getHoriBearing() const {
+	template<typename T>
+	const Math::vec2f & FreeTypeChar<T>::getHoriBearing() const {
 		return this -> horiBearing;
 	}
 
-	float FreeTypeChar::getHoriOffsetY() const {
+	template<typename T>
+	float FreeTypeChar<T>::getHoriOffsetY() const {
 		return this -> horiOffsetY;
 	}
 
-	float FreeTypeChar::getHoriAdvance() const {
+	template<typename T>
+	float FreeTypeChar<T>::getHoriAdvance() const {
 		return this -> horiAdvance;
 	}
 
-	UTF8String::CodePoint FreeTypeChar::getCodePoint() const {
+	template<typename T>
+	UTF8String::CodePoint FreeTypeChar<T>::getCodePoint() const {
 		return this -> uCodePoint;
 	}
 
-	bool FreeTypeChar::read( std::fstream * fileStream ) {
+	template<typename T>
+	bool FreeTypeChar<T>::read( std::fstream * fileStream ) {
 		if ( !Image::read( fileStream ) )
 			return false;
 
@@ -142,7 +152,8 @@ namespace Graphic {
 		return true;
 	}
 
-	bool FreeTypeChar::write( std::fstream * fileStream ) const {
+	template<typename T>
+	bool FreeTypeChar<T>::write( std::fstream * fileStream ) const {
 		if ( !Image::write( fileStream ) )
 			return false;
 

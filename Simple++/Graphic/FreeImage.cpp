@@ -282,14 +282,28 @@ namespace Graphic {
 
 			auto otherIt = datas;
 			auto thisIt = newDatas;
-			for ( size_t i = 0; i < numPixels; i++ ) {
-				thisIt[0] = otherIt[2];
-				thisIt[1] = otherIt[1];
-				thisIt[2] = otherIt[0];
 
-				otherIt += offsetPerPixel;
-				thisIt += offsetPerPixel;
+			if ( format == Format::RGB ) {
+				for ( size_t i = 0; i < numPixels; i++ ) {
+					thisIt[0] = otherIt[2];
+					thisIt[1] = otherIt[1];
+					thisIt[2] = otherIt[0];
+
+					otherIt += offsetPerPixel;
+					thisIt += offsetPerPixel;
+				}
+			} else if ( format == Format::RGBA ) {
+				for ( size_t i = 0; i < numPixels; i++ ) {
+					thisIt[0] = otherIt[2];
+					thisIt[1] = otherIt[1];
+					thisIt[2] = otherIt[0];
+					thisIt[3] = otherIt[3];
+
+					otherIt += offsetPerPixel;
+					thisIt += offsetPerPixel;
+				}
 			}
+			
 			this -> freeImage = FreeImage_ConvertFromRawBits( newDatas, this -> size.x, this -> size.y, this -> size.x * ( this -> BPP / 8 ), this -> BPP, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, this -> invertY );
 			delete[] newDatas;
 		} else {

@@ -8,7 +8,8 @@
 
 namespace Graphic {
 
-	class FontLoadable : public BasicLoadableIO, public Font {
+	template<typename T = unsigned char>
+	class FontLoadable : public BasicLoadableIO, public Font<T> {
 	public:
 
 		enum LoadingType {
@@ -59,4 +60,5 @@ namespace Graphic {
 
 }
 
+#include "FontLoadable.hpp"
 

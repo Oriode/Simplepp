@@ -676,12 +676,16 @@ namespace Graphic {
 				#ifdef GRAPHIC_FAST_BLENDING
 				typedef Utility::TypesInfos<I>::Bigger Bigger;
 				typedef Utility::TypesInfos<Bigger>::Bigger SuperBigger;
-				SuperBigger a = SuperBigger( alpha ) * SuperBigger( colorSrc.a );
-				SuperBigger oneMinusAlpha = Utility::TypesInfos<Bigger>::getMax() - a;
-				colorDest.r = I( ( SuperBigger( colorDest.r ) * oneMinusAlpha + SuperBigger( colorSrc.r ) * a ) >> Utility::TypesInfos<Bigger>::getNbBits() );
-				colorDest.g = I( ( SuperBigger( colorDest.g ) * oneMinusAlpha + SuperBigger( colorSrc.g ) * a ) >> Utility::TypesInfos<Bigger>::getNbBits() );
-				colorDest.b = I( ( SuperBigger( colorDest.b ) * oneMinusAlpha + SuperBigger( colorSrc.b ) * a ) >> Utility::TypesInfos<Bigger>::getNbBits() );
-				colorDest.a = I( ( SuperBigger( colorDest.a ) * oneMinusAlpha ) >> Utility::TypesInfos<Bigger>::getNbBits() + alpha );
+				Bigger a1 = Bigger( alpha );
+				Bigger a2 = Bigger( colorSrc.a );
+
+				Bigger oneMinusAlpha1 = Utility::TypesInfos<I>::getMax() - a1;
+				Bigger oneMinusAlpha2 = Utility::TypesInfos<I>::getMax() - a2;
+
+				colorDest.r = I( ( Bigger( colorDest.r ) * oneMinusAlpha2 + Bigger( colorSrc.r ) * a2 ) >> Utility::TypesInfos<I>::getNbBits() );
+				colorDest.g = I( ( Bigger( colorDest.g ) * oneMinusAlpha2 + Bigger( colorSrc.g ) * a2 ) >> Utility::TypesInfos<I>::getNbBits() );
+				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha2 + Bigger( colorSrc.b ) * a2 ) >> Utility::TypesInfos<I>::getNbBits() );
+				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha1 + Bigger( colorSrc.a ) * a1 ) >> Utility::TypesInfos<I>::getNbBits() );
 				#else
 				blendColor( colorDest, colorSrc, float( alpha ) / float( Utility::TypesInfos<I>::getMax() ) );
 				#endif
@@ -689,30 +693,36 @@ namespace Graphic {
 			template<typename I>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, float alpha ) {
 				typedef float F;
-				alpha *= F( colorSrc.a ) / Utility::TypesInfos<I>::getMax();
+				F a( F( colorSrc.a ) / Utility::TypesInfos<I>::getMax() );
 				F oneMinusAlpha = F( 1.0 ) - alpha;
-				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
-				colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + F( colorSrc.g ) * alpha );
-				colorDest.b = I( F( colorDest.b ) * oneMinusAlpha + F( colorSrc.b ) * alpha );
-				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha + alpha * Utility::TypesInfos<I>::getMax() );
+				F oneMinusA = F( 1.0 ) - a;
+
+				colorDest.r = I( F( colorDest.r ) * oneMinusA + F( colorSrc.r ) * a );
+				colorDest.g = I( F( colorDest.g ) * oneMinusA + F( colorSrc.g ) * a );
+				colorDest.b = I( F( colorDest.b ) * oneMinusA + F( colorSrc.b ) * a );
+				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha + F( colorSrc.a ) * alpha );
 			}
 			inline static void blendColor( ColorRGBA<float> & colorDest, const ColorRGBA<float> & colorSrc, float alpha ) {
 				typedef float F;
-				alpha *= colorSrc.a;
+				F a( colorSrc.a );
 				F oneMinusAlpha = F( 1.0 ) - alpha;
-				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * alpha );
-				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * alpha );
-				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * alpha );
-				colorDest.a = ( colorDest.a * oneMinusAlpha ) + alpha;
+				F oneMinusA = F( 1.0 ) - a;
+
+				colorDest.r = ( colorDest.r * oneMinusA + colorSrc.r * a );
+				colorDest.g = ( colorDest.g * oneMinusA + colorSrc.g * a );
+				colorDest.b = ( colorDest.b * oneMinusA + colorSrc.b * a );
+				colorDest.a = ( colorDest.a * oneMinusAlpha + colorSrc.a * alpha );
 			}
 			inline static void blendColor( ColorRGBA<double> & colorDest, const ColorRGBA<double> & colorSrc, double alpha ) {
 				typedef double F;
-				alpha *= colorSrc.a;
+				F a( colorSrc.a );
 				F oneMinusAlpha = F( 1.0 ) - alpha;
-				colorDest.r = ( colorDest.r * oneMinusAlpha + colorSrc.r * alpha );
-				colorDest.g = ( colorDest.g * oneMinusAlpha + colorSrc.g * alpha );
-				colorDest.b = ( colorDest.b * oneMinusAlpha + colorSrc.b * alpha );
-				colorDest.a = ( colorDest.a * oneMinusAlpha ) + alpha;
+				F oneMinusA = F( 1.0 ) - a;
+
+				colorDest.r = ( colorDest.r * oneMinusA + colorSrc.r * a );
+				colorDest.g = ( colorDest.g * oneMinusA + colorSrc.g * a );
+				colorDest.b = ( colorDest.b * oneMinusA + colorSrc.b * a );
+				colorDest.a = ( colorDest.a * oneMinusAlpha + colorSrc.a * alpha );
 			}
 
 		};

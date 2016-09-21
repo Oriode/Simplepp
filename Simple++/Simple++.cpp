@@ -12,7 +12,8 @@
 //#define SPEEDTEST_POLYGON
 //#define SPEEDTEST_STROKE
 //#define SPEEDTEST_RESAMPLE
-#define SPEEDTEST_FILTER
+#define SPEEDTEST_DRAWTEXT
+//#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
@@ -106,12 +107,12 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 
 
-	Graphic::FontLoadable font( L"consola.ttf", 15 );
+	Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 50 );
 	font.load();
-	font.loadGlyph( Graphic::Font::Template::Ascii );
+	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
 	font.writeToFile( L"consola.cfont" );
 
-	Graphic::FontLoadable font2( L"consola.cfont" );
+	Graphic::FontLoadable<unsigned char> font2( L"consola.cfont" );
 	font2.load();
 
 	font.writeToFile( L"consola2.cfont" );
@@ -146,8 +147,8 @@ int main( int argc, char * argv[] ) {
 
 
 	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientVertical;
-	gradientVertical.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
-	gradientVertical.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
+	gradientVertical.addPoint( 0.5f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
+	gradientVertical.addPoint( 0.6f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 
 
 
@@ -165,7 +166,7 @@ int main( int argc, char * argv[] ) {
 	gradientLinear.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
 
-	Graphic::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientRadial( Math::Vec2<float>( 0, 0.5 ) );
+	Graphic::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientRadial( Math::Vec2<float>( 0.5, 0.5 ), Math::Vec2<float>( 0.5, 0.5 ) );
 	gradientRadial.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 	gradientRadial.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
 	gradientRadial.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
@@ -249,7 +250,7 @@ int main( int argc, char * argv[] ) {
 	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Stroke											//
-		image.drawStrokeFunctor(Graphic::Point(0, 0), image, 4, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255)), Graphic::Image::StrokeType::Middle);
+		image.drawStrokeFunctor(Graphic::Point(0, 0), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255)), Graphic::Image::StrokeType::Middle);
 	}*/
 
 
@@ -342,12 +343,35 @@ int main( int argc, char * argv[] ) {
 		//image.drawRectangle(Graphic::Rectangle(0, 0, 250, 250), Graphic::ColorRGBA<unsigned char>(0, 255, 255, 100));
 	}
 
-
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Gradient as Functor								//
+		Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientVertical );
+		image.drawRectangleFunctor( Graphic::Rectangle( 0, 0, 500, 500 ), testFunctorGradient );
+	}*/
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Text Point									//
-		//UTF8String testStr("Hello World?\nHow are you mofo yyyy?\ndsqhjgjfsdhg sdfg sdfhsdv fhg sdfh sdhfgv sdhgfv ghsdfv ghsd fhgs dfh sdh svdhgf sghd ?\nshdfgshfsdhgfgsf");
-		//Graphic::drawText(&image, font, Graphic::Point(250, 250), testStr, gradientVertical, Math::Vec2<bool>(true, true));
+		image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
+
+		Graphic::Image imageTxt( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Format::R );
+		imageTxt.fillImage( Graphic::ColorR<unsigned char>( 0 ) );
+		UTF8String testStr( "Hello World" );
+		Graphic::drawText( &imageTxt, font, Graphic::Point( 250, 250 ), testStr, Graphic::ColorR<unsigned char>( 255 ), Math::Vec2<bool>( true, true ) );
+
+		image.drawImageShadow( Graphic::Point( 0, 0 ), 10, imageTxt, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+
+		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradientRadial( gradientRadial );
+		Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradientVertical( gradientVertical );
+
+
+		image.drawImageFunctor<Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), testFunctorGradientRadial, Graphic::Rectangle( imageTxt.getSize() ), imageTxt );
+
+		image.drawStrokeFunctor<Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), imageTxt, 1, testFunctorGradientVertical, Graphic::Image::StrokeType::Middle );
+
+		Graphic::FreeImage freeImage;
+		freeImage.loadFromDatas( ( unsigned char * ) imageTxt.getDatas(), imageTxt.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 
 	{
@@ -370,12 +394,7 @@ int main( int argc, char * argv[] ) {
 	}
 
 
-	/*{
-		//////////////////////////////////////////////////////////////////////////
-		// Draw Gradient as Functor								//
-		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientRadial );
-		image.drawRectangleFunctor(Graphic::Rectangle(250, 250, 500, 500), testFunctorGradient);
-	}*/
+
 
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -456,44 +475,44 @@ int main( int argc, char * argv[] ) {
 
 
 
-	/*{
-		//////////////////////////////////////////////////////////////////////////
-		// re sampling															//
+					/*{
+						//////////////////////////////////////////////////////////////////////////
+						// re sampling															//
 
-		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
-		freeImageOriginal.load();
-		freeImageOriginal.resize( Graphic::Point( 200, 200 ), Graphic::FreeImage::Filter::Lanczos3 );
-		Graphic::_Image<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
+						Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
+						freeImageOriginal.load();
+						freeImageOriginal.resize( Graphic::Point( 200, 200 ), Graphic::FreeImage::Filter::Lanczos3 );
+						Graphic::_Image<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
 
-		Graphic::FreeImage freeImageLinearIn( "sanctum200linear.png", Graphic::FreeImage::Format::RGB );
-		freeImageLinearIn.load();
-		Graphic::_Image<unsigned char> imageExampleLinear( freeImageLinearIn.getDatas(), freeImageLinearIn.getSize(), Graphic::LoadingFormat::BGR, false );
+						Graphic::FreeImage freeImageLinearIn( "sanctum200linear.png", Graphic::FreeImage::Format::RGB );
+						freeImageLinearIn.load();
+						Graphic::_Image<unsigned char> imageExampleLinear( freeImageLinearIn.getDatas(), freeImageLinearIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
-		Graphic::FreeImage freeImageBicubicIn( "sanctum200bicubic.png", Graphic::FreeImage::Format::RGB );
-		freeImageBicubicIn.load();
-		Graphic::_Image<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
+						Graphic::FreeImage freeImageBicubicIn( "sanctum200bicubic.png", Graphic::FreeImage::Format::RGB );
+						freeImageBicubicIn.load();
+						Graphic::_Image<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
-		auto imageSmall = texture2[0] -> resample( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
-		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
-		image.drawImage( Graphic::Point( 0, 0 ), imageSmall );
+						auto imageSmall = texture2[0] -> resample( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
+						//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
+						image.drawImage( Graphic::Point( 0, 0 ), imageSmall );
 
-		//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
-		//image.drawImage( Graphic::Point( 0, 200 ), imageExampleBicubic );
-		image.drawImage( Graphic::Point( 0, 200 ), imageLanczos );
-
-
-	}*/
+						//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
+						//image.drawImage( Graphic::Point( 0, 200 ), imageExampleBicubic );
+						image.drawImage( Graphic::Point( 0, 200 ), imageLanczos );
 
 
+					}*/
 
 
-	/*{
-		//////////////////////////////////////////////////////////////////////////
-		// Draw Graph Points									//
-		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(-2.0f, 0.0f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
-		Vector<Math::Vec2<float>> v(vStatic);
-		image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
-	}*/
+
+
+					/*{
+						//////////////////////////////////////////////////////////////////////////
+						// Draw Graph Points									//
+						Math::Vec2<float> vStatic[] = { Math::Vec2<float>(-2.0f, 0.0f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
+						Vector<Math::Vec2<float>> v(vStatic);
+						image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
+					}*/
 
 
 	*( texture2[0] ) = image;
@@ -661,6 +680,33 @@ int main( int argc, char * argv[] ) {
 		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 	#endif
+
+	#ifdef SPEEDTEST_DRAWTEXT
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// SPEED TEST : Draw Text											//
+		Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 15 );
+		font.load();
+		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
+
+		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::RGB );
+
+		UTF8String testStr( "Hello World" );
+
+		Log::startChrono();
+		for ( size_t i = 0; i < M1; i++ ) {
+			Graphic::drawText( &image, font, Graphic::Rectangle( 0, 0, 250, 250 ), testStr, Graphic::ColorRGB<unsigned char>( 255, 100, 200 ), Math::Vec2<bool>( true, true ) );
+		}
+		Log::stopChrono();
+		Log::displayChrono( "DRAW \"Hello World\" (Last Result: 1.629s for M1)" );
+
+
+		Graphic::FreeImage freeImage;
+		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::SavingFormat::PNG );
+	}
+	#endif
+
 
 	#ifdef SPEEDTEST_RESAMPLE
 	{

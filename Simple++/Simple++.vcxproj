@@ -160,9 +160,12 @@
     <ClInclude Include="Graphic\BlendingFunc.hpp" />
     <ClInclude Include="Graphic\ColorFunc.h" />
     <ClInclude Include="Graphic\Font.h" />
+    <ClInclude Include="Graphic\Font.hpp" />
     <ClInclude Include="Graphic\FontLoadable.h" />
+    <ClInclude Include="Graphic\FontLoadable.hpp" />
     <ClInclude Include="Graphic\FreeImage.h" />
     <ClInclude Include="Graphic\FreeTypeChar.h" />
+    <ClInclude Include="Graphic\FreeTypeChar.hpp" />
     <ClInclude Include="Graphic\Gradient.h" />
     <ClInclude Include="Graphic\Gradient.hpp" />
     <ClInclude Include="Graphic\GradientInterpolated.h" />
@@ -251,10 +254,7 @@
     <ClCompile Include="BasicIO.cpp" />
     <ClCompile Include="BasicSimpleIO.cpp" />
     <ClCompile Include="BasicSimpleLoadableIO.cpp" />
-    <ClCompile Include="Graphic\Font.cpp" />
-    <ClCompile Include="Graphic\FontLoadable.cpp" />
     <ClCompile Include="Graphic\FreeImage.cpp" />
-    <ClCompile Include="Graphic\FreeTypeChar.cpp" />
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="BasicLoadable.cpp" />
     <ClCompile Include="BasicLoadableIO.cpp" />

@@ -336,6 +336,15 @@
     <ClInclude Include="Graphic\KernelFunc.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="Graphic\FreeTypeChar.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\Font.hpp">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\FontLoadable.hpp">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -387,15 +396,6 @@
       <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="Graphic\FreeImage.cpp">
-      <Filter>Source Files\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphic\FreeTypeChar.cpp">
-      <Filter>Source Files\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphic\FontLoadable.cpp">
-      <Filter>Source Files\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphic\Font.cpp">
       <Filter>Source Files\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="Time\TimePoint.cpp">

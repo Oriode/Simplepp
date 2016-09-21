@@ -1,4 +1,3 @@
-#include "FontLoadable.h"
 
 
 
@@ -7,29 +6,30 @@ namespace Graphic {
 
 
 
-
-	FontLoadable::FontLoadable( const WString & fileName ) :
-		Font( ctor::null ),
+	template<typename T>
+	FontLoadable<T>::FontLoadable( const WString & fileName ) :
+		Font<T>( ctor::null ),
 		loadingType( LoadingType::FILE ),
 		fileName( fileName ) {
 
 	}
 
-	FontLoadable::FontLoadable( const WString & fileName, int pixSize ) :
-		Font( ctor::null ),
+	template<typename T>
+	FontLoadable<T>::FontLoadable( const WString & fileName, int pixSize ) :
+		Font<T>( ctor::null ),
 		loadingType( LoadingType::FTFILE ),
 		fileName( fileName ) {
 		_setPixSize( pixSize );
 	}
 
 
-
-	FontLoadable::~FontLoadable() {
+	template<typename T>
+	FontLoadable<T>::~FontLoadable() {
 		unload();
 	}
 
-
-	void FontLoadable::onLoad() {
+	template<typename T>
+	void FontLoadable<T>::onLoad() {
 		switch ( this -> loadingType ) {
 		case LoadingType::FTFILE:
 		{
@@ -60,15 +60,18 @@ namespace Graphic {
 		}
 	}
 
-	void FontLoadable::onUnload() {
+	template<typename T>
+	void FontLoadable<T>::onUnload() {
 		_unload();
 	}
 
-	bool FontLoadable::onRead( std::fstream * fileStream ) {
+	template<typename T>
+	bool FontLoadable<T>::onRead( std::fstream * fileStream ) {
 		return Font::_read( fileStream );
 	}
 
-	bool FontLoadable::onWrite( std::fstream * fileStream ) const {
+	template<typename T>
+	bool FontLoadable<T>::onWrite( std::fstream * fileStream ) const {
 		return Font::write( fileStream );
 	}
 
