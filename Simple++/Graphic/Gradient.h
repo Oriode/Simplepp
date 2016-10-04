@@ -44,12 +44,12 @@ namespace Graphic {
 
 		///@brief get the color of this point cast to the float format
 		///@return Color
-		const typename C::FloatType & getColorFloat() const;
+		const typename C::ColorFloat & getColorFloat() const;
 
 
 	private:
 		C color;
-		typename C::FloatType colorFloat;
+		typename C::ColorFloat colorFloat;
 		float position;			//between 0 and 1
 	};
 

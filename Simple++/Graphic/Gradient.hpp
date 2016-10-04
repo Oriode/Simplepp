@@ -11,7 +11,7 @@ namespace Graphic {
 	}
 
 	template<typename C>
-	const typename C::FloatType & GradientPoint<C>::getColorFloat() const {
+	const typename C::ColorFloat & GradientPoint<C>::getColorFloat() const {
 		return this -> colorFloat;
 	}
 

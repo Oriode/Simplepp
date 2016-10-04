@@ -23,6 +23,15 @@ namespace Graphic {
 	public:
 		typedef T Type;
 
+		///@brief Type used to sum multiple pixels components
+		typedef typename ColorR<typename Color<T>::SumType> ColorSum;
+
+		///@brief Type used to sum multiple pixels components multiplied with a negative value
+		typedef typename ColorR<typename Color<T>::KernelType> ColorKernel;
+
+		///@brief Floating point type
+		typedef typename ColorR<typename Color<T>::FloatType> ColorFloat;
+
 		explicit ColorR();
 
 		// Define every possible case because of automatic cast ambiguity

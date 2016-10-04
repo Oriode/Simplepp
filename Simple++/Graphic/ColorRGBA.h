@@ -18,6 +18,15 @@ namespace Graphic {
 	template<typename T>
 	class ColorRGBA : public Math::Vec4<T>, public Color<T> {
 	public:
+		///@brief Type used to sum multiple pixels components
+		typedef typename ColorRGBA<typename Color<T>::SumType> ColorSum;
+
+		///@brief Type used to sum multiple pixels components multiplied with a negative value
+		typedef typename ColorRGBA<typename Color<T>::KernelType> ColorKernel;
+
+		///@brief Floating point type
+		typedef typename ColorRGBA<typename Color<T>::FloatType> ColorFloat;
+
 		explicit ColorRGBA( void );
 
 		explicit ColorRGBA( const unsigned char & l );
