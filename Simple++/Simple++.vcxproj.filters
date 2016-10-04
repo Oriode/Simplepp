@@ -312,9 +312,6 @@
     <ClInclude Include="Graphic\Image.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic\InterpolationFunc.hpp">
-      <Filter>Header Files\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="Graphic\Texture.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
@@ -344,6 +341,36 @@
     </ClInclude>
     <ClInclude Include="Graphic\FontLoadable.hpp">
       <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorR.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorRGB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorRGB.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorRGBA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorRGBA.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\ColorConvertFunc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\InterpolationFunc.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

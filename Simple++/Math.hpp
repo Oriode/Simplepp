@@ -20,8 +20,28 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> min( const Vec3<T> & v, const T & x ) {
+		return Vec3<T>( min( v.x, x ), min( v.y, x ), min( v.z, x ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER T min( const Vec4<T> & v ) {
+		return min( min( min( v.x, v.y ), v.z ), v.w );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> min( const Vec4<T> & v, const T & x ) {
+		return Vec4<T>( min( v.x, x ), min( v.y, x ), min( v.z, x ), min( v.w, x ) );
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec2<T> & v ) {
 		return min( v.x, v.y );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> min( const Vec2<T> & v, const T & x ) {
+		return Vec2<T>( min( v.x, x ), min( v.y, x ) );
 	}
 
 	template<typename T>
@@ -30,8 +50,28 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> max( const Vec3<T> & v, const T & x ) {
+		return Vec3<T>( max( v.x, x ), max( v.y, x ), max( v.z, x ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER T max( const Vec4<T> & v ) {
+		return max( max( max( v.x, v.y ), v.z ), v.w );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> max( const Vec4<T> & v, const T & x ) {
+		return Vec4<T>( max( v.x, x ), max( v.y, x ), max( v.z, x ), max(v.w, x) );
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec2<T> & v ) {
 		return max( v.x, v.y );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> max( const Vec2<T> & v, const T & x ) {
+		return Vec2<T>( max( v.x, x ), max( v.y, x ) );
 	}
 
 	template<typename T>
@@ -251,6 +291,35 @@ namespace Math {
 		}
 
 		return result;
+	}
+
+
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> getMinMax( const Vec3<T> & v ) {
+		Vec2<T> minMax;
+		if ( v.x > v.y ) {
+			if ( v.x > v.z )
+				minMax.y = ( v.x );
+			else
+				minMax.y = ( v.z );
+
+			if ( v.y < v.z )
+				minMax.x = ( v.y );
+			else
+				minMax.x = ( v.z );
+		} else {
+			if ( v.x < v.z )
+				minMax.x = ( v.x );
+			else
+				minMax.x = ( v.z );
+
+			if ( v.y > v.z )
+				minMax.y = ( v.y );
+			else
+				minMax.y = ( v.z );
+		}
+		return minMax;
 	}
 
 }

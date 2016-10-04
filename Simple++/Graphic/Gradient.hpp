@@ -11,8 +11,14 @@ namespace Graphic {
 	}
 
 	template<typename C>
+	const typename C::FloatType & GradientPoint<C>::getColorFloat() const {
+		return this -> colorFloat;
+	}
+
+	template<typename C>
 	void GradientPoint<C>::setColor( const C & color ) {
 		this -> color = color;
+		this -> colorFloat = color;
 	}
 
 	template<typename C>
@@ -28,6 +34,7 @@ namespace Graphic {
 	template<typename C>
 	GradientPoint<C>::GradientPoint( float position, const C & color ) :
 		color( color ),
+		colorFloat( color ),
 		position( position ) {
 
 	}
@@ -113,7 +120,9 @@ namespace Graphic {
 
 	template<typename C, typename InterFunc>
 	template<typename InterFunc2>
-	void Gradient<C, InterFunc>::computeInterpolation( C * buffer, size_t size, const InterFunc2 & functor, float begin, float end ) const {
+	void Gradient<C, InterFunc>::computeInterpolation( C * buffer, size_t size, const InterFunc2 & interFunctor, float begin, float end ) const {
+		typedef typename C::FloatType::Type Float;
+
 		if ( this -> pointsVector.getSize() == 1 ) {
 			//fill the complete array with the same color
 			for ( size_t i = 0; i < size; i++ ) {
@@ -134,12 +143,12 @@ namespace Graphic {
 				//Now we have the point correctly ordered.
 				const_cast< Gradient<C, InterFunc> * >( this ) -> isOrdered = true;
 			}
-			float multiplier = float( size ) / ( end - begin );
+			Float multiplier = Float( size ) / ( end - begin );
 
 
-			float startClamped( 0 );
+			Float startClamped( 0 );
 			int startIndex( 0 );
-			float endClamped( Math::min<float>( end, this -> pointsVectorOrdered[0] -> getPosition() ) );
+			Float endClamped( Math::min<Float>( end, this -> pointsVectorOrdered[0] -> getPosition() ) );
 			int endIndex( Math::clamp<int>( int( ( endClamped - begin ) * multiplier ), 0, size ) );
 
 			{
@@ -156,14 +165,15 @@ namespace Graphic {
 				//Now we have to compute the beginning and ending index of the interpolations of the two colors.
 				startIndex = endIndex;
 				startClamped = Math::max(endClamped, begin);
-				endClamped = Math::min<float>( end, p2.getPosition() );
+				endClamped = Math::min<Float>( end, p2.getPosition() );
 				endIndex =  Math::clamp<int>( int( ( endClamped - begin ) * multiplier ), 0, size ) ;
 				
 
-				float increment = ( 1.0f - ( startClamped - p1.getPosition() + ( p2.getPosition() - endClamped ) ) ) / ( endIndex - startIndex );
-				float x = increment * 0.5f + ( startClamped - p1.getPosition() );
+				Float increment = ( 1.0f - ( startClamped - p1.getPosition() + ( p2.getPosition() - endClamped ) ) ) / ( endIndex - startIndex );
+				Float x = increment * 0.5f + ( startClamped - p1.getPosition() );
 				for ( int i = startIndex; i < endIndex; i++ ) {
-					buffer[i] = functor( p1.getColor(), p2.getColor(), x );
+					auto xInterpolated = interFunctor( x );
+					buffer[i] = p1.getColorFloat() * ( Float( 1.0 ) - xInterpolated ) + p2.getColorFloat() * xInterpolated;
 					x += increment;
 				}
 

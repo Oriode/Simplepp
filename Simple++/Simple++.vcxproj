@@ -80,9 +80,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MSVCPRTD.LIB;FreeImage.lib;freetype26MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -158,7 +158,15 @@
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Graphic\BasicGraphic.h" />
     <ClInclude Include="Graphic\BlendingFunc.hpp" />
+    <ClInclude Include="Graphic\Color.h" />
+    <ClInclude Include="Graphic\ColorConvertFunc.hpp" />
+    <ClInclude Include="Graphic\ColorR.h" />
     <ClInclude Include="Graphic\ColorFunc.h" />
+    <ClInclude Include="Graphic\ColorR.hpp" />
+    <ClInclude Include="Graphic\ColorRGB.h" />
+    <ClInclude Include="Graphic\ColorRGB.hpp" />
+    <ClInclude Include="Graphic\ColorRGBA.h" />
+    <ClInclude Include="Graphic\ColorRGBA.hpp" />
     <ClInclude Include="Graphic\Font.h" />
     <ClInclude Include="Graphic\Font.hpp" />
     <ClInclude Include="Graphic\FontLoadable.h" />
@@ -172,7 +180,6 @@
     <ClInclude Include="Graphic\GradientInterpolated.hpp" />
     <ClInclude Include="Graphic\Image.h" />
     <ClInclude Include="Graphic\Image.hpp" />
-    <ClInclude Include="Graphic\InterpolationFunc.hpp" />
     <ClInclude Include="Graphic\KernelFunc.hpp" />
     <ClInclude Include="Graphic\Texture.h" />
     <ClInclude Include="Graphic\Texture.hpp" />
@@ -185,6 +192,7 @@
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Math\BasicMath.h" />
+    <ClInclude Include="Math\InterpolationFunc.hpp" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="Math\BasicMath.hpp" />
@@ -233,6 +241,7 @@
     <ClInclude Include="SimpleLog.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="String.hpp" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Time\Date.h" />

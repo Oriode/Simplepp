@@ -1,6 +1,9 @@
 namespace Math {
 
 	template<typename T>
+	const Mat3<T> Mat3<T>::identity = Mat3<T>( 1 );
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( const T & v ) {
 		const T Zero( 0 );
 
@@ -17,8 +20,6 @@ namespace Math {
 		this -> column[2].y = Zero;
 		this -> column[2].z = v;
 	}
-
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( const T & v11, const T & v21, const T & v31,
 									   const T & v12, const T & v22, const T & v32,
@@ -35,48 +36,33 @@ namespace Math {
 		this -> column[2].y = v32;
 		this -> column[2].z = v33;
 	}
-
-
-
-
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( const Mat3<T> & m ) {
-		*this = m;
-	}
-
-
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( const Mat3<U> & m ) {
 		*this = m;
 	}
-
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( void ) {
 
 	}
-
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( const ColType & col0, const ColType & col1, const ColType & col2 ) {
+		this -> column[0] = col0;
+		this -> column[1] = col1;
+		this -> column[2] = col2;
+	}
 
 
 	template<typename T >
 	MATH_FUNC_QUALIFIER const Vec3<T> & Mat3<T>::operator[]( unsigned int index ) const {
 		return this -> column[index];
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Mat3<T>::operator[]( unsigned int index ) {
 		return this -> column[index];
 	}
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T>::Mat3( const colType & col0, const colType & col1, const colType & col2 ) {
-		this -> column[0] = col0;
-		this -> column[1] = col1;
-		this -> column[2] = col2;
-	}
+
 
 
 	template<typename T>
@@ -127,23 +113,21 @@ namespace Math {
 	}
 
 	/************************************************************************/
-	/* Multiply                                                             */
+	/* Arithmetic                                                           */
 	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator*=( const Mat3<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator*=( const Mat3<U> & m ) {
 		return ( *this = *this * m );
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator*=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator*=( const Vec3<U> & v ) {
 		this -> column[0] *= v.x;
 		this -> column[1] *= v.y;
 		this -> column[2] *= v.z;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator*=( const T & v ) {
 		this -> column[0] *= v;
@@ -152,25 +136,19 @@ namespace Math {
 		return *this;
 	}
 
-	/************************************************************************/
-	/* Subdivide                                                            */
-	/************************************************************************/
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator/=( const Mat3<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator/=( const Mat3<U> & m ) {
 		return ( *this = *this / m );
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator/=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator/=( const Vec3<U> & v ) {
 		this -> column[0] /= v.x;
 		this -> column[1] /= v.y;
 		this -> column[2] /= v.z;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator/=( const T & v ) {
 		this -> column[0] /= v;
@@ -179,29 +157,22 @@ namespace Math {
 		return *this;
 	}
 
-
-	/************************************************************************/
-	/* Add                                                                  */
-	/************************************************************************/
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator+=( const Mat3<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator+=( const Mat3<U> & m ) {
 		this -> column[0] += m[0];
 		this -> column[1] += m[1];
 		this -> column[2] += m[2];
 		return *this;
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator+=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator+=( const Vec3<U> & v ) {
 		this -> column[0] += v.x;
 		this -> column[1] += v.y;
 		this -> column[2] += v.z;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator+=( const T & v ) {
 		this -> column[0] += v;
@@ -210,27 +181,22 @@ namespace Math {
 		return *this;
 	}
 
-
-	/************************************************************************/
-	/* Minus                                                                */
-	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator-=( const Mat3<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator-=( const Mat3<U> & m ) {
 		this -> column[0] -= m[0];
 		this -> column[1] -= m[1];
 		this -> column[2] -= m[2];
 		return *this;
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator-=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator-=( const Vec3<U> & v ) {
 		this -> column[0] -= v.x;
 		this -> column[1] -= v.y;
 		this -> column[2] -= v.z;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator-=( const T & v ) {
 		this -> column[0] -= v;
@@ -239,19 +205,14 @@ namespace Math {
 		return *this;
 	}
 
-
-	/************************************************************************/
-	/* Binary SHift                                                         */
-	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator>>=( const Mat3<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator>>=( const Mat3<U> & m ) {
 		this -> column[0] >>= m[0];
 		this -> column[1] >>= m[1];
 		this -> column[2] >>= m[2];
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator>>=( const T & v ) {
 		this -> column[0] >>= v;
@@ -259,16 +220,14 @@ namespace Math {
 		this -> column[2] >>= v;
 		return *this;
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator<<=( const Mat3<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator<<=( const Mat3<U> & m ) {
 		this -> column[0] <<= m[0];
 		this -> column[1] <<= m[1];
 		this -> column[2] <<= m[2];
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator<<=( const T & v ) {
 		this -> column[0] <<= v;
@@ -276,6 +235,7 @@ namespace Math {
 		this -> column[2] <<= v;
 		return *this;
 	}
+
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator++() {
@@ -292,17 +252,14 @@ namespace Math {
 		this -> column[2]--;
 		return *this;
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator=( const Mat3<T> & m ) {
-		this -> column[0] = m[0];
-		this -> column[1] = m[1];
-		this -> column[2] = m[2];
-
-		return *this;
+	MATH_FUNC_QUALIFIER Mat3<T>  Mat3<T>::operator-() const {
+		return Mat3<T>(-this -> column[0], -this-> column[1], -this -> column[2]);
 	}
 
+	/************************************************************************/
+	/* Assign                                                               */
+	/************************************************************************/
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator=( const Mat3<U> & m ) {
@@ -311,7 +268,6 @@ namespace Math {
 		this -> column[2] = m[2];
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> & Mat3<T>::operator=( const T & v ) {
 		this -> column[0] = v;
@@ -319,37 +275,37 @@ namespace Math {
 		this -> column[2] = v;
 	}
 
+	/************************************************************************/
+	/* Logical                                                              */
+	/************************************************************************/
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::operator==( const Mat3<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::operator==( const Mat3<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::Equal(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::operator!=( const Mat3<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::operator!=( const Mat3<U> & m ) const {
 		return _logicalOperatorOR( Math::Logical::NotEqual(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<( const Mat3<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<( const Mat3<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::Less(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<=( const Mat3<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<=( const Mat3<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::LessOrEqual(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>( const Mat3<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>( const Mat3<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::Greater(), m );
 	}
-
-
-
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>=( const Mat3<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>=( const Mat3<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::GreaterOrEqual(), m );
 	}
 
@@ -357,14 +313,14 @@ namespace Math {
 
 
 	template<typename T>
-	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::_logicalOperatorOR( Compare func, const Mat3 & m ) const {
+	template<typename Compare, typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::_logicalOperatorOR( Compare & func, const Mat3<U> & m ) const {
 		return func( this -> column[0], m[0] ) || func( this -> column[1], m[1] ) || func( this -> column[2], m[2] );
 	}
 
 	template<typename T>
-	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::_logicalOperatorAND( Compare func, const Mat3 & m )const {
+	template<typename Compare, typename U>
+	MATH_FUNC_QUALIFIER bool Mat3<T>::_logicalOperatorAND( Compare & func, const Mat3<U> & m )const {
 		return func( this -> column[0], m[0] ) && func( this -> column[1], m[1] ) && func( this -> column[2], m[2] );
 	}
 
@@ -372,10 +328,11 @@ namespace Math {
 
 
 
-
+	/************************************************************************/
+	/* Arithmetic                                                           */
+	/************************************************************************/
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> operator*( const Mat3<T> & m1, const Mat3<T> & m2 ) {
-
 		Mat3<T> newMat;
 
 		newMat[0].x = m1[0].x * m2[0].x + m1[1].x * m2[0].y + m1[2].x * m2[0].z;
@@ -390,46 +347,41 @@ namespace Math {
 		newMat[2].y = m1[0].y * m2[2].x + m1[1].y * m2[2].y + m1[2].y * m2[2].z;
 		newMat[2].z = m1[0].z * m2[2].x + m1[1].z * m2[2].y + m1[2].z * m2[2].z;
 
-
 		return newMat;
 	}
 
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator*( const Mat3<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator*( const Mat3<T> & m, const T & v ) {
 		return Mat3<T>( m[0] * v, m[1] * v, m[2] * v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator*( const U & v, const Mat3<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator*( const T & v, const Mat3<T> & m ) {
 		return Mat3<T>( v * m[0], v * m[1], v * m[2] );
 	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat3<T>::colType operator*( const Mat3<T> & m, const typename Mat3<T>::colType & v ) {
-		return typename Mat3<T>::colType( m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER typename Mat3<T>::ColType operator*( const Mat3<T> & m, const Vec3<U> & v ) {
+		return typename Mat3<T>::ColType( m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
 										  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z,
 										  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z );
 	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat3<T>::colType operator*( const typename Mat3<T>::colType & v, const Mat3<T> & m ) {
-		return typename Mat3<T>::colType( m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER typename Mat3<T>::ColType operator*( const Vec3<U> & v, const Mat3<T> & m ) {
+		return typename Mat3<T>::ColType( m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
 										  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
 										  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> operator/( const Mat3<T> & m1, const Mat3<T> & m2 ) {
 		return m1 * m2.inverse();
 	}
 
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator/( const Mat3<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator/( const Mat3<T> & m, const T & v ) {
 		return Mat3<T>( m[0] / v, m[1] / v, m[2] / v );
 	}
 
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator/( const U & v, const Mat3<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator/( const T & v, const Mat3<T> & m ) {
 		return Mat3<T>( v / m[0], v / m[1], v / m[2] );
 	}
 
@@ -438,61 +390,71 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Mat3<T> operator+( const Mat3<T> & m1, const Mat3<T> & m2 ) {
 		return Mat3<T>( m1[0] + m2[0], m1[1] + m2[1], m1[2] + m2[2] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator+( const Mat3<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator+( const Mat3<T> & m, const T & v ) {
 		return Mat3<T>( m[0] + v, m[1] + v, m[2] + v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator+( const U & v, const Mat3<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator+( const T & v, const Mat3<T> & m ) {
 		return Mat3<T>( v + m[0], v + m[1], v + m[2] );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> operator-( const Mat3<T> & m1, const Mat3<T> & m2 ) {
 		return Mat3<T>( m1[0] - m2[0], m1[1] - m2[1], m1[2] - m2[2] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator-( const Mat3<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator-( const Mat3<T> & m, const T & v ) {
 		return Mat3<T>( m[0] - v, m[1] - v, m[2] - v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator-( const U & v, const Mat3<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator-( const T & v, const Mat3<T> & m ) {
 		return Mat3<T>( v - m[0], v - m[1], v - m[2] );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> operator >> ( const Mat3<T> & m1, const Mat3<T> & m2 ) {
 		return Mat3<T>( m1[0] >> m2[0], m1[1] >> m2[1], m1[2] >> m2[2] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator >> ( const Mat3<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator >> ( const Mat3<T> & m, const T & v ) {
 		return Mat3<T>( m[0] >> v, m[1] >> v, m[2] >> v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator >> ( const U & v, const Mat3<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator >> ( const T & v, const Mat3<T> & m ) {
 		return Mat3<T>( v >> m[0], v >> m[1], v >> m[2] );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat3<T> operator<<( const Mat3<T> & m1, const Mat3<T> & m2 ) {
 		return Mat3<T>( m1[0] << m2[0], m1[1] << m2[1], m1[2] << m2[2] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator<<( const Mat3<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator<<( const Mat3<T> & m, const T & v ) {
 		return Mat3<T>( m[0] << v, m[1] << v, m[2] << v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat3<T> operator<<( const U & v, const Mat3<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator<<( const T & v, const Mat3<T> & m ) {
 		return Mat3<T>( v << m[0], v << m[1], v << m[2] );
 	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator%( const Mat3<T> & m1, const Mat3<T> & m2 ) {
+		return Mat3<T>( m1[0] % m2[0], m1[1] % m2[1], m1[2] % m2[2] );
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator%( const Mat3<T> & m, const T & v ) {
+		return Mat3<T>( m[0] % v, m[1] % v, m[2] % v );
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat3<T> operator%( const T & v, const Mat3<T> & m ) {
+		return Mat3<T>( v % m[0], v % m[1], v % m[2] );
+	}
+
+
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat3<T>::operator BasicString<U>() const {
+		return toString();
+	}
+
+
 
 
 	template<typename T>

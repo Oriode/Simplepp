@@ -36,7 +36,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc::Template
 		struct Min : public Template {
 			template<typename T> inline void operator()( ColorR<T> & color, const T & max ) {
-				color = Math::min( color, max );
+				color.r = Math::min( color.r, max );
 			}
 
 			template<typename T> inline void operator()( ColorRGB<T> & color, const T & max ) {
@@ -57,7 +57,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc::Template
 		struct Max : public Template {
 			template<typename T> inline void operator()( ColorR<T> & color, const T & max ) {
-				color = Math::max( color, T( 0 ) );
+				color.r = Math::max( color.r, T( 0 ) );
 			}
 
 			template<typename T> inline void operator()( ColorRGB<T> & color, const T & max ) {
@@ -78,7 +78,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc::Template
 		struct Clamp : public Template {
 			template<typename T> inline void operator()( ColorR<T> & color, const T & max ) {
-				color = Math::clamp( color, T( 0 ), max );
+				color.r = Math::clamp( color.r, T( 0 ), max );
 			}
 
 			template<typename T> inline void operator()( ColorRGB<T> & color, const T & max ) {
@@ -99,7 +99,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc::Template
 		struct Abs : public Template {
 			template<typename T> inline void operator()( ColorR<T> & color, const T & max ) {
-				color = Math::abs( color );
+				color.r = Math::abs( color.r );
 			}
 
 			template<typename T> inline void operator()( ColorRGB<T> & color, const T & max ) {
@@ -120,7 +120,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc::Template
 		struct AbsClamp : public Template {
 			template<typename T> inline void operator()( ColorR<T> & color, const T & max ) {
-				color = Math::min( Math::abs( color ), max );
+				color.r = Math::min( Math::abs( color.r ), max );
 			}
 
 			template<typename T> inline void operator()( ColorRGB<T> & color, const T & max ) {

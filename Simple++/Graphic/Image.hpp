@@ -20,7 +20,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	_Image<T>::_Image( const _Image<T> & image ) :
+	_Image<T>::_Image( const _Image<T> & image, bool normalize ) :
 		format( image.format ),
 		size( image.size ),
 		nbPixels( image.nbPixels ) {
@@ -37,30 +37,45 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C>
-	_Image<T>::_Image( const _Image<C> & image ) :
+	_Image<T>::_Image( const _Image<C> & image, bool normalize ) :
 		format( image.getFormat() ),
 		size( image.getSize() ),
 		nbPixels( image.getNbPixels() ) {
 		if ( this -> nbPixels ) {
 			size_t nbComponents = this -> nbPixels * getNbComponents();
 			this -> buffer = new T[nbComponents];
-
-
-			auto thisIt = this -> buffer;
-			auto otherIt = image.getDatas();
-
-			for ( size_t i = 0; i < nbComponents; i++ ) {
-				_castComponment( thisIt, otherIt );
-				thisIt++;
-				otherIt++;
-			}
-
+			_toType( this -> buffer, image.getDatas(), true );
 		} else {
 			this -> buffer = NULL;
 		}
 	}
 
+	template<typename T>
+	template<typename C>
+	void _Image<T>::_toType( T * bufferDest, const C * bufferSrc, bool normalize ) {
+		size_t nbComponents( getNbComponents() * getNbPixels() );
+		if ( normalize ) {
+			for ( size_t i( 0 ); i < nbComponents; i++ ) {
+				const C & colorSrc( bufferSrc[0] );
+				T & colorDst( bufferDest[0] );
 
+				Color<T>::castComponent( colorDst, colorSrc );
+
+				bufferDest++;
+				bufferSrc++;
+			}
+		} else {
+			for ( size_t i( 0 ); i < nbComponents; i++ ) {
+				const C & colorSrc( bufferSrc[0] );
+				T & colorDst( bufferDest[0] );
+
+				colorDst = T( colorSrc );
+
+				bufferDest++;
+				bufferSrc++;
+			}
+		}
+	}
 
 	template<typename T>
 	_Image<T>::_Image( _Image<T> && image ) :
@@ -117,15 +132,15 @@ namespace Graphic {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
 								for ( Size x = 0; x < size.x; x++ ) {
-									_castComponment( thisIt2[0], otherIt2[2] );
-									_castComponment( thisIt2[1], otherIt2[1] );
-									_castComponment( thisIt2[2], otherIt2[0] );
+									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
+									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
+									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
 
 									thisIt2 += 3;
 									otherIt2 += 3;
 								}
 								thisIt += nbComponentsPerRow;
-								otherIt = ( const U* ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
+								otherIt = ( const U * ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
 							}
 						} else {
 							auto otherIt = data;
@@ -134,9 +149,9 @@ namespace Graphic {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
 								for ( Size x = 0; x < size.x; x++ ) {
-									_castComponment( thisIt2[0], otherIt2[2] );
-									_castComponment( thisIt2[1], otherIt2[1] );
-									_castComponment( thisIt2[2], otherIt2[0] );
+									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
+									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
+									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
 
 									thisIt2 += 3;
 									otherIt2 += 3;
@@ -156,10 +171,10 @@ namespace Graphic {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
 								for ( Size x = 0; x < size.x; x++ ) {
-									_castComponment( thisIt2[0], otherIt2[2] );
-									_castComponment( thisIt2[1], otherIt2[1] );
-									_castComponment( thisIt2[2], otherIt2[0] );
-									_castComponment( thisIt2[3], otherIt2[3] );
+									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
+									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
+									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
+									Color<T>::castComponent( thisIt2[3], otherIt2[3] );
 
 									thisIt2 += 4;
 									otherIt2 += 4;
@@ -174,10 +189,10 @@ namespace Graphic {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
 								for ( Size x = 0; x < size.x; x++ ) {
-									_castComponment( thisIt2[0], otherIt2[2] );
-									_castComponment( thisIt2[1], otherIt2[1] );
-									_castComponment( thisIt2[2], otherIt2[0] );
-									_castComponment( thisIt2[3], otherIt2[3] );
+									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
+									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
+									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
+									Color<T>::castComponent( thisIt2[3], otherIt2[3] );
 
 									thisIt2 += 4;
 									otherIt2 += 4;
@@ -199,7 +214,7 @@ namespace Graphic {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
 								for ( Size x = 0; x < nbComponentsPerRow; x++ ) {
-									_castComponment( thisIt2[0], otherIt2[0] );
+									Color<T>::castComponent( thisIt2[0], otherIt2[0] );
 									thisIt2++;
 									otherIt2++;
 								}
@@ -215,7 +230,7 @@ namespace Graphic {
 									auto thisIt2 = thisIt;
 									auto otherIt2 = otherIt;
 									for ( Size x = 0; x < nbComponentsPerRow; x++ ) {
-										_castComponment( thisIt2[0], otherIt2[0] );
+										Color<T>::castComponent( thisIt2[0], otherIt2[0] );
 										thisIt2++;
 										otherIt2++;
 									}
@@ -385,16 +400,16 @@ namespace Graphic {
 	void Graphic::_Image<T>::setPixel( Size x, Size y, const T * p ) {
 		switch ( this -> format ) {
 			case Format::R:
-				getDatas()[( this -> size.x * y + x ) * this -> format] = *p;
+				getDatas()[( this -> size.x * y + x )] = *p;
 				break;
 			case Format::RGB:
-				size_t offset = ( this -> size.x * y + x ) * this -> format;
+				size_t offset = ( this -> size.x * y + x ) * 3;
 				getDatas()[offset + 0] = *( p + 0 );
 				getDatas()[offset + 1] = *( p + 1 );
 				getDatas()[offset + 2] = *( p + 2 );
 				break;
 			case Format::RGBA:
-				size_t offset = ( this -> size.x * y + x ) * this -> format;
+				size_t offset = ( this -> size.x * y + x ) * 4;
 				getDatas()[offset + 0] = *( p + 0 );
 				getDatas()[offset + 1] = *( p + 1 );
 				getDatas()[offset + 2] = *( p + 2 );
@@ -523,20 +538,14 @@ namespace Graphic {
 		this -> nbPixels = image.getNbPixels();
 		this -> format = image.getFormat();
 
+		//TODO copy constructor & operator= should copy format ! 
+
 
 		if ( this -> nbPixels ) {
 			size_t nbComponents = this -> nbPixels * getNbComponents();
 			this -> buffer = new T[nbComponents];
 
-
-			auto thisIt = this -> buffer;
-			auto otherIt = image.getDatas();
-
-			for ( size_t i = 0; i < nbComponents; i++ ) {
-				_castComponment( thisIt, otherIt );
-				thisIt++;
-				otherIt++;
-			}
+			_toType( this -> buffer, image.getDatas(), true );
 
 		} else {
 			this -> buffer = NULL;
@@ -1430,7 +1439,7 @@ namespace Graphic {
 				auto otherIt2 = otherIt;
 				auto maskIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					blendFunc( *( thisIt2 ), *( otherIt2 ), *( maskIt2 ) );
+					blendFunc( *( thisIt2 ), *( otherIt2 ), ( *( maskIt2 ) ).r );
 					thisIt2++;
 					otherIt2++;
 					maskIt2++;
@@ -1507,7 +1516,7 @@ namespace Graphic {
 				auto maskIt2 = maskIt;
 				auto maxIt = thisIt + sizeOffset;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
-					blendFunc( *( ( C1* ) thisIt2 ), *( ( C2* ) otherIt2 ), *( ( ColorR<T>* ) maskIt2 ) );
+					blendFunc( *( ( C1* ) thisIt2 ), *( ( C2* ) otherIt2 ), ( *( ( ColorR<T>* ) maskIt2 ) ).r );
 					thisIt2 += N1;
 					otherIt2 += N2;
 					maskIt2 += maskImage.getNbComponents();
@@ -1605,7 +1614,7 @@ namespace Graphic {
 				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
 					if ( *( otherIt2 ) != T( 0 ) ) {
-						blendFunc( *( thisIt2 ), colorFunc( i ), *( otherIt2 ) );
+						blendFunc( *( thisIt2 ), colorFunc( i ), ( *( otherIt2 ) ).r );
 					}
 					otherIt2++;
 					thisIt2++;
@@ -1660,7 +1669,7 @@ namespace Graphic {
 				auto otherIt2 = maskIt;
 				for ( i.x = 0; i.x < size.x; i.x++ ) {
 					if ( *( ( ColorR<T>* ) otherIt2 ) != T( 0 ) ) {
-						blendFunc( *( thisIt2 ), colorFunc( i ), *( otherIt2 ) );
+						blendFunc( *( thisIt2 ), colorFunc( i ), ( *( otherIt2 ) ).r );
 					}
 					otherIt2++;
 					thisIt2++;
@@ -1676,55 +1685,6 @@ namespace Graphic {
 
 
 
-	template<typename T /*= unsigned char*/>
-	constexpr T _Image<T>::getComponentMaxValue() {
-		return Utility::TypesInfos<T>::getMax();
-	}
-
-	template<>
-	constexpr float _Image<float>::getComponentMaxValue() {
-		return 1.0f;
-	}
-
-	template<>
-	constexpr double _Image<double>::getComponentMaxValue() {
-		return 1.0;
-	}
-
-
-
-	template<typename T /*= unsigned char*/>
-	constexpr T _Image<T>::getComponentMinValue() {
-		return T( 0 );
-	}
-
-
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_castComponment( unsigned char * dest, const float * source ) {
-		( *dest ) = ( unsigned char ) ( *( source ) * 255.0f );
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_castComponment( unsigned char * dest, const double * source ) {
-		( *dest ) = ( unsigned char ) ( *( source ) * 255.0 );
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_castComponment( float * dest, const unsigned char * source ) {
-		( *dest ) = ( ( float ) *( source ) ) / 255.0f;
-	}
-
-	template<typename T /*= unsigned char*/>
-	void _Image<T>::_castComponment( double * dest, const unsigned char * source ) {
-		( *dest ) = ( ( double ) *( source ) ) / 255.0;
-	}
-
-	template<typename T>
-	template<typename C, typename D>
-	void _Image<T>::_castComponment( D * dest, const C * source ) {
-		*( dest ) = D( *( source ) );
-	}
 
 
 
@@ -1777,10 +1737,10 @@ namespace Graphic {
 		computeSobel1Kernel( sobelKernel1 );
 		computeSobel2Kernel( sobelKernel2 );
 
-		_Image<F> imageCasted( *this );
+		_Image<F> imageCasted( *this, false );
 
-		_Image<F> imageHori( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, _Image<F>::ConvolutionOrder::HorizontalVertical, _Image<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ) );
-		_Image<F> imageVert( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, _Image<F>::ConvolutionOrder::VerticalHorizontal, _Image<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ) );
+		_Image<F> imageHori( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, _Image<F>::ConvolutionOrder::HorizontalVertical, _Image<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ), false );
+		_Image<F> imageVert( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, _Image<F>::ConvolutionOrder::VerticalHorizontal, _Image<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ), false );
 
 		F * imageHoriIt( imageHori.getDatas() );
 		F * imageVertIt( imageVert.getDatas() );
@@ -1792,12 +1752,12 @@ namespace Graphic {
 			F & imageVertPix( imageVertIt[0] );
 
 			F dist( Math::sqrt( imageHoriPix * imageHoriPix + imageVertPix * imageVertPix ) );
-			imageVertIt[0] = T( Math::min<F>( dist / T( 2 ), F( getComponentMaxValue() ) ) );
+			imageVertIt[0] = T( Math::min<F>( dist / F( 2 ), F( Color<T>::getMax() ) ) );
 
 			imageHoriIt++;
 			imageVertIt++;
 		}
-		return imageVert;
+		return _Image<T>( imageVert, false );
 	}
 
 
@@ -1934,7 +1894,7 @@ namespace Graphic {
 			C2 * imageBorderIt = ( ( C2 * ) imageBorder.getDatas() );
 			C2 * imageExtendedIt = ( ( C2 * ) imageExtended.getDatas() );
 
-			constexpr F max( ( 1 << _Image<T1>::getKernelSumNbBits<F>() ) * _Image<T1>::getComponentMaxValue() );
+			constexpr F max( ( 1 << _Image<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
 
 			for ( typename Math::Vec2<Size>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
 				auto imageExtendedIt2 = imageBorderIt;
@@ -2054,7 +2014,7 @@ namespace Graphic {
 			C2 * imageBorderIt = ( ( C2 * ) imageBorder.getDatas() );
 			C2 * imageExtendedIt = ( ( C2 * ) imageExtended.getDatas() );
 
-			constexpr F max( 1.0f * _Image<T1>::getComponentMaxValue() );
+			constexpr F max( 1.0f * Color<T1>::getMax() );
 
 			for ( typename Math::Vec2<Size>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
@@ -2184,7 +2144,7 @@ namespace Graphic {
 			}
 		}
 
-		constexpr F max( ( 1 << _Image<T1>::getKernelSumNbBits<F>() ) * _Image<T1>::getComponentMaxValue() );
+		constexpr F max( ( 1 << _Image<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
 
 		{
 			C2 * imageFilter1It;
@@ -2381,7 +2341,7 @@ namespace Graphic {
 			}
 		}
 
-		constexpr F max( 1.0 * _Image<T1>::getComponentMaxValue() );
+		constexpr F max( 1.0 * Color<T1>::getMax() );
 
 		{
 			C2 * imageFilter1It;
@@ -2486,195 +2446,76 @@ namespace Graphic {
 
 
 
-	template<typename T /*= unsigned char*/>
-	_Image<T> _Image<T>::toFormat( Format newFormat, ConversionMode conversionMode ) const {
-		_Image<T> newImage( getSize(), newFormat );
-
-		switch ( getFormat() ) {
+	template<typename T>
+	template<typename ConvertFunc>
+	_Image<T> _Image<T>::toFormat( Format newFormat, ConvertFunc & convertFunc ) const {
+		switch ( newFormat ) {
 			case Format::R:
 				{
-
-					switch ( newFormat ) {
-						case Format::R:
-							{		// R -> R
-								Vector<T>::copy( newImage.buffer, this -> buffer, getNbPixels() * getNbComponents() );
-								break;
-							}
-						case Format::RGB:
-							{	// R -> RGB
-								auto thisIt = this -> buffer;
-								auto otherIt = newImage.getDatas();
-								auto maxIt = thisIt + getNbPixels() * getNbComponents();
-
-								for ( ; thisIt < maxIt; ) {
-									otherIt[0] = thisIt[0];
-									otherIt[1] = thisIt[0];
-									otherIt[2] = thisIt[0];
-
-									thisIt += getNbComponents();
-									otherIt += newImage.getNbComponents();
-								}
-								break;
-							}
-						case Format::RGBA:
-							{	//R -> RGBA
-								auto thisIt = this -> buffer;
-								auto otherIt = newImage.getDatas();
-								auto maxIt = thisIt + getNbPixels() * getNbComponents();
-
-								for ( ; thisIt < maxIt; ) {
-									otherIt[0] = thisIt[0];
-									otherIt[1] = thisIt[0];
-									otherIt[2] = thisIt[0];
-									otherIt[3] = getComponentMaxValue();
-
-									thisIt += getNbComponents();
-									otherIt += newImage.getNbComponents();
-								}
-								break;
-							}
+					switch ( this -> format ) {
+						case Format::R: 	//Convert R -> R
+							return _toFormat<ColorR<T>, ColorR<T>, ConvertFunc>( newFormat, convertFunc );
+						case Format::RGB: 	//Convert RGB -> R
+							return _toFormat<ColorR<T>, ColorRGB<T>, ConvertFunc>( newFormat, convertFunc );
+						case Format::RGBA: 	//Convert RGBA -> R
+							return _toFormat<ColorR<T>, ColorRGBA<T>, ConvertFunc>( newFormat, convertFunc );
 					}
-
-
-					break;
 				}
 			case Format::RGB:
 				{
-
-					switch ( newFormat ) {
-						case Format::R:
-							{		// RGB -> R
-								auto thisIt = this -> buffer;
-								auto otherIt = newImage.getDatas();
-								auto maxIt = thisIt + getNbPixels() * getNbComponents();
-
-								switch ( conversionMode ) {
-									case ConversionMode::Alpha:
-										for ( ; thisIt < maxIt; ) {
-											otherIt[0] = getComponentMaxValue();
-											thisIt += getNbComponents();
-											otherIt += newImage.getNbComponents();
-										}
-
-										break;
-									case ConversionMode::Luminance:
-										{
-											for ( ; thisIt < maxIt; ) {
-												BlendingFunc::Normal::blendColor( *( ( ColorR<T>* )otherIt ), *( ( ColorRGB<T>* )thisIt ) );
-												thisIt += getNbComponents();
-												otherIt += newImage.getNbComponents();
-											}
-										}
-									case ConversionMode::Trunquate:
-										{
-											for ( ; thisIt < maxIt; ) {
-												otherIt[0] = thisIt[0];
-												thisIt += getNbComponents();
-												otherIt += newImage.getNbComponents();
-											}
-										}
-									default:
-										break;
-								}
-
-
-								break;
-							}
-						case Format::RGB:
-							{	// RGB -> RGB
-								Vector<T>::copy( newImage.buffer, this -> buffer, getNbPixels() * getNbComponents() );
-								break;
-							}
-						case Format::RGBA:
-							{	//RGB -> RGBA
-								auto thisIt = this -> buffer;
-								auto otherIt = newImage.getDatas();
-								auto maxIt = thisIt + getNbPixels() * getNbComponents();
-
-								for ( ; thisIt < maxIt; ) {
-									BlendingFunc::Normal::blendColor( *( ( ColorRGBA<T>* )otherIt ), *( ( ColorRGB<T>* )thisIt ) );
-									thisIt += getNbComponents();
-									otherIt += newImage.getNbComponents();
-								}
-								break;
-							}
+					switch ( this -> format ) {
+						case Format::R: 	//Convert R -> RGB
+							return _toFormat<ColorRGB<T>, ColorR<T>, ConvertFunc>( newFormat, convertFunc );
+						case Format::RGB: 	//Convert RGB -> RGB
+							return _toFormat<ColorRGB<T>, ColorRGB<T>, ConvertFunc>( newFormat, convertFunc );
+						case Format::RGBA: 	//Convert RGBA -> RGB
+							return _toFormat<ColorRGB<T>, ColorRGBA<T>, ConvertFunc>( newFormat, convertFunc );
 					}
-
-					break;
 				}
 			case Format::RGBA:
 				{
-
-					switch ( newFormat ) {
-						case Format::R:
-							{		// RGBA -> R
-								auto thisIt = this -> buffer;
-								auto otherIt = newImage.getDatas();
-								auto maxIt = thisIt + getNbPixels() * getNbComponents();
-
-								switch ( conversionMode ) {
-									case ConversionMode::Alpha:
-										for ( ; thisIt < maxIt; ) {
-											otherIt[0] = thisIt[3];
-											otherIt += newImage.getNbComponents();
-										}
-
-										break;
-									case ConversionMode::Luminance:
-										{
-											for ( ; thisIt < maxIt; ) {
-												BlendingFunc::Normal::blendColor( *( ( ColorR<T>* )otherIt ), *( ( ColorRGB<T>* )thisIt ) );
-												thisIt += getNbComponents();
-												otherIt += newImage.getNbComponents();
-											}
-										}
-									case ConversionMode::Trunquate:
-										{
-											for ( ; thisIt < maxIt; ) {
-												otherIt[0] = thisIt[0];
-												thisIt += getNbComponents();
-												otherIt += newImage.getNbComponents();
-											}
-										}
-									default:
-										break;
-								}
-
-
-								break;
-							}
-						case Format::RGB:
-							{	// RGBA -> RGB
-								auto thisIt = this -> buffer;
-								auto otherIt = newImage.getDatas();
-								auto maxIt = thisIt + getNbPixels() * getNbComponents();
-
-								for ( ; thisIt < maxIt; ) {
-									otherIt[0] = thisIt[0];
-									otherIt[1] = thisIt[1];
-									otherIt[2] = thisIt[2];
-
-									thisIt += getNbComponents();
-									otherIt += newImage.getNbComponents();
-								}
-								break;
-							}
-						case Format::RGBA:
-							{	//RGBA -> RGBA
-								Vector<T>::copy( newImage.buffer, this -> buffer, getNbPixels() * getNbComponents() );
-								break;
-							}
+					switch ( this -> format ) {
+						case Format::R: 	//Convert R -> RGBA
+							return _toFormat<ColorRGBA<T>, ColorR<T>, ConvertFunc>( newFormat, convertFunc );
+						case Format::RGB: 	//Convert RGB -> RGBA
+							return _toFormat<ColorRGBA<T>, ColorRGB<T>, ConvertFunc>( newFormat, convertFunc );
+						case Format::RGBA: 	//Convert RGBA -> RGBA
+							return _toFormat<ColorRGBA<T>, ColorRGBA<T>, ConvertFunc>( newFormat, convertFunc );
 					}
-					break;
 				}
 		}
+	}
 
 
+	template<typename T>
+	template<typename C1, typename C2, typename ConvertFunc>
+	_Image<T> _Image<T>::_toFormat( Format newFormat, ConvertFunc & convertFunc ) const {
+		_Image<T> newImage( getSize(), newFormat );
+
+		C1 * newImageIt0 = ( C1 * ) newImage.getDatas();
+		C2 * thisImageIt0 = ( C2 * ) this -> buffer;
+
+		_toFormat<C1, C2, ConvertFunc>( newImageIt0, thisImageIt0, convertFunc );
 
 		return newImage;
-
-
 	}
+
+	template<typename T>
+	template<typename C1, typename C2, typename ConvertFunc>
+	void _Image<T>::_toFormat( C1 * bufferDst, const C2 * bufferSrc, ConvertFunc & convertFunc ) const {
+		size_t nbPixels( getNbPixels() );
+		for ( size_t i( 0 ); i < nbPixels; i++ ) {
+
+			C1 & colorDst( bufferDst[0] );
+			const C2 & colorSrc( bufferSrc[0] );
+
+			convertFunc( colorDst, colorSrc );
+			//TODO memory leak near here
+			bufferDst++;
+			bufferSrc++;
+		}
+	}
+
 
 	template<typename T /*= unsigned char*/>
 	unsigned int Graphic::_Image<T>::getNbComponents() const {
@@ -3288,7 +3129,7 @@ namespace Graphic {
 
 				if ( i.x >= 0 ) {
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				it0++;
 				i.x++;
@@ -3312,7 +3153,7 @@ namespace Graphic {
 
 					it0 = p0It + i.x;
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0++;
 					i.x++;
 					max = i.x + thicknessMinusOne;
@@ -3352,7 +3193,7 @@ namespace Graphic {
 
 				if ( i.x >= 0 ) {
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				it0++;
 				i.x++;
@@ -3376,7 +3217,7 @@ namespace Graphic {
 
 					it0 = p0It + i.x;
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0++;
 					i.x++;
 					max = i.x + thicknessMinusOne;
@@ -3418,7 +3259,7 @@ namespace Graphic {
 				auto it0 = p0It + i.y * thisRow;
 				if ( i.y >= 0 ) {
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				i.y++;
 				it0 += thisRow;
@@ -3442,7 +3283,7 @@ namespace Graphic {
 
 					it0 = p0It + i.y * thisRow;
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0 += thisRow;
 					i.y++;
 					max = i.y + thicknessMinusOne;
@@ -3482,7 +3323,7 @@ namespace Graphic {
 				auto it0 = p0It + i.y * thisRow;
 				if ( i.y >= 0 ) {
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				i.y++;
 				it0 += thisRow;
@@ -3506,7 +3347,7 @@ namespace Graphic {
 
 					it0 = p0It + i.y * thisRow;
 					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
-					blendFunc( *it0, colorFunc( i ), Utility::TypesInfos<T>::getMax() - interyFPart );
+					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0 += thisRow;
 					i.y++;
 					max = i.y + thicknessMinusOne;
@@ -4187,15 +4028,15 @@ namespace Graphic {
 		struct ThresholdingOutside {
 			ThresholdingOutside( const T & threshold, const ColorR<DistanceType> & trueColor, const ColorR<DistanceType> & falseColor ) : trueColor( trueColor ), falseColor( falseColor ), threshold( threshold ) {}
 			inline void operator()( ColorR<DistanceType> & out, const ColorR<T> & in ) {
-				if ( in > threshold )		BlendingFunc::None::blendColor( out, this -> trueColor - ( in ) / T( _Image<T>::getComponentMaxValue() / 5 ) );
+				if ( in > threshold )		BlendingFunc::None::blendColor( out, this -> trueColor - ( in.r ) / T( Color<T>::getMax() / 5 ) );
 				else					BlendingFunc::None::blendColor( out, this -> falseColor );
 			};
 			inline void operator()( ColorR<DistanceType> & out, const ColorRGB<T> & in ) {
-				if ( in.r > threshold )		BlendingFunc::None::blendColor( out, this -> trueColor - ( in.r ) / T( _Image<T>::getComponentMaxValue() / 5 ) );
+				if ( in.r > threshold )		BlendingFunc::None::blendColor( out, this -> trueColor - ( in.r ) / T( Color<T>::getMax() / 5 ) );
 				else					BlendingFunc::None::blendColor( out, this -> falseColor );
 			}
 			inline void operator()( ColorR<DistanceType> & out, const ColorRGBA<T> & in ) {
-				if ( in.a > threshold )		BlendingFunc::None::blendColor( out, this -> trueColor - ( in.a ) / T( _Image<T>::getComponentMaxValue() / 5 ) );
+				if ( in.a > threshold )		BlendingFunc::None::blendColor( out, this -> trueColor - ( in.a ) / T( Color<T>::getMax() / 5 ) );
 				else					BlendingFunc::None::blendColor( out, this -> falseColor );
 			}
 			T threshold;
@@ -4206,15 +4047,15 @@ namespace Graphic {
 		struct ThresholdingInside {
 			ThresholdingInside( const T & threshold, const ColorR<DistanceType> & trueColor, const ColorR<DistanceType> & falseColor ) : trueColor( trueColor ), falseColor( falseColor ), threshold( threshold ) {}
 			inline void operator()( ColorR<DistanceType> & out, const ColorR<T> & in ) {
-				if ( in < threshold )		BlendingFunc::None::blendColor( out, this -> trueColor + ( in ) / T( _Image<T>::getComponentMaxValue() / 5 ) );
+				if ( in < threshold )		BlendingFunc::None::blendColor( out, this -> trueColor + ( in.r ) / T( Color<T>::getMax() / 5 ) );
 				else					BlendingFunc::None::blendColor( out, this -> falseColor );
 			};
 			inline void operator()( ColorR<DistanceType> & out, const ColorRGB<T> & in ) {
-				if ( in.r < threshold )		BlendingFunc::None::blendColor( out, this -> trueColor + ( in.r ) / T( _Image<T>::getComponentMaxValue() / 5 ) );
+				if ( in.r < threshold )		BlendingFunc::None::blendColor( out, this -> trueColor + ( in.r ) / T( Color<T>::getMax() / 5 ) );
 				else					BlendingFunc::None::blendColor( out, this -> falseColor );
 			}
 			inline void operator()( ColorR<DistanceType> & out, const ColorRGBA<T> & in ) {
-				if ( in.a < threshold )		BlendingFunc::None::blendColor( out, this -> trueColor + ( in.a ) / T( _Image<T>::getComponentMaxValue() / 5 ) );
+				if ( in.a < threshold )		BlendingFunc::None::blendColor( out, this -> trueColor + ( in.a ) / T( Color<T>::getMax() / 5 ) );
 				else					BlendingFunc::None::blendColor( out, this -> falseColor );
 			}
 			T threshold;
@@ -4261,7 +4102,7 @@ namespace Graphic {
 
 
 
-				DistanceType & v = *it22;
+				DistanceType & v( ( *it22 ).r );
 
 				//if ( v < d5 ) return;
 
@@ -4270,13 +4111,13 @@ namespace Graphic {
 				auto it32 = it22 + offset;
 
 
-				t = it12[0] + d5;
+				t = it12[0].r + d5;
 				if ( v > t ) v = t;
-				t = it22[-1] + d5;
+				t = it22[-1].r + d5;
 				if ( v > t ) v = t;
-				t = it22[1] + d5;
+				t = it22[1].r + d5;
 				if ( v > t ) v = t;
-				t = it32[0] + d5;
+				t = it32[0].r + d5;
 				if ( v > t ) v = t;
 
 				//if ( v < d7 ) return;
@@ -4286,13 +4127,13 @@ namespace Graphic {
 
 
 
-				t = it11[0] + d7;
+				t = it11[0].r + d7;
 				if ( v > t ) v = t;
-				t = it12[1] + d7;
+				t = it12[1].r + d7;
 				if ( v > t ) v = t;
-				t = it31[0] + d7;
+				t = it31[0].r + d7;
 				if ( v > t ) v = t;
-				t = it32[1] + d7;
+				t = it32[1].r + d7;
 				if ( v > t ) v = t;
 
 				//if ( v < d10 ) return;
@@ -4300,40 +4141,43 @@ namespace Graphic {
 				auto it01 = it11 - offset;
 				auto it41 = it31 + offset;
 
-				t = it01[1] + d10;
+				t = it01[1].r + d10;
 				if ( v > t ) v = t;
-				t = it41[1] + d10;
+				t = it41[1].r + d10;
 				if ( v > t ) v = t;
-				t = it22[-2] + d10;
+				t = it22[-2].r + d10;
 				if ( v > t ) v = t;
-				t = it22[2] + d10;
+				t = it22[2].r + d10;
 				if ( v > t ) v = t;
 
 				//if ( v < d11 ) return;
 
-				t = it01[0] + d11;
+				t = it01[0].r + d11;
 				if ( v > t ) v = t;
-				t = it01[2] + d11;
+				t = it01[2].r + d11;
 				if ( v > t ) v = t;
-				t = it41[0] + d11;
+				t = it41[0].r + d11;
 				if ( v > t ) v = t;
-				t = it41[2] + d11;
+				t = it41[2].r + d11;
 				if ( v > t ) v = t;
 
-				t = it11[-1] + d11;
+				t = it11[-1].r + d11;
 				if ( v > t ) v = t;
-				t = it31[-1] + d11;
+				t = it31[-1].r + d11;
 				if ( v > t ) v = t;
-				t = it32[2] + d11;
+				t = it32[2].r + d11;
 				if ( v > t ) v = t;
-				t = it12[2] + d11;
+				t = it12[2].r + d11;
 				if ( v > t ) v = t;
 
 			}
 			unsigned int offset;
 		};
-		ThresholdingOutside thresholdingOutside( T( 0 ), 0, maxValue );
-		ThresholdingInside thresholdingInside( _Image<T>::getComponentMaxValue(), 0, maxValue );
+
+		ColorR<DistanceType> minValue( Color<T>::getMin() );
+
+		ThresholdingOutside thresholdingOutside( T( 0 ), minValue, maxValue );
+		ThresholdingInside thresholdingInside( Color<T>::getMax(), minValue, maxValue );
 
 
 
@@ -4524,7 +4368,7 @@ namespace Graphic {
 			for ( i.x = rectangleClamped.getLeft(); i.x < rectangleClamped.getRight(); i.x++ ) {
 				const ColorR<DistanceType> & r1 = *imageOutsideIt2;
 				const ColorR<DistanceType> & r2 = *imageInsideIt2;
-				DistanceType r = Math::max<DistanceType>( r1, r2 );
+				DistanceType r = Math::max<DistanceType>( r1.r, r2.r );
 
 
 				if ( r <= thicknessScaled ) {
@@ -4796,6 +4640,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void _Image<T>::_drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radiusi, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+		typedef typename FloatType Float;
 		auto clampedRectangle = clampRectangle( rectangle );
 		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
@@ -4811,7 +4656,7 @@ namespace Graphic {
 
 
 
-		float radius2 = float( radiusi * radiusi ) - 0.01f;
+		Float radius2 = Float( radiusi * radiusi ) - Float( 0.01 );
 
 
 		Math::Vec2<Size> rightTopOffset( size.x - radiusi, size.y - radiusi );
@@ -4834,10 +4679,10 @@ namespace Graphic {
 		auto lastY = p.y;
 
 		for ( ; p.x < p.y; p.x++ ) {
-			float x2 = float( p.x * p.x );
-			float intery = Math::sqrt( radius2 - x2 );
+			Float x2( p.x * p.x );
+			Float intery( Math::sqrt( radius2 - x2 ) );
 			p.y = int( intery );
-			float interyFPart = intery - float( p.y );
+			Float interyFPart( intery - Float( p.y ) );
 
 
 
@@ -5055,7 +4900,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void _Image<T>::_drawDiskFunctor( const Point & point, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
-
+		typedef typename FloatType Float;
 		radius = Math::min<float>( radius, this -> size.x / 2 );
 		radius = Math::min<float>( radius, this -> size.y / 2 );
 
@@ -5085,10 +4930,10 @@ namespace Graphic {
 		auto xMid = ( size.x ) / 2;
 
 		for ( ; p.x < p.y; p.x++ ) {
-			float x2 = float( p.x * p.x );
-			float intery = Math::sqrt( radius2 - x2 );
+			Float x2( p.x * p.x );
+			Float intery( Math::sqrt( radius2 - x2 ) );
 			p.y = int( intery );
-			float interyFPart = intery - float( p.y );
+			Float interyFPart( intery - Float( p.y ) );
 
 
 
@@ -5260,11 +5105,11 @@ namespace Graphic {
 	_Image<T> Graphic::_Image<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
 		switch ( getFormat() ) {
 			case Format::R:
-				return _resample<ColorR<T>, ColorR<typename KernelType>>( newSize, resamplingMode );
+				return _resample<ColorR<T>, ColorR<typename KernelType>, ColorR<typename FloatType>, KernelType>( newSize, resamplingMode );
 			case Format::RGB:
-				return _resample<ColorRGB<T>, ColorRGB<typename KernelType>>( newSize, resamplingMode );
+				return _resample<ColorRGB<T>, ColorRGB<typename KernelType>, ColorRGB<typename FloatType>, KernelType>( newSize, resamplingMode );
 			case Format::RGBA:
-				return _resample<ColorRGB<T>, ColorRGB<typename KernelType>>( newSize, resamplingMode );
+				return _resample<ColorRGBA<T>, ColorRGBA<typename KernelType>, ColorRGBA<typename FloatType>, KernelType>( newSize, resamplingMode );
 		}
 	}
 
@@ -5272,8 +5117,10 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename C1, typename Sum>
+	template<typename C, typename ColorSum, typename ColorFloat, typename SumType>
 	_Image<T> _Image<T>::_resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
+		typedef typename FloatType Float;
+
 		if ( newSize.x == this -> size.x && newSize.y == this -> size.y )
 			return *this;
 
@@ -5286,15 +5133,15 @@ namespace Graphic {
 		Math::Vec2<bool> isUpscaling( newSize.x > this -> size.x, newSize.y > this -> size.y );
 
 
-		C1 * thisImageIt0 = ( C1 * ) getDatas();
-		C1 * newImageIt0 = ( C1 * ) newImage.getDatas();
+		C * thisImageIt0 = ( C * ) getDatas();
+		C * newImageIt0 = ( C * ) newImage.getDatas();
 
 
 
 
 		// Lanczos Upscaling is not supported, switched to linear instead
 		if ( isUpscaling.x || isUpscaling.y )
-			resamplingMode = ResamplingMode::Linear;
+			resamplingMode = ResamplingMode::Bilinear;
 
 
 
@@ -5320,13 +5167,13 @@ namespace Graphic {
 							auto thisImageIt1 = thisImageIt0 + j.y * this -> size.y;
 
 							for ( i.x = 0; i.x < newSize.x; i.x++ ) {
-								C1 & newImagePixel = *newImageIt1;
+								C & newImagePixel = *newImageIt1;
 
 								j.x = Size( realPosition.x );
 								realPosition.x += ratio.x;
 
 								auto thisImageIt2 = thisImageIt1 + j.x;
-								C1 & thisImagePixel = *thisImageIt2;
+								C & thisImagePixel = *thisImageIt2;
 								newImagePixel = thisImagePixel;
 
 								newImageIt1++;
@@ -5350,7 +5197,7 @@ namespace Graphic {
 							j0.x = Size( 0 );
 
 							for ( i.x = 0; i.x < this -> size.x; i.x++ ) {
-								const C1 & thisImagePixel = *thisImageIt1;
+								const C & thisImagePixel = *thisImageIt1;
 
 								auto newImageIt2 = newImageIt1 + j0.x;
 								realPosition.x += ratioInverse.x;
@@ -5361,7 +5208,7 @@ namespace Graphic {
 									for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 
 										assert( k.x >= 0 && k.y >= 0 && k.x < newSize.x && k.y < newSize.y );
-										C1 & newImagePixel = *newImageIt3;
+										C & newImagePixel = *newImageIt3;
 										newImagePixel = thisImagePixel;
 
 										newImageIt3++;
@@ -5392,12 +5239,12 @@ namespace Graphic {
 								realPosition.x += ratio.x;
 
 								auto thisImageIt2 = thisImageIt1 + k.x;
-								const C1 & thisImagePixel = *thisImageIt2;
+								const C & thisImagePixel = *thisImageIt2;
 
 								auto newImageIt2 = newImageIt1;
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 									assert( i.x >= 0 && k.y >= 0 && i.x < newSize.x && k.y < newSize.y );
-									C1 & newImagePixel = *newImageIt2;
+									C & newImagePixel = *newImageIt2;
 									newImagePixel = thisImagePixel;
 
 									newImageIt2 += newSize.x;
@@ -5421,7 +5268,7 @@ namespace Graphic {
 							realPosition.y += ratio.y;
 
 							for ( i.x = 0; i.x < this -> size.x; i.x++ ) {
-								const C1 & thisImagePixel = *thisImageIt1;
+								const C & thisImagePixel = *thisImageIt1;
 
 								j0.x = int( realPosition.x );
 								realPosition.x += ratioInverse.x;
@@ -5430,7 +5277,7 @@ namespace Graphic {
 								auto newImageIt2 = newImageIt1 + j0.x;
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 									assert( k.x >= 0 && i.y >= 0 && k.x < newSize.x && i.y < newSize.y );
-									C1 & newImagePixel = *newImageIt2;
+									C & newImagePixel = *newImageIt2;
 									newImagePixel = thisImagePixel;
 									newImageIt2++;
 								}
@@ -5447,7 +5294,7 @@ namespace Graphic {
 				///////////////////////////////////////////
 				//// LINEAR
 				///////////////////////////////////////////
-			case ResamplingMode::Linear:
+			case ResamplingMode::Bilinear:
 				{
 					Math::Vec2<float> ratioInverse( float( newSize.x ) / float( this -> size.x - 1 ), float( newSize.y ) / float( this -> size.y - 1 ) );
 
@@ -5463,12 +5310,12 @@ namespace Graphic {
 							realPosition.y += ratio.y;
 							j1.y = int( realPosition.y );
 
-							C1 * thisImageIt1 = ( ( C1 * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
+							C * thisImageIt1 = ( ( C * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
 
 							realPosition.x = 0.0f;
 
 							for ( i.x = 0; i.x < newSize.x; i.x++ ) {
-								C1 & newImagePixel = *newImageIt1;
+								C & newImagePixel = *newImageIt1;
 
 								j0.x = int( realPosition.x );
 								realPosition.x += ratio.x;
@@ -5476,13 +5323,13 @@ namespace Graphic {
 
 								auto thisImageIt2 = thisImageIt1 + j0.x;
 
-								Sum sum( 0 );
-								T sumFactors = ( j1.x - j0.x ) * ( j1.y - j0.y );
+								ColorSum sum( 0 );
+								SumType sumFactors = ( j1.x - j0.x ) * ( j1.y - j0.y );
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 									auto thisImageIt3 = thisImageIt2;
 									for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-										C1 & thisImagePixel = *thisImageIt3;
-										sum += Sum( thisImagePixel );
+										C & thisImagePixel = *thisImageIt3;
+										sum += ColorSum( thisImagePixel );
 
 										thisImageIt3++;
 									}
@@ -5513,13 +5360,13 @@ namespace Graphic {
 							j1.y = int( realPosition.y );
 
 							kernelSize.y = j1.y - j0.y;
-							float yRelativeIncr = 1.0f / float( kernelSize.y );
+							Float yRelativeIncr = Float( 1.0 ) / Float( kernelSize.y );
 
-							auto newImageIt1 = ( ( C1 * ) ( newImageIt0 ) ) + ( j0.y ) * newSize.x;
+							auto newImageIt1 = ( ( C * ) ( newImageIt0 ) ) + ( j0.y ) * newSize.x;
 
 							realPosition.x = 0.0f;
 							for ( i.x = 0; i.x < maxX; i.x++ ) {
-								C1 & thisImagePixel00 = *( thisImageIt1 );
+								ColorFloat thisImagePixel00( *( thisImageIt1 ) );
 
 								j0.x = int( realPosition.x );
 								realPosition.x += ratioInverse.x;
@@ -5530,30 +5377,30 @@ namespace Graphic {
 								auto newImageIt2 = newImageIt1 + ( j0.x );
 
 								if ( kernelSize.x == 1 && kernelSize.y == 1 ) {
-									C1 & newImagePixel = *newImageIt2;
+									C & newImagePixel = *newImageIt2;
 
-									newImagePixel = thisImagePixel00;
+									newImagePixel = C( thisImagePixel00 );
 								} else {
-									C1 & thisImagePixel10 = *( thisImageIt1 + 1 );
-									C1 & thisImagePixel01 = *( thisImageIt1 + this -> size.x );
-									C1 & thisImagePixel11 = *( thisImageIt1 + this -> size.x + 1 );
+									ColorFloat thisImagePixel10( *( thisImageIt1 + 1 ) );
+									ColorFloat thisImagePixel01( *( thisImageIt1 + this -> size.x ) );
+									ColorFloat thisImagePixel11( *( thisImageIt1 + this -> size.x + 1 ) );
 
-									float xRelativeIncr = 1.0f / float( kernelSize.x );
+									Float xRelativeIncr = Float( 1.0 ) / Float( kernelSize.x );
 
-									float yRelative( 0 );
+									Float yRelative( 0 );
 
 									for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 										auto newImageIt3 = newImageIt2;
-										float yRelativeInverse = 1.0f - yRelative;
-										C1 avg1( ( thisImagePixel00 ) * yRelativeInverse + ( thisImagePixel01 ) * yRelative );
-										C1 avg2( ( thisImagePixel10 ) * yRelativeInverse + ( thisImagePixel11 ) * yRelative );
+										Float yRelativeInverse = Float( 1.0 ) - yRelative;
+										ColorFloat avg1( ( thisImagePixel00 ) * yRelativeInverse + ( thisImagePixel01 ) * yRelative );
+										ColorFloat avg2( ( thisImagePixel10 ) * yRelativeInverse + ( thisImagePixel11 ) * yRelative );
 
-										float xRelative( 0 );
+										Float xRelative( 0 );
 										for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-											float xRelativeInverse = 1.0f - xRelative;
-											Sum avg3( avg1 * xRelativeInverse + avg2 * xRelative );
+											Float xRelativeInverse = Float( 1.0 ) - xRelative;
+											ColorSum avg3( avg1 * xRelativeInverse + avg2 * xRelative );
 
-											C1 & newImagePixel = *( newImageIt3 );
+											C & newImagePixel = *( newImageIt3 );
 											newImagePixel = avg3;
 
 											xRelative += xRelativeIncr;
@@ -5572,8 +5419,8 @@ namespace Graphic {
 						Math::Vec2<int> i, j0, j1, k;
 						Math::Vec2<float> realPosition( 0, 0 );
 						Math::Vec2<int> kernelSize;
-						C1 avg;
-						C1 * lastAvg = new C1[newSize.x];
+						ColorFloat avg;
+						ColorFloat * lastAvg = new ColorFloat[newSize.x];
 
 						// First we gonna initialize the lastAvgBuffer with the average on the first line.
 						{
@@ -5584,14 +5431,14 @@ namespace Graphic {
 								j1.x = int( realPosition.x );
 
 								auto thisImageIt1 = thisImageIt0 + j0.x;
-								Sum sum( 0 );
-								T sumFactors = ( j1.x - j0.x );
+								ColorSum sum( 0 );
+								SumType sumFactors = ( j1.x - j0.x );
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-									C1 & thisImagePixel = *thisImageIt1;
-									sum += Sum( thisImagePixel );
+									C & thisImagePixel = *thisImageIt1;
+									sum += ColorSum( thisImagePixel );
 									thisImageIt1++;
 								}
-								*lastAvgIt = C1( sum / sumFactors );
+								*lastAvgIt = ColorFloat( sum / sumFactors );
 								lastAvgIt++;
 							}
 						}
@@ -5610,7 +5457,7 @@ namespace Graphic {
 							kernelSize.y = j1.y - j0.y;
 							float yRelativeIncr = 1.0f / float( kernelSize.y );
 
-							auto newImageIt1 = ( ( C1 * ) ( newImageIt0 ) ) + ( j0.y ) * newSize.x;
+							auto newImageIt1 = ( ( C * ) ( newImageIt0 ) ) + ( j0.y ) * newSize.x;
 
 							auto lastAvgIt = lastAvg;
 							for ( i.x = 0; i.x < newSize.x; i.x++ ) {
@@ -5622,23 +5469,23 @@ namespace Graphic {
 
 
 								// Now compute the sum of the downscaling.
-								Sum sum( 0 );
-								T sumFactors = ( j1.x - j0.x );
+								ColorSum sum( 0 );
+								SumType sumFactors = ( j1.x - j0.x );
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-									C1 & thisImagePixel = *thisImageIt2;
-									sum += Sum( thisImagePixel );
+									C & thisImagePixel = *thisImageIt2;
+									sum += ColorSum( thisImagePixel );
 									thisImageIt2++;
 								}
-								avg = C1( sum / sumFactors );
+								avg = ColorFloat( sum / sumFactors );
 
 
 								// Now create the gradient of the average we calculated.
-								float yRelative( 0 );
+								Float yRelative( 0 );
 								auto newImageIt2 = newImageIt1;
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-									float yRelativeInverse = 1.0f - yRelative;
-									C1 finalAvg( ( *lastAvgIt ) * yRelativeInverse + ( avg ) * yRelative );
-									C1 & newImagePixel = *( newImageIt2 );
+									Float yRelativeInverse = Float( 1.0 ) - yRelative;
+									C finalAvg( ( *lastAvgIt ) * yRelativeInverse + ( avg ) * yRelative );
+									C & newImagePixel = *( newImageIt2 );
 									newImagePixel = finalAvg;
 									yRelative += yRelativeIncr;
 									newImageIt2 += newSize.x;
@@ -5655,13 +5502,13 @@ namespace Graphic {
 
 					} else if ( isUpscaling.x && !isUpscaling.y ) {  //Upscaling X, Downscaling Y
 
-						C1 * thisImageIt0 = ( C1 * ) getDatas();
-						C1 * newImageIt0 = ( ( C1 * ) ( newImage.getDatas() ) );
+						C * thisImageIt0 = ( C * ) getDatas();
+						C * newImageIt0 = ( ( C * ) ( newImage.getDatas() ) );
 						Math::Vec2<int> i, j0, j1, k;
 						Math::Vec2<float> realPosition( 0, 0 );
 						Math::Vec2<int> kernelSize;
-						C1 avg;
-						C1 lastAvg;
+						ColorFloat avg;
+						ColorFloat lastAvg;
 
 
 
@@ -5675,21 +5522,21 @@ namespace Graphic {
 							realPosition.y += ratio.y;
 							j1.y = int( realPosition.y );
 
-							auto thisImageIt1 = ( ( C1 * ) ( thisImageIt0 ) ) + ( j0.y ) * this -> size.x;
+							auto thisImageIt1 = ( ( C * ) ( thisImageIt0 ) ) + ( j0.y ) * this -> size.x;
 
 
 							// First we gonna initialize the lastAvgBuffer with the average on the first line.
 							{
 								auto thisImageIt2 = thisImageIt1;
 
-								Sum sum( 0 );
-								T sumFactors = ( j1.y - j0.y );
+								ColorSum sum( 0 );
+								SumType sumFactors = ( j1.y - j0.y );
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-									C1 & thisImagePixel = *thisImageIt2;
-									sum += Sum( thisImagePixel );
+									C & thisImagePixel = *thisImageIt2;
+									sum += ColorSum( thisImagePixel );
 									thisImageIt2 += this -> size.x;
 								}
-								lastAvg = sum / sumFactors;
+								lastAvg = ColorFloat( sum / sumFactors );
 
 							}
 
@@ -5703,25 +5550,25 @@ namespace Graphic {
 
 								auto thisImageIt2 = thisImageIt1;
 								// Now compute the sum of the downscaling.
-								Sum sum( 0 );
-								T sumFactors = ( j1.y - j0.y );
+								ColorSum sum( 0 );
+								SumType sumFactors = ( j1.y - j0.y );
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-									C1 & thisImagePixel = *thisImageIt2;
-									sum += Sum( thisImagePixel );
+									C & thisImagePixel = *thisImageIt2;
+									sum += ColorSum( thisImagePixel );
 									thisImageIt2 += this -> size.x;
 								}
-								avg = C1( sum / sumFactors );
+								avg = ColorFloat( sum / sumFactors );
 
 
 								// Now create the gradient of the average we calculated.
 								kernelSize.x = j1.x - j0.x;
-								float xRelativeIncr = 1.0f / float( kernelSize.x );
-								float xRelative( 0 );
+								Float xRelativeIncr = Float( 1.0 ) / Float( kernelSize.x );
+								Float xRelative( 0 );
 								auto newImageIt2 = newImageIt1 + j0.x;
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-									float xRelativeInverse = 1.0f - xRelative;
-									C1 finalAvg( ( lastAvg ) * xRelativeInverse + ( avg ) * xRelative );
-									C1 & newImagePixel = *( newImageIt2 );
+									Float xRelativeInverse = 1.0f - xRelative;
+									C finalAvg( ( lastAvg ) * xRelativeInverse + ( avg ) * xRelative );
+									C & newImagePixel = *( newImageIt2 );
 									newImagePixel = finalAvg;
 									xRelative += xRelativeIncr;
 									newImageIt2++;
@@ -5741,27 +5588,50 @@ namespace Graphic {
 				///////////////////////////////////////////
 			case ResamplingMode::Lanczos:
 				{
-					Math::Vec2<float> ratioInverse( float( newSize.x ) / float( this -> size.x - 1 ), float( newSize.y ) / float( this -> size.y - 1 ) );
+					static constexpr Float MIN( Color<Float>::getMin() );
+					struct Max {
+						ColorR<Float> operator()( const ColorR<Float> & c ) {
+							return ColorR<Float>( Math::max( c.r, MIN ) );
+						}
+						ColorRGB<Float> operator()( const ColorRGB<Float> & c ) {
+							return ColorRGB<Float>( Math::max( c.r, MIN ), Math::max( c.g, MIN ), Math::max( c.b, MIN ) );
+						}
+						ColorRGBA<Float> operator()( const ColorRGBA<Float> & c ) {
+							return ColorRGBA<Float>( Math::max( c.r, MIN ), Math::max( c.g, MIN ), Math::max( c.b, MIN ), Math::max( c.a, MIN ) );
+						}
+					};
 
-					int kernelSize( Math::max( Math::ceil( ratio.x ), Math::ceil( ratio.y ) ) / 2 );
-					int kernelSize2 = kernelSize * 2 + 1;
-					float distanceDivider = ( 1.0f / float( kernelSize ) ) * 0.5f * 50.0f;
+					Max maxFunctor;
+
+					Math::Vec2<float> ratioHalf( ratio.x * 0.7f, ratio.y * 0.7f );
+					Math::Vec2<Float> distanceDivider( Float( 1.1 ) * Float( 50 ) );
+
+
+
+
+					Math::Vec2<int> kernelSize( ratioHalf.x * 2.0f + 0.5f, ratioHalf.y * 2.0f + 0.5f );
+
+
+
+					distanceDivider.x /= Float( ratio.x );
+					distanceDivider.y /= Float( ratio.y );
+
 
 					struct Lanczos {
 						Lanczos() {
-							constexpr float A( 3.0f );
-							lanczosValues[0] = 1.0f;
+							constexpr Float A( 3.0f );
+							lanczosValues[0] = Float( 1.0 );
 							for ( int i = 1; i < 100; i++ ) {
-								float x = float( i ) / 50.0f;
+								Float x = Float( i ) / Float( 50 );
 								lanczosValues[i] = ( A * Math::sin( Math::pi() * x ) * Math::sin( ( Math::pi() * x ) / A ) ) / ( Math::pi() * Math::pi() * x * x );
 							}
 						}
-						float operator()( int i ) {
+						Float operator()( int i ) {
 							assert( i >= 0 && i < 100 );
 							return lanczosValues[i];
 						}
 
-						float lanczosValues[100];
+						Float lanczosValues[100];
 					};
 
 					static Lanczos lanczosFunc;
@@ -5769,144 +5639,80 @@ namespace Graphic {
 
 					if ( !isUpscaling.x && !isUpscaling.y ) { // If downscaling
 						Math::Vec2<int> i, j0, j1, k;
-						Math::Vec2<float> realPosition( 0, 0 );
-						Math::Vec2<float> j;
-						Math::Vec2<float> realPositionInit( ( ratio.x - 1.0f ) / 2.0f, ( ratio.y - 1.0f ) / 2.0f );
+						Math::Vec2<Float> j, j0f;
+						Math::Vec2<Float> realPositionInit( ( ratio.x ) / Float( 2.0 ), ( Float( ratio.y ) ) / Float( 2.0 ) );
 
+
+						KernelFunc::Max kernelFunctor;
 
 						j.y = realPositionInit.y;
+						j0f.y = j.y - ratioHalf.y + 0.5f;
 						for ( i.y = 0; i.y < newSize.y; i.y++ ) {
 							auto newImageIt1 = newImageIt0;
 
-							j0.y = Math::max( int( j.y + 0.5f ) - kernelSize, 0 );
-							j1.y = Math::min( j0.y + kernelSize2, this -> size.y );
+							j0.y = Math::max<int>( int( j0f.y ), int( 0 ) );
+							j1.y = Math::min<int>( int( j0.y ) + kernelSize.y, int( this -> size.y ) );
 
 							assert( j1.y <= this -> size.y && j0.y >= 0 );
 							if ( true ) {
-								C1 * thisImageIt1 = ( ( C1 * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
+								C * thisImageIt1 = ( ( C * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
 
 								j.x = realPositionInit.x;
+								j0f.x = j.x - ratioHalf.x + 0.5f;
 
 								for ( i.x = 0; i.x < newSize.x; i.x++ ) {
-									C1 & newImagePixel = *newImageIt1;
+									C & newImagePixel = *newImageIt1;
 
-									j0.x = Math::max( int( j.x + 0.5f ) - kernelSize, 0 );
-									j1.x = Math::min( j0.x + kernelSize2, this -> size.x );
+									j0.x = Math::max<int>( int( j0f.x ), int( 0 ) );
+									j1.x = Math::min<int>( int( j0.x ) + kernelSize.x, int( this -> size.x ) );
 
 									assert( j1.x <= this -> size.x && j1.x >= 0 );
 									if ( true ) {
 										auto thisImageIt2 = thisImageIt1 + j0.x;
 
-										Sum sum( 0 );
-										float sumFactors( 0 );
+										ColorFloat sum( 0 );
+										Float sumFactors( 0 );
 
 										for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 											auto thisImageIt3 = thisImageIt2;
 
-											float disty = ( float( k.y ) - j.y ) * distanceDivider;
-											float factorY( lanczosFunc( Math::abs( int( disty ) ) ) );
+											Float disty = Float( Float( k.y ) - j.y ) * distanceDivider.y;
+											Float factorY( lanczosFunc( Math::abs( int( disty ) ) ) );
 
 
 											for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-												C1 & thisImagePixel = *thisImageIt3;
+												C & thisImagePixel = *thisImageIt3;
 
-												float distx = ( float( k.x ) - j.x ) * distanceDivider;
-												float factorX( lanczosFunc( Math::abs( int( distx ) ) ) );
+												Float distx = Float( Float( k.x ) - j.x ) * distanceDivider.x;
+												Float factorX( lanczosFunc( Math::abs( int( distx ) ) ) );
 
-												float factor = factorY * factorX;
+												Float factor = factorY * factorX;
 
-												sum += Sum( thisImagePixel ) * factor;
+												sum += ColorFloat( thisImagePixel ) * factor;
 												sumFactors += factor;
 												thisImageIt3++;
 											}
 											thisImageIt2 += this -> size.x;
 										}
 										j.x += ratio.x;
-
-										newImagePixel = ( sum ) / sumFactors;
-
+										j0f.x += ratio.x;
 
 
+
+										newImagePixel = C( maxFunctor( ColorFloat( sum / sumFactors ) ) );
 									}
 									newImageIt1++;
-
-
 								}
-
-
-
 							}
-
-
-
 							j.y += ratio.y;
+							j0f.y += ratio.y;
 
 							newImageIt0 += newSize.x;
 						}
-
-
-
-
 					}
 					break;
 				}
-
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/*
-		float yRelativeIncr = 1.0f / float( kernelSize.y );
-		float xRelativeIncr = 1.0f / float( kernelSize.x );
-
-		float yRelative(0);
-
-		for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-		float yRelative = float( k.y - j0.y );
-		float yRelativeInverse = 1.0f - yRelative;
-		assert( yRelative <= 1.0f );
-
-		float xRelative(0);
-		for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-
-		float xRelativeInverse = 1.0f - xRelative;
-		assert( xRelative <= 1.0f );
-
-		float factor00 = xRelativeInverse * yRelativeInverse;
-		float factor11 = xRelative * yRelative;
-		float factor01 = xRelativeInverse * yRelative;
-		float factor10 = xRelative * yRelativeInverse;
-
-
-		xRelative += xRelativeIncr;
-
-		C1 * newImageIt = ( ( C1 * ) ( newImageDatas ) ) + ( k.y )  * newSize.x + ( k.x );
-		C1 & newImagePixel = *newImageIt;
-
-		newImagePixel = ( thisImagePixel00 ) * factor00 + ( thisImagePixel01 ) * factor01 + ( thisImagePixel10 ) * factor10 + ( thisImagePixel11 ) * factor11;
-		}
-		yRelative += yRelativeIncr;
-		}*/
-
-
-
-
-
-
 		return newImage;
 	}
 
@@ -5920,11 +5726,11 @@ namespace Graphic {
 	void Graphic::_Image<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		switch ( getFormat() ) {
 			case Format::R:
-				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorR<T>>( rectangle, radius, colorFunc, blendFunc );
+				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorR<T>>( vertices, nbVertices, rectangle, colorFunc, blendFunc );
 			case Format::RGB:
-				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorRGB<T>>( rectangle, radius, colorFunc, blendFunc );
+				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorRGB<T>>( vertices, nbVertices, rectangle, colorFunc, blendFunc );
 			case Format::RGBA:
-				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorRGBA<T>>( rectangle, radius, colorFunc, blendFunc );
+				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorRGBA<T>>( vertices, nbVertices, rectangle, colorFunc, blendFunc );
 		}
 	}
 
@@ -5935,36 +5741,36 @@ namespace Graphic {
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void _Image<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
-
+		typedef typename FloatType Float;
 		auto clampedRectangle = clampRectangle( rectangle );
 		auto size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 
 		struct Vertex {
 
-			float dx;
-			Math::Vec2<float> v;
+			Float dx;
+			Math::Vec2<Float> v;
 
 		};
 
 		Vertex * absoluteVertices = new Vertex[nbVertices];
-		float * intersectionsDx = new float[nbVertices];
-		float * intersectionsX = new float[nbVertices];
+		Float * intersectionsDx = new Float[nbVertices];
+		Float * intersectionsX = new Float[nbVertices];
 
 
 		Math::Vec2<Size> sizeMinusOne( size.x - 1, size.y - 1 );
 
 		// Compute the absolute coordinate from the relatives [0;1] and the size of the rectangle.
-		Math::Vec2<float> v0Last = vertices[nbVertices - 1];
+		Math::Vec2<Float> v0Last = vertices[nbVertices - 1];
 		for ( unsigned int i = 0; i < nbVertices; i++ ) {
 			Vertex & v1 = absoluteVertices[i];
-			const Math::Vec2<float> & v0 = vertices[i];
+			const Math::Vec2<float> & v0( vertices[i] );
 
 			v1.v.x = v0.x * size.x;
 			v1.v.y = v0.y * size.y;
 
-			float dx = ( v0.x - v0Last.x );
-			float dy = ( v0.y - v0Last.y );
+			Float dx = ( v0.x - v0Last.x );
+			Float dy = ( v0.y - v0Last.y );
 
 			v1.dx = dx / dy;
 
@@ -5981,11 +5787,11 @@ namespace Graphic {
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto intersectionsDxIt = intersectionsDx;
 			auto intersectionsXIt = intersectionsX;
-			float yf = float( i.y );
+			Float yf = Float( i.y );
 
 
-			Math::Vec2<float> vertexLast = absoluteVertices[nbVertices - 1].v;
-			for ( typename Vector<Math::Vec2<float>>::Size j = 0; j < nbVertices; j++ ) {
+			Math::Vec2<Float> vertexLast = absoluteVertices[nbVertices - 1].v;
+			for ( typename Vector<Math::Vec2<Float>>::Size j = 0; j < nbVertices; j++ ) {
 				Vertex & vertex = absoluteVertices[j];
 
 				if ( ( yf < vertex.v.y && yf >= vertexLast.y ) || ( yf < vertexLast.y && yf >= vertex.v.y ) ) {
@@ -6017,15 +5823,15 @@ namespace Graphic {
 			}
 
 
-			for ( typename Vector<Math::Vec2<float>>::Size j = 1; j < nbIntersections; j += 2 ) {
+			for ( typename Vector<Math::Vec2<Float>>::Size j = 1; j < nbIntersections; j += 2 ) {
 
-				float & intersection0 = intersectionsX[j - 1];
-				float & intersection1 = intersectionsX[j];
+				Float & intersection0 = intersectionsX[j - 1];
+				Float & intersection1 = intersectionsX[j];
 
 				//If the zone to draw is less than one pixel
 				if ( intersection1 - intersection0 < 1.0f ) {
 
-					float opacity = intersection1 - intersection0;
+					Float opacity = intersection1 - intersection0;
 					if ( opacity == 0.0f ) continue;
 					i.x = Size( ( intersection0 + intersection1 ) / 2 );
 
@@ -6034,15 +5840,15 @@ namespace Graphic {
 					blendFunc( *p1it, colorFunc( i ), opacity );
 
 				} else {
-					float & intersectionDx0 = intersectionsDx[j - 1];
-					float & intersectionDx1 = intersectionsDx[j];
+					Float & intersectionDx0 = intersectionsDx[j - 1];
+					Float & intersectionDx1 = intersectionsDx[j];
 
 					intersection0 += 0.5f;
 					intersection1 += 0.5f;
 
 
-					float gradient1 = Math::abs( intersectionDx1 );
-					float gradient0 = Math::abs( intersectionDx0 );
+					Float gradient1 = Math::abs( intersectionDx1 );
+					Float gradient0 = Math::abs( intersectionDx0 );
 
 					int xMin, xMax;
 
@@ -6055,7 +5861,7 @@ namespace Graphic {
 
 
 						i.x = intersection0i;
-						float opacity = ( intersection0 ) -float( intersection0i );
+						Float opacity = ( intersection0 ) -Float( intersection0i );
 
 						C1 * p1it = p0it + i.x;
 						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -6072,8 +5878,8 @@ namespace Graphic {
 							int intersection0i = int( intersection0 );
 							int intersection0Beforei = Math::max<int>( int( intersection0 - intersectionDx0 ), 0 );
 
-							float incr = 1.0f / float( intersection0i - intersection0Beforei );
-							float opacity = 0.0f;
+							Float incr = 1.0f / Float( intersection0i - intersection0Beforei );
+							Float opacity = 0.0f;
 
 							i.x = intersection0Beforei;
 
@@ -6094,8 +5900,8 @@ namespace Graphic {
 							int intersection0Afteri = Math::max<int>( int( intersection0 + intersectionDx0 ), 0 );
 
 
-							float incr = 1.0f / float( intersection0i - intersection0Afteri );
-							float opacity = 0.0f;
+							Float incr = 1.0f / Float( intersection0i - intersection0Afteri );
+							Float opacity = 0.0f;
 
 							i.x = intersection0Afteri;
 
@@ -6126,7 +5932,7 @@ namespace Graphic {
 						int intersection1i = int( intersection1 );
 
 						i.x = Math::max<Size>( intersection1i, xMin );
-						float opacity = ( intersection1 ) -float( intersection1i );
+						Float opacity = ( intersection1 ) -Float( intersection1i );
 
 						C1 * p1it = p0it + i.x;
 						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -6140,8 +5946,8 @@ namespace Graphic {
 							int intersection1i = int( intersection1 );
 							int intersection1Afteri = Math::min<int>( int( intersection1 + intersectionDx1 ), size.x );
 
-							float incr = 1.0f / ( intersection1Afteri - intersection1i );
-							float opacity = 1.0f;
+							Float incr = 1.0f / ( intersection1Afteri - intersection1i );
+							Float opacity = 1.0f;
 
 							i.x = Math::max<int>( intersection1i, xMin );
 							xMax = i.x;
@@ -6161,8 +5967,8 @@ namespace Graphic {
 
 
 
-							float incr = 1.0f / ( intersection1Beforei - intersection1i );
-							float opacity = 1.0f;
+							Float incr = 1.0f / ( intersection1Beforei - intersection1i );
+							Float opacity = 1.0f;
 
 							i.x = Math::max<int>( intersection1i, xMin );
 							xMax = i.x;
@@ -6436,7 +6242,7 @@ namespace Graphic {
 			Point finalPoint( point.x - thickness, point.y - thickness );
 			drawImageFunctor( finalPoint, colorFunc, Rectangle( imageBlured.getSize() ), imageBlured, blendFunc );
 		} else {
-			_Image<T> imageBlured( image.toFormat( Format::R, ConversionMode::Alpha ).applyGaussianBlur( thickness, _Image<T>::ConvolutionMode::ExtendedSize ) );
+			_Image<T> imageBlured( image.toFormat( Format::R, ColorConvertFunc::Alpha() ).applyGaussianBlur( thickness, _Image<T>::ConvolutionMode::ExtendedSize ) );
 			Point finalPoint( point.x - thickness, point.y - thickness );
 			drawImageFunctor( finalPoint, colorFunc, Rectangle( imageBlured.getSize() ), imageBlured, blendFunc );
 		}

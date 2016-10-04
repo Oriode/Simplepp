@@ -8,7 +8,6 @@
 #pragma once
 #include "Math.h"
 #include "BasicGraphic.h"
-#include "InterpolationFunc.hpp"
 #include "ColorFunc.h"
 #include "Gradient.h"
 #include "Vector.h"

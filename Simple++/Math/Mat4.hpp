@@ -1,24 +1,78 @@
 namespace Math {
 
+	template<typename T>
+	const Mat4<T> Mat4<T>::identity = Mat4<T>( 1 );
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const T * datas ) {
 		memcpy( this -> column, datas, sizeof( T ) * 16 );
 	}
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const Mat4<T> & m ) {
-		*this = m;
-	}
-
-
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const Mat4<U> & m ) {
 		*this = m;
 	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const ColType & col0, const ColType & col1, const ColType & col2, const ColType & col3 ) {
+		this -> column[0] = col0;
+		this -> column[1] = col1;
+		this -> column[2] = col2;
+		this -> column[3] = col3;
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const T & v ) {
+		this -> column[0].x = v;
+		this -> column[0].y = T( 0 );
+		this -> column[0].z = T( 0 );
+		this -> column[0].w = T( 0 );
 
+		this -> column[1].x = T( 0 );
+		this -> column[1].y = v;
+		this -> column[1].z = T( 0 );
+		this -> column[1].w = T( 0 );
+
+		this -> column[2].x = T( 0 );
+		this -> column[2].y = T( 0 );
+		this -> column[2].z = v;
+		this -> column[2].w = T( 0 );
+
+		this -> column[3].x = T( 0 );
+		this -> column[3].y = T( 0 );
+		this -> column[3].z = T( 0 );
+		this -> column[3].w = v;
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const T & v11, const T & v21, const T & v31, const T & v41,
+									   const T & v12, const T & v22, const T & v32, const T & v42,
+									   const T & v13, const T & v23, const T & v33, const T & v43,
+									   const T & v14, const T & v24, const T & v34, const T & v44 ) {
+		this -> column[0].x = v11;
+		this -> column[0].y = v12;
+		this -> column[0].z = v13;
+		this -> column[0].w = v14;
+
+		this -> column[1].x = v21;
+		this -> column[1].y = v22;
+		this -> column[1].z = v23;
+		this -> column[1].w = v24;
+
+		this -> column[2].x = v31;
+		this -> column[2].y = v32;
+		this -> column[2].z = v33;
+		this -> column[2].w = v34;
+
+		this -> column[3].x = v41;
+		this -> column[3].y = v42;
+		this -> column[3].z = v43;
+		this -> column[3].w = v44;
+	}
+
+
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( void ) {
+
+	}
 
 
 	template<typename T >
@@ -29,14 +83,6 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> & Mat4<T>::operator[]( unsigned int index ) {
 		return this -> column[index];
-	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const colType & col0, const colType & col1, const colType & col2, const colType & col3 ) {
-		this -> column[0] = col0;
-		this -> column[1] = col1;
-		this -> column[2] = col2;
-		this -> column[3] = col3;
 	}
 
 
@@ -154,24 +200,22 @@ namespace Math {
 	}
 
 	/************************************************************************/
-	/* Multiply                                                             */
+	/* Arithmetic                                                           */
 	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator*=( const Mat4<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator*=( const Mat4<U> & m ) {
 		return ( *this = *this * m );
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator*=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator*=( const Vec4<U> & v ) {
 		this -> column[0] *= v.x;
 		this -> column[1] *= v.y;
 		this -> column[2] *= v.z;
 		this -> column[3] *= v.w;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator*=( const T & v ) {
 		this -> column[0] *= v;
@@ -181,27 +225,20 @@ namespace Math {
 		return *this;
 	}
 
-
-	/************************************************************************/
-	/* Divide                                                               */
-	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator/=( const Mat4<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator/=( const Mat4<U> & m ) {
 		return ( *this = *this / m );
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator/=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator/=( const Vec4<U> & v ) {
 		this -> column[0] /= v.x;
 		this -> column[1] /= v.y;
 		this -> column[2] /= v.z;
 		this -> column[3] /= v.w;
 		return *this;
 	}
-
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator/=( const T & v ) {
 		this -> column[0] /= v;
@@ -211,29 +248,24 @@ namespace Math {
 		return *this;
 	}
 
-
-	/************************************************************************/
-	/* Add                                                                  */
-	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator+=( const Mat4<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator+=( const Mat4<U> & m ) {
 		this -> column[0] += m[0];
 		this -> column[1] += m[1];
 		this -> column[2] += m[2];
 		this -> column[3] += m[3];
 		return *this;
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator+=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator+=( const Vec4<U> & v ) {
 		this -> column[0] += v.x;
 		this -> column[1] += v.y;
 		this -> column[2] += v.z;
 		this -> column[3] += v.w;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator+=( const T & v ) {
 		this -> column[0] += v;
@@ -243,31 +275,24 @@ namespace Math {
 		return *this;
 	}
 
-
-
-	/************************************************************************/
-	/* Minus                                                                */
-	/************************************************************************/
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator-=( const Mat4<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator-=( const Mat4<U> & m ) {
 		this -> column[0] -= m[0];
 		this -> column[1] -= m[1];
 		this -> column[2] -= m[2];
 		this -> column[3] -= m[3];
 		return *this;
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator-=( const colType & v ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator-=( const Vec4<U> & v ) {
 		this -> column[0] -= v.x;
 		this -> column[1] -= v.y;
 		this -> column[2] -= v.z;
 		this -> column[3] -= v.w;
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator-=( const T & v ) {
 		this -> column[0] -= v;
@@ -277,20 +302,15 @@ namespace Math {
 		return *this;
 	}
 
-	/************************************************************************/
-	/* Binary Shift                                                         */
-	/************************************************************************/
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator>>=( const Mat4<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator>>=( const Mat4<U> & m ) {
 		this -> column[0] >>= m[0];
 		this -> column[1] >>= m[1];
 		this -> column[2] >>= m[2];
 		this -> column[3] >>= m[3];
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator>>=( const T & v ) {
 		this -> column[0] >>= v;
@@ -299,17 +319,15 @@ namespace Math {
 		this -> column[3] >>= v;
 		return *this;
 	}
-
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator<<=( const Mat4<T> & m ) {
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator<<=( const Mat4<U> & m ) {
 		this -> column[0] <<= m[0];
 		this -> column[1] <<= m[1];
 		this -> column[2] <<= m[2];
 		this -> column[3] <<= m[2];
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator<<=( const T & v ) {
 		this -> column[0] <<= v;
@@ -318,6 +336,8 @@ namespace Math {
 		this -> column[3] <<= v;
 		return *this;
 	}
+
+
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator++() {
@@ -338,15 +358,13 @@ namespace Math {
 	}
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator=( const Mat4<T> & m ) {
-		this -> column[0] = m[0];
-		this -> column[1] = m[1];
-		this -> column[2] = m[2];
-		this -> column[3] = m[3];
-		//memcpy(this, &m, sizeof(m));
-		return *this;
+	MATH_FUNC_QUALIFIER Mat4<T> Mat4<T>::operator-() const {
+		return Mat4<T>(- this -> column[0], -this -> column[1], -this -> column[2], -this -> column[3] );
 	}
 
+	/************************************************************************/
+	/* Assign                                                               */
+	/************************************************************************/
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator=( const Mat4<U> & m ) {
@@ -356,7 +374,6 @@ namespace Math {
 		this -> column[3] = m[3];
 		return *this;
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator=( const T & v ) {
 		this -> column[0] = v;
@@ -365,114 +382,62 @@ namespace Math {
 		this -> column[3] = v;
 	}
 
+	/************************************************************************/
+	/* Logical                                                              */
+	/************************************************************************/
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::operator==( const Mat4<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::operator==( const Mat4<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::Equal(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::operator!=( const Mat4<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::operator!=( const Mat4<U> & m ) const {
 		return _logicalOperatorOR( Math::Logical::NotEqual(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::operator<( const Mat4<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::operator<( const Mat4<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::Less(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::operator<=( const Mat4<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::operator<=( const Mat4<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::LessOrEqual(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::operator>( const Mat4<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::operator>( const Mat4<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::Greater(), m );
 	}
-
 	template<typename T>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::operator>=( const Mat4<T> & m ) const {
+	template<typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::operator>=( const Mat4<U> & m ) const {
 		return _logicalOperatorAND( Math::Logical::GreaterOrEqual(), m );
 	}
 
 
 	template<typename T>
-	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::_logicalOperatorOR( Compare func, const Mat4<T> & m ) const {
+	template<typename Compare, typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::_logicalOperatorOR( Compare & func, const Mat4<U> & m ) const {
 		return func( this -> column[0], m[0] ) || func( this -> column[1], m[1] ) || func( this -> column[2], m[2] ) || func( this -> column[3], m[3] );
 	}
 
 	template<typename T>
-	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::_logicalOperatorAND( Compare func, const Mat4<T> & m ) const {
+	template<typename Compare, typename U>
+	MATH_FUNC_QUALIFIER bool Mat4<T>::_logicalOperatorAND( Compare & func, const Mat4<U> & m ) const {
 		return func( this -> column[0], m[0] ) && func( this -> column[1], m[1] ) && func( this -> column[2], m[2] ) && func( this -> column[3], m[3] );
 	}
 
 
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const T & v ) {
-		this -> column[0].x = v;
-		this -> column[0].y = T( 0 );
-		this -> column[0].z = T( 0 );
-		this -> column[0].w = T( 0 );
-
-		this -> column[1].x = T( 0 );
-		this -> column[1].y = v;
-		this -> column[1].z = T( 0 );
-		this -> column[1].w = T( 0 );
-
-		this -> column[2].x = T( 0 );
-		this -> column[2].y = T( 0 );
-		this -> column[2].z = v;
-		this -> column[2].w = T( 0 );
-
-		this -> column[3].x = T( 0 );
-		this -> column[3].y = T( 0 );
-		this -> column[3].z = T( 0 );
-		this -> column[3].w = v;
-	}
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const T & v11, const T & v21, const T & v31, const T & v41,
-									   const T & v12, const T & v22, const T & v32, const T & v42,
-									   const T & v13, const T & v23, const T & v33, const T & v43,
-									   const T & v14, const T & v24, const T & v34, const T & v44 ) {
-		this -> column[0].x = v11;
-		this -> column[0].y = v12;
-		this -> column[0].z = v13;
-		this -> column[0].w = v14;
-
-		this -> column[1].x = v21;
-		this -> column[1].y = v22;
-		this -> column[1].z = v23;
-		this -> column[1].w = v24;
-
-		this -> column[2].x = v31;
-		this -> column[2].y = v32;
-		this -> column[2].z = v33;
-		this -> column[2].w = v34;
-
-		this -> column[3].x = v41;
-		this -> column[3].y = v42;
-		this -> column[3].z = v43;
-		this -> column[3].w = v44;
-	}
-
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( void ) {
-
-	}
-
+	
+	/************************************************************************/
+	/* Arithmetic                                                           */
+	/************************************************************************/
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator*( const Mat4<T> & m1, const Mat4<T> & m2 ) {
-
 		Mat4<T> newMat;
-
-
 
 		newMat[0].x = m1[0].x * m2[0].x + m1[1].x * m2[0].y + m1[2].x * m2[0].z + m1[3].x * m2[0].w;
 		newMat[0].y = m1[0].y * m2[0].x + m1[1].y * m2[0].y + m1[2].y * m2[0].z + m1[3].y * m2[0].w;
@@ -494,123 +459,115 @@ namespace Math {
 		newMat[3].z = m1[0].z * m2[3].x + m1[1].z * m2[3].y + m1[2].z * m2[3].z + m1[3].z * m2[3].w;
 		newMat[3].w = m1[0].w * m2[3].x + m1[1].w * m2[3].y + m1[2].w * m2[3].z + m1[3].w * m2[3].w;
 
-
-
-
-
-
-
 		return newMat;
 	}
 
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator*( const Mat4<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator*( const Mat4<T> & m, const T & v ) {
 		return Mat4<T>( m[0] * v, m[1] * v, m[2] * v, m[3] * v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator*( const U & v, const Mat4<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator*( const T & v, const Mat4<T> & m ) {
 		return Mat4<T>( v * m[0], v * m[1], v * m[2], v * m[3] );
 	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat4<T>::colType operator*( const Mat4<T> & m, const typename Mat4<T>::colType & v ) {
-		return typename Mat4<T>::colType( m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w,
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER typename Mat4<T>::ColType operator*( const Mat4<T> & m, const Vec4<U> & v ) {
+		return typename Mat4<T>::ColType( m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w,
 										  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] * v.w,
 										  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] * v.w,
 										  m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] * v.w );
 	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat4<T>::colType operator*( const Mat4<T> & m, const typename Mat3<T>::colType & v ) {
-		return typename Mat4<T>::colType( m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0],
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER typename Mat4<T>::ColType operator*( const Mat4<T> & m, const Vec3<U> & v ) {
+		return typename Mat4<T>::ColType( m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0],
 										  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1],
 										  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2],
 										  m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] );
 	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER typename Mat4<T>::colType operator*( const typename Mat4<T>::colType & v, const Mat4<T> & m ) {
-		return typename Mat4<T>::colType( m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w,
+	template<typename T, typename U>
+	MATH_FUNC_QUALIFIER typename Mat4<T>::ColType operator*( const Vec4<U> & v, const Mat4<T> & m ) {
+		return typename Mat4<T>::ColType( m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w,
 										  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w,
 										  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w,
 										  m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator/( const Mat4<T> & m1, const Mat4<T> & m2 ) {
 		return m1 * m2.inverse();
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator/( const Mat4<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator/( const Mat4<T> & m, const T & v ) {
 		return Mat4<T>( m[0] / v, m[1] / v, m[2] / v, m[3] / v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator/( const U & v, const Mat4<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator/( const T & v, const Mat4<T> & m ) {
 		return Mat4<T>( v / m[0], v / m[1], v / m[2], v / m[3] );
 	}
-
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator+( const Mat4<T> & m1, const Mat4<T> & m2 ) {
 		return Mat4<T>( m1[0] + m2[0], m1[1] + m2[1], m1[2] + m2[2], m1[3] + m2[3] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator+( const Mat4<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator+( const Mat4<T> & m, const T & v ) {
 		return Mat4<T>( m[0] + v, m[1] + v, m[2] + v, m[3] + v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator+( const U & v, const Mat4<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator+( const T & v, const Mat4<T> & m ) {
 		return Mat4<T>( v + m[0], v + m[1], v + m[2], v + m[3] );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator-( const Mat4<T> & m1, const Mat4<T> & m2 ) {
 		return Mat4<T>( m1[0] - m2[0], m1[1] - m2[1], m1[2] - m2[2], m1[3] - m2[3] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator-( const Mat4<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator-( const Mat4<T> & m, const T & v ) {
 		return Mat4<T>( m[0] - v, m[1] - v, m[2] - v, m[3] - v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator-( const U & v, const Mat4<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator-( const T & v, const Mat4<T> & m ) {
 		return Mat4<T>( v - m[0], v - m[1], v - m[2], v - m[3] );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator >> ( const Mat4<T> & m1, const Mat4<T> & m2 ) {
 		return Mat4<T>( m1[0] >> m2[0], m1[1] >> m2[1], m1[2] >> m2[2], m1[3] >> m2[3] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator >> ( const Mat4<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator >> ( const Mat4<T> & m, const T & v ) {
 		return Mat4<T>( m[0] >> v, m[1] >> v, m[2] >> v, m[3] >> v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator >> ( const U & v, const Mat4<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator >> ( const T & v, const Mat4<T> & m ) {
 		return Mat4<T>( v >> m[0], v >> m[1], v >> m[2], v >> m[3] );
 	}
-
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator<<( const Mat4<T> & m1, const Mat4<T> & m2 ) {
 		return Mat4<T>( m1[0] << m2[0], m1[1] << m2[1], m1[2] << m2[2], m1[3] << m2[3] );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator<<( const Mat4<T> & m, const U & v ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator<<( const Mat4<T> & m, const T & v ) {
 		return Mat4<T>( m[0] << v, m[1] << v, m[2] << v, m[3] << v );
 	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER Mat4<T> operator<<( const U & v, const Mat4<T> & m ) {
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator<<( const T & v, const Mat4<T> & m ) {
 		return Mat4<T>( v << m[0], v << m[1], v << m[2], v << m[3] );
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator%( const Mat4<T> & m1, const Mat4<T> & m2 ) {
+		return Mat4<T>( m1[0] % m2[0], m1[1] % m2[1], m1[2] % m2[2], m1[3] % m2[3] );
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator%( const Mat4<T> & m, const T & v ) {
+		return Mat4<T>( m[0] % v, m[1] % v, m[2] % v, m[3] % v );
+	}
+	template<typename T>
+	MATH_FUNC_QUALIFIER Mat4<T> operator%( const T & v, const Mat4<T> & m ) {
+		return Mat4<T>( v % m[0], v % m[1], v % m[2], v % m[3] );
+	}
+
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T>::operator BasicString<U>() const {
+		return toString();
 	}
 
 

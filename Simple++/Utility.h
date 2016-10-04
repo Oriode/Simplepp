@@ -56,7 +56,7 @@ namespace Utility {
 		enum : bool { value = sizeof( check( static_cast< T2* >( 0 ) ) ) == sizeof( yes ) };
 	};
 
-
+	
 
 	template<typename T>
 	class biggerType {

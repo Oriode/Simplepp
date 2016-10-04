@@ -1,15 +1,12 @@
 #pragma once
 
 #include "../Math.h"
+#include "ColorR.h"
+#include "ColorRGB.h"
+#include "ColorRGBA.h"
+
 
 namespace Graphic {
-
-	template<typename T = unsigned char>
-	using ColorRGBA = Math::Vec4<T>;
-	template<typename T = unsigned char>
-	using ColorRGB = Math::Vec3<T>;
-	template<typename T = unsigned char>
-	using ColorR = T;
 
 
 	typedef ColorRGBA<float> ColorRGBAf;

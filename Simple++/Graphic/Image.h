@@ -18,25 +18,13 @@
 #include "BlendingFunc.hpp"
 #include "ColorFunc.h"
 #include "KernelFunc.hpp"
+#include "ColorConvertFunc.hpp"
 
 
 
 
 namespace Graphic {
 
-	///@brief Struct used to retrieve the type of a summation of multiple pixel components
-	template<typename T>
-	struct _ImageSumType {
-		typedef typename Utility::TypesInfos<typename Utility::TypesInfos<T>::Bigger>::Bigger Type;
-	};
-	template<>
-	struct _ImageSumType<float> {
-		typedef float Type;
-	};
-	template<>
-	struct _ImageSumType<double> {
-		typedef double Type;
-	};
 
 
 
@@ -47,22 +35,40 @@ namespace Graphic {
 	template<typename T = unsigned char>
 	class _Image : public BasicIO {
 	public:
-		enum class ResamplingMode { Nearest, Linear, Lanczos };
+		enum class ResamplingMode { Nearest, Bilinear, Lanczos };
 		enum class ConvolutionMode { NormalSize, ExtendedSize };
 		enum class ConvolutionOrder { HorizontalVertical, VerticalHorizontal };
-		enum class ConversionMode { Luminance, Trunquate, Alpha };
 		enum class StrokeType { Outside, Inside, Middle };
 
 		///@brief Type used to sum multiple pixels components
-		typedef typename _ImageSumType<T>::Type SumType;
+		typedef typename Color<T>::SumType SumType;
 
 		///@brief Type used to sum multiple pixels components multiplied with a negative value
-		typedef typename Utility::TypesInfos<typename SumType>::Signed KernelType;
+		typedef typename Color<T>::KernelType KernelType;
+
+		///@brief Floating type used for this type of image
+		typedef typename Color<T>::FloatType FloatType;
+
+		///@brief copy constructor
+		///@param image Image to copy
+		///@param normalize if the data has to be normalized to the new type
+		///@param convertFunc Functor used to convert each pixels overloaded with :
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///@see Graphic::ColorConvertFunc
+		_Image( const _Image<T> & image, bool normalize = true );
 
 		///@brief copy constructor with an another storage type
 		///@param image image to copy
+		///@param normalize if the data has to be normalized to the new type
+		///@param convertFunc Functor used to convert each pixels overloaded with :
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///@see Graphic::ColorConvertFunc
 		template<typename C>
-		_Image( const _Image<C> & image );
+		_Image( const _Image<C> & image, bool normalize = true);
 
 		///@brief Empty constructor, create an image unallocated of size (0:0)
 		///@param format of the image
@@ -88,9 +94,6 @@ namespace Graphic {
 		_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 		template<typename U>
 		_Image( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
-
-		///@brief copy constructor
-		_Image( const _Image<T> & image );
 
 		///@brief move constructor
 		_Image( _Image<T> && image );
@@ -226,20 +229,18 @@ namespace Graphic {
 
 		///@brief Create a new Image from this one with a new format
 		///@param newFormat Format of the new image
-		///@param conversionMode Only used when converted to Format::R (Luminance : Use the average of the RGB channels, Trunquate : Use the R channel, Alpha : Use the Alpha Channel)
+		///@param convertFunc Functor used to convert each pixels overloaded with :
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
+		///@see Graphic::ColorConvertFunc
 		///@return Image based of this one with a new format
-		_Image<T> toFormat( Format newFormat, ConversionMode conversionMode = ConversionMode::Luminance ) const;
+		template<typename ConvertFunc = ColorConvertFunc::Luminance>
+		_Image<T> toFormat( Format newFormat, ConvertFunc & convertFunc = ColorConvertFunc::Luminance() ) const;
 
 
 
-		///@brief get the maximum value of a color component
-		///@param maximum value of a component depending of the template type T
-		constexpr static T getComponentMaxValue( );
-
-		///@brief get the maximum value of a color component
-		///@param maximum value of a component depending of the template type T
-		constexpr static T getComponentMinValue( );
-
+		
 
 		/************************************************************************/
 		/* Gradient                                                             */
@@ -908,7 +909,7 @@ namespace Graphic {
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
 		///@return Image with the filter applied
-		_Image<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null ) const;
+		_Image<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::black ) const;
 
 		///@brief apply a Sobel filter and return the resulting image (note the final pixels components will be "min(sqrt(x*x + y*y) / 2, MAX)" where x is the sobel filter horizontal and y vertical)
 		///@return Image with the Sobel filter applied
@@ -1037,7 +1038,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc)const;"
-		template<typename ColorFunc, typename BlendFunc>
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
 		void drawDisk( const Point & p, float radius, ColorRGB<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 		///@brief Draw a filed Disk
@@ -1051,7 +1052,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc)const;"
-		template<typename ColorFunc, typename BlendFunc>
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
 		void drawDisk( const Point & p, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
@@ -1068,7 +1069,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
 		///@see Graphic::ColorFunc::SimpleColor for a solid color functor
 		///@see Graphic::ColorFunc::Template for making your own color functor
-		template<typename ColorFunc, typename BlendFunc>
+		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
 		void drawDiskFunctor( const Point & p, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
@@ -1134,6 +1135,8 @@ namespace Graphic {
 
 
 
+
+
 	protected:
 
 
@@ -1155,7 +1158,7 @@ namespace Graphic {
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
-		template<typename C1, typename Sum>
+		template<typename C1, typename Sum, typename SumF, typename K >
 		_Image<T> _resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
@@ -1244,7 +1247,15 @@ namespace Graphic {
 		static Format _loadingFormat2Format( LoadingFormat loadingFormat );
 
 
+		template<typename C1, typename C2, typename ConvertFunc>
+		_Image<T> _toFormat( Format newFormat, ConvertFunc & convertFunc ) const;
 
+		template<typename C1, typename C2, typename ConvertFunc>
+		void _toFormat( C1 * bufferDst, const C2 * bufferSrc, ConvertFunc & convertFunctor ) const;
+
+
+		template<typename C>
+		void _toType( T * bufferDest, const C * bufferSrc, bool normalize);
 
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
@@ -1276,13 +1287,6 @@ namespace Graphic {
 
 		bool _read( std::fstream * fileStream );
 
-
-		template<typename C, typename D>
-		inline static void _castComponment( D * dest, const C * source );
-		inline static void _castComponment( unsigned char * dest, const float * source );
-		inline static void _castComponment( unsigned char * dest, const double * source );
-		inline static void _castComponment( float * dest, const unsigned char * source );
-		inline static void _castComponment( double * dest, const unsigned char * source );
 
 
 		Format format;

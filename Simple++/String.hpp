@@ -1112,11 +1112,17 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type numb
 		comma--;
 	}
 	int i;
-	for ( i = 0; i < comma; i++, bufferTmp++ ) {
-		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[castedNumber % Base];
-		number *= Type( Base );
+	if ( comma < 1 ) {
+		bufferTmp[0] = T( '0' );
+		bufferTmp++;
+	} else {
+		for ( i = 0; i < comma; i++, bufferTmp++ ) {
+			unsigned long long castedNumber = ( unsigned long long )number;
+			*bufferTmp = BasicString<T>::numbers[castedNumber % Base];
+			number *= Type( Base );
+		}
 	}
+	
 
 	*bufferTmp = T( '.' );
 	bufferTmp++;
@@ -1323,12 +1329,16 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number,
 		comma--;
 	}
 	int i;
-	for ( i = 0; i < comma; i++, bufferTmp++ ) {
-		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[castedNumber % Base];
-		number *= Type( Base );
+	if ( comma < 1 ) {
+		bufferTmp[0] = T( '0' );
+		bufferTmp++;
+	} else {
+		for ( i = 0; i < comma; i++, bufferTmp++ ) {
+			unsigned long long castedNumber = ( unsigned long long )number;
+			*bufferTmp = BasicString<T>::numbers[castedNumber % Base];
+			number *= Type( Base );
+		}
 	}
-
 	*bufferTmp = T( '.' );
 	bufferTmp++;
 

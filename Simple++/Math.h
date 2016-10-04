@@ -17,7 +17,7 @@
 #include "Math/Line.h"
 #include "Math/BasicMath.h"
 #include "Math/Transformations.h"
-
+#include "Math/InterpolationFunc.hpp"
 
 namespace Math {
 
@@ -32,14 +32,37 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec2<T> & v );
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> min( const Vec2<T> & v, const T & x );
+	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec3<T> & v );
-
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> min( const Vec3<T> & v, const T & x );
+	template<typename T>
+	MATH_FUNC_QUALIFIER T min( const Vec4<T> & v );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> min( const Vec4<T> & v, const T & x );
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec2<T> & v );
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> max( const Vec2<T> & v, const T & x );
+	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec3<T> & v );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> max( const Vec3<T> & v, const T & x );
+	template<typename T>
+	MATH_FUNC_QUALIFIER T max( const Vec4<T> & v );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> max( const Vec4<T> & v, const T & x );
 
+	///@brief get the min and the max values of a Vec3
+	///@param v Vector of 3 values
+	///@return ( min , max )
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> getMinMax( const Vec3<T> & v );
+
+
+	
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> abs( const Vec2<T> & v );

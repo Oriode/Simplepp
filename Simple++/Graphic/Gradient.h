@@ -7,7 +7,6 @@
 #pragma once
 #include "Math.h"
 #include "BasicGraphic.h"
-#include "InterpolationFunc.hpp"
 
 
 
@@ -43,9 +42,14 @@ namespace Graphic {
 		///@return Color
 		const C & getColor() const;
 
+		///@brief get the color of this point cast to the float format
+		///@return Color
+		const typename C::FloatType & getColorFloat() const;
+
 
 	private:
 		C color;
+		typename C::FloatType colorFloat;
 		float position;			//between 0 and 1
 	};
 
@@ -56,7 +60,7 @@ namespace Graphic {
 
 
 	///@brief Represent a 2D Gradient for 2D image processing.
-	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 	class Gradient {
 	public:
 
@@ -121,7 +125,7 @@ namespace Graphic {
 	};
 
 
-	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 	class GradientHorizontal : public Gradient<C, InterFunc> {
 	public:
 		///@brief Create a new Horizontal gradient.
@@ -147,7 +151,7 @@ namespace Graphic {
 
 	};
 
-	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 	class GradientVertical : public Gradient<C, InterFunc> {
 	public:
 		///@brief Create a new Horizontal gradient.
@@ -176,7 +180,7 @@ namespace Graphic {
 
 
 
-	template<typename C, typename InterFunc = InterpolationFunc::Linear>
+	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 	class GradientRadial : public Gradient<C, InterFunc> {
 	public:
 		///@brief Create a new Radial Gradient

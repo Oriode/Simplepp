@@ -49,7 +49,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T pow( const T & v, double e ) {
-		std::pow( v, e );
+		return std::pow( v, e );
 	}
 
 	template<typename T>
@@ -144,6 +144,31 @@ namespace Math {
 		else
 			return sin( x ) / x;
 	}
+
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER T modulus( const T & x, const T & d ) {
+		return x;
+	}
+	MATH_FUNC_QUALIFIER float modulus( const float & x, const float & d ) {
+		float r( x );
+		if ( x > d ) {
+			do r -= d; while ( r > d );
+		} else {
+			while ( r < d ) r += d;
+		} 
+		return r;
+	}
+	MATH_FUNC_QUALIFIER double modulus( const double & x, const double & d ) {
+		double r( x );
+		if ( x > d ) {
+			do r -= d; while ( r > d );
+		} else {
+			while ( r < d ) r += d;
+		}
+		return r;
+	}
+	
 
 }
 

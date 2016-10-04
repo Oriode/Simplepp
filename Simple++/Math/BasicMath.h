@@ -31,6 +31,16 @@ namespace Math {
 	template<typename T = double>
 	MATH_FUNC_QUALIFIER constexpr T pi();
 
+
+	///@brief get the modulus of a number (work with floats)
+	///@param x Number to be divided
+	///@param d Divider to be used
+	///@return modulus
+	template<typename T>
+	MATH_FUNC_QUALIFIER T modulus( const T & x, const T & d );
+	MATH_FUNC_QUALIFIER float modulus( const float & x, const float & d );
+	MATH_FUNC_QUALIFIER double modulus( const double & x, const double & d );
+
 	///@brief get a Random number between min and max
 	///@param min Minimal value
 	///@param max Maximal value
