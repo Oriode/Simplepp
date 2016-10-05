@@ -3,7 +3,7 @@
 namespace Graphic {
 
 	template<typename T>
-	_Image<T>::_Image( Format format ) :
+	ImageT<T>::ImageT( Format format ) :
 		format( format ),
 		buffer( NULL ),
 		size( Math::Vec2<Size>::null ),
@@ -11,7 +11,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	Graphic::_Image<T>::_Image( const Math::Vec2<Size> & size, Format format ) :
+	Graphic::ImageT<T>::ImageT( const Math::Vec2<Size> & size, Format format ) :
 		format( format ),
 		size( size ),
 		nbPixels( size.x * size.y ),
@@ -20,7 +20,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	_Image<T>::_Image( const _Image<T> & image, bool normalize ) :
+	ImageT<T>::ImageT( const ImageT<T> & image, bool normalize ) :
 		format( image.format ),
 		size( image.size ),
 		nbPixels( image.nbPixels ) {
@@ -37,7 +37,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C>
-	_Image<T>::_Image( const _Image<C> & image, bool normalize ) :
+	ImageT<T>::ImageT( const ImageT<C> & image, bool normalize ) :
 		format( image.getFormat() ),
 		size( image.getSize() ),
 		nbPixels( image.getNbPixels() ) {
@@ -52,7 +52,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C>
-	void _Image<T>::_toType( T * bufferDest, const C * bufferSrc, bool normalize ) {
+	void ImageT<T>::_toType( T * bufferDest, const C * bufferSrc, bool normalize ) {
 		size_t nbComponents( getNbComponents() * getNbPixels() );
 		if ( normalize ) {
 			for ( size_t i( 0 ); i < nbComponents; i++ ) {
@@ -78,7 +78,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	_Image<T>::_Image( _Image<T> && image ) :
+	ImageT<T>::ImageT( ImageT<T> && image ) :
 		buffer( Utility::toRValue( image.buffer ) ),
 		format( Utility::toRValue( image.format ) ),
 		size( Utility::toRValue( image.size ) ),
@@ -91,20 +91,20 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	ImageT<T>::ImageT( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 	template<typename T>
 	template<typename U>
-	_Image<T>::_Image( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	ImageT<T>::ImageT( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 
 	template<typename T /*= unsigned char*/>
 	template<typename U>
-	void _Image<T>::_allocateAndCopy( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::_allocateAndCopy( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		this -> size = size;
 		this -> nbPixels = size.x * size.y;
 
@@ -252,7 +252,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::_allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::_allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		this -> size = size;
 		this -> nbPixels = size.x * size.y;
 
@@ -391,13 +391,13 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::~_Image() {
+	ImageT<T>::~ImageT() {
 		delete[] this -> buffer;
 	}
 
 
 	template<typename T>
-	void Graphic::_Image<T>::setPixel( Size x, Size y, const T * p ) {
+	void Graphic::ImageT<T>::setPixel( Size x, Size y, const T * p ) {
 		switch ( this -> format ) {
 			case Format::R:
 				getDatas()[( this -> size.x * y + x )] = *p;
@@ -419,7 +419,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	const T * _Image<T>::getPixel( Size x, Size y ) const {
+	const T * ImageT<T>::getPixel( Size x, Size y ) const {
 		return getDatas( x, y );
 	}
 
@@ -427,7 +427,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	T * Graphic::_Image<T>::getPixel( Size x, Size y ) {
+	T * Graphic::ImageT<T>::getPixel( Size x, Size y ) {
 		return getDatas( x, y );
 	}
 
@@ -435,13 +435,13 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	size_t _Image<T>::getDataOffset( Size x, Size y ) const {
+	size_t ImageT<T>::getDataOffset( Size x, Size y ) const {
 		return ( y * this -> size.x + x ) * getNbComponents();
 	}
 
 
 	template<typename T>
-	bool _Image<T>::write( std::fstream * fileStream ) const {
+	bool ImageT<T>::write( std::fstream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> size ) )
 			return false;
 		if ( !IO::write( fileStream, &this -> format ) )
@@ -455,20 +455,20 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T>::_Image( std::fstream * fileStream ) {
+	ImageT<T>::ImageT( std::fstream * fileStream ) {
 		_read( fileStream );
 	}
 
 
 	template<typename T>
-	void _Image<T>::setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		delete[] this -> buffer;
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 	template<typename T>
 	template<typename U>
-	void _Image<T>::setDatas( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::setDatas( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		delete[] this -> buffer;
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
@@ -476,7 +476,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool _Image<T>::_read( std::fstream * fileStream ) {
+	bool ImageT<T>::_read( std::fstream * fileStream ) {
 		if ( !IO::read( fileStream, &this -> size ) )
 			return false;
 		if ( !IO::read( fileStream, &this -> format ) )
@@ -492,13 +492,13 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool _Image<T>::read( std::fstream * fileStream ) {
+	bool ImageT<T>::read( std::fstream * fileStream ) {
 		delete[] this -> buffer;
 		return _read( fileStream );
 	}
 
 	template<typename T>
-	_Image<T> & _Image<T>::operator=( _Image<T> && image ) {
+	ImageT<T> & ImageT<T>::operator=( ImageT<T> && image ) {
 		delete[] this -> buffer;
 		this -> buffer = Utility::toRValue( image.buffer );
 		this -> format = Utility::toRValue( image.format );
@@ -511,7 +511,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	_Image<T> & _Image<T>::operator=( const _Image<T> & image ) {
+	ImageT<T> & ImageT<T>::operator=( const ImageT<T> & image ) {
 		delete[] this -> buffer;
 
 		this -> size = image.size;
@@ -532,7 +532,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C>
-	_Image<T> & _Image<T>::operator=( const _Image<C> & image ) {
+	ImageT<T> & ImageT<T>::operator=( const ImageT<C> & image ) {
 		delete[] this -> buffer;
 		this -> size = image.getSize();
 		this -> nbPixels = image.getNbPixels();
@@ -559,46 +559,46 @@ namespace Graphic {
 
 
 	template<typename T>
-	T * _Image<T>::getDatas() {
+	T * ImageT<T>::getDatas() {
 		return this -> buffer;
 
 	}
 
 	template<typename T>
-	const T * _Image<T>::getDatas() const {
+	const T * ImageT<T>::getDatas() const {
 		return this -> buffer;
 	}
 
 	template<typename T>
-	T * _Image<T>::getDatas( Size x, Size y ) {
+	T * ImageT<T>::getDatas( Size x, Size y ) {
 		return this -> buffer + getDataOffset( x, y );
 
 	}
 
 	template<typename T>
-	const T * _Image<T>::getDatas( Size x, Size y ) const {
+	const T * ImageT<T>::getDatas( Size x, Size y ) const {
 		return this -> buffer + getDataOffset( x, y );
 	}
 
 
 	template<typename T>
-	Size _Image<T>::getHeight() const {
+	Size ImageT<T>::getHeight() const {
 		return this -> size.y;
 	}
 
 	template<typename T>
-	Size _Image<T>::getWidth() const {
+	Size ImageT<T>::getWidth() const {
 		return this -> size.x;
 	}
 
 	template<typename T>
-	const Math::Vec2<Size> & _Image<T>::getSize() const {
+	const Math::Vec2<Size> & ImageT<T>::getSize() const {
 		return this -> size;
 	}
 
 
 	template<typename T>
-	void _Image<T>::clear( const Math::Vec2<Size> & size ) {
+	void ImageT<T>::clear( const Math::Vec2<Size> & size ) {
 		this -> size = size;
 		this -> nbPixels = this -> size.x * this -> size.y;
 		delete[] this -> buffer;
@@ -608,7 +608,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void _Image<T>::clear( const Math::Vec2<Size> & size, Format format ) {
+	void ImageT<T>::clear( const Math::Vec2<Size> & size, Format format ) {
 		this -> size = size;
 		this -> format = format;
 		this -> nbPixels = this -> size.x * this -> size.y;
@@ -620,12 +620,12 @@ namespace Graphic {
 
 
 	template<typename T>
-	_Image<T> * _Image<T>::createMipmap() {
+	ImageT<T> * ImageT<T>::createMipmap() {
 		Math::Vec2<Size> newSize = getSize() / Math::Vec2<Size>( 2 );
 		if ( newSize.x == 0 || newSize.y == 0 )
 			return NULL;
 
-		_Image<T> * newImage = new _Image<T>( newSize, this -> format );
+		ImageT<T> * newImage = new ImageT<T>( newSize, this -> format );
 
 		switch ( this -> format ) {
 			case Format::R:
@@ -643,7 +643,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename SumType /*= unsigned short */, typename C>
-	_Image<T> * _Image<T>::_createMipmap( _Image<T> * newImage ) {
+	ImageT<T> * ImageT<T>::_createMipmap( ImageT<T> * newImage ) {
 		Math::Vec2<Size> i( 0 );
 
 		auto newSize = newImage -> getSize();
@@ -676,13 +676,13 @@ namespace Graphic {
 
 
 	template<typename T>
-	typename Format _Image<T>::getFormat() const {
+	typename Format ImageT<T>::getFormat() const {
 		return this -> format;
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	size_t _Image<T>::getNbPixels() const {
+	size_t ImageT<T>::getNbPixels() const {
 		return this -> nbPixels;
 	}
 
@@ -691,7 +691,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void _Image<T>::fillImage( const T * color ) {
+	void ImageT<T>::fillImage( const T * color ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _fillImage<ColorR<T>, ColorR<T>>( *( ( ColorR<T> * ) color ) );
@@ -703,7 +703,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	void _Image<T>::fillImage( const T * color, const Rectangle & rectangle ) {
+	void ImageT<T>::fillImage( const T * color, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _fillImage<ColorR<T>, ColorRGBA<T>>( *( ( ColorR<T> * ) color ), rectangle );
@@ -716,7 +716,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::fillImage( const ColorR<T> & color ) {
+	void ImageT<T>::fillImage( const ColorR<T> & color ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _fillImage<ColorR<T>, ColorR<T>>( color );
@@ -729,7 +729,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::fillImage( const ColorRGB<T> & color ) {
+	void ImageT<T>::fillImage( const ColorRGB<T> & color ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _fillImage<ColorR<T>, ColorRGB<T>>( color );
@@ -742,7 +742,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::fillImage( const ColorRGBA<T> & color ) {
+	void ImageT<T>::fillImage( const ColorRGBA<T> & color ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _fillImage<ColorR<T>, ColorRGBA<T>>( color );
@@ -757,7 +757,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C1, typename C2>
-	void _Image<T>::_fillImage( const C2 & color ) {
+	void ImageT<T>::_fillImage( const C2 & color ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 
 		auto it = this -> buffer;
@@ -772,14 +772,14 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename Functor>
-	void _Image<T>::setPixels( Functor & functor ) {
+	void ImageT<T>::setPixels( Functor & functor ) {
 		return setPixels( functor, Rectangle( 0, getSize() ) );
 	}
 
 
 	template<typename T /*= unsigned char*/>
 	template<typename Functor>
-	void _Image<T>::setPixels( Functor & functor, const Rectangle & rectangle ) {
+	void ImageT<T>::setPixels( Functor & functor, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend R -> R
 				return _setPixels<Functor, ColorR<T>>( functor, rectangle );
@@ -792,7 +792,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename Functor, typename C>
-	void _Image<T>::_setPixels( Functor & functor, const Rectangle & rectangle ) {
+	void ImageT<T>::_setPixels( Functor & functor, const Rectangle & rectangle ) {
 		constexpr size_t N = sizeof( C ) / sizeof( T );
 
 		Math::Rectangle<Size> rectangleUI = clampRectangle( rectangle );
@@ -812,7 +812,7 @@ namespace Graphic {
 	}
 
 	template<typename T /*= unsigned char*/>
-	Math::Rectangle<Size> _Image<T>::clampRectangle( const Rectangle & rectangle ) const {
+	Math::Rectangle<Size> ImageT<T>::clampRectangle( const Rectangle & rectangle ) const {
 		Math::Rectangle<Size> rectangleUI;
 
 		if ( rectangle.getBottom() < 0 ) 		rectangleUI.setBottom( 0 );
@@ -839,7 +839,7 @@ namespace Graphic {
 
 	////////////////////
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::fillImage( const ColorR<T> & color, const Rectangle & rectangle ) {
+	void ImageT<T>::fillImage( const ColorR<T> & color, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendingFunc::None, ColorR<T>, ColorR<T>>( rectangle, color, BlendingFunc::None() );
@@ -851,7 +851,7 @@ namespace Graphic {
 	}
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage( const ColorRGB<T> & color, const Rectangle & rectangle ) {
+	void Graphic::ImageT<T>::fillImage( const ColorRGB<T> & color, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendingFunc::None, ColorR<T>, ColorRGB<T>>( rectangle, color, BlendingFunc::None() );
@@ -863,7 +863,7 @@ namespace Graphic {
 	}
 
 	template<typename T /*= unsigned char*/>
-	void Graphic::_Image<T>::fillImage( const ColorRGBA<T> & color, const Rectangle & rectangle ) {
+	void Graphic::ImageT<T>::fillImage( const ColorRGBA<T> & color, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendingFunc::None, ColorR<T>, ColorRGBA<T>>( rectangle, color, BlendingFunc::None() );
@@ -876,7 +876,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc>
-	void Graphic::_Image<T>::fillImage( const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle ) {
+	void Graphic::ImageT<T>::fillImage( const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _fillImage<ColorR<T>, C, InterFunc>( gradient, rectangle );
@@ -889,7 +889,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc>
-	void Graphic::_Image<T>::fillImage( const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle ) {
+	void Graphic::ImageT<T>::fillImage( const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _drawRectangle<BlendingFunc::None, ColorR<T>, C, InterFunc>( rectangle, gradient, BlendingFunc::None() );
@@ -903,7 +903,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc>
-	void Graphic::_Image<T>::fillImage( const GradientLinear<C, InterFunc> & gradient, const Rectangle & rectangle ) {
+	void Graphic::ImageT<T>::fillImage( const GradientLinear<C, InterFunc> & gradient, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _drawRectangle<BlendingFunc::None, ColorR<T>, C, InterFunc>( rectangle, gradient, BlendingFunc::None() );
@@ -917,7 +917,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc>
-	void Graphic::_Image<T>::fillImage( const GradientRadial<C, InterFunc> & gradient, const Rectangle & rectangle ) {
+	void Graphic::ImageT<T>::fillImage( const GradientRadial<C, InterFunc> & gradient, const Rectangle & rectangle ) {
 		switch ( this -> format ) {
 			case Format::R: 		//Blend RGBA -> R
 				return _drawRectangle<BlendingFunc::None, ColorR<T>, C, InterFunc>( rectangle, gradient, BlendingFunc::None() );
@@ -932,12 +932,12 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::fillImage( const Point & point, const _Image<T> & image ) {
+	void ImageT<T>::fillImage( const Point & point, const ImageT<T> & image ) {
 		fillImage( point, Rectangle( image.getSize() ), image );
 	}
 
 	template<typename T /*= unsigned char*/>
-	void _Image<T>::fillImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image ) {
+	void ImageT<T>::fillImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image ) {
 		switch ( this -> format ) {
 			case Format::R:
 				{
@@ -979,7 +979,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C1, typename C2>
-	void _Image<T>::_fillImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image ) {
+	void ImageT<T>::_fillImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
@@ -1053,37 +1053,37 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<bool Fast>
-	void _Image<T>::drawImage( const Point & point, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage ) {
+	void ImageT<T>::drawImage( const Point & point, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage ) {
 		drawImage<Fast>( point, Rectangle( image.getSize() ), image, maskPoint, maskImage );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<bool Fast>
-	void _Image<T>::drawImage( const Point & point, const _Image<T> & image, const _Image<T> & maskImage ) {
+	void ImageT<T>::drawImage( const Point & point, const ImageT<T> & image, const ImageT<T> & maskImage ) {
 		drawImage<Fast>( point, Rectangle( image.getSize() ), image, Point::null, maskImage );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<bool Fast>
-	void _Image<T>::drawImage( const Point & point, const _Image<T> & image ) {
+	void ImageT<T>::drawImage( const Point & point, const ImageT<T> & image ) {
 		drawImage<Fast>( point, Rectangle( image.getSize() ), image );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImage( const Point & point, const ColorR<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImage( const Point & point, const ColorR<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		drawImage<BlendFunc, Fast>( point, color, Rectangle( maskImage.getSize() ), maskImage, blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImage( const Point & point, const ColorRGB<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImage( const Point & point, const ColorRGB<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		drawImage<BlendFunc, Fast>( point, color, Rectangle( maskImage.getSize() ), maskImage, blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImage( const Point & point, const ColorRGBA<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImage( const Point & point, const ColorRGBA<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		drawImage<BlendFunc, Fast>( point, color, Rectangle( maskImage.getSize() ), maskImage, blendFunc );
 	}
 
@@ -1091,7 +1091,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<bool Fast>
-	void _Image<T>::drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image ) {
+	void ImageT<T>::drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				{
@@ -1136,7 +1136,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C1, typename C2, bool Fast>
-	void _Image<T>::_drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image ) {
+	void ImageT<T>::_drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
@@ -1238,7 +1238,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc, bool Fast>
-	void _Image<T>::drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				{
@@ -1282,7 +1282,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc, typename C1, typename C2, bool Fast>
-	void _Image<T>::_drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const BlendFunc & blendFunc ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
@@ -1367,7 +1367,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char */>
 	template<typename BlendFunc, bool Fast>
-	void _Image<T>::drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				{
@@ -1413,7 +1413,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char */>
 	template<typename BlendFunc, typename C1, typename C2, bool Fast>
-	void _Image<T>::_drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		assert( maskImage.getNbComponents() == 1 );
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
@@ -1537,7 +1537,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImage( const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImage( const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: 			//Blend R -> R
 				return _drawImage<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc, ColorR<T>, Fast>( point, ColorFunc::SimpleColor<ColorR<T>>( color ), rectangle, maskImage, blendFunc );
@@ -1550,7 +1550,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImage( const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImage( const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: 			//Blend R -> R
 				return _drawImage<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc, ColorR<T>, Fast>( point, ColorFunc::SimpleColor<ColorRGB<T>>( color ), rectangle, maskImage, blendFunc );
@@ -1563,7 +1563,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImage( const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImage( const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: 			//Blend R -> R
 				return _drawImage<ColorFunc::SimpleColor<ColorRGBA<T>>, BlendFunc, ColorR<T>, Fast>( point, ColorFunc::SimpleColor<ColorRGBA<T>>( color ), rectangle, maskImage, blendFunc );
@@ -1578,7 +1578,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, bool Fast>
-	void Graphic::_Image<T>::drawImageFunctor( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::drawImageFunctor( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: 			//Blend R -> R
 				return _drawImage<ColorFunc, BlendFunc, ColorR<T>, Fast>( point, colorFunc, rectangle, maskImage, blendFunc );
@@ -1593,7 +1593,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1, bool Fast>
-	void Graphic::_Image<T>::_drawImage( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc ) {
+	void Graphic::ImageT<T>::_drawImage( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc ) {
 		assert( maskImage.getNbComponents() == 1 );
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 
@@ -1690,25 +1690,25 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	_Image<T> _Image<T>::applyGaussianBlur( Size radius, ConvolutionMode convolutionMode /*= ConvolutionMode::ExtendedSize*/, const ColorRGBA<T> & color /*= ColorRGBA<T>::null */ ) const {
+	ImageT<T> ImageT<T>::applyGaussianBlur( Size radius, ConvolutionMode convolutionMode /*= ConvolutionMode::ExtendedSize*/, const ColorRGBA<T> & color /*= ColorRGBA<T>::null */ ) const {
 
 		typedef KernelType F;
 		struct ApplyGaussian {
-			ApplyGaussian( const _Image<T> & image ) : image( image ) {
+			ApplyGaussian( const ImageT<T> & image ) : image( image ) {
 				for ( Size i = 0; i < 10; i++ ) {
 					Size diameter = i * 2 + 1;
 					kernels[i] = new F[diameter];
 					computeGaussianKernel( kernels[i], diameter );
 				}
 			}
-			inline _Image<T> operator()( Size radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) {
+			inline ImageT<T> operator()( Size radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) {
 				Size diameter = radius * 2 + 1;
 				if ( radius < 10 ) return this -> image.applyFilter<F>( this -> kernels[radius], this -> kernels[radius], diameter, ConvolutionOrder::HorizontalVertical, convolutionMode, color );
 				else {
 					Size diameter = radius * 2 + 1;
 					F * kernelTmp = new F[diameter];
 					computeGaussianKernel( kernelTmp, diameter );
-					_Image<T> image( this -> image.applyFilter<F>( kernelTmp, kernelTmp, diameter, ConvolutionOrder::HorizontalVertical, convolutionMode, color ) );
+					ImageT<T> image( this -> image.applyFilter<F>( kernelTmp, kernelTmp, diameter, ConvolutionOrder::HorizontalVertical, convolutionMode, color ) );
 					delete[] kernelTmp;
 					return image;
 				}
@@ -1720,7 +1720,7 @@ namespace Graphic {
 			}
 
 			F * kernels[10];
-			const _Image<T> & image;
+			const ImageT<T> & image;
 		};
 		static ApplyGaussian applyGaussian( *this );
 		return applyGaussian( radius, convolutionMode, color );
@@ -1728,7 +1728,7 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	_Image<T> Graphic::_Image<T>::applySobelFilter() {
+	ImageT<T> Graphic::ImageT<T>::applySobelFilter() {
 		typedef KernelType F;
 
 		static F sobelKernel1[3];
@@ -1737,10 +1737,10 @@ namespace Graphic {
 		computeSobel1Kernel( sobelKernel1 );
 		computeSobel2Kernel( sobelKernel2 );
 
-		_Image<F> imageCasted( *this, false );
+		ImageT<F> imageCasted( *this, false );
 
-		_Image<F> imageHori( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, _Image<F>::ConvolutionOrder::HorizontalVertical, _Image<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ), false );
-		_Image<F> imageVert( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, _Image<F>::ConvolutionOrder::VerticalHorizontal, _Image<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ), false );
+		ImageT<F> imageHori( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, ImageT<F>::ConvolutionOrder::HorizontalVertical, ImageT<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ), false );
+		ImageT<F> imageVert( imageCasted.applyFilter<F, KernelFunc::None, T>( sobelKernel1, sobelKernel2, 3, ImageT<F>::ConvolutionOrder::VerticalHorizontal, ImageT<F>::ConvolutionMode::NormalSize, ColorRGBA<F>( 0 ), KernelFunc::None() ), false );
 
 		F * imageHoriIt( imageHori.getDatas() );
 		F * imageVertIt( imageVert.getDatas() );
@@ -1757,7 +1757,7 @@ namespace Graphic {
 			imageHoriIt++;
 			imageVertIt++;
 		}
-		return _Image<T>( imageVert, false );
+		return ImageT<T>( imageVert, false );
 	}
 
 
@@ -1766,7 +1766,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename F, typename KernelFunc, typename T1>
-	_Image<T> _Image<T>::applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T> ImageT<T>::applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		switch ( getFormat() ) {
 			case Format::R: return _applyFilter<T1, ColorR<T>, T, ColorR<T>, ColorR<F>, KernelFunc>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
 			case Format::RGB: return _applyFilter<T1, ColorRGB<T>, T, ColorRGB<T>, ColorRGB<F>, KernelFunc>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
@@ -1776,20 +1776,13 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	_Image<T2> _Image<T>::_applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		return _applyFilterf<T1, C1, T2, C2, KernelFunc, float>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
+	ImageT<T2> ImageT<T>::_applyFilter( const Float * filterX, const Float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+		return _applyFilterf<T1, C1, T2, C2, KernelFunc, Float>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
 	}
-
-	template<typename T>
-	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	_Image<T2> _Image<T>::_applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		return _applyFilterf<C1, T2, C2, KernelFunc, double>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
-	}
-
 
 	template<typename T>
 	template<typename F, typename KernelFunc, typename T1>
-	_Image<T> _Image<T>::applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T> ImageT<T>::applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		switch ( getFormat() ) {
 			case Format::R: return _applyFilter<T1, ColorR<T>, T, ColorR<T>, ColorR<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
 			case Format::RGB: return _applyFilter<T1, ColorRGB<T>, T, ColorRGB<T>, ColorRGB<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
@@ -1798,21 +1791,17 @@ namespace Graphic {
 	}
 
 
-	template<typename T>
-	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	_Image<T2> _Image<T>::_applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		return _applyFilterf<T1, C1, T2, C2, KernelFunc, float>( filter, size, convolutionMode, color, kernelFunc );
-	}
+
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	_Image<T2> _Image<T>::_applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		return _applyFilterf<T1, C1, T2, C2, KernelFunc, double>( filter, size, convolutionMode, color, kernelFunc );
+	ImageT<T2> ImageT<T>::_applyFilter( const Float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+		return _applyFilterf<T1, C1, T2, C2, KernelFunc, Float>( filter, size, convolutionMode, color, kernelFunc );
 	}
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-	_Image<T2> _Image<T>::_applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		assert( size.x % 2 == 1 );
 		assert( size.y % 2 == 1 );
 
@@ -1838,8 +1827,8 @@ namespace Graphic {
 		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
 		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
 
-		_Image<T2> imageBorder( sizeBorder, this -> getFormat() );
-		_Image<T2> imageExtended( sizeExtended, this -> getFormat() );
+		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
+		ImageT<T2> imageExtended( sizeExtended, this -> getFormat() );
 
 
 		unsigned int nbComponentsPerRow = this -> getSize().x;
@@ -1894,7 +1883,7 @@ namespace Graphic {
 			C2 * imageBorderIt = ( ( C2 * ) imageBorder.getDatas() );
 			C2 * imageExtendedIt = ( ( C2 * ) imageExtended.getDatas() );
 
-			constexpr F max( ( 1 << _Image<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
+			constexpr F max( ( 1 << ImageT<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
 
 			for ( typename Math::Vec2<Size>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
 				auto imageExtendedIt2 = imageBorderIt;
@@ -1915,7 +1904,7 @@ namespace Graphic {
 						imageExtendedIt3 += nbComponentsPerRowWithBorder;
 					}
 					kernelFunc( sum, max );
-					imageHoriIt2[0] = C2( sum >> _Image<T1>::getKernelSumNbBits<F>() );
+					imageHoriIt2[0] = C2( sum >> ImageT<T1>::getKernelSumNbBits<F>() );
 
 					imageExtendedIt2++;
 					imageHoriIt2++;
@@ -1932,7 +1921,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-	_Image<T2> _Image<T>::_applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		assert( size.x % 2 == 1 );
 		assert( size.y % 2 == 1 );
 
@@ -1958,8 +1947,8 @@ namespace Graphic {
 		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
 		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
 
-		_Image<T2> imageBorder( sizeBorder, this -> getFormat() );
-		_Image<T2> imageExtended( sizeExtended, this -> getFormat() );
+		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
+		ImageT<T2> imageExtended( sizeExtended, this -> getFormat() );
 
 
 		unsigned int nbComponentsPerRow = this -> getSize().x;
@@ -2052,7 +2041,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-	_Image<T2> _Image<T>::_applyFilter( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		assert( kernelSize % 2 == 1 );
 
 		typename Size NHalfed( kernelSize / 2 );
@@ -2077,9 +2066,9 @@ namespace Graphic {
 		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2 );
 		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize * 2, this -> size.y + borderSize * 2 );
 
-		_Image<T2> imageBorder( sizeBorder, this -> getFormat() );
-		_Image<T2> imageFilter1( imageBorder.getSize(), this -> getFormat() );
-		_Image<T2> imageFilter2( sizeExtended, this -> getFormat() );
+		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
+		ImageT<T2> imageFilter1( imageBorder.getSize(), this -> getFormat() );
+		ImageT<T2> imageFilter2( sizeExtended, this -> getFormat() );
 
 
 		unsigned int nbComponentsPerRow = this -> getSize().x;
@@ -2144,7 +2133,7 @@ namespace Graphic {
 			}
 		}
 
-		constexpr F max( ( 1 << _Image<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
+		constexpr F max( ( 1 << ImageT<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
 
 		{
 			C2 * imageFilter1It;
@@ -2180,7 +2169,7 @@ namespace Graphic {
 						imageBorderIt3 += filterOffset;
 					}
 					kernelFunc( sum, max );
-					imageFilter1It2[0] = C2( sum >> _Image<T1>::getKernelSumNbBits<F>() );
+					imageFilter1It2[0] = C2( sum >> ImageT<T1>::getKernelSumNbBits<F>() );
 
 					imageBorderIt2++;
 					imageFilter1It2++;
@@ -2227,7 +2216,7 @@ namespace Graphic {
 						resultHoriIt3 += filterOffset;
 					}
 					kernelFunc( sum, max );
-					imageFilter2It2[0] = C2( sum >> _Image<T1>::getKernelSumNbBits<F>() );
+					imageFilter2It2[0] = C2( sum >> ImageT<T1>::getKernelSumNbBits<F>() );
 
 					imageFilter2It2++;
 					imageFilter1It2++;
@@ -2248,7 +2237,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-	_Image<T2> _Image<T>::_applyFilterf( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilterf( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		assert( size % 2 == 1 );
 		assert( ( Utility::isSame<T, F>::value ) );
 
@@ -2274,9 +2263,9 @@ namespace Graphic {
 		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2 );
 		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize * 2, this -> size.y + borderSize * 2 );
 
-		_Image<T2> imageBorder( sizeBorder, this -> getFormat() );
-		_Image<T2> imageFilter1( imageBorder.getSize(), this -> getFormat() );
-		_Image<T2> imageFilter2( sizeExtended, this -> getFormat() );
+		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
+		ImageT<T2> imageFilter1( imageBorder.getSize(), this -> getFormat() );
+		ImageT<T2> imageFilter2( sizeExtended, this -> getFormat() );
 
 
 		unsigned int nbComponentsPerRow = this -> getSize().x;
@@ -2439,7 +2428,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K>
-	constexpr K _Image<T>::getKernelSumNbBits() {
+	constexpr K ImageT<T>::getKernelSumNbBits() {
 		assert( Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() > 6 );
 		return Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() - 6;
 	}
@@ -2448,7 +2437,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ConvertFunc>
-	_Image<T> _Image<T>::toFormat( Format newFormat, ConvertFunc & convertFunc ) const {
+	ImageT<T> ImageT<T>::toFormat( Format newFormat, ConvertFunc & convertFunc ) const {
 		switch ( newFormat ) {
 			case Format::R:
 				{
@@ -2489,8 +2478,8 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C1, typename C2, typename ConvertFunc>
-	_Image<T> _Image<T>::_toFormat( Format newFormat, ConvertFunc & convertFunc ) const {
-		_Image<T> newImage( getSize(), newFormat );
+	ImageT<T> ImageT<T>::_toFormat( Format newFormat, ConvertFunc & convertFunc ) const {
+		ImageT<T> newImage( getSize(), newFormat );
 
 		C1 * newImageIt0 = ( C1 * ) newImage.getDatas();
 		C2 * thisImageIt0 = ( C2 * ) this -> buffer;
@@ -2502,7 +2491,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C1, typename C2, typename ConvertFunc>
-	void _Image<T>::_toFormat( C1 * bufferDst, const C2 * bufferSrc, ConvertFunc & convertFunc ) const {
+	void ImageT<T>::_toFormat( C1 * bufferDst, const C2 * bufferSrc, ConvertFunc & convertFunc ) const {
 		size_t nbPixels( getNbPixels() );
 		for ( size_t i( 0 ); i < nbPixels; i++ ) {
 
@@ -2518,13 +2507,13 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	unsigned int Graphic::_Image<T>::getNbComponents() const {
+	unsigned int Graphic::ImageT<T>::getNbComponents() const {
 		return ( unsigned int ) this -> format;
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	Format _Image<T>::_loadingFormat2Format( LoadingFormat loadingFormat ) {
+	Format ImageT<T>::_loadingFormat2Format( LoadingFormat loadingFormat ) {
 		switch ( loadingFormat ) {
 			case LoadingFormat::R:
 				return Format::R;
@@ -2543,7 +2532,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const ColorR<T> & color, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const ColorR<T> & color, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, ColorR<T>>( rectangle, color, blendFunc );
@@ -2556,7 +2545,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const ColorRGB<T> & color, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const ColorRGB<T> & color, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, ColorRGB<T>>( rectangle, color, blendFunc );
@@ -2569,7 +2558,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const ColorRGBA<T> & color, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const ColorRGBA<T> & color, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, ColorRGBA<T>>( rectangle, color, blendFunc );
@@ -2583,7 +2572,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const C2 & color, const BlendFunc & functor ) {
+	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const C2 & color, const BlendFunc & functor ) {
 		Math::Rectangle<Size> rectangleClamped = clampRectangle( rectangle );
 		C1 * it = ( C1 * ) getDatas( rectangleClamped.getLeft(), rectangleClamped.getBottom() );
 		typename Math::Vec2<Size>::Type width = rectangleClamped.getRight() - rectangleClamped.getLeft();
@@ -2604,7 +2593,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const GradientLinear<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const GradientLinear<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>( rectangle, gradient, blendFunc );
@@ -2617,7 +2606,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const GradientRadial<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const GradientRadial<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>( rectangle, gradient, blendFunc );
@@ -2630,7 +2619,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>( rectangle, gradient, blendFunc );
@@ -2643,7 +2632,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc, typename BlendFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangle<BlendFunc, ColorR<T>, C, InterFunc>( rectangle, gradient, blendFunc );
@@ -2657,7 +2646,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C, typename InterFunc>
-	void _Image<T>::drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient ) {
+	void ImageT<T>::drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C, InterFunc> & gradient ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawRectangle<ColorR<T>, C, InterFunc>( rectangle, gradient );
@@ -2673,7 +2662,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t _Image<T>::computeInterpolation( const GradientHorizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle )  const {
+	size_t ImageT<T>::computeInterpolation( const GradientHorizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle )  const {
 		float size = rectangle.getRight() - rectangle.getLeft();
 		*clampedRectangle = clampRectangle( rectangle );
 		Size clampedSize = clampedRectangle -> getRight() - clampedRectangle -> getLeft();
@@ -2693,7 +2682,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C1, typename C2, typename InterFunc>
-	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient ) {
+	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
@@ -2730,7 +2719,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename C1, typename C2, typename InterFunc>
-	void _Image<T>::_fillImage( const GradientHorizontal<C2, InterFunc> & gradient, const Rectangle & rectangle ) {
+	void ImageT<T>::_fillImage( const GradientHorizontal<C2, InterFunc> & gradient, const Rectangle & rectangle ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
@@ -2769,7 +2758,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
-	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
+	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const GradientHorizontal<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
 		C2 * gradientArray;
 		Math::Rectangle<Size> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
@@ -2795,7 +2784,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t _Image<T>::computeInterpolation( const GradientVertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
+	size_t ImageT<T>::computeInterpolation( const GradientVertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
 		float size = rectangle.getTop() - rectangle.getBottom();
 		*clampedRectangle = clampRectangle( rectangle );
 		Size clampedSize = clampedRectangle -> getTop() - clampedRectangle -> getBottom();
@@ -2812,7 +2801,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
-	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
+	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const GradientVertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
 
 		C2 * gradientArray;
 		Math::Rectangle<Size> clampedRectangle;
@@ -2840,7 +2829,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t _Image<T>::computeInterpolation( const GradientLinear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
+	size_t ImageT<T>::computeInterpolation( const GradientLinear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 		*clampedRectangle = clampRectangle( rectangle );
 
@@ -2859,7 +2848,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
-	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientLinear<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
+	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const GradientLinear<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
 		Math::Rectangle<Size> clampedRectangle;
 		C2 * gradientArray;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
@@ -2888,7 +2877,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t _Image<T>::computeInterpolation( const GradientRadial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
+	size_t ImageT<T>::computeInterpolation( const GradientRadial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
 		*clampedRectangle = clampRectangle( rectangle );
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 		Math::Vec2<Size> sizeClamped = clampedRectangle -> getRightTop() - clampedRectangle -> getLeftBottom();
@@ -2905,7 +2894,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
-	void _Image<T>::_drawRectangle( const Rectangle & rectangle, const GradientRadial<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
+	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const GradientRadial<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
 		Math::Rectangle<Size> clampedRectangle;
 		C2 * gradientArray;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
@@ -2938,7 +2927,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void _Image<T>::drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor ) {
+	void ImageT<T>::drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor ) {
 		switch ( this -> format ) {
 			case Format::R:
 				return _drawRectangleFunctor<ColorFunc, BlendFunc, ColorR<T>>( rectangle, colorFunctor, blendingFunctor );
@@ -2953,7 +2942,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor ) {
+	void ImageT<T>::_drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor ) {
 		Math::Rectangle<Size> clampedRectangle = clampRectangle( rectangle );
 		colorFunctor.init( clampedRectangle );
 		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
@@ -2981,7 +2970,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine( const LineF & l, const ColorR<T> & color, unsigned int thickness, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawLine( const LineF & l, const ColorR<T> & color, unsigned int thickness, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorR<T>>( l, color, thickness, blendFunc );
 			case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorR<T>>( l, color, thickness, blendFunc );
@@ -2991,7 +2980,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine( const LineF & l, const ColorRGB<T> & color, unsigned int thickness, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawLine( const LineF & l, const ColorRGB<T> & color, unsigned int thickness, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGB<T>>( l, color, thickness, blendFunc );
 			case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGB<T>>( l, color, thickness, blendFunc );
@@ -3001,7 +2990,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc>
-	void _Image<T>::drawLine( const LineF & l, const ColorRGBA<T> & color, unsigned int thickness, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawLine( const LineF & l, const ColorRGBA<T> & color, unsigned int thickness, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: return _drawLine<BlendFunc, ColorR<T>, ColorRGBA<T>>( l, color, thickness, blendFunc );
 			case Format::RGB: return _drawLine<BlendFunc, ColorRGB<T>, ColorRGBA<T>>( l, color, thickness, blendFunc );
@@ -3011,7 +3000,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void _Image<T>::drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R: return _drawLineFunctor<ColorFunc, BlendFunc, ColorR<T>>( l, colorFunc, thickness, blendFunc, static_cast< T * >( NULL ) );
 			case Format::RGB: return _drawLineFunctor<ColorFunc, BlendFunc, ColorRGB<T>>( l, colorFunc, thickness, blendFunc, static_cast< T * >( NULL ) );
@@ -3022,20 +3011,20 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const float * t ) {
+	void ImageT<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const float * t ) {
 		return _drawLineFunctorf<ColorFunc, BlendFunc, C1>( l, colorFunc, thickness, blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const double * t ) {
+	void ImageT<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const double * t ) {
 		return _drawLineFunctorf<ColorFunc, BlendFunc, C1>( l, colorFunc, thickness, blendFunc );
 	}
 
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1, typename I>
-	void _Image<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const I * t ) {
+	void ImageT<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const I * t ) {
 		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
 
 		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
@@ -3384,7 +3373,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawLineFunctorf( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawLineFunctorf( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc ) {
 		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
 
 		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
@@ -3744,7 +3733,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawLineFunctorFilledBottom( const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawLineFunctorFilledBottom( const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc ) {
 		typedef Utility::TypesInfos<SumType>::Signed Bigger;
 
 		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
@@ -3899,13 +3888,13 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawLine( const LineF & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawLine( const LineF & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc ) {
 		return _drawLineFunctor<ColorFunc::SimpleColor<C2>, BlendFunc, C1>( l, ColorFunc::SimpleColor<C2>( color ), thickness, blendFunc, static_cast< T * >( NULL ) );
 	}
 
 
 	template<typename T>
-	void _Image<T>::threshold( const ColorRGBA<T> & colorOver, const ColorRGBA<T> & colorUnder, const ColorRGBA<T> & limit ) {
+	void ImageT<T>::threshold( const ColorRGBA<T> & colorOver, const ColorRGBA<T> & colorUnder, const ColorRGBA<T> & limit ) {
 		struct Functor {
 			Functor( const ColorRGBA<T> & c ) : c( c ) {}
 			inline bool operator()( Graphic::ColorR<T> & color )const { return ( color > c.r ); }
@@ -3921,7 +3910,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ThreshFunc>
-	void _Image<T>::threshold( const ColorRGBA<T> & colorTrue, const ColorRGBA<T> & colorFalse, const ThreshFunc & threshFunc ) {
+	void ImageT<T>::threshold( const ColorRGBA<T> & colorTrue, const ColorRGBA<T> & colorFalse, const ThreshFunc & threshFunc ) {
 
 
 		switch ( getFormat() ) {
@@ -3935,7 +3924,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ThreshFunc, typename C1, typename C2>
-	void _Image<T>::_threshold( const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc ) {
+	void ImageT<T>::_threshold( const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc ) {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C1 ) / sizeof( T );
 
@@ -3953,26 +3942,26 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc /*= BlendingFunc::Normal*/>
-	void _Image<T>::drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		return drawStrokeFunctor<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc>( point, image, thickness, ColorFunc::SimpleColor<ColorR<T>>( color ), strokeType, blendFunc );
 	}
 
 	template<typename T>
 	template<typename BlendFunc /*= BlendingFunc::Normal*/>
-	void _Image<T>::drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		return drawStrokeFunctor<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc>( point, image, thickness, ColorFunc::SimpleColor<ColorRGB<T>>( color ), strokeType, blendFunc );
 	}
 
 	template<typename T>
 	template<typename BlendFunc /*= BlendingFunc::Normal*/>
-	void _Image<T>::drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType /*= StrokeType::Middle*/, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		return drawStrokeFunctor<ColorFunc::SimpleColor<ColorRGBA<T>>, BlendFunc>( point, image, thickness, ColorFunc::SimpleColor<ColorRGBA<T>>( color ), strokeType, blendFunc );
 	}
 
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
-	void _Image<T>::drawStrokeFunctor( const Point & point, const _Image<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawStrokeFunctor( const Point & point, const ImageT<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				{
@@ -4017,7 +4006,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc ) {
 
 
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
@@ -4185,8 +4174,8 @@ namespace Graphic {
 		size_t borderSize2 = Math::max<size_t>( borderSize1, thickness );
 		size_t borderSize = borderSize1 + borderSize2;
 
-		_Image<DistanceType> imageOutside( Math::Vec2<Size>( image.getSize().x + borderSize * 2, image.getSize().y + borderSize * 2 ), Format::R );
-		_Image<DistanceType> imageInside( imageOutside.getSize(), Format::R );
+		ImageT<DistanceType> imageOutside( Math::Vec2<Size>( image.getSize().x + borderSize * 2, image.getSize().y + borderSize * 2 ), Format::R );
+		ImageT<DistanceType> imageInside( imageOutside.getSize(), Format::R );
 
 
 		unsigned int imageOutInOffset = imageOutside.getSize().x;
@@ -4393,7 +4382,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorR<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorR<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawBezierCurve<BlendFunc, ColorR<T>, ColorR<T>>( p0, p1, p2, p3, thickness, color, blendFunc );
@@ -4407,7 +4396,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGB<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGB<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawBezierCurve<BlendFunc, ColorR<T>, ColorRGB<T>>( p0, p1, p2, p3, thickness, color, blendFunc );
@@ -4421,7 +4410,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGBA<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, ColorRGBA<T> & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawBezierCurve<BlendFunc, ColorR<T>, ColorRGBA<T>>( p0, p1, p2, p3, thickness, color, blendFunc );
@@ -4435,7 +4424,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc, typename C1, typename C2>
-	void _Image<T>::_drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::_drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		unsigned int numberPoints = 50;
 
 
@@ -4466,7 +4455,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
-	void _Image<T>::drawGraphValuesFunctor( const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawGraphValuesFunctor( const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawGraphValuesFunctor<ColorFunc, BlendFunc, ColorR<T>>( values, rectangle, colorFunc, blendFunc );
@@ -4479,7 +4468,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawGraphValuesFunctor( const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::_drawGraphValuesFunctor( const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		warn( "Deprecated function" );
 		return;
 		if ( values.getSize() <= 2 ) {
@@ -4586,7 +4575,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangleRounded( const Rectangle & rectangle, unsigned int radius, const ColorR<T> & color, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawRectangleRounded( const Rectangle & rectangle, unsigned int radius, const ColorR<T> & color, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawRectangleRoundedFunctor<ColorFunc::SimpleColor<Graphic::ColorR<T>>, BlendFunc, ColorR<T>>( rectangle, radius, ColorFunc::SimpleColor<Graphic::ColorR<T>>( color ), blendFunc );
@@ -4599,7 +4588,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangleRounded( const Rectangle & rectangle, unsigned int radius, const ColorRGB<T> & color, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawRectangleRounded( const Rectangle & rectangle, unsigned int radius, const ColorRGB<T> & color, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawRectangleRoundedFunctor<ColorFunc::SimpleColor<Graphic::ColorRGB<T>>, BlendFunc, ColorR<T>>( rectangle, radius, ColorFunc::SimpleColor<Graphic::ColorRGB<T>>( color ), blendFunc );
@@ -4612,7 +4601,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawRectangleRounded( const Rectangle & rectangle, unsigned int radius, const ColorRGBA<T> & color, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawRectangleRounded( const Rectangle & rectangle, unsigned int radius, const ColorRGBA<T> & color, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawRectangleRoundedFunctor<ColorFunc::SimpleColor<Graphic::ColorRGBA<T>>, BlendFunc, ColorR<T>>( rectangle, radius, ColorFunc::SimpleColor<Graphic::ColorRGBA<T>>( color ), blendFunc );
@@ -4625,7 +4614,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
-	void _Image<T>::drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
+	void ImageT<T>::drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawRectangleRoundedFunctor<ColorFunc, BlendFunc, ColorR<T>>( rectangle, radius, colorFunc, blendFunc );
@@ -4639,8 +4628,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radiusi, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
-		typedef typename FloatType Float;
+	void ImageT<T>::_drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radiusi, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		auto clampedRectangle = clampRectangle( rectangle );
 		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
@@ -4864,26 +4852,26 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDisk( const Point & point, float radius, ColorR<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::ImageT<T>::drawDisk( const Point & point, float radius, ColorR<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		return drawDiskFunctor<ColorFunc::SimpleColor<ColorR<T>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorR<T>>( c ), blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDisk( const Point & point, float radius, ColorRGB<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::ImageT<T>::drawDisk( const Point & point, float radius, ColorRGB<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		return drawDiskFunctor<ColorFunc::SimpleColor<ColorRGB<T>>, BlendFunc>( point, radius, ColorFunc::SimpleColor<ColorRGB<T>>( c ), blendFunc );
 	}
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDisk( const Point & point, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::ImageT<T>::drawDisk( const Point & point, float radius, ColorRGBA<T> & c, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		return drawDiskFunctor<ColorFunc::SimpleColor<ColorRGBAT>>, BlendFunc > ( point, radius, ColorFunc::SimpleColor<ColorRGBA<T>>( c ), blendFunc );
 	}
 
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawDiskFunctor( const Point & point, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::ImageT<T>::drawDiskFunctor( const Point & point, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawDiskFunctor<ColorFunc, BlendFunc, ColorR<T>>( point, radius, colorFunc, blendFunc );
@@ -4899,8 +4887,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawDiskFunctor( const Point & point, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
-		typedef typename FloatType Float;
+	void ImageT<T>::_drawDiskFunctor( const Point & point, float radius, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		radius = Math::min<float>( radius, this -> size.x / 2 );
 		radius = Math::min<float>( radius, this -> size.y / 2 );
 
@@ -5102,14 +5089,14 @@ namespace Graphic {
 
 
 	template<typename T /*= unsigned char*/>
-	_Image<T> Graphic::_Image<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
+	ImageT<T> Graphic::ImageT<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
 		switch ( getFormat() ) {
 			case Format::R:
-				return _resample<ColorR<T>, ColorR<typename KernelType>, ColorR<typename FloatType>, KernelType>( newSize, resamplingMode );
+				return _resample<ColorR<T>, ColorR<typename KernelType>, ColorR<typename Float>, KernelType>( newSize, resamplingMode );
 			case Format::RGB:
-				return _resample<ColorRGB<T>, ColorRGB<typename KernelType>, ColorRGB<typename FloatType>, KernelType>( newSize, resamplingMode );
+				return _resample<ColorRGB<T>, ColorRGB<typename KernelType>, ColorRGB<typename Float>, KernelType>( newSize, resamplingMode );
 			case Format::RGBA:
-				return _resample<ColorRGBA<T>, ColorRGBA<typename KernelType>, ColorRGBA<typename FloatType>, KernelType>( newSize, resamplingMode );
+				return _resample<ColorRGBA<T>, ColorRGBA<typename KernelType>, ColorRGBA<typename Float>, KernelType>( newSize, resamplingMode );
 		}
 	}
 
@@ -5118,14 +5105,14 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename ColorSum, typename ColorFloat, typename SumType>
-	_Image<T> _Image<T>::_resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
-		typedef typename FloatType Float;
+	ImageT<T> ImageT<T>::_resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode /*= ResamplingMode::Nearest */ ) const {
+		typedef typename Float Float;
 
 		if ( newSize.x == this -> size.x && newSize.y == this -> size.y )
 			return *this;
 
 
-		_Image<T> newImage( newSize, getFormat() );
+		ImageT<T> newImage( newSize, getFormat() );
 
 		Math::Vec2<float> ratio( float( this -> size.x ) / float( newSize.x ), float( this -> size.y ) / float( newSize.y ) );
 
@@ -5723,7 +5710,7 @@ namespace Graphic {
 
 	template<typename T /*= unsigned char*/>
 	template<typename ColorFunc, typename BlendFunc>
-	void Graphic::_Image<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void Graphic::ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		switch ( getFormat() ) {
 			case Format::R:
 				return _drawPolygonFunctor<ColorFunc, BlendFunc, ColorR<T>>( vertices, nbVertices, rectangle, colorFunc, blendFunc );
@@ -5740,8 +5727,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void _Image<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
-		typedef typename FloatType Float;
+	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc /*= BlendingFunc::Normal()*/ ) {
 		auto clampedRectangle = clampRectangle( rectangle );
 		auto size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
@@ -6025,13 +6011,13 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K, size_t N>
-	K _Image<T>::computeGaussianKernel( K( &kernel )[N] ) {
+	K ImageT<T>::computeGaussianKernel( K( &kernel )[N] ) {
 		return computeGaussianKernel( kernel, N );
 	}
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::computeGaussianKernel( K * kernel, size_t size ) {
+	K ImageT<T>::computeGaussianKernel( K * kernel, size_t size ) {
 		struct KernelsComputed {
 			KernelsComputed() {
 				for ( size_t i = 0; i < 10; i++ ) {
@@ -6042,7 +6028,7 @@ namespace Graphic {
 			}
 
 			K computeKernel( K * kernel, size_t size ) {
-				return computeGaussianKernel( kernel, size, float( size ) / 4.0f );
+				return computeGaussianKernel( kernel, size, Float( size ) / Float(4.0) );
 			}
 
 			K setKernel( K * kernel, size_t size ) {
@@ -6073,19 +6059,19 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K, size_t N>
-	K _Image<T>::computeGaussianKernel( K( &kernel )[N], const float & sigma ) {
+	K ImageT<T>::computeGaussianKernel( K( &kernel )[N], const Float & sigma ) {
 		return computeGaussianKernel<K>( ( K * ) kernel, N, sigma );
 	}
 
 
 	template<typename T>
 	template<typename K, typename ComputeKernelFunc>
-	static K _Image<T>::_kernelFromFloat2Int( K * kernel, size_t size, ComputeKernelFunc & computeKernelFunc ) {
-		constexpr K kernelWeight( 1 << _Image<T>::getKernelSumNbBits<K>() );
+	static K ImageT<T>::_kernelFromFloat2Int( K * kernel, size_t size, ComputeKernelFunc & computeKernelFunc ) {
+		constexpr K kernelWeight( 1 << ImageT<T>::getKernelSumNbBits<K>() );
 
-		float * kernelf = new float[size];
+		Float * kernelf = new Float[size];
 		computeKernelFunc( kernelf, size );
-		float newWeight = float( kernelWeight );
+		Float newWeight = Float( kernelWeight );
 
 		for ( size_t i = 0; i < size; i++ )
 			kernel[i] = K( kernelf[i] * newWeight );
@@ -6096,31 +6082,31 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::computeGaussianKernel( K * kernel, size_t size, const float & sigma ) {
+	K ImageT<T>::computeGaussianKernel( K * kernel, size_t size, const Float & sigma ) {
 		struct ComputeKernelFunc {
-			ComputeKernelFunc( const float & sigma ) : sigma( sigma ) {}
-			void operator()( float * kernel, size_t size ) const {
-				_computeGaussianKernelf<float>( kernel, size, sigma );
+			ComputeKernelFunc( const Float & sigma ) : sigma( sigma ) {}
+			void operator()( Float * kernel, size_t size ) const {
+				_computeGaussianKernelf<Float>( kernel, size, sigma );
 			}
-			const float & sigma;
+			const Float & sigma;
 		};
 		ComputeKernelFunc computeKernelFunc( sigma );
 		return _kernelFromFloat2Int( kernel, size, computeKernelFunc );
 	}
 
 	template<typename T>
-	float _Image<T>::computeGaussianKernel( float * kernel, size_t size, const float & sigma ) {
+	float ImageT<T>::computeGaussianKernel( float * kernel, size_t size, const float & sigma ) {
 		return _computeGaussianKernelf<float>( kernel, size, sigma );
 	}
 
 	template<typename T>
-	double _Image<T>::computeGaussianKernel( double * kernel, size_t size, const double & sigma ) {
+	double ImageT<T>::computeGaussianKernel( double * kernel, size_t size, const double & sigma ) {
 		return _computeGaussianKernelf<double>( kernel, size, sigma );
 	}
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::_computeGaussianKernelf( K * kernel, size_t size, const K & sigma ) {
+	K ImageT<T>::_computeGaussianKernelf( K * kernel, size_t size, const K & sigma ) {
 		assert( size % 2 == 1 );
 		const size_t NHalfed = size / 2;
 
@@ -6150,7 +6136,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::computeSobel1Kernel( K * kernel ) {
+	K ImageT<T>::computeSobel1Kernel( K * kernel ) {
 		struct ComputeKernelFunc {
 			void operator()( float * kernel, size_t size ) const {
 				_computeSobel1Kernelf<float>( kernel );
@@ -6161,19 +6147,19 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	float _Image<T>::computeSobel1Kernel( float * kernel ) {
+	float ImageT<T>::computeSobel1Kernel( float * kernel ) {
 		return _computeSobel1Kernelf( kernel );
 	}
 
 	template<typename T>
-	double _Image<T>::computeSobel1Kernel( double * kernel ) {
+	double ImageT<T>::computeSobel1Kernel( double * kernel ) {
 		return _computeSobel1Kernelf( kernel );
 	}
 
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::computeSobel2Kernel( K * kernel ) {
+	K ImageT<T>::computeSobel2Kernel( K * kernel ) {
 		struct ComputeKernelFunc {
 			void operator()( float * kernel, size_t size ) const {
 				_computeSobel2Kernelf<float>( kernel );
@@ -6184,19 +6170,19 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	float _Image<T>::computeSobel2Kernel( float * kernel ) {
+	float ImageT<T>::computeSobel2Kernel( float * kernel ) {
 		return _computeSobel2Kernelf( kernel );
 	}
 
 	template<typename T>
-	double _Image<T>::computeSobel2Kernel( double * kernel ) {
+	double ImageT<T>::computeSobel2Kernel( double * kernel ) {
 		return _computeSobel2Kernelf( kernel );
 	}
 
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::_computeSobel1Kernelf( K * kernel ) {
+	K ImageT<T>::_computeSobel1Kernelf( K * kernel ) {
 		kernel[0] = K( -1 );
 		kernel[1] = K( 0 );
 		kernel[2] = K( 1 );
@@ -6206,7 +6192,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename K>
-	K _Image<T>::_computeSobel2Kernelf( K * kernel ) {
+	K ImageT<T>::_computeSobel2Kernelf( K * kernel ) {
 		kernel[0] = K( 1 );
 		kernel[1] = K( 2 );
 		kernel[2] = K( 1 );
@@ -6217,36 +6203,73 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawImageShadow( const Point & point, unsigned int thickness, const _Image<T> & image, const ColorR<T> & color, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawImageShadow( const Point & point, unsigned int thickness, const ImageT<T> & image, const ColorR<T> & color, const BlendFunc & blendFunc ) {
 		return drawImageShadowFunctor<ColorFunc::SimpleColor<ColorR<T>>>( point, thickness, image, ColorFunc::SimpleColor<ColorR<T>>( color ), blendFunc );
 	}
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawImageShadow( const Point & point, unsigned int thickness, const _Image<T> & image, const ColorRGB<T> & color, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawImageShadow( const Point & point, unsigned int thickness, const ImageT<T> & image, const ColorRGB<T> & color, const BlendFunc & blendFunc ) {
 		return drawImageShadowFunctor<ColorFunc::SimpleColor<ColorRGB<T>>>( point, thickness, image, ColorFunc::SimpleColor<ColorRGB<T>>( color ), blendFunc );
 	}
 
 	template<typename T>
 	template<typename BlendFunc>
-	void _Image<T>::drawImageShadow( const Point & point, unsigned int thickness, const _Image<T> & image, const ColorRGBA<T> & color, const BlendFunc & blendFunc ) {
+	void ImageT<T>::drawImageShadow( const Point & point, unsigned int thickness, const ImageT<T> & image, const ColorRGBA<T> & color, const BlendFunc & blendFunc ) {
 		return drawImageShadowFunctor<ColorFunc::SimpleColor<ColorRGBA<T>>>( point, thickness, image, ColorFunc::SimpleColor<ColorRGBA<T>>( color ), blendFunc );
 	}
 
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc /*= BlendingFunc::Normal*/>
-	void _Image<T>::drawImageShadowFunctor( const Point & point, unsigned int thickness, const _Image<T> & image, ColorFunc & colorFunc, const BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
+	void ImageT<T>::drawImageShadowFunctor( const Point & point, unsigned int thickness, const ImageT<T> & image, ColorFunc & colorFunc, const BlendFunc & blendFunc /*= BlendingFunc::Normal() */ ) {
 		if ( image.getFormat() == Format::R ) {
-			_Image<T> imageBlured( image.applyGaussianBlur( thickness, _Image<T>::ConvolutionMode::ExtendedSize ) );
+			ImageT<T> imageBlured( image.applyGaussianBlur( thickness, ImageT<T>::ConvolutionMode::ExtendedSize ) );
 			Point finalPoint( point.x - thickness, point.y - thickness );
 			drawImageFunctor( finalPoint, colorFunc, Rectangle( imageBlured.getSize() ), imageBlured, blendFunc );
 		} else {
-			_Image<T> imageBlured( image.toFormat( Format::R, ColorConvertFunc::Alpha() ).applyGaussianBlur( thickness, _Image<T>::ConvolutionMode::ExtendedSize ) );
+			ImageT<T> imageBlured( image.toFormat( Format::R, ColorConvertFunc::Alpha() ).applyGaussianBlur( thickness, ImageT<T>::ConvolutionMode::ExtendedSize ) );
 			Point finalPoint( point.x - thickness, point.y - thickness );
 			drawImageFunctor( finalPoint, colorFunc, Rectangle( imageBlured.getSize() ), imageBlured, blendFunc );
 		}
 	}
+
+	template<typename T /*= unsigned char*/>
+	void ImageT<T>::changeHueSaturationLightness( int hueBias, const Float & saturationFactor, const Float & lightnessFactor ) {
+		struct Functor {
+			Functor( int hueBias, const Float & saturationFactor, const Float & lightnessFactor ) : hueBias( Float( hueBias ) / Float( 360 ) ), saturationFactor( saturationFactor ), lightnessFactor( lightnessFactor ) {};
+
+			void operator()( const Math::Vec2<Size> & p, ColorR<T> & c ){
+				c.r = Math::min<Float>( Float( c.r * lightnessFactor ), Float( Color<T>::getMax() ) );
+			}
+			void operator()( const Math::Vec2<Size> & p, ColorRGB<T> & c ){
+				ColorRGB<Float> colorHSL = c.toType<Float>().RGBtoHSL();
+				colorHSL.h = Math::modulus( colorHSL.h + hueBias, ( Color<Float>::getMax() ) );
+				colorHSL.s = Math::min<Float>( Float( colorHSL.s * saturationFactor ), Float( Color<Float>::getMax() ) );
+				colorHSL.l = Math::min<Float>( Float( colorHSL.l * lightnessFactor ), Float( Color<Float>::getMax() ) );
+				c = colorHSL.HSLtoRGB().toType<T>();
+			}
+			void operator()( const Math::Vec2<Size> & p, ColorRGBA<T> & c ){
+				ColorRGB<T> colorRGB( c );
+				ColorRGB<Float> colorHSL = colorRGB.toType<Float>().RGBtoHSL();
+				colorHSL.h = Math::modulus<SumType>( colorHSL.h + hueBias, Float( Color<Float>::getMax() ) );
+				colorHSL.s = Math::min<Float>( Float( colorHSL.s * saturationFactor ), Float( Color<Float>::getMax() ) );
+				colorHSL.l = Math::min<Float>( Float( colorHSL.l * lightnessFactor ), Float( Color<Float>::getMax() ) );
+				colorRGB = colorHSL.HSLtoRGB().toType<T>();
+				c.r = colorRGB.r;
+				c.g = colorRGB.g;
+				c.b = colorRGB.b;
+			}
+
+			Float hueBias;
+			const Float & saturationFactor;
+			const Float & lightnessFactor;
+		};
+		Functor functor( hueBias, saturationFactor, lightnessFactor );
+		setPixels( functor );
+	
+	}
+
 
 
 }

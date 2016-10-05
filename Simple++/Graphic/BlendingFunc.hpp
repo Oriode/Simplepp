@@ -156,7 +156,7 @@ namespace Graphic {
 
 				colorDest.r = I( ( colorDest.r * oneMinusAlpha + ( sum / Bigger( 3 ) ) * colorSrc.a ) >> Color<I>::getMaxNbBits() );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 
 				F alpha( F( colorSrc.a ) / F(Color<I>::getMax()) );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
@@ -207,7 +207,7 @@ namespace Graphic {
 				colorDest.g = I( ( Bigger( colorDest.g ) * oneMinusAlpha + Bigger( colorSrc.g ) * alpha ) >> Color<I>::getMaxNbBits() );
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha + Bigger( colorSrc.b ) * alpha ) >> Color<I>::getMaxNbBits() );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F alpha( F( colorSrc.a ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0f ) - alpha );
 				colorDest.r = I( ( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha ) );
@@ -253,7 +253,7 @@ namespace Graphic {
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha + Bigger( colorSrc.b ) * Bigger( colorSrc.a ) ) >> Color<I>::getMaxNbBits() );
 				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha ) >> Color<I>::getMaxNbBits() + Bigger( colorSrc.a ) );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F alpha( F( colorSrc.a ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( ( float( colorDest.r ) * oneMinusAlpha + float( colorSrc.r ) * alpha ) );
@@ -303,12 +303,12 @@ namespace Graphic {
 				Bigger oneMinusAlpha( Color<I>::getMax() - a );
 				colorDest.r = I( ( Bigger( colorDest.r ) * oneMinusAlpha + Bigger( colorSrc.r ) * a ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Utility::TypesInfos<A>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Utility::TypesInfos<A>::getMax() ) );
 				#endif	
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
 			}
@@ -346,12 +346,12 @@ namespace Graphic {
 				colorDest.g = I( ( Bigger( colorDest.g ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Utility::TypesInfos<A>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Utility::TypesInfos<A>::getMax() ) );
 				#endif		
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				F tmp( ( colorSrc.r ) * alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + tmp );
@@ -399,7 +399,7 @@ namespace Graphic {
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha + tmp ) << Color<I>::getMaxNbBits() );
 				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha ) << Color<I>::getMaxNbBits() + alpha );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F a( F( alpha ) / F( Utility::TypesInfos<A>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - a );
 				F tmp( F( colorSrc ) * a );
@@ -410,8 +410,8 @@ namespace Graphic {
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				F tmp( F( colorSrc.r ) * alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + tmp );
@@ -459,12 +459,12 @@ namespace Graphic {
 				Bigger sum( ( Bigger( colorSrc.r ) + Bigger( colorSrc.g ) + Bigger( colorSrc.b ) ) / Bigger( 3 ) );
 				colorDest.r = I( ( Bigger( colorDest.r ) * oneMinusAlpha + sum * a ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Utility::TypesInfos<A>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Utility::TypesInfos<A>::getMax() ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				F sum( ( F( colorSrc.r ) + F( colorSrc.g ) + F( colorSrc.b ) ) / F( 3 ) );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + sum * alpha );
@@ -503,12 +503,12 @@ namespace Graphic {
 				colorDest.g = I( ( Bigger( colorDest.g ) * oneMinusAlpha + Bigger( colorSrc.g ) * a ) >> Color<I>::getMaxNbBits() );
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha + Bigger( colorSrc.b ) * a ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Utility::TypesInfos<A>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Utility::TypesInfos<A>::getMax() ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
 				colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + F( colorSrc.g ) * alpha );
@@ -562,8 +562,8 @@ namespace Graphic {
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
 				colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + F( colorSrc.g ) * alpha );
@@ -601,7 +601,7 @@ namespace Graphic {
 				SuperBigger sum( ( SuperBigger( colorSrc.r ) + SuperBigger( colorSrc.g ) + SuperBigger( colorSrc.b ) ) / SuperBigger( 3 ) );
 				colorDest.r = I( ( SuperBigger( colorDest.r ) * oneMinusAlpha + sum * a ) >> Utility::TypesInfos<Bigger>::getNbBits() );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F a( F( alpha ) * F( colorSrc.a ) / F( Color<I>::getMax() ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - a );
 				F sum( ( F( colorSrc.r ) + F( colorSrc.g ) + F( colorSrc.b ) ) / F( 3 ) );
@@ -609,8 +609,8 @@ namespace Graphic {
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				alpha *= F( colorSrc.a ) / F( Color<I>::getMax() );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				F sum( ( F( colorSrc.r ) + F( colorSrc.g ) + F( colorSrc.b ) ) / F( 3 ) );
@@ -644,7 +644,7 @@ namespace Graphic {
 				colorDest.g = I( ( SuperBigger( colorDest.g ) * oneMinusAlpha + SuperBigger( colorSrc.g ) * a ) >> Utility::TypesInfos<Bigger>::getNbBits() );
 				colorDest.b = I( ( SuperBigger( colorDest.b ) * oneMinusAlpha + SuperBigger( colorSrc.b ) * a ) >> Utility::TypesInfos<Bigger>::getNbBits() );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F a( F( alpha ) * F( colorSrc.a ) / F( Color<I>::getMax() ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - a );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * a );
@@ -653,8 +653,8 @@ namespace Graphic {
 				#endif		
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				alpha *= F( colorSrc.a ) / F( Color<I>::getMax() );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
@@ -696,12 +696,12 @@ namespace Graphic {
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha2 + Bigger( colorSrc.b ) * a2 ) >> Color<I>::getMaxNbBits() );
 				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha1 + Bigger( colorSrc.a ) * a1 ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Color<I>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Color<I>::getMax() ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F a( F( colorSrc.a ) / F(Color<I>::getMax()) );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				F oneMinusA( F( 1.0 ) - a );
@@ -826,7 +826,7 @@ namespace Graphic {
 			/************************************************************************/
 			template<typename I>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc ) {
-				colorDest.a = _Image<I>::getComponentMinValue();
+				colorDest.a = ImageT<I>::getComponentMinValue();
 			}
 
 			/************************************************************************/
@@ -849,7 +849,7 @@ namespace Graphic {
 
 				colorDest = I( ( colorDest * oneMinusAlpha + colorSrc.r * colorSrc.a ) >> Color<I>::getMaxNbBits() );
 				#else
-				typedef typename Color<T>::FloatType F;
+				typedef typename Color<T>::Float F;
 				F alpha( F( colorSrc.a ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 
@@ -911,7 +911,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorR<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
@@ -928,7 +928,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGB<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
@@ -958,15 +958,15 @@ namespace Graphic {
 
 				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha + Bigger( colorSrc.r ) * a ) << Color<I>::getMaxNbBits() );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F a( F( alpha ) / F( Utility::TypesInfos<A>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - a );
 				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha + a * F( colorSrc ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha + alpha * F( colorSrc.r ) );
 			}
@@ -1001,12 +1001,12 @@ namespace Graphic {
 				Bigger oneMinusAlpha( Color<I>::getMax() - a );
 				colorDest.r = I( ( Bigger( colorDest.r ) * oneMinusAlpha + Bigger( colorSrc.r ) * a ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Utility::TypesInfos<A>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Utility::TypesInfos<A>::getMax() ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
 			}
@@ -1028,7 +1028,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGB<float> & colorDest, const ColorRGB<float> & colorSrc, float alpha ) {
@@ -1058,15 +1058,15 @@ namespace Graphic {
 
 				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha ) >> Color<I>::getMaxNbBits() );
 				#else
-				typedef typename Color<I>::FloatType F;
+				typedef typename Color<I>::Float F;
 				F a( F( alpha ) / F( Utility::TypesInfos<A>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - a );
 				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha );
 			}
@@ -1101,8 +1101,8 @@ namespace Graphic {
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				alpha *= F( colorSrc.a ) / F( Color<I>::getMax() );
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
@@ -1127,7 +1127,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGB<float> & colorDest, const ColorRGBA<float> & colorSrc, float alpha ) {
@@ -1148,12 +1148,12 @@ namespace Graphic {
 				SuperBigger oneMinusAlpha( Utility::TypesInfos<Bigger>::getMax() - a );
 				colorDest.a = I( ( SuperBigger( colorDest.a ) * oneMinusAlpha ) >> Utility::TypesInfos<Bigger>::getNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Color<I>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Color<I>::getMax() ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				alpha *= F( colorSrc.a ) / Color<I>::getMax();
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.a = I( F( colorDest.a ) * oneMinusAlpha );
@@ -1305,7 +1305,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorR<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
@@ -1322,7 +1322,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGB<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
@@ -1339,7 +1339,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGBA<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
@@ -1357,7 +1357,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorR<float> & colorDest, const ColorRGB<float> & colorSrc, float alpha ) {
@@ -1374,7 +1374,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGB<float> & colorDest, const ColorRGB<float> & colorSrc, float alpha ) {
@@ -1391,7 +1391,7 @@ namespace Graphic {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::FloatType alpha ) {
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				Normal::blendColor( colorDest, colorSrc, alpha );
 			}
 			inline static void blendColor( ColorRGBA<float> & colorDest, const ColorRGB<float> & colorSrc, float alpha ) {
@@ -1421,8 +1421,8 @@ namespace Graphic {
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				F sum( ( F( colorSrc.r ) + F( colorSrc.g ) + F( colorSrc.b ) ) / F( 3 ) );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + sum * alpha );
@@ -1461,8 +1461,8 @@ namespace Graphic {
 				#endif		
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
 				colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + F( colorSrc.g ) * alpha );
@@ -1496,12 +1496,12 @@ namespace Graphic {
 				colorDest.b = I( ( Bigger( colorDest.b ) * oneMinusAlpha + Bigger( colorSrc.b ) * a ) >> Color<I>::getMaxNbBits() );
 				colorDest.a = I( ( Bigger( colorDest.a ) * oneMinusAlpha + Bigger( colorSrc.a ) * a ) >> Color<I>::getMaxNbBits() );
 				#else
-				blendColor( colorDest, colorSrc, typename Color<I>::FloatType( alpha ) / typename Color<I>::FloatType( Color<I>::getMax() ) );
+				blendColor( colorDest, colorSrc, typename Color<I>::Float( alpha ) / typename Color<I>::Float( Color<I>::getMax() ) );
 				#endif
 			}
 			template<typename I>
-			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::FloatType alpha ) {
-				typedef typename Color<I>::FloatType F;
+			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
+				typedef typename Color<I>::Float F;
 				F oneMinusAlpha( F( 1.0 ) - alpha );
 				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alpha );
 				colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + F( colorSrc.g ) * alpha );

@@ -67,12 +67,12 @@ namespace Graphic {
 		///@brief get the data buffer of this image
 		///@param i number of mipmap (0 = original image)
 		///@return data buffer
-		const T * getDatas(typename Vector<_Image<T>>::Size i = 0) const;
+		const T * getDatas(typename Vector<ImageT<T>>::Size i = 0) const;
 
 		///@brief get the data buffer of this image
 		///@param i number of mipmap (0 = original image)
 		///@return data buffer
-		T * getDatas(typename Vector<_Image<T>>::Size i = 0);
+		T * getDatas(typename Vector<ImageT<T>>::Size i = 0);
 
 
 		///@brief get a pixel from this image
@@ -80,7 +80,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@return the pixel from the picture at the specified 2D coordinate.
-		const T * getPixel(typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y) const;
+		const T * getPixel(typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y) const;
 
 
 		///@brief set a pixel inside this image
@@ -88,7 +88,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@param p The pixel to set.
-		void setPixel(typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y, const T * p);
+		void setPixel(typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y, const T * p);
 
 
 		///@brief copy operator

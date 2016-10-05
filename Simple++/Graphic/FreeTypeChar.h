@@ -12,7 +12,7 @@
 namespace Graphic {
 
 	template<typename T = unsigned char>
-	class FreeTypeChar : public _Image<T> {
+	class FreeTypeChar : public ImageT<T> {
 	public:
 		///@brief Constructor
 		///@param ftFace FreeType char object used to create this glyph.

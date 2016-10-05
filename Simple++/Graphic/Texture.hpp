@@ -5,12 +5,12 @@ namespace Graphic {
 	template<typename T>
 	Texture<T>::Texture( typename Format format ) 
 	{
-		this -> datas.push( new _Image<T>( format ) );
+		this -> datas.push( new ImageT<T>( format ) );
 	}
 
 	template<typename T>
 	Graphic::Texture<T>::Texture( const Math::Vec2<Size> & size, typename Format format ) {
-		this -> datas.push( new _Image<T>( size, format ) );
+		this -> datas.push( new ImageT<T>( size, format ) );
 	}
 
 	template<typename T>
@@ -21,7 +21,7 @@ namespace Graphic {
 	template<typename T>
 	Texture<T>::Texture( const Texture<T> & image ) {
 		for ( auto it = image.datas.getBegin(); it != image.datas.getEnd(); it++ )
-			this -> datas.push( new _Image<T>( **it ) );
+			this -> datas.push( new ImageT<T>( **it ) );
 	}
 
 	template<typename T>
@@ -32,7 +32,7 @@ namespace Graphic {
 
 	template<typename T>
 	Texture<T>::Texture( const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat, bool invertY ) {
-		this -> datas.push( new _Image<T>( dataBuffer, size, loadingFormat, invertY ) );
+		this -> datas.push( new ImageT<T>( dataBuffer, size, loadingFormat, invertY ) );
 	}
 
 	template<typename T>
@@ -55,12 +55,12 @@ namespace Graphic {
 
 
 	template<typename T>
-	void Graphic::Texture<T>::setPixel( typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y, const T * p ) {
+	void Graphic::Texture<T>::setPixel( typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y, const T * p ) {
 		this -> datas[i] ->  getDatas()[this -> size.x * y + x] = p;
 	}
 
 	template<typename T>
-	const T * Texture<T>::getPixel( typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y ) const {
+	const T * Texture<T>::getPixel( typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y ) const {
 		return this -> datas[i] ->  getDatas()[this -> size.x * y + x];
 	}
 
@@ -76,7 +76,7 @@ namespace Graphic {
 			this -> datas.resize( 1 );
 		}
 
-		Vector<_Image<T>>::Size i = 0;
+		Vector<ImageT<T>>::Size i = 0;
 		auto newMipmap = this -> datas[i] -> createMipmap();
 		while ( newMipmap ) {
 			this -> datas.push( newMipmap );
@@ -88,7 +88,7 @@ namespace Graphic {
 
 	template<typename T>
 	bool Texture<T>::write( std::fstream * fileStream ) const {
-		Vector<_Image<T> *>::Size nbMipmaps = this -> datas.getSize();
+		Vector<ImageT<T> *>::Size nbMipmaps = this -> datas.getSize();
 		if ( !IO::write( fileStream, &nbMipmaps ) )
 			return false;
 
@@ -116,12 +116,12 @@ namespace Graphic {
 
 	template<typename T>
 	bool Texture<T>::_read( std::fstream * fileStream ) {
-		Vector<_Image<T> *>::Size nbDatas;
+		Vector<ImageT<T> *>::Size nbDatas;
 		if ( !IO::read( fileStream, &nbDatas ) )
 			return false;
 
-		for ( Vector<_Image<T> * >::Size i = 0; i < nbDatas; i++ ) {
-			this -> datas.push( new _Image<T>( fileStream ) );
+		for ( Vector<ImageT<T> * >::Size i = 0; i < nbDatas; i++ ) {
+			this -> datas.push( new ImageT<T>( fileStream ) );
 		}
 		return true;
 	}
@@ -129,7 +129,7 @@ namespace Graphic {
 	template<typename T>
 	void Texture<T>::setDatas( const T * data, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat /*= LoadingFormat::RGB*/, bool invertY /*= false*/ ) {
 		_unload();
-		this -> datas.push( new _Image<T>( data, size, loadingFormat, invertY ) );
+		this -> datas.push( new ImageT<T>( data, size, loadingFormat, invertY ) );
 	}
 
 
@@ -159,12 +159,12 @@ namespace Graphic {
 
 
 	template<typename T>
-	T * Texture<T>::getDatas( typename Vector<_Image<T>>::Size i ) {
+	T * Texture<T>::getDatas( typename Vector<ImageT<T>>::Size i ) {
 		return this -> datas[i] -> getDatas();
 	}
 
 	template<typename T>
-	const T * Texture<T>::getDatas( typename Vector<_Image<T>>::Size i ) const {
+	const T * Texture<T>::getDatas( typename Vector<ImageT<T>>::Size i ) const {
 		return this -> datas[i] -> getDatas();
 	}
 
@@ -174,17 +174,17 @@ namespace Graphic {
 
 
 	template<typename T>
-	unsigned int Texture<T>::getHeight( typename Vector<_Image<T>>::Size i ) const {
+	unsigned int Texture<T>::getHeight( typename Vector<ImageT<T>>::Size i ) const {
 		return this -> datas[i] -> getSize().y;
 	}
 
 	template<typename T>
-	unsigned int Texture<T>::getWidth( typename Vector<_Image<T>>::Size i ) const {
+	unsigned int Texture<T>::getWidth( typename Vector<ImageT<T>>::Size i ) const {
 		return this -> datas[i] -> getSize().x;
 	}
 
 	template<typename T>
-	const Math::Vec2<Size> & Texture<T>::getSize( typename Vector<_Image<T>>::Size i ) const {
+	const Math::Vec2<Size> & Texture<T>::getSize( typename Vector<ImageT<T>>::Size i ) const {
 		return this -> datas[i] -> getSize();
 	}
 
@@ -210,18 +210,18 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	_Image<T> *Texture<T>::getMipmap( typename Vector<_Image<T>>::Size i /*= 0*/ ) {
+	ImageT<T> *Texture<T>::getMipmap( typename Vector<ImageT<T>>::Size i /*= 0*/ ) {
 		return this -> datas[i];
 	}
 
 
 	template<typename T /*= unsigned char*/>
-	_Image<T> * Graphic::Texture<T>::operator[]( typename Vector<_Image<T>>::Size i /*= 0*/ ) {
+	ImageT<T> * Graphic::Texture<T>::operator[]( typename Vector<ImageT<T>>::Size i /*= 0*/ ) {
 		return this -> datas[i];
 	}
 
 	template<typename T /*= unsigned char*/>
-	typename Vector<_Image<T> * >::Size Texture<T>::getNumMipmaps() const {
+	typename Vector<ImageT<T> * >::Size Texture<T>::getNumMipmaps() const {
 		return this -> datas.getSize();
 	}
 }

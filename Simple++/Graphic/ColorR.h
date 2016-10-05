@@ -30,7 +30,7 @@ namespace Graphic {
 		typedef typename ColorR<typename Color<T>::KernelType> ColorKernel;
 
 		///@brief Floating point type
-		typedef typename ColorR<typename Color<T>::FloatType> ColorFloat;
+		typedef typename ColorR<typename Color<T>::Float> ColorFloat;
 
 		explicit ColorR();
 

@@ -24,7 +24,7 @@ namespace Graphic {
 		typedef typename ColorRGB<typename Color<T>::KernelType> ColorKernel;
 
 		///@brief Floating point type
-		typedef typename ColorRGB<typename Color<T>::FloatType> ColorFloat;
+		typedef typename ColorRGB<typename Color<T>::Float> ColorFloat;
 
 
 		explicit ColorRGB( void );

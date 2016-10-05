@@ -113,10 +113,10 @@ int main( int argc, char * argv[] ) {
 	/* GRAPHIC PART									                        */
 	/************************************************************************/
 
-	Graphic::ColorRGB<unsigned char> colorUC( 255, 0, 20 );
-	Graphic::ColorR<float> colorF;
+	Graphic::ColorRGB<unsigned char> colorUC( 6, 0, 8 );
+	Graphic::ColorRGB<float> colorF(0.33, 0.86, 0.96);
 
-	log( String( colorUC.toType<float>().RGBtoHSL().HSLtoRGB() ) );
+	log( String( colorF.HSLtoRGB() ) );
 
 
 	Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 50 );
@@ -203,11 +203,17 @@ int main( int argc, char * argv[] ) {
 	}
 
 	{
-		Graphic::_Image<float> imagef( image );
-		image = imagef.toFormat(Graphic::Format::R).toFormat(Graphic::Format::RGB);
+		Graphic::ImageT<float> imagef( image );
+		image = imagef;
 
 	}
 
+
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Change Hue Saturation Lightness Image								//
+		image.changeHueSaturationLightness( 360, 1.0, 1.0f );
+	}*/
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
@@ -310,7 +316,7 @@ int main( int argc, char * argv[] ) {
 			image.drawLine(Graphic::LineF(250, 250, 500, 500), colorBlack, 5);
 
 		}*/
-		{
+		/*{
 			//////////////////////////////////////////////////////////////////////////
 			// Draw Bezier UChar									//
 
@@ -319,7 +325,7 @@ int main( int argc, char * argv[] ) {
 			image.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, colorRed);
 			image.drawBezierCurve(Graphic::PointF(0, 499), Graphic::PointF(100, 100), Graphic::PointF(400, 400), Graphic::PointF(500, 0), 3, colorRed);
 
-		}
+		}*/
 
 
 		/*{
@@ -443,6 +449,7 @@ int main( int argc, char * argv[] ) {
 
 	}*/
 
+/*
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Polygon															//
@@ -477,13 +484,13 @@ int main( int argc, char * argv[] ) {
 			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 250, 350, 350 ), colorFunc );
 
 		}
-	}
-	{
+	}*/
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Disk															//
 		Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
 		image.drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( Graphic::Point( 250, 250 ), 250, colorFunc );
-	}
+	}*/
 
 
 
@@ -492,22 +499,22 @@ int main( int argc, char * argv[] ) {
 
 
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// re sampling															//
 
 		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageOriginal.load();
 		freeImageOriginal.resize( Graphic::Point( 100, 500 ), Graphic::FreeImage::Filter::Lanczos3 );
-		Graphic::_Image<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
+		Graphic::ImageT<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
 
 		Graphic::FreeImage freeImageLinearIn( "sanctum200linear.png", Graphic::FreeImage::Format::RGB );
 		freeImageLinearIn.load();
-		Graphic::_Image<unsigned char> imageExampleLinear( freeImageLinearIn.getDatas(), freeImageLinearIn.getSize(), Graphic::LoadingFormat::BGR, false );
+		Graphic::ImageT<unsigned char> imageExampleLinear( freeImageLinearIn.getDatas(), freeImageLinearIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
 		Graphic::FreeImage freeImageBicubicIn( "sanctum200bicubic.png", Graphic::FreeImage::Format::RGB );
 		freeImageBicubicIn.load();
-		Graphic::_Image<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
+		Graphic::ImageT<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
 		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
 		image.drawImage( Graphic::Point( 0, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Lanczos ) );
@@ -520,7 +527,7 @@ int main( int argc, char * argv[] ) {
 		image.drawImage( Graphic::Point( 100, 0 ), imageLanczos );
 
 
-	}
+	}*/
 
 
 
@@ -573,7 +580,7 @@ int main( int argc, char * argv[] ) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 		Graphic::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
 		gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
@@ -603,7 +610,7 @@ int main( int argc, char * argv[] ) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::_Image<float> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<float> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M1; i++ ) {
@@ -613,7 +620,7 @@ int main( int argc, char * argv[] ) {
 		Log::displayChrono( "DRAW LINES R -> R (Last Result: 1.6s for M1)" );
 
 
-		Graphic::_Image<unsigned char> imageUC( image );
+		Graphic::ImageT<unsigned char> imageUC( image );
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char * ) imageUC.getDatas(), imageUC.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::SavingFormat::PNG );
@@ -626,7 +633,7 @@ int main( int argc, char * argv[] ) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Graph									//
 
-		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 
 		Math::Vec2<float> vStatic[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.25f, 0.2f ), Math::Vec2<float>( 0.5f, 0.1f ), Math::Vec2<float>( 0.6f, 0.8f ), Math::Vec2<float>( 0.7f, 0.1f ), Math::Vec2<float>( 1.0f, 0.8f ) };
@@ -651,7 +658,7 @@ int main( int argc, char * argv[] ) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
 
-		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 
 		Log::startChrono();
@@ -673,7 +680,7 @@ int main( int argc, char * argv[] ) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
 
-		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc( Graphic::ColorR<unsigned char>( 255 ) );
 
@@ -708,7 +715,7 @@ int main( int argc, char * argv[] ) {
 		font.load();
 		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
 
-		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::RGB );
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::RGB );
 
 		UTF8String testStr( "Hello World" );
 
@@ -736,9 +743,9 @@ int main( int argc, char * argv[] ) {
 		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
 		freeImageOriginal.load();
-		Graphic::_Image<unsigned char> imageOriginal( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false );
-		Graphic::_Image<unsigned char> image( imageOriginal );
-		Graphic::_Image<unsigned char> image2( imageOriginal.getSize(), Graphic::Format::RGB );
+		Graphic::ImageT<unsigned char> imageOriginal( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false );
+		Graphic::ImageT<unsigned char> image( imageOriginal );
+		Graphic::ImageT<unsigned char> image2( imageOriginal.getSize(), Graphic::Format::RGB );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
@@ -794,7 +801,7 @@ int main( int argc, char * argv[] ) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Polygon									//
 
-		Graphic::_Image<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 		Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.2f, 0.5f ), Math::Vec2<float>( 0.0f, 0.8f ), Math::Vec2<float>( 1.0f, 0.5f ) };
 		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc( Graphic::ColorR<unsigned char>( 128 ) );
@@ -819,8 +826,8 @@ int main( int argc, char * argv[] ) {
 		// Filter											//
 		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
-		Graphic::_Image<unsigned char> image( freeImageIn.getDatas(), Math::Vec2<Graphic::Size>( 500 ), Graphic::LoadingFormat::BGR, false );
-		Graphic::_Image<float> imagef( image );
+		Graphic::ImageT<unsigned char> image( freeImageIn.getDatas(), Math::Vec2<Graphic::Size>( 500 ), Graphic::LoadingFormat::BGR, false );
+		Graphic::ImageT<float> imagef( image );
 
 
 
@@ -835,7 +842,7 @@ int main( int argc, char * argv[] ) {
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			imagef = imagef.applyGaussianBlur( 5, Graphic::_Image<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>( 0, 0, 0, 0 ) );
+			imagef = imagef.applyGaussianBlur( 5, Graphic::ImageT<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>( 0, 0, 0, 0 ) );
 		}
 		Log::stopChrono();
 		Log::displayChrono( "FILTER RGB FLOAT (Last Result: 15.1s for K1)" );
@@ -859,7 +866,7 @@ int main( int argc, char * argv[] ) {
 		// Stroke											//
 		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
-		Graphic::_Image<unsigned char> image( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::RGB, false );
+		Graphic::ImageT<unsigned char> image( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::RGB, false );
 		image.threshold( Graphic::ColorRGBA<unsigned char>( 255 ), Graphic::ColorRGBA<unsigned char>( 0 ), Graphic::ColorRGBA<unsigned char>( 128, 0, 0, 0 ) );
 
 		Log::startChrono();
@@ -955,8 +962,8 @@ int main( int argc, char * argv[] ) {
 		testBlendRGBA.fillImage( colorWhite );
 		testBlendRGB.fillImage( colorWhite );
 
-		Graphic::_Image<float> testBlendRGBAFloat( Math::Vec2<unsigned int>( 100, 100 ), Graphic::Format::RGBA );
-		Graphic::_Image<float> testBlendRGBFloat( Math::Vec2<unsigned int>( 100, 100 ), Graphic::Format::RGB );
+		Graphic::ImageT<float> testBlendRGBAFloat( Math::Vec2<unsigned int>( 100, 100 ), Graphic::Format::RGBA );
+		Graphic::ImageT<float> testBlendRGBFloat( Math::Vec2<unsigned int>( 100, 100 ), Graphic::Format::RGB );
 
 		Math::vec4f colorWhiteF( 1.0, 1.0, 1.0, 1.0 );
 		Math::vec4f colorRedF( 1.0, 0.0, 0.0, 0.0001 );

@@ -13,7 +13,7 @@ namespace Graphic {
 	template<typename T>
 	struct _ColorHelper {
 		typedef typename Utility::TypesInfos<typename Utility::TypesInfos<T>::Bigger>::Bigger Type;
-		typedef float FloatType;
+		typedef float Float;
 		constexpr static T getMax() {
 			return Utility::TypesInfos<T>::getMax();
 		}
@@ -21,7 +21,7 @@ namespace Graphic {
 	template<>
 	struct _ColorHelper<float> {
 		typedef float Type;
-		typedef float FloatType;
+		typedef float Float;
 		constexpr static float getMax() {
 			return 1.0f;
 		}
@@ -29,7 +29,7 @@ namespace Graphic {
 	template<>
 	struct _ColorHelper<double> {
 		typedef double Type;
-		typedef double FloatType;
+		typedef double Float;
 		constexpr static double getMax() {
 			return 1.0;
 		}
@@ -51,7 +51,7 @@ namespace Graphic {
 		typedef typename Utility::TypesInfos<typename SumType>::Signed KernelType;
 
 		///@brief Floating point type
-		typedef typename _ColorHelper<T>::FloatType FloatType;
+		typedef typename _ColorHelper<T>::Float Float;
 
 
 		inline static void castComponent( float & comDest, const float & compSrc );

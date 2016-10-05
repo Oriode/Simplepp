@@ -236,7 +236,7 @@ namespace Graphic {
 					hsl.l = ( bCasted + min ) / U( 2 );
 				} else {
 					hsl.h = ( ( maxBy6 * ( rCasted - gCasted ) / ( delta ) + U( maxBy6 * U( 4 ) ) ) );
-					U lightness2( rCasted + min );
+					U lightness2( bCasted + min );
 					hsl.l = ( lightness2 ) / U( 2 );
 					hsl.s = delta * max / ( max - Math::abs( lightness2 - max ) );
 				}

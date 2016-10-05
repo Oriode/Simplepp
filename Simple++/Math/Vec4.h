@@ -94,6 +94,7 @@ namespace Math {
 
 		union {
 			struct { T r, g, b, a; };
+			struct { T h, s, l, a; };
 			struct { T x, y, z, w; };
 			struct { T values[4]; };
 		};

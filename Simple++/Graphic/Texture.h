@@ -49,17 +49,17 @@ namespace Graphic {
 		///@brief get the actual size (width:height) of the image
 		///@param i num of the mipmap
 		///@return the actual size of this image
-		const Math::Vec2<Size> & getSize( typename Vector<_Image<T>>::Size i = 0 ) const;
+		const Math::Vec2<Size> & getSize( typename Vector<ImageT<T>>::Size i = 0 ) const;
 
 		///@brief get the actual width of the image
 		///@param i num of the mipmap
 		///@return actual width of this image
-		unsigned int getWidth( typename Vector<_Image<T>>::Size i = 0 ) const;
+		unsigned int getWidth( typename Vector<ImageT<T>>::Size i = 0 ) const;
 
 		///@brief get the actual height of the image
 		///@param i num of the mipmap
 		///@return actual height of this image
-		unsigned int getHeight( typename Vector<_Image<T>>::Size i = 0 ) const;
+		unsigned int getHeight( typename Vector<ImageT<T>>::Size i = 0 ) const;
 
 		///@brief set the data from an another data buffer.
 		///@param data Data buffer to copy
@@ -82,13 +82,13 @@ namespace Graphic {
 		///@brief get a mipmap from this texture
 		///@param i mipmap number (0 mean original size)
 		///@return pointer to the mipmap wanted.
-		_Image<T> * getMipmap( typename Vector<_Image<T>>::Size i = 0 );
+		ImageT<T> * getMipmap( typename Vector<ImageT<T>>::Size i = 0 );
 
 
 		///@brief get a mipmap from this texture
 		///@param i mipmap number (0 mean the original size)
 		///@return pointer to the mipmap
-		_Image<T> * operator[]( typename Vector<_Image<T>>::Size i );
+		ImageT<T> * operator[]( typename Vector<ImageT<T>>::Size i );
 
 
 
@@ -99,12 +99,12 @@ namespace Graphic {
 		///@brief get the data buffer of this image
 		///@param i number of mipmap (0 = original image)
 		///@return data buffer
-		const T * getDatas( typename Vector<_Image<T>>::Size i = 0 ) const;
+		const T * getDatas( typename Vector<ImageT<T>>::Size i = 0 ) const;
 
 		///@brief get the data buffer of this image
 		///@param i number of mipmap (0 = original image)
 		///@return data buffer
-		T * getDatas( typename Vector<_Image<T>>::Size i = 0 );
+		T * getDatas( typename Vector<ImageT<T>>::Size i = 0 );
 
 
 		///@brief get a pixel from this texture
@@ -112,7 +112,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@return the pixel from the picture at the specified 2D coordinate.
-		const T * getPixel( typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y ) const;
+		const T * getPixel( typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y ) const;
 
 
 		///@brief set a pixel inside this image
@@ -120,7 +120,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@param p The pixel to set.
-		void setPixel( typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y, const T * p );
+		void setPixel( typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y, const T * p );
 
 
 		///@brief copy operator
@@ -150,7 +150,7 @@ namespace Graphic {
 
 		///@brief get the number of mipmap of this texture
 		///@return number of mipmaps
-		typename Vector<_Image<T> * >::Size getNumMipmaps() const;
+		typename Vector<ImageT<T> * >::Size getNumMipmaps() const;
 	protected:
 		enum ctor { null };
 		Texture( ctor );
@@ -158,7 +158,7 @@ namespace Graphic {
 		bool _read( std::fstream * fileStream );
 		void _unload();
 
-		Vector<_Image<T> * > datas;
+		Vector<ImageT<T> * > datas;
 	};
 
 

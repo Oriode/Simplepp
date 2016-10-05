@@ -101,7 +101,7 @@ namespace Graphic {
 	void TextureLoadable<T>::onLoad() {
 		switch ( this -> loadingType ) {
 		case EMPTY: {
-			this -> datas.push(new _Image<T>(this -> size, this -> format));
+			this -> datas.push(new ImageT<T>(this -> size, this -> format));
 			break;
 		}
 		case FILE: {
@@ -179,7 +179,7 @@ namespace Graphic {
 		lock();
 		setLoading(true);
 
-		this -> datas.push(new _Image<T>(dataBuffer, size, loadingFormat, invertY));
+		this -> datas.push(new ImageT<T>(dataBuffer, size, loadingFormat, invertY));
 
 		setLoaded(true);
 		setLoading(false);
@@ -194,25 +194,25 @@ namespace Graphic {
 
 
 	template<typename T>
-	void TextureLoadable<T>::setPixel(typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y, const T * p) {
+	void TextureLoadable<T>::setPixel(typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y, const T * p) {
 		assert(isLoaded());
 		Texture<T>::setPixel(i, x, y, p);
 	}
 
 	template<typename T>
-	const T * TextureLoadable<T>::getPixel(typename Vector<_Image<T>>::Size i, unsigned int x, unsigned int y) const {
+	const T * TextureLoadable<T>::getPixel(typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y) const {
 		assert(isLoaded());
 		return Texture<T>::getPixel(i, x, y);
 	}
 
 	template<typename T>
-	T * TextureLoadable<T>::getDatas(typename Vector<_Image<T>>::Size i /*= 0*/) {
+	T * TextureLoadable<T>::getDatas(typename Vector<ImageT<T>>::Size i /*= 0*/) {
 		assert(isLoaded());
 		return Texture<T>::getDatas(i);
 	}
 
 	template<typename T>
-	const T * TextureLoadable<T>::getDatas(typename Vector<_Image<T>>::Size i /*= 0*/) const {
+	const T * TextureLoadable<T>::getDatas(typename Vector<ImageT<T>>::Size i /*= 0*/) const {
 		assert(isLoaded());
 		return Texture<T>::getDatas(i);
 	}

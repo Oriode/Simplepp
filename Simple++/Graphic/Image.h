@@ -33,7 +33,7 @@ namespace Graphic {
 	///@template T Type of one pixel
 	///@template F Format of the image
 	template<typename T = unsigned char>
-	class _Image : public BasicIO {
+	class ImageT : public BasicIO {
 	public:
 		enum class ResamplingMode { Nearest, Bilinear, Lanczos };
 		enum class ConvolutionMode { NormalSize, ExtendedSize };
@@ -47,7 +47,7 @@ namespace Graphic {
 		typedef typename Color<T>::KernelType KernelType;
 
 		///@brief Floating type used for this type of image
-		typedef typename Color<T>::FloatType FloatType;
+		typedef typename Color<T>::Float Float;
 
 		///@brief copy constructor
 		///@param image Image to copy
@@ -57,7 +57,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///@see Graphic::ColorConvertFunc
-		_Image( const _Image<T> & image, bool normalize = true );
+		ImageT( const ImageT<T> & image, bool normalize = true );
 
 		///@brief copy constructor with an another storage type
 		///@param image image to copy
@@ -68,21 +68,21 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		///@see Graphic::ColorConvertFunc
 		template<typename C>
-		_Image( const _Image<C> & image, bool normalize = true);
+		ImageT( const ImageT<C> & image, bool normalize = true);
 
 		///@brief Empty constructor, create an image unallocated of size (0:0)
 		///@param format of the image
-		_Image( Format format = Format::RGB );
+		ImageT( Format format = Format::RGB );
 
 		///@brief Constructor to create an initialized image of specified size.
 		///@param size size of the image to create.
 		///@param format of the image
-		_Image( const Math::Vec2<Size> & size, Format format = Format::RGB );
+		ImageT( const Math::Vec2<Size> & size, Format format = Format::RGB );
 
 		///@brief create a new image data from a file stream.
 		///@param fileStream Stream to read
 		///@param format of the image
-		_Image( std::fstream * fileStream );
+		ImageT( std::fstream * fileStream );
 
 
 		///@brief Constructor to create an image from a data buffer.
@@ -91,14 +91,14 @@ namespace Graphic {
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
 		///@param stride width of ONE line of the image data in bytes, if stride == 0, the lines are supposed to be contiguous without any padding
-		_Image( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		ImageT( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 		template<typename U>
-		_Image( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		ImageT( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 		///@brief move constructor
-		_Image( _Image<T> && image );
+		ImageT( ImageT<T> && image );
 
-		~_Image( );
+		~ImageT( );
 
 		///@brief get the actual size (width:height) of the image
 		///@return the actual size of this image
@@ -140,7 +140,7 @@ namespace Graphic {
 
 		///@brief create a new image from this one with a size of width / 2 and height / 2
 		///@return new image created from this one with an halved size.
-		_Image<T> * createMipmap( );
+		ImageT<T> * createMipmap( );
 
 		///@brief get the data buffer of this image 
 		///@return data buffer
@@ -194,15 +194,15 @@ namespace Graphic {
 		///@brief copy operator with another type
 		///@param image Image to copy
 		template<typename C>
-		_Image<T> & operator=( const _Image<C> & image );
+		ImageT<T> & operator=( const ImageT<C> & image );
 
 		///@brief copy operator
 		///@param image Image to copy
-		_Image<T> & operator=( const _Image<T> & image );
+		ImageT<T> & operator=( const ImageT<T> & image );
 
 		///@brief move operator
 		///@param image Image to move from
-		_Image<T> & operator=( _Image<T> && image );
+		ImageT<T> & operator=( ImageT<T> && image );
 
 
 		///@brief read from a file stream
@@ -236,7 +236,7 @@ namespace Graphic {
 		///@see Graphic::ColorConvertFunc
 		///@return Image based of this one with a new format
 		template<typename ConvertFunc = ColorConvertFunc::Luminance>
-		_Image<T> toFormat( Format newFormat, ConvertFunc & convertFunc = ColorConvertFunc::Luminance() ) const;
+		ImageT<T> toFormat( Format newFormat, ConvertFunc & convertFunc = ColorConvertFunc::Luminance() ) const;
 
 
 
@@ -534,13 +534,13 @@ namespace Graphic {
 		///@param point Position where to draw.
 		///@param rectangle rectangle of the second image to draw. (The rectangle HAS TO BE smaller or equal of the given image)
 		///@param image Another image to draw
-		void fillImage( const Point & point, const _Image<T> & image );
+		void fillImage( const Point & point, const ImageT<T> & image );
 
 		///@brief fill an another image into this one (no blending will be applied)
 		///@param point Position where to draw.
 		///@param rectangle rectangle of the second image to draw. (The rectangle HAS TO BE smaller or equal of the given image)
 		///@param image Another image to draw
-		void fillImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image );
+		void fillImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image );
 
 
 		///@brief draw an another image into this one
@@ -548,7 +548,7 @@ namespace Graphic {
 		///@param image Another image to draw
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<bool Fast = false>
-		void drawImage( const Point & point, const _Image<T> & image );
+		void drawImage( const Point & point, const ImageT<T> & image );
 
 
 		///@brief draw an another image into this one
@@ -557,7 +557,7 @@ namespace Graphic {
 		///@param image Another image to draw
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<bool Fast = false>
-		void drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image );
+		void drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image );
 
 
 		///@brief draw an another image into this one with a custom blending function
@@ -578,7 +578,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 
@@ -592,7 +592,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const ColorR<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const ColorR<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		///@brief draw a color to this image using a mask
 		///@param point Position where to draw.
@@ -604,7 +604,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const ColorRGB<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const ColorRGB<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		///@brief draw a color to this image using a mask
 		///@param point Position where to draw.
@@ -616,7 +616,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const ColorRGBA<T> & color, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const ColorRGBA<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
@@ -630,7 +630,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
@@ -644,7 +644,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
@@ -658,7 +658,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief draw a color to this image using a mask and a rectangle to know the part of the mask to use.
@@ -674,7 +674,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImageFunctor( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImageFunctor( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief draw an another image into this one with a mask image
@@ -683,7 +683,7 @@ namespace Graphic {
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<bool Fast = false>
-		void drawImage( const Point & point, const _Image<T> & image, const _Image<T> & maskImage );
+		void drawImage( const Point & point, const ImageT<T> & image, const ImageT<T> & maskImage );
 
 		///@brief draw an another image into this one with a mask image
 		///@param point Position where to draw.
@@ -692,7 +692,7 @@ namespace Graphic {
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<bool Fast = false>
-		void drawImage( const Point & point, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage );
+		void drawImage( const Point & point, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage );
 
 
 		///@brief draw an another image into this one with a mask image
@@ -715,7 +715,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
-		void drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief Stroke the image with a specified color functor
@@ -734,7 +734,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawStrokeFunctor( const Point & point, const _Image<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStrokeFunctor( const Point & point, const ImageT<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief Stroke the image with a specified color
@@ -751,7 +751,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		///@brief Stroke the image with a specified color
 		///@param point Point where to draw the stroking
@@ -767,7 +767,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		///@brief Stroke the image with a specified color
 		///@param point Point where to draw the stroking
@@ -783,7 +783,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke( const Point & point, const _Image<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 
@@ -797,7 +797,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc, const T & alpha)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc, const T & alpha)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawImageShadow( const Point & point, unsigned int thickness, const _Image<T> & image, const ColorR<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawImageShadow( const Point & point, unsigned int thickness, const ImageT<T> & image, const ColorR<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 		///@brief Draw the shadow of an image into this one
 		///@param point where to draw the shadow
@@ -809,7 +809,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGB<T> & colorSrc, const T & alpha)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGB<T> & colorSrc, const T & alpha)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawImageShadow( const Point & point, unsigned int thickness, const _Image<T> & image, const ColorRGB<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawImageShadow( const Point & point, unsigned int thickness, const ImageT<T> & image, const ColorRGB<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 		///@brief Draw the shadow of an image into this one
 		///@param point where to draw the shadow
@@ -821,7 +821,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorRGBA<T> & colorSrc, const T & alpha)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorRGBA<T> & colorSrc, const T & alpha)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawImageShadow( const Point & point, unsigned int thickness, const _Image<T> & image, const ColorRGBA<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawImageShadow( const Point & point, unsigned int thickness, const ImageT<T> & image, const ColorRGBA<T> & color, const BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
 		///@brief Draw the shadow of an image into this one
@@ -836,7 +836,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, const T & alpha)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc, const T & alpha)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawImageShadowFunctor( const Point & point, unsigned int thickness, const _Image<T> & image, ColorFunc & colorFunc, const BlendFunc & blendFunc = BlendingFunc::Normal() );
+		void drawImageShadowFunctor( const Point & point, unsigned int thickness, const ImageT<T> & image, ColorFunc & colorFunc, const BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 
 		///@method drawBezierCurve
@@ -873,6 +873,12 @@ namespace Graphic {
 		void drawGraphValuesFunctor( const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
+		///@brief Change the Hue Saturation Lightness of this image
+		///@param hueBias Value added to the Hue value of each pixel [ -359 ; 359 ]
+		///@param saturationFactor Factor multiplied to the saturation of each pixel (must be positive)
+		///@param lightnessFactor Factor multiplied to the lightness of each pixel (must be positive)
+		void changeHueSaturationLightness( int hueBias, const Float & saturationFactor, const Float & lightnessFactor );
+
 		///@brief Get the number of bits of the sum of a kernel depending of the types used
 		///@return number of bits of the sum of a integer kernel (floating kernel will every time has a sum of 1.0)
 		template<typename K>
@@ -888,7 +894,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
 		template<typename F, typename KernelFunc = KernelFunc::None, typename T1 = T>
-		_Image<T> applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
+		ImageT<T> applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		///@brief Apply a convolution filter
@@ -901,7 +907,7 @@ namespace Graphic {
 		///@see Graphic::KernelFunc for many preconfigured functors
 		///@return Image with the filter applied
 		template<typename F, typename KernelFunc = KernelFunc::None, typename T1 = T>
-		_Image<T> applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
+		ImageT<T> applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		///@brief apply a Gaussian Blur Filter
@@ -909,12 +915,12 @@ namespace Graphic {
 		///@param convolutionMode Mode of the convolution (if the convolution will create a bigger image or crop it to keep the original size.)
 		///@param color Color of the background
 		///@return Image with the filter applied
-		_Image<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::black ) const;
+		ImageT<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::black ) const;
 
 		///@brief apply a Sobel filter and return the resulting image (note the final pixels components will be "min(sqrt(x*x + y*y) / 2, MAX)" where x is the sobel filter horizontal and y vertical)
 		///@return Image with the Sobel filter applied
 		///@see https://en.wikipedia.org/wiki/Sobel_operator
-		_Image<T> applySobelFilter();
+		ImageT<T> applySobelFilter();
 
 
 		///@brief Clamp a rectangle inside the image
@@ -991,7 +997,7 @@ namespace Graphic {
 		///						Linear : Do a linear interpolation to compute the resulting pixels.
 		///						Lanczos : Use the Lanczos algorithm with a constant of 3 (Note : only available for strict reduction, linear will be used instead)
 		///@see https://en.wikipedia.org/wiki/Lanczos_resampling
-		_Image<T> resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+		ImageT<T> resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 
 		///@brief Draw a filed Polygon
@@ -1085,7 +1091,7 @@ namespace Graphic {
 		///@param sigma Sigma used during the computation
 		///@return The weight computed
 		template<typename K, size_t N>
-		static K computeGaussianKernel( K( &kernel )[N], const float & sigma );
+		static K computeGaussianKernel( K( &kernel )[N], const Float & sigma );
 
 		///@brief compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : Size of your kernel (has to be odd))
 		///@param kernel table to be filled (has to be already allocated)
@@ -1099,7 +1105,7 @@ namespace Graphic {
 		///@param sigma Sigma used during the computation
 		///@return The weight computed
 		template<typename K>
-		static K computeGaussianKernel( K * kernel, size_t size, const float & sigma );
+		static K computeGaussianKernel( K * kernel, size_t size, const Float & sigma );
 		static float computeGaussianKernel( float * kernel, size_t size, const float & sigma );
 		static double computeGaussianKernel( double * kernel, size_t size, const double & sigma );
 
@@ -1159,7 +1165,7 @@ namespace Graphic {
 		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal() );
 
 		template<typename C1, typename Sum, typename SumF, typename K >
-		_Image<T> _resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+		ImageT<T> _resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radius, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -1174,7 +1180,7 @@ namespace Graphic {
 		void _drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
-		void _drawStroke( const Point & point, const _Image<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void _drawStroke( const Point & point, const ImageT<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		template<typename ThreshFunc, typename C1, typename C2>
 		void _threshold( const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc );
@@ -1198,22 +1204,22 @@ namespace Graphic {
 		void _fillImage( const C2 & color );
 
 		template<typename C1, typename C2>
-		void _fillImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image );
+		void _fillImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image );
 
 		template<typename C1, typename C2, typename InterFunc>
 		void _fillImage( const GradientHorizontal<C2, InterFunc> & color, const Rectangle & rectangle );
 
 		template<typename BlendFunc, typename C1, typename C2, bool Fast>
-		void _drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const Point & maskPoint, const _Image<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal( ) );
+		void _drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal( ) );
 
 		template<typename ColorFunc, typename BlendFunc, typename C1, bool Fast>
-		void _drawImage( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const _Image<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void _drawImage( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		template<typename BlendFunc, typename C1, typename C2, bool Fast>
-		void _drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image, const BlendFunc & blendFunc );
+		void _drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const BlendFunc & blendFunc );
 
 		template <typename C1, typename C2, bool Fast>
-		void _drawImage( const Point & point, const Rectangle & rectangle, const _Image<T> & image );
+		void _drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image );
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor = BlendingFunc::Normal( ) );
@@ -1248,7 +1254,7 @@ namespace Graphic {
 
 
 		template<typename C1, typename C2, typename ConvertFunc>
-		_Image<T> _toFormat( Format newFormat, ConvertFunc & convertFunc ) const;
+		ImageT<T> _toFormat( Format newFormat, ConvertFunc & convertFunc ) const;
 
 		template<typename C1, typename C2, typename ConvertFunc>
 		void _toFormat( C1 * bufferDst, const C2 * bufferSrc, ConvertFunc & convertFunctor ) const;
@@ -1259,31 +1265,25 @@ namespace Graphic {
 
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-		_Image<T2> _applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-		_Image<T2> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
-		_Image<T2> _applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
-
-		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
-		_Image<T2> _applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const Float * filterX, const Float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-		_Image<T2> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
-		_Image<T2> _applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
-
-		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
-		_Image<T2> _applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const Float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-		_Image<T2> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename SumType, typename C>
-		_Image<T> * _createMipmap( _Image<T> * destinationImage );
+		ImageT<T> * _createMipmap( ImageT<T> * destinationImage );
 
 		bool _read( std::fstream * fileStream );
 
@@ -1298,8 +1298,9 @@ namespace Graphic {
 
 
 
-	typedef _Image<unsigned char> Image;
-	typedef _Image<float> ImageF;
+
+	typedef ImageT<unsigned char> Image;
+	typedef ImageT<float> ImageF;
 
 
 

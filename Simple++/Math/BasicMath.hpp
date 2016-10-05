@@ -148,23 +148,23 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T modulus( const T & x, const T & d ) {
-		return x;
+		return x % d;
 	}
 	MATH_FUNC_QUALIFIER float modulus( const float & x, const float & d ) {
 		float r( x );
-		if ( x > d ) {
-			do r -= d; while ( r > d );
-		} else {
-			while ( r < d ) r += d;
+		if ( r > d ) {
+			do { r -= d; } while ( r > d );
+		} else if ( r < float( 0 ) ) {
+			while ( r < float( 0 ) ) r += d;
 		} 
 		return r;
 	}
 	MATH_FUNC_QUALIFIER double modulus( const double & x, const double & d ) {
 		double r( x );
 		if ( x > d ) {
-			do r -= d; while ( r > d );
-		} else {
-			while ( r < d ) r += d;
+			do { r -= d; } while ( r > d );
+		} else if ( r < double( 0 ) ) {
+			while ( r < double( 0 ) ) r += d;
 		}
 		return r;
 	}

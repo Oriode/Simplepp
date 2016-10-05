@@ -5,7 +5,7 @@ namespace Graphic {
 
 	template<typename T>
 	FreeTypeChar<T>::FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint ) :
-		_Image<T>( Format::R ),
+		ImageT<T>( Format::R ),
 		uCodePoint( codePoint ) {
 
 		unsigned int glyphindex = FT_Get_Char_Index( ftFace, this -> uCodePoint );
@@ -55,7 +55,7 @@ namespace Graphic {
 
 	template<typename T>
 	FreeTypeChar<T>::FreeTypeChar( FreeTypeChar<T> && c ) :
-		_Image<T>( Utility::toRValue( c ) ),
+		ImageT<T>( Utility::toRValue( c ) ),
 		uCodePoint( Utility::toRValue( c.uCodePoint ) ),
 		size( Utility::toRValue( c.size ) ),
 		horiOffsetY( Utility::toRValue( c.horiOffsetY ) ),
@@ -66,7 +66,7 @@ namespace Graphic {
 
 	template<typename T>
 	FreeTypeChar<T>::FreeTypeChar( std::fstream * fileStream ) :
-		_Image<T>( fileStream ) {
+		ImageT<T>( fileStream ) {
 		IO::read( fileStream, &this -> uCodePoint );
 		IO::read( fileStream, &this -> size );
 		IO::read( fileStream, &this -> horiBearing );
