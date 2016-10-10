@@ -15,7 +15,7 @@
 /*  The blending will have some error when used with int types but will */
 /*  at least two times faster											*/
 /************************************************************************/
-//#define GRAPHIC_FAST_BLENDING
+#define GRAPHIC_FAST_BLENDING
 
 
 

@@ -17,7 +17,7 @@ namespace Graphic {
 
 	///@brief base class of an interpolated gradient
 	template<typename C, typename InterFunc>
-	class GradientInterpolation {
+	class GradientInterpolation : public BasicIO {
 	public:
 		GradientInterpolation();
 
@@ -48,6 +48,16 @@ namespace Graphic {
 		///@brief move operator
 		GradientInterpolation<C, InterFunc> & operator=( GradientInterpolation<C, InterFunc> && gradient );
 
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read( std::fstream * fileStream );
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write( std::fstream * fileStream ) const;
 	protected:
 
 		C * interpolatedArray;
@@ -55,7 +65,7 @@ namespace Graphic {
 		int size;
 	};
 
-
+	
 
 
 
@@ -89,6 +99,15 @@ namespace Graphic {
 			///@brief Move operator
 			GradientHorizontal<C, InterFunc> & operator=( GradientHorizontal<C, InterFunc> && gradient );
 
+			///@brief read from a file stream
+			///@param fileStream stream used to read load this object
+			///@return boolean to know if the operation is a success of not.
+			bool read( std::fstream * fileStream );
+
+			///@brief write this object as binary into a file stream
+			///@param fileStream stream used to write this object
+			///@return boolean to know if the operation is a success of not.
+			bool write( std::fstream * fileStream ) const;
 		private:
 			const Graphic::GradientHorizontal<C, InterFunc> & gradient;
 		};
@@ -125,6 +144,15 @@ namespace Graphic {
 			///@brief Move operator
 			GradientVertical<C, InterFunc> & operator=( GradientVertical<C, InterFunc> && gradient );
 
+			///@brief read from a file stream
+			///@param fileStream stream used to read load this object
+			///@return boolean to know if the operation is a success of not.
+			bool read( std::fstream * fileStream );
+
+			///@brief write this object as binary into a file stream
+			///@param fileStream stream used to write this object
+			///@return boolean to know if the operation is a success of not.
+			bool write( std::fstream * fileStream ) const;
 		private:
 			const Graphic::GradientVertical<C, InterFunc> & gradient;
 		};
@@ -158,6 +186,15 @@ namespace Graphic {
 			///@brief Move operator
 			GradientLinear<C, InterFunc> & operator=( GradientLinear<C, InterFunc> && gradient );
 
+			///@brief read from a file stream
+			///@param fileStream stream used to read load this object
+			///@return boolean to know if the operation is a success of not.
+			bool read( std::fstream * fileStream );
+
+			///@brief write this object as binary into a file stream
+			///@param fileStream stream used to write this object
+			///@return boolean to know if the operation is a success of not.
+			bool write( std::fstream * fileStream ) const;
 		private:
 			const Graphic::GradientLinear<C, InterFunc> & gradient;
 			int sizeMinusOne;
@@ -192,6 +229,15 @@ namespace Graphic {
 			///@brief Move operator
 			GradientRadial<C, InterFunc> & operator=( GradientRadial<C, InterFunc> && gradient );
 
+			///@brief read from a file stream
+			///@param fileStream stream used to read load this object
+			///@return boolean to know if the operation is a success of not.
+			bool read( std::fstream * fileStream );
+
+			///@brief write this object as binary into a file stream
+			///@param fileStream stream used to write this object
+			///@return boolean to know if the operation is a success of not.
+			bool write( std::fstream * fileStream ) const;
 		private:
 			const Graphic::GradientRadial<C, InterFunc> & gradient;
 			int sizeMinusOne;

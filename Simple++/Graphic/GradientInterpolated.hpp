@@ -50,7 +50,7 @@ namespace Graphic {
 		this -> clampedRectangle = gradient.clampedRectangle;
 		delete[] this -> interpolatedArray;
 		this -> interpolatedArray = new C[this -> size];
-		Vector::copy( this -> interpolatedArray, gradient.interpolatedArray, this -> size );
+		Vector<C>::copy( this -> interpolatedArray, gradient.interpolatedArray, this -> size );
 		return *this;
 	}
 
@@ -64,6 +64,17 @@ namespace Graphic {
 		return *this;
 	}
 
+	template<typename C, typename InterFunc>
+	bool GradientInterpolation<C, InterFunc>::read( std::fstream * fileStream ) {
+		delete[] this -> interpolatedArray;
+		this -> interpolatedArray = NULL;
+		return true;
+	}
+
+	template<typename C, typename InterFunc>
+	bool GradientInterpolation<C, InterFunc>::write( std::fstream * fileStream ) const {
+		return true;
+	}
 
 
 
@@ -113,6 +124,26 @@ namespace Graphic {
 			return *this;
 		}
 
+		template<typename C, typename InterFunc>
+		bool GradientHorizontal<C, InterFunc>::read( std::fstream * fileStream ) {
+			if ( !GradientInterpolation<C, InterFunc>::read( fileStream ) )
+				return false;
+			if ( !IO::read( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
+		}
+
+		template<typename C, typename InterFunc>
+		bool GradientHorizontal<C, InterFunc>::write( std::fstream * fileStream ) const {
+			if ( !GradientInterpolation<C, InterFunc>::write( fileStream ) )
+				return false;
+			if ( !IO::write( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
+		}
+
 
 		//////////////////////////////////////////////////////////////////////////
         //// VERTICAL
@@ -157,6 +188,26 @@ namespace Graphic {
 			GradientInterpolation<C, InterFunc>::operator=( Utility::toRValue( gradient ) );
 			this -> gradient = Utility::toRValue( gradient.gradient );
 			return *this;
+		}
+
+		template<typename C, typename InterFunc>
+		bool GradientVertical<C, InterFunc>::read( std::fstream * fileStream ) {
+			if ( !GradientInterpolation<C, InterFunc>::read( fileStream ) )
+				return false;
+			if ( !IO::read( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
+		}
+
+		template<typename C, typename InterFunc>
+		bool GradientVertical<C, InterFunc>::write( std::fstream * fileStream ) const {
+			if ( !GradientInterpolation<C, InterFunc>::write( fileStream ) )
+				return false;
+			if ( !IO::write( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -226,6 +277,25 @@ namespace Graphic {
 			return *this;
 		}
 
+		template<typename C, typename InterFunc>
+		bool GradientLinear<C, InterFunc>::read( std::fstream * fileStream ) {
+			if ( !GradientInterpolation<C, InterFunc>::read( fileStream ) )
+				return false;
+			if ( !IO::read( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
+		}
+
+		template<typename C, typename InterFunc>
+		bool GradientLinear<C, InterFunc>::write( std::fstream * fileStream ) const {
+			if ( !GradientInterpolation<C, InterFunc>::write( fileStream ) )
+				return false;
+			if ( !IO::write( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
+		}
 
 		//////////////////////////////////////////////////////////////////////////
 		//// RADIAL
@@ -290,7 +360,25 @@ namespace Graphic {
 			return *this;
 		}
 
+		template<typename C, typename InterFunc>
+		bool GradientRadial<C, InterFunc>::read( std::fstream * fileStream ) {
+			if ( !GradientInterpolation<C, InterFunc>::read( fileStream ) )
+				return false;
+			if ( !IO::read( fileStream, this -> gradient ) )
+				return false;
 
+			return true;
+		}
+
+		template<typename C, typename InterFunc>
+		bool GradientRadial<C, InterFunc>::write( std::fstream * fileStream ) const {
+			if ( !GradientInterpolation<C, InterFunc>::write( fileStream ) )
+				return false;
+			if ( !IO::write( fileStream, this -> gradient ) )
+				return false;
+
+			return true;
+		}
 	}
 
 

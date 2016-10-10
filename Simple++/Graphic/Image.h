@@ -587,9 +587,9 @@ namespace Graphic {
 		///@param color Color to draw
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const ColorR<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -599,9 +599,9 @@ namespace Graphic {
 		///@param color Color to draw
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const ColorRGB<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -611,9 +611,9 @@ namespace Graphic {
 		///@param color Color to draw
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const ColorRGBA<T> & color, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -625,9 +625,9 @@ namespace Graphic {
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const ColorR<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -639,9 +639,9 @@ namespace Graphic {
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const ColorRGB<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -653,9 +653,9 @@ namespace Graphic {
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const ColorRGBA<T> & color, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -669,9 +669,9 @@ namespace Graphic {
 		///@param rectangle Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImageFunctor( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -702,17 +702,17 @@ namespace Graphic {
 		///@param maskPoint Point inside the mask to use.
 		///@param maskImage mask to use (only the first component will be used to determine the luminance)
 		///@param blendFunc Functor with operator() overloaded with 
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> & colorSrc, T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
 		///
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
 		///
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
-		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGB<T> & colorSrc, const T & colorMask)const;"
+		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const T & colorMask)const;"
 		///@template Fast if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		template<typename BlendFunc = BlendingFunc::Normal, bool Fast = false>
 		void drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
@@ -734,7 +734,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc)const;"
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawStrokeFunctor( const Point & point, const ImageT<T> & image, unsigned int thickness, ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStrokeFunctor( const Point & point, const ImageT<T> & image, float thickness, ColorFunc & colorFunc, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 		///@brief Stroke the image with a specified color
@@ -751,7 +751,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorR<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStroke( const Point & point, const ImageT<T> & image, float thickness, const ColorR<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		///@brief Stroke the image with a specified color
 		///@param point Point where to draw the stroking
@@ -767,7 +767,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorRGB<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStroke( const Point & point, const ImageT<T> & image, float thickness, const ColorRGB<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		///@brief Stroke the image with a specified color
 		///@param point Point where to draw the stroking
@@ -783,7 +783,7 @@ namespace Graphic {
 		///					"template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		///					"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const ColorR<T> & colorSrc)const;"
 		template<typename BlendFunc = BlendingFunc::Normal>
-		void drawStroke( const Point & point, const ImageT<T> & image, unsigned int thickness, const ColorRGBA<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void drawStroke( const Point & point, const ImageT<T> & image, float thickness, const ColorRGBA<T> & color, StrokeType strokeType = StrokeType::Middle, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 
 
@@ -1180,7 +1180,7 @@ namespace Graphic {
 		void _drawBezierCurve( const PointF & p0, const PointF & p1, const PointF p2, const PointF & p3, unsigned int thickness, const C2 & color, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		template<typename ColorFunc, typename BlendFunc, typename C1, typename C2>
-		void _drawStroke( const Point & point, const ImageT<T> & image, unsigned int width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
+		void _drawStroke( const Point & point, const ImageT<T> & image, float width, ColorFunc & colorFunc, StrokeType strokeType, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		template<typename ThreshFunc, typename C1, typename C2>
 		void _threshold( const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc );
@@ -1209,10 +1209,10 @@ namespace Graphic {
 		template<typename C1, typename C2, typename InterFunc>
 		void _fillImage( const GradientHorizontal<C2, InterFunc> & color, const Rectangle & rectangle );
 
-		template<typename BlendFunc, typename C1, typename C2, bool Fast>
+		template<typename BlendFunc, typename C1, typename C2, typename C3, bool Fast>
 		void _drawImage( const Point & point, const Rectangle & rectangle, const ImageT<T> & image, const Point & maskPoint, const ImageT<T> & maskImage, const BlendFunc & functor = BlendingFunc::Normal( ) );
 
-		template<typename ColorFunc, typename BlendFunc, typename C1, bool Fast>
+		template<typename ColorFunc, typename BlendFunc, typename C1, typename C2, bool Fast>
 		void _drawImage( const Point & point, ColorFunc & colorFunc, const Rectangle & rectangle, const ImageT<T> & maskImage, const BlendFunc & blendFunc = BlendingFunc::Normal( ) );
 
 		template<typename BlendFunc, typename C1, typename C2, bool Fast>
@@ -1271,13 +1271,19 @@ namespace Graphic {
 		ImageT<T2> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
-		ImageT<T2> _applyFilter( const Float * filterX, const Float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
+		ImageT<T2> _applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
 		ImageT<T2> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
-		ImageT<T2> _applyFilter( const Float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+
+		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
+		ImageT<T2> _applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
 		ImageT<T2> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;

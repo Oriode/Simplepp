@@ -9,6 +9,9 @@
 
 namespace Graphic {
 
+	enum class Format : unsigned int { R = 1, RGB = 3, RGBA = 4 };
+
+
 	///@brief Struct used to retrieve the type compilation times informations 
 	template<typename T>
 	struct _ColorHelper {

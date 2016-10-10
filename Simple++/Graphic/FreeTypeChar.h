@@ -8,8 +8,10 @@
 #include "../IO.h"
 
 #include "Image.h"
+#include "CharLoadingFunc.hpp"
 
 namespace Graphic {
+
 
 	template<typename T = unsigned char>
 	class FreeTypeChar : public ImageT<T> {
@@ -17,7 +19,8 @@ namespace Graphic {
 		///@brief Constructor
 		///@param ftFace FreeType char object used to create this glyph.
 		///@param Unicode codePoint representing this char.
-		FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint );
+		template<typename LoadingFunc = FontLoadingFunc::Default>
+		FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint, LoadingFunc & createImageFunctor = FontLoadingFunc::Default() );
 
 		///@brief Copy Constructor
 		///@param c Char to be copied.

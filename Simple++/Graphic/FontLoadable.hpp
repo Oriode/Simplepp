@@ -6,30 +6,30 @@ namespace Graphic {
 
 
 
-	template<typename T>
-	FontLoadable<T>::FontLoadable( const WString & fileName ) :
-		Font<T>( ctor::null ),
+	template<typename T, typename LoadingFunc>
+	_FontLoadable<T, LoadingFunc>::_FontLoadable( const WString & fileName ) :
+		_Font<T, LoadingFunc>(  ),
 		loadingType( LoadingType::FILE ),
 		fileName( fileName ) {
 
 	}
 
-	template<typename T>
-	FontLoadable<T>::FontLoadable( const WString & fileName, int pixSize ) :
-		Font<T>( ctor::null ),
+	template<typename T, typename LoadingFunc>
+	_FontLoadable<T, LoadingFunc>::_FontLoadable( const WString & fileName, int pixSize, const LoadingFunc & loadingFunc ) :
+		_Font<T, LoadingFunc>( loadingFunc ),
 		loadingType( LoadingType::FTFILE ),
 		fileName( fileName ) {
 		_setPixSize( pixSize );
 	}
 
 
-	template<typename T>
-	FontLoadable<T>::~FontLoadable() {
+	template<typename T, typename LoadingFunc>
+	_FontLoadable<T, LoadingFunc>::~_FontLoadable() {
 		unload();
 	}
 
-	template<typename T>
-	void FontLoadable<T>::onLoad() {
+	template<typename T, typename LoadingFunc>
+	void _FontLoadable<T, LoadingFunc>::onLoad() {
 		switch ( this -> loadingType ) {
 		case LoadingType::FTFILE:
 		{
@@ -60,19 +60,19 @@ namespace Graphic {
 		}
 	}
 
-	template<typename T>
-	void FontLoadable<T>::onUnload() {
+	template<typename T, typename LoadingFunc>
+	void _FontLoadable<T, LoadingFunc>::onUnload() {
 		_unload();
 	}
 
-	template<typename T>
-	bool FontLoadable<T>::onRead( std::fstream * fileStream ) {
-		return Font::_read( fileStream );
+	template<typename T, typename LoadingFunc>
+	bool _FontLoadable<T, LoadingFunc>::onRead( std::fstream * fileStream ) {
+		return _Font::_read( fileStream );
 	}
 
-	template<typename T>
-	bool FontLoadable<T>::onWrite( std::fstream * fileStream ) const {
-		return Font::write( fileStream );
+	template<typename T, typename LoadingFunc>
+	bool _FontLoadable<T, LoadingFunc>::onWrite( std::fstream * fileStream ) const {
+		return _Font::write( fileStream );
 	}
 
 }

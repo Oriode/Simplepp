@@ -142,12 +142,15 @@ namespace Graphic {
 		template<typename U>
 		ColorRGBA<U> toType() const;
 
+		static constexpr Format getFormat() { return Format::RGBA; }
 
 		static const ColorRGBA<T> black;
 		static const ColorRGBA<T> white;
 		static const ColorRGBA<T> red;
 		static const ColorRGBA<T> green;
 		static const ColorRGBA<T> blue;
+
+		static const Format format;
 
 	private:
 		template<typename U>

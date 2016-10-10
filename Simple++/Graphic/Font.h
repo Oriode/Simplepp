@@ -15,8 +15,8 @@
 
 namespace Graphic {
 
-	template<typename T = unsigned char>
-	class Font : public BasicIO {
+	template<typename T = unsigned char, typename LoadingFunc = FontLoadingFunc::Default>
+	class _Font : public BasicIO {
 	public:
 
 		class Template {
@@ -30,17 +30,19 @@ namespace Graphic {
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
 		///@param pixSize Size of the loaded font.
-		Font( const WString & fileName, int pixSize );
+		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
+		_Font( const WString & fileName, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 
 		///@brief Constructor using a font file dump and his size in bytes
 		///@param fileDump memory copy of a font file.
 		///@param fileSize size in bytes of the data buffer.
-		Font( const char * fileDump, size_t fileSize );
+		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
+		_Font( const char * fileDump, size_t fileSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 
 
-		~Font();
+		~_Font();
 
 
 
@@ -59,6 +61,9 @@ namespace Graphic {
 		///@brief load all the glyph present inside the string
 		void loadGlyph( const UTF8String & str );
 
+		///@brief re load all the already loaded glyphs. Useful if you changed something with the loading functor
+		void reloadGlyphs(  );
+
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
@@ -69,12 +74,24 @@ namespace Graphic {
 		///@return boolean to know if the operation is a success of not.
 		bool write( std::fstream * fileStream ) const;
 
-
 		///@brief get the line height of this font.
 		///@return line height
 		float getLineHeight() const;
 
 
+		///@brief Get the loading functor of this font
+		///@return loading functor
+		const LoadingFunc & getLoadingFunctor() const;
+
+
+		///@brief set the loading functor of this image
+		///@see reloadGlyphs()
+		///@param loadingFunctor Loading Functor (must inherite from FontLoadingFunc::Template)
+		void setLoadingFunctor( const LoadingFunc & loadingFunctor ) ;
+
+
+
+		const Math::Vec2<float> & getDrawingBias() const;
 
 		///@brief get the word space of this font
 		///@return word space
@@ -85,9 +102,16 @@ namespace Graphic {
 		///@return the rectangle of this font.
 		Math::Rectangle<int> computeRectangle( const UTF8String & text ) const;
 
+
+
+		///@brief compute the size of each line of the text
+		///@param in out vector Vector to be filled with the values (the vector wont be erased, the values will be pushed into)
+		///@param text Text to be analyzed
+		void computeLineWidth( Vector<float> * vector, const UTF8String & text ) const;
+
 	protected:
 		enum ctor { null };
-		Font( ctor );
+		_Font( const LoadingFunc & createImageFunctor = LoadingFunc() );
 
 		bool _read( std::fstream * fileStream );
 		void _loadFreeType( const char * fileDump, size_t size );
@@ -106,7 +130,16 @@ namespace Graphic {
 
 		char * memoryFontObject;
 		size_t memorySize;
+
+		LoadingFunc loadingFunctor;
 	};
+
+
+
+
+
+	template<typename T>
+	using Font = _Font<T>;
 
 }
 

@@ -22,7 +22,6 @@ namespace Graphic {
 	typedef Math::Line<int> Line;
 	typedef Math::Line<float> LineF;
 
-	enum class Format : unsigned int { R = 1, RGB = 3, RGBA = 4 };
 	enum class LoadingFormat { R, RGB, BGR, RGBA, BGRA };
 
 

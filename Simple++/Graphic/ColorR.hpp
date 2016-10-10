@@ -7,6 +7,9 @@ namespace Graphic {
 	template<typename T> const ColorR<T> ColorR<T>::green = ColorR<T>( T( 0 ) );
 	template<typename T> const ColorR<T> ColorR<T>::blue = ColorR<T>( T( 0 ) );
 
+	template<typename T> const ColorR<T> ColorR<T>::format = Format::R;
+
+
 	template<typename T>
 	ColorR<T>::ColorR() {
 

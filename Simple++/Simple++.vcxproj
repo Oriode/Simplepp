@@ -153,11 +153,11 @@
     <ClInclude Include="BasicIO.hpp" />
     <ClInclude Include="BasicSimpleIO.h" />
     <ClInclude Include="BasicSimpleLoadableIO.h" />
-    <ClInclude Include="BlendingFunc.hpp" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Graphic\BasicGraphic.h" />
     <ClInclude Include="Graphic\BlendingFunc.hpp" />
+    <ClInclude Include="Graphic\CharLoadingFunc.hpp" />
     <ClInclude Include="Graphic\Color.h" />
     <ClInclude Include="Graphic\ColorConvertFunc.hpp" />
     <ClInclude Include="Graphic\ColorR.h" />
@@ -169,6 +169,8 @@
     <ClInclude Include="Graphic\ColorRGBA.hpp" />
     <ClInclude Include="Graphic\Font.h" />
     <ClInclude Include="Graphic\Font.hpp" />
+    <ClInclude Include="Graphic\FontEffect.h" />
+    <ClInclude Include="Graphic\FontEffect.hpp" />
     <ClInclude Include="Graphic\FontLoadable.h" />
     <ClInclude Include="Graphic\FontLoadable.hpp" />
     <ClInclude Include="Graphic\FreeImage.h" />

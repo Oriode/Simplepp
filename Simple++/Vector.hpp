@@ -496,7 +496,7 @@ void Vector<T>::sortDesc() {
 
 template<typename T>
 template<typename Func>
-void Vector<T>::sort( Func functor ) {
+void Vector<T>::sort( Func & functor ) {
 	if ( this -> size ) quicksort( this -> dataTable, this -> iteratorEnd - 1, functor );
 }
 

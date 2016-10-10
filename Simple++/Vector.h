@@ -193,7 +193,7 @@ public:
 	///@param functor Functor with operator () overloaded with :
 	///				bool operator()(const T & v1, const T & v2) const;
 	template<typename Func>
-	void sort( Func functor );
+	void sort( Func & functor );
 
 	//Copy from the input vector to this one
 	void copy(Vector vector, Size indexSrc, Size indexDest, Size size);

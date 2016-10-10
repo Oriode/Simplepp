@@ -11,12 +11,12 @@
 //#define SPEEDTEST_DISK
 //#define SPEEDTEST_POLYGON
 //#define SPEEDTEST_STROKE
-#define SPEEDTEST_RESAMPLE
+//#define SPEEDTEST_RESAMPLE
 //#define SPEEDTEST_DRAWTEXT
 //#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
-//#define SPEEDTEST_BLENDING
+#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
 //#define SPEEDTEST_STRING_CONCAT
 //#define SPEEDTEST_STRING_CAST
@@ -25,6 +25,8 @@
 //#define SPEEDTEST_MAP
 //#define SPEEDTEST_NETWORK
 //#define SPEEDTEST_CAST
+//#define SPEEDTEST_ARITHMETIC
+
 
 #ifndef _LIB 
 #include <iostream>
@@ -371,7 +373,8 @@ int main( int argc, char * argv[] ) {
 		Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientVertical );
 		image.drawRectangleFunctor( Graphic::Rectangle( 0, 0, 500, 500 ), testFunctorGradient );
 	}*/
-	/*{
+/*
+	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Text Point									//
 		image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
@@ -381,7 +384,7 @@ int main( int argc, char * argv[] ) {
 		UTF8String testStr( "Hello World" );
 		Graphic::drawText( &imageTxt, font, Graphic::Point( 250, 250 ), testStr, Graphic::ColorR<unsigned char>( 255 ), Math::Vec2<bool>( true, true ) );
 
-		image.drawImageShadow( Graphic::Point( 0, 0 ), 10, imageTxt, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+		image.drawImageShadow( Graphic::Point( 0, 0 ), 0, imageTxt, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 
 		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientRadial( gradientRadial );
 		Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientVertical( gradientVertical );
@@ -395,6 +398,36 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) imageTxt.getDatas(), imageTxt.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::SavingFormat::PNG );
 	}*/
+
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Bufferized Font !!!!!!!!!!!!									//
+		image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
+		UTF8String testStr( "Hello World" );
+
+		typedef Graphic::FontLoadingFunc::Effect<unsigned char> LoadingFunctor;
+
+		LoadingFunctor fontLoadingFunc;
+		fontLoadingFunc.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) ) );
+		fontLoadingFunc.setShadowActivated( true );
+		fontLoadingFunc.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 127 ) ) );
+		fontLoadingFunc.setShadowRadius( 5 );
+		fontLoadingFunc.setShadowBias( -5.0f );
+
+
+		fontLoadingFunc.setStrokeActivated( true );
+		fontLoadingFunc.setStrokeSize( 1 );
+		fontLoadingFunc.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 100, 100, 100, 255 ) ) );
+
+		Graphic::_Font<unsigned char, LoadingFunctor> myFont( L"consola.ttf", 50, fontLoadingFunc );
+		myFont.loadGlyph( Graphic::_Font<unsigned char, LoadingFunctor>::Template::Ascii );
+
+		auto maskTest = myFont['A'];
+		//image.drawImage(Graphic::Point(300, 300), *maskTest);
+		Graphic::drawText( &image, myFont, Graphic::Point( 250, 250 ), testStr, Math::Vec2<bool>( true, true ) );
+
+	}
+
 
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -566,14 +599,14 @@ int main( int argc, char * argv[] ) {
 	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
 
 	#else		//DEBUG
-	const unsigned long long G10 = 10000000000;
-	const unsigned long long G1 = 1000000000;
-	const unsigned long long M100 = 100000000;
-	const unsigned long long M10 = 10000000;
-	const unsigned long long M1 = 1000000;
-	const unsigned long long K100 = 100000;
-	const unsigned long long K10 = 10000;
-	const unsigned long long K1 = 1000;
+constexpr unsigned long long G10( 10000000000 );
+constexpr unsigned long long G1( 1000000000 );
+constexpr unsigned long long M100( 100000000 );
+constexpr unsigned long long M10( 10000000 );
+constexpr unsigned long long M1( 1000000 );
+constexpr unsigned long long K100( 100000 );
+constexpr unsigned long long K10( 10000 );
+constexpr unsigned long long K1( 1000 );
 
 	#ifdef SPEEDTEST_DRAWLINE
 	{
@@ -874,7 +907,7 @@ int main( int argc, char * argv[] ) {
 			image.drawStrokeFunctor( Graphic::Point( 0, 0 ), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>( Graphic::ColorRGB<unsigned char>( 0, 255, 0 ) ), Graphic::Image::StrokeType::Outside );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "STROKE THICKNESS 2 RGB UCHAR (Last Result: 3658ms for K1)" );
+		Log::displayChrono( "STROKE THICKNESS 2 RGB UCHAR (Last Result: 11000ms for K1)" );
 
 		Graphic::FreeImage freeImageOut;
 		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
@@ -954,57 +987,60 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
 	{
-		Graphic::ColorRGBA<unsigned char> colorWhite( 255, 255, 255, 100 );
+		Graphic::ColorRGBA<unsigned char> colorWhite( 255, 255, 255, 10 );
+		Graphic::ColorRGBA<unsigned char> colorRed( 255, 0, 0, 10 );
 
-		Graphic::Image testBlendRGBA( Math::Vec2<unsigned int>( 200, 200 ), Graphic::Format::RGBA );
-		Graphic::Image testBlendRGB( Math::Vec2<unsigned int>( 200, 200 ), Graphic::Format::RGB );
+		Graphic::Image testBlendRGBA1( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Format::RGBA );
+		Graphic::Image testBlendRGBA2( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Format::RGBA );
 
-		testBlendRGBA.fillImage( colorWhite );
-		testBlendRGB.fillImage( colorWhite );
+		testBlendRGBA1.fillImage( colorRed );
+		testBlendRGBA2.fillImage( colorWhite );
 
-		Graphic::ImageT<float> testBlendRGBAFloat( Math::Vec2<unsigned int>( 100, 100 ), Graphic::Format::RGBA );
-		Graphic::ImageT<float> testBlendRGBFloat( Math::Vec2<unsigned int>( 100, 100 ), Graphic::Format::RGB );
+		Graphic::ImageT<float> testBlendRGBAFloat1( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
+		Graphic::ImageT<float> testBlendRGBAFloat2( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
 
-		Math::vec4f colorWhiteF( 1.0, 1.0, 1.0, 1.0 );
-		Math::vec4f colorRedF( 1.0, 0.0, 0.0, 0.0001 );
+		Graphic::ColorRGBA<float> colorWhiteF( 1.0f, 1.0f, 1.0f, float( 127 ) / float( 255 ) );
+		Graphic::ColorRGBA<float> colorRedF( 1.0f, 0.0f, 0.0f, float(127) / float(255) );
 
-		testBlendRGBAFloat.fillImage( ( const float * ) &colorRedF );
-		testBlendRGBFloat.fillImage( ( const float * ) &colorWhiteF );
+		testBlendRGBAFloat1.fillImage( colorRedF );
+		testBlendRGBAFloat2.fillImage( colorWhiteF );
+
+		Graphic::Rectangle rectangle( testBlendRGBA2.getSize() );
 
 		Log::startChrono();
-		for ( size_t i = 0; i < 10000; i++ ) {
-			testBlendRGB.drawImage( Graphic::Point( 0, 0 ), Graphic::Rectangle( 0, testBlendRGB.getSize() ), testBlendRGBA );
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBA2.drawImage( Graphic::Point( 0, 0 ), testBlendRGBA1 );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "INT BLENDING RGBA -> RGB (last 2288ms)" );
+		Log::displayChrono( "INT BLENDING RGBA -> RGB (last 1215ms)" );
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i < 10000; i++ ) {
-			testBlendRGBFloat.drawImage( Graphic::Point( 0, 0 ), Graphic::Rectangle( 0, testBlendRGB.getSize() ), testBlendRGBAFloat );
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBAFloat2.drawImage( Graphic::Point( 0, 0 ), testBlendRGBAFloat1 );
 		}
 		Log::stopChrono();
 		Log::displayChrono( "FLOAT BLENDING RGBA -> RGB (last 205ms)" );
 
 		Log::startChrono();
-		for ( size_t i = 0; i < 10000; i++ ) {
-			testBlendRGB.drawImage( Graphic::Point( 0, 0 ), Graphic::Rectangle( 0, testBlendRGB.getSize() ), testBlendRGBA, Graphic::BlendingFunc::Normal() );
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBA2.drawImage( Graphic::Point( 0, 0 ), rectangle, testBlendRGBA1, Graphic::BlendingFunc::Normal() );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "INT BLENDING FUNCTOR RGBA -> RGB (last 2337ms)" );
+		Log::displayChrono( "INT BLENDING FUNCTOR RGBA -> RGB (last 1200ms)" );
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i < 10000; i++ ) {
-			testBlendRGBFloat.drawImage( Graphic::Point( 0, 0 ), Graphic::Rectangle( 0, testBlendRGB.getSize() ), testBlendRGBAFloat, Graphic::BlendingFunc::Normal() );
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBAFloat2.drawImage( Graphic::Point( 0, 0 ), rectangle, testBlendRGBAFloat1, Graphic::BlendingFunc::Normal() );
 		}
 		Log::stopChrono();
 		Log::displayChrono( "FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)" );
 
-		Graphic::Image testblendCasted( testBlendRGBFloat );
+		Graphic::Image testblendCasted( testBlendRGBAFloat2 );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImage.loadFromDatas( ( unsigned char * ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA );
 		freeImage.saveToFile( "blending.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 	#endif
@@ -1166,6 +1202,50 @@ int main( int argc, char * argv[] ) {
 		}
 	}
 	#endif
+	#ifdef SPEEDTEST_ARITHMETIC 
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Arithmetic												//
+	{
+
+		volatile float f0(1);
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M100; i++ ) {
+			f0 += f0;
+		}
+		Log::stopChrono();
+		Log::displayChrono( String("Float ADD ( Last 284ms ) : " ) << f0 );
+
+		volatile float f1( 1 );
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M100; i++ ) {
+			f1 *= f1;
+		}
+		Log::stopChrono();
+		Log::displayChrono( String( "Float MULT ( Last 331ms ) : " ) << f1 );
+
+		volatile int i0( 1 );
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M100; i++ ) {
+			i0 += i0;
+		}
+		Log::stopChrono();
+		Log::displayChrono( String( "Float ADD ( Last 284ms ) : " ) << String(int(i0)) );
+
+		volatile int i1( 1 );
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M100; i++ ) {
+			i1 *= i1;
+		}
+		Log::stopChrono();
+		Log::displayChrono( String( "Float MULT ( Last 331ms ) : " ) << String( int( i1 ) ) );
+
+
+
+	}
+
+	#endif 
+
+
 	#ifdef SPEEDTEST_CAST
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Cast									//

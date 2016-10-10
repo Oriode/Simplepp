@@ -123,7 +123,7 @@ namespace Graphic {
 
 		T r;
 
-
+		static constexpr Format getFormat() { return Format::R; }
 
 		static const ColorR<T> black;
 		static const ColorR<T> white;
@@ -131,7 +131,7 @@ namespace Graphic {
 		static const ColorR<T> green;
 		static const ColorR<T> blue;
 
-
+		static const Format format;
 	};
 
 	

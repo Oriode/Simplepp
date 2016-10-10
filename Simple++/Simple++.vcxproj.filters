@@ -264,9 +264,6 @@
     <ClInclude Include="Time\TimePoint.hpp">
       <Filter>Header Files\Time</Filter>
     </ClInclude>
-    <ClInclude Include="BlendingFunc.hpp">
-      <Filter>Header Files\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="Graphic\BasicGraphic.h">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
@@ -370,6 +367,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\InterpolationFunc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\CharLoadingFunc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\FontEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\FontEffect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -33,6 +33,9 @@ namespace Graphic {
 		template<typename C>
 		class SimpleColor : protected Template<C> {
 		public:
+			///@brief empty constructor (will not init anything)
+			SimpleColor() {};
+
 			///@brief construct a Simple Color functor with a color
 			SimpleColor( const C & color ) : color( color ) {}
 

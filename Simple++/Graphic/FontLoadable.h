@@ -8,8 +8,8 @@
 
 namespace Graphic {
 
-	template<typename T = unsigned char>
-	class FontLoadable : public BasicLoadableIO, public Font<T> {
+	template<typename T = unsigned char, typename LoadingFunc = FontLoadingFunc::Default>
+	class _FontLoadable : public BasicLoadableIO, public _Font<T> {
 	public:
 
 		enum LoadingType {
@@ -21,17 +21,18 @@ namespace Graphic {
 		///@brief constructor that take a filename of a special font file (file created by saveToFile())
 		///@param fileName Path to the file to open
 		///@param pixSize Size of the loaded font.
-		FontLoadable( const WString & fileName );
+		_FontLoadable( const WString & fileName );
 
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
 		///@param pixSize Size of the loaded font.
-		FontLoadable( const WString & fileName, int pixSize );
+		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
+		_FontLoadable( const WString & fileName, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 
 
-		~FontLoadable();
+		~_FontLoadable();
 
 	protected:
 		///@brief function to be overloaded to add action during the loading process.
@@ -57,6 +58,8 @@ namespace Graphic {
 
 	};
 
+	template<typename T>
+	using FontLoadable = _FontLoadable<T>;
 
 }
 

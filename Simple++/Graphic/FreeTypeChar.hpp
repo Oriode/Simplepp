@@ -4,7 +4,8 @@
 namespace Graphic {
 
 	template<typename T>
-	FreeTypeChar<T>::FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint ) :
+	template<typename LoadingFunc = FontLoadingFunc::Default>
+	FreeTypeChar<T>::FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint, LoadingFunc & createImageFunctor ) :
 		ImageT<T>( Format::R ),
 		uCodePoint( codePoint ) {
 
@@ -39,7 +40,7 @@ namespace Graphic {
 
 		FT_Bitmap * ftBitmap = &ftGlyph -> bitmap;
 
-		this -> setDatas( ( unsigned char * ) (ftBitmap -> buffer), Math::Vec2<Size>( ftBitmap -> width, ftBitmap -> rows ), LoadingFormat::R, true );
+		createImageFunctor( this, ( unsigned char * ) ( ftBitmap -> buffer ), Math::Vec2<Size>( ftBitmap -> width, ftBitmap -> rows ) );
 	}
 
 	template<typename T>

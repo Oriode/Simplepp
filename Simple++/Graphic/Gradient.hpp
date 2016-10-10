@@ -121,7 +121,7 @@ namespace Graphic {
 	template<typename C, typename InterFunc>
 	template<typename InterFunc2>
 	void Gradient<C, InterFunc>::computeInterpolation( C * buffer, size_t size, const InterFunc2 & interFunctor, float begin, float end ) const {
-		typedef typename C::FloatType::Type Float;
+		typedef typename C::ColorFloat::Type Float;
 
 		if ( this -> pointsVector.getSize() == 1 ) {
 			//fill the complete array with the same color
@@ -130,19 +130,8 @@ namespace Graphic {
 			}
 
 		} else if ( this -> pointsVector.getSize() > 1 ) {
-			struct OrderFunctor {
-				bool operator()( const GradientPoint<C> * p1, const GradientPoint<C> * p2 ) const {
-					return ( p1 -> getPosition() < p2 -> getPosition() );
-				}
-			};
-
-
-			if ( !this -> isOrdered ) {
-				const_cast< Gradient<C, InterFunc> * >( this ) -> pointsVectorOrdered = const_cast< Gradient<C, InterFunc> * >( this ) -> pointsVector;
-				const_cast< Gradient<C, InterFunc> * >( this ) -> pointsVectorOrdered.sort( OrderFunctor() );
-				//Now we have the point correctly ordered.
-				const_cast< Gradient<C, InterFunc> * >( this ) -> isOrdered = true;
-			}
+			if (!this -> isOrdered ) const_cast< Gradient<C, InterFunc> * >( this ) -> _updateOrdered();
+			
 			Float multiplier = Float( size ) / ( end - begin );
 
 
@@ -189,9 +178,42 @@ namespace Graphic {
 		}
 	}
 
+	template<typename C, typename InterFunc /*= Math::InterpolationFunc::Linear*/>
+	void Gradient<C, InterFunc>::_updateOrdered() {
+		struct OrderFunctor {
+			bool operator()( const GradientPoint<C> * p1, const GradientPoint<C> * p2 ) const {
+				return ( p1 -> getPosition() < p2 -> getPosition() );
+			}
+		};
+		static OrderFunctor orderFunctor;
+		this -> pointsVectorOrdered = this -> pointsVector;
+		this -> pointsVectorOrdered.sort( orderFunctor );
+		//Now we have the point correctly ordered.
+		this -> isOrdered = true;
+		
+	}
 
+	template<typename C, typename InterFunc>
+	bool Gradient<C, InterFunc>::read( std::fstream * fileStream ) {
+		if ( !IO::read( fileStream, &this -> pointsVector ) )
+			return false;
+		if ( !IO::read( fileStream, &this -> functor ) )
+			return false;
 
+		_updateOrdered();
 
+		return true;
+	}
+
+	template<typename C, typename InterFunc>
+	bool Gradient<C, InterFunc>::write( std::fstream * fileStream ) const {
+		if ( !IO::write( fileStream, &this -> pointsVector ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> functor ) )
+			return false;
+
+		return true;
+	}
 
 
 	template<typename C, typename InterFunc>
@@ -268,7 +290,7 @@ namespace Graphic {
 	GradientLinear<C, InterFunc>::GradientLinear( float angle, const Math::Vec2<float> & p /*= Math::Vec2<float>::null*/, unsigned int length /*= 0*/, const InterFunc & functor /*= Func()*/ ) :
 		Gradient( functor ),
 		angle( angle ),
-		angleRad( angle * 0.0174533 ),
+		angleRad( Math::radians(angle) ),
 		p( p ),
 		length( length ),
 		v( Math::cos( angleRad ), Math::sin( angleRad ) )
@@ -298,6 +320,40 @@ namespace Graphic {
 	float GradientLinear<C, InterFunc>::getAngleRad() const {
 		return this -> angleRad;
 	}
+
+	template<typename C, typename InterFunc>
+	bool GradientLinear<C, InterFunc>::read( std::fstream * fileStream ) {
+		if ( !Gradient<C, InterFunc>::read( fileStream ) )
+			return false;
+		if ( !IO::read( fileStream, &this -> length ) )
+			return false;
+		if ( !IO::read( fileStream, &this -> p ) )
+			return false;
+		if ( !IO::read( fileStream, &this -> angle ) )
+			return false;
+		this -> angleRad = Math::radians( this -> angle );
+		this -> v.x = Math::cos( this -> angleRad );
+		this -> v.y = Math::sin( this -> angleRad );
+
+		return true;
+	}
+
+	template<typename C, typename InterFunc>
+	bool GradientLinear<C, InterFunc>::write( std::fstream * fileStream ) const {
+		if ( !Gradient<C, InterFunc>::write( fileStream ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> length ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> p ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> angle ) )
+			return false;
+
+
+		return true;
+	}
+
+
 
 	template<typename C, typename InterFunc>
 	const Math::Vec2<float> & GradientRadial<C, InterFunc>::getRadius() const {
@@ -338,6 +394,32 @@ namespace Graphic {
 	int GradientRadial<C, InterFunc>::computeIndex( const Math::Vec2<float> & p, int maxIndex ) const {
 		return GradientRadial<C, InterFunc>::computeIndex( p, maxIndex, getRadius() );
 	}
+
+
+	template<typename C, typename InterFunc>
+	bool GradientRadial<C, InterFunc>::read( std::fstream * fileStream ) {
+		if ( !Gradient<C, InterFunc>::read( fileStream ) )
+			return false;
+		if ( !IO::read( fileStream, &this -> center ) )
+			return false;
+		if ( !IO::read( fileStream, &this -> radius ) )
+			return false;
+
+		return true;
+	}
+
+	template<typename C, typename InterFunc>
+	bool GradientRadial<C, InterFunc>::write( std::fstream * fileStream ) const {
+		if ( !Gradient<C, InterFunc>::write( fileStream ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> center ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> radius ) )
+			return false;
+
+		return true;
+	}
+
 
 }
 

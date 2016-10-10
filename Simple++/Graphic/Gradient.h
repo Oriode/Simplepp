@@ -61,7 +61,7 @@ namespace Graphic {
 
 	///@brief Represent a 2D Gradient for 2D image processing.
 	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-	class Gradient {
+	class Gradient : public BasicIO {
 	public:
 
 
@@ -109,12 +109,24 @@ namespace Graphic {
 		///@param end ending of the interpolation (between 0.0 and 1.0)
 		void computeInterpolation( C * buffer, size_t size, float begin = 0.0f, float end = 1.0f ) const;
 
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read( std::fstream * fileStream );
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write( std::fstream * fileStream ) const;
+
 	protected:
 		///@brief Create a new gradient.
 		///@param functor Functor used to interpolate the colors overloaded with :
 		///				template<typename C> inline C operator()(const C & color1, const C & color2, float x) const;
 		Gradient( const InterFunc & functor = InterFunc() );
 	private:
+		void _updateOrdered();
 
 		Vector<GradientPoint<C> * > pointsVector;
 		Vector<GradientPoint<C> * > pointsVectorOrdered;
@@ -123,6 +135,8 @@ namespace Graphic {
 
 		InterFunc functor;
 	};
+
+
 
 
 	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
@@ -224,6 +238,16 @@ namespace Graphic {
 		///@return Computed index.
 		static int computeIndex( const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & radius );
 
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read( std::fstream * fileStream );
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write( std::fstream * fileStream ) const;
+
 	private:
 		Math::Vec2<float> center;
 		Math::Vec2<float> radius;
@@ -289,6 +313,17 @@ namespace Graphic {
 		///@param direction Unitary vector representing the direction if this gradient.
 		///@return Computed index.
 		static int computeIndex( const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & direction );
+
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read( std::fstream * fileStream );
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write( std::fstream * fileStream ) const;
 	private:
 		unsigned int length;
 		Math::Vec2<float> p;
