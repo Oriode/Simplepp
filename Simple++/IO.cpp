@@ -5,6 +5,7 @@
 
 
 
+
 size_t IO::readToBuffer( std::fstream * fileStream, char ** buffer ) {
 	fileStream -> seekg( 0, fileStream -> end );
 	size_t length = fileStream -> tellg();

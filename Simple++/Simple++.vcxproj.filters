@@ -369,13 +369,13 @@
     <ClInclude Include="Math\InterpolationFunc.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic\CharLoadingFunc.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphic\FontEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphic\FontEffect.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\FontLoadingFunc.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

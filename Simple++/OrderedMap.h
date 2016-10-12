@@ -39,6 +39,7 @@ public:
 	using Map<I, T>::getEnd;
 	using Map<I, T>::end;
 	using Map<I, T>::begin;
+	using Map<I, T>::iterate;
 
 	using Map<I, T>::clear;
 	using Map<I, T>::reset;

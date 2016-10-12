@@ -23,6 +23,7 @@ bool SimpleIO::_writeObject(std::fstream * fileStream, C * buffer, ...) {
 
 template<typename C>
 bool SimpleIO::write(std::fstream * fileStream, C * buffer) {
+	if ( !buffer ) return true;
 	return IO::_writeObject(fileStream, buffer, buffer);
 }
 
@@ -47,18 +48,21 @@ bool SimpleIO::_readObject(std::fstream * fileStream, C * buffer, ...) {
 
 template<typename C>
 bool SimpleIO::read(std::fstream * fileStream, C * buffer) {
+	if ( !buffer ) return true;
 	return IO::_readObject(fileStream, buffer, buffer);
 }
 
 
 template<typename C>
 bool SimpleIO::writeBuffer(std::fstream * fileStream, C * buffer, size_t size) {
+	if ( !buffer ) return true;
 	return _writeBuffer(fileStream, buffer, size, buffer);
 }
 
 
 template<typename C>
 bool SimpleIO::readBuffer(std::fstream * fileStream, C * buffer, size_t size) {
+	if ( !buffer ) return true;
 	return _readBuffer(fileStream, buffer, size, buffer);
 }
 

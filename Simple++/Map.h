@@ -151,6 +151,8 @@ public:
 	using Vector<MapObject<I, T>>::end;
 	using Vector<MapObject<I, T>>::getBegin;
 	using Vector<MapObject<I, T>>::getEnd;
+	using Vector<MapObject<I, T>>::iterate;
+
 
 	void eraseFirst( const T & data );
 	void eraseAll( const T & data );
@@ -164,11 +166,11 @@ protected:
 	Map( ctor );
 
 
-	template<typename Compare>
-	void _sort( Compare func );
+	template<typename Compare = Math::Logical::Less>
+	void _sort( Compare func = Compare() );
 
-	template<typename Compare>
-	void _quicksort( RandomAccessIterator start, RandomAccessIterator end, Compare func = Math::Logical::Less<I> );
+	template<typename Compare = Math::Logical::Less>
+	void _quicksort( RandomAccessIterator start, RandomAccessIterator end, Compare func = Compare() );
 };
 
 

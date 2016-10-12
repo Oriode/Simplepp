@@ -4,7 +4,7 @@
 namespace Graphic {
 
 	template<typename T>
-	template<typename LoadingFunc = FontLoadingFunc::Default>
+	template<typename LoadingFunc>
 	FreeTypeChar<T>::FreeTypeChar( FT_Face ftFace, UTF8String::CodePoint codePoint, LoadingFunc & createImageFunctor ) :
 		ImageT<T>( Format::R ),
 		uCodePoint( codePoint ) {

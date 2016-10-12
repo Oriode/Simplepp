@@ -29,6 +29,12 @@ public:
 	using Vector<T>::size;
 
 	using Vector<T>::swap;
+	using Vector<T>::iterate;
+	using Vector<T>::begin;
+	using Vector<T>::end;
+	using Vector<T>::getBegin;
+	using Vector<T>::getEnd;
+
 
 	//Add a value and order the table
 	void insert( const T & data );
@@ -52,6 +58,9 @@ public:
 
 	Size getNumEntries( const T & value );
 
+
+
+	
 	///@brief read from a file stream
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.

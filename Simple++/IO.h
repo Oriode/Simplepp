@@ -6,6 +6,23 @@
 
 class IO : public SimpleIO {
 public:
+	using SimpleIO::write;
+	using SimpleIO::read;
+
+	///@brief write an object to the file, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own write method.
+	///@param fileName file where to write.
+	///@param object pointer to the object we wanna write.
+	///@return Boolean if the result is a success or not.
+	template<typename C>
+	static bool write( const WString & fileName, C * object );
+
+	///@brief read from a file to an object, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own read method.
+	///@param fileName file where to read.
+	///@param object pointer to the object we wanna read.
+	///@return Boolean if the result is a success or not.
+	template<typename C>
+	static bool read( const WString & fileName, C * object );
+
 
 	///@brief read the complete file stream (from begin to end) and allocate a new data and copy data inside.
 	///@param fileStream file stream to read.

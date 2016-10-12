@@ -1,4 +1,4 @@
-///@file CharLoadingFunc.hpp
+///@file FontLoadingFunc.hpp
 ///@brief File containing all Char Loading Functors
 ///@author Clement Gerber
 ///@date 06/10/2016 (DMY) 
@@ -18,11 +18,6 @@ namespace Graphic {
 			///@param Bias of the font/chars when drawing them (simply add this bias to the initial position when drawing)
 			const Math::Vec2<float> & getBias() const { return this -> bias; }
 
-			///@brief Set the bias of this loading functor
-			///@see getBias()
-			///@param Bias	
-			void setBias( const Math::Vec2<float> & bias ) { this -> bias = bias; }
-
 			///@brief Operator to be overloaded, this function will set the image from the given buffer of the given size.
 			///@param image in out image to be set
 			///@param buffer bitmap buffer read from the font file
@@ -31,6 +26,11 @@ namespace Graphic {
 			void operator()( ImageT<T> * image, const unsigned char * buffer, const Math::Vec2<float> & size ) const {}
 
 		protected:
+			///@brief Set the bias of this loading functor
+			///@see getBias()
+			///@param Bias	
+			void setBias( const Math::Vec2<float> & bias ) { this -> bias = bias; }
+
 			Math::Vec2<float> bias;
 		};
 

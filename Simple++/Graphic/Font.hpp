@@ -7,6 +7,15 @@ namespace Graphic {
 	template<typename T, typename LoadingFunc>
 	const UTF8String _Font<T, LoadingFunc>::Template::Latin1 = "\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf";
 
+
+	template<typename T, typename LoadingFunc>
+	_Font<T, LoadingFunc>::_Font( std::fstream * fileStream ) {
+		for ( size_t i = 0; i < 256; i++ )
+			this -> asciiMap[i] = NULL;
+		_read( fileStream );
+	}
+
+
 	template<typename T, typename LoadingFunc>
 	_Font<T, LoadingFunc>::_Font( const WString & fileName, int pixSize, const LoadingFunc & loadingFunctor ) :
 		loadingFunctor( loadingFunctor )
@@ -46,12 +55,22 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void Graphic::_Font<T, LoadingFunc>::setLoadingFunctor( const LoadingFunc & loadingFunctor ) {
+	_Font<T, LoadingFunc>::_Font( const _Font<T, LoadingFunc> & font ) {
+		_copy( font );
+	}
+
+	template<typename T, typename LoadingFunc>
+	_Font<T, LoadingFunc>::_Font( _Font<T, LoadingFunc> && font ) {
+		_copy( Utility::toRValue(font) );
+	}
+
+	template<typename T, typename LoadingFunc>
+	void _Font<T, LoadingFunc>::setLoadingFunctor( const LoadingFunc & loadingFunctor ) {
 		this -> loadingFunctor = loadingFunctor;
 	}
 
 	template<typename T, typename LoadingFunc>
-	const LoadingFunc & Graphic::_Font<T, LoadingFunc>::getLoadingFunctor() const {
+	const LoadingFunc & _Font<T, LoadingFunc>::getLoadingFunctor() const {
 		return this -> loadingFunctor;
 	}
 
@@ -239,7 +258,7 @@ namespace Graphic {
 			return false;
 		for ( OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size i = 0; i < nbCharsLoaded; i++ ) {
 			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( fileStream );
-			if ( newChar->getCodePoint() < 256 )
+			if ( newChar -> getCodePoint() < 256 )
 				this -> asciiMap[newChar -> getCodePoint()] = newChar;
 			else
 				this -> charsMap.insertFast( newChar -> getCodePoint(), newChar );
@@ -324,5 +343,62 @@ namespace Graphic {
 		FT_Set_Pixel_Sizes( this -> ftFace, this -> pixSize, this -> pixSize );
 	}
 
+
+	template<typename T, typename LoadingFunc>
+	void _Font<T, LoadingFunc>::_move( _Font<T, LoadingFunc> && font ) {
+		this -> charsMap = Utility::toRValue( font.charsMap );
+		for ( int i( 0 ); i < 256; i++ )
+			this -> asciiMap[i] = Utility::toRValue( font.asciiMap[i] );
+
+		this -> ftLib = Utility::toRValue( font.ftLib );
+		this -> ftFace = Utility::toRValue( font.ftFace );
+		this -> pixSize = Utility::toRValue( font.pixSize );
+		this -> lineHeight = Utility::toRValue( font.lineHeight );
+		this -> wordSpace = Utility::toRValue( font.wordSpace );
+		this -> memoryFontObject = Utility::toRValue( font.memoryFontObject );
+		this -> memorySize = Utility::toRValue( font.memorySize );
+		this -> loadingFunctor = Utility::toRValue( font.loadingFunctor );
+	}
+
+	template<typename T, typename LoadingFunc>
+	void _Font<T, LoadingFunc>::_copy( const _Font<T, LoadingFunc> & font ) {
+		if ( font.memoryFontObject ) {
+			this -> memoryFontObject = new char[font.memorySize];
+			this -> memorySize = font.memorySize;
+			Vector<T>::copy( this -> memoryFontObject, font.memoryFontObject, font.memorySize );
+		}
+
+		_loadFreeType( this -> memoryFontObject, this -> memorySize );
+
+		for ( int i( 0 ); i < 256; i++ ) {
+			if ( font.asciiMap[i] )
+				this -> asciiMap[i] = new FreeTypeChar<T>( *( font.asciiMap[i] ) );
+			else
+				this -> asciiMap[i] = NULL;
+		}
+
+		for ( auto it( font.charsMap.getBegin() ); it != font.charsMap.getEnd(); font.charsMap.iterate( &it ) ) {
+			this -> charsMap.insertFast( it -> getIndex(), new FreeTypeChar<T>( *( it -> getValue() ) ) );
+		}
+
+		this -> pixSize = font.pixSize;
+		this -> lineHeight = font.lineHeight;
+		this -> wordSpace = font.wordSpace;
+		this -> loadingFunctor = font.loadingFunctor;
+	}
+
+	template<typename T, typename LoadingFunc>
+	_Font<T, LoadingFunc> & _Font<T, LoadingFunc>::operator=( _Font<T, LoadingFunc> && font ) {
+		_unload();
+		_move( Utility::toRValue( font ) );
+		return *this;
+	}
+
+	template<typename T, typename LoadingFunc>
+	_Font<T, LoadingFunc> & _Font<T, LoadingFunc>::operator=( const _Font<T, LoadingFunc> & font ) {
+		_unload();
+		_copy( font );
+		return *this;
+	}
 
 }

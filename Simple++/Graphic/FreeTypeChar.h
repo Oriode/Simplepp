@@ -8,7 +8,7 @@
 #include "../IO.h"
 
 #include "Image.h"
-#include "CharLoadingFunc.hpp"
+#include "FontLoadingFunc.hpp"
 
 namespace Graphic {
 

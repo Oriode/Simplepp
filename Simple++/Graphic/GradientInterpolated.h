@@ -16,7 +16,7 @@
 namespace Graphic {
 
 	///@brief base class of an interpolated gradient
-	template<typename C, typename InterFunc>
+	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 	class GradientInterpolation : public BasicIO {
 	public:
 		GradientInterpolation();
@@ -72,11 +72,11 @@ namespace Graphic {
 	namespace ColorFunc {
 
 		///@brief An Horizontal gradient color Functor
-		template<typename C, typename InterFunc>
+		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 		class GradientHorizontal : public GradientInterpolation<C, InterFunc>, protected Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
-			GradientHorizontal( const Graphic::GradientHorizontal<C, InterFunc> & gradient );
+			GradientHorizontal( const Graphic::Gradient::Horizontal<C, InterFunc> & gradient = Graphic::Gradient::Horizontal<C, InterFunc>() );
 
 			///@brief Copy Constructor
 			GradientHorizontal( const GradientHorizontal<C, InterFunc> & gradient );
@@ -109,18 +109,18 @@ namespace Graphic {
 			///@return boolean to know if the operation is a success of not.
 			bool write( std::fstream * fileStream ) const;
 		private:
-			const Graphic::GradientHorizontal<C, InterFunc> & gradient;
+			Graphic::Gradient::Horizontal<C, InterFunc> gradient;
 		};
 
 
 
 
 		///@brief A Vertical gradient color Functor
-		template<typename C, typename InterFunc>
+		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 		class GradientVertical : public GradientInterpolation<C, InterFunc>, protected Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
-			GradientVertical( const Graphic::GradientVertical<C, InterFunc> & gradient );
+			GradientVertical( const Graphic::Gradient::Vertical<C, InterFunc> & gradient = Graphic::Gradient::Vertical<C, InterFunc>());
 
 			///@brief Copy Constructor
 			GradientVertical( const GradientVertical<C, InterFunc> & gradient );
@@ -154,16 +154,16 @@ namespace Graphic {
 			///@return boolean to know if the operation is a success of not.
 			bool write( std::fstream * fileStream ) const;
 		private:
-			const Graphic::GradientVertical<C, InterFunc> & gradient;
+			Graphic::Gradient::Vertical<C, InterFunc> gradient;
 		};
 
 
 		///@brief Linear Gradient Color Functor
-		template<typename C, typename InterFunc>
+		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 		class GradientLinear : public GradientInterpolation<C, InterFunc>, protected Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
-			GradientLinear( const Graphic::GradientLinear<C, InterFunc> & gradient );
+			GradientLinear( const Graphic::Gradient::Linear<C, InterFunc> & gradient = Graphic::Gradient::Linear<C, InterFunc>() );
 
 			///@brief Copy Constructor
 			GradientLinear( const GradientLinear<C, InterFunc> & gradient );
@@ -196,17 +196,17 @@ namespace Graphic {
 			///@return boolean to know if the operation is a success of not.
 			bool write( std::fstream * fileStream ) const;
 		private:
-			const Graphic::GradientLinear<C, InterFunc> & gradient;
+			Graphic::Gradient::Linear<C, InterFunc> gradient;
 			int sizeMinusOne;
 			Point origin;
 		};
 
 		///@brief Linear Gradient Color Functor
-		template<typename C, typename InterFunc>
+		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
 		class GradientRadial : public GradientInterpolation<C, InterFunc>, protected Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
-			GradientRadial( const Graphic::GradientRadial<C, InterFunc> & gradient );
+			GradientRadial( const Graphic::Gradient::Radial<C, InterFunc> & gradient = Graphic::Gradient::Radial<C, InterFunc>() );
 
 			///@brief Copy Constructor
 			GradientRadial( const GradientRadial<C, InterFunc> & gradient );
@@ -239,7 +239,7 @@ namespace Graphic {
 			///@return boolean to know if the operation is a success of not.
 			bool write( std::fstream * fileStream ) const;
 		private:
-			const Graphic::GradientRadial<C, InterFunc> & gradient;
+			Graphic::Gradient::Radial<C, InterFunc> gradient;
 			int sizeMinusOne;
 			Point center;
 		};

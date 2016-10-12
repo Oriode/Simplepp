@@ -160,18 +160,18 @@ int main( int argc, char * argv[] ) {
 	Graphic::ColorRGBA<unsigned char> colorTransluscient( 0, 0, 0, 0 );
 
 	
-	Graphic::GradientVertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientVertical;
-	gradientVertical.addPoint( 0.5f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
-	gradientVertical.addPoint( 0.6f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+	Graphic::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientVertical;
+	gradientVertical.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
+	gradientVertical.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 100, 100, 100, 255 ) );
 
 
 
-	Graphic::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientHorizontal;
+	Graphic::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientHorizontal;
 	gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 	gradientHorizontal.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
 
 
-	Graphic::GradientLinear<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientLinear( 45 );
+	Graphic::Gradient::Linear<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientLinear( 45 );
 	gradientLinear.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 	gradientLinear.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
 	gradientLinear.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
@@ -180,7 +180,7 @@ int main( int argc, char * argv[] ) {
 	gradientLinear.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
 
-	Graphic::GradientRadial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientRadial( Math::Vec2<float>( 0.5, 0.5 ), Math::Vec2<float>( 0.5, 0.5 ) );
+	Graphic::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientRadial( Math::Vec2<float>( 0.5, 0.5 ), Math::Vec2<float>( 0.5, 0.5 ) );
 	gradientRadial.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 	gradientRadial.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
 	gradientRadial.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
@@ -217,7 +217,7 @@ int main( int argc, char * argv[] ) {
 		image.changeHueSaturationLightness( 360, 1.0, 1.0f );
 	}*/
 
-	/*{
+	{
 		//////////////////////////////////////////////////////////////////////////
 		// Apply Non symmetrical Filter Image									//
 		//constexpr size_t bits( Graphic::Image::getKernelSumNbBits() );
@@ -233,7 +233,7 @@ int main( int argc, char * argv[] ) {
 		image = image.applySobelFilter();
 
 
-	}*/
+	}
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
@@ -370,7 +370,7 @@ int main( int argc, char * argv[] ) {
 	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Gradient as Functor								//
-		Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientVertical );
+		Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientVertical );
 		image.drawRectangleFunctor( Graphic::Rectangle( 0, 0, 500, 500 ), testFunctorGradient );
 	}*/
 /*
@@ -386,13 +386,13 @@ int main( int argc, char * argv[] ) {
 
 		image.drawImageShadow( Graphic::Point( 0, 0 ), 0, imageTxt, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 
-		Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientRadial( gradientRadial );
-		Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientVertical( gradientVertical );
+		Graphic::ColorFunc::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientRadial( gradientRadial );
+		Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientVertical( gradientVertical );
 
 
-		image.drawImageFunctor<Graphic::ColorFunc::GradientRadial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), testFunctorGradientRadial, Graphic::Rectangle( imageTxt.getSize() ), imageTxt );
+		image.drawImageFunctor<Graphic::ColorFunc::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), testFunctorGradientRadial, Graphic::Rectangle( imageTxt.getSize() ), imageTxt );
 
-		image.drawStrokeFunctor<Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), imageTxt, 1, testFunctorGradientVertical, Graphic::Image::StrokeType::Middle );
+		image.drawStrokeFunctor<Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), imageTxt, 1, testFunctorGradientVertical, Graphic::Image::StrokeType::Middle );
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char * ) imageTxt.getDatas(), imageTxt.getSize(), Graphic::FreeImage::Format::R );
@@ -402,29 +402,35 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Bufferized Font !!!!!!!!!!!!									//
-		image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
+		//image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
 		UTF8String testStr( "Hello World" );
 
-		typedef Graphic::FontLoadingFunc::Effect<unsigned char> LoadingFunctor;
+		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFont( L"consola.ttf", 50 );
 
-		LoadingFunctor fontLoadingFunc;
-		fontLoadingFunc.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) ) );
-		fontLoadingFunc.setShadowActivated( true );
-		fontLoadingFunc.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 127 ) ) );
-		fontLoadingFunc.setShadowRadius( 5 );
-		fontLoadingFunc.setShadowBias( -5.0f );
+		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) ) );
+		myFont.setShadowActivated( true );
+		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) ) );
+		myFont.setShadowRadius( 5 );
+		myFont.setShadowBias( Math::Vec2<float>( 0 ) );
 
 
-		fontLoadingFunc.setStrokeActivated( true );
-		fontLoadingFunc.setStrokeSize( 1 );
-		fontLoadingFunc.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 100, 100, 100, 255 ) ) );
+		myFont.setStrokeActivated( true );
+		myFont.setStrokeSize( 1 );
+		myFont.setStrokeColorFunc( Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>( gradientVertical ) );
 
-		Graphic::_Font<unsigned char, LoadingFunctor> myFont( L"consola.ttf", 50, fontLoadingFunc );
-		myFont.loadGlyph( Graphic::_Font<unsigned char, LoadingFunctor>::Template::Ascii );
+		auto myFontCOPY = myFont;
+
+		IO::write( WString( "myFontCustomdeOUF.font" ), &myFontCOPY );
+
+
+		IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCOPY );
+		myFontCOPY.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
+
+
 
 		auto maskTest = myFont['A'];
 		//image.drawImage(Graphic::Point(300, 300), *maskTest);
-		Graphic::drawText( &image, myFont, Graphic::Point( 250, 250 ), testStr, Math::Vec2<bool>( true, true ) );
+		Graphic::drawText( &image, myFontCOPY, Graphic::Point( 250, 250 ), testStr, Math::Vec2<bool>( true, true ) );
 
 	}
 
@@ -454,7 +460,7 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Line as Functor									//
-		//Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient42(gradientHorizontal);
+		//Graphic::ColorFunc::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient42(gradientHorizontal);
 		//image.drawLineFunctor(Graphic::LineF(0, 0, 500, 500), testFunctorGradient42, 5);
 	}
 
@@ -615,10 +621,10 @@ constexpr unsigned long long K1( 1000 );
 
 		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
-		Graphic::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
+		Graphic::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
 		gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 		gradientHorizontal.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
-		Graphic::ColorFunc::GradientHorizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor( gradientHorizontal );
+		Graphic::ColorFunc::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor( gradientHorizontal );
 
 
 

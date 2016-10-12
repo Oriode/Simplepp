@@ -598,7 +598,7 @@ const T * Vector<T>::data() const {
 /* ITERATIONS                                                           */
 /************************************************************************/
 template<typename T>
-bool Vector<T>::iterate( RandomAccessIterator * it, ElemType ** e ) {
+bool Vector<T>::iterate( RandomAccessIterator * it, ElemType ** e ) const {
 	if ( *it == getEnd() )
 		return false;
 	*e = *it;
@@ -606,7 +606,11 @@ bool Vector<T>::iterate( RandomAccessIterator * it, ElemType ** e ) {
 	return true;
 }
 
-
+template<typename T>
+bool Vector<T>::iterate( RandomAccessIterator * it ) const {
+	( *it )++;
+	return !(*it == getEnd());
+}
 
 
 
@@ -884,7 +888,7 @@ template<typename T>
 template<typename C, typename D>
 void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, const Size & size ) {
 	for ( Size i = 0; i < size; i++ ) {
-		destinationBuffer[i] = C(sourceBuffer[i]);
+		destinationBuffer[i] = C( sourceBuffer[i] );
 	}
 }
 
@@ -980,15 +984,28 @@ void Vector<T>::_extendBuffer( const Size & newSizeNeeded ) {
 
 template<typename T>
 bool Vector<T>::write( std::fstream * fileStream ) const {
-	SimpleIO::write( fileStream, &this -> size );
-	return IO::writeBuffer( fileStream, getData(), getSize() );
+	if ( !SimpleIO::write( fileStream, &this -> size ) )
+		return false;
+
+	for ( Size i( 0 ); i < this -> size; i++ ) {
+		if ( !SimpleIO::write( fileStream, &( this -> dataTable[i] ) ) )
+			 return false;
+	}
+
+	return true
 }
 
 template<typename T>
 bool Vector<T>::read( std::fstream * fileStream ) {
-	SimpleIO::read( fileStream, &this -> size );
+	if ( !SimpleIO::read( fileStream, &this -> size ) )
+		return false;
 	this -> maxSize = this -> size;
 	_allocateNoNull( this -> maxSize );
 
-	return IO::readBuffer( fileStream, getData(), getSize() );
+	for ( Size i( 0 ); i < this -> size; i++ ) {
+		if ( !SimpleIO::read( fileStream, &( this -> dataTable[i] ) ) )
+			 return false;
+	}
+
+	return true;
 }

@@ -8,32 +8,32 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		_drawText<T, LoadingFunc, ColorR<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename LoadingFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		_drawText<T, LoadingFunc, ColorR<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename LoadingFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		_drawText<T, LoadingFunc, ColorRGB<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename LoadingFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		_drawText<T, LoadingFunc, ColorRGB<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename LoadingFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		_drawText<T, LoadingFunc, ColorRGBA<T>, BlendFunc>( image, font, point, text, color, centered, blendFunc );
 	}
 
 	template<typename T, typename LoadingFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		_drawText<T, LoadingFunc, ColorRGBA<T>, BlendFunc>( image, font, rectangle, text, color, centered, blendFunc );
 	}
 
@@ -43,7 +43,7 @@ namespace Graphic {
 	/************************************************************************/
 
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Gradient::Horizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -54,7 +54,7 @@ namespace Graphic {
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor( ImageT<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
+			Functor( ImageT<T> * image, const Gradient::Horizontal<C, InterFunc> & gradient, BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & rectangle ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
@@ -69,8 +69,8 @@ namespace Graphic {
 		private:
 			ColorFunctor colorFunctor;
 			ImageT<T> * image;
-			const BlendFunc & blendFunc;
-			const GradientHorizontal<C, InterFunc> & gradient;
+			BlendFunc & blendFunc;
+			const Gradient::Horizontal<C, InterFunc> & gradient;
 			Math::Rectangle<Size> clampedRectangle;
 		};
 		Functor functor( image, gradient, blendFunc );
@@ -78,7 +78,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const GradientHorizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Gradient::Horizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -89,7 +89,7 @@ namespace Graphic {
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor( ImageT<T> * image, const GradientHorizontal<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
+			Functor( ImageT<T> * image, const Gradient::Horizontal<C, InterFunc> & gradient, const Rectangle & rectangle, BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
@@ -102,7 +102,7 @@ namespace Graphic {
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			ImageT<T> * image;
-			const BlendFunc & blendFunc;
+			BlendFunc & blendFunc;
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
@@ -117,7 +117,7 @@ namespace Graphic {
 	/************************************************************************/
 
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Gradient::Vertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -128,7 +128,7 @@ namespace Graphic {
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor( ImageT<T> * image, const GradientVertical<C, InterFunc> & gradient, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
+			Functor( ImageT<T> * image, const Gradient::Vertical<C, InterFunc> & gradient, BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & rectangle ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
@@ -142,8 +142,8 @@ namespace Graphic {
 		private:
 			ColorFunctor colorFunctor;
 			ImageT<T> * image;
-			const BlendFunc & blendFunc;
-			const GradientVertical<C, InterFunc> & gradient;
+			BlendFunc & blendFunc;
+			const Gradient::Vertical<C, InterFunc> & gradient;
 			Math::Rectangle<Size> clampedRectangle;
 		};
 		Functor functor( image, gradient, blendFunc );
@@ -151,7 +151,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const GradientVertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Gradient::Vertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
 			struct ColorFunctor : public ColorFunc::Template<C> {
 				ColorFunctor() {}
@@ -162,7 +162,7 @@ namespace Graphic {
 				C * interpolationDatas;
 				Size offset;
 			};
-			Functor( ImageT<T> * image, const GradientVertical<C, InterFunc> & gradient, const Rectangle & rectangle, const BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
+			Functor( ImageT<T> * image, const Gradient::Vertical<C, InterFunc> & gradient, const Rectangle & rectangle, BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
 				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
@@ -175,7 +175,7 @@ namespace Graphic {
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			ImageT<T> * image;
-			const BlendFunc & blendFunc;
+			BlendFunc & blendFunc;
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
@@ -187,32 +187,32 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc, typename C, typename BlendFunc>
-	void _drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void _drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
-			Functor( ImageT<T> * image, const C & color, const BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
+			Functor( ImageT<T> * image, const C & color, BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & size ) {}
 			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<BlendFunc, true>( Point( x, y ), this -> color, c, this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
 			const C & color;
-			const BlendFunc & blendFunc;
+			BlendFunc & blendFunc;
 		};
-		auto rectangleClamped( image->clampRectangle( rectangle ) );
+		auto rectangleClamped( image -> clampRectangle( rectangle ) );
 		Functor functor( image, color, blendFunc );
 		_drawText( font, rectangleClamped, text, centered, functor );
 	}
 
 
 	template<typename T, typename LoadingFunc, typename C, typename BlendFunc>
-	void _drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, const BlendFunc & blendFunc ) {
+	void _drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
-			Functor( ImageT<T> * image, const C & color, const BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
+			Functor( ImageT<T> * image, const C & color, BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
 			void onBegin( const Math::Vec2<float> & size ) {}
 			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage( Point( x, y ), this -> color, c, this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
 			const C & color;
-			const BlendFunc & blendFunc;
+			BlendFunc & blendFunc;
 		};
 		Functor functor( image, color, blendFunc );
 		_drawText( font, point, text, centered, functor );
@@ -220,29 +220,31 @@ namespace Graphic {
 
 
 
-	template<typename T, typename LoadingFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
+	template<typename T, typename LoadingFunc, typename BlendFunc>
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
-			Functor( ImageT<T> * image ) : image( image ) {}
+			Functor( ImageT<T> * image, BlendFunc & blendFunc ) : image( image ), blendFunc(blendFunc) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const ImageT<T> & c ) { this -> image ->  drawImage( Point( x, y ), c ); }
+			void operator()( float x, float y, const ImageT<T> & c ) { this -> image ->  drawImage( Point( x, y ), c, Rectangle( c.getSize() ), this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
+			BlendFunc & blendFunc;
 		};
-		Functor functor( image );
+		Functor functor( image, blendFunc );
 		_drawText( font, point, text, centered, functor );
 	}
 
-	template<typename T, typename LoadingFunc>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered /*= Math::Vec2<bool>(false)*/ ) {
+	template<typename T, typename LoadingFunc, typename BlendFunc>
+	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
 		struct Functor {
-			Functor( ImageT<T> * image ) : image( image ) {}
+			Functor( ImageT<T> * image, BlendFunc & blendFunc ) : image( image ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<true>( Point( x, y ), c ); }
+			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<true>( Point( x, y ), c, Rectangle( c.getSize() ), this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
+			BlendFunc & blendFunc;
 		};
-		Functor functor( image );
+		Functor functor( image, blendFunc );
 		_drawText( font, image->clampRectangle( rectangle ), text, centered, functor );
 	}
 

@@ -9,22 +9,19 @@ public:
 
 	UTF8String();
 
-
 	template<typename C>
 	UTF8String( const C * str );
 	UTF8String( const char * str );
-
-
 
 	template<typename C>
 	UTF8String( const C * str, Size size );
 	UTF8String( const char * str, Size size );
 
-
 	template<typename C>
 	UTF8String( const BasicString<C> & str );
 	UTF8String( const String & str );
 	UTF8String( const UTF8String & str );
+	UTF8String( UTF8String && str );
 
 
 	template<typename C>
@@ -49,6 +46,8 @@ public:
 	~UTF8String();
 
 
+
+
 	/************************************************************************/
 	/* OPERATOR EQUAL                                                       */
 	/************************************************************************/
@@ -56,6 +55,7 @@ public:
 	UTF8String & operator=( const BasicString<C> & str );
 	UTF8String & operator=( const String & str );
 	UTF8String & operator=( const UTF8String & str );
+	UTF8String & operator=( UTF8String && str );
 
 	template<typename C>
 	UTF8String & operator=( const C * str );
@@ -102,7 +102,9 @@ public:
 
 
 
-	///\brief compute the code point associated with the char buffer
+	///@brief get the codePoint associated with an iterator
+	///@param it Iterator
+	///@return codePoint computed
 	static CodePoint getCodePoint( char charTmp[4] );
 
 

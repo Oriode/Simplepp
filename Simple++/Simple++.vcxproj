@@ -157,7 +157,7 @@
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Graphic\BasicGraphic.h" />
     <ClInclude Include="Graphic\BlendingFunc.hpp" />
-    <ClInclude Include="Graphic\CharLoadingFunc.hpp" />
+    <ClInclude Include="Graphic\FontLoadingFunc.hpp" />
     <ClInclude Include="Graphic\Color.h" />
     <ClInclude Include="Graphic\ColorConvertFunc.hpp" />
     <ClInclude Include="Graphic\ColorR.h" />

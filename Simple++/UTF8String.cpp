@@ -72,6 +72,10 @@ UTF8String::UTF8String( const UTF8String & str ) :
 	String( str ) {
 }
 
+UTF8String::UTF8String( UTF8String && str ) :
+	String( Utility::toRValue( str ) ) {
+}
+
 UTF8String::UTF8String( const char * str, Size size ) :
 	String( ctor::null ) {
 	_contructorEQUAL( str, size );
@@ -93,6 +97,12 @@ UTF8String & UTF8String::operator=( const UTF8String & str ) {
 	return *this;
 }
 
+UTF8String & UTF8String::operator=( UTF8String && str ) {
+	String::operator=( Utility::toRValue( str ) );
+	return *this;
+}
+
+
 UTF8String & UTF8String::operator=( const char * str ) {
 	return _operatorEQUAL( str, String::getSize( str ) );
 }
@@ -100,6 +110,7 @@ UTF8String & UTF8String::operator=( const char * str ) {
 UTF8String & UTF8String::operator=( const std::string & str ) {
 	return _operatorEQUAL( str, str.size() );
 }
+
 
 
 UTF8String & UTF8String::operator+=( const UTF8String & str ) {
@@ -133,6 +144,7 @@ UTF8String::CodePoint UTF8String::getCodePoint( char charTmp[4] ) {
 	} else   //If the code point is on ONE Byte ONLY !
 		return ( CodePoint ) charTmp[0];
 }
+
 
 
 bool UTF8String::iterate( RandomAccessIterator * i ) const {
