@@ -25,6 +25,12 @@ namespace Graphic {
 			static const UTF8String Latin1;
 		};
 
+
+		///@brief Empty constructor
+		///@param createImageFunctor Functor to be used to load the glyphs
+		///@see FontLoadingFunc
+		_Font( const LoadingFunc & createImageFunctor = LoadingFunc() );
+
 		///@brief Constructor from a fileStream
 		///@param fileStream Stream to read to create this object
 		_Font( std::fstream * fileStream );
@@ -132,10 +138,12 @@ namespace Graphic {
 
 	protected:
 		enum ctor { null };
-		_Font( const LoadingFunc & createImageFunctor = LoadingFunc() );
+		
 
 		bool _read( std::fstream * fileStream );
-		void _loadFreeType( const char * fileDump, size_t size );
+		void _clear();
+		void _nullify();
+		bool _loadFreeType( const char * fileDump, size_t size );
 		void _setPixSize( unsigned int size );
 		void _unload();
 		void _copy( const _Font<T, LoadingFunc> & font );
@@ -156,8 +164,6 @@ namespace Graphic {
 
 		LoadingFunc loadingFunctor;
 	};
-
-
 	
 
 

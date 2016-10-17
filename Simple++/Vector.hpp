@@ -997,14 +997,27 @@ bool Vector<T>::write( std::fstream * fileStream ) const {
 
 template<typename T>
 bool Vector<T>::read( std::fstream * fileStream ) {
-	if ( !SimpleIO::read( fileStream, &this -> size ) )
+	if ( !SimpleIO::read( fileStream, &this -> size ) ) {
+		this -> size = 0;
+		this -> maxSize = 0;
+		delete[] this -> dataTable;
+		this -> dataTable = NULL;
+		_updateIterators();
 		return false;
+	}
+
 	this -> maxSize = this -> size;
-	_allocateNoNull( this -> maxSize );
+	allocate( this -> maxSize );
 
 	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( !SimpleIO::read( fileStream, &( this -> dataTable[i] ) ) )
-			 return false;
+		if ( !SimpleIO::read( fileStream, &( this -> dataTable[i] ) ) ) {
+			this -> size = 0;
+			this -> maxSize = 0;
+			delete[] this -> dataTable;
+			this -> dataTable = NULL;
+			_updateIterators();
+			return false;
+		}
 	}
 
 	return true;

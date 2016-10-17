@@ -205,7 +205,7 @@ UTF8String::Size UTF8String::getSizeUTF8() const {
 	return numChar;
 }
 
-void UTF8String::CodePoint2Chars( const CodePoint & codePoint, char charBuffer[4], unsigned char * size ) {
+void UTF8String::codePoint2Chars( const CodePoint & codePoint, char charBuffer[4], unsigned char * size ) {
 	if ( codePoint > 127 ) {
 		if ( codePoint > 2047 ) {
 			if ( codePoint > 65535 ) {

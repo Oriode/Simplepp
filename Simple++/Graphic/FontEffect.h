@@ -12,7 +12,7 @@ namespace Graphic {
 	namespace FontLoadingFunc {
 
 		template<typename OverlayColorFunc = ColorFunc::SimpleColor<ColorRGBA<unsigned char>>, typename StrokeColorFunc = ColorFunc::SimpleColor<ColorRGBA<unsigned char>>, typename ShadowColorFunc = ColorFunc::SimpleColor<ColorRGBA<unsigned char>>>
-		class Effect : public Template {
+		class Effect : public Template, public BasicIO {
 		public:
 			Effect();
 
@@ -75,7 +75,6 @@ namespace Graphic {
 			///@return Size of the stroke
 			float getStrokeSize() const;
 
-
 			///@brief Set the color overlay functor
 			///@param colorFunc Color overlay functor
 			void setOverlayColorFunc( const OverlayColorFunc & overlayColorFunc );
@@ -87,6 +86,18 @@ namespace Graphic {
 			template<typename T>
 			void operator()( ImageT<T> * image, const unsigned char * buffer, const Math::Vec2<float> & size );
 
+			///@brief Reset with default parameters
+			void clear();
+
+			///@brief read from a file stream
+			///@param fileStream stream used to read load this object
+			///@return boolean to know if the operation is a success of not.
+			bool read( std::fstream * fileStream );
+
+			///@brief write this object as binary into a file stream
+			///@param fileStream stream used to write this object
+			///@return boolean to know if the operation is a success of not.
+			bool write( std::fstream * fileStream ) const;
 		private:
 			void _updateBias();
 
@@ -101,6 +112,8 @@ namespace Graphic {
 
 			OverlayColorFunc overlayColorFunc;
 		};
+
+	
 	}
 
 
@@ -112,6 +125,9 @@ namespace Graphic {
 	template<typename T = unsigned char, typename OverlayColorFunc = ColorFunc::SimpleColor<ColorRGBA<T>>, typename StrokeColorFunc = ColorFunc::SimpleColor<ColorRGBA<T>>, typename ShadowColorFunc = ColorFunc::SimpleColor<ColorRGBA<T>>>
 	class FontEffect : public _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>> {
 	public:
+		///@brief Empty Constructor
+		FontEffect( );
+
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
 		///@param pixSize Size of the loaded font.

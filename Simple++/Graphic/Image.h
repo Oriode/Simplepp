@@ -117,10 +117,13 @@ namespace Graphic {
 		///@return number of pixels
 		size_t getNbPixels() const;
 
+
+		///@brief reset this image as empty.
+		void clear(  );
+
 		///@brief reset this image with a new size.
 		///@param size new size
 		void clear( const Math::Vec2<Size> & size );
-
 
 		///@brief reset this image with a new size and a new format
 		///@param size new size

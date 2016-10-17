@@ -153,6 +153,7 @@ namespace Graphic {
 		private:
 			void _updateOrdered();
 			void _unload();
+			void _clear();
 			void _copy( const Template & fontEffect );
 			void _move( Template && fontEffect );
 

@@ -36,10 +36,13 @@ namespace Graphic {
 			this -> memorySize = IO::readToBuffer( this -> fileName, &this -> memoryFontObject );
 			if ( this -> memorySize == -1 ) {
 				Log::displayError( String( "Unable to open the font file : " ) << this -> fileName );
+				this -> memorySize = 0;
+				this -> ftLib = NULL;
+				this -> ftFace = NULL;
 				return;
+			} else {
+				_loadFreeType( this -> memoryFontObject, this -> memorySize );
 			}
-
-			_loadFreeType( this -> memoryFontObject, this -> memorySize );
 
 
 			break;
@@ -62,7 +65,7 @@ namespace Graphic {
 
 	template<typename T, typename LoadingFunc>
 	void _FontLoadable<T, LoadingFunc>::onUnload() {
-		_unload();
+		_clear();
 	}
 
 	template<typename T, typename LoadingFunc>

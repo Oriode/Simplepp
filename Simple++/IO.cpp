@@ -11,8 +11,14 @@ size_t IO::readToBuffer( std::fstream * fileStream, char ** buffer ) {
 	size_t length = fileStream -> tellg();
 	fileStream -> seekg( 0, fileStream -> beg );
 
-	*buffer = new char[length];
-	fileStream -> read( *buffer, length );
+	if ( length ) {
+		*buffer = new char[length];
+		fileStream -> read( *buffer, length );
+	} else {
+		*buffer = NULL;
+	}
+		
+	
 	return length;
 }
 

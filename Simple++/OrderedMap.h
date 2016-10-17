@@ -48,8 +48,8 @@ public:
 	using Map<I, T>::size;
 	using Map<I, T>::pop;
 	using Map<I, T>::fill;
-	using Map<I, T>::eraseFirst;
-	using Map<I, T>::eraseAll;
+	using Map<I, T>::eraseValueFirst;
+	using Map<I, T>::eraseValueAll;
 
 	T * getValue( const I & index );
 	const T * getValue( const I & index ) const;

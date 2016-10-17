@@ -15,7 +15,9 @@ namespace Graphic {
 
 	template<typename T>
 	Texture<T>::Texture( std::fstream * fileStream ) {
-		read( fileStream );
+		if ( !read( fileStream ) ) {
+
+		}
 	}
 
 	template<typename T>
@@ -120,8 +122,18 @@ namespace Graphic {
 		if ( !IO::read( fileStream, &nbDatas ) )
 			return false;
 
+		// Clamp the number of datas with a big number just in case of file corruption.
+		nbDatas = Math::min<Vector<ImageT<T> *>::Size>( nbDatas, 100 );
+
 		for ( Vector<ImageT<T> * >::Size i = 0; i < nbDatas; i++ ) {
-			this -> datas.push( new ImageT<T>( fileStream ) );
+			ImageT<T> * newImage = new ImageT<T>();
+			if ( newImage -> read( fileStream ) ) {
+				this -> datas.push( newImage );
+			} else {
+				delete newImage;
+				_unload();
+				return false;
+			}
 		}
 		return true;
 	}

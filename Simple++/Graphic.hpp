@@ -96,7 +96,7 @@ namespace Graphic {
 
 			void operator()( float x, float y, const ImageT<T> & c ) {
 				this -> colorFunctor.offset = x - this -> clampedRectangle.getLeft();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, true>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, false>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
@@ -169,7 +169,7 @@ namespace Graphic {
 
 			void operator()( float x, float y, const ImageT<T> & c ) {
 				this -> colorFunctor.offset = y - this -> clampedRectangle.getBottom();
-				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, true>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, false>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
 
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
@@ -191,7 +191,7 @@ namespace Graphic {
 		struct Functor {
 			Functor( ImageT<T> * image, const C & color, BlendFunc & blendFunc ) : image( image ), color( color ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<BlendFunc, true>( Point( x, y ), this -> color, c, this -> blendFunc ); }
+			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<BlendFunc, false>( Point( x, y ), this -> color, c, this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
 			const C & color;
@@ -239,7 +239,7 @@ namespace Graphic {
 		struct Functor {
 			Functor( ImageT<T> * image, BlendFunc & blendFunc ) : image( image ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<true>( Point( x, y ), c, Rectangle( c.getSize() ), this -> blendFunc ); }
+			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<false>( Point( x, y ), c, Rectangle( c.getSize() ), this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
 			BlendFunc & blendFunc;
@@ -266,7 +266,7 @@ namespace Graphic {
 
 
 		for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-			if ( codePoint == '\n' ) {
+			if ( codePoint == UCodePoint(UCodePoint('\n')) ) {
 				rectangleHeight += font.getLineHeight();
 				lineWidth.push( currentPosX * 0.5f );
 
@@ -275,7 +275,7 @@ namespace Graphic {
 				//
 
 				currentPosX = 0;
-			} else if ( codePoint == ' ' ) {
+			} else if ( codePoint == UCodePoint(' ') ) {
 				currentPosX += font.getWordSpace();
 			} else {
 				const FreeTypeChar<T> * c = font[codePoint];
@@ -296,7 +296,7 @@ namespace Graphic {
 
 		} else {
 			rectangle.setTop( initPoint.y + marginY );										//update BB
-			rectangle.setBottom( initPoint.y + marginY - rectangleHeight );						//update BB
+			rectangle.setBottom( initPoint.y + marginY - rectangleHeight );					//update BB
 		}
 
 
@@ -308,14 +308,15 @@ namespace Graphic {
 			func.onBegin( rectangle );
 
 			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0], initPoint.y );
+			currentPos += font.getDrawingBias();
 			unsigned int currentLine = 1;
 
 			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x - lineWidth[currentLine];
 					currentLine++;
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPos.x += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];
@@ -331,12 +332,12 @@ namespace Graphic {
 
 			func.onBegin( rectangle );
 
-			Math::Vec2<float> currentPos( initPoint );
+			Math::Vec2<float> currentPos( initPoint + font.getDrawingBias() );
 			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x;
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPos.x += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];
@@ -367,7 +368,7 @@ namespace Graphic {
 
 
 			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					rectangleTop += font.getLineHeight();
 					lineWidth.push( currentPosX / 2.0f );
 
@@ -376,7 +377,7 @@ namespace Graphic {
 					//
 
 					currentPosX = 0;
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPosX += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];
@@ -400,17 +401,17 @@ namespace Graphic {
 
 
 
-			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0], initPoint.y );
+			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0] + font.getDrawingBias().x, initPoint.y + font.getDrawingBias().y );
 			unsigned int currentLine = 1;
 
 			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x - lineWidth[currentLine];
 					currentLine++;
 
 
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPos.x += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];
@@ -424,18 +425,18 @@ namespace Graphic {
 			if ( centered.y ) {
 				float rectangleTop = font.getLineHeight();
 				for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-					if ( codePoint == '\n' ) rectangleTop += font.getLineHeight();
+					if ( codePoint == UCodePoint('\n') ) rectangleTop += font.getLineHeight();
 				}
 
 				initPoint.y = initPoint.y - font.getLineHeight() * 0.7f + rectangleTop * 0.5f;
 			}
 
-			Math::Vec2<float> currentPos( initPoint );
+			Math::Vec2<float> currentPos( initPoint + font.getDrawingBias() );
 			for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x;
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPos.x += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];
@@ -477,9 +478,9 @@ namespace Graphic {
 				float tmpPosX = currentPosX;
 				auto it2 = it;
 				for ( ; textCopy.iterate( &it2, &codePoint ); ) {
-					if ( codePoint == '\n' ) {
+					if ( codePoint == UCodePoint('\n') ) {
 						goto drawText_afterIterate;	//if we reached the end of the word
-					} else if ( codePoint == ' ' ) {
+					} else if ( codePoint == UCodePoint(' ') ) {
 						tmpPosX += font.getWordSpace();
 						goto drawText_afterIterate;	//if we reached the end of the word
 					} else {
@@ -505,13 +506,13 @@ drawText_afterIterate:
 						break;
 					}
 					currentPosX = newSize;
-					*( lastIt ) = '\n';
+					*( lastIt ) = UCodePoint('\n');
 					rectangleTop += font.getLineHeight();
 					lastIt = it2 - 1;
 				} else {
 					currentPosX = tmpPosX;
 					lastIt = it2 - 1;
-					if ( *lastIt == '\n' ) {
+					if ( *lastIt == UCodePoint('\n') ) {
 						lineWidth.push( currentPosX / 2.0f );
 						currentPosX = 0.0f;
 						rectangleTop += font.getLineHeight();
@@ -533,15 +534,15 @@ drawText_afterIterate:
 			initPoint.x = rectangle.getLeft() + rectangleSize.x / 2;
 
 
-			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0], initPoint.y );
+			Math::Vec2<float> currentPos( initPoint.x - lineWidth[0] + font.getDrawingBias().x, initPoint.y + font.getDrawingBias().y );
 			unsigned int currentLine = 1;
 
 			for ( auto it = textCopy.getBegin(); textCopy.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x - lineWidth[currentLine];
 					currentLine++;
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPos.x += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];
@@ -566,9 +567,9 @@ drawText_afterIterate:
 				float tmpPosX = currentPosX;
 				auto it2 = it;
 				for ( ; textCopy.iterate( &it2, &codePoint ); ) {
-					if ( codePoint == '\n' ) {
+					if ( codePoint == UCodePoint('\n') ) {
 						goto drawText_afterIterate2;	//if we reached the end of the word
-					} else if ( codePoint == ' ' ) {
+					} else if ( codePoint == UCodePoint(' ') ) {
 						tmpPosX += font.getWordSpace();
 						goto drawText_afterIterate2;	//if we reached the end of the word
 					} else {
@@ -590,14 +591,14 @@ drawText_afterIterate2:
 					}
 					currentPosX = tmpPosX - currentPosX - font.getWordSpace();
 
-					*( lastIt ) = '\n';
+					*( lastIt ) = UCodePoint('\n');
 					rectangleTop += font.getLineHeight();
 					lastIt = it2 - 1;
 
 				} else {
 					currentPosX = tmpPosX;
 					lastIt = it2 - 1;
-					if ( *lastIt == '\n' ) {
+					if ( *lastIt == UCodePoint('\n') ) {
 						currentPosX = 0.0f;
 						rectangleTop += font.getLineHeight();
 					}
@@ -615,13 +616,13 @@ drawText_afterIterate2:
 			initPoint.x = rectangle.getLeft();
 
 
-			Math::Vec2<float> currentPos( initPoint );
+			Math::Vec2<float> currentPos( initPoint + font.getDrawingBias() );
 
 			for ( auto it = textCopy.getBegin(); textCopy.iterate( &it, &codePoint ); ) {
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					currentPos.y -= font.getLineHeight();
 					currentPos.x = initPoint.x;
-				} else if ( codePoint == ' ' ) {
+				} else if ( codePoint == UCodePoint(' ') ) {
 					currentPos.x += font.getWordSpace();
 				} else {
 					const FreeTypeChar<T> * c = font[codePoint];

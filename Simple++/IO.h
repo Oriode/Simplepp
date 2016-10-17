@@ -14,7 +14,7 @@ public:
 	///@param object pointer to the object we wanna write.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool write( const WString & fileName, C * object );
+	static bool write( const WString & fileName, const C * object );
 
 	///@brief read from a file to an object, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own read method.
 	///@param fileName file where to read.

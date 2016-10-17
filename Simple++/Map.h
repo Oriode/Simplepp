@@ -154,8 +154,8 @@ public:
 	using Vector<MapObject<I, T>>::iterate;
 
 
-	void eraseFirst( const T & data );
-	void eraseAll( const T & data );
+	void eraseValueFirst( const T & data );
+	void eraseValueAll( const T & data );
 
 	void eraseIndexFirst( const I & index );
 	void eraseIndexAll( const I & index );

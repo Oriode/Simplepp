@@ -159,7 +159,7 @@ bool Map<I, T>::existsIndex( const I & index ) const {
 
 
 template<typename I, typename T>
-void Map<I, T>::eraseAll( const T & data ) {
+void Map<I, T>::eraseValueAll( const T & data ) {
 	for ( auto it = getBegin(); it != getEnd(); it++ ) {
 		if ( it -> value == data )
 			_eraseit( it );
@@ -167,7 +167,7 @@ void Map<I, T>::eraseAll( const T & data ) {
 }
 
 template<typename I, typename T>
-void Map<I, T>::eraseFirst( const T & data ) {
+void Map<I, T>::eraseValueFirst( const T & data ) {
 	for ( auto it = getBegin(); it != getEnd(); it++ ) {
 		if ( it -> value == data ) {
 			_eraseit( it );

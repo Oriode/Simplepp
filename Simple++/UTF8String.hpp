@@ -46,7 +46,7 @@ void UTF8String::_operatorCONCAT( const T & str, const Size & bufferSize ) {
 	unsigned char size;
 	auto bufferTmp = this -> dataTable + addedSize;
 	for ( Size j = 0; j < addedSize; j++, bufferTmp += size )
-		CodePoint2Chars( str[j], bufferTmp, &size );
+		codePoint2Chars( str[j], bufferTmp, &size );
 
 	*bufferTmp = '\0';
 	this -> size = newSize;
@@ -71,7 +71,7 @@ void UTF8String::_contructorEQUAL( const T & str, const Size & bufferSize ) {
 	unsigned char size;
 	auto bufferTmp = this -> dataTable;
 	for ( Size j = 0; j < bufferSize; j++, bufferTmp += size )
-		CodePoint2Chars( str[j], bufferTmp, &size );
+		codePoint2Chars( str[j], bufferTmp, &size );
 
 	*bufferTmp = '\0';
 	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
@@ -86,7 +86,7 @@ UTF8String & UTF8String::_operatorEQUAL( const T & str, const Size & bufferSize 
 	unsigned char size;
 	auto bufferTmp = this -> dataTable;
 	for ( Size j = 0; j < bufferSize; j++, bufferTmp += size )
-		CodePoint2Chars( str[j], bufferTmp, &size );
+		codePoint2Chars( str[j], bufferTmp, &size );
 
 	*bufferTmp = '\0';
 	this -> size = ( Size ) ( bufferTmp - this -> dataTable );

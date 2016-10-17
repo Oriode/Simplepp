@@ -111,7 +111,7 @@ public:
 	//\brief this is the special version for UTF8 of the getSize() method /!\ WARNING /!\ This method iterate the whole string to retrieve the length.
 	Size getSizeUTF8() const;
 
-	static void CodePoint2Chars( const CodePoint & codePoint, char charBuffer[4], unsigned char * size );
+	static void codePoint2Chars( const CodePoint & codePoint, char charBuffer[4], unsigned char * size );
 private:
 	template<typename T>
 	UTF8String & _operatorEQUAL( const T & str, const Size & bufferSize );

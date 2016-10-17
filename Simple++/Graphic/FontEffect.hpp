@@ -20,33 +20,33 @@ namespace Graphic {
 
 			this -> bias.y = Math::min<float>( this -> shadowBias.y - this -> shadowRadius, 0 );
 			this -> bias.y = Math::min<float>( -float( this -> strokeSize ), this -> bias.y );
+
+			this -> margins.setLeft( Math::ceil( -this -> bias.x ) );
+			this -> margins.setBottom( Math::ceil( -this -> bias.y ) );
+
+			this -> margins.setRight( Math::ceil( Math::max<float>( Math::max<float>( this -> shadowBias.x + this -> shadowRadius, 0.0f ), this -> strokeSize ) ) );
+			this -> margins.setTop( Math::ceil( Math::max<float>( Math::max<float>( this -> shadowBias.y + this -> shadowRadius, 0.0f ), this -> strokeSize ) ) );
 		}
 
 
 		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
 		template<typename T>
 		void Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::operator()( ImageT<T> * image, const unsigned char * buffer, const Math::Vec2<float> & size ) {
-			Math::Vec2<float> bottomLeftExtend( -this -> bias.x, -this -> bias.y );
-			Math::Vec2<float> topRightExtend( Math::max<float>( Math::max<float>( this -> shadowBias.x + this -> shadowRadius, 0.0f ), this -> strokeSize ),
-											  Math::max<float>( Math::max<float>( this -> shadowBias.y + this -> shadowRadius, 0.0f ), this -> strokeSize ) );
-
 			// Lets create a new image that will be the mask image
 			ImageT<T> imageMask( buffer, size, LoadingFormat::R, true );
 
 			// Now Clear the final image
-			image -> clear( Math::Vec2<Size>( Size( -this -> bias.x + topRightExtend.x + size.x ), Size( -this -> bias.y + topRightExtend.y + size.y ) ), Format::RGBA );
+			image -> clear( Math::Vec2<Size>( Size( -this -> bias.x + size.x ) + this -> margins.getRight(), Size( -this -> bias.y + size.y ) + this -> margins.getTop() ), Format::RGBA );
 			image -> fillImage( ColorRGBA<T>( Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin() ) );
 
 			// Draw the shadow
-			if ( this -> bShadowActivated ) image -> drawImageShadowFunctor<ShadowColorFunc>( Point( bottomLeftExtend.x + this -> shadowBias.x, bottomLeftExtend.y + this -> shadowBias.y ), this -> shadowRadius, imageMask, this -> shadowColorFunc );
-
-
+			if ( this -> bShadowActivated ) image -> drawImageShadowFunctor<ShadowColorFunc>( Point( this -> margins.getLeft() + Size( this -> shadowBias.x ), this -> margins.getTop() + Size( this -> shadowBias.y ) ), this -> shadowRadius, imageMask, this -> shadowColorFunc );
 
 			// Draw the stroke effect
-			if ( this -> bStrokeActivated ) image -> drawStrokeFunctor<StrokeColorFunc>( Point( bottomLeftExtend.x, bottomLeftExtend.y ), imageMask, this -> strokeSize, this -> strokeColorFunc, ImageT<T>::StrokeType::Outside );
+			if ( this -> bStrokeActivated ) image -> drawStrokeFunctor<StrokeColorFunc>( this -> margins.getLeftBottom(), imageMask, this -> strokeSize, this -> strokeColorFunc, ImageT<T>::StrokeType::Outside );
 
 			// Draw the mask with the color functor to the final image
-			image -> drawImageFunctor<OverlayColorFunc>( Math::Vec2<Size>( bottomLeftExtend.x, bottomLeftExtend.y ), this -> overlayColorFunc, Rectangle( imageMask.getSize() ), imageMask );
+			image -> drawImageFunctor<OverlayColorFunc>( this -> margins.getLeftBottom(), this -> overlayColorFunc, Rectangle( imageMask.getSize() ), imageMask );
 
 			// Finish !
 		}
@@ -134,12 +134,107 @@ namespace Graphic {
 		OverlayColorFunc & Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::getOverlayColorFunc() {
 			return this -> overlayColorFunc;
 		}
+
+		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
+		void Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::clear() {
+			this -> bShadowActivated = false;
+			this -> shadowRadius = 0;
+			this -> shadowBias = Math::Vec2<float>::null;
+			this -> bStrokeActivated = false;
+			this -> strokeSize = 0;
+		}
+
+		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read( std::fstream * fileStream ) {
+			if ( !IO::read( fileStream, (Template *) this ) ) {
+				clear();
+				return false;
+			}
+
+			if ( !IO::read( fileStream, &this -> bShadowActivated ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> shadowRadius ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> shadowBias ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> bStrokeActivated ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> strokeSize ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> shadowColorFunc ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> strokeColorFunc ) ) {
+				clear();
+				return false;
+			}
+			if ( !IO::read( fileStream, &this -> overlayColorFunc ) ) {
+				clear();
+				return false;
+			}
+
+			// Clamping the data in case of file corruption
+			this -> shadowRadius = Math::min( this -> shadowRadius, unsigned int( 100 ) );
+			this -> shadowBias.x = Math::clamp( this -> shadowBias.x, -100.0f, 100.0f );
+			this -> shadowBias.y = Math::clamp( this -> shadowBias.y, -100.0f, 100.0f );
+			this -> strokeSize = Math::min( this -> strokeSize, 50.0f );
+
+			return true;
+		}
+
+		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::write( std::fstream * fileStream ) const {
+			if ( !IO::write( fileStream, ( Template * ) this ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> bShadowActivated ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> shadowRadius ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> shadowBias ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> bStrokeActivated ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> strokeSize ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> shadowColorFunc ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> strokeColorFunc ) )
+				return false;
+
+			if ( !IO::write( fileStream, &this -> overlayColorFunc ) )
+				return false;
+
+
+
+			return true;
+		}
 	}
 
 
 
 
+	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect() : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>() {
 
+	}
 
 
 

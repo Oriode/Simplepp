@@ -2,18 +2,18 @@
 
 
 template<typename C>
-bool SimpleIO::_writeObject(std::fstream * fileStream, C * buffer, BasicSimpleLoadableIO * b) {
+bool SimpleIO::_writeObject(std::fstream * fileStream, const C * buffer, const BasicSimpleLoadableIO * b) {
 	return buffer -> write(fileStream);
 }
 
 template<typename C>
-bool SimpleIO::_writeObject(std::fstream * fileStream, C * buffer, BasicSimpleIO * b) {
+bool SimpleIO::_writeObject(std::fstream * fileStream, const C * buffer, const BasicSimpleIO * b) {
 	return buffer -> write(fileStream);
 }
 
 
 template<typename C>
-bool SimpleIO::_writeObject(std::fstream * fileStream, C * buffer, ...) {
+bool SimpleIO::_writeObject(std::fstream * fileStream, const C * buffer, ...) {
 	debug(size_t tmp = sizeof(C); size_t beginPos = fileStream -> tellp(););
 	fileStream -> write((char *) buffer, sizeof(C));
 	debug(size_t charWrote = (size_t) ( fileStream -> tellp() ) - beginPos;);
@@ -22,7 +22,7 @@ bool SimpleIO::_writeObject(std::fstream * fileStream, C * buffer, ...) {
 
 
 template<typename C>
-bool SimpleIO::write(std::fstream * fileStream, C * buffer) {
+bool SimpleIO::write(std::fstream * fileStream, const C * buffer) {
 	if ( !buffer ) return true;
 	return IO::_writeObject(fileStream, buffer, buffer);
 }
@@ -54,7 +54,7 @@ bool SimpleIO::read(std::fstream * fileStream, C * buffer) {
 
 
 template<typename C>
-bool SimpleIO::writeBuffer(std::fstream * fileStream, C * buffer, size_t size) {
+bool SimpleIO::writeBuffer(std::fstream * fileStream, const C * buffer, size_t size) {
 	if ( !buffer ) return true;
 	return _writeBuffer(fileStream, buffer, size, buffer);
 }
@@ -69,7 +69,7 @@ bool SimpleIO::readBuffer(std::fstream * fileStream, C * buffer, size_t size) {
 
 
 template<typename C>
-bool SimpleIO::_writeBuffer(std::fstream * fileStream, C * buffer, size_t size, BasicSimpleLoadableIO * b) {
+bool SimpleIO::_writeBuffer(std::fstream * fileStream, const C * buffer, size_t size, const BasicSimpleLoadableIO * b) {
 	for ( size_t i = 0; i < size; i++ ) {
 		if ( !buffer[i].write(fileStream) )
 			return false;
@@ -80,7 +80,7 @@ bool SimpleIO::_writeBuffer(std::fstream * fileStream, C * buffer, size_t size, 
 
 
 template<typename C>
-bool SimpleIO::_writeBuffer(std::fstream * fileStream, C * buffer, size_t size, BasicSimpleIO * b) {
+bool SimpleIO::_writeBuffer(std::fstream * fileStream, const C * buffer, size_t size, const BasicSimpleIO * b) {
 	for ( size_t i = 0; i < size; i++ ) {
 		if ( !buffer[i].write(fileStream) )
 			return false;
@@ -89,7 +89,7 @@ bool SimpleIO::_writeBuffer(std::fstream * fileStream, C * buffer, size_t size, 
 }
 
 template<typename C>
-bool SimpleIO::_writeBuffer(std::fstream * fileStream, C * buffer, size_t size, ...) {
+bool SimpleIO::_writeBuffer(std::fstream * fileStream, const C * buffer, size_t size, ...) {
 	debug(size_t tmp = sizeof(C) * size; size_t beginPos = fileStream -> tellp(););
 	fileStream -> write((char *) buffer, sizeof(C) * size);
 	debug(size_t charWrote = (size_t) ( fileStream -> tellp() ) - beginPos;);

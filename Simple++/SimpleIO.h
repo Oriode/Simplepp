@@ -16,7 +16,7 @@ public:
 	///@param object pointer to the object we wanna write.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool write(std::fstream * fileStream, C * object);
+	static bool write(std::fstream * fileStream, const C * object);
 
 	///@brief read from a file stream to an object, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own read method.
 	///@param fileStream file stream where to read.
@@ -32,7 +32,7 @@ public:
 	///@param size number of elements in the table.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool writeBuffer(std::fstream * fileStream, C * buffer, size_t size);
+	static bool writeBuffer(std::fstream * fileStream, const C * buffer, size_t size);
 
 	///@brief read from a file stream to a table of objects, this function will automatically test for each object inherit from BasicIO themselves and then call there own write method.
 	///@param fileStream file stream where to read.
@@ -45,23 +45,23 @@ public:
 
 private:
 	template<typename C>
-	static bool _writeObject(std::fstream * fileStream, C * buffer, BasicSimpleLoadableIO  * b);
+	static bool _writeObject(std::fstream * fileStream, const C * buffer, const BasicSimpleLoadableIO  * b);
 
 	template<typename C>
-	static bool _writeObject(std::fstream * fileStream, C * buffer, BasicSimpleIO * b);
+	static bool _writeObject(std::fstream * fileStream, const C * buffer, const BasicSimpleIO * b);
 
 	template<typename C>
-	static bool _writeObject(std::fstream * fileStream, C * buffer, ...);
+	static bool _writeObject(std::fstream * fileStream, const C * buffer, ...);
 
 
 	template<typename C>
-	static bool _writeBuffer(std::fstream * fileStream, C * buffer, size_t size, BasicSimpleLoadableIO * b);
+	static bool _writeBuffer(std::fstream * fileStream, const C * buffer, size_t size, const BasicSimpleLoadableIO * b);
 
 	template<typename C>
-	static bool _writeBuffer(std::fstream * fileStream, C * buffer, size_t size, BasicSimpleIO * b);
+	static bool _writeBuffer(std::fstream * fileStream, const C * buffer, size_t size, const BasicSimpleIO * b);
 
 	template<typename C>
-	static bool _writeBuffer(std::fstream * fileStream, C * buffer, size_t size, ...);
+	static bool _writeBuffer(std::fstream * fileStream, const C * buffer, size_t size, ...);
 
 
 

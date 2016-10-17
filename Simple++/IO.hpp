@@ -1,6 +1,6 @@
 
 template<typename C>
-bool IO::write( const WString & fileName, C * object ) {
+bool IO::write( const WString & fileName, const C * object ) {
 	std::fstream fileStream( fileName.getData(), std::ios::out | std::ios::binary );
 	if ( fileStream.is_open() ) {
 		bool result( IO::write( &fileStream, object ) );

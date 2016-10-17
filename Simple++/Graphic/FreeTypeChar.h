@@ -16,6 +16,9 @@ namespace Graphic {
 	template<typename T = unsigned char>
 	class FreeTypeChar : public ImageT<T> {
 	public:
+		///@brief Empty constructor
+		FreeTypeChar( );
+
 		///@brief Constructor
 		///@param ftFace FreeType char object used to create this glyph.
 		///@param Unicode codePoint representing this char.
@@ -112,6 +115,9 @@ namespace Graphic {
 		//float vertAdvance;
 
 	};
+
+
+
 }
 
 #include "FreeTypeChar.hpp"

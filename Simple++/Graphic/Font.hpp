@@ -10,11 +10,10 @@ namespace Graphic {
 
 	template<typename T, typename LoadingFunc>
 	_Font<T, LoadingFunc>::_Font( std::fstream * fileStream ) {
-		for ( size_t i = 0; i < 256; i++ )
-			this -> asciiMap[i] = NULL;
-		_read( fileStream );
+		_nullify();
+		if ( !_read( fileStream ) )
+			_clear();
 	}
-
 
 	template<typename T, typename LoadingFunc>
 	_Font<T, LoadingFunc>::_Font( const WString & fileName, int pixSize, const LoadingFunc & loadingFunctor ) :
@@ -25,11 +24,14 @@ namespace Graphic {
 		this -> memorySize = IO::readToBuffer( fileName, &this -> memoryFontObject );
 		if ( this -> memorySize == -1 ) {
 			Log::displayError( String( "Unable to open the font file : " ) << fileName );
+			this -> memorySize = 0;
+			this -> ftLib = NULL;
+			this -> ftFace = NULL;
+		} else {
+			_loadFreeType( this -> memoryFontObject, this -> memorySize );
 		}
 		for ( size_t i = 0; i < 256; i++ )
 			this -> asciiMap[i] = NULL;
-
-		_loadFreeType( this -> memoryFontObject, this -> memorySize );
 	}
 
 	template<typename T, typename LoadingFunc>
@@ -38,20 +40,30 @@ namespace Graphic {
 		memorySize( fileSize ) 
 	{
 		static_assert( Utility::isBase<FontLoadingFunc::Template<T>, LoadingFunc>::value, "The Loading Functor has to inherite from FontLoadingFunc::Template" );
-		Vector<char>::copy( this -> memoryFontObject, fileDump, fileSize );
+		
+		if ( this -> memorySize ) {
+			this -> memoryFontObject = new char[this -> memorySize];
+			Vector<char>::copy( this -> memoryFontObject, fileDump, fileSize );
+			if ( !_loadFreeType( this -> memoryFontObject, fileSize ) ) {
+				delete[] this -> memoryFontObject;
+				this -> memoryFontObject = NULL;
+				this -> memorySize = 0;
+			}
+		} else {
+			this -> memoryFontObject = NULL;
+			this -> ftLib = NULL;
+			this -> ftFace = NULL;
+		}
 
 		for ( size_t i = 0; i < 256; i++ )
 			this -> asciiMap[i] = NULL;
-
-		_loadFreeType( this -> memoryFontObject, fileSize );
 	}
 
 	template<typename T, typename LoadingFunc>
 	_Font<T, LoadingFunc>::_Font( const LoadingFunc & loadingFunctor ) :
-		loadingFunctor( loadingFunctor ),
-		memoryFontObject( NULL ) {
-		for ( size_t i = 0; i < 256; i++ )
-			this -> asciiMap[i] = NULL;
+		loadingFunctor( loadingFunctor )
+	{
+		_nullify();
 	}
 
 	template<typename T, typename LoadingFunc>
@@ -61,7 +73,7 @@ namespace Graphic {
 
 	template<typename T, typename LoadingFunc>
 	_Font<T, LoadingFunc>::_Font( _Font<T, LoadingFunc> && font ) {
-		_copy( Utility::toRValue(font) );
+		_move( Utility::toRValue(font) );
 	}
 
 	template<typename T, typename LoadingFunc>
@@ -94,21 +106,25 @@ namespace Graphic {
 	template<typename T, typename LoadingFunc>
 	void _Font<T, LoadingFunc>::_unload() {
 		if ( this -> memoryFontObject ) {
-			FT_Done_Face( this -> ftFace );
-			FT_Done_FreeType( this -> ftLib );
+			if ( this -> ftFace ) FT_Done_Face( this -> ftFace );
+			if ( this -> ftLib ) FT_Done_FreeType( this -> ftLib );
 			delete[] this -> memoryFontObject;
-			this -> memoryFontObject = NULL;
 		}
-
-		for ( size_t i( 0 ); i < 256; i++ ) {
-			delete this -> asciiMap[i];
-			this -> asciiMap[i] = NULL;
-		}
-		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); it++ ) {
+		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); it++ ) 
 			delete it -> getValue();
-		}
+		
 		this -> charsMap.clear();
+	}
 
+	template<typename T, typename LoadingFunc>
+	void _Font<T, LoadingFunc>::_nullify() {
+		for ( size_t i = 0; i < 256; i++ )
+			this -> asciiMap[i] = NULL;
+
+		this -> memoryFontObject = NULL;
+		this -> ftFace = NULL;
+		this -> ftLib = NULL;
+		this -> memorySize = 0;
 	}
 
 	template<typename T, typename LoadingFunc>
@@ -150,12 +166,16 @@ namespace Graphic {
 		FreeTypeChar<T> ** c = this -> charsMap.getValue( codePoint );
 
 		if ( !c ) {
-			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( this -> ftFace, codePoint, this -> loadingFunctor );
-			if ( codePoint < 256 ) 
-				this -> asciiMap[codePoint] = newChar;
-			 else 
-				 this -> charsMap.insert( codePoint, newChar );
-			return newChar;
+			if ( this -> ftFace ) {
+				FreeTypeChar<T> * newChar = new FreeTypeChar<T>( this -> ftFace, codePoint, this -> loadingFunctor );
+				if ( codePoint < 256 )
+					this -> asciiMap[codePoint] = newChar;
+				else
+					this -> charsMap.insert( codePoint, newChar );
+				return newChar;
+			} else {
+				return NULL;
+			}
 		} else {
 			return *c;
 		}
@@ -174,13 +194,16 @@ namespace Graphic {
 		for ( size_t i( 0 ); i < 256; i++ ) {
 			if ( this -> asciiMap[i] ) {
 				delete this -> asciiMap[i];
-				this -> asciiMap[i] = new FreeTypeChar<T>( this -> ftFace, UCodePoint(i), this -> loadingFunctor );
+				if ( this -> ftFace ) this -> asciiMap[i] = new FreeTypeChar<T>( this -> ftFace, UCodePoint(i), this -> loadingFunctor );
+				else this -> asciiMap[i] = NULL;
 			}
 		}
 		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); it++ ) {
 			delete it -> getValue();
-			it -> setValue( new FreeTypeChar<T>( this -> ftFace, it -> getIndex(), this -> loadingFunctor ) );
+			if ( this -> ftFace ) it -> setValue( new FreeTypeChar<T>( this -> ftFace, it -> getIndex(), this -> loadingFunctor ) );
+			else it -> setValue( NULL );
 		}
+		this -> charsMap.eraseValueAll( NULL );
 	}
 
 	template<typename T, typename LoadingFunc>
@@ -188,11 +211,7 @@ namespace Graphic {
 		return this -> loadingFunctor.getBias();
 	}
 
-	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::read( std::fstream * fileStream ) {
-		_unload();
-		return _read( fileStream );
-	}
+
 
 	template<typename T, typename LoadingFunc>
 	bool _Font<T, LoadingFunc>::write( std::fstream * fileStream ) const {
@@ -234,34 +253,75 @@ namespace Graphic {
 		return true;
 	}
 
+
+
+	template<typename T, typename LoadingFunc>
+	void _Font<T, LoadingFunc>::_clear( ) {
+		_unload();
+		_nullify();
+		this -> pixSize = 0.0f;
+		this -> lineHeight = 0.0f;
+		this -> wordSpace = 0.0f;
+	}
+
+	template<typename T, typename LoadingFunc>
+	bool _Font<T, LoadingFunc>::read( std::fstream * fileStream ) {
+		_unload();
+		_nullify();
+		if ( !_read( fileStream ) ) {
+			_clear();
+			return false;
+		}
+		return true;
+	}
+
 	template<typename T, typename LoadingFunc>
 	bool _Font<T, LoadingFunc>::_read( std::fstream * fileStream ) {
-		if ( !IO::read( fileStream, &this -> memorySize ) )
+
+
+		if ( !IO::read( fileStream, &this -> memorySize ) ) 
 			return false;
-		this -> memoryFontObject = new char[this -> memorySize];
+		
+
+		// Clamp the size with a big value in case of file corruption
+		this -> memorySize = Math::min( this -> memorySize, size_t( 100000000 ) );
+
+		if ( this -> memorySize ) this -> memoryFontObject = new char[this -> memorySize];
+		else this -> memoryFontObject = NULL;
+
 		if ( !IO::readBuffer( fileStream, this -> memoryFontObject, this -> memorySize ) )
 			return false;
-
-		if ( !IO::read( fileStream, &this -> pixSize ) )
+		
+		if ( !IO::read( fileStream, &this -> pixSize ) ) 
 			return false;
-		if ( !IO::read( fileStream, &this -> lineHeight ) )
+		if ( !IO::read( fileStream, &this -> lineHeight ) ) 
 			return false;
-		if ( !IO::read( fileStream, &this -> wordSpace ) )
+		if ( !IO::read( fileStream, &this -> wordSpace ) ) 
 			return false;
-		if ( !IO::read( fileStream, &this -> loadingFunctor ) )
+		if ( !IO::read( fileStream, &this -> loadingFunctor ) ) 
 			return false;
-
+		
 		_loadFreeType( this -> memoryFontObject, this -> memorySize );
 
 		OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded;
 		if ( !IO::read( fileStream, &nbCharsLoaded ) )
 			return false;
+
+		nbCharsLoaded = Math::min( nbCharsLoaded, OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size( 100000 ) );
+
 		for ( OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size i = 0; i < nbCharsLoaded; i++ ) {
-			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( fileStream );
-			if ( newChar -> getCodePoint() < 256 )
-				this -> asciiMap[newChar -> getCodePoint()] = newChar;
-			else
-				this -> charsMap.insertFast( newChar -> getCodePoint(), newChar );
+			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( );
+
+			if ( newChar -> read( fileStream ) ) {
+				if ( newChar -> getCodePoint() < 256 )
+					this -> asciiMap[newChar -> getCodePoint()] = newChar;
+				else
+					this -> charsMap.insertFast( newChar -> getCodePoint(), newChar );
+			} else {
+				delete newChar;
+				return false;
+			}
+			
 		}
 
 		return true;
@@ -282,19 +342,19 @@ namespace Graphic {
 
 		UCodePoint codePoint;
 		Math::Rectangle<int> rectangle( 0, this -> getLineHeight(), 0, 0 );
-		float currentPosX = 0.0f;
+		float currentPosX(0.0f);
 
 		for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
-			if ( codePoint == '\n' ) {
+			if ( codePoint == UCodePoint('\n') ) {
 				rectangle.setTop( rectangle.getTop() + getLineHeight() );
 				rectangle.setRight( Math::max<int>( rectangle.getRight(), currentPosX ) );
 				currentPosX = 0;
-			} else if ( codePoint == ' ' ) {
+			} else if ( codePoint == UCodePoint(' ') ) {
 				currentPosX += getWordSpace();
 			} else {
 				const FreeTypeChar * c = this -> operator []( codePoint );
 				if ( c ) {
-					rectangle.setBottom( Math::min<int>( rectangle.getBottom(), -c -> getHoriOffsetY() ) );
+					rectangle.setBottom( Math::min<int>( rectangle.getBottom(), -( c -> getHoriOffsetY() ) ) );
 					currentPosX += c -> getHoriAdvance();
 				}
 			}
@@ -312,10 +372,10 @@ namespace Graphic {
 
 		for ( auto it = text.getBegin(); text.iterate( &it, &codePoint ); ) {
 			if ( codePoint < 33 ) {// If the code point is a special char
-				if ( codePoint == '\n' ) {
+				if ( codePoint == UCodePoint('\n') ) {
 					vector -> push( currentPosX * 0.5f );
 					currentPosX = 0;
-				} else if ( codePoint == ' ' )
+				} else if ( codePoint == UCodePoint(' ') )
 					currentPosX += font.getWordSpace();
 			} else {
 				const FreeTypeChar<T> * c = (*this)[codePoint];
@@ -329,18 +389,31 @@ namespace Graphic {
 	
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_loadFreeType( const char * fileDump, size_t size ) {
-		//Load the FreeType library
-		if ( FT_Init_FreeType( &this -> ftLib ) ) {
-			Log::displayError( "Error when loading the FreeType library." );
-		}
+	bool _Font<T, LoadingFunc>::_loadFreeType( const char * fileDump, size_t size ) {
+		if ( fileDump && size ) {
+			//Load the FreeType library
+			if ( FT_Init_FreeType( &this -> ftLib ) ) {
+				Log::displayError( "Error when loading the FreeType library." );
+				this -> ftFace = NULL;
+				this -> ftLib = NULL;
+				return false;
+			}
 
-		//Load the Font file in FreeType
-		if ( FT_New_Memory_Face( this -> ftLib, ( FT_Byte * ) fileDump, size, 0, &this -> ftFace ) ) {
-			Log::displayError( String( "Error while opening the font file " ) );
-		}
+			//Load the Font file in FreeType
+			if ( FT_New_Memory_Face( this -> ftLib, ( FT_Byte * ) fileDump, size, 0, &this -> ftFace ) ) {
+				Log::displayError( String( "Error while opening the font file " ) );
+				FT_Done_FreeType( this -> ftLib );
+				this -> ftLib = NULL;
+				this -> ftFace = NULL;
+				return false;
+			}
 
-		FT_Set_Pixel_Sizes( this -> ftFace, this -> pixSize, this -> pixSize );
+			FT_Set_Pixel_Sizes( this -> ftFace, this -> pixSize, this -> pixSize );
+			return true;
+		} 
+		this -> ftLib = NULL;
+		this -> ftFace = NULL;
+		return false;
 	}
 
 
@@ -366,9 +439,13 @@ namespace Graphic {
 			this -> memoryFontObject = new char[font.memorySize];
 			this -> memorySize = font.memorySize;
 			Vector<T>::copy( this -> memoryFontObject, font.memoryFontObject, font.memorySize );
+			_loadFreeType( this -> memoryFontObject, this -> memorySize );
+		} else {
+			this -> memoryFontObject = NULL;
+			this -> memorySize = 0;
+			this -> ftLib = NULL;
+			this -> ftFace = NULL;
 		}
-
-		_loadFreeType( this -> memoryFontObject, this -> memorySize );
 
 		for ( int i( 0 ); i < 256; i++ ) {
 			if ( font.asciiMap[i] )

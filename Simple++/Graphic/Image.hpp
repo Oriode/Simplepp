@@ -477,16 +477,33 @@ namespace Graphic {
 
 	template<typename T>
 	bool ImageT<T>::_read( std::fstream * fileStream ) {
-		if ( !IO::read( fileStream, &this -> size ) )
+		if ( !IO::read( fileStream, &this -> size ) ) {
+			this -> size.x = 0;
+			this -> size.y = 0;
+			this -> nbPixels = 0;
+			this -> buffer = NULL;
 			return false;
-		if ( !IO::read( fileStream, &this -> format ) )
+		}
+		if ( !IO::read( fileStream, &this -> format ) ) {
+			this -> size.x = 0;
+			this -> size.y = 0;
+			this -> nbPixels = 0;
+			this -> buffer = NULL;
 			return false;
+		}
 		this -> nbPixels = size.x * size.y;
-		size_t nbComponents = this -> nbPixels * getNbComponents();
-		this -> buffer = new T[nbComponents];
+		size_t nbComponents( this -> nbPixels * getNbComponents() );
+		if ( this -> nbPixels ) this -> buffer = new T[nbComponents];
+		else this -> buffer = NULL;
 
-		if ( !IO::readBuffer( fileStream, this -> buffer, nbComponents ) )
+		if ( !IO::readBuffer( fileStream, this -> buffer, nbComponents ) ) {
+			delete[] this -> buffer;
+			this -> size.x = 0;
+			this -> size.y = 0;
+			this -> nbPixels = 0;
+			this -> buffer = NULL;
 			return false;
+		}
 		return true;
 	}
 
@@ -619,23 +636,41 @@ namespace Graphic {
 
 
 	template<typename T>
+	void ImageT<T>::clear( ) {
+		delete[] this -> buffer;
+		this -> buffer = NULL;
+		this -> size.x = 0;
+		this -> size.y = 0;
+		this -> nbPixels = 0;
+	}
+
+	template<typename T>
 	void ImageT<T>::clear( const Math::Vec2<Size> & size ) {
+		delete[] this -> buffer;
+
 		this -> size = size;
 		this -> nbPixels = this -> size.x * this -> size.y;
-		delete[] this -> buffer;
-		size_t nbComponents = this -> nbPixels * size_t( this -> format );
-		this -> buffer = new T[nbComponents];
+		if ( this -> nbPixels ) {
+			this -> buffer = new T[this -> nbPixels * size_t( this -> format )];
+		} else {
+			this -> buffer = NULL;
+		}
 	}
 
 
 	template<typename T>
 	void ImageT<T>::clear( const Math::Vec2<Size> & size, Format format ) {
+		delete[] this -> buffer;
+
 		this -> size = size;
 		this -> format = format;
 		this -> nbPixels = this -> size.x * this -> size.y;
-		delete[] this -> buffer;
-		size_t nbComponents = this -> nbPixels * size_t(this -> format);
-		this -> buffer = new T[nbComponents];
+		if ( this -> nbPixels ) {
+			this -> buffer = new T[this -> nbPixels * size_t( this -> format )];
+		} else {
+			this -> buffer = NULL;
+		}
+		
 	}
 
 

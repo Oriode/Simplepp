@@ -126,6 +126,7 @@ int main( int argc, char * argv[] ) {
 	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
 	font.writeToFile( L"consola.cfont" );
 
+
 	Graphic::FontLoadable<unsigned char> font2( L"consola.cfont" );
 	font2.load();
 
@@ -144,10 +145,10 @@ int main( int argc, char * argv[] ) {
 	texture.generateMipmaps();
 	texture.writeToFile( "sanctum.ctexture" );
 
+	
 	Graphic::TextureLoadable<unsigned char> texture2( WString( "sanctum.ctexture" ) );
 	texture2.load();
 	texture2.writeToFile( "sanctum2.ctexture" );
-
 
 	/************************************************************************/
 	/* DOING SOME TEST IN imageTest2                                        */
@@ -418,19 +419,22 @@ int main( int argc, char * argv[] ) {
 		myFont.setStrokeSize( 1 );
 		myFont.setStrokeColorFunc( Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>( gradientVertical ) );
 
-		auto myFontCOPY = myFont;
+		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFontCOPY = myFont;
 
 		IO::write( WString( "myFontCustomdeOUF.font" ), &myFontCOPY );
 
 
-		IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCOPY );
-		myFontCOPY.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
+		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFontCp;
+		
+
+		IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCp );
+		myFontCp.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
 
 
 
-		auto maskTest = myFont['A'];
+		auto maskTest = myFontCp['A'];
 		//image.drawImage(Graphic::Point(300, 300), *maskTest);
-		Graphic::drawText( &image, myFontCOPY, Graphic::Point( 250, 250 ), testStr, Math::Vec2<bool>( true, true ) );
+		Graphic::drawText( &image, myFontCp, Graphic::Point( 0, 0 ), testStr, Math::Vec2<bool>( false, false ) );
 
 	}
 

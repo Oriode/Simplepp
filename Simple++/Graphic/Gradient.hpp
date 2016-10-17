@@ -195,23 +195,40 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
+		void Template<C, InterFunc>::_clear() {
+			_unload();
+			this -> pointsVectorOrdered.clear();
+			this -> isOrdered = true;
+		}
+
+
+		template<typename C, typename InterFunc>
 		bool Template<C, InterFunc>::read( std::fstream * fileStream ) {
 			_unload();
 
 			Vector<Point<C> * >::Size nbPoints;
-			if ( !IO::read( fileStream, &this -> nbPoints ) )
+			if ( !IO::read( fileStream, &nbPoints ) ) {
+				_clear();
 				return false;
+			}
+
+			//	Clamp in case of file corruption	
+			nbPoints = Math::min( nbPoints, Vector<Point<C> * >::Size(1000) );
 
 			for ( Vector<Point<C> * >::Size i( 0 ); i < nbPoints; i++ ) {
 				Point<C> * gradientPoint = new Point<C>();
-				if ( !IO::read( fileStream, gradientPoint ) )
+				if ( !IO::read( fileStream, gradientPoint ) ) {
+					delete gradientPoint;
+					_clear();
 					return false;
-				else
+				} else
 					this -> pointsVector.push( gradientPoint );
 			}
 
-			if ( !IO::read( fileStream, &this -> functor ) )
+			if ( !IO::read( fileStream, &this -> functor ) ) {
+				_clear();
 				return false;
+			}
 
 			_updateOrdered();
 
@@ -226,7 +243,7 @@ namespace Graphic {
 				return false;
 
 			for ( auto it( this -> pointsVector.getBegin() ); it != this -> pointsVector.getEnd(); this->pointsVector.iterate( &it ) ) {
-				if ( !IO::write( fileStream, **it ) )
+				if ( !IO::write( fileStream, *it ) )
 					return false;
 			}
 
