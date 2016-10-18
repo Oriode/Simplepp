@@ -31,7 +31,11 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Mat2<T>::Mat2( const Mat2<U> & m ) {
 		*this = m;
 	}
-
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat2<T>::Mat2( const U( &m )[4] ) {
+		*this = m;
+	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat2<T>::Mat2( void ) {
@@ -223,6 +227,16 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Mat2<T> & Mat2<T>::operator=( const Mat2<U> & m ) {
 		this -> column[0] = m[0];
 		this -> column[1] = m[1];
+		return *this;
+	}
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat2<T> & Mat2<T>::operator=( const U( &m )[4] ) {
+		this -> column[0].x = m[0];
+		this -> column[0].y = m[2];
+
+		this -> column[1].x = m[1];
+		this -> column[1].y = m[3];
 		return *this;
 	}
 	template<typename T>

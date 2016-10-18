@@ -179,7 +179,11 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Vec3<T>::Vec3( const Vec2<U> & v ) : z(0) {
 		*this = v;
 	}
-
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Vec3<T>::Vec3( const U( &v )[3] ) : x( v[0] ), y( v[1] ), z( v[2] ) {
+	}
+	
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T>::Vec3( const Vec2<T> & v, const T & z ) {
 		*this = v;
@@ -207,7 +211,14 @@ namespace Math {
 		this -> z = T( v.z );
 		return *this;
 	}
-
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator=( const U( &v )[3] ) {
+		this -> x = T( v[0] );
+		this -> y = T( v[1] );
+		this -> z = T( v[2] );
+		return *this;
+	}
 
 
 	template<typename T>

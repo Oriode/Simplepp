@@ -37,16 +37,19 @@ namespace Graphic {
 
 			// Now Clear the final image
 			image -> clear( Math::Vec2<Size>( Size( -this -> bias.x + size.x ) + this -> margins.getRight(), Size( -this -> bias.y + size.y ) + this -> margins.getTop() ), Format::RGBA );
+
 			image -> fillImage( ColorRGBA<T>( Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin() ) );
 
 			// Draw the shadow
-			if ( this -> bShadowActivated ) image -> drawImageShadowFunctor<ShadowColorFunc>( Point( float( this -> margins.getLeft() + this -> shadowBias.x ), float(this -> margins.getBottom() + this -> shadowBias.y ) ), this -> shadowRadius, imageMask, this -> shadowColorFunc );
+			if ( this -> bShadowActivated ) image -> drawImageShadowFunctor<ShadowColorFunc, BlendingFunc::None>( Point( float( this -> margins.getLeft() + this -> shadowBias.x ), float(this -> margins.getBottom() + this -> shadowBias.y ) ), this -> shadowRadius, imageMask, this -> shadowColorFunc, BlendingFunc::None() );
 
 			// Draw the stroke effect
-			if ( this -> bStrokeActivated ) image -> drawStrokeFunctor<StrokeColorFunc>( this -> margins.getLeftBottom(), imageMask, this -> strokeSize, this -> strokeColorFunc, ImageT<T>::StrokeType::Outside );
+			if ( this -> bStrokeActivated && this -> bShadowActivated ) image -> drawStrokeFunctor<StrokeColorFunc>( this -> margins.getLeftBottom(), imageMask, this -> strokeSize, this -> strokeColorFunc, ImageT<T>::StrokeType::Outside );
+			else if ( this -> bStrokeActivated && !this -> bShadowActivated )image -> drawStrokeFunctor<StrokeColorFunc, BlendingFunc::None>( this -> margins.getLeftBottom(), imageMask, this -> strokeSize, this -> strokeColorFunc, ImageT<T>::StrokeType::Outside, BlendingFunc::None() );
 
 			// Draw the mask with the color functor to the final image
-			image -> drawImageFunctor<OverlayColorFunc>( this -> margins.getLeftBottom(), this -> overlayColorFunc, Rectangle( imageMask.getSize() ), imageMask );
+			if ( !this -> bStrokeActivated && !this -> bShadowActivated) image -> drawImageFunctor<OverlayColorFunc, BlendingFunc::None>( this -> margins.getLeftBottom(), this -> overlayColorFunc, Rectangle( imageMask.getSize() ), imageMask, BlendingFunc::None() );
+			else image -> drawImageFunctor<OverlayColorFunc>( this -> margins.getLeftBottom(), this -> overlayColorFunc, Rectangle( imageMask.getSize() ), imageMask );
 
 			// Finish !
 		}

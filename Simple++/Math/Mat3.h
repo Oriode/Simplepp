@@ -16,6 +16,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Mat3( void );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Mat3( const Mat3<U> & m );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Mat3( const U( &m )[9] );
 
 		MATH_FUNC_QUALIFIER Mat3( const T & v );
 		MATH_FUNC_QUALIFIER Mat3( const T & v11, const T & v21, const T & v31,
@@ -74,6 +76,8 @@ namespace Math {
 		/************************************************************************/
 		template<typename U>
 		MATH_FUNC_QUALIFIER Mat3<T> & operator=( const Mat3<U> & m );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Mat3<T> & operator=( const U( &m )[9] );
 		MATH_FUNC_QUALIFIER Mat3<T> & operator=( const T & v );
 
 

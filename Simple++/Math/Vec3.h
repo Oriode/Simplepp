@@ -16,6 +16,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Vec3( const Vec3<U> & v );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec3( const Vec2<U> & v );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Vec3( const U( &v )[3] );
 		MATH_FUNC_QUALIFIER Vec3( const Vec2<T> & v, const T & z );
 
 
@@ -75,7 +77,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Vec3<T> & operator=( const Vec3<U> & v );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec3<T> & operator=( const Vec2<U> & v );
-
+		template<typename U>
+		MATH_FUNC_QUALIFIER Vec3<T> & operator=( const U( &v )[3] );
 
 
 		MATH_FUNC_QUALIFIER void inverse();

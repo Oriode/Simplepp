@@ -992,7 +992,7 @@ bool Vector<T>::write( std::fstream * fileStream ) const {
 			 return false;
 	}
 
-	return true
+	return true;
 }
 
 template<typename T>

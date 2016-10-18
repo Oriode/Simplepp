@@ -77,6 +77,12 @@ namespace Math {
 	}
 
 	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Vec2<T>::Vec2( const U( &v )[2] ) : x( v[0] ), y( v[1] ) {
+	}
+
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> & Vec2<T>::operator-=( const T & v ) {
 		return _MathOperator( Math::Operations::SubEqual(), v );
 	}
@@ -159,6 +165,13 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Vec2<T> & Vec2<T>::operator=( const Vec2<U> & v ) {
 		this -> x = T( v.x );
 		this -> y = T( v.y );
+		return *this;
+	}
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Vec2<T> & Vec2<T>::operator=( const U( &v )[2] ) {
+		this -> x = T( v[0] );
+		this -> y = T( v[1] );
 		return *this;
 	}
 

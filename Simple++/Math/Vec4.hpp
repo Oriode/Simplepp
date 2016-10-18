@@ -102,6 +102,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Vec4<T>::Vec4( const U( &v )[4] ) : x( v[0] ), y( v[1] ), z( v[2] ), w( v[3] ) {
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T>::Vec4( const T & v ) {
 		*this = v;
 	}
@@ -268,7 +273,15 @@ namespace Math {
 		this -> w = T( v.w );
 		return *this;
 	}
-
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Vec4<T> & Vec4<T>::operator=( const U( &v )[4] ) {
+		this -> x = T( v[0] );
+		this -> y = T( v[1] );
+		this -> z = T( v[2] );
+		this -> w = T( v[4] );
+		return *this;
+	}
 
 	
 

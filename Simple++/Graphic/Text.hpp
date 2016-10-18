@@ -13,6 +13,8 @@ namespace Graphic {
 
 	template<typename T>
 	bool Text<T>::write( std::fstream * fileStream ) const {
+		if ( !IO::write( fileStream, (ImageT<T> *) this ) )
+			return false;
 		if ( !IO::write( fileStream, &this -> centering ) )
 			return false;
 		if ( !IO::write( fileStream, &this -> margins ) )
@@ -27,6 +29,10 @@ namespace Graphic {
 
 	template<typename T>
 	bool Text<T>::read( std::fstream * fileStream ) {
+		if ( !IO::read( fileStream, ( ImageT<T> * ) this ) ) {
+			_clear();
+			return false;
+		}
 		if ( !IO::read( fileStream, &this -> centering ) ) {
 			_clear();
 			return false;
@@ -99,8 +105,10 @@ namespace Graphic {
 		ImageT<T>::clear();
 		this -> centering.x = false;
 		this -> centering.y = false;
-		this -> margins.x = 0.0f;
-		this -> margins.y = 0.0f;
+		this -> margins.setLeft( 0.0f );
+		this -> margins.setBottom( 0.0f );
+		this -> margins.setRight( 0.0f );
+		this -> margins.setTop( 0.0f );
 		this -> bias.x = 0.0f;
 		this -> bias.y = 0.0f;
 		this -> str.clear();

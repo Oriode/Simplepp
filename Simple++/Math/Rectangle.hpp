@@ -4,30 +4,33 @@ namespace Math {
 	const Rectangle<T> Math::Rectangle<T>::null = Rectangle<T>( 0, 0 );
 
 	template <typename T>
-	Rectangle<T>::Rectangle( const T & left, const T & bottom, const T & right, const T & top ) {
-		_assert( right >= left );
-		_assert( top >= bottom );
-
-		this -> pointLeftBottom.x = left;
-		this -> pointLeftBottom.y = bottom;
-		this -> pointRightTop.x = right;
-		this -> pointRightTop.y = top;
+	Rectangle<T>::Rectangle( const T & left, const T & bottom, const T & right, const T & top ) :
+		pointLeftBottom( left, bottom ),
+		pointRightTop( right , top)
+	{
 	}
 
 	template <typename T>
-	Rectangle<T>::Rectangle( const Vec2<T> & leftBottom, const Vec2<T> & rightTop ) {
-		_assert( rightTop.x >= leftBottom.x );
-		_assert( rightTop.y >= leftBottom.y );
+	Rectangle<T>::Rectangle( const Vec2<T> & leftBottom, const Vec2<T> & rightTop ) : 
+		pointLeftBottom( pointLeftBottom ), 
+		pointRightTop( pointRightTop ) 
+	{
 
-		this -> pointLeftBottom = leftBottom;
-		this -> pointRightTop = rightTop;
 	}
 
 
 	template <typename T>
-	Rectangle<T>::Rectangle( const Vec2<T> & rightTop ) {
-		this -> pointLeftBottom = Vec2<T>::null;
-		this -> pointRightTop = rightTop;
+	Rectangle<T>::Rectangle( const Vec2<T> & rightTop ) : 
+		pointLeftBottom( Vec2<T>::null ), 
+		pointRightTop( rightTop ) 
+	{
+	}
+
+	template <typename T>
+	Rectangle<T>::Rectangle( const T( &r )[4] ) : 
+		pointLeftBottom( r[0], r[1] ), 
+		pointRightTop( r[2], r[3] ) 
+	{
 	}
 
 	template <typename T>
@@ -114,6 +117,24 @@ namespace Math {
 		return *this;
 	}
 
+	template <typename T>
+	Rectangle<T> & Rectangle<T>::operator=( const Rectangle<T> & r ) {
+		this -> pointLeftBottom = r.pointLeftBottom;
+		this -> pointRightTop = r.pointRightTop;
+
+		return *this;
+	}
+
+	template <typename T>
+	Rectangle<T> & Rectangle<T>::operator=( const T( &r )[4] ) {
+		this -> pointLeftBottom.x = r[0];
+		this -> pointLeftBottom.y = r[1];
+
+		this -> pointRightTop.x = r[2];
+		this -> pointRightTop.y = r[3];
+
+		return *this;
+	}
 
 
 	template <typename T>

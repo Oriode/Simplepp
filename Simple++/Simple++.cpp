@@ -83,6 +83,8 @@ int main( int argc, char * argv[] ) {
 
 	Application<char> app( argc, argv );
 
+	Math::Vec2<float> test({ 1 , 2 });
+
 
 	/************************************************************************/
 	/* MAPS                                                                 */
@@ -405,17 +407,17 @@ int main( int argc, char * argv[] ) {
 		UTF8String testStr( "Hello World\nThis Lib is Awesome !" );
 
 		typedef Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>> FontType;
-		FontType myFont( L"consola.ttf", 15 );
+		FontType myFont( L"consola.ttf", 30 );
 
 		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) ) );
-		myFont.setShadowActivated( true );
+		myFont.setShadowActivated( false );
 		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 250 ) ) );
 		myFont.setShadowRadius( 2 );
 		myFont.setShadowBias( Math::Vec2<float>( 1, -1 ) );
 
 
 		myFont.setStrokeActivated( true );
-		myFont.setStrokeSize( 1 );
+		myFont.setStrokeSize( 1.9 );
 		myFont.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
 
 		FontType myFontCOPY = myFont;
@@ -439,7 +441,12 @@ int main( int argc, char * argv[] ) {
 
 		//Graphic::drawText( &image, myFontCp, Graphic::Point(250,250), testStr,  Math::Vec2<bool>( true, true ) );
 
-		image.drawImage( Graphic::Point( myText.getBias() ) + Graphic::Point(250,250), myText );
+		assert( IO::write( WString( "myText.cimg" ), &myText ) );
+		Graphic::Text<unsigned char> myTextCp;
+		assert( IO::read( WString( "myText.cimg" ), &myTextCp ) );
+
+		auto mipmap = myTextCp.resample(Math::Vec2<Graphic::Size>( myTextCp.getSize() / 2 ), Graphic::Image::ResamplingMode::Lanczos);
+		image.drawImage( Graphic::Point( myTextCp.getBias() / 2.0f ) + Graphic::Point(250,250), mipmap );
 
 	}
 

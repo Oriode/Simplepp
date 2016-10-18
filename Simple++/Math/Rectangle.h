@@ -20,9 +20,9 @@ namespace Math {
 			Top = 8
 		};
 
-
 		Rectangle();
 		Rectangle( const Vec2<T> & rightTop );
+		Rectangle( const T( &r )[4] );
 		Rectangle( const Vec2<T> & leftBottom,
 				   const Vec2<T> & rightTop );
 		Rectangle( const T & left, const T & bottom, const T & right, const T & top );
@@ -39,7 +39,6 @@ namespace Math {
 
 
 		bool isInside( const Vec2<T> & p ) const;
-
 
 
 		///@brief get the zone of a point relatively to this rectangle (top left, right bottom, inside etc...)
@@ -62,7 +61,8 @@ namespace Math {
 		Rectangle<T> & operator-=( const Vec2<T> & p );
 
 
-
+		Rectangle<T> & operator=( const Rectangle<T> & r );
+		Rectangle<T> & operator=( const T( &r )[4] );
 
 
 		static const Rectangle<T> null;
@@ -70,7 +70,6 @@ namespace Math {
 		Vec2<T> pointLeftBottom;
 		Vec2<T> pointRightTop;
 	};
-
 
 
 

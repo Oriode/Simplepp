@@ -15,6 +15,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Vec4( const T & x, const T & y, const T & z, const T & w );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec4( const Vec4<U> & v );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Vec4( const U( &v )[4] );
 
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec4( const Vec3<U> & v );
@@ -80,6 +82,8 @@ namespace Math {
 		/************************************************************************/
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const Vec4<U> & v );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const U( &v )[4] );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec4<T> & operator=( const Vec3<U> & v );
 		template<typename U>

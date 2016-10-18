@@ -17,6 +17,9 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Vec2( const T & x, const T & y );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec2( const Vec2<U> & v );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Vec2( const U( &v )[2] ); 
+
 
 		template<typename U = char>
 		MATH_FUNC_QUALIFIER operator BasicString<U>() const;
@@ -61,7 +64,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Vec2<T> & operator=( const T & v );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec2<T> & operator=( const Vec2<U> & v );
-
+		template<typename U>
+		MATH_FUNC_QUALIFIER Vec2<T> & operator=( const U( &v )[2] );
 
 		MATH_FUNC_QUALIFIER void inverse();
 
@@ -92,6 +96,7 @@ namespace Math {
 		template<typename Compare>
 		MATH_FUNC_QUALIFIER Vec2<T> & _MathOperator( Compare & func, const T & v );
 	};
+
 
 	/************************************************************************/
 	/* Logical                                                              */

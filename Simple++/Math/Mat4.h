@@ -17,6 +17,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER Mat4( void );
 		template<typename U>
 		MATH_FUNC_QUALIFIER Mat4( const Mat4<U> & m );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Mat4( const U( &m )[16] );
 		MATH_FUNC_QUALIFIER Mat4( const T & v );
 		MATH_FUNC_QUALIFIER Mat4( const T & v11, const T & v21, const T & v31, const T & v41,
 								  const T & v12, const T & v22, const T & v32, const T & v42,
@@ -76,6 +78,8 @@ namespace Math {
 		/************************************************************************/
 		template<typename U>
 		MATH_FUNC_QUALIFIER Mat4<T> & operator=( const Mat4<U> & m );
+		template<typename U>
+		MATH_FUNC_QUALIFIER Mat4<T> & operator=( const U( &m )[16] );
 		MATH_FUNC_QUALIFIER Mat4<T> & operator=( const T & v );
 
 

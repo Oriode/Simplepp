@@ -5402,7 +5402,7 @@ namespace Graphic {
 								realPosition.x += ratio.x;
 
 								auto thisImageIt2 = thisImageIt1 + j.x;
-								C & thisImagePixel = *thisImageIt2;
+								const C & thisImagePixel = *thisImageIt2;
 								newImagePixel = thisImagePixel;
 
 								newImageIt1++;
@@ -5557,7 +5557,7 @@ namespace Graphic {
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
 									auto thisImageIt3 = thisImageIt2;
 									for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-										C & thisImagePixel = *thisImageIt3;
+										const C & thisImagePixel = *thisImageIt3;
 										sum += ColorSum( thisImagePixel );
 
 										thisImageIt3++;
@@ -5663,7 +5663,7 @@ namespace Graphic {
 								ColorSum sum( 0 );
 								SumType sumFactors = ( j1.x - j0.x );
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-									C & thisImagePixel = *thisImageIt1;
+									const C & thisImagePixel = *thisImageIt1;
 									sum += ColorSum( thisImagePixel );
 									thisImageIt1++;
 								}
@@ -5701,7 +5701,7 @@ namespace Graphic {
 								ColorSum sum( 0 );
 								SumType sumFactors = ( j1.x - j0.x );
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-									C & thisImagePixel = *thisImageIt2;
+									const C & thisImagePixel = *thisImageIt2;
 									sum += ColorSum( thisImagePixel );
 									thisImageIt2++;
 								}
@@ -5761,7 +5761,7 @@ namespace Graphic {
 								ColorSum sum( 0 );
 								SumType sumFactors = ( j1.y - j0.y );
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-									C & thisImagePixel = *thisImageIt2;
+									const C & thisImagePixel = *thisImageIt2;
 									sum += ColorSum( thisImagePixel );
 									thisImageIt2 += this -> size.x;
 								}
@@ -5782,7 +5782,7 @@ namespace Graphic {
 								ColorSum sum( 0 );
 								SumType sumFactors = ( j1.y - j0.y );
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-									C & thisImagePixel = *thisImageIt2;
+									const C & thisImagePixel = *thisImageIt2;
 									sum += ColorSum( thisImagePixel );
 									thisImageIt2 += this -> size.x;
 								}
@@ -5884,7 +5884,7 @@ namespace Graphic {
 
 							assert( j1.y <= this -> size.y && j0.y >= 0 );
 							if ( true ) {
-								C * thisImageIt1 = ( ( C * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
+								auto thisImageIt1 = ( ( C * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
 
 								j.x = realPositionInit.x;
 								j0f.x = j.x - ratioHalf.x + 0.5f;
@@ -5910,7 +5910,7 @@ namespace Graphic {
 
 
 											for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-												C & thisImagePixel = *thisImageIt3;
+												const C & thisImagePixel = *thisImageIt3;
 
 												Float distx = Float( Float( k.x ) - j.x ) * distanceDivider.x;
 												Float factorX( lanczosFunc( Math::abs( int( distx ) ) ) );

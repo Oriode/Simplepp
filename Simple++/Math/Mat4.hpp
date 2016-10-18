@@ -13,6 +13,11 @@ namespace Math {
 		*this = m;
 	}
 	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const U( &m )[16] ) {
+		*this = m;
+	}
+	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T>::Mat4( const ColType & col0, const ColType & col1, const ColType & col2, const ColType & col3 ) {
 		this -> column[0] = col0;
 		this -> column[1] = col1;
@@ -372,6 +377,30 @@ namespace Math {
 		this -> column[1] = m[1];
 		this -> column[2] = m[2];
 		this -> column[3] = m[3];
+		return *this;
+	}
+	template<typename T>
+	template<typename U>
+	MATH_FUNC_QUALIFIER Mat4<T> & Mat4<T>::operator=( const U( &m )[16] ) {
+		this -> column[0].x = m[0];
+		this -> column[0].y = m[4];
+		this -> column[0].z = m[8];
+		this -> column[0].w = m[12];
+
+		this -> column[1].x = m[1];
+		this -> column[1].y = m[5];
+		this -> column[1].z = m[9];
+		this -> column[1].w = m[13];
+
+		this -> column[2].x = m[2];
+		this -> column[2].y = m[6];
+		this -> column[2].z = m[10];
+		this -> column[2].w = m[14];
+
+		this -> column[3].x = m[3];
+		this -> column[3].y = m[7];
+		this -> column[3].z = m[11];
+		this -> column[3].w = m[15];
 		return *this;
 	}
 	template<typename T>
