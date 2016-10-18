@@ -44,8 +44,9 @@ namespace Graphic {
 		///@brief Constructor using a font file dump and his size in bytes
 		///@param fileDump memory copy of a font file.
 		///@param fileSize size in bytes of the data buffer.
+		///@param pixSize Size in pixels of the font
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
-		_Font( const char * fileDump, size_t fileSize, const LoadingFunc & loadingFunc = LoadingFunc() );
+		_Font( const char * fileDump, size_t fileSize, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 		///@brief Copy constructor
 		///@param font Font to be copied
@@ -147,7 +148,7 @@ namespace Graphic {
 		bool _read( std::fstream * fileStream );
 		void _clear();
 		void _nullify();
-		bool _loadFreeType( const char * fileDump, size_t size );
+		bool _loadFreeType( const char * fileDump, size_t size, float pixSize );
 		void _setPixSize( unsigned int size );
 		void _unload();
 		void _copy( const _Font<T, LoadingFunc> & font );

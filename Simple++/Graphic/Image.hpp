@@ -3244,6 +3244,9 @@ namespace Graphic {
 
 		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
 
+		if ( thickness == 0 ) return;
+
+
 		float steepY( Math::abs( l.getP1().y - l.getP0().y ) );
 		float steepX( Math::abs( l.getP1().x - l.getP0().x ) );
 
@@ -3601,6 +3604,7 @@ namespace Graphic {
 
 		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
 
+		if ( thickness == 0 ) return;
 
 
 		float steepY( Math::abs( l.getP1().y - l.getP0().y ) );

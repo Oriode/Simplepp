@@ -111,11 +111,14 @@ namespace Graphic {
 		float horiOffsetY;
 		float horiAdvance;
 
+		void _clear();
+
 		//Math::vec2f vertBearing;
 		//float vertAdvance;
 
 	};
 
+	
 
 
 }

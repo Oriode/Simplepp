@@ -239,7 +239,7 @@ namespace Graphic {
 
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const char * fileDump, size_t fileSize ) : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fileDump, fileSize ) {
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const char * fileDump, size_t fileSize, int pixSize ) : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fileDump, fileSize, pixSize ) {
 
 	}
 

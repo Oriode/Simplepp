@@ -137,8 +137,8 @@ namespace Graphic {
 		///@brief Constructor using a font file dump and his size in bytes
 		///@param fileDump memory copy of a font file.
 		///@param fileSize size in bytes of the data buffer.
-		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
-		FontEffect( const char * fileDump, size_t fileSize );
+		///@param pixSize Size in pixels of the font to be loaded
+		FontEffect( const char * fileDump, size_t fileSize, int pixSize );
 
 		///@brief Copy constructor
 		///@param fontEffect Font to be copied

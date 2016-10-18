@@ -121,6 +121,7 @@ int main( int argc, char * argv[] ) {
 	log( String( colorF.HSLtoRGB() ) );
 
 
+/*
 	Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 40 );
 	font.load();
 	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
@@ -135,7 +136,7 @@ int main( int argc, char * argv[] ) {
 	Graphic::FreeImage glyphFreeImage;
 	glyphFreeImage.loadFromDatas( ( unsigned char * ) font2['A'] -> getDatas(), font2['A'] -> getSize(), Graphic::FreeImage::Format::R );
 	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
-
+*/
 
 	Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB );
 	freeImage.load();
@@ -403,29 +404,30 @@ int main( int argc, char * argv[] ) {
 		//image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
 		UTF8String testStr( "Hello World\nThis Lib is Awesome !" );
 
-		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFont( L"consola.ttf", 40 );
+		typedef Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>> FontType;
+		FontType myFont( L"consola.ttf", 15 );
 
-		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) ) );
+		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) ) );
 		myFont.setShadowActivated( true );
-		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
-		myFont.setShadowRadius( 5 );
-		myFont.setShadowBias( Math::Vec2<float>( -10 ) );
+		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 250 ) ) );
+		myFont.setShadowRadius( 2 );
+		myFont.setShadowBias( Math::Vec2<float>( 1, -1 ) );
 
 
 		myFont.setStrokeActivated( true );
 		myFont.setStrokeSize( 1 );
-		myFont.setStrokeColorFunc( Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>( gradientVertical ) );
+		myFont.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
 
-		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFontCOPY = myFont;
+		FontType myFontCOPY = myFont;
+		myFontCOPY.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
 
-		IO::write( WString( "myFontCustomdeOUF.font" ), &myFontCOPY );
+		assert( IO::write( WString( "myFontCustomdeOUF.font" ), &myFontCOPY ) );
 
 
-		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFontCp;
+		FontType myFontCp;
 		
 
-		IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCp );
-		myFontCp.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
+		assert( IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCp ) );
 
 
 

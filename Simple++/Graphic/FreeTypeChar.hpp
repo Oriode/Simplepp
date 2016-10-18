@@ -140,20 +140,47 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool FreeTypeChar<T>::read( std::fstream * fileStream ) {
-		if ( !Image::read( fileStream ) )
-			return false;
+	void FreeTypeChar<T>::_clear() {
+		ImageT<T>::clear();
 
-		if ( !IO::read( fileStream, &this -> uCodePoint ) )
+		this -> uCodePoint = 0;
+
+		this -> size.x = 0.0f;
+		this -> size.y = 0.0f;
+
+		this -> horiBearing.x = 0.0f;
+		this -> horiBearing.y = 0.0f;
+
+		this -> horiOffsetY = 0.0f;
+		this -> horiAdvance = 0.0f;
+	}
+
+	template<typename T>
+	bool FreeTypeChar<T>::read( std::fstream * fileStream ) {
+		if ( !Image::read( fileStream ) ) {
+			_clear();
 			return false;
-		if ( !IO::read( fileStream, &this -> size ) )
+		}
+		if ( !IO::read( fileStream, &this -> uCodePoint ) ) {
+			_clear();
 			return false;
-		if ( !IO::read( fileStream, &this -> horiBearing ) )
+		}
+		if ( !IO::read( fileStream, &this -> size ) ) {
+			_clear();
 			return false;
-		if ( !IO::read( fileStream, &this -> horiOffsetY ) )
+		}
+		if ( !IO::read( fileStream, &this -> horiBearing ) ) {
+			_clear();
 			return false;
-		if ( !IO::read( fileStream, &this -> horiAdvance ) )
+		}
+		if ( !IO::read( fileStream, &this -> horiOffsetY ) ) {
+			_clear();
 			return false;
+		}
+		if ( !IO::read( fileStream, &this -> horiAdvance ) ) {
+			_clear();
+			return false;
+		}
 
 		return true;
 	}
