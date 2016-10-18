@@ -279,13 +279,17 @@ namespace Graphic {
 					colorDest.b = I( ( Biggest( colorDest.b ) * oneMinusAlpha + Biggest( colorSrc.b ) * alphaSrc ) >> Color<I>::getMaxNbBits() );
 			   } else {
 					Biggest alphaDst( colorDest.a );
-					Biggest alphaOut( alphaSrc + ( ( alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) );
+					Biggest alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					Biggest alphaOut( ( alphaSrc << Color<I>::getMaxNbBits() ) + alphaDstMinusAlpha );
 					Biggest divider( alphaOut );
 
-					colorDest.a = I( alphaOut );
-					colorDest.r = I( ( ( ( ( Biggest( colorDest.r ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + ( Biggest( colorSrc.r ) * alphaSrc ) ) ) / divider );
-					colorDest.g = I( ( ( ( ( Biggest( colorDest.g ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + ( Biggest( colorSrc.g ) * alphaSrc ) ) ) / divider );
-					colorDest.b = I( ( ( ( ( Biggest( colorDest.b ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + ( Biggest( colorSrc.b ) * alphaSrc ) ) ) / divider );
+
+					colorDest.a = I( alphaOut >> Color<I>::getMaxNbBits() );
+					colorDest.r = I( ( ( ( ( ( Biggest( colorDest.r ) * alphaDstMinusAlpha ) ) + ( ( Biggest( colorSrc.r ) * alphaSrc ) << Color<I>::getMaxNbBits() ) ) ) / divider ) );
+					colorDest.g = I( ( ( ( ( ( Biggest( colorDest.g ) * alphaDstMinusAlpha ) ) + ( ( Biggest( colorSrc.g ) * alphaSrc ) << Color<I>::getMaxNbBits() ) ) ) / divider ) );
+					colorDest.b = I( ( ( ( ( ( Biggest( colorDest.b ) * alphaDstMinusAlpha ) ) + ( ( Biggest( colorSrc.b ) * alphaSrc ) << Color<I>::getMaxNbBits() ) ) ) / divider ) );
+
+					
 				}
 				#else
 				typedef typename Color<I>::Float F;
@@ -298,12 +302,14 @@ namespace Graphic {
 					colorDest.b = I( ( F( colorDest.b ) * oneMinusAlpha + F( colorSrc.b ) * alphaSrc ) );
 				} else {
 					F alphaDst( F( colorDest.a ) / F( Color<I>::getMax() ) );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
+
 
 					colorDest.a = I( alphaOut * F( Color<I>::getMax() ) );
-					colorDest.r = I( ( F( colorDest.r ) * alphaDst * oneMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = I( ( F( colorDest.g ) * alphaDst * oneMinusAlpha + F( colorSrc.g ) * alphaSrc ) / alphaOut );
-					colorDest.b = I( ( F( colorDest.b ) * alphaDst * oneMinusAlpha + F( colorSrc.b ) * alphaSrc ) / alphaOut );
+					colorDest.r = I( ( F( colorDest.r ) * alphaDstMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
+					colorDest.g = I( ( F( colorDest.g ) * alphaDstMinusAlpha + F( colorSrc.g ) * alphaSrc ) / alphaOut );
+					colorDest.b = I( ( F( colorDest.b ) * alphaDstMinusAlpha + F( colorSrc.b ) * alphaSrc ) / alphaOut );
 				}
 				#endif
 			}
@@ -327,12 +333,13 @@ namespace Graphic {
 					colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + ( colorSrc.b ) * alphaSrc );
 				} else {
 					F alphaDst( colorDest.a );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = ( ( colorDest.r ) * alphaDst * oneMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut ;
-					colorDest.g = ( ( colorDest.g ) * alphaDst * oneMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut ;
-					colorDest.b = ( ( colorDest.b ) * alphaDst * oneMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut ;
+					colorDest.r = ( ( colorDest.r ) * alphaDstMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut ;
+					colorDest.g = ( ( colorDest.g ) * alphaDstMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut ;
+					colorDest.b = ( ( colorDest.b ) * alphaDstMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut ;
 				}
 			}
 			inline static void blendColor( ColorRGBA<double> & colorDest, const ColorRGBA<double> & colorSrc ) {
@@ -355,12 +362,13 @@ namespace Graphic {
 					colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + ( colorSrc.b ) * alphaSrc );
 				} else {
 					F alphaDst( colorDest.a );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = ( ( colorDest.r ) * alphaDst * oneMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut;
-					colorDest.g = ( ( colorDest.g ) * alphaDst * oneMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut;
-					colorDest.b = ( ( colorDest.b ) * alphaDst * oneMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut;
+					colorDest.r = ( ( colorDest.r ) * alphaDstMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut;
+					colorDest.g = ( ( colorDest.g ) * alphaDstMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut;
+					colorDest.b = ( ( colorDest.b ) * alphaDstMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut;
 				}
 			}
 
@@ -467,19 +475,21 @@ namespace Graphic {
 
 				Biggest alphaSrc( alpha );
 				Biggest oneMinusAlpha( Biggest( Color<I>::getMax() ) - alphaSrc );
+				Biggest tmp( Biggest( colorSrc.getLightness() ) * alphaSrc );
 
-				colorDest.r = I( ( Biggest( colorDest.r ) * oneMinusAlpha + Biggest( colorSrc.getLightness() ) * alphaSrc ) >> Color<I>::getMaxNbBits() );
-				colorDest.g = colorDest.r;
-				colorDest.b = colorDest.r;
+				colorDest.r = I( ( Biggest( colorDest.r ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
+				colorDest.g = I( ( Biggest( colorDest.g ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
+				colorDest.b = I( ( Biggest( colorDest.b ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
 
 				#else
 				typedef typename Color<I>::Float F;
 				F alphaSrc( F( alpha ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
+				F tmp( F( colorSrc.getLightness() ) * alphaSrc );
 
-				colorDest.r = I( ( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.getLightness() ) * alphaSrc ) );
-				colorDest.g = colorDest.r;
-				colorDest.b = colorDest.r;
+				colorDest.r = I( ( F( colorDest.r ) * oneMinusAlpha + tmp ) );
+				colorDest.g = I( ( F( colorDest.g ) * oneMinusAlpha + tmp ) );
+				colorDest.b = I( ( F( colorDest.b ) * oneMinusAlpha + tmp ) );
 
 				#endif
 			}
@@ -497,10 +507,11 @@ namespace Graphic {
 
 				F alphaSrc( alpha );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
+				F tmp( F( colorSrc.getLightness() ) * alphaSrc );
 
-				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.getLightness() ) * alphaSrc );
-				colorDest.g = colorDest.r;
-				colorDest.b = colorDest.r;
+				colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + tmp );
+				colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + tmp );
+				colorDest.b = I( F( colorDest.b ) * oneMinusAlpha + tmp );
 			}
 			inline static void blendColor( ColorRGB<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
 				typedef float F;
@@ -515,10 +526,10 @@ namespace Graphic {
 
 				F alphaSrc( alpha );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
-
-				colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + ( colorSrc.getLightness() ) * alphaSrc );
-				colorDest.g = colorDest.r;
-				colorDest.b = colorDest.r;
+				F tmp( colorSrc.getLightness() * alphaSrc);
+				colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + tmp );
+				colorDest.g = ( ( colorDest.g ) * oneMinusAlpha + tmp );
+				colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + tmp );
 			}
 			inline static void blendColor( ColorRGB<double> & colorDest, const ColorR<double> & colorSrc, double alpha ) {
 				typedef double F;
@@ -533,10 +544,10 @@ namespace Graphic {
 
 				F alphaSrc( alpha );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
-
-				colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + ( colorSrc.r ) * alphaSrc );
-				colorDest.g = colorDest.r;
-				colorDest.b = colorDest.r;
+				F tmp( colorSrc.getLightness() * alphaSrc );
+				colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + tmp );
+				colorDest.g = ( ( colorDest.g ) * oneMinusAlpha + tmp );
+				colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + tmp );
 			}
 			/************************************************************************/
 			/* R -> RGBA                                                            */
@@ -562,36 +573,45 @@ namespace Graphic {
 				Biggest oneMinusAlpha( Biggest( Color<I>::getMax() ) - alphaSrc );
 
 				if ( colorDest.a == Color<I>::getMax() ) {
-					colorDest.r = I( ( Biggest( colorDest.r ) * oneMinusAlpha + Biggest( colorSrc.r ) * alphaSrc ) >> Color<I>::getMaxNbBits() );
-					colorDest.g = colorDest.r;
-					colorDest.b = colorDest.r;
+					Biggest tmp( Biggest( colorSrc.r ) * alphaSrc );
+
+
+					colorDest.r = I( ( Biggest( colorDest.r ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
+					colorDest.g = I( ( Biggest( colorDest.g ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
+					colorDest.b = I( ( Biggest( colorDest.b ) * oneMinusAlpha + tmp ) >> Color<I>::getMaxNbBits() );
 				} else {
 					Biggest alphaDst( colorDest.a );
-					Biggest alphaOut( alphaSrc + ( ( alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) );
+					Biggest alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					Biggest alphaOut( ( alphaSrc << Color<I>::getMaxNbBits() ) + alphaDstMinusAlpha );
 					Biggest divider( alphaOut );
 
-					colorDest.a = I( alphaOut );
-					colorDest.r = I( ( ( ( ( Biggest( colorDest.r ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + Biggest( colorSrc.r ) * alphaSrc ) ) / divider );
-					colorDest.g = colorDest.r;
-					colorDest.b = colorDest.r;
+					Biggest tmp( (Biggest( colorSrc.r ) * alphaSrc) << Color<I>::getMaxNbBits() );
+
+					colorDest.a = I( alphaOut >> Color<I>::getMaxNbBits() );
+					colorDest.r = I( ( ( ( ( ( Biggest( colorDest.r ) * alphaDstMinusAlpha ) ) + tmp ) ) / divider ) );
+					colorDest.g = I( ( ( ( ( ( Biggest( colorDest.g ) * alphaDstMinusAlpha ) ) + tmp ) ) / divider ) );
+					colorDest.b = I( ( ( ( ( ( Biggest( colorDest.b ) * alphaDstMinusAlpha ) ) + tmp ) ) / divider ) );
 				}
 				#else
 				typedef typename Color<I>::Float F;
 				F alphaSrc( F( alpha ) / F( Color<I>::getMax() ) );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
+				F tmp( F( colorSrc.r ) * alphaSrc );
 
 				if ( colorDest.a == Color<I>::getMax() ) {
-					colorDest.r = I( ( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alphaSrc ) );
-					colorDest.g = colorDest.r;
-					colorDest.b = colorDest.r;
+					colorDest.r = I( ( F( colorDest.r ) * oneMinusAlpha + tmp ) );
+					colorDest.g = I( ( F( colorDest.g ) * oneMinusAlpha + tmp ) );
+					colorDest.b = I( ( F( colorDest.b ) * oneMinusAlpha + tmp ) );
 				} else {
 					F alphaDst( F( colorDest.a ) / F( Color<I>::getMax() ) );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
+					
 
 					colorDest.a = I( alphaOut * F( Color<I>::getMax() ) );
-					colorDest.r = I( ( F( colorDest.r ) * alphaDst * oneMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = colorDest.r;
-					colorDest.b = colorDest.r;
+					colorDest.r = I( ( F( colorDest.r ) * alphaDstMinusAlpha + tmp ) / alphaOut );
+					colorDest.g = I( ( F( colorDest.g ) * alphaDstMinusAlpha + tmp ) / alphaOut );
+					colorDest.b = I( ( F( colorDest.b ) * alphaDstMinusAlpha + tmp ) / alphaOut );
 				}
 				#endif
 			}
@@ -612,19 +632,22 @@ namespace Graphic {
 
 				F alphaSrc( alpha );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
+				F tmp( F( colorSrc.r ) * alphaSrc );
 
 				if ( colorDest.a == Color<F>::getMax() ) {
-					colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + F( colorSrc.r ) * alphaSrc );
-					colorDest.g = colorSrc.r;
-					colorDest.b = colorSrc.r;
+					colorDest.r = I( F( colorDest.r ) * oneMinusAlpha + tmp );
+					colorDest.g = I( F( colorDest.g ) * oneMinusAlpha + tmp );
+					colorDest.b = I( F( colorDest.b ) * oneMinusAlpha + tmp );
 				} else {
 					F alphaDst( colorDest.a );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
+
 
 					colorDest.a = alphaOut;
-					colorDest.r = I( ( F( colorDest.r ) * alphaDst * oneMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = colorSrc.r;
-					colorDest.b = colorSrc.r;
+					colorDest.r = I( ( F( colorDest.r ) * alphaDstMinusAlpha + tmp ) / alphaOut );
+					colorDest.g = I( ( F( colorDest.g ) * alphaDstMinusAlpha + tmp ) / alphaOut );
+					colorDest.b = I( ( F( colorDest.b ) * alphaDstMinusAlpha + tmp ) / alphaOut );
 				}
 			}
 			inline static void blendColor( ColorRGBA<float> & colorDest, const ColorR<float> & colorSrc, float alpha ) {
@@ -643,19 +666,21 @@ namespace Graphic {
 
 				F alphaSrc( alpha );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
+				F tmp( colorSrc.r * alphaSrc );
 
 				if ( colorDest.a == Color<F>::getMax() ) {
-					colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + ( colorSrc.r ) * alphaSrc );
-					colorDest.g = colorSrc.r;
-					colorDest.b = colorSrc.r;
+					colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + tmp );
+					colorDest.g = ( ( colorDest.g ) * oneMinusAlpha + tmp );
+					colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + tmp );
 				} else {
 					F alphaDst( colorDest.a );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = ( ( colorDest.r ) * alphaDst * oneMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut;
-					colorDest.g = colorSrc.r;
-					colorDest.b = colorSrc.r;
+					colorDest.r = ( ( colorDest.r ) * alphaDstMinusAlpha + tmp ) / alphaOut;
+					colorDest.g = ( ( colorDest.g ) * alphaDstMinusAlpha + tmp ) / alphaOut;
+					colorDest.b = ( ( colorDest.b ) * alphaDstMinusAlpha + tmp ) / alphaOut;
 				}
 			}
 			inline static void blendColor( ColorRGBA<double> & colorDest, const ColorR<double> & colorSrc, double alpha ) {
@@ -674,19 +699,21 @@ namespace Graphic {
 
 				F alphaSrc( alpha );
 				F oneMinusAlpha( F( 1.0 ) - alphaSrc );
+				F tmp( colorSrc.r * alphaSrc );
 
 				if ( colorDest.a == Color<F>::getMax() ) {
-					colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + ( colorSrc.r ) * alphaSrc );
+					colorDest.r = ( ( colorDest.r ) * oneMinusAlpha + tmp );
 					colorDest.g = colorSrc.r;
 					colorDest.b = colorSrc.r;
 				} else {
 					F alphaDst( colorDest.a );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
 					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = ( ( colorDest.r ) * alphaDst * oneMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut;
-					colorDest.g = colorSrc.r;
-					colorDest.b = colorSrc.r;
+					colorDest.r = ( ( colorDest.r ) * alphaDstMinusAlpha + tmp ) / alphaOut;
+					colorDest.g = ( ( colorDest.g ) * alphaDstMinusAlpha + tmp ) / alphaOut;
+					colorDest.b = ( ( colorDest.b ) * alphaDstMinusAlpha + tmp ) / alphaOut;
 				}
 			}
 
@@ -869,13 +896,15 @@ namespace Graphic {
 					colorDest.b = I( ( Biggest( colorDest.b ) * oneMinusAlpha + Biggest( colorSrc.b ) * alphaSrc ) >> Color<I>::getMaxNbBits() );
 			} else {
 					Biggest alphaDst( colorDest.a );
-					Biggest alphaOut( alphaSrc + ( ( alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) );
+					Biggest alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					Biggest alphaOut( ( alphaSrc << Color<I>::getMaxNbBits() ) + alphaDstMinusAlpha );
 					Biggest divider( alphaOut );
 
-					colorDest.a = I( alphaOut );
-					colorDest.r = I( ( ( ( ( Biggest( colorDest.r ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + Biggest( colorSrc.r ) * alphaSrc ) ) / divider );
-					colorDest.g = I( ( ( ( ( Biggest( colorDest.g ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + Biggest( colorSrc.g ) * alphaSrc ) ) / divider );
-					colorDest.b = I( ( ( ( ( Biggest( colorDest.b ) * alphaDst * oneMinusAlpha ) >> Color<I>::getMaxNbBits() ) + Biggest( colorSrc.b ) * alphaSrc ) ) / divider );
+
+					colorDest.a = I( alphaOut >> Color<I>::getMaxNbBits() );
+					colorDest.r = I( ( ( ( ( ( Biggest( colorDest.r ) * alphaDstMinusAlpha ) ) + ( ( Biggest( colorSrc.r ) * alphaSrc ) << Color<I>::getMaxNbBits() ) ) ) / divider ) );
+					colorDest.g = I( ( ( ( ( ( Biggest( colorDest.g ) * alphaDstMinusAlpha ) ) + ( ( Biggest( colorSrc.g ) * alphaSrc ) << Color<I>::getMaxNbBits() ) ) ) / divider ) );
+					colorDest.b = I( ( ( ( ( ( Biggest( colorDest.b ) * alphaDstMinusAlpha ) ) + ( ( Biggest( colorSrc.b ) * alphaSrc ) << Color<I>::getMaxNbBits() ) ) ) / divider ) );
 				}
 				#else
 				typedef typename Color<I>::Float F;
@@ -888,12 +917,13 @@ namespace Graphic {
 					colorDest.b = I( ( F( colorDest.b ) * oneMinusAlpha + F( colorSrc.b ) * alphaSrc ) );
 				} else {
 					F alphaDst( F( colorDest.a ) / F( Color<I>::getMax() ) );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
 
 					colorDest.a = I( alphaOut * F( Color<I>::getMax() ) );
-					colorDest.r = I( ( F( colorDest.r ) * alphaDst * oneMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = I( ( F( colorDest.g ) * alphaDst * oneMinusAlpha + F( colorSrc.g ) * alphaSrc ) / alphaOut );
-					colorDest.b = I( ( F( colorDest.b ) * alphaDst * oneMinusAlpha + F( colorSrc.b ) * alphaSrc ) / alphaOut );
+					colorDest.r = I( ( F( colorDest.r ) * alphaDstMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
+					colorDest.g = I( ( F( colorDest.g ) * alphaDstMinusAlpha + F( colorSrc.g ) * alphaSrc ) / alphaOut );
+					colorDest.b = I( ( F( colorDest.b ) * alphaDstMinusAlpha + F( colorSrc.b ) * alphaSrc ) / alphaOut );
 				}
 				#endif
 			}
@@ -921,12 +951,13 @@ namespace Graphic {
 					colorDest.b = ( F( colorDest.b ) * oneMinusAlpha + F( colorSrc.b ) * alphaSrc );
 				} else {
 					F alphaDst( colorDest.a );
-					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
+					F alphaOut( alphaSrc + alphaDstMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = I( ( F( colorDest.r ) * alphaDst * oneMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = I( ( F( colorDest.g ) * alphaDst * oneMinusAlpha + F( colorSrc.g ) * alphaSrc ) / alphaOut );
-					colorDest.b = I( ( F( colorDest.b ) * alphaDst * oneMinusAlpha + F( colorSrc.b ) * alphaSrc ) / alphaOut );
+					colorDest.r = I( ( F( colorDest.r ) * alphaDstMinusAlpha + F( colorSrc.r ) * alphaSrc ) / alphaOut );
+					colorDest.g = I( ( F( colorDest.g ) * alphaDstMinusAlpha + F( colorSrc.g ) * alphaSrc ) / alphaOut );
+					colorDest.b = I( ( F( colorDest.b ) * alphaDstMinusAlpha + F( colorSrc.b ) * alphaSrc ) / alphaOut );
 				}
 			}
 			inline static void blendColor( ColorRGBA<float> & colorDest, const ColorRGB<float> & colorSrc, float alpha ) {
@@ -952,12 +983,13 @@ namespace Graphic {
 					colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + ( colorSrc.b ) * alphaSrc );
 				} else {
 					F alphaDst( colorDest.a );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
 					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = ( ( ( colorDest.r ) * alphaDst * oneMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = ( ( ( colorDest.g ) * alphaDst * oneMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut );
-					colorDest.b = ( ( ( colorDest.b ) * alphaDst * oneMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut );
+					colorDest.r = ( ( ( colorDest.r ) * alphaDstMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut );
+					colorDest.g = ( ( ( colorDest.g ) * alphaDstMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut );
+					colorDest.b = ( ( ( colorDest.b ) * alphaDstMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut );
 				}
 			}
 			inline static void blendColor( ColorRGBA<double> & colorDest, const ColorRGB<double> & colorSrc, double alpha ) {
@@ -983,12 +1015,13 @@ namespace Graphic {
 					colorDest.b = ( ( colorDest.b ) * oneMinusAlpha + ( colorSrc.b ) * alphaSrc );
 				} else {
 					F alphaDst( colorDest.a );
+					F alphaDstMinusAlpha( alphaDst * oneMinusAlpha );
 					F alphaOut( alphaSrc + alphaDst * oneMinusAlpha );
 
 					colorDest.a = alphaOut;
-					colorDest.r = ( ( ( colorDest.r ) * alphaDst * oneMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut );
-					colorDest.g = ( ( ( colorDest.g ) * alphaDst * oneMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut );
-					colorDest.b = ( ( ( colorDest.b ) * alphaDst * oneMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut );
+					colorDest.r = ( ( ( colorDest.r ) * alphaDstMinusAlpha + ( colorSrc.r ) * alphaSrc ) / alphaOut );
+					colorDest.g = ( ( ( colorDest.g ) * alphaDstMinusAlpha + ( colorSrc.g ) * alphaSrc ) / alphaOut );
+					colorDest.b = ( ( ( colorDest.b ) * alphaDstMinusAlpha + ( colorSrc.b ) * alphaSrc ) / alphaOut );
 				}
 			}
 

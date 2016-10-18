@@ -13,6 +13,8 @@ namespace Graphic {
 		template<typename C>
 		class Template {
 		public:
+			typedef C Color;
+
 			Template() {}
 
 
@@ -31,7 +33,7 @@ namespace Graphic {
 
 		///@brief Color functor with a simple color
 		template<typename C>
-		class SimpleColor : protected Template<C> {
+		class SimpleColor : public Template<C> {
 		public:
 			///@brief empty constructor (will not init anything)
 			SimpleColor() {};

@@ -38,6 +38,87 @@ namespace Graphic {
 	}
 
 
+
+	/************************************************************************/
+	/* Color Functor */
+	/************************************************************************/
+	template<typename T, typename LoadingFunc, typename ColorFunc,  typename BlendFunc>
+	void drawTextFunctor( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
+		struct Functor {
+			struct ColorFunctor : public ColorFunc::Template<ColorFunc::Color> {
+				ColorFunctor( ColorFunc & colorFunc ) : colorFunc( colorFunc ) {}
+				inline typename ColorFunc::Color operator()( const Math::Vec2<Size> & p ) const {
+					return this -> colorFunc(p + offset);
+				}
+				ColorFunc & colorFunc;
+				Math::Vec2<Size> offset;
+			};
+			Functor( ImageT<T> * image, ColorFunc & colorFunc, BlendFunc & blendFunc, const Rectangle & rectangle ) : colorFunctor( colorFunc ), image( image ), colorFunc( colorFunc ), blendFunc( blendFunc ), rectangle( rectangle ) {
+				this -> colorFunc.init( rectangle );
+			}
+
+			void operator()( float x, float y, const ImageT<T> & c ) {
+				this -> colorFunctor.offset.x = x - rectangle.getLeft();
+				this -> colorFunctor.offset.y = y - rectangle.getBottom();
+
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, false>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+			}
+
+		private:
+			ImageT<T> * image;
+			BlendFunc & blendFunc;
+			ColorFunctor colorFunctor;
+			ColorFunc & colorFunc;
+			const Rectangle & rectangle;
+		};
+		Rectangle rectangleMarged( rectangle.getLeft() - font.getMargins().getLeft(),
+								   rectangle.getBottom() - font.getMargins().getBottom(),
+								   rectangle.getRight() + font.getMargins().getRight(),
+								   rectangle.getTop() + font.getMargins().getTop() );
+		Rectangle rectangleClamped( image->clampRectangle( rectangleMarged ) );
+
+		Functor functor( image, colorFunc, blendFunc, rectangleClamped );
+		_drawText( font, rectangle, text, centered, functor );
+	}
+
+
+	template<typename T, typename LoadingFunc, typename ColorFunc, typename BlendFunc>
+	void drawTextFunctor( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered, BlendFunc & blendFunc ) {
+		struct Functor {
+			struct ColorFunctor : public ColorFunc::Template<ColorFunc::Color> {
+				ColorFunctor( ColorFunc & colorFunc ) : colorFunc( colorFunc) {}
+				inline typename ColorFunc::Color operator()( const Math::Vec2<Size> & p ) const {
+					return this -> colorFunc( p + offset );
+				}
+				ColorFunc & colorFunc;
+				Math::Vec2<Size> offset;
+			};
+			Functor( ImageT<T> * image, ColorFunc & colorFunc, BlendFunc & blendFunc) : colorFunctor( colorFunc ), image( image ), colorFunc( colorFunc ), blendFunc( blendFunc ) {
+			}
+			void operator()( float x, float y, const ImageT<T> & c ) {
+				this -> colorFunctor.offset.x = x - rectangle.getLeft();
+				this -> colorFunctor.offset.y = y - rectangle.getBottom();
+
+				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, false>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
+			}
+			void onBegin( const Rectangle & rectangle ) {
+				this -> rectangle = this -> image -> clampRectangle( rectangle );
+				this -> colorFunc.init( this -> rectangle );
+			}
+		private:
+			ImageT<T> * image;
+			BlendFunc & blendFunc;
+			ColorFunctor colorFunctor;
+			ColorFunc & colorFunc;
+			Rectangle rectangle;
+		};
+		
+		Functor functor( image, colorFunc, blendFunc );
+		_drawTextWBB( font, point, text, centered, functor );
+	}
+
+
+
 	/************************************************************************/
 	/* Horizontal Gradient                                                  */
 	/************************************************************************/
@@ -57,14 +138,11 @@ namespace Graphic {
 			Functor( ImageT<T> * image, const Gradient::Horizontal<C, InterFunc> & gradient, BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & rectangle ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
-				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 			void operator()( float x, float y, const ImageT<T> & c ) {
 				this -> colorFunctor.offset = x - this -> clampedRectangle.getLeft();
 				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
-
 			}
-
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			ColorFunctor colorFunctor;
@@ -73,6 +151,7 @@ namespace Graphic {
 			const Gradient::Horizontal<C, InterFunc> & gradient;
 			Math::Rectangle<Size> clampedRectangle;
 		};
+		
 		Functor functor( image, gradient, blendFunc );
 		_drawTextWBB( font, point, text, centered, functor );
 	}
@@ -91,14 +170,11 @@ namespace Graphic {
 			};
 			Functor( ImageT<T> * image, const Gradient::Horizontal<C, InterFunc> & gradient, const Rectangle & rectangle, BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
-				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
-
 			void operator()( float x, float y, const ImageT<T> & c ) {
 				this -> colorFunctor.offset = x - this -> clampedRectangle.getLeft();
 				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, false>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
 			}
-
 			~Functor() { delete[] this -> colorFunctor.interpolationDatas; }
 		private:
 			ImageT<T> * image;
@@ -106,7 +182,11 @@ namespace Graphic {
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		auto rectangleClamped( image->clampRectangle( rectangle ) );
+		Rectangle rectangleMarged( rectangle.getLeft() - font.getMargins().getLeft(),
+								   rectangle.getBottom() - font.getMargins().getBottom(),
+								   rectangle.getRight() + font.getMargins().getRight(),
+								   rectangle.getTop() + font.getMargins().getTop() );
+		Rectangle rectangleClamped( image -> clampRectangle( rectangleMarged ) );
 
 		Functor functor( image, gradient, rectangleClamped, blendFunc );
 		_drawText( font, rectangleClamped, text, centered, functor );
@@ -131,7 +211,6 @@ namespace Graphic {
 			Functor( ImageT<T> * image, const Gradient::Vertical<C, InterFunc> & gradient, BlendFunc & blendFunc ) : colorFunctor(), image( image ), gradient( gradient ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & rectangle ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
-				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
 			void operator()( float x, float y, const ImageT<T> & c ) {
 				this -> colorFunctor.offset = y - this -> clampedRectangle.getBottom();
@@ -164,9 +243,7 @@ namespace Graphic {
 			};
 			Functor( ImageT<T> * image, const Gradient::Vertical<C, InterFunc> & gradient, const Rectangle & rectangle, BlendFunc & blendFunc ) : colorFunctor(), image( image ), blendFunc( blendFunc ) {
 				this -> image -> computeInterpolation( gradient, &this -> colorFunctor.interpolationDatas, rectangle, &this -> clampedRectangle );
-				//this -> image -> drawRectangle(rectangle, ColorR<T>(42));						//DEBUG
 			}
-
 			void operator()( float x, float y, const ImageT<T> & c ) {
 				this -> colorFunctor.offset = y - this -> clampedRectangle.getBottom();
 				return this -> image -> drawImageFunctor<ColorFunctor, BlendFunc, false>( Point( x, y ), this -> colorFunctor, Rectangle( c.getSize() ), c, this -> blendFunc );
@@ -179,7 +256,11 @@ namespace Graphic {
 			ColorFunctor colorFunctor;
 			Math::Rectangle<Size> clampedRectangle;
 		};
-		auto rectangleClamped( image -> clampRectangle( rectangle ) );
+		Rectangle rectangleMarged( rectangle.getLeft() - font.getMargins().getLeft(),
+								   rectangle.getBottom() - font.getMargins().getBottom(),
+								   rectangle.getRight() + font.getMargins().getRight(),
+								   rectangle.getTop() + font.getMargins().getTop() );
+		Rectangle rectangleClamped( image -> clampRectangle( rectangleMarged ) );
 		Functor functor( image, gradient, rectangleClamped, blendFunc );
 		_drawText( font, rectangleClamped, text, centered, functor );
 	}
@@ -239,7 +320,7 @@ namespace Graphic {
 		struct Functor {
 			Functor( ImageT<T> * image, BlendFunc & blendFunc ) : image( image ), blendFunc( blendFunc ) {}
 			void onBegin( const Rectangle & size ) {}
-			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<false>( Point( x, y ), c, Rectangle( c.getSize() ), this -> blendFunc ); }
+			void operator()( float x, float y, const ImageT<T> & c ) { this -> image -> drawImage<BlendFunc, false>( Point( x, y ), c, Rectangle( c.getSize() ), this -> blendFunc ); }
 		private:
 			ImageT<T> * image;
 			BlendFunc & blendFunc;
@@ -287,23 +368,23 @@ namespace Graphic {
 
 
 
-		float marginY = font.getLineHeight() * 0.7f;
+		float marginY( font.getLineHeight() * 0.7f );
 		if ( centered.y ) {
-			float rectangleHeightHalfed = rectangleHeight * 0.5f;
-			rectangle.setTop( initPoint.y + rectangleHeightHalfed );				//update BB
-			rectangle.setBottom( initPoint.y - rectangleHeightHalfed );				//update BB
+			float rectangleHeightHalfed( rectangleHeight * 0.5f );
+			rectangle.setTop( initPoint.y + rectangleHeightHalfed + font.getMargins().getTop() );				//update BB
+			rectangle.setBottom( initPoint.y - rectangleHeightHalfed - font.getMargins().getBottom() );				//update BB
 			initPoint.y = initPoint.y - marginY + rectangleHeightHalfed;
 
 		} else {
-			rectangle.setTop( initPoint.y + marginY );										//update BB
-			rectangle.setBottom( initPoint.y + marginY - rectangleHeight );					//update BB
+			rectangle.setTop( initPoint.y + marginY + font.getMargins().getTop() );										//update BB
+			rectangle.setBottom( initPoint.y + marginY - rectangleHeight - font.getMargins().getBottom() );					//update BB
 		}
 
 
 
 		if ( centered.x ) {
-			rectangle.setLeft( initPoint.x - maxLineWidth * 0.5f );
-			rectangle.setRight( initPoint.x + maxLineWidth * 0.5f );
+			rectangle.setLeft( initPoint.x - maxLineWidth * 0.5f - font.getMargins().getLeft() );
+			rectangle.setRight( initPoint.x + maxLineWidth * 0.5f + font.getMargins().getRight() );
 
 			func.onBegin( rectangle );
 
@@ -327,8 +408,8 @@ namespace Graphic {
 				}
 			}
 		} else {
-			rectangle.setLeft( initPoint.x );
-			rectangle.setRight( initPoint.x + maxLineWidth );
+			rectangle.setLeft( initPoint.x - font.getMargins().getLeft() );
+			rectangle.setRight( initPoint.x + maxLineWidth + font.getMargins().getRight() );
 
 			func.onBegin( rectangle );
 
@@ -548,7 +629,6 @@ drawText_afterIterate:
 					const FreeTypeChar<T> * c = font[codePoint];
 					if ( c ) {
 						func( currentPos.x, currentPos.y + c -> getHoriOffsetY(), *c );
-						//image -> drawImage(Point(currentPos.x, currentPos.y + c -> getHoriOffsetY()), color, *c);
 						currentPos.x += c -> getHoriAdvance();
 					}
 				}

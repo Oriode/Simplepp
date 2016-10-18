@@ -997,6 +997,7 @@ bool Vector<T>::write( std::fstream * fileStream ) const {
 
 template<typename T>
 bool Vector<T>::read( std::fstream * fileStream ) {
+
 	if ( !SimpleIO::read( fileStream, &this -> size ) ) {
 		this -> size = 0;
 		this -> maxSize = 0;

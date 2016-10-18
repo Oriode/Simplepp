@@ -1195,17 +1195,12 @@ namespace Graphic {
 		template<typename ThreshFunc, typename C1, typename C2>
 		void _threshold( const C2 & colorTrue, const C2 & colorFalse, const ThreshFunc & threshFunc );
 
-		template<typename BlendFunc, typename C1, typename C2>
-		void _drawLine( const LineF & l, const C2 & color, unsigned int thickness, const BlendFunc & blendFunc );
-
-		template<typename ColorFunc, typename BlendFunc, typename C1, typename I>
-		void _drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const I * t );
+		template<typename ColorFunc, typename BlendFunc, typename C1>
+		void _drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, ... );
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const float * t );
+		void _drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, typename Float * );
 
-		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, const double * t );
 
 		template<typename ColorFunc, typename BlendFunc, typename C1>
 		void _drawLineFunctorf( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc );
@@ -1299,7 +1294,11 @@ namespace Graphic {
 		ImageT<T2> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		template<typename SumType, typename C>
-		ImageT<T> * _createMipmap( ImageT<T> * destinationImage );
+		ImageT<T> * _createMipmap( ImageT<T> * destinationImage, ... );
+
+
+		template<typename SumType, typename C>
+		ImageT<T> * _createMipmap( ImageT<T> * destinationImage, typename Float * );
 
 		bool _read( std::fstream * fileStream );
 

@@ -122,6 +122,10 @@ namespace Graphic {
 		///@return Bias using to draw this font
 		const Math::Vec2<float> & getDrawingBias() const;
 
+		///@brief get the margins of the drawing
+		///@return margins
+		const Rectangle & getMargins() const;
+
 		///@brief get the word space of this font
 		///@return word space
 		float getWordSpace() const;

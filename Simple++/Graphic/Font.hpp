@@ -210,7 +210,10 @@ namespace Graphic {
 	const Math::Vec2<float> & _Font<T, LoadingFunc>::getDrawingBias() const {
 		return this -> loadingFunctor.getBias();
 	}
-
+	template<typename T, typename LoadingFunc>
+	const Rectangle & _Font<T, LoadingFunc>::getMargins() const {
+		return this -> loadingFunctor.getMargins();
+	}
 
 
 	template<typename T, typename LoadingFunc>

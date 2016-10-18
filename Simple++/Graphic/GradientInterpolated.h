@@ -73,7 +73,7 @@ namespace Graphic {
 
 		///@brief An Horizontal gradient color Functor
 		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-		class GradientHorizontal : public GradientInterpolation<C, InterFunc>, protected Template<C> {
+		class GradientHorizontal : public GradientInterpolation<C, InterFunc>, public Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
 			GradientHorizontal( const Graphic::Gradient::Horizontal<C, InterFunc> & gradient = Graphic::Gradient::Horizontal<C, InterFunc>() );
@@ -117,7 +117,7 @@ namespace Graphic {
 
 		///@brief A Vertical gradient color Functor
 		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-		class GradientVertical : public GradientInterpolation<C, InterFunc>, protected Template<C> {
+		class GradientVertical : public GradientInterpolation<C, InterFunc>, public Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
 			GradientVertical( const Graphic::Gradient::Vertical<C, InterFunc> & gradient = Graphic::Gradient::Vertical<C, InterFunc>());
@@ -160,7 +160,7 @@ namespace Graphic {
 
 		///@brief Linear Gradient Color Functor
 		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-		class GradientLinear : public GradientInterpolation<C, InterFunc>, protected Template<C> {
+		class GradientLinear : public GradientInterpolation<C, InterFunc>, public Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
 			GradientLinear( const Graphic::Gradient::Linear<C, InterFunc> & gradient = Graphic::Gradient::Linear<C, InterFunc>() );
@@ -203,7 +203,7 @@ namespace Graphic {
 
 		///@brief Linear Gradient Color Functor
 		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-		class GradientRadial : public GradientInterpolation<C, InterFunc>, protected Template<C> {
+		class GradientRadial : public GradientInterpolation<C, InterFunc>, public Template<C> {
 		public:
 			///@brief Create a new Horizontal gradient.
 			GradientRadial( const Graphic::Gradient::Radial<C, InterFunc> & gradient = Graphic::Gradient::Radial<C, InterFunc>() );

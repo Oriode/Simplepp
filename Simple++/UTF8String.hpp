@@ -112,7 +112,6 @@ template<typename C>
 UTF8String::UTF8String( const BasicString<C> & str ) :
 	String( ctor::null ) {
 	_contructorEQUAL( str, str.getSize() );
-
 }
 
 template<typename C>

@@ -183,6 +183,8 @@
     <ClInclude Include="Graphic\Image.h" />
     <ClInclude Include="Graphic\Image.hpp" />
     <ClInclude Include="Graphic\KernelFunc.hpp" />
+    <ClInclude Include="Graphic\Text.h" />
+    <ClInclude Include="Graphic\Text.hpp" />
     <ClInclude Include="Graphic\Texture.h" />
     <ClInclude Include="Graphic\Texture.hpp" />
     <ClInclude Include="Graphic\TextureLoadable.h" />

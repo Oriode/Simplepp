@@ -13,7 +13,7 @@
 #include "Graphic/GradientInterpolated.h"
 #include "Graphic/Gradient.h"
 #include "Graphic/FontEffect.h"
-
+#include "Graphic/Text.h"
 
 
 
@@ -164,6 +164,23 @@ namespace Graphic {
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
 	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
+
+	///@brief draw the text into the specified rectangle using a Color Functor
+	///@param font Font object to use
+	///@param rectangle Rectangle where the text will be.
+	///@param text Text to draw
+	///@param colorFunc Color Functor to be used to draw (@see Graphic::ColorFunc)
+	///@param centered If the text has to be centered vertically or horizontally.
+	///@param blendFunc Functor with operator() overloaded with 
+	///					"void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	///					"void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	///					"void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorRGBA<T> & colorSrc, const Graphic::ColorR<T> & colorMask)const;"
+	template<typename T, typename LoadingFunc, typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+	void drawTextFunctor( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+
+
+	template<typename T, typename LoadingFunc, typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
+	void drawTextFunctor( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 	///@brief draw the text to the specified point without a blending, the character bitmap will directly be blended to the specified image
 	///@param font Font object to use

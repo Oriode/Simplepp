@@ -40,7 +40,7 @@ namespace Graphic {
 			image -> fillImage( ColorRGBA<T>( Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin() ) );
 
 			// Draw the shadow
-			if ( this -> bShadowActivated ) image -> drawImageShadowFunctor<ShadowColorFunc>( Point( this -> margins.getLeft() + Size( this -> shadowBias.x ), this -> margins.getTop() + Size( this -> shadowBias.y ) ), this -> shadowRadius, imageMask, this -> shadowColorFunc );
+			if ( this -> bShadowActivated ) image -> drawImageShadowFunctor<ShadowColorFunc>( Point( float( this -> margins.getLeft() + this -> shadowBias.x ), float(this -> margins.getBottom() + this -> shadowBias.y ) ), this -> shadowRadius, imageMask, this -> shadowColorFunc );
 
 			// Draw the stroke effect
 			if ( this -> bStrokeActivated ) image -> drawStrokeFunctor<StrokeColorFunc>( this -> margins.getLeftBottom(), imageMask, this -> strokeSize, this -> strokeColorFunc, ImageT<T>::StrokeType::Outside );

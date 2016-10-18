@@ -3263,13 +3263,21 @@ void BasicString<T>::resize( typename Vector<T>::Size newSize ) {
 
 template<typename T>
 bool BasicString<T>::read( std::fstream * fileStream ) {
-	fileStream -> read( ( char* ) &this -> size, sizeof( this -> size ) );
+	if ( !SimpleIO::read( fileStream, &this -> size ) ) {
+		this -> size = 0;
+		_allocateNoNull( 1 );
+		this -> dataTable[0] = T( '\0' );
+		return false;
+	}
 	this -> maxSize = this -> size + 1;
 	_allocateNoNull( this -> maxSize );
 
-	//Used to know if the type is inherited from BasicIO
-	if ( !SimpleIO::readBuffer( fileStream, getData(), getSize() ) )
+	if ( !SimpleIO::readBuffer( fileStream, getData(), getSize() ) ) {
+		this -> size = 0;
+		_allocateNoNull( 1 );
+		this -> dataTable[0] = T( '\0' );
 		return false;
+	}
 	this -> dataTable[getSize()] = T( '\0' );
 	return true;
 }

@@ -121,7 +121,7 @@ int main( int argc, char * argv[] ) {
 	log( String( colorF.HSLtoRGB() ) );
 
 
-	Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 50 );
+	Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 40 );
 	font.load();
 	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
 	font.writeToFile( L"consola.cfont" );
@@ -205,11 +205,12 @@ int main( int argc, char * argv[] ) {
 		image = imageCopy;
 	}
 
-	{
+	/*{
 		Graphic::ImageT<float> imagef( image );
+		Graphic::Image mipmap( *(imagef.createMipmap()) );
 		image = imagef;
-
-	}
+		image.drawImage( Graphic::Point( 0, 0 ), mipmap );
+	}*/
 
 
 	/*{
@@ -218,23 +219,14 @@ int main( int argc, char * argv[] ) {
 		image.changeHueSaturationLightness( 360, 1.0, 1.0f );
 	}*/
 
-	{
+	/*{
 		//////////////////////////////////////////////////////////////////////////
 		// Apply Non symmetrical Filter Image									//
-		//constexpr size_t bits( Graphic::Image::getKernelSumNbBits() );
-		//constexpr size_t mult( ( 1 << Graphic::Image::getKernelSumNbBits() ) );
-		//typename Graphic::Image::KernelType kernelX[3], kernelY[3];
-
-		//Graphic::Image::computeSobel1Kernel( kernelX );
-		//Graphic::Image::computeSobel2Kernel( kernelY );
-
-		//image = image.applyFilter( kernelX, kernelY, 3, Graphic::Image::ConvolutionOrder::VerticalHorizontal,  Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
-		//image = image.applyFilter( kernel, Math::Vec2<Graphic::Size>(3,3), Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ), Graphic::KernelFunc::AbsClamp() );
 
 		image = image.applySobelFilter();
 
 
-	}
+	}*/
 
 	/*{
 		//////////////////////////////////////////////////////////////////////////
@@ -279,8 +271,8 @@ int main( int argc, char * argv[] ) {
 	}*/
 
 
-	/*
-		{
+	
+		/*{
 			//////////////////////////////////////////////////////////////////////////
 			// Draw Line										//
 			Graphic::ColorR<unsigned char> colorBlack(0);
@@ -400,19 +392,24 @@ int main( int argc, char * argv[] ) {
 		freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::SavingFormat::PNG );
 	}*/
 
+
+
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Bufferized Font !!!!!!!!!!!!									//
-		//image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
-		UTF8String testStr( "Hello World" );
 
-		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFont( L"consola.ttf", 50 );
+
+
+		//image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
+		UTF8String testStr( "Hello World\nThis Lib is Awesome !" );
+
+		Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::GradientVertical<Graphic::ColorRGBA<unsigned char>>> myFont( L"consola.ttf", 40 );
 
 		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) ) );
 		myFont.setShadowActivated( true );
-		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) ) );
+		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
 		myFont.setShadowRadius( 5 );
-		myFont.setShadowBias( Math::Vec2<float>( 0 ) );
+		myFont.setShadowBias( Math::Vec2<float>( -10 ) );
 
 
 		myFont.setStrokeActivated( true );
@@ -434,7 +431,13 @@ int main( int argc, char * argv[] ) {
 
 		auto maskTest = myFontCp['A'];
 		//image.drawImage(Graphic::Point(300, 300), *maskTest);
-		Graphic::drawText( &image, myFontCp, Graphic::Point( 0, 0 ), testStr, Math::Vec2<bool>( false, false ) );
+
+		Graphic::Text<unsigned char> myText;
+		myText.setText( myFontCp, testStr, Math::Vec2<bool>(true, true) );
+
+		//Graphic::drawText( &image, myFontCp, Graphic::Point(250,250), testStr,  Math::Vec2<bool>( true, true ) );
+
+		image.drawImage( Graphic::Point( myText.getBias() ) + Graphic::Point(250,250), myText );
 
 	}
 
