@@ -10,7 +10,7 @@
 
 
 #include "../Utility.h"
-#include "../Math.h"
+#include "../Math/Math.h"
 #include "Color.h"
 
 namespace Graphic {

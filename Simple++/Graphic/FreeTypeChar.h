@@ -5,7 +5,7 @@
 #include FT_FREETYPE_H
 
 #include "../UTF8String.h"
-#include "../IO.h"
+#include "../IO/IO.h"
 
 #include "Image.h"
 #include "FontLoadingFunc.hpp"

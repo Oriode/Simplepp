@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "BuildConfig.h"
-#include "Math/Operations.h"
-#include "Math/Vec2.h"
-#include "Math/Vec3.h"
-#include "Math/Vec4.h"
-#include "Math/Mat3.h"
-#include "Math/Mat4.h"
-#include "Math/BoundingBox2D.h"
-#include "Math/Rectangle.h"
-#include "Math/Line.h"
-#include "Math/BasicMath.h"
-#include "Math/Transformations.h"
-#include "Math/InterpolationFunc.hpp"
+#include "../BuildConfig.h"
+#include "Operations.h"
+#include "Vec2.h"
+#include "Vec3.h"
+#include "Vec4.h"
+#include "Mat3.h"
+#include "Mat4.h"
+#include "BoundingBox2D.h"
+#include "Rectangle.h"
+#include "Line.h"
+#include "BasicMath.h"
+#include "Transformations.h"
+#include "InterpolationFunc.hpp"
 
 namespace Math {
 

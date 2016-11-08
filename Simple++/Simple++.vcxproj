@@ -149,10 +149,12 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
-    <ClInclude Include="BasicIO.h" />
-    <ClInclude Include="BasicIO.hpp" />
-    <ClInclude Include="BasicSimpleIO.h" />
-    <ClInclude Include="BasicSimpleLoadableIO.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Map.hpp" />
+    <ClInclude Include="IO\BasicIO.h" />
+    <ClInclude Include="IO\BasicIO.hpp" />
+    <ClInclude Include="IO\BasicSimpleIO.h" />
+    <ClInclude Include="IO\BasicSimpleLoadableIO.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Graphic\BasicGraphic.h" />
@@ -189,12 +191,13 @@
     <ClInclude Include="Graphic\Texture.hpp" />
     <ClInclude Include="Graphic\TextureLoadable.h" />
     <ClInclude Include="Graphic\TextureLoadable.hpp" />
-    <ClInclude Include="IO.h" />
-    <ClInclude Include="IO.hpp" />
+    <ClInclude Include="IO\IO.h" />
+    <ClInclude Include="IO\IO.hpp" />
     <ClInclude Include="BasicLoadable.h" />
-    <ClInclude Include="BasicLoadableIO.h" />
+    <ClInclude Include="IO\BasicLoadableIO.h" />
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="MapObject.hpp" />
     <ClInclude Include="Math\BasicMath.h" />
     <ClInclude Include="Math\InterpolationFunc.hpp" />
     <ClInclude Include="Math\Line.h" />
@@ -202,14 +205,14 @@
     <ClInclude Include="Math\BasicMath.hpp" />
     <ClInclude Include="Math\Transformations.h" />
     <ClInclude Include="Math\Transformations.hpp" />
-    <ClInclude Include="SimpleIO.h" />
-    <ClInclude Include="SimpleIO.hpp" />
+    <ClInclude Include="XML\Node.h" />
+    <ClInclude Include="XML\XMLDocument.h" />
+    <ClInclude Include="IO\SimpleIO.h" />
+    <ClInclude Include="IO\SimpleIO.hpp" />
     <ClInclude Include="Log.h" />
-    <ClInclude Include="Logical.h" />
-    <ClInclude Include="Map.h" />
-    <ClInclude Include="Map.hpp" />
-    <ClInclude Include="Math.h" />
-    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Math\Logical.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Math.hpp" />
     <ClInclude Include="Math\BoundingBox2D.h" />
     <ClInclude Include="Math\BoundingBox2D.hpp" />
     <ClInclude Include="Math\Mat2.h" />
@@ -230,14 +233,12 @@
     <ClInclude Include="MemoryAllocation.h" />
     <ClInclude Include="MemoryAllocation.hpp" />
     <ClInclude Include="Mutex.h" />
-    <ClInclude Include="Network.h" />
+    <ClInclude Include="Network\Network.h" />
     <ClInclude Include="Network\Address.h" />
     <ClInclude Include="Network\AddrInfo.h" />
     <ClInclude Include="Network\Server.h" />
     <ClInclude Include="Network\BasicNetwork.h" />
     <ClInclude Include="Network\Connection.h" />
-    <ClInclude Include="OrderedMap.h" />
-    <ClInclude Include="OrderedMap.hpp" />
     <ClInclude Include="OrderedVector.h" />
     <ClInclude Include="OrderedVector.hpp" />
     <ClInclude Include="Regex.h" />
@@ -247,7 +248,7 @@
     <ClInclude Include="String.hpp" />
     <ClInclude Include="Test.h" />
     <ClInclude Include="Thread.h" />
-    <ClInclude Include="Time.h" />
+    <ClInclude Include="Time\Time.h" />
     <ClInclude Include="Time\Date.h" />
     <ClInclude Include="Time\Date.hpp" />
     <ClInclude Include="Time\Duration.h" />
@@ -264,13 +265,13 @@
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicIO.cpp" />
-    <ClCompile Include="BasicSimpleIO.cpp" />
-    <ClCompile Include="BasicSimpleLoadableIO.cpp" />
+    <ClCompile Include="IO\BasicIO.cpp" />
+    <ClCompile Include="IO\BasicSimpleIO.cpp" />
+    <ClCompile Include="IO\BasicSimpleLoadableIO.cpp" />
     <ClCompile Include="Graphic\FreeImage.cpp" />
-    <ClCompile Include="IO.cpp" />
+    <ClCompile Include="IO\IO.cpp" />
     <ClCompile Include="BasicLoadable.cpp" />
-    <ClCompile Include="BasicLoadableIO.cpp" />
+    <ClCompile Include="IO\BasicLoadableIO.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -282,12 +283,14 @@
     <ClCompile Include="Network\Connection.cpp" />
     <ClCompile Include="SimpleLog.cpp" />
     <ClCompile Include="Thread.cpp" />
-    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="Time\Date.cpp" />
     <ClCompile Include="Time\Tick.cpp" />
     <ClCompile Include="Time\TickRate.cpp" />
     <ClCompile Include="Time\TimePoint.cpp" />
     <ClCompile Include="UTF8String.cpp" />
+    <ClCompile Include="XML\Node.cpp" />
+    <ClCompile Include="XML\XMLDocument.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

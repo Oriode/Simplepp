@@ -9,11 +9,11 @@
 
 
 #include "../Log.h"
-#include "../Math.h"
+#include "../Math/Math.h"
 #include "../Vector.h"
 #include "../String.h"
 #include "../Utility.h"
-#include "../BasicIO.h"
+#include "../IO/BasicIO.h"
 #include "Gradient.h"
 #include "BlendingFunc.hpp"
 #include "ColorFunc.h"
@@ -890,7 +890,7 @@ namespace Graphic {
 		void changeHueSaturationLightness( int hueBias, const Float & saturationFactor, const Float & lightnessFactor );
 
 		///@brief Get the number of bits of the sum of a kernel depending of the types used
-		///@return number of bits of the sum of a integer kernel (floating kernel will every time has a sum of 1.0)
+		///@return number of bits of the sum of a integer kernel (floating kernel will every Time/Time.has a sum of 1.0)
 		template<typename K>
 		constexpr static K getKernelSumNbBits();
 

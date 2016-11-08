@@ -8,7 +8,7 @@
 #include "BasicNetwork.h"
 #include "Connection.h"
 #include "../Vector.h"
-#include "../Math.h"
+#include "../Math/Math.h"
 
 namespace Network {
 

@@ -15,6 +15,8 @@ void UTF8String::concat( const C * buffer, typename const BasicString<C>::Size &
 	_operatorCONCAT( buffer, bufferSize );
 }
 
+
+
 template<typename C>
 void UTF8String::concat( const BasicString<C> & str ) {
 	_operatorCONCAT( str, str.getSize() );
@@ -97,6 +99,52 @@ UTF8String & UTF8String::_operatorEQUAL( const T & str, const Size & bufferSize 
 
 
 
+template<typename TestFunctor>
+bool UTF8String::iterate( typename Iterator * it, CodePoint * codePoint, TestFunctor & testFunctor ) const {
+	char & c = **it;
+	if ( c & 0x80 ) {				//1100 0000
+		char & c1 = *( *it + 1 );
+		if ( c & 0x20 ) {			//1110 0000
+			char & c2 = *( *it + 2 );
+			if ( c & 0x10 ) {		//1111 0000
+				char & c3 = *( *it + 3 );
+				*codePoint = ( ( c & 0x7 ) << 18 ) | ( ( c1 & 0x3F ) << 12 ) | ( ( c2 & 0x3F ) << 6 ) | ( c3 & 0x3F );
+				if ( testFunctor( *codePoint ) ) {
+					*it += 4;
+					return true;
+				}
+			} else {  //If the code point is on THREE Bytes ONLY !
+				*codePoint = ( ( c & 0xF ) << 12 ) | ( ( c1 & 0x3F ) << 6 ) | ( c2 & 0x3F );
+				if ( testFunctor( *codePoint ) ) {
+					*it += 3;
+					return true;
+				}
+			}
+		} else {  //If the code point is on TWO Bytes ONLY !
+			*codePoint = ( ( c & 0x1F ) << 6 ) | ( c1 & 0x3F );
+			if ( testFunctor( *codePoint ) ) {
+				*it += 2;
+				return true;
+			}
+		}
+	} else {  //If the code point is on ONE Byte ONLY !
+		*codePoint = ( CodePoint ) c;
+		if ( c != '\0' ) {
+			if ( testFunctor( *codePoint ) ) {
+				*it += 1;
+				return true;
+			}
+		} else {
+			return false;
+		}
+		
+	}
+	return false;
+}
+
+
+
+
 template<typename C>
 UTF8String & UTF8String::operator=( const BasicString<C> & str ) {
 	return _operatorEQUAL( str, str.getSize() );
@@ -118,6 +166,11 @@ template<typename C>
 UTF8String::UTF8String( const C * str, Size size ) :
 	String( ctor::null ) {
 	_contructorEQUAL( str, size );
+}
+
+template<typename C>
+UTF8String::UTF8String( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt ) : BasicString<char>(beginIt, endIt) {
+
 }
 
 template<typename C>

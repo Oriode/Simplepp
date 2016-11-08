@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Math.h"
-#include "../Time.h"
+#include "../Math/Math.h"
+#include "../Time/Time.h"
 
 
 class TickRate {

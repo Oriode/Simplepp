@@ -5,10 +5,10 @@
 #include FT_FREETYPE_H
 
 #include "../String.h"
-#include "../OrderedMap.h"
+#include "../Map.h"
 #include "../UTF8String.h"
 #include "../Log.h"
-#include "../IO.h"
+#include "../IO/IO.h"
 
 
 #include "FreeTypeChar.h"
@@ -84,7 +84,7 @@ namespace Graphic {
 
 		///@brief Retrieve the complete map of (Unicode codePoint => POINTERS to char )
 		///@return Map of (Unicode codePoint => POINTERS to char )
-		const OrderedMap<UCodePoint, FreeTypeChar<T> *> & getCharMap() const;
+		const Map<UCodePoint, FreeTypeChar<T> *> & getCharMap() const;
 
 		///@brief load a glyph on this 
 		///@return const pointer of the character just created (NULL if nothing was loaded)
@@ -154,7 +154,7 @@ namespace Graphic {
 		void _copy( const _Font<T, LoadingFunc> & font );
 		void _move( _Font<T, LoadingFunc> && font );
 
-		OrderedMap<UCodePoint, FreeTypeChar<T> *> charsMap;
+		Map<UCodePoint, FreeTypeChar<T> *> charsMap;
 		FreeTypeChar<T> * asciiMap[256];
 
 		FT_Library ftLib;

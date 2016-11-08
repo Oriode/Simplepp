@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Log.h"
-#include "../BasicLoadableIO.h"
-#include "../Math.h"
+#include "../IO/BasicLoadableIO.h"
+#include "../Math/Math.h"
 #include "../Vector.h"
 #include "../String.h"
 #include "../Utility.h"

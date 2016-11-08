@@ -73,6 +73,15 @@ BasicString<T>::BasicString( const C * str, Size size ) :
 }
 
 template<typename T>
+template<typename C>
+BasicString<T>::BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt ) :
+	Vector( beginIt, Size(endIt - beginIt), Size(endIt - beginIt + 1) ) {
+	this -> dataTable[size] = T( '\0' );
+}
+
+
+
+template<typename T>
 BasicString<T>::BasicString() :
 	Vector( Size( 0 ), Size( 1 ) ) {
 	this -> dataTable[0] = T( '\0' );
@@ -2534,7 +2543,7 @@ BasicString<T> & BasicString<T>::operator=( const C * str ) {
 	this -> size = BasicString<C>::getSize( str );
 	if ( getMaxSize() < this -> size + 1 )
 		_allocateNoNull( this -> size + 1 );
-	setValuei( this -> size, T( '\0' ) );
+	setValueI( this -> size, T( '\0' ) );
 	copy( str, 0, this -> size );
 
 	return *this;
@@ -2546,8 +2555,8 @@ BasicString<T> & BasicString<T>::operator=( const T & c ) {
 	this -> size = 1;
 	if ( getMaxSize() < 2 )
 		_allocateNoNull( 2 );
-	setValuei( 0, T( c ) );
-	setValuei( 1, T( '\0' ) );
+	setValueI( 0, T( c ) );
+	setValueI( 1, T( '\0' ) );
 
 	return *this;
 }
@@ -2676,43 +2685,43 @@ typename Vector<T>::Size BasicString<T>::getSize( const T * str ) {
 
 
 template<typename T>
-typename BasicString<T>::RandomAccessIterator BasicString<T>::getLastIt( const BasicString<T> & str ) const {
+typename BasicString<T>::Iterator BasicString<T>::getLastIt( const BasicString<T> & str ) const {
 	if ( !str.getSize() || this -> size < str.getSize() )
-		goto NOTFOUND;
+		goto getLastItNOTFOUND;
 
-	auto iteratorSize = getEnd() - str.getSize() + 1;
-	for ( auto it = iteratorSize - 1; it >= getBegin();) {
+	auto iteratorSize( getEnd() - str.getSize() + 1 );
+	for ( auto it( iteratorSize - 1 ); it >= getBegin();) {
 		for ( Size j = 0; j < str.getSize(); j++ ) {
 			if ( *( it + j ) != str[j] ) {
-				goto ENDLOOP;
+				goto getLastItENDLOOP;
 			}
 		}
 		return it;
-ENDLOOP:it--;
+getLastItENDLOOP:it--;
 	}
-NOTFOUND:return getEnd();
+getLastItNOTFOUND:return getEnd();
 }
 
 template<typename T>
-typename BasicString<T>::RandomAccessIterator BasicString<T>::getFirstIt( const BasicString<T> & str ) const {
+typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const BasicString<T> & str ) const {
 	if ( !str.getSize() || this -> size < str.getSize() )
-		goto NOTFOUND;
+		goto getFirstItNOTFOUND;
 
 	auto iteratorSize = getEnd() - str.getSize() + 1;
 	for ( auto it = getBegin(); it < iteratorSize;) {
 		for ( Size j = 0; j < str.getSize(); j++ ) {
 			if ( *( it + j ) != str[j] ) {
-				goto ENDLOOP;
+				goto getFirstItENDLOOP;
 			}
 		}
 		return it;
-ENDLOOP:it++;
+getFirstItENDLOOP:it++;
 	}
-NOTFOUND:return getEnd();
+getFirstItNOTFOUND:return getEnd();
 }
 
 template<typename T>
-typename BasicString<T>::RandomAccessIterator BasicString<T>::getLastIt( const T & c ) const {
+typename BasicString<T>::Iterator BasicString<T>::getLastIt( const T & c ) const {
 	for ( auto it = getEnd() - 1; it >= getBegin(); it-- ) {
 		if ( *it == c )
 			return it;
@@ -2721,7 +2730,7 @@ typename BasicString<T>::RandomAccessIterator BasicString<T>::getLastIt( const T
 }
 
 template<typename T>
-typename BasicString<T>::RandomAccessIterator BasicString<T>::getFirstIt( const T & c ) const {
+typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const T & c ) const {
 	for ( auto it = getBegin(); it < getEnd(); it++ ) {
 		if ( *it == c ) {
 			return it;
@@ -2754,7 +2763,7 @@ typename BasicString<T>::Size BasicString<T>::getFirst( const T & c ) const {
 
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const Size & bufferSize, const T * toSearch, const Size & toSearchSize ) {
+typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
@@ -2773,7 +2782,7 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const Size & bufferSize, const T * toSearch, const Size & toSearchSize ) {
+typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
@@ -2792,7 +2801,7 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const Size & bufferSize, const T & c ) {
+typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T & c ) {
 	for ( Size i = bufferSize - 1; i >= 0; i-- ) {
 		if ( buffer[i] == c ) {
 			return i;
@@ -2802,7 +2811,7 @@ typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const S
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const Size & bufferSize, const T & c ) {
+typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T & c ) {
 	for ( Size i = 0; i < bufferSize; i++ ) {
 		if ( buffer[i] == c ) {
 			return i;
@@ -2913,20 +2922,47 @@ const T * BasicString<T>::toCString() const {
 
 
 
-
-
-
 template<typename T>
-BasicString<T> BasicString<T>::getSubStr( const Size & index, const Size & size ) {
-	if ( index > this -> size )
+BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const {
+	if ( beginIt >= getEnd() )
 		return BasicString<T>();
 
-	Size realSize = Math::min( size, this -> size - index );
-	return BasicString<T>( this -> dataTable + index, realSize );
+	if ( beginIt < getBegin() )
+		beginIt = getBegin();
+	if ( size > getEnd() - beginIt )
+		size = getEnd() - beginIt;
+
+	return BasicString<T>( beginIt, size );
 }
 
 template<typename T>
-BasicString<T> BasicString<T>::getFileName() {
+BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator beginIt, typename BasicString<T>::Iterator endIt ) const {
+	if ( beginIt >= getEnd() || endIt < getBegin() )
+		return BasicString<T>();
+
+	if ( beginIt < getBegin() )
+		beginIt = getBegin();
+
+	if ( endIt > getEnd() )
+		endIt = getEnd();
+
+	return BasicString<T>( beginIt, Size(endIt - beginIt) );
+}
+
+
+template<typename T>
+BasicString<T> BasicString<T>::getSubStr( Size index, Size size ) const {
+	if ( index > this -> size )
+		return BasicString<T>();
+
+	if ( size > this -> size - index )
+		size = this -> size - index;
+
+	return BasicString<T>( this -> dataTable + index, size );
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::getFileName() const {
 	Size lastSlash = getLast( T( '/' ) );
 	if ( lastSlash == BasicString<T>::overflow )
 		return *this;
@@ -2935,7 +2971,7 @@ BasicString<T> BasicString<T>::getFileName() {
 }
 
 template<typename T>
-BasicString<T> BasicString<T>::getDirectory() {
+BasicString<T> BasicString<T>::getDirectory() const {
 	Size lastSlash = getLast( T( '/' ) );
 	if ( lastSlash == BasicString<T>::overflow )
 		return *this;
@@ -3253,11 +3289,14 @@ BasicString<T> & BasicString<T>::operator+=( const wchar_t & c ) {
 
 template<typename T>
 void BasicString<T>::resize( typename Vector<T>::Size newSize ) {
-	if ( newSize + 1 > this -> maxSize )
-		reserve( newSize + 1 );
-
-	this -> size = newSize;
-	_updateIterators();
+	if ( newSize + 1 > this -> maxSize ) {
+		this -> size = newSize;
+		_extendBuffer( newSize + 1 );
+	} else {
+		this -> size = newSize;
+		_updateIterators();
+	}
+	*( this -> iteratorEnd ) = T( '\0' );
 }
 
 
@@ -3288,13 +3327,13 @@ bool BasicString<T>::read( std::fstream * fileStream ) {
 /* format()                                                             */
 /************************************************************************/
 template<typename T>
-void BasicString<T>::_format( const typename BasicString<T>::RandomAccessIterator & referenceStringBegin, const typename BasicString<T>::RandomAccessIterator & referenceStringEnd, BasicString<T> * newString ) {
+void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString ) {
 	newString -> _concatWOS( referenceStringBegin, referenceStringEnd - referenceStringBegin );
 }
 
 template<typename T>
 template<typename T1, typename... Types>
-void BasicString<T>::_format( const typename  BasicString<T>::RandomAccessIterator & referenceStringBegin, const typename BasicString<T>::RandomAccessIterator & referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
+void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
 
 
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {

@@ -78,7 +78,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename U>
-	MATH_FUNC_QUALIFIER Vec2<T>::Vec2( const U( &v )[2] ) : x( v[0] ), y( v[1] ) {
+	MATH_FUNC_QUALIFIER Vec2<T>::Vec2( const U( &v )[2] ) : x( T(v[0]) ), y( T(v[1]) ) {
 	}
 
 

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../Math.h"
+#include "../Math/Math.h"
 #include "BasicGraphic.h"
 
 

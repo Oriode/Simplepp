@@ -37,10 +37,9 @@
 #endif
  
 
-#if defined DEBUG || !defined NDEBUG
-#ifndef debug
+#if defined DEBUG
+#undef debug
 #define debug(code); code
-#endif
 #define error(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Error, __FILE__, __LINE__);
 #define log(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Info, __FILE__, __LINE__);
 #define warn(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Warning, __FILE__, __LINE__);
@@ -54,9 +53,8 @@
 #define windowsDebug(msg);
 #endif
 #else
-#ifndef debug
+#undef debug
 #define debug( ... );
-#endif
 #define log( ... );
 #define warn( ... );
 #define error( ... );

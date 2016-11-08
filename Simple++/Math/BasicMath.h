@@ -47,6 +47,9 @@ namespace Math {
 	///@return value between min and max
 	template<typename T = float>
 	MATH_FUNC_QUALIFIER T random( const T & min, const T & max );
+	MATH_FUNC_QUALIFIER unsigned long long random( unsigned long long min, unsigned long long max );
+	MATH_FUNC_QUALIFIER int random( int min, int max );
+
 
 	///@brief get a random value between 0.0 and 1.0
 	///@return Random number between 0.0 and 1.0

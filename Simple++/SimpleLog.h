@@ -24,10 +24,9 @@
 
 
 
-#if defined DEBUG || !defined NDEBUG
-#ifndef debug
+#if defined DEBUG
+#undef debug
 #define debug(code); code
-#endif
 #define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, __FILE__, __LINE__);
 #define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, __FILE__, __LINE__);
 #define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, __FILE__, __LINE__);
@@ -38,9 +37,8 @@
 #define _windowsDebug(msg);
 #endif
 #else
-#ifndef debug
+#undef debug
 #define debug(code);
-#endif
 #define _log(msg);
 #define _warn(msg);
 #define _error(msg);

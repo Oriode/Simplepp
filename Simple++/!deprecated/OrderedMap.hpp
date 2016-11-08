@@ -7,7 +7,7 @@ T * OrderedMap<I, T, Compare>::getValue( const I & index ) {
 		if ( this -> size == 0 )
 			return NULL;
 		else {
-			return &( this -> dataTable[0].value );
+			return &( getValueI( 0 ) );
 		}
 	}
 
@@ -27,16 +27,16 @@ T * OrderedMap<I, T, Compare>::getValue( const I & index ) {
 
 
 	if ( getIndexi( minIndex ) == index ) {
-		return &( this -> dataTable[minIndex].value );
+		return &( getValueI( minIndex ) );
 	} else if ( getIndexi( maxIndex ) == index ) {
-		return &( this -> dataTable[maxIndex].value );
+		return &( getValueI( maxIndex ) );
 	}
 	return NULL;
 }
 
 
 
-template<typename I, typename T, typename Compare /*= Math::Logical::less<I>*/>
+template<typename I, typename T, typename Compare>
 const T * OrderedMap<I, T, Compare>::getValue( const I & index ) const {
 	return const_cast< OrderedMap<I, T, Compare> * >( this ) -> getValue( index );
 }
@@ -76,13 +76,13 @@ typename OrderedMap<I, T, Compare>::Size OrderedMap<I, T, Compare>::getNumEntrie
 
 template<typename I, typename T, typename Compare>
 void OrderedMap<I, T, Compare>::_sort() {
-	Map::_sort( this -> sortFunction );
+	Map<I, T>::sort( this -> sortFunction );
 	this -> isOrdered = true;
 }
 
 template<typename I, typename T, typename Compare>
 void OrderedMap<I, T, Compare>::insertFast( const I & index, const T & data ) {
-	Map::insert( index, data );
+	Map<I, T>::insert( index, data );
 	this -> isOrdered = false;
 }
 
@@ -224,7 +224,7 @@ void OrderedMap<I, T, Compare>::insert( const I & index, const T & data ) {
 	Size deltaIndex = maxIndex;
 
 	while ( deltaIndex > 1 ) {
-		Size thisIndex = minIndex + deltaIndex / 2;
+		Size thisIndex = minIndex + ( deltaIndex >> 1 );
 
 		if ( this -> sortFunction( getIndexi( thisIndex ), index ) )
 			minIndex = thisIndex;
@@ -244,35 +244,14 @@ void OrderedMap<I, T, Compare>::insert( const I & index, const T & data ) {
 
 }
 
-template<typename I, typename T, typename Compare>
-void OrderedMap<I, T, Compare>::inserti( Size it, const I & index, const T & data ) {
-	if ( this -> maxSize == this -> size ) {
-		if ( this -> maxSize < 10 )
-			reserve( this -> maxSize + 1 );
-		else
-			reserve( this -> maxSize * 2 );
-	}
 
-
-	for ( Size i = this -> size, j = this -> size - 1; i > it; i--, j-- ) {
-		setValuei( i, getValuei( j ) );
-		setIndexi( i, getIndexi( j ) );
-	}
-
-	this -> size++;
-
-	setValuei( it, data );
-	setIndexi( it, index );
-
-	_updateIterators();
-}
 
 
 
 
 template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=( const OrderedMap<I, T, Compare> & map ) {
-	Map::operator =( map );
+	Map<I, T>::operator =( map );
 	this -> isOrdered = map.isOrdered;
 	this -> sortFunction = map.sortFunction;
 	return *this;
@@ -280,7 +259,7 @@ OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=( const OrderedM
 
 template<typename I, typename T, typename Compare>
 OrderedMap<I, T, Compare> & OrderedMap<I, T, Compare>::operator=( OrderedMap<I, T, Compare> && map ) {
-	Map::operator =( Utility::toRValue(map) );
+	Map<I, T>::operator =( Utility::toRValue(map) );
 	this -> isOrdered = Utility::toRValue( map.isOrdered );
 	this -> sortFunction = Utility::toRValue( map.sortFunction );
 	return *this;
@@ -293,15 +272,14 @@ OrderedMap<I, T, Compare>::~OrderedMap( void ) {
 }
 
 template<typename I, typename T, typename Compare>
-OrderedMap<I, T, Compare>::OrderedMap( Compare & compareFunc ) :
+OrderedMap<I, T, Compare>::OrderedMap( const Compare & compareFunc ) :
 	isOrdered( true ),
 	sortFunction( compareFunc ) {
 }
 
 
 template<typename I, typename T, typename Compare>
-OrderedMap<I, T, Compare>::OrderedMap( const OrderedMap<I, T, Compare> & map ) :
-	Map( map ),
+OrderedMap<I, T, Compare>::OrderedMap( const OrderedMap<I, T, Compare> & map ) : Map<I, T>( map ),
 	isOrdered( map.isOrdered ),
 	sortFunction( map.sortFunction ) {
 
@@ -309,8 +287,7 @@ OrderedMap<I, T, Compare>::OrderedMap( const OrderedMap<I, T, Compare> & map ) :
 
 
 template<typename I, typename T, typename Compare>
-OrderedMap<I, T, Compare>::OrderedMap( OrderedMap<I, T, Compare> && map ) :
-	Map( Utility::toRValue( map ) ),
+OrderedMap<I, T, Compare>::OrderedMap( OrderedMap<I, T, Compare> && map ) : Map<I, T>( Utility::toRValue( map ) ),
 	isOrdered( Utility::toRValue( map.isOrdered ) ),
 	sortFunction( Utility::toRValue( map.sortFunction ) ) {
 
@@ -327,7 +304,7 @@ std::ostream & operator<<( std::ostream & stream, const OrderedMap<I, T, Compare
 	for ( Vector<T>::Size i = 0; i < map.getSize(); i++ ) {
 		if ( i )
 			stream << ",\n";
-		stream << "[" << map.getIndexi( i ) << "] -> " << map.getValuei( i );
+		stream << "[" << map.getIndexi( i ) << "] -> " << map.getValueI( i );
 	}
 	stream << " };";
 	return stream;
@@ -335,19 +312,31 @@ std::ostream & operator<<( std::ostream & stream, const OrderedMap<I, T, Compare
 
 
 
-template<typename I, typename T, typename Compare /*= Math::Logical::less<I>*/>
+template<typename I, typename T, typename Compare>
 bool OrderedMap<I, T, Compare>::write( std::fstream * fileStream ) const {
 	if ( !this -> isOrdered )
 		_sort();
 	if ( !Map::write( fileStream ) )
 		return false;
+	if ( !IO::write( fileStream, &this -> sortFunction ) ) {
+		_clear();
+		return false;
+	}
 	return true;
 }
 
-template<typename I, typename T, typename Compare /*= Math::Logical::less<I>*/>
+template<typename I, typename T, typename Compare>
 bool OrderedMap<I, T, Compare>::read( std::fstream * fileStream ) {
 	this -> isOrdered = true;
 	if ( !Map::read( fileStream ) )
 		return false;
+	if ( !IO::read( fileStream, &this -> sortFunction ) )
+		return false;
 	return true;
+}
+
+template<typename I, typename T, typename Compare>
+template<typename C>
+OrderedMap<I, T, Compare>::operator BasicString<C>() const {
+	return static_cast<const Map<I, T> *>(this) -> operator BasicString<C>();
 }

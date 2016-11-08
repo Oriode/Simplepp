@@ -7,13 +7,15 @@
 template<typename I, typename T, typename Compare = Math::Logical::Less>
 class OrderedMap : protected Map<I, T> {
 public:
-	OrderedMap( Compare & compareFunc = Compare() );
+	OrderedMap( const Compare & compareFunc = Compare() );
 	OrderedMap( const OrderedMap & map );
 	OrderedMap( OrderedMap && map );
 
 
 	~OrderedMap( void );
 
+	template<typename C = char>
+	operator BasicString<C>() const;
 
 	///@brief Operator [] return the value for a specified index (can be NULL if the value is not found)
 	///@param index Index
@@ -29,8 +31,8 @@ public:
 
 	using Map<I, T>::Size;
 	using Map<I, T>::operator();
-	using Map<I, T>::getValuei;
-	using Map<I, T>::getValueit;
+	using Map<I, T>::getValueI;
+	using Map<I, T>::getValueIt;
 	using Map<I, T>::getIndexi;
 	using Map<I, T>::getIndexit;
 
@@ -87,7 +89,6 @@ private:
 	Compare & sortFunction;
 	bool isOrdered;
 
-	void inserti( Size i, const I & index, const T & data );
 	void _sort();
 };
 template<typename I, typename T, typename Compare>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BasicSimpleIO.h"
-#include "BasicLoadable.h"
+#include "../BasicLoadable.h"
 
 class BasicSimpleLoadableIO : public BasicSimpleIO, public BasicLoadable {
 public:

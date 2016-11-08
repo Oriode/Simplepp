@@ -88,6 +88,7 @@ UTF8String::UTF8String( const char * str ) :
 }
 
 
+
 UTF8String & UTF8String::operator=( const String & str ) {
 	return _operatorEQUAL( str, str.getSize() );
 }
@@ -130,6 +131,41 @@ UTF8String::~UTF8String() {
 
 
 
+UTF8String UTF8String::getSubStr( Size index, Size size ) const  {
+	auto beginIt( getBegin() );
+	for ( ; index && this -> iterate( &beginIt ); index-- );
+
+	auto endIt( beginIt );
+	for ( ; size && this -> iterate( &endIt ); size-- );
+
+	return UTF8String( beginIt, endIt );
+}
+
+
+UTF8String UTF8String::getSubStr( typename UTF8String::Iterator beginIt, Size size ) const {
+	if ( beginIt >= getEnd() )
+		return UTF8String();
+	if ( beginIt < getBegin() )
+		beginIt = getBegin();
+
+
+	auto endIt( beginIt );
+	for ( ; this -> iterate( &endIt ); );
+
+	return UTF8String( beginIt, endIt );
+}
+
+UTF8String UTF8String::getSubStr( typename UTF8String::Iterator beginIt, typename UTF8String::Iterator endIt ) const {
+	if ( beginIt >= getEnd() || endIt < getBegin() )
+		return UTF8String();
+	if ( beginIt < getBegin() )
+		beginIt = getBegin();
+	if ( endIt > getEnd() )
+		endIt = getEnd();
+
+	return UTF8String( beginIt, endIt );
+}
+
 UTF8String::CodePoint UTF8String::getCodePoint( char charTmp[4] ) {
 	if ( charTmp[0] & 0x80 ) {				//1100 0000
 		if ( charTmp[1] & 0x20 ) {			//1110 0000
@@ -147,7 +183,7 @@ UTF8String::CodePoint UTF8String::getCodePoint( char charTmp[4] ) {
 
 
 
-bool UTF8String::iterate( RandomAccessIterator * i ) const {
+bool UTF8String::iterate( typename UTF8String::Iterator * i ) const {
 	char & c = **i;
 	if ( c & 0x80 ) {				//1000 0000
 		if ( c & 0x20 ) {			//1110 0000
@@ -160,15 +196,19 @@ bool UTF8String::iterate( RandomAccessIterator * i ) const {
 			*i += 2;
 		}
 	} else {  //If the code point is on ONE Byte ONLY !
-		*i += 1;
+		if ( c != '\0' ) {
+			*i += 1;
+		} else {
+			return false;
+		}
 	}
-	return *i < getEnd();
+	return true;
 }
 
 
 
 
-bool UTF8String::iterate( RandomAccessIterator * i, CodePoint * codePoint ) const {
+bool UTF8String::iterate( typename UTF8String::Iterator * i, CodePoint * codePoint ) const {
 	char & c = **i;
 	if ( c & 0x80 ) {				//1100 0000
 		char & c1 = *( *i + 1 );
@@ -191,13 +231,56 @@ bool UTF8String::iterate( RandomAccessIterator * i, CodePoint * codePoint ) cons
 		}
 	} else {  //If the code point is on ONE Byte ONLY !
 		*codePoint = ( CodePoint ) c;
-		*i += 1;
-		return c != '\0';
+		if ( c != '\0' ) {
+			*i += 1;
+			return true;
+		} else
+			return false;
 	}
 }
 
 
 
+
+bool UTF8String::cmp( typename UTF8String::Iterator it, const UTF8String & otherStr, typename UTF8String::Iterator anotherIt, Size size ) const {
+	return cmp( &it, otherStr, &anotherIt, size );
+}
+
+
+bool UTF8String::cmp( typename UTF8String::Iterator * it, const UTF8String & otherStr, typename UTF8String::Iterator * anotherIt, Size size ) const {
+	UCodePoint codePointThis;
+	UCodePoint codePointOther;
+	while ( size ) {
+		if ( !this -> iterate( it, &codePointThis ) ) {
+			if ( !otherStr.iterate( anotherIt, &codePointOther ) ) return true;
+			else return false;
+		}
+		if ( !otherStr.iterate( anotherIt, &codePointOther ) ) return false;
+		if ( codePointThis != codePointOther ) return false;
+		size--;
+	}
+	return true;
+}
+
+
+bool UTF8String::cmp( typename UTF8String::Iterator it, const  BasicString<char> & otherStr, typename BasicString<char>::Iterator anotherIt, Size size ) const {
+	return cmp( &it, otherStr, &anotherIt, size );
+}
+
+
+bool UTF8String::cmp( typename UTF8String::Iterator * it, const  BasicString<char> & otherStr, typename BasicString<char>::Iterator * anotherIt, Size size ) const {
+	while ( size ) {
+		if ( ( **it ) == ( **anotherIt ) ) {
+			if ( ( **it ) == char( '\0' ) ) return true;
+		} else {
+			return false;
+		}
+		size--;
+		( *it )++;
+		( *anotherIt )++;
+	}
+	return true;
+}
 
 UTF8String::Size UTF8String::getSizeUTF8() const {
 	Size numChar = 0;

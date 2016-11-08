@@ -16,8 +16,27 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T random( const T & min, const T & max ) {
 		static std::random_device _randomDevice;
-		return T(_randomDevice()) / T( _randomDevice.max()) * ( max - min ) + min;
+		static T randomMax( _randomDevice.max() );
+		T range( max - min );
+		T rng( _randomDevice() );
+
+		return rng * range / randomMax + min;
 	}
+	MATH_FUNC_QUALIFIER int random( int min, int max ) {
+		static std::random_device _randomDevice;
+		static unsigned long long randomMax( _randomDevice.max() );
+		unsigned long long range( max - min );
+		unsigned long long rng( _randomDevice() );
+		return int(rng * range / randomMax) + min;
+	}
+	MATH_FUNC_QUALIFIER unsigned int random( unsigned int min, unsigned int max ) {
+		static std::random_device _randomDevice;
+		static unsigned long long randomMax( _randomDevice.max() );
+		unsigned long long range( max - min );
+		unsigned long long rng( _randomDevice() );
+		return unsigned int( rng * range / randomMax ) + min;
+	}
+
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T random() {

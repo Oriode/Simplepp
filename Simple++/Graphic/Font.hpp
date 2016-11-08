@@ -112,7 +112,7 @@ namespace Graphic {
 			delete[] this -> memoryFontObject;
 		}
 		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); it++ ) 
-			delete it -> getValue();
+			delete this -> charsMap.getValueIt(it);
 		
 		this -> charsMap.clear();
 	}
@@ -157,7 +157,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	const OrderedMap<UCodePoint, FreeTypeChar<T> *> & _Font<T, LoadingFunc>::getCharMap() const {
+	const Map<UCodePoint, FreeTypeChar<T> *> & _Font<T, LoadingFunc>::getCharMap() const {
 		return this -> charsMap;
 	}
 
@@ -200,9 +200,9 @@ namespace Graphic {
 			}
 		}
 		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); it++ ) {
-			delete it -> getValue();
-			if ( this -> ftFace ) it -> setValue( new FreeTypeChar<T>( this -> ftFace, it -> getIndex(), this -> loadingFunctor ) );
-			else it -> setValue( NULL );
+			delete this -> charsMap.getValueIt(it);
+			if ( this -> ftFace ) this -> charsMap.setValueIt( it, new FreeTypeChar<T>( this -> ftFace, this -> charsMap.getIndexit(it), this -> loadingFunctor ) );
+			else this -> charsMap.setValueIt( it, NULL );
 		}
 		this -> charsMap.eraseValueAll( NULL );
 	}
@@ -233,7 +233,7 @@ namespace Graphic {
 		if ( !IO::write( fileStream, &this -> loadingFunctor ) )
 			return false;
 
-		OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded = this -> charsMap.getSize();
+		Map<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded = this -> charsMap.getSize();
 		for ( size_t i( 0 ); i < 256; i++ ) {
 			if ( this -> asciiMap[i] ) 
 				nbCharsLoaded++;
@@ -244,7 +244,7 @@ namespace Graphic {
 			return false;
 
 		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); this -> charsMap.iterate( &it ) ) {
-			if ( !IO::write( fileStream, it -> getValue() ) )
+			if ( !IO::write( fileStream, this -> charsMap.getValueIt(it) ) )
 				return false;
 		}
 
@@ -309,13 +309,13 @@ namespace Graphic {
 		
 		_loadFreeType( this -> memoryFontObject, this -> memorySize, this -> pixSize );
 
-		OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded;
+		Map<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded;
 		if ( !IO::read( fileStream, &nbCharsLoaded ) )
 			return false;
 
-		nbCharsLoaded = Math::min( nbCharsLoaded, OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size( 100000 ) );
+		nbCharsLoaded = Math::min( nbCharsLoaded, Map<UCodePoint, FreeTypeChar<T> *>::Size( 100000 ) );
 
-		for ( OrderedMap<UCodePoint, FreeTypeChar<T> *>::Size i = 0; i < nbCharsLoaded; i++ ) {
+		for ( Map<UCodePoint, FreeTypeChar<T> *>::Size i = 0; i < nbCharsLoaded; i++ ) {
 			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( );
 
 			if ( newChar -> read( fileStream ) ) {
@@ -466,7 +466,7 @@ namespace Graphic {
 		}
 
 		for ( auto it( font.charsMap.getBegin() ); it != font.charsMap.getEnd(); font.charsMap.iterate( &it ) ) {
-			this -> charsMap.insertFast( it -> getIndex(), new FreeTypeChar<T>( *( it -> getValue() ) ) );
+			this -> charsMap.insertFast( this -> charsMap.getIndexit( it ), new FreeTypeChar<T>( *( this -> charsMap.getValueIt(it) ) ) );
 		}
 
 		

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "String.h"
-#include "Log.h"
+#include "../String.h"
+#include "../Log.h"
 #include "BasicSimpleLoadableIO.h"
-#include "String.h"
 
 class BasicLoadableIO : public BasicSimpleLoadableIO {
 public:

@@ -9,14 +9,14 @@ typename OrderedVector<T, Compare>::Size OrderedVector<T, Compare>::getNumEntrie
 
 	Size numEntries = 1;
 	for ( Size i = thisIndex + 1; i < this -> size; i++ ) {
-		if ( getValuei( i ) == value )
+		if ( getValueI( i ) == value )
 			numEntries++;
 		else
 			break;
 	}
 	if ( thisIndex > 0 ) {
 		for ( Size i = thisIndex - 1; i >= 0; i-- ) {
-			if ( getValuei( i ) == value )
+			if ( getValueI( i ) == value )
 				numEntries++;
 			else
 				break;
@@ -34,7 +34,7 @@ bool OrderedVector<T, Compare>::exists( const T & data ) {
 	if ( this -> size == 0 )
 		return false;
 	else if ( this -> size == 1 )
-		return ( getValuei( 0 ) == data );
+		return ( getValueI( 0 ) == data );
 
 
 	Size maxIndex = getSize() - 1;
@@ -44,7 +44,7 @@ bool OrderedVector<T, Compare>::exists( const T & data ) {
 
 	while ( deltaIndex > 1 ) {
 		Size thisIndex = minIndex + deltaIndex / 2;
-		if ( this -> sortFunction( getValuei( thisIndex ), data ) )
+		if ( this -> sortFunction( getValueI( thisIndex ), data ) )
 			minIndex = thisIndex;
 		else
 			maxIndex = thisIndex;
@@ -52,7 +52,7 @@ bool OrderedVector<T, Compare>::exists( const T & data ) {
 	}
 
 
-	if ( getValuei( minIndex ) == data || getValuei( maxIndex ) == data )
+	if ( getValueI( minIndex ) == data || getValueI( maxIndex ) == data )
 		return true;
 	return false;
 }
@@ -92,11 +92,6 @@ OrderedVector<T, Compare>::OrderedVector( const OrderedVector & vector ) :
 	sortFunction( vector.sortFunction ) {
 }
 
-template<typename T, typename Compare>
-OrderedVector<T, Compare>::~OrderedVector( const Compare & compareFunc ) :
-	sortFunction( compareFunc ) {
-
-}
 
 template<typename T, typename Compare>
 OrderedVector<T, Compare>::OrderedVector( const OrderedVector<T, Compare> & v ) :
@@ -121,9 +116,9 @@ typename OrderedVector<T, Compare>::Size OrderedVector<T, Compare>::search( cons
 
 
 	if ( this -> size == 0 )
-		return -1;
+		return Vector<T>::overflow;
 	else if ( this -> size == 1 )
-		return ( getValuei( 0 ) == data ) ? 0 : -1;
+		return ( getValueI( 0 ) == data ) ? 0 : -1;
 
 
 
@@ -134,7 +129,7 @@ typename OrderedVector<T, Compare>::Size OrderedVector<T, Compare>::search( cons
 
 	while ( deltaIndex > 1 ) {
 		Size thisIndex = minIndex + deltaIndex / 2;
-		if ( this -> sortFunction( getValuei( thisIndex ), data ) )
+		if ( this -> sortFunction( getValueI( thisIndex ), data ) )
 			minIndex = thisIndex;
 		else
 			maxIndex = thisIndex;
@@ -142,12 +137,12 @@ typename OrderedVector<T, Compare>::Size OrderedVector<T, Compare>::search( cons
 	}
 
 
-	if ( getValuei( minIndex ) == data )
+	if ( getValueI( minIndex ) == data )
 		return minIndex;
-	else if ( getValuei( maxIndex ) == data )
+	else if ( getValueI( maxIndex ) == data )
 		return maxIndex;
 	else
-		return -1;
+		return Vector<T>::overflow;
 }
 
 
@@ -163,10 +158,10 @@ void OrderedVector<T, Compare>::insert( Size index, const T & data ) {
 	}
 
 	for ( Size i = getSize(), Size j = getSize() - 1; i > index; i--, j-- )
-		setValuei( i, getValuei( j ) );
+		setValueI( i, getValueI( j ) );
 
 	this -> size++;
-	setValuei( index, data );
+	setValueI( index, data );
 }
 
 template<typename T, typename Compare>
@@ -186,48 +181,55 @@ void OrderedVector<T, Compare>::insert( const T & data ) {
 
 	while ( deltaIndex > 1 ) {
 		Size thisIndex = minIndex + deltaIndex / 2;
-		if ( this -> sortFunction( getValuei( thisIndex ), data ) )
+		if ( this -> sortFunction( getValueI( thisIndex ), data ) )
 			minIndex = thisIndex;
 		else
 			maxIndex = thisIndex;
 		deltaIndex = maxIndex - minIndex;
 	}
 
-	if ( this -> sortFunction( getValuei( minIndex ), data ) )
+	if ( this -> sortFunction( getValueI( minIndex ), data ) )
 		insert( maxIndex, data );
 	else
 		insert( minIndex, data );
 }
 
 
-template<typename T, typename Compare /*= Math::Logical::Less*/>
-OrderedVector<T, Compare>::OrderedVector( Compare & compareFunc /*= Compare() */ ) : 
+template<typename T, typename Compare>
+OrderedVector<T, Compare>::OrderedVector( const Compare & compareFunc ) : 
 	isOrdered(true),
 	sortFunction( compareFunc )
 {
 
 }
 
-
-template<typename T, typename Compare /*= Math::Logical::Less*/>
+template<typename T, typename Compare>
 OrderedVector<T, Compare>::~OrderedVector( void ) {
 
 }
 
-
-template<typename T, typename Compare /*= Math::Logical::less*/>
+template<typename T, typename Compare>
 bool OrderedVector<T, Compare>::write( std::fstream * fileStream ) const {
 	if ( !this -> isOrdered )
 		_sort();
 	if ( !Vector<T>::write( fileStream ) )
 		return false;
+	if ( !IO::write( fileStream, &this -> sortFunction ) )
+		return false;
 	return true;
 }
 
-template<typename T, typename Compare /*= Math::Logical::less*/>
+template<typename T, typename Compare>
 bool OrderedVector<T, Compare>::read( std::fstream * fileStream ) {
 	this -> isOrdered = true;
-	if ( !Vector<T>::read( fileStream ) )
+
+	// In this case already clear
+	if ( !Vector<T>::read( fileStream ) ) 
 		return false;
+	
+	if ( !IO::read( fileStream, &this -> sortFunction ) ) {
+		_clear();
+		return false;
+	}
 	return true;
 }

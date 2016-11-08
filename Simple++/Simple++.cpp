@@ -16,19 +16,23 @@
 //#define SPEEDTEST_FILTER
 //#define SPEEDTEST_ARRAYACCESS
 //#define SPEEDTEST_LOGICAL
-#define SPEEDTEST_BLENDING
+//#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
 //#define SPEEDTEST_STRING_CONCAT
 //#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
 //#define SPEEDTEST_VECTOR
-//#define SPEEDTEST_MAP
+#define SPEEDTEST_MAP
 //#define SPEEDTEST_NETWORK
 //#define SPEEDTEST_CAST
 //#define SPEEDTEST_ARITHMETIC
 
 
-#ifndef _LIB 
+//#define DEBUG_GRAPHIC
+//#define DEBUG_XML
+#define DEBUG_MAP
+
+#ifndef _LIB
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -36,21 +40,20 @@
 #include <regex>
 #include <functional>
 
-#include "Network.h"
-#include "Math.h"
+#include "Network/Network.h"
+#include "Math/Math.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
-#include "OrderedMap.h"
+#include "Map.h"
 #include "Application.h"
 #include "FreeImage.h"
 #include "Graphic.h"
 #include "Utility.h"
 #include "Regex.h"
-#include "Time.h"
+#include "Time/Time.h"
 #include "Test.h"
-
-
+#include "XML/XMLDocument.h"
 
 
 template<typename T>
@@ -81,16 +84,15 @@ int main( int argc, char * argv[] ) {
 	/* DEBUG PART															*/
 	/************************************************************************/
 
-	Application<char> app( argc, argv );
+	//Application<char> app( argc, argv );
 
-	Math::Vec2<float> test({ 1 , 2 });
 
 
 	/************************************************************************/
 	/* MAPS                                                                 */
 	/************************************************************************/
 	/*{
-		OrderedMap<unsigned long, unsigned long> mapMine;
+		Map<unsigned long, unsigned long> mapMine;
 		std::map<unsigned long, unsigned long> mapSTD;
 
 		Log::startChrono();
@@ -107,12 +109,103 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( String( "Map .insert(); Mine " ) );
 		for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
-			Log::displayLog( String( it -> getIndex() ) + " : " + it -> getValue() );
+			Log::displayLog( String( mapMine.getIndexit(it) ) + " : " + mapMine.getValueIt(it) );
 		}
 	}*/
 
 
 
+
+	/*Vector<int *> testVector;
+
+	for ( size_t i( 0 ); i < 1000; i++ ) {
+		testVector.push( new int( i ) );
+	}*/
+
+
+	/************************************************************************/
+	/* XML PART																*/
+	/************************************************************************/
+	#ifdef DEBUG_XML
+	{
+		UTF8String testStr( "Hello world" );
+		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
+		XML::Document testDocument( testDocumentStr );
+
+
+	}
+	#endif
+
+	#ifdef DEBUG_MAP
+	{
+		Map<unsigned long, unsigned long> testMap;
+
+		testMap.insert( 0, 0 );
+		testMap.insert( 1, 1 );
+		testMap.insert( 2, 2 );
+		testMap.insert( 3, 3 );
+		testMap.insert( 4, 4 );
+		testMap.insert( 5, 5 );
+		testMap.insert( 6, 6 );
+		testMap.insert( 7, 7 );
+		testMap.insert( 8, 8 );
+		testMap.insert( 9, 9 );
+
+
+		for ( auto it( testMap.getBegin() ); it != testMap.getEnd(); testMap.iterate( &it ) ) {
+			log( testMap.getValueIt( it ) );
+
+
+		}
+
+		log( String( testMap ) );
+
+
+		{
+			// Testing IN/OUT
+			assert( IO::write( WString( "myMap.font" ), &testMap ) );
+
+			Map<unsigned long, unsigned long> mapLoaded;
+			assert( IO::read( WString( "myMap.font" ), &mapLoaded ) );
+
+			log( String( mapLoaded ) );
+		}
+
+		{
+			// Testing Copy
+			Map<unsigned long, unsigned long> mapCopied = testMap ;
+
+			log( String( mapCopied ) );
+
+		}
+
+		for ( size_t j( 0 ); j < 100; j++ ) {
+			Map<unsigned long, unsigned long> testMap;
+			for ( size_t i( 0 ); i < 100; i++ ) {
+				testMap.insert( i, i );
+			}
+			testMap.eraseIndex( j );
+		}
+	
+		for ( size_t i( 0 ); i < 1000; i++ ) {
+			testMap.insert( Math::random( 0, 1000 ), i );
+		}
+
+
+		for ( size_t i( 0 ); i < 1000; i++ ) {
+			testMap.eraseIndex( Math::random( 0, 1000 ));
+		}
+		//log( String( testMap ) );
+		
+
+	}
+	#endif
+
+
+
+
+
+	#ifdef DEBUG_GRAPHIC
 	/************************************************************************/
 	/* GRAPHIC PART									                        */
 	/************************************************************************/
@@ -619,6 +712,8 @@ int main( int argc, char * argv[] ) {
 	Graphic::FreeImage freeImage2;
 	freeImage2.loadFromDatas( ( unsigned char * ) texture2.getDatas( 0 ), texture2.getSize( 0 ), Graphic::FreeImage::Format::RGB );
 	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
+	#endif
+
 
 	#else		//DEBUG
 constexpr unsigned long long G10( 10000000000 );
@@ -1203,25 +1298,52 @@ constexpr unsigned long long K1( 1000 );
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Maps									//
 	{
-		OrderedMap<unsigned long, unsigned long> mapMine;
-		std::map<unsigned long, unsigned long> mapSTD;
+		{
+			Map<unsigned long, unsigned long> mapRedBlackTree;
+			std::map<unsigned long, unsigned long> mapSTD;
 
-		Log::startChrono();
-		for ( unsigned long i = 0; i < M1; i++ ) {
-			mapSTD.insert( std::pair<unsigned long, unsigned long>( Math::random( 0, 100000 ), i ) );
-		}
-		Log::stopChrono();
-		Log::displayChrono( "Map .insert(); STD" );
+			Log::startChrono();
+			for ( unsigned long i = 0; i < M1; i++ ) {
+				mapSTD.insert( std::pair<unsigned long, unsigned long>( Math::random( 0, 1000000 ), i ) );
+			}
+			Log::stopChrono();
+			Log::displayChrono( "Map .insert(); STD" );
 
-		Log::startChrono();
-		for ( unsigned long i = 0; i < M1; i++ ) {
-			mapMine.insertFast( Math::random( 0, 100000 ), i );
+
+			Log::startChrono();
+			for ( unsigned long i = 0; i < M1; i++ ) {
+				mapRedBlackTree.insert( Math::random( 0, 1000000 ), i );
+			}
+			Log::stopChrono();
+			Log::displayChrono( String( "Map Red Black Tree .insert(); Mine " ) );
 		}
-		Log::stopChrono();
-		Log::displayChrono( String( "Map .insert(); Mine " ) );
-		for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
-			Log::displayLog( String( it -> getIndex() ) + " : " + it -> getValue() );
+		{
+			Map<unsigned long, unsigned long> mapRedBlackTree;
+			std::map<unsigned long, unsigned long> mapSTD;
+
+			for ( unsigned long i = 0; i < M1; i++ ) {
+				mapSTD.insert( std::pair<unsigned long, unsigned long>( i, i ) );
+				mapRedBlackTree.insert( i, i );
+			}
+			volatile unsigned long tmp(0);
+			Log::startChrono();
+			for ( unsigned long i = 0; i < M1; i++ ) {
+				tmp += mapSTD[i];
+			}
+			Log::stopChrono();
+			Log::displayChrono( "Map .operator[] STD" );
+
+
+			Log::startChrono();
+			for ( unsigned long i = 0; i < M1; i++ ) {
+				tmp += *( mapRedBlackTree[i] );
+			}
+			Log::stopChrono();
+			Log::displayChrono( String( "Map Red Black Tree .operator[] Mine " )  );
+
 		}
+
+		
 	}
 	#endif
 	#ifdef SPEEDTEST_ARITHMETIC 

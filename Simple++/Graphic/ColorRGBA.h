@@ -6,7 +6,7 @@
 
 
 #include "../Utility.h"
-#include "../Math.h"
+#include "../Math/Math.h"
 #include "ColorR.h"
 #include "ColorRGB.h"
 

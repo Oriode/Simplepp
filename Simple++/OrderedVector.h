@@ -6,28 +6,21 @@
 template<typename T, typename Compare = Math::Logical::Less>
 class OrderedVector : private Vector<T> {
 public:
-	OrderedVector( Compare & compareFunc = Compare() );
+	OrderedVector( const Compare & compareFunc = Compare() );
 	OrderedVector( const OrderedVector & vector );
 	OrderedVector( OrderedVector && v );
 
 	~OrderedVector( void );
 
-	//get a value and can assign something else
 	using Vector<T>::operator[];
 
-	//used to copy datas
 	OrderedVector<T, Compare> & operator=( const OrderedVector<T, Compare> & vector );
 	OrderedVector<T, Compare> && operator=( OrderedVector<T, Compare> && vector );
 
-
-	//allocate the memory with the specified size (used method in push when the size isn't enough)
 	using Vector<T>::reserve;
 	using Vector<T>::resize;
-
-	//return the size of this vector (push will increment it)
 	using Vector<T>::getSize;
 	using Vector<T>::size;
-
 	using Vector<T>::swap;
 	using Vector<T>::iterate;
 	using Vector<T>::begin;
@@ -35,32 +28,32 @@ public:
 	using Vector<T>::getBegin;
 	using Vector<T>::getEnd;
 
-
-	//Add a value and order the table
+	///@brief Insert a new value and keep the buffer ordered
+	///@see insertFast For multiple insert without access
+	///@param data Data to be inserted
 	void insert( const T & data );
+
+	///@brief Insert a new value and do not keep the buffer ordered (it will be ordered at the next access)
+	///@param data Data to be inserted
 	void insertFast( const T & data );
 
-	//it will totally fill all the buffer with the specified value 
 	using Vector<T>::fill;
-
-	//delete a value and rearrange others data
 	using Vector<T>::eraseFirst;
-
-
-	//set size = 0
 	using Vector<T>::clear;
-
-	//Set size = 0 AND free memory
 	using Vector<T>::reset;
 
+	///@brief Search the index of a data using dichotomic search
+	///@param data Data to searched
+	///@return Index of the founded data or Vector<T>::overflow if nothing founded
 	Size search( const T & data );
+
+	///@brief search if a data exists using dichotomic search
+	///@param data Data to be searched
+	///@return True if something has been found or false instead.
 	bool exists( const T & data );
 
 	Size getNumEntries( const T & value );
 
-
-
-	
 	///@brief read from a file stream
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
@@ -73,7 +66,7 @@ public:
 
 
 private:
-	Compare & sortFunction;
+	Compare sortFunction;
 	bool isOrdered;
 
 	void insert( Size index, const T & data );

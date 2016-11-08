@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math.h"
+#include "../Math/Math.h"
 #include "ColorR.h"
 #include "ColorRGB.h"
 #include "ColorRGBA.h"

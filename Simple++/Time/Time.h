@@ -9,11 +9,11 @@
 
 #include <ctime>
 
-#include "Math.h"
-#include "Time/TimePoint.h"
-#include "Time/Tick.h"
-#include "Time/Duration.h"
-#include "Time/Date.h"
+#include "../Math/Math.h"
+#include "TimePoint.h"
+#include "Tick.h"
+#include "Duration.h"
+#include "Date.h"
 
 namespace Time {
 

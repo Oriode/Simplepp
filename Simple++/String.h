@@ -11,7 +11,6 @@
 
 
 
-
 //T = buffer type
 template<typename T>
 class BasicString : public Vector<T> {
@@ -24,11 +23,10 @@ public:
 	template<typename C>
 	BasicString( const C * str );
 
-	/*template<typename C, size_t N = 0>
-	BasicString(const C(&s)[N]);*/
-
 	template<typename C>
 	BasicString( const C * str, Size size );
+	template<typename C>
+	BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt );
 
 
 	template<typename C>
@@ -525,7 +523,8 @@ public:
 	Vector<BasicString<T>> split( const T & delimiter ) const;
 	bool isNumeric() const;
 
-	//resize the string and reallocate if necessary.
+	///@brief Resize the string
+	///@param newSize New size of this string
 	void resize( typename Vector<T>::Size newSize );
 
 	using Vector<T>::getSize;
@@ -536,11 +535,11 @@ public:
 	///@brief set the size to 0
 	void clear();
 
-	typename BasicString<T>::RandomAccessIterator getFirstIt( const T & c ) const;
-	typename BasicString<T>::RandomAccessIterator getLastIt( const T & c ) const;
+	typename BasicString<T>::Iterator getFirstIt( const T & c ) const;
+	typename BasicString<T>::Iterator getLastIt( const T & c ) const;
 
-	typename BasicString<T>::RandomAccessIterator getFirstIt( const BasicString<T> & str ) const;
-	typename BasicString<T>::RandomAccessIterator getLastIt( const BasicString<T> & str ) const;
+	typename BasicString<T>::Iterator getFirstIt( const BasicString<T> & str ) const;
+	typename BasicString<T>::Iterator getLastIt( const BasicString<T> & str ) const;
 
 	typename BasicString<T>::Size getFirst( const T & c ) const;
 	typename BasicString<T>::Size getLast( const T & c ) const;
@@ -552,9 +551,12 @@ public:
 	void replace( const T & toReplace, const BasicString<T> & byThis );
 	void replace( const BasicString<T> & toReplace, const BasicString<T> & byThis );
 
-	BasicString<T> getDirectory();
-	BasicString<T> getFileName();
-	BasicString<T> getSubStr( const Size & index, const Size & size );
+	BasicString<T> getDirectory() const;
+	BasicString<T> getFileName() const;
+	BasicString<T> getSubStr( Size index, Size size ) const;
+	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const;
+	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename BasicString<T>::Iterator endIt ) const;
+
 
 	///@brief read from a file stream
 	///@param fileStream stream used to read load this object
@@ -572,11 +574,11 @@ public:
 	static BasicString<T> format( const BasicString<T> referenceString, const T1 & arg1, Types ... vars );
 
 
-	static typename BasicString<T>::Size getFirst( const T * buffer, const Size & bufferSize, const T & c );
-	static typename BasicString<T>::Size getLast( const T * buffer, const Size & bufferSize, const T & c );
+	static typename BasicString<T>::Size getFirst( const T * buffer, Size bufferSize, const T & c );
+	static typename BasicString<T>::Size getLast( const T * buffer, Size bufferSize, const T & c );
 
-	static typename BasicString<T>::Size getFirst( const T * buffer, const Size & bufferSize, const T * toSearch, const Size & toSearchSize );
-	static typename BasicString<T>::Size getLast( const T * buffer, const Size & bufferSize, const T * toSearch, const Size & toSearchSize );
+	static typename BasicString<T>::Size getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
+	static typename BasicString<T>::Size getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 
 	static typename BasicString<T>::Size getFirst( const T * buffer, const T & c );
 	static typename BasicString<T>::Size getLast( const T * buffer, const T & c );
@@ -659,8 +661,8 @@ protected:
 private:
 
 	template<typename T1, typename... Types>
-	static void _format( const typename BasicString<T>::RandomAccessIterator &  referenceStringBegin, const typename BasicString<T>::RandomAccessIterator &  referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... vars );
-	static void _format( const typename BasicString<T>::RandomAccessIterator &  referenceStringBegin, const typename BasicString<T>::RandomAccessIterator &  referenceStringEnd, BasicString<T> * newString );
+	static void _format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... vars );
+	static void _format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString );
 
 	template<typename Type, unsigned int Base = 10>
 	BasicString & _concatInteger( const Type & i );

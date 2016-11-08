@@ -10,7 +10,7 @@
 #include <FreeImage.h>
 
 #include "../BasicLoadable.h"
-#include "../Math.h"
+#include "../Math/Math.h"
 #include "../Log.h"
 #include "../String.h"
 

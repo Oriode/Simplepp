@@ -1,4 +1,4 @@
-///@file Time.h
+///@file Time/Time.h
 ///@brief Time Class
 ///@author Clément Gerber
 ///@date 11/07/2016 (DMY) 

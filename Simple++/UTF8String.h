@@ -13,9 +13,13 @@ public:
 	UTF8String( const C * str );
 	UTF8String( const char * str );
 
+	///@brief Copy constructor from a NON-multibyte string
 	template<typename C>
 	UTF8String( const C * str, Size size );
 	UTF8String( const char * str, Size size );
+
+	template<typename C>
+	UTF8String( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt );
 
 	template<typename C>
 	UTF8String( const BasicString<C> & str );
@@ -95,11 +99,43 @@ public:
 
 
 	///\brief iterate the buffer by passing a pointer to a buffer. The index has to be initialized to the first value you wanna iterate to.
-	bool iterate( RandomAccessIterator * i ) const;
+	bool iterate( typename UTF8String::Iterator * it ) const;
 
 	///\brief iterate the buffer by passing a pointer to a buffer AND a pointer to a code point. The index has to be initialized to the first value you wanna iterate to.
-	bool iterate( RandomAccessIterator * i, CodePoint * codePoint ) const;
+	bool iterate( typename UTF8String::Iterator * it, CodePoint * codePoint ) const;
 
+	///@brief Iterate ONE time and set the pointer to codePoint with the new one just retrieved
+	///@param it Iterator to iterate
+	///@param codePoint out Will be set to point to the data retrieved
+	///@param testFunctor Functor to check a condition before incrementing the iterator
+	///								bool operator()( const CodePoint & c );
+	///@return True if a data has been retrieved or False if the end has been reached or false is the functor return false
+	template<typename TestFunctor>
+	bool iterate( typename UTF8String::Iterator * it, CodePoint * codePoint, TestFunctor & testFunctor ) const;
+
+	///@brief Compare a sub string of this UTF8 String with an another one
+	///@param it Iterator of this string where you want to begin the comparison
+	///@param otherStr Other String
+	///@param anotherIt It of the other UTF8 String to be compared
+	///@param size Number of chars to be compared
+	///@return True if the two substring are equals, false instead
+	bool cmp( typename UTF8String::Iterator it, const UTF8String & otherStr, typename UTF8String::Iterator anotherIt, Size size ) const;
+
+	///brief Same as cmp without using pointer but the iterator will be modified instead of being copied
+	bool cmp( typename UTF8String::Iterator * it, const UTF8String & otherStr, typename UTF8String::Iterator * anotherIt, Size size ) const;
+
+	///@brief same as the one with UTF8String but a bit faster for using ASCII strings
+	bool cmp( typename UTF8String::Iterator it, const BasicString<char> & otherStr, typename BasicString<char>::Iterator anotherIt, Size size ) const;
+
+	///brief Same as cmp without using pointer but the iterator will be modified instead of being copied
+	bool cmp( typename UTF8String::Iterator * it, const BasicString<char> & otherStr, typename BasicString<char>::Iterator * anotherIt, Size size ) const;
+	
+
+	///@brief Create a sub String of this one
+	///@param beginIt Iterator of the beginning
+	UTF8String getSubStr( Size index, Size size ) const;
+	UTF8String getSubStr( typename UTF8String::Iterator beginIt, Size size ) const;
+	UTF8String getSubStr( typename UTF8String::Iterator beginIt, typename UTF8String::Iterator endIt ) const;
 
 
 	///@brief get the codePoint associated with an iterator
@@ -123,7 +159,6 @@ private:
 	void _operatorCONCAT( const T & str, const Size & bufferSize );
 
 };
-
 
 
 typedef  UTF8String::CodePoint UCodePoint;
