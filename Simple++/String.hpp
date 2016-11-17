@@ -2586,8 +2586,9 @@ bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
-		if ( t1 < t2 ) return true;
-		else if ( t1 > t2 ) return false;
+		if ( t1 == t2 ) continue;
+		else if ( t1 < t2 ) return true;
+		else return false;
 	}
 	return true;
 }
@@ -2598,8 +2599,9 @@ bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
-		if ( t1 > t2 ) return true;
-		else if ( t1 < t2 ) return false;
+		if ( t1 == t2 ) continue;
+		else if ( t1 > t2 ) return true;
+		else return false;
 	}
 	return true;
 }
@@ -2610,8 +2612,9 @@ bool BasicString<T>::operator<( const BasicString<T> & text ) const {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
-		if ( t1 < t2 ) return true;
-		else if ( t1 > t2 ) return false;
+		if ( t1 == t2 ) continue;
+		else if ( t1 < t2 ) return true;
+		else return false;
 	}
 	return false;
 }
@@ -2622,8 +2625,9 @@ bool BasicString<T>::operator>( const BasicString<T> & text ) const {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
-		if ( t1 > t2 ) return true;
-		else if ( t1 < t2 ) return false;
+		if ( t1 == t2 ) continue;
+		else if ( t1 > t2 ) return true;
+		else return false;
 	}
 	return false;
 }
@@ -3308,6 +3312,12 @@ bool BasicString<T>::read( std::fstream * fileStream ) {
 		this -> dataTable[0] = T( '\0' );
 		return false;
 	}
+	return read( fileStream, this -> size );
+}
+
+template<typename T>
+bool BasicString<T>::read( std::fstream * fileStream, typename Vector<T>::Size size ) {
+	this -> size = size;
 	this -> maxSize = this -> size + 1;
 	_allocateNoNull( this -> maxSize );
 
@@ -3321,6 +3331,13 @@ bool BasicString<T>::read( std::fstream * fileStream ) {
 	return true;
 }
 
+
+template<typename T>
+bool BasicString<T>::writeReadable( std::fstream * fileStream ) const {
+	if ( !IO::writeBuffer( fileStream, getData(), getSize() ) )
+		return false;
+	return true;
+}
 
 
 /************************************************************************/
@@ -3363,4 +3380,18 @@ BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, con
 	*( newString.dataTable + newString.size ) = T( '\0' );
 
 	return newString;
+}
+
+
+template<typename T>
+Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const BasicString<T> & y ) {
+	for ( Size i( 0 ); i < x.getSize(); i++ ) {
+		const T & t1 = x[i];
+		const T & t2 = y[i];
+
+		if ( t1 == t2 ) continue;
+		else if ( t1 > t2 ) return Math::Compare::Value::Greater;
+		else return Math::Compare::Value::Less;
+	}
+	return Math::Compare::Value::Equal;
 }

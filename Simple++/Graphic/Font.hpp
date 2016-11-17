@@ -322,7 +322,7 @@ namespace Graphic {
 				if ( newChar -> getCodePoint() < 256 )
 					this -> asciiMap[newChar -> getCodePoint()] = newChar;
 				else
-					this -> charsMap.insertFast( newChar -> getCodePoint(), newChar );
+					this -> charsMap.insert( newChar -> getCodePoint(), newChar );
 			} else {
 				delete newChar;
 				return false;
@@ -466,7 +466,7 @@ namespace Graphic {
 		}
 
 		for ( auto it( font.charsMap.getBegin() ); it != font.charsMap.getEnd(); font.charsMap.iterate( &it ) ) {
-			this -> charsMap.insertFast( this -> charsMap.getIndexit( it ), new FreeTypeChar<T>( *( this -> charsMap.getValueIt(it) ) ) );
+			this -> charsMap.insert( this -> charsMap.getIndexit( it ), new FreeTypeChar<T>( *( this -> charsMap.getValueIt(it) ) ) );
 		}
 
 		

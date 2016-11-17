@@ -550,7 +550,6 @@ void RBNode<T>::insertNode( RBNode<T> * node, RBNode<T> ** root ) {
 						_N -> setRight( _P );
 						_P -> setParent( _N );
 						_P -> setLeft( _R );
-						assert( _R );
 						if ( _R ) _R -> setParent( _P );
 
 						if ( _G ) {
@@ -1046,12 +1045,14 @@ template<typename I, typename T, typename Compare>
 RBTree<I, T, Compare>::RBTree( const Compare & compareFunc ) :
 	compareFunc( compareFunc ),
 	rootNode( NULL ) {
+	static_assert( Utility::isBase<Math::Compare::Template, Compare>::value, "Functor should inherite from Math::Compare::Template" );
 
 }
 
 template<typename I, typename T, typename Compare>
 RBTree<I, T, Compare>::RBTree( const RBTree<I, T, Compare> & tree ) :
 	compareFunc( tree.compareFunc ) {
+
 	if ( tree.rootNode ) {
 		this -> rootNode = new RBNode<MapObject<I, T>>( *( tree.rootNode ) );
 	} else {
@@ -1129,7 +1130,10 @@ RBNode< MapObject< I, T > > * RBTree<I, T, Compare>::_insert( const I & index, c
 		return newNode;
 	} else {
 		while ( true ) {
-			if ( !this -> compareFunc( node -> getValue().getIndex(), index ) ) {
+			Math::Compare::Value compareResult( this -> compareFunc( index, node -> getValue().getIndex() ) );
+			if ( compareResult == Math::Compare::Value::Equal ) {
+				return NULL;
+			} else if ( compareResult == Math::Compare::Value::Less ) {
 				if ( node -> getLeft() ) {
 					node = node -> getLeft();
 					continue;
@@ -1162,9 +1166,9 @@ RBNode< MapObject< I, T > > * RBTree<I, T, Compare>::_insert( const I & index, c
 }
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::insert( const I & index, const T & value ) {
+T * RBTree<I, T, Compare>::insert( const I & index, const T & value ) {
 	auto newNode( _insert( index, value ) );
-	return ( newNode != NULL );
+	return ( newNode != NULL ) ? const_cast< T * >( &( newNode -> getValue().getValue() ) ) : NULL;
 }
 
 template<typename I, typename T, typename Compare>
@@ -1177,18 +1181,18 @@ T * RBTree<I, T, Compare>::operator[]( const I & index ) {
 	if ( this -> rootNode ) {
 		RBNode< MapObject< I, T > > * node( this -> rootNode );
 		while ( true ) {
-			if ( node -> getValue().getIndex() == index )
+			Math::Compare::Value compareResult( this -> compareFunc( index, node -> getValue().getIndex() ) );
+
+			if ( compareResult == Math::Compare::Value::Equal ) {
 				return const_cast< T * >( &( node -> getValue().getValue() ) );
-			else {
-				if ( !this -> compareFunc( node -> getValue().getIndex(), index ) ) {
-					node = node -> getLeft();
-					if ( !node )
-						return NULL;
-				} else {
-					node = node -> getRight();
-					if ( !node )
-						return NULL;
-				}
+			} else if ( compareResult == Math::Compare::Value::Less ) {
+				node = node -> getLeft();
+				if ( !node )
+					return NULL;
+			} else {
+				node = node -> getRight();
+				if ( !node )
+					return NULL;
 			}
 		}
 	} else {
@@ -1201,7 +1205,9 @@ bool RBTree<I, T, Compare>::eraseIndex( const I & index ) {
 	if ( this -> rootNode ) {
 		RBNode< MapObject< I, T > > * node( this -> rootNode );
 		while ( true ) {
-			if ( node -> getValue().getIndex() == index ) {
+			Math::Compare::Value compareResult( this -> compareFunc( index, node -> getValue().getIndex() ) );
+
+			if ( compareResult == Math::Compare::Value::Equal ) {
 				RBNode< MapObject< I, T > >::deleteNode( node, &this -> rootNode );
 
 				// DEBUG
@@ -1210,16 +1216,14 @@ bool RBTree<I, T, Compare>::eraseIndex( const I & index ) {
 				#endif
 
 				return true;
+			} else if ( compareResult == Math::Compare::Value::Less ) {
+				node = node -> getLeft();
+				if ( !node )
+					return false;
 			} else {
-				if ( !this -> compareFunc( node -> getValue().getIndex(), index ) ) {
-					node = node -> getLeft();
-					if ( !node )
-						return false;
-				} else {
-					node = node -> getRight();
-					if ( !node )
-						return false;
-				}
+				node = node -> getRight();
+				if ( !node )
+					return false;
 			}
 		}
 	} else {
@@ -1239,11 +1243,13 @@ void RBTree<I, T, Compare>::_checkTreeSorted( RBNode< MapObject<I, T> > * node, 
 	if ( node ) {
 		const MapObject<I, T> & v( node -> getValue() );
 		if ( node -> getLeft() ) {
-			assert( v.getIndex() == node -> getLeft() -> getValue().getIndex() || !func( v.getIndex(), node -> getLeft() -> getValue().getIndex() ) );
+			Math::Compare::Value compareValue( func( node -> getLeft() -> getValue().getIndex(), v.getIndex() ) );
+			assert( compareValue == Math::Compare::Value::Less );
 			_checkTree( node -> getLeft(), func );
 		}
 		if ( node -> getRight() ) {
-			assert( v.getIndex() == node -> getRight() -> getValue().getIndex() || func( v.getIndex(), node -> getRight() -> getValue().getIndex() ) );
+			Math::Compare::Value compareValue( func( node -> getRight() -> getValue().getIndex(), v.getIndex() ) );
+			assert( compareValue == Math::Compare::Value::Greater );
 			_checkTree( node -> getRight(), func );
 		}
 	}
@@ -1417,6 +1423,11 @@ void RBTree<I, T, Compare>::setIndexIt( typename RBTree<I, T, Compare>::Iterator
 	return it -> getValue().setIndex( v );
 }
 
+template<typename I, typename T, typename Compare /*= Math::Logical::Less*/>
+bool RBTree<I, T, Compare>::isEmpty() const {
+	return ( rootNode == NULL );
+}
+
 
 /************************************************************************/
 /* MAP                                                                  */
@@ -1482,13 +1493,13 @@ void Map<I, T, Compare>::_clear() {
 }
 
 template<typename I, typename T, typename Compare>
-bool Map<I, T, Compare>::insert( const I & index, const T & value ) {
+T * Map<I, T, Compare>::insert( const I & index, const T & value ) {
 	auto newNode( RBTree<I, T, Compare>::_insert( index, value ) );
 	if ( newNode ) {
 		Vector< MapObject<I, T> *>::push( const_cast< MapObject<I, T> * >( &( newNode -> getValue() ) ) );
-		return true;
+		return const_cast<T *>(&(newNode -> getValue().getValue()));
 	}
-	return false;
+	return NULL;
 }
 
 template<typename I, typename T, typename Compare>
@@ -1611,6 +1622,11 @@ bool Map<I, T, Compare>::iterate( typename Map<I, T, Compare>::Iterator * it, I 
 		return true;
 	}
 	return false;
+}
+
+template<typename I, typename T, typename Compare>
+void Map<I, T, Compare>::isEmpty() {
+	return RBTree<I, T, Compare>::isEmpty();
 }
 
 template<typename I, typename T, typename Compare>

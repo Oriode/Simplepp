@@ -7,13 +7,13 @@
 #include <cmath>
 #include "SimpleLog.h"
 #include "Vector.h"
-
+#include "Math/BasicComparable.h"
 
 
 
 //T = buffer type
 template<typename T>
-class BasicString : public Vector<T> {
+class BasicString : public Vector<T>, public Math::Compare::BasicComparable {
 public:
 	BasicString();
 
@@ -558,11 +558,28 @@ public:
 	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename BasicString<T>::Iterator endIt ) const;
 
 
+	///@brief Function to compare two elements
+	///@param x First Element
+	///@param y Second Element
+	///@return Equal (x == y), Less (x < y) or Greater (x > y)
+	static Math::Compare::Value compare( const BasicString<T> & x, const BasicString<T> & y );
+
+
+	///@brief Write this string into a file as readable (non binary)
+	///@param fileStream Stream used to write this string
+	///@return boolean to know if the operation is a success of not.
+	bool writeReadable( std::fstream * fileStream ) const;
+
 	///@brief read from a file stream
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
 	bool read( std::fstream * fileStream );
 
+	///@brief read from a file stream
+	///@param fileStream stream used to read load this object
+	///@param size Number of characters to read
+	///@return boolean to know if the operation is a success of not.
+	bool read( std::fstream * fileStream, typename Vector<T>::Size size );
 
 	/************************************************************************/
 	/* Some static methods                                                  */
@@ -752,6 +769,7 @@ private:
 	template<typename Type>
 	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T * buffer, unsigned int precision, unsigned int base );
 };
+
 
 
 

@@ -6,6 +6,9 @@
 template<typename T, typename Compare = Math::Logical::Less>
 class OrderedVector : private Vector<T> {
 public:
+	///@brief Constructor
+	///@param compareFunc Functor with operator() overloaded with :
+	///        bool operator()( const T & , const T & ) const;
 	OrderedVector( const Compare & compareFunc = Compare() );
 	OrderedVector( const OrderedVector & vector );
 	OrderedVector( OrderedVector && v );
@@ -27,6 +30,7 @@ public:
 	using Vector<T>::end;
 	using Vector<T>::getBegin;
 	using Vector<T>::getEnd;
+	using Vector<T>::isEmpty;
 
 	///@brief Insert a new value and keep the buffer ordered
 	///@see insertFast For multiple insert without access

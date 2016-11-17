@@ -436,12 +436,15 @@ void Vector<T>::swap( typename Vector<T>::Iterator index1, typename Vector<T>::I
 
 
 template<typename T>
-void Vector<T>::eraseAll( const T & value ) {
+bool Vector<T>::eraseAll( const T & value ) {
+	bool r( false );
 	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ ) {
 		if ( value == this -> dataTable[i] ) {
 			eraseIndex( i );
+			r = true;
 		}
 	}
+	return r;
 }
 
 template<typename T>
@@ -506,21 +509,26 @@ void Vector<T>::resize( typename Vector<T>::Size newSize ) {
 
 
 template<typename T>
-void Vector<T>::replaceAll( const T & search, const T & data ) {
-	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ ) {
-		if ( this -> dataTable[i] == search )
-			this -> dataTable[i] = data;
-	}
-}
-
-template<typename T>
-void Vector<T>::replaceFirst( const T & search, const T & data ) {
+bool Vector<T>::replaceAll( const T & search, const T & data ) {
+	bool r( false );
 	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ ) {
 		if ( this -> dataTable[i] == search ) {
 			this -> dataTable[i] = data;
-			return;
+			r = true;
 		}
 	}
+	return r;
+}
+
+template<typename T>
+bool Vector<T>::replaceFirst( const T & search, const T & data ) {
+	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ ) {
+		if ( this -> dataTable[i] == search ) {
+			this -> dataTable[i] = data;
+			return true;
+		}
+	}
+	return false;
 }
 
 template<typename T>
@@ -535,13 +543,14 @@ bool Vector<T>::exists( const T & value ) const {
 
 
 template<typename T>
-void Vector<T>::eraseFirst( const T & v ) {
+bool Vector<T>::eraseFirst( const T & v ) {
 	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ ) {
 		if ( v == this -> dataTable[i] ) {
 			eraseIndex( i );
-			return;
+			return true;
 		}
 	}
+	return false;
 }
 
 template<typename T>
@@ -626,26 +635,6 @@ bool Vector<T>::iterate( typename Vector<T>::Iterator * it, ElemType ** e, TestF
 /* OPERATOR =                                                           */
 /************************************************************************/
 template<typename T>
-Vector<T> & Vector<T>::operator=( const Vector<T> & vector ) {
-	this -> maxSize = vector.maxSize;
-	this -> size = vector.size;
-
-	//debugDelete(this -> table);
-	delete[] this -> dataTable;
-	this -> dataTable = ( this -> maxSize ) ? new T[this -> maxSize] : NULL;
-	//debugNew(this -> table, this -> maxSize * sizeof(T));
-
-	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ )
-		this -> dataTable[i] = vector.dataTable[i];
-
-	_updateIterators();
-
-	return *this;
-}
-
-
-
-template<typename T>
 Vector<T> & Vector<T>::operator=( Vector && v ) {
 	delete[] this -> dataTable;
 	this -> dataTable = Utility::toRValue( v.dataTable );
@@ -657,8 +646,6 @@ Vector<T> & Vector<T>::operator=( Vector && v ) {
 	return *this;
 }
 
-
-
 template<typename T>
 template<typename C>
 Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
@@ -667,17 +654,22 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 
 	delete[] this -> dataTable;
 	this -> dataTable = ( this -> maxSize ) ? new T[this -> maxSize] : NULL;
-
-	for ( typename Vector<T>::Size i = 0; i < this -> maxSize; i++ )
-		this -> dataTable[i] = vector[i];
-
+	copy( this -> dataTable, vector.dataTable, this -> size );
 	_updateIterators();
 
 	return *this;
 }
 
 
+template<typename T>
+Vector<T> & Vector<T>::operator=( const Vector<T> & vector ) {
+	return operator=<T>( vector );
+}
 
+template<typename T>
+bool Vector<T>::isEmpty() const {
+	return ( this -> size == 0 );
+}
 
 template<typename T>
 void Vector<T>::clear() {
@@ -725,15 +717,19 @@ void Vector<T>::reserve( typename Vector<T>::Size newMax ) {
 }
 
 template<typename T>
-void Vector<T>::push( const T & data ) {
+T * Vector<T>::push( const T & data ) {
 	if ( this -> maxSize == this -> size ) {
 		this -> size++;
 		_extendBuffer( this -> size );
-		this -> dataTable[this -> size - 1] = data;
+		T * valueP( this -> dataTable + ( this -> size - 1 ));
+		( *valueP ) = data;
+		return valueP;
 	} else {
-		this -> dataTable[this -> size] = data;
+		T * valueP( this -> dataTable + ( this -> size ) );
+		( *valueP ) = data;
 		this -> size++;
 		_updateIterators();
+		return valueP;
 	}
 }
 

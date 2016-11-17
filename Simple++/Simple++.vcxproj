@@ -198,13 +198,19 @@
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="MapObject.hpp" />
+    <ClInclude Include="Math\BasicComparable.h" />
+    <ClInclude Include="Math\BasicComparable.hpp" />
     <ClInclude Include="Math\BasicMath.h" />
+    <ClInclude Include="Math\Compare.h" />
+    <ClInclude Include="Math\Compare.hpp" />
     <ClInclude Include="Math\InterpolationFunc.hpp" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="Math\BasicMath.hpp" />
     <ClInclude Include="Math\Transformations.h" />
     <ClInclude Include="Math\Transformations.hpp" />
+    <ClInclude Include="MultiMap.h" />
+    <ClInclude Include="MultiMap.hpp" />
     <ClInclude Include="XML\Node.h" />
     <ClInclude Include="XML\XMLDocument.h" />
     <ClInclude Include="IO\SimpleIO.h" />
@@ -273,6 +279,7 @@
     <ClCompile Include="BasicLoadable.cpp" />
     <ClCompile Include="IO\BasicLoadableIO.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Mutex.cpp" />

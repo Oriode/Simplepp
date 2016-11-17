@@ -29,8 +29,8 @@
 
 
 //#define DEBUG_GRAPHIC
-//#define DEBUG_XML
-#define DEBUG_MAP
+#define DEBUG_XML
+//#define DEBUG_MAP
 
 #ifndef _LIB
 #include <iostream>
@@ -104,7 +104,7 @@ int main( int argc, char * argv[] ) {
 
 		Log::startChrono();
 		for ( unsigned long i = 0; i < 1000; i++ ) {
-			mapMine.insertFast( Math::random( 0, 100000 ), i );
+			mapMine.insert( Math::random( 0, 100000 ), i );
 		}
 		Log::stopChrono();
 		Log::displayChrono( String( "Map .insert(); Mine " ) );
@@ -130,14 +130,23 @@ int main( int argc, char * argv[] ) {
 	{
 		UTF8String testStr( "Hello world" );
 		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
-		XML::Document testDocument( testDocumentStr );
+		XML::Document testDocument( WString("test.xml") );
 
+		//assert( IO::write( WString( "testXML.cxml" ), &testDocument ) );
+		//assert( IO::read( WString( "testXML.cxml" ), &testDocument ) );
+
+		testDocument.writeXML( WString( "testOut.xml" ) );
+
+		int test;
 
 	}
 	#endif
 
 	#ifdef DEBUG_MAP
 	{
+
+		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
+
 		Map<unsigned long, unsigned long> testMap;
 
 		testMap.insert( 0, 0 );

@@ -3,10 +3,55 @@
 
 namespace XML {
 
-	Document::Document( const UTF8String & str ) {
+	Document::Document( const UTF8String & str ) : 
+	rootNode(NULL)
+	{
 		_parse( str );
 	}
 
+
+	Document::Document( const Document & document ) : 
+		version( document.version ),
+		encoding( document.encoding ),
+		rootNode( new Node( *document.rootNode ) )
+	{
+	}
+
+
+	Document::Document( Document && document ) : 
+		version( Utility::toRValue( document.version ) ),
+		encoding( Utility::toRValue( document.encoding ) ),
+		rootNode( Utility::toRValue( document.rootNode ) )
+	{
+		document.rootNode = NULL;
+	}
+
+
+	Document::Document( const WString & fileName ) {
+		_readXML( fileName );
+	}
+
+	Document & Document::operator=( const Document & document ) {
+		_unload();
+
+		this -> version = document.version;
+		this -> encoding = document.encoding;
+
+		this -> rootNode = new Node( *( document.rootNode ) );
+		
+		return *this;
+	}
+
+	Document & Document::operator=( Document && document ) {
+		_unload();
+
+		this -> version = Utility::toRValue( document.version );
+		this -> encoding = Utility::toRValue( document.encoding );
+		this -> rootNode = Utility::toRValue( document.rootNode );
+		document.rootNode = NULL;
+
+		return *this;
+	}
 
 	Document::~Document() {
 		_unload();
@@ -17,9 +62,15 @@ namespace XML {
 	void Document::_parse( const UTF8String & str ) {
 
 		int deep( 0 );
-		Node * activeNode( NULL );
 		Vector<Node * > nodeTree;
 		nodeTree.reserve( 10 );
+
+
+		static UTF8String rootName( "#document" );
+		this -> rootNode = new Node( rootName, Node::Type::Document );
+
+		Node * activeNode( this -> rootNode );
+		nodeTree.push( activeNode );
 
 		UCodePoint codePoint;
 		for ( auto it( str.getBegin() ); str.iterate( &it, &codePoint );) {
@@ -50,11 +101,11 @@ namespace XML {
 									deep--;
 									activeNode = nodeTree.pop();
 									if ( nodeName != activeNode -> getName() ) {
-										log( String( "[XML ERROR] : Closing node do not match " ) << activeNode -> getName() << " != " << nodeName );
+										error( String( "[XML ERROR] : Closing node do not match " ) << activeNode -> getName() << " != " << nodeName );
 										//SYNTAX ERROR
 									}
 								} else {
-									log(String("[XML ERROR] : Trying to close ") << nodeName << " without opened it." );
+									error(String("[XML ERROR] : Trying to close ") << nodeName << " without opened it." );
 									//SYNTAX ERROR
 								}
 								
@@ -71,19 +122,11 @@ namespace XML {
 								// We have a new node ! let's create it !
 								activeNode = new Node( nodeName );
 
-								UTF8String paramValue;
-								Param * param = new Param();
-								while ( _parseParameter( str, &it, &codePoint, const_cast< UTF8String * >( &param -> getName() ), const_cast< UTF8String * >( &param -> getValue() ) ) ) {
-									activeNode -> addParam( param );
-								}
-
-								if ( deep ) {
-									// We already are in an another node
-									nodeTree.getLast() -> addChild( activeNode );
-								} else {
-									// We still are in root
-									this -> nodes.push( activeNode );
-								}
+								while ( _parseParameter( str, &it, &codePoint, activeNode ) );
+								
+								// Push the new Node
+								nodeTree.getLast() -> addChild( activeNode );
+								
 
 								if ( ( *it ) == char( '/' ) ) {
 									// Self closing node
@@ -108,7 +151,7 @@ namespace XML {
 								UTF8String paramName;
 								UTF8String paramValue;
 
-								while ( _parseParameter( str, &it, &codePoint, &paramName, &paramValue ) ) {
+								while ( _parseParameterSpecial( str, &it, &codePoint, &paramName, &paramValue ) ) {
 									if ( paramName == encodingStr ) {
 										this -> encoding = paramValue;
 									} else if ( paramName == versionStr ) {
@@ -120,7 +163,7 @@ namespace XML {
 							if ( ( *it ) == char( '?' ) ) {
 								it++;
 							} else {
-								log( "[XML ERROR] : Opened a special node with <? but not closing it correctly." );
+								error( "[XML ERROR] : Opened a special node with <? but not closing it correctly." );
 								//SYNTAX ERROR
 							}
 						}
@@ -133,39 +176,34 @@ namespace XML {
 							struct FunctorContent {
 								bool operator()( const UCodePoint & c ) { return c != UCodePoint( '<' ); }
 							};
+							struct FunctorNoSpace {
+								bool operator()( const UCodePoint & c ) { return c == UCodePoint( '\n' ) || c == UCodePoint( '\t' ) || c == UCodePoint( ' ' ); }
+							};
 							static FunctorContent functorContent;
+							static FunctorNoSpace functorNoSpace;
+
+							while ( str.iterate( &it, &codePoint, functorNoSpace ) );
 							auto beginIt( it );
 							while ( str.iterate( &it, &codePoint, functorContent ) );
-							UTF8String nodeContent( str.getSubStr( beginIt, it ) );
-							nodeTree.getLast() -> setContent( nodeContent );
+
+							if ( it != beginIt ) {
+								// We have content, so we gonna create a text node and add the content
+								NodeText * nodeText( new NodeText( str.getSubStr( beginIt, it ) ) );
+
+								nodeTree.getLast() -> addChild( nodeText );
+							}
 						}
 
 
 
 						break;
 					}
-
-
 			}
-
 		}
-
-
 	}
 
 
-
-
-
-
-
-
-
-
-
-	
-
-	bool Document::_parseParameter( const UTF8String & str, RandomAccessIterator<char> * itp, UCodePoint * lastCodePoint, UTF8String * name, UTF8String * value ) {
+	bool Document::_parseParameter( const UTF8String & str, RandomAccessIterator<char> * itp, UCodePoint * lastCodePoint, Node * node ) {
 		RandomAccessIterator<char> & it( *itp );
 		UCodePoint & codePoint( *lastCodePoint );
 
@@ -197,10 +235,12 @@ namespace XML {
 		while ( str.iterate( &it, &codePoint, functorNoEqual ) );
 
 
-	
-
 		if ( iteratorBegin != it ) {
-			( *name ) = str.getSubStr( iteratorBegin, it );
+			Param * param = new Param();
+			UTF8String & name( const_cast< UTF8String & >( param -> getName() ) );
+			UTF8String & value( const_cast< UTF8String & >( param -> getValue() ) );
+
+			name = str.getSubStr( iteratorBegin, it );
 
 			if ( codePoint == UCodePoint( '=' ) ) {
 				( it )++; // Just to skip the equal sign
@@ -209,12 +249,76 @@ namespace XML {
 					( it )++; // Skip the quotes too
 					iteratorBegin = it;
 					while ( str.iterate( &it, &codePoint, functorNoQuote ) );
-					( *value ) = str.getSubStr( iteratorBegin, it );
+					value = str.getSubStr( iteratorBegin, it );
 					if (( *it ) == char( '"' )) ( it )++; // Skip the quotes again
 				} else {
 					iteratorBegin = it;
 					while ( str.iterate( &it, &codePoint, functorNoSpace ) );
-					( *value ) = str.getSubStr( iteratorBegin, it );
+					value = str.getSubStr( iteratorBegin, it );
+				}
+			}
+
+			node -> addParam( param );
+			return true;
+		}
+		return false;
+	}
+
+
+
+	bool Document::_parseParameterSpecial( const UTF8String & str, RandomAccessIterator<char> * itp, UCodePoint * lastCodePoint, UTF8String * nameP, UTF8String * valueP ) {
+		RandomAccessIterator<char> & it( *itp );
+		UCodePoint & codePoint( *lastCodePoint );
+
+		struct FunctorNoQuote {
+			bool operator()( const UCodePoint & c ) {
+				return c != UCodePoint( '"' );
+			}
+		};
+		struct FunctorNoSpace {
+			bool operator()( const UCodePoint & c ) {
+				return c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
+			}
+		};
+		struct FunctorNoEqual {
+			bool operator()( const UCodePoint & c ) {
+				return c != UCodePoint( '=' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
+			}
+		};
+		static FunctorNoEqual functorNoEqual;
+		static FunctorNoSpace functorNoSpace;
+		static FunctorNoQuote functorNoQuote;
+
+		//Now lets skip all the blanks
+		while ( ( *it ) == char( ' ' ) || ( *it ) == char( '\t' ) || ( *it ) == char( '\n' ) ) ( it )++;
+
+		// ? is a special char
+		if ( ( *it ) == char( '?' ) || ( *it ) == char( '/' ) ) return false;
+		auto iteratorBegin( it );
+		while ( str.iterate( &it, &codePoint, functorNoEqual ) );
+
+
+
+
+		if ( iteratorBegin != it ) {
+			UTF8String & name( *nameP );
+			UTF8String & value( *valueP );
+
+			name = str.getSubStr( iteratorBegin, it );
+
+			if ( codePoint == UCodePoint( '=' ) ) {
+				( it )++; // Just to skip the equal sign
+
+				if ( ( *it ) == char( '"' ) ) {
+					( it )++; // Skip the quotes too
+					iteratorBegin = it;
+					while ( str.iterate( &it, &codePoint, functorNoQuote ) );
+					value = str.getSubStr( iteratorBegin, it );
+					if ( ( *it ) == char( '"' ) ) ( it )++; // Skip the quotes again
+				} else {
+					iteratorBegin = it;
+					while ( str.iterate( &it, &codePoint, functorNoSpace ) );
+					value = str.getSubStr( iteratorBegin, it );
 				}
 			}
 			return true;
@@ -224,11 +328,78 @@ namespace XML {
 
 
 
+	bool Document::writeXML( std::fstream * fileStream ) const {
+		if ( !this -> rootNode ) return true;
+
+		fileStream -> put( char( '<' ) );
+		fileStream -> put( char( '?' ) );
+		fileStream -> put( char( 'x' ) );
+		fileStream -> put( char( 'm' ) );
+		fileStream -> put( char( 'l' ) );
+		fileStream -> put( char( ' ' ) );
+
+		fileStream -> put( char( 'v' ) );
+		fileStream -> put( char( 'e' ) );
+		fileStream -> put( char( 'r' ) );
+		fileStream -> put( char( 's' ) );
+		fileStream -> put( char( 'i' ) );
+		fileStream -> put( char( 'o' ) );
+		fileStream -> put( char( 'n' ) );
+		fileStream -> put( char( '=' ) );
+		fileStream -> put( char( '"' ) );
+		String::toString<2,10>( this -> version ).writeReadable( fileStream );
+		fileStream -> put( char( '"' ) );
+		fileStream -> put( char( ' ' ) );
+		fileStream -> put( char( 'e' ) );
+		fileStream -> put( char( 'n' ) );
+		fileStream -> put( char( 'c' ) );
+		fileStream -> put( char( 'o' ) );
+		fileStream -> put( char( 'd' ) );
+		fileStream -> put( char( 'i' ) );
+		fileStream -> put( char( 'n' ) );
+		fileStream -> put( char( 'g' ) );
+		fileStream -> put( char( '=' ) );
+		fileStream -> put( char( '"' ) );
+		this -> encoding.writeReadable( fileStream );
+		fileStream -> put( char( '"' ) );
+		fileStream -> put( char( '?' ) );
+		fileStream -> put( char( '>' ) );
+		fileStream -> put( char( '\n' ) );
+
+
+		for ( typename Vector< Node *>::Size i( 0 ); i < this -> rootNode -> getNbChildren(); i++ ) {
+			this -> rootNode -> getChild( i ).writeXML( fileStream );
+		}
+
+		return !( fileStream -> bad() );
+	}
+
+
+	bool Document::writeXML( const WString & fileName ) const {
+		std::fstream fileStream( fileName.getData(), std::ios::out );
+		if ( fileStream.is_open() ) {
+
+			if ( !writeXML( &fileStream ) ) {
+				fileStream.close();
+				return false;
+			} else {
+				fileStream.close();
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	bool Document::readXML( const WString & fileName ) {
+		_clear();
+
+		return _readXML( fileName );
+	}
+
 	bool Document::read( std::fstream * fileStream ) {
 		_unload();
-		this -> nodes.clear();
-
-
+		this -> rootNode = NULL;
 
 		if ( !IO::read( fileStream, &this -> version ) ) {
 			_clear();
@@ -238,20 +409,38 @@ namespace XML {
 			_clear();
 			return false;
 		}
-		Vector<Node *>::Size nbNodes;
-		if ( !IO::read( fileStream, &nbNodes ) ) {
+		bool isRootNode;
+		if ( !IO::read( fileStream, &isRootNode ) ) {
 			_clear();
 			return false;
 		}
-		for ( Vector<Node *>::Size i( 0 ); i < nbNodes; i++ ) {
-			Node * newNode = new Node();
-			if ( !IO::read( fileStream, &newNode ) ) {
+		if ( isRootNode ) {
+			this -> rootNode = new Node( UTF8String( "root" ) );
+			if ( !IO::read( fileStream, this -> rootNode ) ) {
 				_clear();
-				delete newNode;
 				return false;
 			}
-			this -> nodes.push(newNode);
 		}
+		
+		return true;
+	}
+
+
+	bool Document::write( std::fstream * fileStream ) const {
+		if ( !IO::write( fileStream, &this -> version ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> encoding ) ) 
+			return false;
+
+		bool isRootNode( this -> rootNode != NULL );
+		if ( !IO::write( fileStream, &isRootNode ) )
+			return false;
+
+		if ( isRootNode ) {
+			if ( !IO::write( fileStream, this -> rootNode ) ) 
+				return false;
+		}
+
 		return true;
 	}
 
@@ -259,14 +448,40 @@ namespace XML {
 		_unload();
 		this -> version = 0.0f;
 		this -> encoding.clear();
-		this -> nodes.clear();
+		this -> rootNode = NULL;
 	}
 
 
 	void Document::_unload() {
-		// Delete one by one all the nodes
-		for ( auto it( this -> nodes.getBegin() ); it != this -> nodes.getEnd(); this -> nodes.iterate( &it ) ) {
-			delete this -> nodes.getValueIt( it );
+		delete this -> rootNode;
+	}
+
+
+	bool Document::_readXML( const WString & fileName ) {
+		_unload();
+		this -> rootNode = NULL;
+
+		std::fstream fileStream( fileName.getData(), std::ios::in );
+		if ( fileStream.is_open() ) {
+			auto beginPos( fileStream.tellg() );
+			fileStream.seekg( 0, fileStream.end );
+			auto endPos( fileStream.tellg() );
+			fileStream.seekg( 0, fileStream.beg );
+
+			UTF8String buffer;
+			if ( !buffer.read( &fileStream, endPos - beginPos ) ) {
+				_clear();
+				return false;
+			}
+
+			fileStream.close();
+
+			_parse( buffer );
+
+			return true;
+		} else {
+			_clear();
+			return false;
 		}
 	}
 

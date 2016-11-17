@@ -163,12 +163,12 @@ public:
 	template<typename C = char>
 	BasicString<C> toString() const;
 
-	///@brief read from a file stream (childs will be read recursively)
+	///@brief read from a file stream (children will be read recursively)
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
 	bool read( std::fstream * fileStream );
 
-	///@brief write this object as binary into a file stream (childs will be wrote recursively)
+	///@brief write this object as binary into a file stream (children will be wrote recursively)
 	///@param fileStream stream used to write this object
 	///@return boolean to know if the operation is a success of not.
 	bool write( std::fstream * fileStream ) const;
@@ -235,13 +235,15 @@ private:
 
 ///@brief Data structure where datas of types T are ordered in a binary Red Black Tree
 ///@see https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
-template<typename I, typename T, typename Compare = Math::Logical::Less>
+template<typename I, typename T, typename Compare = Math::Compare::Template>
 class RBTree : public BasicIO {
 public:
 	typedef RBNode< MapObject<I, T> > * Iterator;
 
 	///@brief Empty Constructor
-	///@param compareFunc Functor used to order the Tree
+	///@param compareFunc Functor with operator() overloaded with :
+	///            Math::Compare::Value operator()( const T & , const T & ) const;
+	///            For security reasons, the functor should inherite from Math::Compare::Template
 	RBTree( const Compare & compareFunc = Compare() );
 
 	///@brief Copy Constructor
@@ -335,6 +337,9 @@ public:
 
 
 
+	///@brief Get if the Tree is empty of not
+	///@return True if the Tree is empty, false otherwise.
+	bool isEmpty() const;
 
 	///@brief clear the complete Tree
 	void clear();
@@ -342,8 +347,8 @@ public:
 	///@brief Insert a new [ Index => Value ] into the map
 	///@param index Index of the value to insert
 	///@param value Value to be inserted
-	///@return True of the index didn't exist and has been added. false instead.
-	bool insert( const I & index, const T & value );
+	///@return Pointer to the value just inserted, NULL if nothing has been inserted
+	T * insert( const I & index, const T & value );
 
 
 	///@brief Delete a node from the map
@@ -356,17 +361,15 @@ public:
 	template<typename C = char>
 	BasicString<C> toString() const;
 
-	///@brief Read from a file stream (childs will be read recursively)
+	///@brief Read from a file stream (children will be read recursively)
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
 	bool read( std::fstream * fileStream );
 
-	///@brief Write this object as binary into a file stream (childs will be wrote recursively)
+	///@brief Write this object as binary into a file stream (children will be wrote recursively)
 	///@param fileStream stream used to write this object
 	///@return boolean to know if the operation is a success of not.
 	bool write( std::fstream * fileStream ) const;
-
-
 protected:
 	void _clear();
 	void _unload();
@@ -387,7 +390,8 @@ protected:
 
 
 
-template<typename I, typename T, typename Compare = Math::Logical::Less>
+
+template<typename I, typename T, typename Compare = Math::Compare::Template>
 using Map = RBTree<I, T, Compare>;
 
 
@@ -400,9 +404,6 @@ using Map = RBTree<I, T, Compare>;
 
 
 /*
-
-
-
 ///@brief Data structure where datas of types T are ordered in a binary Red Black Tree
 ///@see https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
 template<typename I, typename T, typename Compare = Math::Logical::Less>
@@ -523,7 +524,9 @@ public:
 
 
 
-
+	///@brief Get if the Map is empty of not
+	///@return True if the Map is empty, false otherwise.
+	bool isEmpty() const;
 
 	///@brief Clear the complete map
 	void clear();
@@ -531,20 +534,20 @@ public:
 	///@brief Insert a new [ Index => Value ] into the map
 	///@param index Index of the value to insert
 	///@param value Value to be inserted
-	///@return True of the index didn't exist and has been added. false instead.
-	bool insert( const I & index, const T & value );
+	///@return Pointer to the value just inserted, NULL if nothing has been inserted
+	T * insert( const I & index, const T & value );
 
 	///@brief Create an human readable string from this map
 	///@return String
 	template<typename C = char>
 	BasicString<C> toString() const;
 
-	///@brief Read from a file stream (childs will be read recursively)
+	///@brief Read from a file stream (children will be read recursively)
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
 	bool read( std::fstream * fileStream );
 
-	///@brief Write this object as binary into a file stream (childs will be wrote recursively)
+	///@brief Write this object as binary into a file stream (children will be wrote recursively)
 	///@param fileStream stream used to write this object
 	///@return boolean to know if the operation is a success of not.
 	bool write( std::fstream * fileStream ) const;

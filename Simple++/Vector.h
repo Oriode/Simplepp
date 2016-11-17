@@ -35,6 +35,8 @@ public:
 	template<typename C>
 	Vector( const Vector<C> & vector );
 
+	///@brief Move Constructor
+	///@param v Vector to be moved
 	Vector( Vector && v );
 
 
@@ -170,19 +172,27 @@ public:
 	bool operator>=( const T & v ) const;
 
 
-	//used to copy data
+
+	///@brief Copy Operator
+	///@param vector Vector to be copied
+	///@return reference to THIS
+	template<typename C>
+	Vector<T> & operator=( const Vector<C> & vector );
 	Vector<T> & operator=( const Vector<T> & vector );
+
+	///@brief Move operator
+	///@param vector to be moved
+	///@return reference to THIS
 	Vector<T> & operator=( Vector && v );
 
 
-	template<typename C>
-	Vector<T> & operator=( const Vector<C> & vector );
 	Vector<T> & operator+=( const Vector<T> & vector );
 
 
 	///@brief insert a new data in the vector getSize() will be incremented and the memory auto managed.
 	///@param data data to be inserted.
-	void push( const T & data );
+	///@return Pointer to the data just inserted
+	T * push( const T & data );
 
 	///@brief retrieve the last inserted object and decrement getSize() and decrement size
 	///@return last inserted data
@@ -193,7 +203,6 @@ public:
 	///@param i Index
 	///@param v Value to insert
 	void inserti( typename Vector<T>::Size i, const T & v );
-
 
 	///@brief Fill the complete vector with the specified data.
 	///@param data data to be copied in the whole vector.
@@ -217,7 +226,9 @@ public:
 	///@brief Set the size = 0 and clear the memory
 	void reset();
 
-
+	///@brief Get if the Vector is empty of not
+	///@return True if the Vector is empty, false otherwise.
+	bool isEmpty() const;
 
 	///@brief Get the datas of this vector
 	///@return Data buffer of this vector
@@ -226,12 +237,9 @@ public:
 	const T * getData() const;
 	T * getData();
 
-
-
 	///@brief Test if a value exists in this vector
 	///@return True if the value has been founded and false instead
 	bool exists( const T & value ) const;
-
 
 	///@brief Clear and re create this vector from a data table
 	///@param dataTable Table to be read
@@ -242,20 +250,24 @@ public:
 	///@brief Replace the first occurrence of the data
 	///@param search Data to be searched
 	///@param data Data to be set instead
-	void replaceFirst( const T & search, const T & data );
+	///@return True if something has been replaced, False otherwise
+	bool replaceFirst( const T & search, const T & data );
 
 	///@brief Replace ALL occurrences of the data searched
 	///@param search Data to be searched
 	///@param data Data to be set instead
-	void replaceAll( const T & search, const T & data );
+	///@return True if something has been replaced, False otherwise
+	bool replaceAll( const T & search, const T & data );
 
 	///@brief Erase the first occurrence and rearrange the data
 	///@param value Value to be searched and erased
-	void eraseFirst( const T & value );
+	///@return True if something has been deleted, False otherwise
+	bool eraseFirst( const T & value );
 
 	///@brief Erase all the occurrences and rearrange the data
 	///@param value Value to be searched and erased
-	void eraseAll( const T & value );
+	///@return True if something has been deleted, False otherwise
+	bool eraseAll( const T & value );
 
 	///@brief Erase the data at the specified index and rearrange the data
 	///@param index Index to be erased
@@ -269,10 +281,9 @@ public:
 
 	///@brief sort the elements of this vector using the quicksort algorithm
 	///@param functor Functor with operator () overloaded with :
-	///				bool operator()(const T & v1, const T & v2) const;
+	///				bool operator()(const T &, const T &) const;
 	template<typename Func = Math::Logical::Less>
 	void sort( Func & functor = Func() );
-
 
 	///@brief Copy a part of an another vector into this one
 	///@param vector Vector to be copied
@@ -368,6 +379,7 @@ protected:
 	T * dataTable;
 	typename Vector<T>::Iterator iteratorEnd;		//Pointer to the last value
 };
+
 
 
 

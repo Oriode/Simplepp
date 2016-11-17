@@ -15,9 +15,10 @@
 #include <random>
 #include <algorithm>
 
-
 #include "../BuildConfig.h"
 #include "../SimpleLog.h"
+#include "Logical.h"
+#include "Compare.h"
 
 namespace Math {
 

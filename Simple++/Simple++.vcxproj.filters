@@ -387,6 +387,24 @@
     <ClInclude Include="MapObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\Compare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Compare.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\BasicComparable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\BasicComparable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -465,6 +483,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XML\Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\BasicComparable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
