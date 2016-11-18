@@ -52,15 +52,15 @@ namespace XML {
 		///@return Name of the param
 		const UTF8String & getName() const;
 
-		///@brief Set the name of this param
+		///@brief Set the name of this param (Warning: Changing this param name to "id" will not change the id of the node associated, @see Node::setId())
 		///@param name Name of this param
 		void setName( const UTF8String & name );
 
-		///@brief get the value of this param
+		///@brief get the value of this param 
 		///@return value of the param
 		const UTF8String & getValue() const;
 
-		///@brief Set the value of this param
+		///@brief Set the value of this param (Warning: Changing this param value if name is "id" will not change the id of the node associated, @see Node::setId())
 		///@param value Value of this param
 		void setValue( const UTF8String & value );
 
@@ -142,6 +142,10 @@ namespace XML {
 		const NodeText * toText() const;
 		NodeText * toText();
 
+		///@brief Get the Value of this node (Only appliable if getType() == Text) or of the child if a text child is present 
+		///@return Value of this node
+		const UTF8String & getValue() const;
+
 		///@brief set the name of this node
 		///@param name Name of this node
 		void setName( const UTF8String & name );
@@ -179,16 +183,33 @@ namespace XML {
 		const Param & getParam( typename Vector< Param * >::Size i ) const;
 		Param & getParam( typename Vector< Param * >::Size i );
 
-		///@brief Remove a param from this node
+		///@brief Delete a param from this node
 		///@param param Param to be removed (The param itself is deleted during this operation, NEVER call delete directly from a param)
 		///@return True if something has been removed, False otherwise
-		bool removeParam( Param * param );
+		bool deleteParam( Param * param );
 
 		///@brief Remove a child from this node
 		///@param i Index of the param to be removed (The child itself is deleted during this operation, NEVER call delete directly from a param)
 		///@return True if something has been removed, False otherwise
-		bool removeParam( typename Vector< Param * >::Size i );
+		bool deleteParam( typename Vector< Param * >::Size i );
 
+		///@brief Set the id of this node
+		///@param id String representing the identifier if this node
+		void setId( const UTF8String & id );
+
+		///@brief Get the id of this node
+		///@return Id of this node
+		const UTF8String & getId() const;
+
+		///@brief Get a vector filled by pointer to all the node corresponding to the id searched in this sub tree.
+		///@param id Id to look for
+		///@return Vector of Node's pointers with the searched id
+		Vector< Node * > getElementsById( const UTF8String & id ) const;
+
+		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
+		///@param name Name to look for
+		///@return Vector of Node's pointers with the searched name
+		Vector< Node * > getElementsByName( const UTF8String & name ) const;
 
 		///@brief Get the number of children of this node
 		///@return Number of children of this node
@@ -210,15 +231,25 @@ namespace XML {
 		const Vector<Node *> getChild( const UTF8String & name ) const;
 		Vector<Node *> getChild( const UTF8String & name );
 
-		///@brief Remove a child from this node
-		///@param child Child to be removed (The child itself is deleted during this operation, NEVER call delete directly from a node)
-		///@return True if something has been removed, False otherwise
-		bool removeChild( Node * child );
+		///@brief Delete a child from this node (And delete it)
+		///@param child Child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
+		///@return True if something has been deleted, False otherwise
+		bool deleteChild( Node * child );
 
-		///@brief Remove a child from this node
-		///@param i Index of the child to be removed (The child itself is deleted during this operation, NEVER call delete directly from a node)
-		///@return True if something has been removed, False otherwise
-		bool removeChild( typename Vector< Node * >::Size i );
+		///@brief Delete a child from this node (And delete it)
+		///@param i Index of the child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
+		///@return True if something has been deleted, False otherwise
+		bool deleteChild( typename Vector< Node * >::Size i );
+
+		///@brief Remove a child from this node (And do NOT delete it)
+		///@param child Child to be removed (The child itself is not deleted and can be set as a child to another node)
+		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
+		Node * removeChild( Node * child );
+
+		///@brief Remove a child from this node (And do NOT delete it)
+		///@param i Index of the child to be removed (The child itself is not deleted and can be set as a child to another node)
+		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
+		Node * removeChild( typename Vector< Node * >::Size i );
 
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object
@@ -240,14 +271,24 @@ namespace XML {
 		bool _writeXML( std::fstream * fileStream, unsigned int tabs ) const;
 		bool _write( std::fstream * fileStream ) const;
 		bool _read( std::fstream * fileStream );
+		bool _setChildName( Node * child, const UTF8String & name );
+		bool _setChildId( Node * child, const UTF8String & id );
+		void _getElementsById( Vector < Node * > * nodeVector, const UTF8String & id ) const;
+		void _getElementsByName( Vector < Node * > * nodeVector, const UTF8String & name ) const;
+
 	private:
 		Type type;
 		UTF8String name;
+		UTF8String id;
+
+		Node * parent;
 
 		Map< UTF8String, Param * > paramsMap;
 		MultiMap< UTF8String, Node * > childrenMap;
 		Vector< Param * > paramsVector;
 		Vector< Node * > childrenVector;
+
+		MultiMap< UTF8String, Node * > childrenByIdMap;
 	};
 
 

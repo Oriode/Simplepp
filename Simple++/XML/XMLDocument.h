@@ -45,6 +45,23 @@ namespace XML {
 		///@return Reference to THIS
 		Document & operator=( Document && document );
 
+
+		///@brief Get a vector filled by pointer to all the node corresponding to the id searched in this sub tree.
+		///@param id Id to look for
+		///@return Vector of Node's pointers with the searched id
+		Vector< Node * > getElementsById( const UTF8String & id ) const;
+
+
+		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
+		///@param name Name to look for
+		///@return Vector of Node's pointers with the searched name
+		Vector< Node * > getElementsByName( const UTF8String & name ) const;
+
+
+		///@brief Get the root node of this document
+		///@return Pointer to the root document node (can be NULL if nothing has been parsed)
+		Node * getRoot();
+
 		///@brief Write this object as an XML file
 		///@param fileName Where to write
 		///@return True if success, False otherwise

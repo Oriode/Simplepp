@@ -200,13 +200,20 @@ void Vector<T>::assign( typename Vector<T>::Size index1, typename Vector<T>::Siz
 
 template<typename T>
 Vector<T> & Vector<T>::operator+=( const Vector<T> & vector ) {
-	typename Vector<T>::Size oldNumValues = this -> size;
-	this -> resize( this -> size + vector.size );
-	for ( typename Vector<T>::Size i = 0; i < vector.getSize(); i++ ) {
-		this -> dataTable[i + oldNumValues] = vector.dataTable[i];
-	}
+	concat( vector );
 	return *this;
 }
+
+
+
+template<typename T>
+void Vector<T>::concat( const Vector<T> & vector ) {
+	typename Vector<T>::Size oldNumValues( this -> size );
+	this -> resize( this -> size + vector.size );
+	copy( getData() + oldNumValues, vector.getData(), vector.getSize() );
+}
+
+
 
 
 

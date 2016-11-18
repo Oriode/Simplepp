@@ -132,10 +132,16 @@ int main( int argc, char * argv[] ) {
 		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
 		XML::Document testDocument( WString("test.xml") );
 
-		//assert( IO::write( WString( "testXML.cxml" ), &testDocument ) );
-		//assert( IO::read( WString( "testXML.cxml" ), &testDocument ) );
+		assert( IO::write( WString( "testXML.cxml" ), &testDocument ) );
+		assert( IO::read( WString( "testXML.cxml" ), &testDocument ) );
 
 		testDocument.writeXML( WString( "testOut.xml" ) );
+
+		auto nodeTest( testDocument.getElementsById( "test" ) );
+
+		if ( nodeTest.getSize() ) {
+			log( nodeTest[0] -> getValue() );
+		}
 
 		int test;
 

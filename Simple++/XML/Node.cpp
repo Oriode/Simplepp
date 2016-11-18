@@ -120,20 +120,26 @@ namespace XML {
 
 
 
-	Node::Node( ) : type( Type::Element ) {
+	Node::Node( ) : 
+		type( Type::Element ),
+		parent(NULL)
+	{
 
 	}
 
 	Node::Node( const UTF8String & name, Type type ) :
 		name( name ),
-		type( type )
+		type( type ),
+		parent( NULL )
 	{
 
 	}
 
 	Node::Node( const Node & node ) : 
 		name( node.name ),
-		type( node.type )
+		id( node.id ),
+		type( node.type ),
+		parent(NULL)
 	{
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
 			Node * newNode( new Node( *( node.childrenVector.getValueIt( it ) ) ) );
@@ -148,11 +154,13 @@ namespace XML {
 
 	Node::Node( Node && node ) :
 		name( Utility::toRValue( node.name ) ),
+		id( Utility::toRValue( node.id ) ),
 		type( Utility::toRValue( node.type ) ),
 		paramsMap( Utility::toRValue( node.paramsMap ) ),
 		paramsVector( Utility::toRValue( node.paramsVector ) ),
 		childrenMap( Utility::toRValue( node.childrenMap ) ),
-		childrenVector( Utility::toRValue( node.childrenVector ) )
+		childrenVector( Utility::toRValue( node.childrenVector ) ),
+		parent( Utility::toRValue( node.parent ) )
 	{
 		node.childrenVector.clear();
 		node.paramsVector.clear();
@@ -161,7 +169,9 @@ namespace XML {
 
 	Node & Node::operator=( const Node & node ) {
 		this -> name = node.name;
+		this -> id = node.id;
 		this -> type = node.type;
+		this -> parent = NULL;
 
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
 			Node * newNode( new Node( *( node.childrenVector.getValueIt( it ) ) ) );
@@ -176,11 +186,13 @@ namespace XML {
 
 	Node & Node::operator=( Node && node ) {
 		this -> name = Utility::toRValue( node.name );
+		this -> id = Utility::toRValue( node.id );
 		this -> type = Utility::toRValue( node.type );
 		this -> paramsVector = Utility::toRValue( node.paramsVector );
 		this -> paramsMap = Utility::toRValue( node.paramsMap );
 		this -> childrenVector = Utility::toRValue( node.childrenVector );
 		this -> childrenMap = Utility::toRValue( node.childrenMap );
+		this -> parent = Utility::toRValue( node.parent );
 
 		node.childrenVector.clear();
 		node.paramsVector.clear();
@@ -195,15 +207,32 @@ namespace XML {
 
 
 	const NodeText * Node::toText() const {
-		return static_cast< const NodeText * >( this );
+		return ( static_cast< const NodeText * >( this ) );
 	}
 
 	NodeText * Node::toText() {
-		return static_cast< NodeText * >( this );
+		return ( static_cast< NodeText * >( this ) );
+	}
+
+
+	const UTF8String & Node::getValue() const {
+		if ( getType() == Type::Text ) {
+			return toText() -> getValue();
+		} else if (this -> childrenVector.getSize() == 1 && this -> childrenVector[0] -> getType() == Type::Text)  {
+			return this -> childrenVector[0] -> toText() -> getValue();
+		} else {
+			//Error, you shouldn't call this method, return an empty string
+			static const UTF8String emptyString;
+			return emptyString;
+		}
 	}
 
 	void Node::setName( const UTF8String & name ) {
-		this -> name = name;
+		if ( this -> parent ) {
+			this -> parent -> _setChildName( this, name );
+		} else {
+			this -> name = name;
+		}
 	}
 
 	const UTF8String & Node::getName() const {
@@ -227,6 +256,10 @@ namespace XML {
 	}
 
 	void Node::addParam( Param * param ) {
+		static UTF8String idStr( "id" );
+		if ( param -> getName() == idStr ) 
+			setId( param -> getValue() );
+		
 		this -> paramsMap.insert( param -> getName(), param );
 		this -> paramsVector.push( param );
 	}
@@ -253,7 +286,7 @@ namespace XML {
 	}
 
 
-	bool Node::removeParam( Param * param ) {
+	bool Node::deleteParam( Param * param ) {
 		if ( this -> paramsVector.eraseFirst( param ) ) {
 			this -> paramsMap.eraseIndex( param -> getName() );
 			delete param;
@@ -263,7 +296,7 @@ namespace XML {
 	}
 
 
-	bool Node::removeParam( typename Vector< Param * >::Size i ) {
+	bool Node::deleteParam( typename Vector< Param * >::Size i ) {
 		if ( i >= this -> paramsVector.getSize() ) {
 			return false;
 		} else {
@@ -275,6 +308,44 @@ namespace XML {
 		}
 	}
 
+
+	void Node::setId( const UTF8String & id ) {
+		if ( this -> parent ) {
+			this -> parent -> _setChildId( this, id );
+		} else {
+			this -> id = id;
+		}
+	}
+
+
+	const UTF8String & Node::getId() const {
+		return this -> id;
+	}
+
+
+	Vector< Node * > Node::getElementsById( const UTF8String & id ) const {
+		Vector< Node * > nodeVector;
+		nodeVector.reserve( 20 );
+
+		if ( id == this -> id )
+			nodeVector.push( const_cast< Node * >( this ) );
+
+		_getElementsById( &nodeVector, id );
+		return nodeVector;
+	}
+
+
+	Vector< Node * > Node::getElementsByName( const UTF8String & name ) const {
+		Vector< Node * > nodeVector;
+		nodeVector.reserve( 20 );
+
+		if ( name == this -> name )
+			nodeVector.push( const_cast< Node * >( this ) );
+
+		_getElementsByName( &nodeVector, name );
+		return nodeVector;
+	}
+
 	typename Vector< Param * >::Size Node::getNbChildren() const {
 		return this -> childrenVector.getSize();
 	}
@@ -284,6 +355,12 @@ namespace XML {
 	}
 
 	void Node::addChild( Node * child ) {
+		if ( child -> parent ) 
+			child -> parent -> removeChild( child );
+		if ( child -> getId().getSize() )
+			this -> childrenByIdMap.insert( child -> getId(), child );
+		
+		child -> parent = this;
 		this -> childrenMap.insert( child -> getName(), child );
 		this -> childrenVector.push( child );
 	}
@@ -292,6 +369,7 @@ namespace XML {
 		_unload();
 
 		this -> name.clear();
+		this -> id.clear();
 
 		this -> paramsMap.clear();
 		this -> paramsVector.clear();
@@ -332,10 +410,10 @@ namespace XML {
 		return *( this -> childrenVector.getValueI( i ) );
 	}
 
-	bool Node::removeChild( Node * child ) {
-		if ( this -> childrenVector.eraseFirst( child ) ) {
-			this -> childrenMap.eraseFirst( child -> getName(), child );
-			delete child;
+	bool Node::deleteChild( Node * child ) {
+		Node * childRemoved( removeChild( child ) );
+		if ( childRemoved ) {
+			delete childRemoved;
 			return true;
 		} else {
 			return false;
@@ -343,15 +421,41 @@ namespace XML {
 	}
 
 
-	bool Node::removeChild( typename Vector< Node * >::Size i ) {
-		if ( i >= this -> childrenVector.getSize() ) {
+	bool Node::deleteChild( typename Vector< Node * >::Size i ) {
+		Node * childRemoved( removeChild( i ) );
+		if ( childRemoved ) {
+			delete childRemoved;
+			return true;
+		} else {
 			return false;
+		}
+	}
+
+
+	Node * Node::removeChild( Node * child ) {
+		if ( this -> childrenVector.eraseFirst( child ) ) {
+			this -> childrenMap.eraseFirst( child -> getName(), child );
+			if ( child -> getId().getSize() )
+				this -> childrenByIdMap.eraseFirst( child -> getId(), child );
+			child -> parent = NULL;
+			return child;
+		} else {
+			return NULL;
+		}
+	}
+
+
+	Node * Node::removeChild( typename Vector< Node * >::Size i ) {
+		if ( i >= this -> childrenVector.getSize() ) {
+			return NULL;
 		} else {
 			Node * child( this -> childrenVector[i] );
 			this -> childrenVector.eraseIndex( i );
 			this -> childrenMap.eraseFirst( child -> getName(), child );
-			delete child;
-			return true;
+			if ( child -> getId().getSize() )
+				this -> childrenByIdMap.eraseFirst( child -> getId(), child );
+			child -> parent = NULL;
+			return child;
 		}
 	}
 
@@ -391,9 +495,15 @@ namespace XML {
 				this -> childrenVector.getValueIt( it ) -> _writeXML( fileStream, tabs + 1 );
 			}
 
-			
 
 			// Now Close
+			if ( getNbChildren() > 1 ) {
+				fileStream -> put( char( '\n' ) );
+				for ( unsigned int i( 0 ); i < tabs; i++ )
+					fileStream -> put( char( '\t' ) );
+			}
+
+			
 			fileStream -> put( char( '<' ) );
 			fileStream -> put( char( '/' ) );
 			this -> name.writeReadable( fileStream );
@@ -430,6 +540,11 @@ namespace XML {
 			_clear();
 			return false;
 		}
+
+		if ( !IO::read( fileStream, &this -> id ) ) {
+			_clear();
+			return false;
+		}
 	
 		// Read the Params
 		Vector< Param * >::Size nbParams;
@@ -445,8 +560,7 @@ namespace XML {
 				_clear();
 				return false;
 			}
-			this -> paramsVector.push( newParam );
-			this -> paramsMap.insert( newParam -> getName(), newParam );
+			addParam( newParam );
 		}
 
 		// Read the children
@@ -464,6 +578,7 @@ namespace XML {
 			}
 			if ( newNodeType == Type::Text ) {
 				NodeText * newNode( new NodeText() );
+				newNode -> parent = this;
 				if ( !IO::read( fileStream, newNode ) ) {
 					delete newNode;
 					_clear();
@@ -473,6 +588,7 @@ namespace XML {
 				this -> childrenMap.insert( newNode -> getName(), newNode );
 			} else {
 				Node * newNode( new Node() );
+				newNode -> parent = this;
 				if ( !IO::read( fileStream, newNode ) ) {
 					delete newNode;
 					_clear();
@@ -489,6 +605,52 @@ namespace XML {
 		return true;
 	}
 
+
+	bool Node::_setChildName( Node * child, const UTF8String & name ) {
+		if ( this -> childrenMap.eraseFirst( child -> getName(), child ) ) {
+			child -> name = name;
+			this -> childrenMap.insert( child -> getName(), child );
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	bool Node::_setChildId( Node * child, const UTF8String & id ) {
+		this -> childrenByIdMap.eraseFirst( child -> getId(), child );
+		child -> id = id;
+		if ( id.getSize() ) 
+			this -> childrenByIdMap.insert( child -> getId(), child );
+		return true;
+	}
+
+
+	void Node::_getElementsById( Vector < Node * > * nodeVector, const UTF8String & id ) const {
+		const Vector < Node * > * vectorFounded( this -> childrenByIdMap[id] );
+		if ( vectorFounded ) {
+			// Concat the new one with what we already have
+			nodeVector -> concat( *vectorFounded );
+		}
+		// Recursively call every child too
+		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
+			this -> childrenVector.getValueIt( it ) -> _getElementsById( nodeVector, id );
+		}
+	}
+
+
+	void Node::_getElementsByName( Vector < Node * > * nodeVector, const UTF8String & name ) const {
+		const Vector < Node * > * vectorFounded( this -> childrenMap[name] );
+		if ( vectorFounded ) {
+			// Concat the new one with what we already have
+			nodeVector -> concat( *vectorFounded );
+		}
+		// Recursively call every child too
+		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
+			this -> childrenVector.getValueIt( it ) -> _getElementsByName( nodeVector, name );
+		}
+	}
+
 	bool Node::write( std::fstream * fileStream ) const {
 		if ( getType() == Type::Text )
 			return this -> toText() -> write( fileStream );
@@ -500,6 +662,8 @@ namespace XML {
 		
 
 		if ( !IO::write( fileStream, &this -> name ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> id ) )
 			return false;
 
 		Vector< Param * >::Size nbParams( this -> paramsVector.getSize() );

@@ -185,8 +185,15 @@ public:
 	///@return reference to THIS
 	Vector<T> & operator=( Vector && v );
 
-
+	///@brief Concat another vector to this one
+	///@param vector Vector to be concatenated
+	///@return reference to THIS
 	Vector<T> & operator+=( const Vector<T> & vector );
+
+	///@brief Concat another vector to this one
+	///@param vector Vector to be concatenated
+	void concat( const Vector<T> & vector );
+	
 
 
 	///@brief insert a new data in the vector getSize() will be incremented and the memory auto managed.
@@ -379,8 +386,6 @@ protected:
 	T * dataTable;
 	typename Vector<T>::Iterator iteratorEnd;		//Pointer to the last value
 };
-
-
 
 
 

@@ -85,7 +85,7 @@ namespace XML {
 						if ( (*it) != char('?') ) {
 							
 							struct FunctorNodeName {
-								bool operator()( const UCodePoint & c ) { return c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' ); }
+								bool operator()( const UCodePoint & c ) { return c != UCodePoint( ' ' ) && c != UCodePoint( '\t' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' ); }
 							};
 							static FunctorNodeName functorNodeName;
 
@@ -167,32 +167,53 @@ namespace XML {
 								//SYNTAX ERROR
 							}
 						}
+
 						assert( ( *it ) == char( '>' ) );
 						it++;
-
+						if ( it == str.getEnd() )
+							break;
 
 						//Node has been created, maybe we have content inside the active node
-						if ( deep ) {
+						{
 							struct FunctorContent {
 								bool operator()( const UCodePoint & c ) { return c != UCodePoint( '<' ); }
 							};
 							struct FunctorNoSpace {
 								bool operator()( const UCodePoint & c ) { return c == UCodePoint( '\n' ) || c == UCodePoint( '\t' ) || c == UCodePoint( ' ' ); }
 							};
+							struct FunctorSpace {
+								bool operator()( const UCodePoint & c ) { return c != UCodePoint( '<' ) && c != UCodePoint( '\n' ) && c != UCodePoint( '\t' ) && c != UCodePoint( ' ' ); }
+							};
 							static FunctorContent functorContent;
 							static FunctorNoSpace functorNoSpace;
+							static FunctorSpace functorSpace;
 
 							while ( str.iterate( &it, &codePoint, functorNoSpace ) );
 							auto beginIt( it );
-							while ( str.iterate( &it, &codePoint, functorContent ) );
+							auto endIt( it );
+							while ( true ) {
+								while ( str.iterate( &it, &codePoint, functorSpace ) )
+									endIt = it;
+								if ( ( *it ) == char( '<' ) || it == str.getEnd() )
+									break;
+								else 
+									it++;
+								
+							}
 
-							if ( it != beginIt ) {
+							//while ( str.iterate( &it, &codePoint, functorContent ) );
+
+							if ( endIt != beginIt ) {
 								// We have content, so we gonna create a text node and add the content
-								NodeText * nodeText( new NodeText( str.getSubStr( beginIt, it ) ) );
+								NodeText * nodeText( new NodeText( str.getSubStr( beginIt, endIt ) ) );
+
+								UTF8String & strValue( *( const_cast< UTF8String * >( &( nodeText -> getValue() ) ) ) );
+								
 
 								nodeTree.getLast() -> addChild( nodeText );
 							}
 						}
+						
 
 
 
@@ -214,12 +235,12 @@ namespace XML {
 		};
 		struct FunctorNoSpace {
 			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
+				return c != UCodePoint( ' ' ) && c != UCodePoint( '\t' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
 			}
 		};
 		struct FunctorNoEqual {
 			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( '=' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
+				return c != UCodePoint( '=' ) && c != UCodePoint( '\t' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
 			}
 		};
 		static FunctorNoEqual functorNoEqual;
@@ -277,12 +298,12 @@ namespace XML {
 		};
 		struct FunctorNoSpace {
 			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
+				return c != UCodePoint( ' ' ) && c != UCodePoint( '\t' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
 			}
 		};
 		struct FunctorNoEqual {
 			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( '=' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
+				return c != UCodePoint( '=' ) && c != UCodePoint( '\t' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
 			}
 		};
 		static FunctorNoEqual functorNoEqual;
@@ -328,6 +349,26 @@ namespace XML {
 
 
 
+	Vector< Node * > Document::getElementsById( const UTF8String & id ) const {
+		if ( this -> rootNode )
+			return this -> rootNode -> getElementsById( id );
+		else
+			return Vector< Node * >();
+	}
+
+
+	Vector< Node * > Document::getElementsByName( const UTF8String & name ) const {
+		if ( this -> rootNode )
+			return this -> rootNode -> getElementsByName( name );
+		else
+			return Vector< Node * >();
+	}
+
+
+	Node * Document::getRoot() {
+		return this -> rootNode;
+	}
+
 	bool Document::writeXML( std::fstream * fileStream ) const {
 		if ( !this -> rootNode ) return true;
 
@@ -364,10 +405,10 @@ namespace XML {
 		fileStream -> put( char( '"' ) );
 		fileStream -> put( char( '?' ) );
 		fileStream -> put( char( '>' ) );
-		fileStream -> put( char( '\n' ) );
 
 
 		for ( typename Vector< Node *>::Size i( 0 ); i < this -> rootNode -> getNbChildren(); i++ ) {
+			fileStream -> put( char( '\n' ) );
 			this -> rootNode -> getChild( i ).writeXML( fileStream );
 		}
 
