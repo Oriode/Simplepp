@@ -4,7 +4,7 @@
 namespace XML {
 
 	Document::Document( const UTF8String & str ) : 
-	rootNode(NULL)
+		rootNode( NULL )
 	{
 		_parse( str );
 	}
@@ -29,6 +29,14 @@ namespace XML {
 
 	Document::Document( const WString & fileName ) {
 		_readXML( fileName );
+	}
+
+
+	Document::Document() :
+		version(0.0),
+		rootNode( new Node( "#document", Node::Type::Document ) )
+	{
+
 	}
 
 	Document & Document::operator=( const Document & document ) {
@@ -350,18 +358,12 @@ namespace XML {
 
 
 	Vector< Node * > Document::getElementsById( const UTF8String & id ) const {
-		if ( this -> rootNode )
-			return this -> rootNode -> getElementsById( id );
-		else
-			return Vector< Node * >();
+		return this -> rootNode -> getElementsById( id );
 	}
 
 
 	Vector< Node * > Document::getElementsByName( const UTF8String & name ) const {
-		if ( this -> rootNode )
-			return this -> rootNode -> getElementsByName( name );
-		else
-			return Vector< Node * >();
+		return this -> rootNode -> getElementsByName( name );
 	}
 
 
@@ -369,9 +371,27 @@ namespace XML {
 		return this -> rootNode;
 	}
 
-	bool Document::writeXML( std::fstream * fileStream ) const {
-		if ( !this -> rootNode ) return true;
 
+	float Document::getVersion() const {
+		return this -> version;
+	}
+
+
+	void Document::setVersion( float version ) {
+		this -> version = version;
+	}
+
+
+	const UTF8String & Document::getEncoding() const {
+		return this -> encoding;
+	}
+
+
+	void Document::setEncoding( const UTF8String & encoding ) {
+		this -> encoding = encoding;
+	}
+
+	bool Document::writeXML( std::fstream * fileStream ) const {
 		fileStream -> put( char( '<' ) );
 		fileStream -> put( char( '?' ) );
 		fileStream -> put( char( 'x' ) );
@@ -450,18 +470,12 @@ namespace XML {
 			_clear();
 			return false;
 		}
-		bool isRootNode;
-		if ( !IO::read( fileStream, &isRootNode ) ) {
+		this -> rootNode = new Node( UTF8String( "#document" ), Node::Type::Document );
+		if ( !IO::read( fileStream, this -> rootNode ) ) {
 			_clear();
 			return false;
 		}
-		if ( isRootNode ) {
-			this -> rootNode = new Node( UTF8String( "root" ) );
-			if ( !IO::read( fileStream, this -> rootNode ) ) {
-				_clear();
-				return false;
-			}
-		}
+		
 		
 		return true;
 	}
@@ -472,15 +486,8 @@ namespace XML {
 			return false;
 		if ( !IO::write( fileStream, &this -> encoding ) ) 
 			return false;
-
-		bool isRootNode( this -> rootNode != NULL );
-		if ( !IO::write( fileStream, &isRootNode ) )
+		if ( !IO::write( fileStream, this -> rootNode ) ) 
 			return false;
-
-		if ( isRootNode ) {
-			if ( !IO::write( fileStream, this -> rootNode ) ) 
-				return false;
-		}
 
 		return true;
 	}
@@ -489,7 +496,7 @@ namespace XML {
 		_unload();
 		this -> version = 0.0f;
 		this -> encoding.clear();
-		this -> rootNode = NULL;
+		this -> rootNode = new Node( "#document", Node::Type::Document );
 	}
 
 

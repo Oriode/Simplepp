@@ -13,6 +13,8 @@ namespace XML {
 
 	class Document : public BasicIO {
 	public:
+		///@brief Empty constructor
+		Document();
 
 		///@brief Constructor from a buffer
 		///@param str String buffer to be parsed
@@ -21,7 +23,6 @@ namespace XML {
 		///@brief Constructor from an XML file
 		///@param fileName File to be opened and parsed
 		Document( const WString & fileName );
-
 
 		///@brief Destructor
 		~Document();
@@ -33,7 +34,6 @@ namespace XML {
 		///@brief Move Constructor
 		///@param document Document to be moved
 		Document( Document && document );
-
 
 		///@brief Copy operator
 		///@param document Document to be copied
@@ -51,16 +51,30 @@ namespace XML {
 		///@return Vector of Node's pointers with the searched id
 		Vector< Node * > getElementsById( const UTF8String & id ) const;
 
-
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
 		///@return Vector of Node's pointers with the searched name
 		Vector< Node * > getElementsByName( const UTF8String & name ) const;
 
-
 		///@brief Get the root node of this document
-		///@return Pointer to the root document node (can be NULL if nothing has been parsed)
+		///@return Pointer to the root document node (will never be NULL)
 		Node * getRoot();
+
+		///@brief Get the version of this document
+		///@return Version
+		float getVersion() const;
+
+		///@brief Set the version of this document
+		///@param version new version to be set
+		void setVersion( float version );
+
+		///@brief Get the encoding of this document
+		///@return Encoding of this document
+		const UTF8String & getEncoding() const;
+
+		///@brief Set the encoding of this document
+		///@param encoding Encoding to be set
+		void setEncoding( const UTF8String & encoding );
 
 		///@brief Write this object as an XML file
 		///@param fileName Where to write

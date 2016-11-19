@@ -227,6 +227,23 @@ namespace XML {
 		}
 	}
 
+
+	void Node::setValue( const UTF8String & value ) {
+		if ( getType() == Type::Text ) {
+			this -> toText() -> setValue( value );
+		} else {
+			if ( this -> childrenVector.getSize() > 0 ) {
+				// We are not a Text node, and we have at least one child, if the first one is a Text one, set it's value.
+				if ( this -> childrenVector[0] -> getType() == Type::Text )
+					this -> childrenVector[0] -> toText() -> setValue( value );
+			} else {
+				// We are not a Text node, and do not have any child, add one
+				NodeText * newNode( new NodeText( value ) );
+				addChild( newNode );
+			}
+		}
+	}
+
 	void Node::setName( const UTF8String & name ) {
 		if ( this -> parent ) {
 			this -> parent -> _setChildName( this, name );

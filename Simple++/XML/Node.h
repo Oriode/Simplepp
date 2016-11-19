@@ -146,6 +146,10 @@ namespace XML {
 		///@return Value of this node
 		const UTF8String & getValue() const;
 
+		///@brief Set the value of this node (Will change this node value if getType() == Text, otherwise will try to change the first child value)
+		///@param value Value to be set
+		void setValue( const UTF8String & value );
+
 		///@brief set the name of this node
 		///@param name Name of this node
 		void setName( const UTF8String & name );
