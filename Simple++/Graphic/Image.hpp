@@ -454,10 +454,6 @@ namespace Graphic {
 	}
 
 
-	template<typename T>
-	ImageT<T>::ImageT( std::fstream * fileStream ) {
-		_read( fileStream );
-	}
 
 
 	template<typename T>

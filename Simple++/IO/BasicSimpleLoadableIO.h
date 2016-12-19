@@ -3,7 +3,7 @@
 #include "BasicSimpleIO.h"
 #include "../BasicLoadable.h"
 
-class BasicSimpleLoadableIO : public BasicSimpleIO, public BasicLoadable {
+class BasicSimpleLoadableIO : public virtual BasicSimpleIO, public virtual BasicLoadable {
 public:
 	BasicSimpleLoadableIO();
 	~BasicSimpleLoadableIO();

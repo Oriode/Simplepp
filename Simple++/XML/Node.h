@@ -142,6 +142,11 @@ namespace XML {
 		const NodeText * toText() const;
 		NodeText * toText();
 
+		///@brief Get the parent of this node
+		///@return Pointer to the parent if there is one (NULL otherwise)
+		const Node * getParent() const;
+		Node * getParent();
+
 		///@brief Get the Value of this node (Only appliable if getType() == Text) or of the child if a text child is present 
 		///@return Value of this node
 		const UTF8String & getValue() const;

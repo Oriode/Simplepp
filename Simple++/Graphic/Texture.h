@@ -1,12 +1,12 @@
 #pragma once
 
 
-#include "Log.h"
-#include "IO/BasicLoadableIO.h"
-#include "Math/Math.h"
-#include "Vector.h"
-#include "String.h"
-#include "Utility.h"
+#include "../Log.h"
+#include "../IO/BasicLoadableIO.h"
+#include "../Math/Math.h"
+#include "../Vector.h"
+#include "../String.h"
+#include "../Utility.h"
 #include "Image.h"
 
 namespace Graphic {
@@ -23,13 +23,6 @@ namespace Graphic {
 		///@param format of the image
 		Texture( const Math::Vec2<Size> & size, typename Format format = Format::RGB );
 
-		///@brief create a new image using a path to a file (only support official file format)
-		Texture( const WString & filePath );
-
-		///@brief create a new Texture using a file stream to read.
-		///@param fileStream file stream to read.
-		Texture( std::fstream * fileStream );
-
 		///@brief copy constructor
 		Texture( const Texture<T> & image );
 
@@ -40,6 +33,9 @@ namespace Graphic {
 		///@param invertY if the image has to be flipped vertically or not.
 		Texture( const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
 
+		///@brief Create a texture from an ImageT
+		///@param image Image to use to create the mipmap 0
+		Texture( const ImageT<T> & image );
 
 		///@brief move constructor
 		Texture( Texture<T> && image );
@@ -67,6 +63,9 @@ namespace Graphic {
 		///@param invertY if the image has to be flipped vertically or not.
 		void setDatas( const T * data, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
 
+		///@brief Set the data of this texture from an ImageT
+		///@param image Image to be used
+		void setDatas( const ImageT<T> & image );
 
 		///@brief reset this image with a new size.
 		///@param size new size
@@ -82,14 +81,20 @@ namespace Graphic {
 		///@brief get a mipmap from this texture
 		///@param i mipmap number (0 mean original size)
 		///@return pointer to the mipmap wanted.
-		ImageT<T> * getMipmap( typename Vector<ImageT<T>>::Size i = 0 );
+		const ImageT<T> & getMipmap( typename Vector<ImageT<T>>::Size i = 0 ) const;
+		ImageT<T> & getMipmap( typename Vector<ImageT<T>>::Size i = 0 );
 
 
 		///@brief get a mipmap from this texture
 		///@param i mipmap number (0 mean the original size)
 		///@return pointer to the mipmap
-		ImageT<T> * operator[]( typename Vector<ImageT<T>>::Size i );
+		const ImageT<T> & operator[]( typename Vector<ImageT<T>>::Size i ) const;
+		ImageT<T> & operator[]( typename Vector<ImageT<T>>::Size i );
 
+		///@brief get the mipmaps vector
+		///@return Vector of mipmaps
+		const typename Vector<ImageT<T> * > & getMipmapVector() const;
+		typename Vector<ImageT<T> * > & getMipmapVector();
 
 
 		///@brief generate the mipmap from the actual lod 0
@@ -150,7 +155,7 @@ namespace Graphic {
 
 		///@brief get the number of mipmap of this texture
 		///@return number of mipmaps
-		typename Vector<ImageT<T> * >::Size getNumMipmaps() const;
+		typename Vector<ImageT<T> * >::Size getNbMipmaps() const;
 	protected:
 		enum ctor { null };
 		Texture( ctor );
@@ -160,9 +165,6 @@ namespace Graphic {
 
 		Vector<ImageT<T> * > datas;
 	};
-
-
-
 
 }
 

@@ -31,9 +31,7 @@ public:
 
 	template<typename C>
 	BasicString( const BasicString<C> & str );
-
-	BasicString( const BasicString & str );
-
+	BasicString( const BasicString<T> & str );
 	BasicString( BasicString<T> && str );
 
 
@@ -66,8 +64,8 @@ public:
 
 	template<typename C>
 	BasicString & operator=( const BasicString<C> & str );
-	BasicString & operator=( BasicString<T> && str );
 	BasicString & operator=( const BasicString<T> & str );
+	BasicString & operator=( BasicString<T> && str );
 
 
 	template<typename C>

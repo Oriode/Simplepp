@@ -1,6 +1,6 @@
 
 template<typename C>
-bool IO::write( const WString & fileName, const C * object ) {
+bool IO::write( const UTF8String & fileName, const C * object ) {
 	std::fstream fileStream( fileName.getData(), std::ios::out | std::ios::binary );
 	if ( fileStream.is_open() ) {
 		bool result( IO::write( &fileStream, object ) );
@@ -12,7 +12,7 @@ bool IO::write( const WString & fileName, const C * object ) {
 
 
 template<typename C>
-bool IO::read( const WString & fileName, C * object ) {
+bool IO::read( const UTF8String & fileName, C * object ) {
 	std::fstream fileStream( fileName.getData(), std::ios::in | std::ios::binary );
 	if ( fileStream.is_open() ) {
 		bool result( IO::read( &fileStream, object ) );

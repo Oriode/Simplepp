@@ -29,7 +29,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _FontLoadable<T, LoadingFunc>::onLoad() {
+	bool _FontLoadable<T, LoadingFunc>::onLoad() {
 		switch ( this -> loadingType ) {
 		case LoadingType::FTFILE:
 		{
@@ -39,9 +39,9 @@ namespace Graphic {
 				this -> memorySize = 0;
 				this -> ftLib = NULL;
 				this -> ftFace = NULL;
-				return;
+				return false;
 			} else {
-				_loadFreeType( this -> memoryFontObject, this -> memorySize );
+				return _loadFreeType( this -> memoryFontObject, this -> memorySize );
 			}
 
 
@@ -52,19 +52,23 @@ namespace Graphic {
 			if ( file.is_open() ) {
 				if ( !onRead( &file ) ) {
 					error( String( "Error while reading the file : " ) << this -> fileName );
+					return false;
 				}
 				file.close();
+				return true;
 			} else {
 				error( String( "Error while opening the file : " ) << this -> fileName );
+				return false;
 			}
 
 			break;
 		}
 		}
+		return true;
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _FontLoadable<T, LoadingFunc>::onUnload() {
+	bool _FontLoadable<T, LoadingFunc>::onUnload() {
 		_clear();
 	}
 

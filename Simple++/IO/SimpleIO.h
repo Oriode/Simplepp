@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fstream>
-#include "SimpleLog.h"
+#include "../SimpleLog.h"
 #include "BasicSimpleIO.h"
 #include "BasicSimpleLoadableIO.h"
 

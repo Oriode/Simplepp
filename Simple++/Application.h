@@ -27,10 +27,16 @@ public:
 	~Application();
 
 
-	///@brief Operator [] to access an arg using his name
+	///@brief Operator [] to access an arg using its name
 	///@param argName Name of the arg to retrieve.
-	///@return Pointer to the string representing the value of the arg.
+	///@return Pointer to the string representing the value of the arg. (NULL if nothing has been founded)
 	const BasicString<T> * operator[]( const BasicString<T> & argName ) const;
+
+	///@brief Get an arg value using its name (alias of operator[])
+	///@param argName Name of the arg to retrieve.
+	///@return Pointer to the string representing the value of the arg. (NULL if nothing has been founded)
+	const BasicString<T> * getArgValue( const BasicString<T> & argName ) const;
+
 
 	///@brief get the application name (argv[0])
 	///@return Name of this application

@@ -79,11 +79,6 @@ namespace Graphic {
 		///@param format of the image
 		ImageT( const Math::Vec2<Size> & size, Format format = Format::RGB );
 
-		///@brief create a new image data from a file stream.
-		///@param fileStream Stream to read
-		///@param format of the image
-		ImageT( std::fstream * fileStream );
-
 
 		///@brief Constructor to create an image from a data buffer.
 		///@param data Data buffer to copy

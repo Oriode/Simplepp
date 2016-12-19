@@ -382,7 +382,7 @@ namespace XML {
 	}
 
 
-	const UTF8String & Document::getEncoding() const {
+	const String & Document::getEncoding() const {
 		return this -> encoding;
 	}
 
