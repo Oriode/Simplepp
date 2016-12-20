@@ -435,10 +435,22 @@
     <ClInclude Include="IO\IOManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IO\IOLoadableManager.h">
+    <ClInclude Include="IO\IOHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IO\IOHandler.h">
+    <ClInclude Include="IO\IOHandlerLoadable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\IOManagerLoadable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\IOManagerLoadable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\IOHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\IOHandlerLoadable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

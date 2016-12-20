@@ -156,9 +156,13 @@
     <ClInclude Include="GL\GLFW.h" />
     <ClInclude Include="GL\GLFWWindow.h" />
     <ClInclude Include="IO\IOHandler.h" />
-    <ClInclude Include="IO\IOLoadableManager.h" />
+    <ClInclude Include="IO\IOHandler.hpp" />
+    <ClInclude Include="IO\IOHandlerLoadable.h" />
+    <ClInclude Include="IO\IOHandlerLoadable.hpp" />
+    <ClInclude Include="IO\IOManagerLoadable.h" />
     <ClInclude Include="IO\IOManager.h" />
     <ClInclude Include="IO\IOManager.hpp" />
+    <ClInclude Include="IO\IOManagerLoadable.hpp" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="IO\BasicIO.h" />

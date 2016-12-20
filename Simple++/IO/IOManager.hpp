@@ -3,7 +3,7 @@
 	template<typename DataType>
 	IOManager<DataType>::IOManager() {
 		// DataType has to be a BasicIO
-		static_assert( Utility::isBase<BasicSimpleIO, DataType>::value, "DataType should inherit from BasicSimpleIO" );
+		//static_assert( Utility::isBase<BasicSimpleIO, DataType>::value, "DataType should inherit from BasicSimpleIO" );
 	}
 
 	template<typename DataType>
@@ -57,31 +57,23 @@
 				clear();
 				return false;
 			}
-			RBNode<MapObject<UTF8String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, newContainer ) );
-			if ( !nodeInserted ) {
-				delete newContainer.object;
+			if ( !_addObjectContainer( filePath, newContainer ) ) {
 				clear();
 				return false;
 			}
-			auto objectInserted( this -> dataNodeMap.insert( newContainer.object, nodeInserted ) );
-			if ( !objectInserted ) {
-				clear();
-				return false;
-			}
-			this -> dataVector.push( &(nodeInserted -> getValue().getValue()) );
 		}
 		return true;
 	}
 
 
 	template<typename DataType>
-	const DataType * IOManager<DataType>::addObject( const UTF8String & filePath ) {
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const UTF8String & filePath ) {
 		ObjectContainer * objectFounded( this -> dataMap[filePath] );
 		if ( objectFounded ) {
 			( objectFounded -> nbUses )++;
-			return ( objectFounded -> object );
+			return ( objectFounded );
 		} else {
-			// Image doesn't exists, we have to add it
+			// Object doesn't exists, we have to add it
 			DataType * newData( new DataType() );
 			if ( IO::read( filePath, newData ) ) {
 
@@ -89,21 +81,7 @@
 				newContainer.nbUses = 1;
 				newContainer.object = newData;
 
-				RBNode<MapObject<UTF8String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, newContainer ) );
-				if ( !nodeInserted ) {
-					delete newData;
-					// Insert has failed
-					return NULL;
-				} 
-				auto nodeNodeInserted( this -> dataNodeMap.insertNode( newData, nodeInserted ) );
-				if ( !nodeNodeInserted ) {
-					delete newData;
-					this -> dataMap.eraseNode( nodeInserted );
-					return NULL;
-				}
-
-				this -> dataVector.push( &(nodeInserted -> getValue().getValue()) );
-				return newData;
+				return _addObjectContainer( filePath, newContainer );
 			} else {
 				delete newData;
 				// Loading has failed
@@ -112,73 +90,56 @@
 		}
 	}
 
-	/*template<typename DataType>
-	const DataType * IOManager<DataType>::getObject( const UTF8String & filePath ) {
-		ObjectContainer * objectFounded( this -> dataMap[filePath] );
-		if ( objectFounded ) {
-			( objectFounded -> nbUses )++;
-			return  objectFounded -> object;
-		} else {
-			// Image doesn't exists, we have to add it
-			DataType newData( new DataType() );
-			if ( IO::read( filePath, *newImage ) ) {
-
-				ObjectContainer newContainer;
-				newContainer.nbUses = 1;
-				newContainer.object = newData;
-
-
-				ObjectContainer * dataInserted( this -> dataMap.insert( filePath, newContainer ) );
-				if ( dataInserted ) {
-					this -> dataVector.push( dataInserted );
-					return newData;
-				} else {
-					delete newData;
-					// Insert has failed
-					return NULL;
-				}
-			} else {
-				delete newData;
-				// Loading has failed
-				return NULL;
-			}
-		}
-	}*/
-
-	/*template<typename DataType>
-	void IO::IOManager<DataType>::deleteObject( const UTF8String & filePath ) {
-		ObjectContainer * objectFounded( this -> dataMap[filePath] );
-		if ( objectFounded ) {
-			if ( objectFounded -> nbUses <= 1 ) {
-				delete objectFounded -> object; 
-				this -> dataMap.eraseIndex( filePath );
-				this -> dataVector.eraseFirst( objectFounded );
-			} else {
-				( objectFounded -> nbUses )--;
-			}
-		} else {
-			// Seems like the object looked for doesn't exists.
-		}
-	}*/
 
 	template<typename DataType>
-	bool IOManager<DataType>::deleteObject( DataType * object ) {
-		auto foundedNodeNode( this -> dataNodeMap.getNodeI( object ) );
+	void IOManager<DataType>::incrUseCounter( ObjectId objectId ) {
+		( const_cast< ObjectContainer * >( objectId ) -> nbUses )++;
+	}
+
+
+
+	template<typename DataType>
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const UTF8String & filePath, ObjectContainer & objectContainer ) {
+		RBNode<MapObject<UTF8String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, objectContainer ) );
+		ObjectContainer & objectContainerInserted( nodeInserted -> getValue().getValue() );
+		if ( !nodeInserted ) {
+			delete objectContainer.object;
+			// Insert has failed
+			return NULL;
+		}
+		auto nodeNodeInserted( this -> dataNodeMap.insertNode( &objectContainerInserted, nodeInserted ) );
+		if ( !nodeNodeInserted ) {
+			delete objectContainer.object;
+			this -> dataMap.eraseNode( nodeInserted );
+			return NULL;
+		}
+		objectContainerInserted.filePath = &(nodeInserted -> getValue().getIndex());
+		this -> dataVector.push( &( objectContainerInserted ) );
+		return &( objectContainerInserted );
+	}
+
+
+	template<typename DataType>
+	bool IOManager<DataType>::deleteObject( ObjectId objectId ) {
+		auto foundedNodeNode( this -> dataNodeMap.getNodeI( objectId ) );
 		if ( foundedNodeNode ) {
 			auto foundedNode( foundedNodeNode -> getValue().getValue() );
 			ObjectContainer * objectContainer( &( foundedNode -> getValue().getValue() ) );
-			this -> dataVector.eraseFirst( objectContainer );
+			this -> dataVector.eraseFirst( objectId );
 			this -> dataMap.eraseNode( foundedNode );
 			this -> dataNodeMap.eraseNode( foundedNodeNode );
 
 		} else {
 			// Seems like the object looked for doesn't exists.
 		}
-		delete object;
+		delete const_cast<ObjectContainer *>(objectId) -> object;
 		return true;
 	}
 
-	
+	template<typename DataType>
+	const DataType * IOManager<DataType>::getObject( ObjectId objectId ) const {
+		return objectId -> object;
+	}
 
 	template<typename DataType>
 	bool IOManager<DataType>::_unload() {
@@ -197,8 +158,13 @@
 	void IOManager<DataType>::clear() {
 		_unload();
 		this -> dataMap.clear();
+		this -> dataNodeMap.clear();
+		this -> dataVector.clear();
 	}
 
-
+	template<typename DataType>
+	typename IOManager<DataType>::ObjectContainer * IOManager<DataType>::_getObjectContainer( ObjectId objectId ) {
+		return const_cast< ObjectContainer * >( objectId );
+	}
 
 //}

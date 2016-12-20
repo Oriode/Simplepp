@@ -60,6 +60,8 @@
 #include "UI/Window.h"
 #include <functional>
 #include "IO/IOHandler.h"
+#include "IO/IOHandlerLoadable.h"
+#include "IO/IOManagerLoadable.h"
 
 
 template<typename T>
@@ -96,13 +98,44 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 	#ifdef DEBUG_IO
 	{
-		IOManager<Graphic::Texture<unsigned char>> manager;
-		IOHandler<Graphic::Texture<unsigned char>> textureHandler( &manager );
+
+		{
+			IOManager<Graphic::Texture<unsigned char>> manager;
+			IOHandler<Graphic::Texture<unsigned char>> textureHandler;
 
 
-		//assert( IO::write( "TextureManager.cmanager", &manager ) );
-		assert( IO::read( "TextureManager.cmanager", &manager ) );
-		assert( textureHandler.setObject( "sanctum.ctexture" ) );
+			//assert( IO::write( "TextureManager.cmanager", &manager ) );
+			//assert( IO::read( "TextureManager.cmanager", &manager ) );
+			assert( textureHandler.setObject( "sanctum.ctexture" ) );
+
+			Graphic::Texture<unsigned char> textureTest;
+
+			assert( textureHandler.setObject( &textureTest ) );
+
+			assert( textureHandler.setObject( "sanctum.ctexture" ) );
+		}
+		{
+			IOManagerLoadable<Graphic::Texture<unsigned char>> manager;
+			IOHandlerLoadable<Graphic::Texture<unsigned char>> textureHandler;
+
+
+			//assert( IO::write( "TextureManager.cmanager", &manager ) );
+			//assert( IO::read( "TextureManager.cmanager", &manager ) );
+			assert( textureHandler.setObject( "sanctum.ctexture" ) );
+
+			Graphic::Texture<unsigned char> textureTest;
+
+			assert( manager.load() );
+			assert( textureHandler.load() );
+			assert( textureHandler.unload() );
+			assert( textureHandler.load() );
+
+
+			assert( textureHandler.setObject( &textureTest ) );
+
+			assert( textureHandler.setObject( "sanctum.ctexture" ) );
+		}
+
 
 
 		/*
