@@ -1,0 +1,19 @@
+TODO:
+
+
+Correct problems with Id when removeParam or Param::setName/Param::setValue
+Create IOHandlerLoadable
+Create GLFW::Cursor object
+Finish GLFW::Window
+
+DONE! correct functor default values
+DONE! Bug with drawstroke and border
+DONE! Bug with blending without float
+DONE! Add Image.getData<C>()
+DONE! Check read/write for string
+DONE! test mipmaping with float
+DONE! Check blendFunc::None
+DONE! Create BlackTree Object
+DONE! Check Functors ( object not reference ) for read/write
+DONE! Finalize XML Parser
+DONE! optimize blendfunc XXX -> RGBA with mask

@@ -80,7 +80,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -109,7 +109,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>FreeImage.lib;freetype250.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;freetype250.lib;SDL2.lib;Msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'">
@@ -140,7 +141,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -149,6 +151,14 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
+    <ClInclude Include="GL\BasicGL.h" />
+    <ClInclude Include="GL\BasicGlLoadable.h" />
+    <ClInclude Include="GL\GLFW.h" />
+    <ClInclude Include="GL\GLFWWindow.h" />
+    <ClInclude Include="IO\IOHandler.h" />
+    <ClInclude Include="IO\IOLoadableManager.h" />
+    <ClInclude Include="IO\IOManager.h" />
+    <ClInclude Include="IO\IOManager.hpp" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="IO\BasicIO.h" />
@@ -211,6 +221,10 @@
     <ClInclude Include="Math\Transformations.hpp" />
     <ClInclude Include="MultiMap.h" />
     <ClInclude Include="MultiMap.hpp" />
+    <ClInclude Include="UI\BasicUI.h" />
+    <ClInclude Include="UI\Event.h" />
+    <ClInclude Include="UI\UI.h" />
+    <ClInclude Include="UI\Window.h" />
     <ClInclude Include="XML\Node.h" />
     <ClInclude Include="XML\XMLDocument.h" />
     <ClInclude Include="IO\SimpleIO.h" />
@@ -271,6 +285,9 @@
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GL\BasicGlLoadable.cpp" />
+    <ClCompile Include="GL\GLFW.cpp" />
+    <ClCompile Include="GL\GLFWWindow.cpp" />
     <ClCompile Include="IO\BasicIO.cpp" />
     <ClCompile Include="IO\BasicSimpleIO.cpp" />
     <ClCompile Include="IO\BasicSimpleLoadableIO.cpp" />
@@ -295,11 +312,14 @@
     <ClCompile Include="Time\Tick.cpp" />
     <ClCompile Include="Time\TickRate.cpp" />
     <ClCompile Include="Time\TimePoint.cpp" />
+    <ClCompile Include="UI\Event.cpp" />
+    <ClCompile Include="UI\Window.cpp" />
     <ClCompile Include="UTF8String.cpp" />
     <ClCompile Include="XML\Node.cpp" />
     <ClCompile Include="XML\XMLDocument.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Graphic\HELPER.txt" />
     <Text Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,0 +1,10 @@
+
+
+///@brief Function setting all the fields to their default value
+reset(); 
+
+///@brief Clear the memory but to not set the value to default ( ie pointers are not set to NULL )
+unload(); 
+
+///@brief reset(); unload();
+clear();

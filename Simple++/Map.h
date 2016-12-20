@@ -91,7 +91,7 @@ public:
 	///@brief Constructor from parent and a value
 	///@param parent Pointer to the parent Node
 	///@param value Value of this node
-	RBNode( RBNode<T> * parent,  const T & value );
+	RBNode( RBNode<T> * parent, const T & value );
 
 	///@brief Copy Constructor ( The node and all the sub tree is copied too, Parent is set to NULL )
 	///@param node Node to be copied
@@ -114,29 +114,20 @@ public:
 	///@return reference to THIS
 	RBNode<T> & operator=( RBNode<T> && node );
 
-	///@brief Set the parent of this node
-	///@param parent Pointer to the parent node of this one
-	void setParent( RBNode<T> * parent );
-
 	///@brief Get the parent of this node
 	///@return Pointer to the parent node of this one
-	RBNode<T> * getParent() const;
-
-	///@brief Set the left child of this node
-	///@param left Pointer to the left child node of this one
-	void setLeft( RBNode<T> * left );
+	const RBNode<T> * getParent() const;
+	RBNode<T> * getParent();
 
 	///@brief Get the left child of this node
 	///@return Pointer to the left child node of this one
-	RBNode<T> * getLeft() const;
-
-	///@brief Set the right child of this node
-	///@param left Pointer to the right child node of this one
-	void setRight( RBNode<T> * right );
+	const RBNode<T> * getLeft() const;
+	RBNode<T> * getLeft();
 
 	///@brief Get the right child of this node
 	///@return Pointer to the right child node of this one
-	RBNode<T> * getRight() const;
+	const RBNode<T> * getRight() const;
+	RBNode<T> * getRight();
 
 	///@brief Set the value of this node
 	///@param value Value of this node
@@ -147,16 +138,9 @@ public:
 	const T & getValue() const;
 	T & getValue();
 
-	///@brief Set the color of this node
-	///@param color Color to set
-	void setColor( typename RBNode<T>::Color color );
-
 	///@brief Get the color of this node
 	///@return Color of this node
 	typename RBNode<T>::Color getColor() const;
-
-	///@brief Swap the color of this node
-	void swapColor();
 
 	///@brief Create a human readable string with this sub tree
 	///@return String
@@ -176,7 +160,6 @@ public:
 	/************************************************************************/
 	/* STATIC                                                               */
 	/************************************************************************/
-
 	///@brief Get the Grand Parent of this node
 	///@param n Node from where to retrieve the uncle
 	///@return Grand Parent of this node (Parent of the Parent)
@@ -187,11 +170,22 @@ public:
 	///@return Uncle of this node
 	static RBNode<T> * getUncle( const RBNode<T> & n );
 
-
 	///@brief Call this method when you have just inserted a new left in the tree to keep the tree balanced
 	///@param node Pointer to the node just inserted (parent and child correctly set)
 	///@param in out root Pointer to the Pointer of the root
 	static void insertNode( RBNode<T> * node, RBNode<T> ** root );
+
+	///@brief Call this method when you want to insert a node at the left on one another and keep the tree balanced
+	///@param parentNode Node where to place the new one.
+	///@param newNode Pointer to the node you want to insert
+	///@param in out root Pointer to the Pointer of the root
+	static void insertNodeLeft( RBNode<T> * parentNode, RBNode<T> * newNode, RBNode<T> ** root );
+
+	///@brief Call this method when you want to insert a node at the right on one another and keep the tree balanced
+	///@param parentNode Node where to place the new one.
+	///@param newNode Pointer to the node you want to insert
+	///@param in out root Pointer to the Pointer of the root
+	static void insertNodeRight( RBNode<T> * parentNode, RBNode<T> * newNode, RBNode<T> ** root );
 
 	///@brief Delete a node from the tree
 	///@param node Node to be deleted from the tree
@@ -212,6 +206,25 @@ protected:
 	RBNode( ctor );
 
 private:
+	///@brief Set the parent of this node
+	///@param parent Pointer to the parent node of this one
+	void setParent( RBNode<T> * parent );
+
+	///@brief Set the left child of this node
+	///@param left Pointer to the left child node of this one
+	void setLeft( RBNode<T> * left );
+
+	///@brief Set the right child of this node
+	///@param left Pointer to the right child node of this one
+	void setRight( RBNode<T> * right );
+
+	///@brief Set the color of this node
+	///@param color Color to set
+	void setColor( typename RBNode<T>::Color color );
+	
+	///@brief Swap the color of this node
+	void swapColor();
+
 	void _clear();
 	void _unload();
 
@@ -225,6 +238,7 @@ private:
 
 	Color color;
 };
+
 
 
 
@@ -315,6 +329,18 @@ public:
 	const T * operator[]( const I & index ) const;
 	T * operator[]( const I & index );
 
+	///@brief Access from a value using and index
+	///@param index Index to be used
+	///@param Pointer to the value if founded, if not, return NULL
+	const T * getValueI( const I & index ) const;
+	T * getValueI( const I & index );
+
+	///@brief Access from a value using and index
+	///@param index Index to be used
+	///@param Pointer to the node if founded, if not, return NULL
+	const RBNode< MapObject<I, T> > * getNodeI( const I & index ) const;
+	RBNode< MapObject<I, T> > * getNodeI( const I & index );
+
 	///@brief Get the Value associated with an iterator
 	///@param it Iterator used to retrieve the value (no bound check is done here)
 	///@return Value founded
@@ -326,6 +352,10 @@ public:
 	///@return Index founded
 	const I & getIndexIt( typename RBTree<I, T, Compare>::Iterator it ) const;
 	I & getIndexIt( typename RBTree<I, T, Compare>::Iterator it );
+
+	///@brief Set the Value associated with an index ( The index has to already exists )
+	///@param index Index used to set the value
+	void setValueI( const I & index, const T & v );
 
 	///@brief Set the Value associated with an iterator
 	///@param it Iterator used to set the value
@@ -350,11 +380,23 @@ public:
 	///@return Pointer to the value just inserted, NULL if nothing has been inserted
 	T * insert( const I & index, const T & value );
 
+	///@brief Insert a new [ Index => Value ] into the map and return the Node just insert (prefere using insert())
+	///@param index Index of the value to insert
+	///@param value Value to be inserted
+	///@return Pointer to the node just inserted, NULL if nothing has been inserted
+	RBNode< MapObject<I, T> > * insertNode( const I & index, const T & value );
+
 
 	///@brief Delete a node from the map
 	///@param index Index to search and to be deleted
 	///@return Boolean if a key has been deleted
 	bool eraseIndex( const I & index );
+
+	///@brief Delete a node from the map
+	///@param node Node to be deleted from the map
+	///@return Boolean if the node has been deleted
+	bool eraseNode( RBNode< MapObject<I, T> > * node );
+
 
 	///@brief Create an human readable string from this tree
 	///@return String
@@ -387,6 +429,8 @@ protected:
 	RBNode< MapObject<I, T> > * rootNode;
 	Compare compareFunc;
 };
+
+
 
 
 

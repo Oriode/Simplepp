@@ -211,15 +211,17 @@ BasicString<T>::BasicString( const std::basic_string<C, std::char_traits<C>, std
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const BasicString<C> & str ) :
-	Vector( str ) {
-
+	Vector( str.getSize(), str.getSize() + 1 ) {
+	Vector<T>::copy( this -> dataTable, str.getData(), getMaxSize() );
 }
 
 template<typename T>
-BasicString<T>::BasicString( const BasicString & str ) :
-	Vector( str ) {
-
+BasicString<T>::BasicString( const BasicString<T> & str ) :
+	Vector( str.getSize(), str.getSize() + 1 ) {
+	Vector<T>::copy( this -> dataTable, str.dataTable, getMaxSize() );
 }
+
+
 
 template<typename T>
 BasicString<T>::BasicString( BasicString<T> && str ) :
@@ -2239,6 +2241,7 @@ BasicString<T> BasicString<T>::toString( const T & c ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( 2 );
 	newStr.size = toCString( c, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2248,6 +2251,7 @@ BasicString<T> BasicString<T>::toString( unsigned char number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned char ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2257,6 +2261,7 @@ BasicString<T> BasicString<T>::toString( unsigned short number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( short ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2266,6 +2271,7 @@ BasicString<T> BasicString<T>::toString( unsigned int number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2275,6 +2281,7 @@ BasicString<T> BasicString<T>::toString( int number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2284,6 +2291,7 @@ BasicString<T> BasicString<T>::toString( unsigned long long number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2293,6 +2301,7 @@ BasicString<T> BasicString<T>::toString( long long number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2302,6 +2311,7 @@ BasicString<T> BasicString<T>::toString( unsigned long number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2311,6 +2321,7 @@ BasicString<T> BasicString<T>::toString( long number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2320,6 +2331,7 @@ BasicString<T> BasicString<T>::toString( double number ) {
 	BasicString<T> newStr;
 	newStr._allocateNoNullDelete( sizeof( double ) * 8 + Precision );
 	newStr.size = toCString<Precision, Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2329,6 +2341,7 @@ BasicString<T> BasicString<T>::toString( float number ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + Precision );
 	newStr.size = toCString<Precision, Base>( number, newStr.dataTable );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2337,6 +2350,7 @@ BasicString<T> BasicString<T>::toString( unsigned char number, unsigned int base
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned char ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2345,6 +2359,7 @@ BasicString<T> BasicString<T>::toString( unsigned short number, unsigned int bas
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned short ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2354,6 +2369,7 @@ BasicString<T> BasicString<T>::toString( unsigned int number, unsigned int base 
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators()
 	return newStr;
 }
 
@@ -2362,6 +2378,7 @@ BasicString<T> BasicString<T>::toString( int number, unsigned int base ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2370,6 +2387,7 @@ BasicString<T> BasicString<T>::toString( unsigned long long number, unsigned int
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2378,6 +2396,7 @@ BasicString<T> BasicString<T>::toString( long long number, unsigned int base ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators()
 	return newStr;
 }
 
@@ -2386,6 +2405,7 @@ BasicString<T> BasicString<T>::toString( unsigned long number, unsigned int base
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2394,6 +2414,7 @@ BasicString<T> BasicString<T>::toString( long number, unsigned int base ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
+	newStr._updateIterators()
 	return newStr;
 }
 
@@ -2402,6 +2423,7 @@ BasicString<T> BasicString<T>::toString( double number, unsigned int precision, 
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( double ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
+	newStr._updateIterators()
 	return newStr;
 }
 
@@ -2410,6 +2432,7 @@ BasicString<T> BasicString<T>::toString( float number, unsigned int precision, u
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
+	newStr._updateIterators()
 	return newStr;
 }
 
@@ -2419,6 +2442,7 @@ BasicString<T> BasicString<T>::toString( bool b ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( 6 );
 	newStr.size = toCString( b );
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2433,6 +2457,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned short & ui ) {
 	if ( getMaxSize() < 7 )
 		_allocateNoNull( 7 );
 	this -> size = toCString( ui, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2442,6 +2467,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned char & ui ) {
 	if ( getMaxSize() < 5 )
 		_allocateNoNull( 5 );
 	this -> size = toCString( ui, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2450,6 +2476,7 @@ BasicString<T> & BasicString<T>::operator=( const int & i ) {
 	if ( getMaxSize() < 10 )
 		_allocateNoNull( 10 );
 	this -> size = toCString( i, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2458,6 +2485,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned int & ui ) {
 	if ( getMaxSize() < 10 )
 		_allocateNoNull( 10 );
 	this -> size = toCString( ui, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2466,6 +2494,7 @@ BasicString<T> & BasicString<T>::operator=( const long & l ) {
 	if ( getMaxSize() < 21 )
 		_allocateNoNull( 21 );
 	this -> size = toCString( l, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2474,6 +2503,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned long & ul ) {
 	if ( getMaxSize() < 21 )
 		_allocateNoNull( 21 );
 	this -> size = toCString( ul, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2482,6 +2512,7 @@ BasicString<T> & BasicString<T>::operator=( const long long & ll ) {
 	if ( getMaxSize() < 21 )
 		_allocateNoNull( 21 );
 	this -> size = toCString( ll, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2490,6 +2521,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned long long & ull ) {
 	if ( getMaxSize() < 21 )
 		_allocateNoNull( 21 );
 	this -> size = toCString( ull, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2498,6 +2530,7 @@ BasicString<T> & BasicString<T>::operator=( const double & d ) {
 	if ( getMaxSize() < 11 )
 		_allocateNoNull( 11 );
 	this -> size = toCString( d, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2506,6 +2539,7 @@ BasicString<T> & BasicString<T>::operator=( const float & d ) {
 	if ( getMaxSize() < 6 )
 		_allocateNoNull( 6 );
 	this -> size = toCString( d, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -2519,14 +2553,18 @@ BasicString<T> & BasicString<T>::operator=( const std::basic_string<C, std::char
 template<typename T>
 template<typename C>
 BasicString<T> & BasicString<T>::operator=( const BasicString<C> & str ) {
-	Vector<T>::operator=( str );
+	auto sizePlusOne( str.getSize() + 1 );
+	if ( getMaxSize() < sizePlusOne )
+		reserve( sizePlusOne );
+	Vector<T>::copy( this -> dataTable, str.getData(), sizePlusOne );
+	this -> size = str.size;
+	_updateIterators();
 	return *this;
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const BasicString & str ) {
-	Vector<T>::operator=( str );
-	return *this;
+BasicString<T> & BasicString<T>::operator=( const BasicString<T> & str ) {
+	return operator=<T>(str);
 }
 
 
@@ -2541,8 +2579,10 @@ template<typename T>
 template<typename C>
 BasicString<T> & BasicString<T>::operator=( const C * str ) {
 	this -> size = BasicString<C>::getSize( str );
-	if ( getMaxSize() < this -> size + 1 )
+	if ( getMaxSize() < this -> size + 1 ) {
 		_allocateNoNull( this -> size + 1 );
+	}
+	_updateIterators();
 	setValueI( this -> size, T( '\0' ) );
 	copy( str, 0, this -> size );
 
@@ -2553,8 +2593,10 @@ BasicString<T> & BasicString<T>::operator=( const C * str ) {
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const T & c ) {
 	this -> size = 1;
-	if ( getMaxSize() < 2 )
+	if ( getMaxSize() < 2 ) {
 		_allocateNoNull( 2 );
+	}
+	_updateIterators();
 	setValueI( 0, T( c ) );
 	setValueI( 1, T( '\0' ) );
 
@@ -2565,9 +2607,11 @@ BasicString<T> & BasicString<T>::operator=( const T & c ) {
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const bool & b ) {
-	if ( getMaxSize() < 6 )
+	if ( getMaxSize() < 6 ) {
 		_allocateNoNull( 6 );
+	}
 	this ->  size = toCString( b, this -> dataTable );
+	_updateIterators();
 	return *this;
 }
 
@@ -3309,6 +3353,7 @@ bool BasicString<T>::read( std::fstream * fileStream ) {
 	if ( !SimpleIO::read( fileStream, &this -> size ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
+		_updateIterators();
 		this -> dataTable[0] = T( '\0' );
 		return false;
 	}
@@ -3320,10 +3365,13 @@ bool BasicString<T>::read( std::fstream * fileStream, typename Vector<T>::Size s
 	this -> size = size;
 	this -> maxSize = this -> size + 1;
 	_allocateNoNull( this -> maxSize );
+	_updateIterators();
+
 
 	if ( !SimpleIO::readBuffer( fileStream, getData(), getSize() ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
+		_updateIterators();
 		this -> dataTable[0] = T( '\0' );
 		return false;
 	}

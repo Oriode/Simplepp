@@ -5,26 +5,33 @@ Mutex::Mutex() {
 
 }
 
+Mutex::Mutex( const Mutex & mutex ) {
+	*this = mutex;
+}
 
 Mutex::~Mutex() {
 
 }
 
-void Mutex::lock() {
-	if ( this -> bLocked && Thread::getCurrentThreadId() == this -> lockingThreadId ) {
-		//log("Trying to lock an already locked mutex on the same thread");
-		return;
-	}
+Mutex & Mutex::operator=( const Mutex & mutex ) {
+	if ( mutex.isLocked() && !isLocked() )
+		lock();
+	else if ( isLocked() && !mutex.isLocked() )
+		unlock();
 
+	return *this;
+}
+
+void Mutex::lock() {
+	_assert( !this -> bLocked );
 	this -> mMutex.lock();
-	this -> lockingThreadId = Thread::getCurrentThreadId();
+	//this -> lockingThreadId = Thread::getCurrentThreadId();
 	this -> bLocked = true;
 }
 
 void Mutex::unlock() {
-	if ( this -> bLocked )
-		this -> mMutex.unlock();
-
+	_assert( this -> bLocked );
+	this -> mMutex.unlock();
 	this -> bLocked = false;
 }
 

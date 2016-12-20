@@ -785,7 +785,6 @@ template<typename T>
 void Vector<T>::_allocateNoNullDelete( typename Vector<T>::Size newMax ) {
 	this -> dataTable = new T[newMax];
 	this -> maxSize = newMax;
-	_updateIterators();
 }
 
 
@@ -794,7 +793,6 @@ void Vector<T>::_allocateNoNull( typename Vector<T>::Size newMax ) {
 	delete[] this -> dataTable;
 	this -> dataTable = new T[newMax];
 	this -> maxSize = newMax;
-	_updateIterators();
 }
 
 
@@ -921,10 +919,17 @@ void Vector<T>::_eraseit( typename Vector<T>::Iterator index ) {
 template<typename T>
 template<typename C, typename D>
 void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, typename Vector<T>::Size size ) {
-	for ( typename Vector<T>::Size i = 0; i < size; i++ ) {
-		destinationBuffer[i] = C( sourceBuffer[i] );
+	if ( Utility::isSame<C, D>::value ) {
+		for ( typename Vector<T>::Size i = 0; i < size; i++ ) {
+			destinationBuffer[i] = sourceBuffer[i];
+		}
+	} else {
+		for ( typename Vector<T>::Size i = 0; i < size; i++ ) {
+			destinationBuffer[i] = C( sourceBuffer[i] );
+		}
 	}
 }
+
 
 template<typename T>
 template<typename C, typename D>

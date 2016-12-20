@@ -29,8 +29,10 @@
 
 
 //#define DEBUG_GRAPHIC
-#define DEBUG_XML
+//#define DEBUG_XML
 //#define DEBUG_MAP
+//#define DEBUG_UI
+#define DEBUG_IO
 
 #ifndef _LIB
 #include <iostream>
@@ -54,6 +56,10 @@
 #include "Time/Time.h"
 #include "Test.h"
 #include "XML/XMLDocument.h"
+#include "UI/UI.h"
+#include "UI/Window.h"
+#include <functional>
+#include "IO/IOHandler.h"
 
 
 template<typename T>
@@ -75,52 +81,81 @@ public:
 
 
 
-
 int main( int argc, char * argv[] ) {
-
-
 	#ifdef DEBUG 
 	/************************************************************************/
 	/* DEBUG PART															*/
 	/************************************************************************/
 
-	//Application<char> app( argc, argv );
+	Application<char> app( argc, argv );
 
 
 
 	/************************************************************************/
-	/* MAPS                                                                 */
+	/* IO                                                                   */
 	/************************************************************************/
-	/*{
-		Map<unsigned long, unsigned long> mapMine;
-		std::map<unsigned long, unsigned long> mapSTD;
-
-		Log::startChrono();
-		for ( unsigned long i = 0; i < 1000; i++ ) {
-			mapSTD.insert( std::pair<unsigned long, unsigned long>( Math::random( 0, 100000 ), i ) );
-		}
-		Log::stopChrono();
-		Log::displayChrono( "Map .insert(); STD" );
-
-		Log::startChrono();
-		for ( unsigned long i = 0; i < 1000; i++ ) {
-			mapMine.insert( Math::random( 0, 100000 ), i );
-		}
-		Log::stopChrono();
-		Log::displayChrono( String( "Map .insert(); Mine " ) );
-		for ( auto it = mapMine.getBegin(); it != mapMine.getEnd(); it++ ) {
-			Log::displayLog( String( mapMine.getIndexit(it) ) + " : " + mapMine.getValueIt(it) );
-		}
-	}*/
+	#ifdef DEBUG_IO
+	{
+		IOManager<Graphic::Texture<unsigned char>> manager;
+		IOHandler<Graphic::Texture<unsigned char>> textureHandler( &manager );
 
 
+		//assert( IO::write( "TextureManager.cmanager", &manager ) );
+		assert( IO::read( "TextureManager.cmanager", &manager ) );
+		assert( textureHandler.setObject( "sanctum.ctexture" ) );
 
 
-	/*Vector<int *> testVector;
+		/*
+		Graphic::FreeImage freeImage;
+		freeImage.loadFromDatas( ( unsigned char * ) textureHandler.getObject() -> getDatas( 0 ), textureHandler.getObject() -> getSize( 0 ), Graphic::FreeImage::Format::RGB );
+		freeImage.saveToFile( "sanctum test manager i will delete.png", Graphic::FreeImage::SavingFormat::PNG );
+		*/
+	}
+	#endif
 
-	for ( size_t i( 0 ); i < 1000; i++ ) {
-		testVector.push( new int( i ) );
-	}*/
+
+	/************************************************************************/
+	/* UI                                                                   */
+	/************************************************************************/
+	#ifdef DEBUG_UI
+	{
+		Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB, true );
+		freeImage.load();
+
+		Graphic::Image imageTmp( ( unsigned char * ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR );
+
+		Graphic::TextureLoadable<unsigned char> texture;
+
+		texture.setDatas( imageTmp.toFormat( Graphic::Format::RGBA ) );
+		texture.generateMipmaps();
+		
+		
+		
+		GLFW::load();
+
+
+
+
+		UI::Window window;
+		window.setCursorMode( GLFW::Window::CursorMode::Disabled );
+
+		//window.setCursor( &( texture[0] ) );
+
+		window.load();
+
+
+
+		window.setIcon( &texture );
+
+
+		//window.setFullscreen(NULL, Math::Vec2<unsigned int>(800,600), 60);
+
+		window.show();
+
+	}
+	#endif
+
+
 
 
 	/************************************************************************/
@@ -300,7 +335,7 @@ int main( int argc, char * argv[] ) {
 	gradientRadial.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 	gradientRadial.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
-	Graphic::Image image( *( texture2[0] ) );
+	Graphic::Image image( texture2[0] );
 
 
 	/*{
@@ -704,7 +739,7 @@ int main( int argc, char * argv[] ) {
 					}*/
 
 
-	*( texture2[0] ) = image;
+	texture2[0] = image;
 
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -716,7 +751,7 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Mipmaps										//
-		for ( size_t i = 1; i < texture2.getNumMipmaps(); i++ ) {
+		for ( size_t i = 1; i < texture2.getNbMipmaps(); i++ ) {
 			//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 		}
 	}

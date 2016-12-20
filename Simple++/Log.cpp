@@ -49,7 +49,7 @@ void Log::displayChrono( const String & text ) {
 	displayLog( text + " : " + ( std::chrono::duration_cast< std::chrono::duration<double> >( Log::endTime - Log::startTime ).count() * 1000.0 ) + " ms" );
 }
 
-void Log::errorHandler( const String & message, MessageSeverity severity /*= MessageSeverity::Error*/, const char * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
+void Log::errorHandler( const String & message, MessageSeverity severity, const char * fileName, unsigned int lineNumber) {
 	#if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
 
 	//Cast the time into a standard C time
@@ -95,6 +95,7 @@ void Log::errorHandler( const String & message, MessageSeverity severity /*= Mes
 void Log::setErrorHandler( void( *errorHandlerFn ) ( const String &, MessageSeverity, const char *, unsigned int ) ) {
 	Log::mErrorHandlerFn = errorHandlerFn;
 }
+
 
 void Log::callErrorHandler( const String & message, MessageSeverity severity /*= MessageSeverity::Error*/, const char * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
 	Log::mErrorHandlerFn( message, severity, fileName, lineNumber );

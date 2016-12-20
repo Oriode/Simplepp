@@ -32,6 +32,7 @@ public:
 	UTF8String( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 	UTF8String( const std::string & str );
 
+	//UTF8String( const CodePoint & codePoint );
 
 	UTF8String( const int & i );
 	UTF8String( const unsigned int & ui );
@@ -44,6 +45,9 @@ public:
 	UTF8String( const bool & b );
 
 	UTF8String( const char & c );
+
+	template<typename T = char>
+	operator BasicString<T>() const;
 
 
 
@@ -147,16 +151,27 @@ public:
 	//\brief this is the special version for UTF8 of the getSize() method /!\ WARNING /!\ This method iterate the whole string to retrieve the length.
 	Size getSizeUTF8() const;
 
-	static void codePoint2Chars( const CodePoint & codePoint, char charBuffer[4], unsigned char * size );
+	///@brief Convert an Unicode Code Point into an char * (Without any '\0')
+	///@param codePoint Code Point to be converted
+	///@param in out buffer where to write
+	///@return Number of character wrote
+	static typename String::Size codePoint2Chars( const CodePoint & codePoint, char charBuffer[4] );
+
+	///@brief Convert an Unicode Code Point into an UTF8 String
+	///@param codePoint Code Point to be converted
+	///@param in out buffer where to write
+	///@return String result
+	static UTF8String codePoint2String( const CodePoint & codePoint );
 private:
 	template<typename T>
-	UTF8String & _operatorEQUAL( const T & str, const Size & bufferSize );
+	UTF8String & _operatorEQUAL( const T * str, const Size & bufferSize );
 
 	template<typename T>
-	void _contructorEQUAL( const T & str, const Size & bufferSize );
+	void _contructorEQUAL( const T * str, const Size & bufferSize );
+
 
 	template<typename T>
-	void _operatorCONCAT( const T & str, const Size & bufferSize );
+	void _operatorCONCAT( const T * str, const Size & bufferSize );
 
 };
 

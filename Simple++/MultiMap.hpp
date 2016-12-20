@@ -58,9 +58,9 @@ T * MultiMap<I, T, Compare>::_insert( const I & index, const T & value ) {
 					continue;
 				} else {
 					RBNode< MapObject< I, Vector<T> > > * newNode( new RBNode< MapObject< I, Vector<T> > >( node, MapObject< I, Vector<T> >( index, Vector<T>() ) ) );
+					RBNode< MapObject< I, Vector<T> > >::insertNodeLeft( node, newNode, &this -> rootNode );
 					T * valueP( newNode -> getValue().getValue().push( value ) );
-					node -> setLeft( newNode );
-					RBNode< MapObject< I, Vector<T> > >::insertNode( newNode, &this -> rootNode );
+
 					#ifdef DEBUG
 					Map<I, Vector<T>, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
 					#endif
@@ -72,9 +72,9 @@ T * MultiMap<I, T, Compare>::_insert( const I & index, const T & value ) {
 					continue;
 				} else {
 					RBNode< MapObject< I, Vector<T> > > * newNode( new RBNode< MapObject< I, Vector<T> > >( node, MapObject< I, Vector<T> >( index, Vector<T>() ) ) );
+					RBNode< MapObject< I, Vector<T> > >::insertNodeRight( node, newNode, &this -> rootNode );
 					T * valueP( newNode -> getValue().getValue().push( value ) );
-					node -> setRight( newNode );
-					RBNode< MapObject< I, Vector<T> > >::insertNode( newNode, &this -> rootNode );
+
 					#ifdef DEBUG
 					Map<I, Vector<T>, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
 					#endif

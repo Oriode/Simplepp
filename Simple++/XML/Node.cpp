@@ -215,6 +215,15 @@ namespace XML {
 	}
 
 
+	const Node * Node::getParent() const {
+		return this -> parent;
+	}
+
+
+	Node * Node::getParent() {
+		return this -> parent;
+	}
+
 	const UTF8String & Node::getValue() const {
 		if ( getType() == Type::Text ) {
 			return toText() -> getValue();

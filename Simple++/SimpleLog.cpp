@@ -75,7 +75,7 @@ void SimpleLog::callErrorHandler(const char * message, MessageSeverity severity 
 
 void SimpleLog::setConsoleColor(MessageColor color /*= MessageColor::White*/) {
 #ifdef WIN32
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (unsigned char)color);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (unsigned char) color);
 #else
 	std::stringstream stream;
 	stream << std::hex << color;

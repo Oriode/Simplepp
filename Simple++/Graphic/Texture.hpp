@@ -14,28 +14,24 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	Texture<T>::Texture( std::fstream * fileStream ) {
-		if ( !read( fileStream ) ) {
-
-		}
-	}
-
-	template<typename T>
 	Texture<T>::Texture( const Texture<T> & image ) {
 		for ( auto it = image.datas.getBegin(); it != image.datas.getEnd(); it++ )
 			this -> datas.push( new ImageT<T>( **it ) );
 	}
 
 	template<typename T>
-	Texture<T>::Texture( const WString & filePath ) 
-	{
-
-	}
-
-	template<typename T>
 	Texture<T>::Texture( const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat, bool invertY ) {
 		this -> datas.push( new ImageT<T>( dataBuffer, size, loadingFormat, invertY ) );
 	}
+
+
+	template<typename T>
+	Graphic::Texture<T>::Texture( const ImageT<T> & image ) {
+		this -> datas.push( new ImageT<T>( image ) );
+	}
+
+
+
 
 	template<typename T>
 	Texture<T>::Texture( ctor ) {
@@ -144,6 +140,14 @@ namespace Graphic {
 		this -> datas.push( new ImageT<T>( data, size, loadingFormat, invertY ) );
 	}
 
+	template<typename T>
+	void Graphic::Texture<T>::setDatas( const ImageT<T> & image ) {
+		_unload();
+		this -> datas.push( new ImageT<T>( image ) );
+	}
+
+
+
 
 	template<typename T>
 	Texture<T> & Texture<T>::operator=( Texture<T> && image ) {
@@ -222,18 +226,38 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	ImageT<T> *Texture<T>::getMipmap( typename Vector<ImageT<T>>::Size i /*= 0*/ ) {
-		return this -> datas[i];
+	ImageT<T> & Texture<T>::getMipmap( typename Vector<ImageT<T>>::Size i ) {
+		return *this -> datas[i];
 	}
 
-
-	template<typename T /*= unsigned char*/>
-	ImageT<T> * Graphic::Texture<T>::operator[]( typename Vector<ImageT<T>>::Size i /*= 0*/ ) {
-		return this -> datas[i];
+	template<typename T>
+	const ImageT<T> & Texture<T>::getMipmap( typename Vector<ImageT<T>>::Size i ) const {
+		return *this -> datas[i];
 	}
 
-	template<typename T /*= unsigned char*/>
-	typename Vector<ImageT<T> * >::Size Texture<T>::getNumMipmaps() const {
+	template<typename T>
+	ImageT<T> & Graphic::Texture<T>::operator[]( typename Vector<ImageT<T>>::Size i ) {
+		return *this -> datas[i];
+	}
+
+	template<typename T>
+	const ImageT<T> & Graphic::Texture<T>::operator[]( typename Vector<ImageT<T>>::Size i ) const {
+		return *this -> datas[i];
+	}
+
+	template<typename T>
+	typename Vector<ImageT<T> * >::Size Texture<T>::getNbMipmaps() const {
 		return this -> datas.getSize();
 	}
+
+	template<typename T>
+	typename Vector<ImageT<T> * > & Graphic::Texture<T>::getMipmapVector() {
+		return this -> datas;
+	}
+
+	template<typename T>
+	const typename Vector<ImageT<T> * > & Graphic::Texture<T>::getMipmapVector() const {
+		return this -> datas;
+	}
+
 }

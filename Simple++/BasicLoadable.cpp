@@ -2,7 +2,8 @@
 
 
 BasicLoadable::BasicLoadable() :
-	mIsloaded( false ) {
+	mIsloaded( false ) 
+{
 }
 
 BasicLoadable::BasicLoadable( const BasicLoadable & loadable ) {
@@ -13,40 +14,50 @@ BasicLoadable::BasicLoadable( const BasicLoadable & loadable ) {
 BasicLoadable::~BasicLoadable() {
 }
 
-void BasicLoadable::load() {
+bool BasicLoadable::load() {
 	lock();
 	if ( this -> mIsloaded ) {
 		unlock();
-		return;
+		// Object already loaded, nothing to do.
+		return true;
 	}
 	this -> bIsLoading = true;
-
-	onLoad();
-
-	this -> bIsLoading = false;
-	this -> mIsloaded = true;
-	unlock();
-
+	if ( onLoad() ) {
+		this -> bIsLoading = false;
+		this -> mIsloaded = true;
+		unlock();
+		return true;
+	} else {
+		this -> bIsLoading = false;
+		unlock();
+		return false;
+	}
 }
 
-void BasicLoadable::unload() {
+bool BasicLoadable::unload() {
 	lock();
 
 	if ( !this -> mIsloaded ) {
 		unlock();
-		return;
+		// Object not loaded, nothing to do.
+		return true;
 	}
-	onUnload();
-	this -> mIsloaded = false;
-	unlock();
+	if ( onUnload() ) {
+		this -> mIsloaded = false;
+		unlock();
+		return true;
+	} else {
+		unlock();
+		return false;
+	}
 }
 
-void BasicLoadable::onLoad() {
-
+bool BasicLoadable::onLoad() {
+	return true;
 }
 
-void BasicLoadable::onUnload() {
-
+bool BasicLoadable::onUnload() {
+	return true;
 }
 
 bool BasicLoadable::isLoaded() const {
@@ -61,35 +72,35 @@ void BasicLoadable::setLoading( bool isLoading ) {
 	this -> bIsLoading = isLoading;
 }
 
-void BasicLoadable::reload() {
+bool BasicLoadable::reload() {
 	if ( isLoaded() ) {
-		unload();
-		load();
+		if ( unload() && load() )
+			return true;
+		else
+			return false;
+	} else {
+		return true;
 	}
-
 }
 
 bool BasicLoadable::isLoading() const {
 	return this -> bIsLoading;
 }
 
-
 void BasicLoadable::lock() {
 	this -> mutex.lock();
-	#ifdef DEBUG
-	this -> isLocked = true;
-	#endif
 }
 
 void BasicLoadable::unlock() {
-	#ifdef DEBUG
-	this -> isLocked = false;
-	#endif
 	this -> mutex.unlock();
 }
 
 BasicLoadable & BasicLoadable::operator=( const BasicLoadable & loadable ) {
+	lock();
+
 	this ->  bIsLoading = loadable.bIsLoading;
 	this ->  mIsloaded = loadable.mIsloaded;
+
+	unlock();
 	return *this;
 }

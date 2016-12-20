@@ -133,7 +133,7 @@ namespace Graphic {
 		if ( codePoint < 256 ) {
 			return this -> asciiMap[codePoint];
 		} else {
-			FreeTypeChar<T> ** c = this -> charsMap.getValue( codePoint );
+			FreeTypeChar<T> ** c = this -> charsMap.getValueI( codePoint );
 			if ( c ) {
 				return *c;
 			} else {
@@ -147,7 +147,7 @@ namespace Graphic {
 		if ( codePoint < 256 ) {
 			return this -> asciiMap[codePoint];
 		} else {
-			FreeTypeChar<T> * const * c = this -> charsMap.getValue( codePoint );
+			FreeTypeChar<T> * const * c = this -> charsMap.getValueI( codePoint );
 			if ( c ) {
 				return *c;
 			} else {
@@ -164,7 +164,7 @@ namespace Graphic {
 
 	template<typename T, typename LoadingFunc>
 	const FreeTypeChar<T> * _Font<T, LoadingFunc>::loadGlyph( UCodePoint codePoint ) {
-		FreeTypeChar<T> ** c = this -> charsMap.getValue( codePoint );
+		FreeTypeChar<T> ** c = this -> charsMap.getValueI( codePoint );
 
 		if ( !c ) {
 			if ( this -> ftFace ) {
@@ -233,7 +233,10 @@ namespace Graphic {
 		if ( !IO::write( fileStream, &this -> loadingFunctor ) )
 			return false;
 
-		Map<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded = this -> charsMap.getSize();
+		size_t nbCharsLoaded( 0 );
+		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); this -> charsMap.iterate( &it ) ) {
+			nbCharsLoaded++;
+		}
 		for ( size_t i( 0 ); i < 256; i++ ) {
 			if ( this -> asciiMap[i] ) 
 				nbCharsLoaded++;
@@ -309,13 +312,13 @@ namespace Graphic {
 		
 		_loadFreeType( this -> memoryFontObject, this -> memorySize, this -> pixSize );
 
-		Map<UCodePoint, FreeTypeChar<T> *>::Size nbCharsLoaded;
+		size_t nbCharsLoaded;
 		if ( !IO::read( fileStream, &nbCharsLoaded ) )
 			return false;
 
-		nbCharsLoaded = Math::min( nbCharsLoaded, Map<UCodePoint, FreeTypeChar<T> *>::Size( 100000 ) );
+		nbCharsLoaded = Math::min( nbCharsLoaded, size_t( 100000 ) );
 
-		for ( Map<UCodePoint, FreeTypeChar<T> *>::Size i = 0; i < nbCharsLoaded; i++ ) {
+		for ( size_t i( 0 ); i < nbCharsLoaded; i++ ) {
 			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( );
 
 			if ( newChar -> read( fileStream ) ) {
@@ -466,7 +469,7 @@ namespace Graphic {
 		}
 
 		for ( auto it( font.charsMap.getBegin() ); it != font.charsMap.getEnd(); font.charsMap.iterate( &it ) ) {
-			this -> charsMap.insert( this -> charsMap.getIndexit( it ), new FreeTypeChar<T>( *( this -> charsMap.getValueIt(it) ) ) );
+			this -> charsMap.insert( this -> charsMap.getIndexIt( it ), new FreeTypeChar<T>( *( this -> charsMap.getValueIt(it) ) ) );
 		}
 
 		

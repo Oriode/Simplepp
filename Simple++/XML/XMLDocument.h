@@ -70,7 +70,7 @@ namespace XML {
 
 		///@brief Get the encoding of this document
 		///@return Encoding of this document
-		const UTF8String & getEncoding() const;
+		const String & getEncoding() const;
 
 		///@brief Set the encoding of this document
 		///@param encoding Encoding to be set

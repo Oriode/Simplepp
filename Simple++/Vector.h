@@ -362,10 +362,10 @@ protected:
 
 	void _clear();
 
-	//Same as allocate(typename Vector<T>::Size) but without the test if the size = 0
+	///@brief Delete the old buffer; allocate a new one; Set the new maxSize;
 	void _allocateNoNull( typename Vector<T>::Size newMax );
 
-	//Same as allocate(typename Vector<T>::Size) but without the delete of the old buffer and without the test if the size = 0
+	///@brief allocate a new buffer; Set the new maxSize;
 	void _allocateNoNullDelete( typename Vector<T>::Size newMax );
 
 	//Extend the actual buffer to be able to handle AT LEAST the newSizeNeeded (possible algo is *2), size has to be NOT null

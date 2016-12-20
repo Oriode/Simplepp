@@ -6,7 +6,7 @@
 #include "../Log.h"
 #include "../String.h"
 
-class BasicIO : public BasicSimpleIO {
+class BasicIO : public virtual BasicSimpleIO {
 public:
 
 

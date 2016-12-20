@@ -59,13 +59,11 @@ UTF8String::UTF8String( const char & c ) :
 }
 
 UTF8String::UTF8String( const String & str ) :
-	String( ctor::null ) {
-	_contructorEQUAL( str, str.getSize() );
+	String( str ) {
 }
 
 UTF8String::UTF8String( const std::string & str ) :
-	String( ctor::null ) {
-	_contructorEQUAL( str, str.size() );
+	String( str ) {
 }
 
 UTF8String::UTF8String( const UTF8String & str ) :
@@ -77,20 +75,27 @@ UTF8String::UTF8String( UTF8String && str ) :
 }
 
 UTF8String::UTF8String( const char * str, Size size ) :
-	String( ctor::null ) {
-	_contructorEQUAL( str, size );
+	String( str, size ) {
 }
-
 
 UTF8String::UTF8String( const char * str ) :
-	String( ctor::null ) {
-	_contructorEQUAL( str, String::getSize( str ) );
+	String( str) {
 }
 
 
 
+/*
+UTF8String::UTF8String( const CodePoint & codePoint ) : String( ctor::null ) {
+	_allocateNoNullDelete(5);
+	this -> size = codePoint2Chars( codePoint , this -> dataTable);
+	this -> dataTable[this -> size] = char( '\0' );
+	_updateIterators();
+}
+*/
+
 UTF8String & UTF8String::operator=( const String & str ) {
-	return _operatorEQUAL( str, str.getSize() );
+	String::operator=( str );
+	return *this;
 }
 
 UTF8String & UTF8String::operator=( const UTF8String & str ) {
@@ -105,14 +110,14 @@ UTF8String & UTF8String::operator=( UTF8String && str ) {
 
 
 UTF8String & UTF8String::operator=( const char * str ) {
-	return _operatorEQUAL( str, String::getSize( str ) );
+	String::operator=( str );
+	return *this;
 }
 
 UTF8String & UTF8String::operator=( const std::string & str ) {
-	return _operatorEQUAL( str, str.size() );
+	String::operator=( str );
+	return *this;
 }
-
-
 
 UTF8String & UTF8String::operator+=( const UTF8String & str ) {
 	String::operator+=( str );
@@ -288,7 +293,7 @@ UTF8String::Size UTF8String::getSizeUTF8() const {
 	return numChar;
 }
 
-void UTF8String::codePoint2Chars( const CodePoint & codePoint, char charBuffer[4], unsigned char * size ) {
+typename String::Size UTF8String::codePoint2Chars( const CodePoint & codePoint, char charBuffer[4] ) {
 	if ( codePoint > 127 ) {
 		if ( codePoint > 2047 ) {
 			if ( codePoint > 65535 ) {
@@ -296,33 +301,44 @@ void UTF8String::codePoint2Chars( const CodePoint & codePoint, char charBuffer[4
 				charBuffer[1] = ( ( codePoint >> 12 ) & 0x3F ) | 0xC0;
 				charBuffer[2] = ( ( codePoint >> 6 ) & 0x3F ) | 0xC0;
 				charBuffer[3] = ( codePoint & 0x3F ) | 0x80;
-				*size = 4;
+				return String::Size( 4 );
 			} else {	//If the code point is on THREE Bytes ONLY !
 				charBuffer[0] = ( codePoint >> 12 ) | 0xE0;
 				charBuffer[1] = ( ( codePoint >> 6 ) & 0x3F ) | 0xC0;
 				charBuffer[2] = ( codePoint & 0x3F ) | 0x80;
-				*size = 3;
+				return String::Size( 3 );
 			}
 		} else {	//If the code point is on TWO Bytes ONLY !
 			charBuffer[0] = ( codePoint >> 6 ) | 0xC0;
 			charBuffer[1] = ( codePoint & 0x3F ) | 0x80;
-			*size = 2;
+			return String::Size( 2 );
 		}
 	} else {		//If the code point is on ONE Byte ONLY !
 		charBuffer[0] = codePoint;
-		*size = 1;
+		return String::Size( 1 );
 	}
 }
+
+
+UTF8String UTF8String::codePoint2String( const CodePoint & codePoint ) {
+	UTF8String result(ctor::null);
+	result._allocateNoNullDelete( 5 );
+	result.size = codePoint2Chars( codePoint, result.dataTable );
+	result.dataTable[result.size] = char( '\0' );
+	result._updateIterators();
+	return result;
+}
+
 
 void UTF8String::concat( const UTF8String & str ) {
 	String::concat( str );
 }
 
 void UTF8String::concat( const String & str ) {
-	_operatorCONCAT( str, str.getSize() );
+	String::concat( str.data(), str.getSize() );
 }
 
 void UTF8String::concat( const char * buffer, const Size & bufferSize ) {
-	_operatorCONCAT( buffer, bufferSize );
+	String::concat( buffer, bufferSize );
 }
 

@@ -15,6 +15,7 @@ Application<T>::Application( int argc, T * argv[] ) :
 	applicationName( argv[0] ) {
 
 	bool isNewArg = true;
+	BasicString<T> * lastValue( NULL );
 
 	//for each arg
 	for ( size_t i = 1; i < argc; i++ ) {
@@ -25,19 +26,19 @@ Application<T>::Application( int argc, T * argv[] ) :
 			if ( *it == T( '-' ) ) {		//EXTENDED
 				it++;
 				isNewArg = false;
-				this -> argMap.insert( BasicString<T>( it ), BasicString<T>() );
+				lastValue = this -> argMap.insert( BasicString<T>( it ), BasicString<T>() );
 			} else {				//SIMPLE
 				isNewArg = true;
 				//for each char
 				for ( ; *it != T( '\0' ); it++ ) {
-					this -> argMap.insert( BasicString<T>( *it ), BasicString<T>() );
+					lastValue = this -> argMap.insert( BasicString<T>( *it ), BasicString<T>() );
 				}
 			}
 		} else {
 			if ( isNewArg ) {
-				this -> argMap.insert( BasicString<T>(), BasicString<T>( it ) );
+				lastValue = this -> argMap.insert( BasicString<T>(), BasicString<T>( it ) );
 			} else {
-				this -> argMap.getLastValue() = it;
+				*(lastValue) = it;
 			}
 		}
 	}
@@ -73,5 +74,10 @@ Application<T>::~Application() {
 
 template<typename T>
 const BasicString<T> * Application<T>::operator[]( const BasicString<T> & argName ) const {
+	return this -> argMap[argName];
+}
+
+template<typename T>
+const BasicString<T> * Application<T>::getArgValue( const BasicString<T> & argName ) const {
 	return this -> argMap[argName];
 }

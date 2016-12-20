@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Log.h"
-#include "../String.h"
+#include "../UTF8String.h"
 #include "SimpleIO.h"
 #include "BasicIO.h"
 
@@ -15,14 +15,14 @@ public:
 	///@param object pointer to the object we wanna write.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool write( const WString & fileName, const C * object );
+	static bool write( const UTF8String & fileName, const C * object );
 
 	///@brief read from a file to an object, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own read method.
 	///@param fileName file where to read.
 	///@param object pointer to the object we wanna read.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool read( const WString & fileName, C * object );
+	static bool read( const UTF8String & fileName, C * object );
 
 
 	///@brief read the complete file stream (from begin to end) and allocate a new data and copy data inside.
@@ -35,7 +35,7 @@ public:
 	///@param fileName file to read.
 	///@param data [out] data buffer to be allocated and filled with the content of the file.
 	///@return number of char read (-1) if an error has occurred.
-	static size_t readToBuffer( const WString & fileName, char ** data );
+	static size_t readToBuffer( const UTF8String & fileName, char ** data );
 };
 
 

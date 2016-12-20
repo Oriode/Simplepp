@@ -14,13 +14,16 @@ namespace Graphic {
 
 	}
 
-	FreeImage::FreeImage( const WString & fileName, Format format, bool invertY, const Math::Vec2<Size> & size ) {
+	FreeImage::FreeImage( const UTF8String & fileName, Format format, bool invertY, const Math::Vec2<Size> & size ) {
 		setFile( fileName, format, invertY, size );
 	}
 
-	FreeImage::FreeImage( const FreeImage & freeImage, const Math::Vec2<Size> & newSize /*= vec2ui::null*/, Filter resampleFilter ) :
+	FreeImage::FreeImage( const FreeImage & freeImage, const Math::Vec2<Size> & newSize, Filter resampleFilter ) :
 		BasicLoadable( freeImage ),
 		fileName( freeImage.fileName ),
+		#ifdef WIN32
+		fileNameW( freeImage.fileNameW ),
+		#endif
 		size( newSize ),
 		invertY( freeImage.invertY ),
 		loadingType( freeImage.loadingType ),
@@ -46,6 +49,9 @@ namespace Graphic {
 	FreeImage::FreeImage( const FreeImage & freeImage ) :
 		BasicLoadable( freeImage ),
 		fileName( freeImage.fileName ),
+		#ifdef WIN32
+		fileNameW( freeImage.fileNameW ),
+		#endif
 		size( freeImage.size ),
 		invertY( invertY ),
 		loadingType( freeImage.loadingType ),
@@ -67,6 +73,9 @@ namespace Graphic {
 		BasicLoadable( Utility::toRValue( freeImage ) ),
 		freeImage( Utility::toRValue( freeImage.freeImage ) ),
 		fileName( Utility::toRValue( freeImage.fileName ) ),
+		#ifdef WIN32
+		fileNameW( Utility::toRValue( freeImage.fileNameW ) ),
+		#endif
 		size( Utility::toRValue( freeImage.size ) ),
 		invertY( invertY ),
 		loadingType( Utility::toRValue( freeImage.loadingType ) ),
@@ -81,59 +90,74 @@ namespace Graphic {
 		unload();
 	}
 
-	void FreeImage::onLoad() {
+	bool FreeImage::onLoad() {
 
 		switch ( this -> loadingType ) {
-		case LoadingType::EMPTY:
-		this -> freeImage = FreeImage_Allocate( this -> size.x, this -> size.y, this -> BPP, 0, 0, 0 );
-		break;
+			case LoadingType::EMPTY:
+				{
+					this -> freeImage = FreeImage_Allocate( this -> size.x, this -> size.y, this -> BPP, 0, 0, 0 );
+					break;
+				}
+			case LoadingType::FILE: 
+				{
+					// Check the file signature and deduce its format.
+					#ifdef WIN32
+					FREE_IMAGE_FORMAT imageFormat = FreeImage_GetFileTypeU( fileNameW.toCString(), 0 );
+					#else
+					FREE_IMAGE_FORMAT imageFormat = FreeImage_GetFileType( fileName.toCString(), 0 );
+					#endif
 
-		case LoadingType::FILE:
-		// Check the file signature and deduce its format.  
-		FREE_IMAGE_FORMAT imageFormat = FreeImage_GetFileTypeU( fileName.toCString(), 0 );
+					// If still unknown, try to guess the file format from the file extension.  
+					if ( imageFormat == FIF_UNKNOWN ) {
+						#ifdef WIN32
+						imageFormat = FreeImage_GetFIFFromFilenameU( fileNameW.toCString() );
+						#else
+						imageFormat = FreeImage_GetFIFFromFilename( fileName.toCString() );
+						#endif
+					}
 
-		// If still unknown, try to guess the file format from the file extension.  
-		if ( imageFormat == FIF_UNKNOWN ) {
-			imageFormat = FreeImage_GetFIFFromFilenameU( fileName.toCString() );
-		}
+					// If still unknown, return failure.  
+					if ( imageFormat == FIF_UNKNOWN ) {
+						error( String( "Free Image was unable to detect the file format : " ) << fileName );
+						return false;
+					}
 
-		// If still unkown, return failure.  
-		if ( imageFormat == FIF_UNKNOWN ) {
-			error( "Free Image was unable to detect the file format" );
-			return;
-		}
+					// Check that the plugin has reading capabilities and load the file.  
+					if ( FreeImage_FIFSupportsReading( imageFormat ) ) {
+						#ifdef WIN32
+						this -> freeImage = FreeImage_LoadU( imageFormat, fileNameW.toCString() );
+						#else
+						this -> freeImage = FreeImage_Load( imageFormat, fileName.toCString() );
+						#endif
+					}
 
-		// Check that the plugin has reading capabilities and load the file.  
-		if ( FreeImage_FIFSupportsReading( imageFormat ) ) {
-			this -> freeImage = FreeImage_LoadU( imageFormat, fileName.toCString() );
-		}
-
-		if ( this -> freeImage == NULL ) {
-			error( "Free Image was unable to load the picture " + fileName );
-			return;
-		}
-		if ( this -> size.x == 0 || this -> size.y == 0 ) {
-			this -> size.x = FreeImage_GetWidth( this -> freeImage );
-			this -> size.y = FreeImage_GetHeight( this -> freeImage );
-		}
+					if ( this -> freeImage == NULL ) {
+						error( String( "Free Image was unable to load the picture : " ) << fileName );
+						return false;
+					}
+					if ( this -> size.x == 0 || this -> size.y == 0 ) {
+						this -> size.x = FreeImage_GetWidth( this -> freeImage );
+						this -> size.y = FreeImage_GetHeight( this -> freeImage );
+					}
 
 
-		if ( this -> loadingFormat == Format::UNDEFINED ) {
-			switch ( FreeImage_GetColorType( this -> freeImage ) ) {
-			case FIC_PALETTE:
-			_updateFormat( Format::R );
-			break;
-			case FIC_RGB:
-			_updateFormat( Format::RGB );
-			break;
-			default:
-			_updateFormat( Format::RGBA );
-			break;
-			}
-		}
+					if ( this -> loadingFormat == Format::UNDEFINED ) {
+						switch ( FreeImage_GetColorType( this -> freeImage ) ) {
+							case FIC_PALETTE:
+								_updateFormat( Format::R );
+								break;
+							case FIC_RGB:
+								_updateFormat( Format::RGB );
+								break;
+							default:
+								_updateFormat( Format::RGBA );
+								break;
+						}
+					}
 
-		log( this -> fileName << this -> size << " has been loaded successfully !" );
-		break;
+					log( this -> fileName << this -> size << " has been loaded successfully !" );
+					break;
+				}
 
 		}
 
@@ -149,7 +173,7 @@ namespace Graphic {
 			_updateSize();
 
 		this -> stride = FreeImage_GetPitch( this -> freeImage );
-
+		return true;
 	}
 
 
@@ -192,10 +216,12 @@ namespace Graphic {
 
 
 
-	void FreeImage::onUnload() {
+	bool FreeImage::onUnload() {
 		if ( this -> freeImage )
 			FreeImage_Unload( this -> freeImage );
 		this -> freeImage = NULL;
+
+		return true;
 	}
 
 
@@ -212,29 +238,26 @@ namespace Graphic {
 		}
 	}
 
-	bool FreeImage::saveToFile( const WString & fileName, SavingFormat savingFormat, unsigned int quality /*= 100*/ ) {
+	bool FreeImage::saveToFile( const UTF8String & fileName, SavingFormat savingFormat, unsigned int quality ) {
+		#ifdef WIN32
+		WString fileNameW( fileName );
+		#endif
+		
 		load();
 
-		if ( savingFormat == SavingFormat::JPG ) {
-			if ( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileName.toCString(), quality ) ) {
-				log( String( "Success writing file : " ) << fileName );
-				return true;
-			} else {
-				error( String( "error writing file : " ) << fileName );
-				return false;
-			}
+		#ifdef WIN32
+		bool r( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileNameW.toCString(), quality ) );
+		#else
+		bool r( FreeImage_Save( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileName.toCString(), quality ) );
+		#endif
 
-
+		if ( r ) {
+			log( String( "Success writing file : " ) << fileName );
+			return true;
 		} else {
-			if ( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileName.toCString() ) ) {
-				log( String( "Success writing file : " ) << fileName );
-				return true;
-			} else {
-				error( String( "error writing file : " ) << fileName );
-				return false;
-			}
+			error( String( "error writing file : " ) << fileName );
+			return false;
 		}
-
 	}
 
 
@@ -247,11 +270,15 @@ namespace Graphic {
 	}
 
 
-	void FreeImage::setFile( const WString & fileName, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<Size> & size ) {
+	void FreeImage::setFile( const UTF8String & fileName, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<Size> & size ) {
 		unload();
 
 		this -> invertY = invertY;
 		this -> fileName = fileName;
+		#ifdef WIN32
+		this -> fileNameW = WString( fileName );
+		#endif // WIN32
+
 		this -> loadingType = LoadingType::FILE;
 		_updateFormat( format );
 		this -> resampleFilter = Filter::Bilinear;
@@ -271,7 +298,9 @@ namespace Graphic {
 		this -> invertY = datasInvertY;
 		this -> loadingType = LoadingType::EMPTY;
 		this -> fileName.clear();			//we have no reason to keep a filepath now.
-
+		#ifdef WIN32
+		this -> fileNameW.clear();			//we have no reason to keep a filepath now.
+		#endif // WIN32
 
 		#ifdef WIN32 
 		if ( format == Format::RGB || format == Format::RGBA ) {
@@ -322,6 +351,9 @@ namespace Graphic {
 
 	FreeImage & FreeImage::operator=( const FreeImage & image ) {
 		this -> fileName = image.fileName;
+		#ifdef WIN32
+		this -> fileNameW = image.fileNameW;
+		#endif
 		this -> size = size;
 		this -> invertY = image.invertY;
 		this -> loadingType = image.loadingType;
@@ -351,6 +383,9 @@ namespace Graphic {
 		BasicLoadable::operator=( Utility::toRValue( image ) );
 		this -> freeImage = Utility::toRValue( image.freeImage );
 		this -> fileName = Utility::toRValue( image.fileName );
+		#ifdef WIN32
+		this -> fileNameW = Utility::toRValue( image.fileNameW );
+		#endif
 		this -> size = Utility::toRValue( size );
 		this -> invertY = Utility::toRValue( image.invertY );
 		this -> loadingType = Utility::toRValue( image.loadingType );
@@ -364,7 +399,7 @@ namespace Graphic {
 	}
 
 
-	const WString & FreeImage::getFileName() const {
+	const UTF8String & FreeImage::getFileName() const {
 		return this -> fileName;
 	}
 

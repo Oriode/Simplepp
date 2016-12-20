@@ -19,7 +19,7 @@ void UTF8String::concat( const C * buffer, typename const BasicString<C>::Size &
 
 template<typename C>
 void UTF8String::concat( const BasicString<C> & str ) {
-	_operatorCONCAT( str, str.getSize() );
+	_operatorCONCAT( str.getData(), str.getSize() );
 }
 
 template<typename C>
@@ -29,11 +29,52 @@ UTF8String & UTF8String::operator+=( const BasicString<C> & str ) {
 }
 
 
+
+
+template<typename C>
+UTF8String & UTF8String::operator=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
+	return _operatorEQUAL( str.data(), str.size() );
+}
+
+template<typename C>
+UTF8String & UTF8String::operator=( const C * str ) {
+	return _operatorEQUAL( str, BasicString<C>::getSize( str ) );
+}
+
 template<typename T>
-void UTF8String::_operatorCONCAT( const T & str, const Size & bufferSize ) {
+void UTF8String::_contructorEQUAL( const T * str, const Size & bufferSize ) {
+	this -> maxSize = ( bufferSize + 1 ) * 4;
+	this -> dataTable = new char[this -> maxSize];
+
+	auto bufferTmp = this -> dataTable;
+	for ( Size j = 0; j < bufferSize; j++ )
+		bufferTmp += codePoint2Chars( str[j], bufferTmp );
+
+	*bufferTmp = '\0';
+	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
+	_updateIterators();
+}
+
+template<typename T>
+UTF8String & UTF8String::_operatorEQUAL( const T * str, const Size & bufferSize ) {
+	if ( getMaxSize() < bufferSize + 1 )
+		allocate( ( bufferSize + 1 ) * 4 );
+
+	auto bufferTmp = this -> dataTable;
+	for ( Size j = 0; j < bufferSize; j++ )
+		bufferTmp += codePoint2Chars( str[j], bufferTmp );
+
+	*bufferTmp = '\0';
+	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
+	_updateIterators();
+	return *this;
+}
+
+template<typename T>
+void UTF8String::_operatorCONCAT( const T * str, const Size & bufferSize ) {
 	typename UTF8String::Size oldSize = getSize();
 	typename UTF8String::Size newSize = oldSize + bufferSize;
-	auto newSizeSentinel = newSize + 1;
+	auto newSizeSentinel( newSize + 1 );
 
 	if ( this -> maxSize < newSizeSentinel ) {
 		this -> maxSize = newSizeSentinel * 2;
@@ -45,57 +86,14 @@ void UTF8String::_operatorCONCAT( const T & str, const Size & bufferSize ) {
 	}
 
 	Size addedSize = bufferSize + 1;
-	unsigned char size;
 	auto bufferTmp = this -> dataTable + addedSize;
-	for ( Size j = 0; j < addedSize; j++, bufferTmp += size )
-		codePoint2Chars( str[j], bufferTmp, &size );
+	for ( Size j = 0; j < addedSize; j++ )
+		bufferTmp += codePoint2Chars( str[j], bufferTmp );
 
 	*bufferTmp = '\0';
 	this -> size = newSize;
 	_updateIterators();
 }
-
-template<typename C>
-UTF8String & UTF8String::operator=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
-	return _operatorEQUAL( str, str.size() );
-}
-
-template<typename C>
-UTF8String & UTF8String::operator=( const C * str ) {
-	return _operatorEQUAL( str, BasicString<C>::getSize( str ) );
-}
-
-template<typename T>
-void UTF8String::_contructorEQUAL( const T & str, const Size & bufferSize ) {
-	this -> maxSize = ( bufferSize + 1 ) * 4;
-	this -> dataTable = new char[this -> maxSize];
-
-	unsigned char size;
-	auto bufferTmp = this -> dataTable;
-	for ( Size j = 0; j < bufferSize; j++, bufferTmp += size )
-		codePoint2Chars( str[j], bufferTmp, &size );
-
-	*bufferTmp = '\0';
-	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
-	_updateIterators();
-}
-
-template<typename T>
-UTF8String & UTF8String::_operatorEQUAL( const T & str, const Size & bufferSize ) {
-	if ( getMaxSize() < bufferSize + 1 )
-		allocate( ( bufferSize + 1 ) * 4 );
-
-	unsigned char size;
-	auto bufferTmp = this -> dataTable;
-	for ( Size j = 0; j < bufferSize; j++, bufferTmp += size )
-		codePoint2Chars( str[j], bufferTmp, &size );
-
-	*bufferTmp = '\0';
-	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
-	_updateIterators();
-	return *this;
-}
-
 
 
 
@@ -147,19 +145,19 @@ bool UTF8String::iterate( typename Iterator * it, CodePoint * codePoint, TestFun
 
 template<typename C>
 UTF8String & UTF8String::operator=( const BasicString<C> & str ) {
-	return _operatorEQUAL( str, str.getSize() );
+	return _operatorEQUAL( str.getData(), str.getSize() );
 }
 
 template<typename C>
 UTF8String::UTF8String( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) :
 	String( ctor::null ) {
-	_contructorEQUAL( str, str.size() );
+	_contructorEQUAL( str.data(), str.size() );
 }
 
 template<typename C>
 UTF8String::UTF8String( const BasicString<C> & str ) :
 	String( ctor::null ) {
-	_contructorEQUAL( str, str.getSize() );
+	_contructorEQUAL( str.getData(), str.getSize() );
 }
 
 template<typename C>
@@ -177,4 +175,26 @@ template<typename C>
 UTF8String::UTF8String( const C * str ) :
 	String( str ) {
 	_contructorEQUAL( str, BasicString<C>::getSize( str ) );
+}
+
+template<typename T>
+UTF8String::operator BasicString<T>() const {
+	if ( Utility::isSame<T, char>::value ) {
+		return BasicString<T>( getData(), getSize() );
+	} else {
+		BasicString<T> r(ctor::null);
+		r._allocateNoNullDelete( getSize() );
+		CodePoint codePoint;
+		auto newDatas( r.getData() );
+		BasicString<T>::Size i( 0 );
+		for ( auto it( getBegin() ); iterate( &it, &codePoint ); i++ ) {
+			newDatas[i] = codePoint;
+		}
+		newDatas[i] = T( '\0' );
+		r.size = i;
+		r._updateIterators();
+		return r;
+	}
+
+
 }

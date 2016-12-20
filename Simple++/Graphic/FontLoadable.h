@@ -36,10 +36,12 @@ namespace Graphic {
 
 	protected:
 		///@brief function to be overloaded to add action during the loading process.
-		virtual void onLoad() override;
+		///@return True if loading has succeeded, False otherwise
+		virtual bool onLoad() override;
 
 		///@brief function to be overloaded to add action during the unloading process.
-		virtual void onUnload() override;
+		///@return True if unloading has succeeded, False otherwise
+		virtual bool onUnload() override;
 
 		///@brief function to be overloaded to set the action when reading from a stream.
 		///@param fileStream stream used to read load this object
