@@ -11,17 +11,17 @@ namespace Utility {
 	template<class T>
 	struct removeReference {
 		typedef T Type;
-	};
+		};
 
 	template<class T>
 	struct removeReference<T &> {
 		typedef T Type;
-	};
+		};
 
 	template<class T>
 	struct removeReference<T &&> {
 		typedef T Type;
-	};
+		};
 
 	template<typename T>
 	void swap( T & v1, T & v2 );
@@ -35,61 +35,61 @@ namespace Utility {
 
 	template < typename Base, typename PotentialDerived >
 	class isBase {
-	public:
+		public:
 
 		typedef char( &no )[1];
 		typedef char( &yes )[2];
 
-		static yes check( Base * );
-		static no  check( ... );
-		enum : bool { value = sizeof( check( static_cast< PotentialDerived* >( 0 ) ) ) == sizeof( yes ) };
-	};
+		static yes checkType( Base * );
+		static no  checkType( ... );
+		enum : bool { value = sizeof( checkType( static_cast< PotentialDerived* >( 0 ) ) ) == sizeof( yes ) };
+		};
 
 	template < typename T1, typename T2 >
 	class isSame {
-	public:
+		public:
 		typedef char( &no )[1];
 		typedef char( &yes )[2];
 
-		static yes check( T1 * );
-		static no  check( ... );
-		enum : bool { value = sizeof( check( static_cast< T2* >( 0 ) ) ) == sizeof( yes ) };
-	};
+		static yes checkType( T1 * );
+		static no  checkType( ... );
+		enum : bool { value = sizeof( checkType( static_cast< T2* >( 0 ) ) ) == sizeof( yes ) };
+		};
 
-	
+
 
 	template<typename T>
 	class biggerType {
 		typedef T Type;
-	};
+		};
 
 	template<>
 	class biggerType<char> {
 		typedef short Type;
-	};
+		};
 
 	template<>
 	class biggerType<unsigned char> {
 		typedef unsigned short Type;
-	};
+		};
 
 
 
 
 
-	//	template < typename Base, typename PotentialDerived >
-	//	bool isBase<Base, PotentialDerived>::value = IsClassT<Base,PotentialDerived >::check(0);
+		//	template < typename Base, typename PotentialDerived >
+		//	bool isBase<Base, PotentialDerived>::value = IsClassT<Base,PotentialDerived >::check(0);
 
 
-		/*template<typename T>
-		class isBase {
-			typedef char yes[1];
-			typedef char no[2];
-			template<typename C> static yes& test(int C::*); // selected if C is a class type
-			template<typename C> static no&  test(...);      // selected otherwise
-		public:
-			static bool const value = sizeof(test<T>(0)) == sizeof(yes);
-		};*/
+			/*template<typename T>
+			class isBase {
+				typedef char yes[1];
+				typedef char no[2];
+				template<typename C> static yes& test(int C::*); // selected if C is a class type
+				template<typename C> static no&  test(...);      // selected otherwise
+			public:
+				static bool const value = sizeof(test<T>(0)) == sizeof(yes);
+			};*/
 
 
 
@@ -104,7 +104,7 @@ namespace Utility {
 		constexpr static T getMax() { return T(); }
 		constexpr static bool isSigned() { return false; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
-	};
+		};
 
 
 	template<>
@@ -119,7 +119,7 @@ namespace Utility {
 		constexpr static T getMax() { return T( CHAR_MAX ); }
 		constexpr static bool isSigned() { return true; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
-	};
+		};
 
 	template<>
 	struct TypesInfos<unsigned char> {
@@ -134,7 +134,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return false; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 
 
@@ -152,7 +152,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return true; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 	template<>
 	struct TypesInfos<unsigned short> {
@@ -167,7 +167,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return false; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 
 	template<>
@@ -183,7 +183,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return true; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 	template<>
 	struct TypesInfos<unsigned int> {
@@ -198,7 +198,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return false; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 
 	template<>
@@ -214,7 +214,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return true; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 	template<>
 	struct TypesInfos<unsigned long> {
@@ -229,7 +229,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return false; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 
 	template<>
@@ -245,7 +245,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return true; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 	template<>
 	struct TypesInfos<unsigned long long> {
@@ -260,7 +260,7 @@ namespace Utility {
 		constexpr static bool isSigned() { return false; }
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
-	};
+		};
 
 
 	template<>
@@ -277,7 +277,7 @@ namespace Utility {
 		constexpr static size_t getNbBits() { return sizeof( T ) * 8; }
 
 
-	};
+		};
 
 	template<>
 	struct TypesInfos<double> {
@@ -295,7 +295,7 @@ namespace Utility {
 
 
 
-	};
+		};
 
 
 
@@ -305,7 +305,7 @@ namespace Utility {
 
 
 
-}
+	}
 
 
 

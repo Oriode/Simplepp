@@ -142,8 +142,10 @@ namespace Math {
 		static_assert( -INTMAX_MAX <= Numerator, "Numerator too negative." );
 		static_assert( -INTMAX_MAX <= Numerator, "Denominator too negative." );
 
-		static constexpr intmax_t num = sign( Numerator ) * sign( Denumerator ) * abs( Numerator ) / gcd( Numerator, Denumerator );
-		static constexpr intmax_t den = abs( Denumerator ) / gcd( Numerator, Denumerator );
+		static constexpr intmax_t g = gcd( Numerator, Denumerator );
+
+		static constexpr intmax_t num = ( g == 0 ) ? 0 : ( sign( Numerator ) * sign( Denumerator ) * abs( Numerator ) / g );
+		static constexpr intmax_t den = ( g == 0 ) ? 0 : ( abs( Denumerator ) / g );
 
 		typedef Ratio<num, den> type;
 	};
