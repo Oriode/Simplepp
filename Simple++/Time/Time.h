@@ -1,7 +1,11 @@
 #pragma once
 
-#ifdef WIN32
+#include "../BuildConfig.h"
+
+#if defined WIN32
+#if defined ENABLE_WIN32
 #include <windows.h>
+#endif
 #else
 #include <unistd.h>
 #endif // WIN32

@@ -191,7 +191,7 @@ namespace Graphic {
 		FIBITMAP * freeImage;
 
 		UTF8String fileName;
-		#ifdef WIN32
+		#if defined WIN32
 		WString fileNameW;
 		#endif
 

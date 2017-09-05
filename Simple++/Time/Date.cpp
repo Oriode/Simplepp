@@ -370,7 +370,7 @@ namespace Time {
 	}
 
 	const long long Date::_retrieveLocalUTCBias() {
-		#ifdef WIN32
+		#if defined WIN32
 		DYNAMIC_TIME_ZONE_INFORMATION dtzi;
 
 		DWORD r = GetDynamicTimeZoneInformation( &dtzi );

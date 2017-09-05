@@ -8,7 +8,7 @@ namespace Network {
 	bool Network::init() {
 
 		if ( Network::mIsInit ) return true;
-		#ifdef WIN32
+		#if defined WIN32
 		WSADATA wsaData;
 
 		if ( WSAStartup( MAKEWORD( 2, 2 ), &wsaData ) != 0 ) {
@@ -29,7 +29,7 @@ namespace Network {
 	void Network::close() {
 
 		if ( !Network::mIsInit ) return;
-		#ifdef WIN32
+		#if defined WIN32
 		WSACleanup();
 		#endif
 		Network::mIsInit = false;

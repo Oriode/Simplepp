@@ -5,8 +5,10 @@
 
 #pragma once
 
+#include "../BuildConfig.h"
+
 //If we are on windows, include it to avoid problems
-#ifdef WIN32
+#if defined WIN32 && defined ENABLE_WIN32
 #include <windows.h>
 #undef min
 #undef max

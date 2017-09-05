@@ -91,7 +91,6 @@ int main( int argc, char * argv[] ) {
 
 	Application<char> app( argc, argv );
 
-	
 
 	/************************************************************************/
 	/* IO                                                                   */

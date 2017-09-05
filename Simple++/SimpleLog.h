@@ -17,7 +17,9 @@
 #include <chrono>
 #include <string>
 
-#ifdef WIN32
+#include "BuildConfig.h"
+
+#if defined WIN32 && defined ENABLE_WIN32
 #include <windows.h>
 #endif // !WIN32
 
@@ -31,7 +33,7 @@
 #define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, __FILE__, __LINE__);
 #define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, __FILE__, __LINE__);
 #define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler("Assertion failed : "#condition, SimpleLog::MessageSeverity::Error, __FILE__, __LINE__);
-#ifdef WIN32
+#if defined WIN32 && defined ENABLE_WIN32
 #define _windowsDebug(msg); SimpleLog::displayWindowsDebug(msg, __FILE__, __LINE__);
 #else	
 #define _windowsDebug(msg);
@@ -45,6 +47,9 @@
 #define _windowsDebug(msg);
 #define _assert(condition);
 #endif
+
+
+#include "BuildConfig.h"
 
 
 class SimpleLog {
@@ -87,17 +92,30 @@ public:
 		unsigned int lineNumber = 0
 		);
 
+
+	///@brief Set the error handler to be called
+	///@param msg Message to be displayed
+	///@param 
+	static void setErrorHandler( void( *errorHandlerFn ) (
+		const char * msg,
+		MessageSeverity severity,
+		const char * file,
+		unsigned int line ) );
+
 	static void setConsoleColor(MessageColor color = MessageColor::White);
 
-#ifdef WIN32
+#if defined WIN32 && defined ENABLE_WIN32
 	static void displayWindowsDebug(const char * message, const char * fileName, unsigned int lineNumber);
 	static const char * getWindowsLastError();
 #endif
 
+	///@brief Fill a char * buffer with the current time
+	///@param strBuffer Buffer to be filled
+	///@param bufferSize size of the buffer
+	static void getTimeStr( char * strBuffer, size_t bufferSize );
+
+
 protected:
-
-	static void _printMessage(const char * message, const char * fileName, unsigned int lineNumber);
-
 	static void(*mErrorHandlerFn) (
 		const char *,
 		MessageSeverity,

@@ -8,7 +8,7 @@
 
 
 
-#ifdef WIN32
+#if defined WIN32 && defined ENABLE_WIN32
 #include <windows.h>
 #endif
 

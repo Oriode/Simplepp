@@ -18,6 +18,10 @@
 #define GRAPHIC_FAST_BLENDING
 
 
+/************************************************************************/
+/* Enable Windows explicit parts on WIN32 system						*/
+/************************************************************************/
+#define ENABLE_WIN32
 
 /************************************************************************/
 /* Enable or disable blending branching optimizations					*/

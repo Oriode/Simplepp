@@ -32,7 +32,9 @@
 #include <iostream>
 #include <stdio.h>
 
-#ifdef WIN32
+#include "BuildConfig.h"
+
+#if defined WIN32 && defined ENABLE_WIN32
 #include <Windows.h>
 #endif
  
@@ -47,7 +49,7 @@
 #define assert(condition); if (!(condition)) Log::callErrorHandler("Assertion Failed! : ("#condition") => false", Log::MessageSeverity::Error, __FILE__, __LINE__);
 #define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler("Assertion Failed! : "#msg, Log::MessageSeverity::Error, __FILE__, __LINE__);
 
-#ifdef WIN32
+#if defined WIN32 && defined ENABLE_WIN32
 #define windowsDebug(msg); Log::displayWindowsDebug(msg, __FILE__, __LINE__);
 #else	
 #define windowsDebug(msg);
@@ -102,14 +104,7 @@ public:
 	static void displayChrono( const String & text = "Elapsed Time" );
 
 
-	///@brief Set the error handler to be called
-	///@param msg Message to be displayed
-	///@param 
-	static void setErrorHandler( void( *errorHandlerFn ) (
-		const String & msg,
-		MessageSeverity severity,
-		const char * file,
-		unsigned int line) );
+
 
 
 	static void errorHandler(
@@ -127,22 +122,13 @@ public:
 	);
 
 
-	#ifdef WIN32
+	#if defined WIN32 && defined ENABLE_WIN32
 	static void displayWindowsDebug( const String & message, const char * fileName, unsigned int lineNumber );
 	#endif
 
 private:
-
-	static void( *mErrorHandlerFn ) (
-		const String &,
-		MessageSeverity,
-		const char *,
-		unsigned int );
-
-
 	static std::chrono::high_resolution_clock::time_point startTime;
 	static std::chrono::high_resolution_clock::time_point endTime;
-
 };
 
 

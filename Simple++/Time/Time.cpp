@@ -12,7 +12,7 @@ namespace Time {
 
 
 	void Time::sleep( unsigned long ms ) {
-		#ifdef WIN32
+		#if defined WIN32
 		Sleep( ( DWORD ) ms );
 		#else
 		usleep( ms * 1000 );
