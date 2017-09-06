@@ -174,14 +174,14 @@ namespace Time {
 
 		///@brief get the week day English name from the day number of the week.
 		///@param weekDay Day number of the week [0-6]
-		///@return Weekday name as a String<T>
+		///@return Weekday name as a StringASCII<T>
 		template<typename T = char>
 		static const BasicString<T> & getWeekDayStr( unsigned char weekDay );
 
 
 		///@brief get the month English name from the month number
 		///@param month number [0-11]
-		///@return Month name as a String<T>
+		///@return Month name as a StringASCII<T>
 		template<typename T = char>
 		static const BasicString<T> & getMonthStr( unsigned char month );
 

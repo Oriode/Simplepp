@@ -34,8 +34,8 @@ namespace XML {
 		///@param param Object to move
 		Param( Param && param );
 
-		///@brief Convert to String operator
-		///@return String generated
+		///@brief Convert to StringASCII operator
+		///@return StringASCII generated
 		operator UTF8String() const;
 
 		///@brief Move operator
@@ -64,8 +64,8 @@ namespace XML {
 		///@param value Value of this param
 		void setValue( const UTF8String & value );
 
-		///@brief Generate a String from this object
-		///@return String
+		///@brief Generate a StringASCII from this object
+		///@return StringASCII
 		UTF8String toString() const;
 
 		///@brief Write this object in the XML syntax into the fileStream
@@ -203,7 +203,7 @@ namespace XML {
 		bool deleteParam( typename Vector< Param * >::Size i );
 
 		///@brief Set the id of this node
-		///@param id String representing the identifier if this node
+		///@param id StringASCII representing the identifier if this node
 		void setId( const UTF8String & id );
 
 		///@brief Get the id of this node

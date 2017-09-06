@@ -25,9 +25,9 @@
 		~IOManagerLoadable();
 
 		///@brief create an object using its filepath (If the Manager is no loaded (@see isLoaded()), getObject() will return NULL )
-		///@param filePath Path to the file used to load the object (UTF8 Encoded) (If the object doesn't exists, it will be created and added) (Memory management is assured)
+		///@param filePath Path to the file used to load the object (If the object doesn't exists, it will be created and added) (Memory management is assured)
 		///@return Unique Object Id of the new object (@see getObject() to retrieve the created object) (NULL (0) if the loading has failed)
-		ObjectId addObject( const UTF8String & filePath );
+		ObjectId addObject( const String & filePath );
 
 		using BasicLoadableIO::read;
 		using BasicLoadableIO::write;

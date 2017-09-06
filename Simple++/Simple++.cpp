@@ -92,6 +92,9 @@ int main( int argc, char * argv[] ) {
 	Application<char> app( argc, argv );
 
 
+	error( TEXT( "Hello World !" ) );
+
+
 	/************************************************************************/
 	/* IO                                                                   */
 	/************************************************************************/
@@ -240,7 +243,7 @@ int main( int argc, char * argv[] ) {
 
 		}
 
-		log( String( testMap ) );
+		log( StringASCII( testMap ) );
 
 
 		{
@@ -250,14 +253,14 @@ int main( int argc, char * argv[] ) {
 			Map<unsigned long, unsigned long> mapLoaded;
 			assert( IO::read( WString( "myMap.font" ), &mapLoaded ) );
 
-			log( String( mapLoaded ) );
+			log( StringASCII( mapLoaded ) );
 		}
 
 		{
 			// Testing Copy
 			Map<unsigned long, unsigned long> mapCopied = testMap ;
 
-			log( String( mapCopied ) );
+			log( StringASCII( mapCopied ) );
 
 		}
 
@@ -277,7 +280,7 @@ int main( int argc, char * argv[] ) {
 		for ( size_t i( 0 ); i < 1000; i++ ) {
 			testMap.eraseIndex( Math::random( 0, 1000 ));
 		}
-		//log( String( testMap ) );
+		//log( StringASCII( testMap ) );
 		
 
 	}
@@ -295,7 +298,7 @@ int main( int argc, char * argv[] ) {
 	Graphic::ColorRGB<unsigned char> colorUC( 6, 0, 8 );
 	Graphic::ColorRGB<float> colorF(0.33, 0.86, 0.96);
 
-	log( String( colorF.HSLtoRGB() ) );
+	log( StringASCII( colorF.HSLtoRGB() ) );
 
 
 /*
@@ -1125,7 +1128,7 @@ constexpr unsigned long long K1( 1000 );
 			sum += ( i < i + 2 ) ? 1 : 0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( String( "LOGICAL < (Last : 5914ms) " ) + sum );
+		Log::displayChrono( StringASCII( "LOGICAL < (Last : 5914ms) " ) + sum );
 
 		sum = 0;
 		Log::startChrono();
@@ -1133,7 +1136,7 @@ constexpr unsigned long long K1( 1000 );
 			sum += ( i <= i + 2 ) ? 1 : 0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( String( "LOGICAL <= (Last : 8281ms) " ) + sum );
+		Log::displayChrono( StringASCII( "LOGICAL <= (Last : 8281ms) " ) + sum );
 	}
 	#endif
 
@@ -1255,7 +1258,7 @@ constexpr unsigned long long K1( 1000 );
 			date = Time::Date( Time::getTime() );
 		}
 		Log::stopChrono();
-		Log::displayChrono( String() << "Date" );
+		Log::displayChrono( StringASCII() << "Date" );
 
 		Log::startChrono();
 		for ( unsigned long i = 0; i < M10; i++ ) {
@@ -1263,7 +1266,7 @@ constexpr unsigned long long K1( 1000 );
 			localtime_s( &timeinfo, &now );
 		}
 		Log::stopChrono();
-		Log::displayChrono( String() << "localtime_s" );
+		Log::displayChrono( StringASCII() << "localtime_s" );
 	}
 	#endif
 
@@ -1271,16 +1274,16 @@ constexpr unsigned long long K1( 1000 );
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
-		String testStr( "STRING STREAM : " );
+		StringASCII testStr( "STRING STREAM : " );
 		std::string testStr2( "STRING : " );
 
-		String strConcat( "Hello World!" );
+		StringASCII strConcat( "Hello World!" );
 		std::string strConcat2( "Hello World!" );
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M10; i++ ) {
-			testStr += String( "Hello World!" );
+			testStr += StringASCII( "Hello World!" );
 		}
 		Log::stopChrono();
 		Log::displayChrono( testStr.getSubStr( 0, 30 ) );
@@ -1304,14 +1307,14 @@ constexpr unsigned long long K1( 1000 );
 			sum += atof( "42.054217" );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "ATOF : " + String( sum ) );
+		Log::displayChrono( "ATOF : " + StringASCII( sum ) );
 
 		Log::startChrono();
 		for ( unsigned long i = 0; i < 10000000; i++ ) {
-			sum += String::toFloat( "42.054217" );
+			sum += StringASCII::toFloat( "42.054217" );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "toFloat : " + String( sum ) );
+		Log::displayChrono( "toFloat : " + StringASCII( sum ) );
 	}
 	#endif
 
@@ -1320,10 +1323,10 @@ constexpr unsigned long long K1( 1000 );
 	// SPEED TEST : Regex									//
 	{
 		for ( unsigned int i = 0; i < 260; i++ ) {
-			log( String( i ) + " : " + Regex::match( i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" ) );
+			log( StringASCII( i ) + " : " + Regex::match( i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" ) );
 		}
 		for ( unsigned int i = 0; i < 260; i++ ) {
-			log( String( i ) + " : " + Regex::match( i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$" ) );
+			log( StringASCII( i ) + " : " + Regex::match( i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$" ) );
 		}
 
 		std::string stdString = "________255";
@@ -1337,19 +1340,19 @@ constexpr unsigned long long K1( 1000 );
 			stdResult &= std::regex_search( stdString, stdRegex );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "Regex .regex_match(); STD : " + String( stdResult ) );
+		Log::displayChrono( "Regex .regex_match(); STD : " + StringASCII( stdResult ) );
 
 
 		bool mineResult = true;
-		String mineRegex = "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$";
-		String mineString = "________255";
+		StringASCII mineRegex = "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$";
+		StringASCII mineString = "________255";
 
 		Log::startChrono();
 		for ( unsigned long i = 0; i < M1; i++ ) {
 			mineResult &= Regex::match( mineString, mineRegex );
 		}
 		Log::stopChrono();
-		Log::displayChrono( "Vector .regex_match(); Mine : " + String( mineResult ) );
+		Log::displayChrono( "Vector .regex_match(); Mine : " + StringASCII( mineResult ) );
 	}
 	#endif
 
@@ -1397,7 +1400,7 @@ constexpr unsigned long long K1( 1000 );
 				mapRedBlackTree.insert( Math::random( 0, 1000000 ), i );
 			}
 			Log::stopChrono();
-			Log::displayChrono( String( "Map Red Black Tree .insert(); Mine " ) );
+			Log::displayChrono( StringASCII( "Map Red Black Tree .insert(); Mine " ) );
 		}
 		{
 			Map<unsigned long, unsigned long> mapRedBlackTree;
@@ -1421,7 +1424,7 @@ constexpr unsigned long long K1( 1000 );
 				tmp += *( mapRedBlackTree[i] );
 			}
 			Log::stopChrono();
-			Log::displayChrono( String( "Map Red Black Tree .operator[] Mine " )  );
+			Log::displayChrono( StringASCII( "Map Red Black Tree .operator[] Mine " )  );
 
 		}
 
@@ -1439,7 +1442,7 @@ constexpr unsigned long long K1( 1000 );
 			f0 += f0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( String("Float ADD ( Last 284ms ) : " ) << f0 );
+		Log::displayChrono( StringASCII("Float ADD ( Last 284ms ) : " ) << f0 );
 
 		volatile float f1( 1 );
 		Log::startChrono();
@@ -1447,7 +1450,7 @@ constexpr unsigned long long K1( 1000 );
 			f1 *= f1;
 		}
 		Log::stopChrono();
-		Log::displayChrono( String( "Float MULT ( Last 331ms ) : " ) << f1 );
+		Log::displayChrono( StringASCII( "Float MULT ( Last 331ms ) : " ) << f1 );
 
 		volatile int i0( 1 );
 		Log::startChrono();
@@ -1455,7 +1458,7 @@ constexpr unsigned long long K1( 1000 );
 			i0 += i0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( String( "Float ADD ( Last 284ms ) : " ) << String(int(i0)) );
+		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " ) << StringASCII(int(i0)) );
 
 		volatile int i1( 1 );
 		Log::startChrono();
@@ -1463,7 +1466,7 @@ constexpr unsigned long long K1( 1000 );
 			i1 *= i1;
 		}
 		Log::stopChrono();
-		Log::displayChrono( String( "Float MULT ( Last 331ms ) : " ) << String( int( i1 ) ) );
+		Log::displayChrono( StringASCII( "Float MULT ( Last 331ms ) : " ) << StringASCII( int( i1 ) ) );
 
 
 
@@ -1493,7 +1496,7 @@ constexpr unsigned long long K1( 1000 );
 				c3 += ( i3 );
 			}
 			Log::stopChrono();
-			Log::displayChrono( String( "EXPLICIT CAST (Last Result : ???)" ) << c1.v << c2.v1 << c3.v );
+			Log::displayChrono( StringASCII( "EXPLICIT CAST (Last Result : ???)" ) << c1.v << c2.v1 << c3.v );
 		}
 
 		{
@@ -1511,7 +1514,7 @@ constexpr unsigned long long K1( 1000 );
 				c3 += ( i3 );
 			}
 			Log::stopChrono();
-			Log::displayChrono( String( "IMPLICIT CAST (Last Result : ???)" ) << c1.v << c2.v1 << c3.v );
+			Log::displayChrono( StringASCII( "IMPLICIT CAST (Last Result : ???)" ) << c1.v << c2.v1 << c3.v );
 		}
 
 	}
@@ -1539,7 +1542,7 @@ constexpr unsigned long long K1( 1000 );
 
 			Network::Address addressFrom;
 			if ( myUDPServer.receive( testData2, sizeof( testData2 ), &addressFrom ) )
-				Log::displayLog( String() << "We got an UDP message from the server " << testData2 );
+				Log::displayLog( StringASCII() << "We got an UDP message from the server " << testData2 );
 
 		} else if ( result == 1 ) {
 			//SERVER
@@ -1561,7 +1564,7 @@ constexpr unsigned long long K1( 1000 );
 			Network::Connection myTCPConnection;
 
 			if ( myTCPConnection.connect( "www.google.fr", 80, Network::SockType::TCP ) ) {
-				Log::displayLog( String( "Connected to Google ! IP:" ) << myTCPConnection.getIp() );
+				Log::displayLog( StringASCII( "Connected to Google ! IP:" ) << myTCPConnection.getIp() );
 			}
 		}
 	}

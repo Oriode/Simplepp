@@ -921,11 +921,11 @@ template<typename C, typename D>
 void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, typename Vector<T>::Size size ) {
 	if ( Utility::isSame<C, D>::value ) {
 		for ( typename Vector<T>::Size i = 0; i < size; i++ ) {
-			destinationBuffer[i] = sourceBuffer[i];
+			destinationBuffer[i] = static_cast<C>( sourceBuffer[i] );
 		}
 	} else {
 		for ( typename Vector<T>::Size i = 0; i < size; i++ ) {
-			destinationBuffer[i] = C( sourceBuffer[i] );
+			destinationBuffer[i] = static_cast<C>( sourceBuffer[i] );
 		}
 	}
 }

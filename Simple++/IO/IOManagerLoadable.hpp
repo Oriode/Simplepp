@@ -16,7 +16,7 @@ IOManagerLoadable<DataType>::IOManagerLoadable( const IOManager<DataType> & mana
 }
 
 template<typename DataType>
-typename IOManagerLoadable<DataType>::ObjectId IOManagerLoadable<DataType>::addObject( const UTF8String & filePath ) {
+typename IOManagerLoadable<DataType>::ObjectId IOManagerLoadable<DataType>::addObject( const String & filePath ) {
 	ObjectContainer * objectFounded( this -> dataMap[filePath] );
 	if ( objectFounded ) {
 		( objectFounded -> nbUses )++;

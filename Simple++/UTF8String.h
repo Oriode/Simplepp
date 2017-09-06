@@ -23,7 +23,7 @@ public:
 
 	template<typename C>
 	UTF8String( const BasicString<C> & str );
-	UTF8String( const String & str );
+	UTF8String( const StringASCII & str );
 	UTF8String( const UTF8String & str );
 	UTF8String( UTF8String && str );
 
@@ -61,7 +61,7 @@ public:
 	/************************************************************************/
 	template<typename C>
 	UTF8String & operator=( const BasicString<C> & str );
-	UTF8String & operator=( const String & str );
+	UTF8String & operator=( const StringASCII & str );
 	UTF8String & operator=( const UTF8String & str );
 	UTF8String & operator=( UTF8String && str );
 
@@ -80,11 +80,11 @@ public:
 	/************************************************************************/
 	/* OPERATOR CONCAT                                                      */
 	/************************************************************************/
-	using String::operator+=;
+	using StringASCII::operator+=;
 
 	template<typename C>
 	UTF8String & operator+=( const BasicString<C> & str );
-	UTF8String & operator+=( const String & str );
+	UTF8String & operator+=( const StringASCII & str );
 	UTF8String & operator+=( const UTF8String & str );
 
 
@@ -94,7 +94,7 @@ public:
 
 	template<typename C>
 	void concat( const BasicString<C> & str );
-	void concat( const String & str );
+	void concat( const StringASCII & str );
 	void concat( const UTF8String & str );
 
 	template<typename C>
@@ -117,10 +117,10 @@ public:
 	template<typename TestFunctor>
 	bool iterate( typename UTF8String::Iterator * it, CodePoint * codePoint, TestFunctor & testFunctor ) const;
 
-	///@brief Compare a sub string of this UTF8 String with an another one
+	///@brief Compare a sub string of this UTF8 StringASCII with an another one
 	///@param it Iterator of this string where you want to begin the comparison
-	///@param otherStr Other String
-	///@param anotherIt It of the other UTF8 String to be compared
+	///@param otherStr Other StringASCII
+	///@param anotherIt It of the other UTF8 StringASCII to be compared
 	///@param size Number of chars to be compared
 	///@return True if the two substring are equals, false instead
 	bool cmp( typename UTF8String::Iterator it, const UTF8String & otherStr, typename UTF8String::Iterator anotherIt, Size size ) const;
@@ -135,7 +135,7 @@ public:
 	bool cmp( typename UTF8String::Iterator * it, const BasicString<char> & otherStr, typename BasicString<char>::Iterator * anotherIt, Size size ) const;
 	
 
-	///@brief Create a sub String of this one
+	///@brief Create a sub StringASCII of this one
 	///@param beginIt Iterator of the beginning
 	UTF8String getSubStr( Size index, Size size ) const;
 	UTF8String getSubStr( typename UTF8String::Iterator beginIt, Size size ) const;
@@ -155,12 +155,12 @@ public:
 	///@param codePoint Code Point to be converted
 	///@param in out buffer where to write
 	///@return Number of character wrote
-	static typename String::Size codePoint2Chars( const CodePoint & codePoint, char charBuffer[4] );
+	static typename StringASCII::Size codePoint2Chars( const CodePoint & codePoint, char charBuffer[4] );
 
-	///@brief Convert an Unicode Code Point into an UTF8 String
+	///@brief Convert an Unicode Code Point into an UTF8 StringASCII
 	///@param codePoint Code Point to be converted
 	///@param in out buffer where to write
-	///@return String result
+	///@return StringASCII result
 	static UTF8String codePoint2String( const CodePoint & codePoint );
 private:
 	template<typename T>

@@ -42,13 +42,13 @@ namespace GLFW {
 
 	///@brief Get an error code and return the string associated.
 	///@param error Error code
-	///@return String representing the error.
-	const String & errorToString( Error error );
+	///@return StringASCII representing the error.
+	const StringASCII & errorToString( Error error );
 
 	///@brief Static error callback called when an error occurs
 	///@param Error code (Can be casted freely into an Error)
 	///@param description Additional text for the error.
-	void errorCallbackDefault( Error error, const String & description );
+	void errorCallbackDefault( Error error, const StringASCII & description );
 
 	///@brief Called when the object is gonna be loaded
 	///@return True on success, False otherwise.
@@ -60,8 +60,8 @@ namespace GLFW {
 
 	///@brief Call the error handler to display an error
 	///@param error Type of the error
-	///@param description Additional String 
-	void callError( Error error, const String & description );
+	///@param description Additional StringASCII 
+	void callError( Error error, const StringASCII & description );
 
 
 

@@ -14,7 +14,7 @@ namespace Network {
 	/*
 
 
-	Connection::Connection(const String & ip, const String & service, SockType sockType / *= SockType::TCP* /, IpFamily ipFamily / *= IpFamily::Undefined* /) :
+	Connection::Connection(const StringASCII & ip, const StringASCII & service, SockType sockType / *= SockType::TCP* /, IpFamily ipFamily / *= IpFamily::Undefined* /) :
 		Address(ip, service, sockType, ipFamily),
 		mSocket(0),
 		mIsCreated(false),
@@ -83,11 +83,11 @@ namespace Network {
 		}
 
 		if ( !_tryListen( this, maxClients ) ) {
-			error( String( "Unable to bind ip " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " << getPort() << " with protocol " << getSockTypeS() );
+			error( StringASCII( "Unable to bind ip " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 			return false;
 		}
 
-		log( String( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
+		log( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
 
 		this -> mIsListening = ( getSockType() == SockType::TCP );
 		this -> mIsCreated = true;
@@ -118,16 +118,16 @@ namespace Network {
 		return newSocket;
 	}
 
-	bool Connection::listen( const String & ip, const String & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
+	bool Connection::listen( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
 		return _listen( ip.getData(), service.getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Connection::listen( const String & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
-		return _listen( ip.getData(), String( port ).getData(), sockType, ipFamily, maxClients );
+	bool Connection::listen( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
+		return _listen( ip.getData(), StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
 	bool Connection::listen( unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
-		return _listen( NULL, String( port ).getData(), sockType, ipFamily, maxClients );
+		return _listen( NULL, StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
 	bool Connection::listen( const Address & address, int maxClients /*= 100*/ ) {
@@ -148,17 +148,17 @@ namespace Network {
 
 		struct addrinfo * addrResults;
 		if ( getaddrinfo( ip, service, getAddrInfoStruct(), &addrResults ) ) {
-			error( String( "Unable to retrieve address info on address  " ) << ip << "@" << service );
+			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 			return false;
 		}
 
 		if ( !_tryListen( addrResults, maxClients ) ) {
-			error( String( "Unable to bind on " ) << getIpFamilyS() + " : " << ip << " on port " << service << " with Protocol " << getSockTypeS() );
+			error( StringASCII( "Unable to bind on " ) << getIpFamilyS() + " : " << ip << " on port " << service << " with Protocol " << getSockTypeS() );
 			freeaddrinfo( addrResults );
 			return false;
 		}
 		freeaddrinfo( addrResults );
-		log( String( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
+		log( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
 
 		this -> mIsListening = ( getSockType() == SockType::TCP );
 		this -> mIsCreated = true;
@@ -174,23 +174,23 @@ namespace Network {
 		}
 
 		if ( !_tryConnect( this ) ) {
-			error( String( "Unable to connect to host " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS() );
+			error( StringASCII( "Unable to connect to host " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS() );
 			return false;
 		}
 
-		log( String( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
+		log( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 
 		this -> mIsCreated = true;
 		return true;
 	}
 
 
-	bool Connection::connect( const String & ip, const String & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
+	bool Connection::connect( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
 		return _connect( ip.toCString(), service.toCString(), sockType, ipFamily );
 	}
 
-	bool Connection::connect( const String & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
-		return _connect( ip.toCString(), String( port ).toCString(), sockType, ipFamily );
+	bool Connection::connect( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
+		return _connect( ip.toCString(), StringASCII( port ).toCString(), sockType, ipFamily );
 	}
 
 	SOCKET Connection::connectStatic( const AddrInfo & addrInfo ) {
@@ -234,12 +234,12 @@ namespace Network {
 
 		struct addrinfo * addrResults;
 		if ( ::getaddrinfo( ip, service, getAddrInfoStruct(), &addrResults ) ) {
-			error( String( "Unable to retrieve address info on address  " ) << ip << "@" << service );
+			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 			return false;
 		}
 
 		if ( !_tryConnect( addrResults ) ) {
-			error( String( "Unable to connect to host " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
+			error( StringASCII( "Unable to connect to host " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
 			freeaddrinfo( addrResults );
 			return false;
 		}
@@ -247,7 +247,7 @@ namespace Network {
 		//freeing the automatically allocated AddrInfos
 		freeaddrinfo( addrResults );
 
-		log( String( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
+		log( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 
 		this -> mIsCreated = true;
 		return true;
@@ -402,7 +402,7 @@ namespace Network {
 		clientSocket -> setPort( getSockAddr() );
 		clientSocket -> _update();
 
-		log( String( "Socket " ) << this -> mSocket << " has accepted a new client " << clientSocket -> getIpFamilyS() << " : " << clientSocket -> getIp() );
+		log( StringASCII( "Socket " ) << this -> mSocket << " has accepted a new client " << clientSocket -> getIpFamilyS() << " : " << clientSocket -> getIp() );
 
 
 		return true;

@@ -74,7 +74,7 @@ void Thread::unlock() {
 }
 
 Thread::Id Thread::getCurrentThreadId() {
-	#if defined WIN32 && defined ENABLE_WIN32
+	#if defined WIN32
 	return GetCurrentThreadId();
 	#else
 	return std::this_thread::get_id().hash();

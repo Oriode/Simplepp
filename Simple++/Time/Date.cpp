@@ -174,11 +174,11 @@ namespace Time {
 	}
 
 
-	/*const String & Date::getWeekDayStr(unsigned char weekDay) {
+	/*const StringASCII & Date::getWeekDayStr(unsigned char weekDay) {
 		return weekDayShortStr[weekDay];
 	}
 
-	const String & Date::getMonthStr(unsigned char month) {
+	const StringASCII & Date::getMonthStr(unsigned char month) {
 		return monthShortStr[month];
 	}
 	const WString & Date::getWeekDayWStr(unsigned char weekDay) {
@@ -193,8 +193,8 @@ namespace Time {
 
 
 	/*
-		String Date::toString() const {
-			String newString;
+		StringASCII Date::toString() const {
+			StringASCII newString;
 			newString.reserve(100);
 
 
@@ -224,9 +224,9 @@ namespace Time {
 		}
 
 
-		String Date::toString(const String & str) const {
+		StringASCII Date::toString(const StringASCII & str) const {
 
-			String newString;
+			StringASCII newString;
 			newString.reserve(100);
 
 			for ( auto it = str.getBegin(); it != str.getEnd(); it++ ) {

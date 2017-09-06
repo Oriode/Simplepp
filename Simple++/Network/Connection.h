@@ -23,11 +23,11 @@ namespace Network {
 
 
 		///@brief Create a connection already initialized
-		///@param address address as a String (ip or domain name)
+		///@param address address as a StringASCII (ip or domain name)
 		///@param service Service or port as a string
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4 or IPv6 or Undefined for testing the two
-		//Connection(const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
+		//Connection(const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
 		//Connection(const AddrInfo & addrInfo);
 
 
@@ -81,23 +81,23 @@ namespace Network {
 
 
 		///@brief Listen for clients on a selected address/service
-		///@param address address as a String (ip or domain name)
+		///@param address address as a StringASCII (ip or domain name)
 		///@param service Service or port as a string
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4 or IPv6 or Undefined for testing the two
 		///@param maxClients Maximum number of clients accepted (Only for TCP)
 		///@return true if success else false
-		bool listen( const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
+		bool listen( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
 
 
 		///@brief Listen for clients on a selected address/port
-		///@param address address as a String (ip or domain name)
+		///@param address address as a StringASCII (ip or domain name)
 		///@param port port
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4 or IPv6 or Undefined for testing the two
 		///@param maxClients Maximum number of clients accepted (Only for TCP)
 		///@return true if success else false
-		bool listen( const String & address, unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
+		bool listen( const StringASCII & address, unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
 
 
 
@@ -122,21 +122,21 @@ namespace Network {
 
 
 		///@brief Connect to a specified address/service
-		///@param address address as a String (ip or domain name)
+		///@param address address as a StringASCII (ip or domain name)
 		///@param service Service or port as a string
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4 or IPv6 or Undefined for testing the two
 		///@return true if success else false
-		bool connect( const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		bool connect( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 
 		///@brief Connect to a specified address/port
-		///@param address address as a String (ip or domain name)
+		///@param address address as a StringASCII (ip or domain name)
 		///@param port port
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4 or IPv6 or Undefined for testing the two
 		///@return true if success else false
-		bool connect( const String & address, unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		bool connect( const StringASCII & address, unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 
 		///@brief Accept a new client (only when listening on TCP). This is a blocking method.

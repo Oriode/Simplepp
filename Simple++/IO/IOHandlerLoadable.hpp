@@ -22,7 +22,7 @@ IOHandlerLoadable<DataType>::IOHandlerLoadable( DataType * dataObject, IOManager
 }
 
 template<typename DataType>
-IOHandlerLoadable<DataType>::IOHandlerLoadable( const UTF8String & filePath, IOManagerLoadable<DataType> * manager ) {
+IOHandlerLoadable<DataType>::IOHandlerLoadable( const String & filePath, IOManagerLoadable<DataType> * manager ) {
 	lock();
 	{
 		this -> manager = manager;
@@ -157,7 +157,7 @@ IOHandlerLoadable<DataType> & IOHandlerLoadable<DataType>::operator=( IOHandlerL
 }
 
 template<typename DataType>
-bool IOHandlerLoadable<DataType>::setObject( const UTF8String & filePath ) {
+bool IOHandlerLoadable<DataType>::setObject( const String & filePath ) {
 	lock();
 	{
 		if ( this -> bMemoryManaged ) {

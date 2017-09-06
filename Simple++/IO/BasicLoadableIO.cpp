@@ -22,10 +22,10 @@ bool BasicLoadableIO::writeToFile(const WString & path) {
 			return false;
 		}
 		file.close();
-		log(String("Success writting the file  : ") << path);
+		log(StringASCII("Success writting the file  : ") << path);
 		return true;
 	} else {
-		error(String("Unable to open the file : ") << path);
+		error(StringASCII("Unable to open the file : ") << path);
 		return false;
 	}
 }
@@ -38,10 +38,10 @@ bool BasicLoadableIO::readFromFile(const WString & path) {
 			return false;
 		}
 		file.close();
-		log(String("Success writting the file  : ") << path);
+		log(StringASCII("Success writting the file  : ") << path);
 		return true;
 	} else {
-		error(String("Unable to open the file : ") << path);
+		error(StringASCII("Unable to open the file : ") << path);
 		return false;
 	}
 }

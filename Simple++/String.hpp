@@ -2078,7 +2078,7 @@ double BasicString<T>::toDouble( T * buffer, unsigned int base ) {
 
 
 /************************************************************************/
-/* From String                                                          */
+/* From StringASCII                                                          */
 /************************************************************************/
 template<typename T>
 template<unsigned int Base>

@@ -33,7 +33,7 @@ namespace Graphic {
 		TextureLoadable( const Math::Vec2<Size> & size, typename Format format = Format::RGB );
 
 		///@brief create a new image using a path to a file (only support official file format)
-		TextureLoadable( const UTF8String & filePath );
+		TextureLoadable( const String & filePath );
 
 		///@brief copy constructor
 		TextureLoadable( const TextureLoadable<T> & image );
@@ -135,7 +135,7 @@ namespace Graphic {
 	private:
 		Math::Vec2<Size> size;	//If not loaded we have to keep the size of the mipmap 0
 		typename Format format;
-		UTF8String fileName;
+		String fileName;
 		LoadingType loadingType;
 	};
 

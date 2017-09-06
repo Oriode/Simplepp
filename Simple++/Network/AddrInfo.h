@@ -25,13 +25,13 @@ namespace Network {
 		///@param service Service to be used.
 		///@param sockType SockType
 		///@param ipFamily IpFamily
-		AddrInfo( const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		AddrInfo( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 		///@brief Constructor from a IP, Service, SockType and IpFamily
 		///@param address to connect to (IP or domain name)
 		///@param service Service to be used.
 		///@param hints Hints to be used (sockType, ipFamily, flags, protocol) 
-		AddrInfo( const String & address, const String & service, const AddrInfo & hints );
+		AddrInfo( const StringASCII & address, const StringASCII & service, const AddrInfo & hints );
 
 		///@brief Copy constructor
 		///@param addrInfo object to copy
@@ -70,7 +70,7 @@ namespace Network {
 		///@param ip IP to look for
 		///@param service Service to look for ("http", 80, ...)
 		///@param ipFamily IPv4, IPv6 or Undefined to look for the two
-		//void setAddress(const String & ip, const String & service, IpFamily ipFamily = IpFamily::Undefined);
+		//void setAddress(const StringASCII & ip, const StringASCII & service, IpFamily ipFamily = IpFamily::Undefined);
 
 
 		///@brief copy operator
@@ -125,9 +125,9 @@ namespace Network {
 		IpFamily getIpFamily() const;
 
 
-		///@brief get the IP�family as a String
+		///@brief get the IP�family as a StringASCII
 		///@return IP family as a string
-		const String & getIpFamilyS() const;
+		const StringASCII & getIpFamilyS() const;
 
 		///@brief get the Protocol
 		///@return Protocol
@@ -139,9 +139,9 @@ namespace Network {
 		SockType getSockType() const;
 
 
-		///@brief get the SockType as a String
-		///@return SockType as a String
-		const String & getSockTypeS() const;
+		///@brief get the SockType as a StringASCII
+		///@return SockType as a StringASCII
+		const StringASCII & getSockTypeS() const;
 
 		///@brief set flags
 		///@param flags Flags to set
@@ -158,25 +158,25 @@ namespace Network {
 
 		///@brief set the CanonName of this object
 		///@param name CanonName to set
-		void setCanonName( const String & name );
+		void setCanonName( const StringASCII & name );
 
 
-		///@brief alias of getnameinfo() and cast the result to a String
+		///@brief alias of getnameinfo() and cast the result to a StringASCII
 		///@param sockAddr SockAddr from which to get the name
 		///@param sockAddrLen length in bytes of the struct sockaddr
-		///@return String representing the struct sockaddr
-		static String getNameInfo( const struct sockaddr & sockAddr, size_t sockAddrLen );
+		///@return StringASCII representing the struct sockaddr
+		static StringASCII getNameInfo( const struct sockaddr & sockAddr, size_t sockAddrLen );
 
 		///@brief alias of getnameinfo() of the  struct sockaddr inside the struct addrinfo
 		///@param addrInfo getnameinfo() will be executed to the struct sockaddr inside
-		///@return String
-		static String getNameInfo( const struct addrinfo & addrInfo );
+		///@return StringASCII
+		static StringASCII getNameInfo( const struct addrinfo & addrInfo );
 
 
 
 		///@brief getnameinfo() on the struct sockaddr inside this object
-		///@return String representing the struct sockaddr
-		String getNameInfo() const;
+		///@return StringASCII representing the struct sockaddr
+		StringASCII getNameInfo() const;
 
 
 		///@brief get the port a struct sockaddr as an unsigned short

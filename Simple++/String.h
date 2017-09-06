@@ -9,7 +9,9 @@
 #include "Vector.h"
 #include "Math/BasicComparable.h"
 
-
+#if defined WIN32 && defined ENABLE_WIN32
+	#include <Windows.h>
+#endif
 
 //T = buffer type
 template<typename T>
@@ -340,7 +342,7 @@ public:
 
 
 	/************************************************************************/
-	/* From String to number                                                */
+	/* From StringASCII to number                                                */
 	/************************************************************************/
 	template<unsigned int Base = 10>
 	char toChar();
@@ -467,7 +469,7 @@ public:
 
 
 	/************************************************************************/
-	/* To String                                                            */
+	/* To StringASCII                                                            */
 	/************************************************************************/
 	static BasicString<T> toString( const T & c );
 
@@ -945,9 +947,15 @@ std::ostream & operator <<( std::ostream & stream, const BasicString<T> & str );
 
 
 
-typedef BasicString<char> String;
+typedef BasicString<char> StringASCII;
 typedef BasicString<wchar_t> WString;
 typedef BasicString<unsigned int> UTF32String;
+
+#ifdef WIN32
+	typedef WString String;
+#else
+	typedef StringASCII String;
+#endif
 
 
 

@@ -28,13 +28,13 @@ namespace Network {
 		///@param service Service to be used.
 		///@param sockType SockType
 		///@param ipFamily IpFamily
-		Address(const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
+		Address(const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
 
 		///@brief Constructor from a IP, Service, SockType and IpFamily
 		///@param address to connect to (IP or domain name)
 		///@param service Service to be used.
 		///@param hints Hints to be used (sockType, ipFamily, flags, protocol) 
-		Address(const String & address, const String & service, const AddrInfo & hints);
+		Address(const StringASCII & address, const StringASCII & service, const AddrInfo & hints);
 
 		///@brief copy constructor to up cast
 		///@param addrInfo
@@ -90,9 +90,9 @@ namespace Network {
 		unsigned short getPort();
 
 
-		///@brief get the IP as a String (this function use buffered values)
-		///@return IP as String
-		const String & getIp();
+		///@brief get the IP as a StringASCII (this function use buffered values)
+		///@return IP as StringASCII
+		const StringASCII & getIp();
 
 	protected:
 		Address(ctor);
@@ -100,7 +100,7 @@ namespace Network {
 		void _update();
 	private:
 
-		String mIp;
+		StringASCII mIp;
 		unsigned short mPort;
 
 

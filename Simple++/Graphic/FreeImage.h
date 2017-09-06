@@ -9,6 +9,7 @@
 
 #include <FreeImage.h>
 
+
 #include "../BasicLoadable.h"
 #include "../Math/Math.h"
 #include "../Log.h"
@@ -54,11 +55,11 @@ namespace Graphic {
 		FreeImage();
 
 		///@brief Create a new Image using a file stored on the HD, the format can be specified if all the colors aren't usefully 
-		///@param fileName Path to the image to be opened. Has to be in UTF8
+		///@param fileName Path to the image to be opened.
 		///@param format Format of the image (Format::UNDEFINED meens automatic detection. The file will be converted instead.)
 		///@param invertY Specify if the image has to be flipped vertically when loaded.
 		///@param size the size the image will have. (Math::Vec2<Size>::null meens the original one).
-		FreeImage( const UTF8String & fileName, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
+		FreeImage( const String & fileName, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
 
 		///@brief Create a new Image, a copy from an another one existing but resize it directly.
 		///@param freeImage the image to be copied.
@@ -88,11 +89,11 @@ namespace Graphic {
 
 
 		///@brief define a new file to be this image. This object will be automatically reloaded if already loaded.
-		///@param fileName new file Path to be opened in UTF8
+		///@param fileName new file Path to be opened
 		///@param format loading format to be used if every components are not useful. (Format::UNDEFINED will use the file's one.)
 		///@param invertY if we have to flip the image vertically.
 		///@param size the new size of the loaded image (Math::Vec2<Size>::null mean full image resolution).
-		void setFile( const UTF8String & fileName, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
+		void setFile( const String & fileName, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
 
 
 		///@brief load this object using raw datas
@@ -132,7 +133,7 @@ namespace Graphic {
 
 
 		///@brief Save the image to a file, the quality is only for JPG from 0 to 100
-		bool saveToFile( const UTF8String & fileName, SavingFormat savingFormat, unsigned int quality = 100 );
+		bool saveToFile( const String & fileName, SavingFormat savingFormat, unsigned int quality = 100 );
 
 		///@brief Resize the image to the specified size using the specified Filter
 		void resize( const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );
@@ -151,7 +152,7 @@ namespace Graphic {
 		void setFlipY( bool value );
 
 		///@brief Retrieve the fileName
-		const UTF8String & getFileName() const;
+		const String & getFileName() const;
 
 
 		///@brief Create a new image full black
@@ -190,10 +191,7 @@ namespace Graphic {
 		LoadingType loadingType;
 		FIBITMAP * freeImage;
 
-		UTF8String fileName;
-		#if defined WIN32
-		WString fileNameW;
-		#endif
+		String fileName;
 
 		Math::Vec2<Size> size;
 		Filter resampleFilter;

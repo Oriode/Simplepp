@@ -22,10 +22,10 @@ public:
 	///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
 	IOHandlerLoadable( DataType * dataObject, IOManagerLoadable<DataType> * manager = NULL );
 
-	///@brief Constructor from File Path (UTF8) (object will be loaded and memory managed)
+	///@brief Constructor from File Path (object will be loaded and memory managed)
 	///@param filePath Path to the file to be loaded
 	///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
-	IOHandlerLoadable( const UTF8String & filePath, IOManagerLoadable<DataType> * manager = NULL );
+	IOHandlerLoadable( const String & filePath, IOManagerLoadable<DataType> * manager = NULL );
 
 	///@brief Copy Constructor
 	///@param handler object to be copied
@@ -55,7 +55,7 @@ public:
 	///@brief Set the object using a file path (memory management is assured) (getObject() will return NULL if the handler is not loaded)
 	///@param filePath Path to the file to be loaded.
 	///@return Boolean if the init has worked
-	bool setObject( const UTF8String & filePath );
+	bool setObject( const String & filePath );
 
 	///@brief Set the object using an externally generated object (you still have to handle memory management in this case) (getObject() will return dataObject in every cases)
 	///@param dataObject Object already defined to link to this handler
@@ -101,7 +101,7 @@ private:
 
 	IOManagerLoadable<DataType> * manager;
 	DataType * object;
-	UTF8String filePath;
+	String filePath;
 	typename IOManagerLoadable<DataType>::ObjectId objectId;
 	bool bMemoryManaged;
 	bool bUseMemoryManager;

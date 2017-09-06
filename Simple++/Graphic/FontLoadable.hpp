@@ -35,7 +35,7 @@ namespace Graphic {
 		{
 			this -> memorySize = IO::readToBuffer( this -> fileName, &this -> memoryFontObject );
 			if ( this -> memorySize == -1 ) {
-				Log::displayError( String( "Unable to open the font file : " ) << this -> fileName );
+				Log::displayError( StringASCII( "Unable to open the font file : " ) << this -> fileName );
 				this -> memorySize = 0;
 				this -> ftLib = NULL;
 				this -> ftFace = NULL;
@@ -51,13 +51,13 @@ namespace Graphic {
 			std::fstream file( this -> fileName.getData(), std::ios::in | std::ios::binary );
 			if ( file.is_open() ) {
 				if ( !onRead( &file ) ) {
-					error( String( "Error while reading the file : " ) << this -> fileName );
+					error( String( TEXT( "Error while reading the file : " ) ) << this -> fileName );
 					return false;
 				}
 				file.close();
 				return true;
 			} else {
-				error( String( "Error while opening the file : " ) << this -> fileName );
+				error( StringASCII( TEXT( "Error while opening the file : " ) ) << this -> fileName );
 				return false;
 			}
 

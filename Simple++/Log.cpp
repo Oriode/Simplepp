@@ -11,7 +11,6 @@ Log::Log( void ) {
 Log::~Log( void ) {
 }
 
-
 void Log::displayError( const String & message ) {
 	#if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
 	Log::callErrorHandler( message, MessageSeverity::Error );
@@ -39,21 +38,19 @@ void Log::stopChrono() {
 }
 
 void Log::displayChrono( const String & text ) {
-	displayLog( text + " : " + ( std::chrono::duration_cast< std::chrono::duration<double> >( Log::endTime - Log::startTime ).count() * 1000.0 ) + " ms" );
+	displayLog( text + TEXT( " : " ) + ( std::chrono::duration_cast< std::chrono::duration<double> >( Log::endTime - Log::startTime ).count() * 1000.0 ) + TEXT( " ms" ) );
 }
 
-void Log::errorHandler( const String & message, MessageSeverity severity, const char * fileName, unsigned int lineNumber) {
+void Log::errorHandler( const String & message, MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber) {
 	SimpleLog::errorHandler( message.toCString(), severity, fileName, lineNumber );
 }
 
-
-
-void Log::callErrorHandler( const String & message, MessageSeverity severity /*= MessageSeverity::Error*/, const char * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
+void Log::callErrorHandler( const String & message, MessageSeverity severity /*= MessageSeverity::Error*/, const TCHAR * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
 	Log::mErrorHandlerFn( message.toCString(), severity, fileName, lineNumber );
 }
 
 #if defined WIN32 && defined ENABLE_WIN32
-void Log::displayWindowsDebug( const String & message, const char * fileName, unsigned int lineNumber ) {
+void Log::displayWindowsDebug( const String & message, const TCHAR * fileName, unsigned int lineNumber ) {
 	if ( GetLastError() ) {
 		String str( message );
 		str << " : Code [" << GetLastError() << "] : " << Log::getWindowsLastError();

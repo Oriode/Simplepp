@@ -17,7 +17,7 @@ namespace XML {
 		Document();
 
 		///@brief Constructor from a buffer
-		///@param str String buffer to be parsed
+		///@param str StringASCII buffer to be parsed
 		Document( const UTF8String & str );
 
 		///@brief Constructor from an XML file
@@ -70,7 +70,7 @@ namespace XML {
 
 		///@brief Get the encoding of this document
 		///@return Encoding of this document
-		const String & getEncoding() const;
+		const StringASCII & getEncoding() const;
 
 		///@brief Set the encoding of this document
 		///@param encoding Encoding to be set
@@ -111,7 +111,7 @@ namespace XML {
 		bool _readXML( const WString & fileName );
 
 		float version;
-		String encoding;
+		StringASCII encoding;
 
 		Node * rootNode;
 	};

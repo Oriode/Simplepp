@@ -25,7 +25,7 @@ public:
 	///@param map Map to move from
 	MultiMap( MultiMap<I, T, Compare> && map );
 
-	///@brief Conversion to String operator
+	///@brief Conversion to StringASCII operator
 	template<typename C = char>
 	operator BasicString<C>() const;
 

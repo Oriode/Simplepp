@@ -18,7 +18,7 @@ void Debug::_debugNew( const char * fileName, int lineNumber, unsigned long memo
 	for ( unsigned int i = 0; i < _debugMemoryAllocations.size(); i++ ) {
 		if ( _debugMemoryAllocations[i].getMemoryAddress() == memoryAddress ) {
 			if ( _debugMemoryAllocations[i].isAllocated() ) {
-				Log::displayError( String( "System allocated a memory already set ?!?!?\n Allocation at " ) + fileName + "@" + lineNumber + " and previously at " + _debugMemoryAllocations[i].getAllocationFileName() + "@" + _debugMemoryAllocations[i].getAllocationLineNumber() );
+				Log::displayError( StringASCII( "System allocated a memory already set ?!?!?\n Allocation at " ) + fileName + "@" + lineNumber + " and previously at " + _debugMemoryAllocations[i].getAllocationFileName() + "@" + _debugMemoryAllocations[i].getAllocationLineNumber() );
 			}
 			_debugMemoryAllocations.erase( _debugMemoryAllocations.begin() + i );
 		}
@@ -38,12 +38,12 @@ void Debug::_debugDelete( const char * fileName, int lineNumber, unsigned long m
 	MemoryAllocation * memoryAllocation = Debug::getMemoryAllocationByAddress( memoryAddress );
 
 	if ( memoryAllocation == NULL ) {
-		Log::displayError( String( "Memory delete at " ) + fileName + "@" + lineNumber + " was unable to detect his allocation !" );
+		Log::displayError( StringASCII( "Memory delete at " ) + fileName + "@" + lineNumber + " was unable to detect his allocation !" );
 		return;
 	}
 
 	if ( !memoryAllocation -> isAllocated() ) {
-		Log::displayError( String( "Memory delete at " ) + fileName + "@" + lineNumber + " is deleting a ALREADY deleted space. Previously deleted at " + memoryAllocation -> getDeleteFileName() + "@" + memoryAllocation -> getDeleteLineNumber() );
+		Log::displayError( StringASCII( "Memory delete at " ) + fileName + "@" + lineNumber + " is deleting a ALREADY deleted space. Previously deleted at " + memoryAllocation -> getDeleteFileName() + "@" + memoryAllocation -> getDeleteLineNumber() );
 		return;
 	}
 
@@ -65,11 +65,11 @@ void Debug::_debugDelete( const char * fileName, int lineNumber, unsigned long m
 		//checking for double delete
 		if ( _debugMemoryAllocations[i].getMemoryAddress() < memoryAllocation -> getMemoryAddress() &&
 			 _debugMemoryAllocations[i].getMemoryAddress() + _debugMemoryAllocations[i].getMemorySize() >= memoryAllocation -> getMemoryAddress() ) {
-			Log::displayError( String( "Memory delete at " ) + fileName + "@" + lineNumber + " is deleting a ALREADY deleted space. Previously deleted at " + _debugMemoryAllocations[i].getDeleteFileName() + "@" + _debugMemoryAllocations[i].getDeleteLineNumber() );
+			Log::displayError( StringASCII( "Memory delete at " ) + fileName + "@" + lineNumber + " is deleting a ALREADY deleted space. Previously deleted at " + _debugMemoryAllocations[i].getDeleteFileName() + "@" + _debugMemoryAllocations[i].getDeleteLineNumber() );
 			continue;
 		} else if ( _debugMemoryAllocations[i].getMemoryAddress() < memoryAllocation -> getMemoryAddress() + memoryAllocation -> getMemorySize() &&
 					_debugMemoryAllocations[i].getMemoryAddress() > memoryAllocation -> getMemoryAddress() ) {
-			Log::displayError( String( "Memory delete at " ) + fileName + "@" + lineNumber + " is deleting a ALREADY deleted space. Previously deleted at " + _debugMemoryAllocations[i].getDeleteFileName() + "@" + _debugMemoryAllocations[i].getDeleteLineNumber() );
+			Log::displayError( StringASCII( "Memory delete at " ) + fileName + "@" + lineNumber + " is deleting a ALREADY deleted space. Previously deleted at " + _debugMemoryAllocations[i].getDeleteFileName() + "@" + _debugMemoryAllocations[i].getDeleteLineNumber() );
 			continue;
 		}
 	}

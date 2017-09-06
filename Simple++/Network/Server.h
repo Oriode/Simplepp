@@ -31,23 +31,23 @@ namespace Network {
 		bool listen( unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
 
 		///@brief Add a listen address to this server
-		///@param address Address as String (IP or domain name)
+		///@param address Address as StringASCII (IP or domain name)
 		///@param service to look for.
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4, IPV6 or Undefined for both
 		///@param maxClients Maximum number of clients accepted (Only for TCP)
 		///@return true if success else false
-		bool listen( const String & address, const String & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
+		bool listen( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
 
 
 		///@brief Add a listen address to this server
-		///@param address Address as String (IP or domain name)
+		///@param address Address as StringASCII (IP or domain name)
 		///@param port Port onto listen.
 		///@param sockType TCP or UDP
 		///@param ipFamily IPv4, IPV6 or Undefined for both
 		///@param maxClients Maximum number of clients accepted (Only for TCP)
 		///@return true if success else false
-		bool listen( const String & address, unsigned int port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
+		bool listen( const StringASCII & address, unsigned int port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined, int maxClients = 100 );
 
 
 		///@brief Add a listen address to this server

@@ -35,25 +35,32 @@
 #include "BuildConfig.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
-#include <Windows.h>
+	#include <Windows.h>
 #endif
+
+
+
  
 
 #if defined DEBUG
 #undef debug
-#define debug(code); code
-#define error(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Error, __FILE__, __LINE__);
-#define log(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Info, __FILE__, __LINE__);
-#define warn(msg); Log::callErrorHandler(String(msg), Log::MessageSeverity::Warning, __FILE__, __LINE__);
 
-#define assert(condition); if (!(condition)) Log::callErrorHandler("Assertion Failed! : ("#condition") => false", Log::MessageSeverity::Error, __FILE__, __LINE__);
-#define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler("Assertion Failed! : "#msg, Log::MessageSeverity::Error, __FILE__, __LINE__);
 
 #if defined WIN32 && defined ENABLE_WIN32
-#define windowsDebug(msg); Log::displayWindowsDebug(msg, __FILE__, __LINE__);
-#else	
+#define windowsDebug(msg); Log::displayWindowsDebug(msg, TEXT( __FILE__ ), __LINE__);
+#else
 #define windowsDebug(msg);
 #endif
+
+
+#define debug(code); code
+#define error(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, TEXT( __FILE__ ), __LINE__ );
+#define log(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, TEXT( __FILE__ ), __LINE__ );
+#define warn(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, TEXT( __FILE__ ), __LINE__ );
+
+#define assert(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, TEXT( __FILE__ ), __LINE__);
+#define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : "#msg ), Log::MessageSeverity::Error, TEXT( __FILE__ ), __LINE__);
+
 #else
 #undef debug
 #define debug( ... );
@@ -88,7 +95,6 @@ public:
 	static void displayWarning( const String & text );
 
 
-
 	///@brief Display a error message even if we are in debug build or not.
 	///@param text Text to display
 	static void displayError( const String & text );
@@ -110,20 +116,20 @@ public:
 	static void errorHandler(
 		const String &,
 		MessageSeverity severity = MessageSeverity::Error,
-		const char * fileName = "",
+		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0 );
 
 
 	static void callErrorHandler(
 		const String & message,
 		MessageSeverity severity = MessageSeverity::Error,
-		const char * fileName = "",
+		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
 	);
 
 
 	#if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug( const String & message, const char * fileName, unsigned int lineNumber );
+	static void displayWindowsDebug( const String & message, const TCHAR * fileName, unsigned int lineNumber );
 	#endif
 
 private:

@@ -16,15 +16,15 @@ namespace Network {
 
 
 	bool Server::listen( unsigned short port, SockType sockType, IpFamily ipFamily, int maxClients ) {
-		return _listen( NULL, String( port ).getData(), sockType, ipFamily, maxClients );
+		return _listen( NULL, StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Server::listen( const String & address, const String & service, SockType sockType, IpFamily ipFamily, int maxClients ) {
+	bool Server::listen( const StringASCII & address, const StringASCII & service, SockType sockType, IpFamily ipFamily, int maxClients ) {
 		return _listen( address.getData(), service.getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Server::listen( const String & address, unsigned int port, SockType sockType, IpFamily ipFamily, int maxClients ) {
-		return _listen( address.getData(), String( port ).getData(), sockType, ipFamily, maxClients );
+	bool Server::listen( const StringASCII & address, unsigned int port, SockType sockType, IpFamily ipFamily, int maxClients ) {
+		return _listen( address.getData(), StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
 	bool Server::listen( const Address & address, int maxClients /*= 100*/ ) {
@@ -32,7 +32,7 @@ namespace Network {
 
 		AddrInfo thisAddrInfo( *( ( AddrInfo * ) &address ) );
 		if ( ( ( int ) _tryListen( &thisAddrInfo, maxClients ) ) == SOCKET_ERROR ) {
-			error( String( "Unable to bind ip " ) << thisAddrInfo.getIpFamilyS() << " : " << thisAddrInfo.getNameInfo() << " on port " << thisAddrInfo.getPort() << " with protocol " << thisAddrInfo.getSockTypeS() );
+			error( StringASCII( "Unable to bind ip " ) << thisAddrInfo.getIpFamilyS() << " : " << thisAddrInfo.getNameInfo() << " on port " << thisAddrInfo.getPort() << " with protocol " << thisAddrInfo.getSockTypeS() );
 			return false;
 		}
 		updateFdSet();
@@ -50,12 +50,12 @@ namespace Network {
 
 		struct addrinfo * addrResults;
 		if ( ::getaddrinfo( ip, service, hints.getAddrInfoStruct(), &addrResults ) ) {
-			error( String( "Unable to retreive address info on address  " ) << ip << "@" << service );
+			error( StringASCII( "Unable to retreive address info on address  " ) << ip << "@" << service );
 			return false;
 		}
 
 		if ( _tryListen( addrResults, maxClients ) == false ) {
-			error( String( "Unable to bind on " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
+			error( StringASCII( "Unable to bind on " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
 			freeaddrinfo( addrResults );
 			return false;
 		}

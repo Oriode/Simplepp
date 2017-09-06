@@ -148,10 +148,10 @@ namespace GLFW {
 		}
 	}
 
-	void Window::setTitle( const UTF8String & title ) {
+	void Window::setTitle( const String & title ) {
 		this -> title = title;
 		if ( isLoaded() ) {
-			glfwSetWindowTitle( this -> glwfWindow, this -> title.getData() );
+			//glfwSetWindowTitle( this -> glwfWindow, this -> title.getData() );
 		}
 	}
 
@@ -168,7 +168,7 @@ namespace GLFW {
 		this -> size.x = 800;
 		this -> size.y = 600;
 
-		static UTF8String defaultTitle( "Simple++ Window" );
+		static String defaultTitle( TEXT( "Simple++ Window" ) );
 		this -> title = defaultTitle;
 		this -> cursorMode = CursorMode::Normal;
 
@@ -215,15 +215,15 @@ namespace GLFW {
 
 	
 
-	UTF8String Window::getClipboardString() const {
+	String Window::getClipboardString() const {
 		assert( isLoaded() );
-		return UTF8String( glfwGetClipboardString( this -> glwfWindow ) );
+		return String( glfwGetClipboardString( this -> glwfWindow ) );
 	}
 
 
-	void Window::setClipboardString( const UTF8String & string ) {
+	void Window::setClipboardString( const String & string ) {
 		assert( isLoaded() );
-		glfwSetClipboardString( this -> glwfWindow , string.getData() );
+		//glfwSetClipboardString( this -> glwfWindow , string.getData() );
 	}
 
 
@@ -231,7 +231,7 @@ namespace GLFW {
 		return this -> mouseHover;
 	}
 
-	String & Window::key2String( Key key ) {
+	StringASCII & Window::key2String( Key key ) {
 		class KeyStrMap {
 		public:
 			KeyStrMap() {
@@ -358,13 +358,13 @@ namespace GLFW {
 				keyStrMap.insert( Key::Menu, "Menu" );
 			}
 
-			Map<Key, String> keyStrMap;
+			Map<Key, StringASCII> keyStrMap;
 		};
 
 		static KeyStrMap keyMap;
-		static String errorStr( "Unknown" );
+		static StringASCII errorStr( "Unknown" );
 
-		String * foundedStr = keyMap.keyStrMap[key];
+		StringASCII * foundedStr = keyMap.keyStrMap[key];
 		if ( foundedStr ) {
 			return *foundedStr;
 		} else {
@@ -373,7 +373,7 @@ namespace GLFW {
 	}
 
 
-	String & Window::mouseButton2String( MouseButton mouseButton ) {
+	StringASCII & Window::mouseButton2String( MouseButton mouseButton ) {
 		class MouseButtonMap {
 		public:
 			MouseButtonMap() {
@@ -386,13 +386,13 @@ namespace GLFW {
 				strMap.insert( MouseButton::Button7, "Button 7" );
 				strMap.insert( MouseButton::Button8, "Button 8" );
 			}
-			Map<MouseButton, String> strMap;
+			Map<MouseButton, StringASCII> strMap;
 		};
 
 		static MouseButtonMap mouseButtonMap;
-		static String errorStr( "Unknown" );
+		static StringASCII errorStr( "Unknown" );
 
-		String * foundedStr = mouseButtonMap.strMap[mouseButton];
+		StringASCII * foundedStr = mouseButtonMap.strMap[mouseButton];
 		if ( foundedStr ) {
 			return *foundedStr;
 		} else {
@@ -464,11 +464,12 @@ namespace GLFW {
 			glfwWindowHint( GLFW_REFRESH_RATE, this -> refreshRate );
 		}
 		
-		this -> glwfWindow = glfwCreateWindow( this -> size.x, 
+		/*this -> glwfWindow = glfwCreateWindow( this -> size.x, 
 											   this -> size.y,
 											   this -> title.getData(),
 											   this -> glfwMonitor, 
 											   (sharedWindow && sharedWindow -> isLoaded()) ? sharedWindow -> glwfWindow : NULL );
+											   */
 
 		if ( glwfWindow == NULL ) {
 			glfwError( GLFW::Error::APIUnavailable, "Window creation has failed." );
@@ -789,7 +790,7 @@ namespace GLFW {
 		log( getClipboardString() );
 	}
 
-	void Window::onDrop( Vector<UTF8String> filePathsVector ) {
+	void Window::onDrop( Vector<String> filePathsVector ) {
 		// Virtual function to be overloaded
 	}
 
@@ -817,9 +818,9 @@ namespace GLFW {
 				break;
 		}
 
-		String severityMsg;
-		String typeMsg;
-		String sourceMsg;
+		StringASCII severityMsg;
+		StringASCII typeMsg;
+		StringASCII sourceMsg;
 
 		switch ( source ) {
 			case GL_DEBUG_CATEGORY_API_ERROR_AMD:
@@ -981,10 +982,10 @@ namespace GLFW {
 			return;
 		GLFW::Window ** foundedWindow( GLFW::Window::createdWindowMap[glfwWindow] );
 		if ( foundedWindow ) {
-			Vector<UTF8String> filePathVector;
+			Vector<String> filePathVector;
 			filePathVector.reserve( count );
 			for ( int i( 0 ); i < count; i++ ) {
-				filePathVector.push( UTF8String( paths[i] ) );
+				filePathVector.push( String( paths[i] ) );
 			}
 			( *foundedWindow ) -> onDrop( filePathVector );
 		} else {

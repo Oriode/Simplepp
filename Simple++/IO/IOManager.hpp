@@ -40,7 +40,7 @@
 		this -> dataVector.reserve( nbDatas );
 
 		for ( Vector<DataType *>::Size i( 0 ); i < nbDatas; i++ ) {
-			UTF8String filePath;
+			String filePath;
 			if ( !IO::read( fileStream, &filePath ) ) {
 				clear();
 				return false;
@@ -67,7 +67,7 @@
 
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const UTF8String & filePath ) {
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const String & filePath ) {
 		ObjectContainer * objectFounded( this -> dataMap[filePath] );
 		if ( objectFounded ) {
 			( objectFounded -> nbUses )++;
@@ -99,8 +99,8 @@
 
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const UTF8String & filePath, ObjectContainer & objectContainer ) {
-		RBNode<MapObject<UTF8String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, objectContainer ) );
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const String & filePath, ObjectContainer & objectContainer ) {
+		RBNode<MapObject<String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, objectContainer ) );
 		ObjectContainer & objectContainerInserted( nodeInserted -> getValue().getValue() );
 		if ( !nodeInserted ) {
 			delete objectContainer.object;

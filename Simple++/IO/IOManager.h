@@ -22,7 +22,7 @@
 		struct ObjectContainer {
 			DataType * object;
 			typename Vector<DataType *>::Size nbUses;
-			const UTF8String * filePath;
+			const String * filePath;
 		};
 
 		typedef const ObjectContainer * ObjectId;
@@ -34,9 +34,9 @@
 		~IOManager();
 
 		///@brief create an object using its filepath
-		///@param filePath Path to the file used to load the object (UTF8 Encoded) (If the object doesn't exists, it will be created and added) (Memory management is assured)
+		///@param filePath Path to the file used to load the object (If the object doesn't exists, it will be created and added) (Memory management is assured)
 		///@return Unique Object Id of the new object (@see getObject() to retrieve the created object)(NULL (0) if the loading has failed)
-		ObjectId addObject( const UTF8String & filePath );
+		ObjectId addObject( const String & filePath );
 
 		///@brief Get the object associated to ObjectId
 		///@param objectId Object Id to use
@@ -63,13 +63,13 @@
 		///@return boolean to know if the operation is a success of not.
 		bool write( std::fstream * fileStream ) const;
 	protected:
-		ObjectId _addObjectContainer( const UTF8String & filePath, ObjectContainer & objectContainer );
+		ObjectId _addObjectContainer( const String & filePath, ObjectContainer & objectContainer );
 		bool _load();
 		bool _unload();
 		ObjectContainer * _getObjectContainer( ObjectId objectId );
 
-		Map< UTF8String, ObjectContainer > dataMap;
-		Map< ObjectId , RBNode< MapObject< UTF8String, ObjectContainer > > * > dataNodeMap;
+		Map< String, ObjectContainer > dataMap;
+		Map< ObjectId , RBNode< MapObject< String, ObjectContainer > > * > dataNodeMap;
 		Vector< ObjectId > dataVector;
 	};
 

@@ -143,7 +143,7 @@ public:
 	typename RBNode<T>::Color getColor() const;
 
 	///@brief Create a human readable string with this sub tree
-	///@return String
+	///@return StringASCII
 	template<typename C = char>
 	BasicString<C> toString() const;
 
@@ -194,7 +194,7 @@ public:
 
 	///@brief Create a human readable string with a sub tree (can be NULL)
 	///@param root Pointer to the root node of the tree
-	///@return String
+	///@return StringASCII
 	template<typename C = char>
 	static BasicString<C> toString( RBNode<T> * root );
 
@@ -271,7 +271,7 @@ public:
 	///@brief destructor
 	~RBTree();
 
-	///@brief Conversion to String operator
+	///@brief Conversion to StringASCII operator
 	template<typename C = char>
 	operator BasicString<C>() const;
 
@@ -399,7 +399,7 @@ public:
 
 
 	///@brief Create an human readable string from this tree
-	///@return String
+	///@return StringASCII
 	template<typename C = char>
 	BasicString<C> toString() const;
 
@@ -468,8 +468,8 @@ public:
 	///@param tree Tree to move from
 	Map( Map<I, T, Compare> && tree );
 
-	///@brief Conversion to String operator
-	///@return String
+	///@brief Conversion to StringASCII operator
+	///@return StringASCII
 	template<typename C = char>
 	operator BasicString<C>() const;
 
@@ -582,7 +582,7 @@ public:
 	T * insert( const I & index, const T & value );
 
 	///@brief Create an human readable string from this map
-	///@return String
+	///@return StringASCII
 	template<typename C = char>
 	BasicString<C> toString() const;
 

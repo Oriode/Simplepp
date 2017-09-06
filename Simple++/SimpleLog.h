@@ -20,7 +20,7 @@
 #include "BuildConfig.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
-#include <windows.h>
+	#include <windows.h>
 #endif // !WIN32
 
 
@@ -28,16 +28,42 @@
 
 #if defined DEBUG
 #undef debug
-#define debug(code); code
-#define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, __FILE__, __LINE__);
-#define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, __FILE__, __LINE__);
-#define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, __FILE__, __LINE__);
-#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler("Assertion failed : "#condition, SimpleLog::MessageSeverity::Error, __FILE__, __LINE__);
-#if defined WIN32 && defined ENABLE_WIN32
-#define _windowsDebug(msg); SimpleLog::displayWindowsDebug(msg, __FILE__, __LINE__);
-#else	
+
+
+#if defined WIN32
+#ifndef TEXT
+#define __TEXT(str) L##str
+#define TEXT(str) __TEXT(str)
+#endif
+#ifndef TCHAR
+#define TCHAR wchar_t
+#endif
+#if defined ENABLE_WIN32
+#define _windowsDebug(msg); SimpleLog::displayWindowsDebug(msg, TEXT(__FILE__), __LINE__);
+#endif
+#else
+#ifndef TEXT
+#define TEXT(str) str
+#endif
+#ifndef TEXT2
+#define TEXT2(str) str
+#endif
+#ifndef TCHAR
+#define TCHAR char
+#endif
 #define _windowsDebug(msg);
 #endif
+
+
+
+
+
+#define debug(code); code
+#define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, TEXT(__FILE__), __LINE__);
+#define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, TEXT(__FILE__), __LINE__);
+#define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, TEXT(__FILE__), __LINE__);
+#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed : "#condition ), SimpleLog::MessageSeverity::Error, TEXT(__FILE__), __LINE__);
+
 #else
 #undef debug
 #define debug(code);
@@ -71,59 +97,47 @@ public:
 	};
 
 
-	///@brief retrieve the out stream (by default cout)
-	///@return out stream
-	static std::ostream & getOutStream();
-
-	///@brief set the output stream
-	///@param stream Stream to be used to output the log messages
-	static void setOutStream( std::ostream * stream );
-
-	static void errorHandler(
-		const char * message,
-		MessageSeverity severity = MessageSeverity::Error,
-		const char * fileName = "",
-		unsigned int lineNumber = 0);
+	static void errorHandler( const TCHAR * message, MessageSeverity severity = MessageSeverity::Error, const TCHAR * fileName = TEXT(""), unsigned int lineNumber = 0);
 
 	static void callErrorHandler(
-		const char *  message,
+		const TCHAR * message,
 		MessageSeverity severity = MessageSeverity::Error,
-		const char *  fileName = "",
+		const TCHAR *  fileName = TEXT(""),
 		unsigned int lineNumber = 0
 		);
+
 
 
 	///@brief Set the error handler to be called
 	///@param msg Message to be displayed
 	///@param 
 	static void setErrorHandler( void( *errorHandlerFn ) (
-		const char * msg,
+		const TCHAR * msg,
 		MessageSeverity severity,
-		const char * file,
+		const TCHAR * file,
 		unsigned int line ) );
 
-	static void setConsoleColor(MessageColor color = MessageColor::White);
+	static void setConsoleColor( MessageColor color = MessageColor::White );
 
 #if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug(const char * message, const char * fileName, unsigned int lineNumber);
-	static const char * getWindowsLastError();
+	static void displayWindowsDebug( const TCHAR * message, const TCHAR * fileName, unsigned int lineNumber );
+	static const TCHAR * getWindowsLastError();
 #endif
 
 	///@brief Fill a char * buffer with the current time
 	///@param strBuffer Buffer to be filled
 	///@param bufferSize size of the buffer
-	static void getTimeStr( char * strBuffer, size_t bufferSize );
+	static void getTimeStr( TCHAR * strBuffer, size_t bufferSize );
 
 
 protected:
 	static void(*mErrorHandlerFn) (
-		const char *,
+		const TCHAR *,
 		MessageSeverity,
-		const char *,
+		const TCHAR *,
 		unsigned int);
 
 private:
-	static std::ostream * Out;
 
 
 };

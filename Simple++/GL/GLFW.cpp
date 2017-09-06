@@ -6,7 +6,7 @@
 namespace GLFW {
 
 	bool bLoaded = false;
-	void( *errorCallback )( Error, const String & ) = errorCallbackDefault;
+	void( *errorCallback )( Error, const StringASCII & ) = errorCallbackDefault;
 
 
 
@@ -14,18 +14,18 @@ namespace GLFW {
 		return bLoaded;
 	}
 
-	const String & errorToString( Error error ) {
-		static String errorNotInitialized( "Not Initialized" );
-		static String errorNoContext( "No Context" );
-		static String errorInvalidEnum( "Invalid Enum" );
-		static String errorInvalidValue( "Invalid Value" );
-		static String errorOutOfMemory( "Out of Memory" );
-		static String errorAPIUnavailable( "API Unavailable" );
-		static String errorVersionUnavailable( " Version Unavailable" );
-		static String errorPlatformError( "Platform Error" );
-		static String errorFormatUnavailable( "Format Unavailable" );
-		static String errorNoWindowContext( "No Context Window" );
-		static String errorUnknownErrorCode( "Error code unknown" );
+	const StringASCII & errorToString( Error error ) {
+		static StringASCII errorNotInitialized( "Not Initialized" );
+		static StringASCII errorNoContext( "No Context" );
+		static StringASCII errorInvalidEnum( "Invalid Enum" );
+		static StringASCII errorInvalidValue( "Invalid Value" );
+		static StringASCII errorOutOfMemory( "Out of Memory" );
+		static StringASCII errorAPIUnavailable( "API Unavailable" );
+		static StringASCII errorVersionUnavailable( " Version Unavailable" );
+		static StringASCII errorPlatformError( "Platform Error" );
+		static StringASCII errorFormatUnavailable( "Format Unavailable" );
+		static StringASCII errorNoWindowContext( "No Context Window" );
+		static StringASCII errorUnknownErrorCode( "Error code unknown" );
 
 		switch ( error ) {
 			case Error::NotInitialized:
@@ -54,12 +54,12 @@ namespace GLFW {
 
 	}
 
-	void errorCallbackDefault( Error errorCode, const String & description ) {
-		error( String( "[GLFW] " ) << '[' << String( errorToString( errorCode ) ) << ']' << ' ' << description );
+	void errorCallbackDefault( Error errorCode, const StringASCII & description ) {
+		error( String( TEXT( "[GLFW] " ) ) << TCHAR( '[' ) << String( errorToString( errorCode ) ) << TCHAR( ']' ) << TCHAR( ' ' ) << description );
 	}
 
 	void _error_callback( int error, const char * description ) {
-		callError( Error( error ), String( description ) );
+		callError( Error( error ), ( description ) );
 	}
 
 	bool load() {
@@ -67,7 +67,7 @@ namespace GLFW {
 			return true;
 		if ( !glfwInit() ) {
 			// Init has failed.
-			callError( Error::NotInitialized, String( " Initialization of GLFW has failed :(" ) );
+			callError( Error::NotInitialized, String( TEXT( " Initialization of GLFW has failed :(" ) ) );
 			return false;
 		}
 		glfwSetErrorCallback( _error_callback );
@@ -84,7 +84,7 @@ namespace GLFW {
 	}
 
 
-	void callError( Error error, const String & description ) {
+	void callError( Error error, const StringASCII & description ) {
 		errorCallback( error, description );
 	}
 

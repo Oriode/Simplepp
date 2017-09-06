@@ -219,18 +219,18 @@ namespace GLFW {
 		///@param size Size in pixels of the specified window.
 		///@param monitor Monitor Used.
 		///@param share Window used to share resource to.
-		Window( const String & title, VideoMode videoMode = VideoMode::Windowed, const Math::Vec2<unsigned int> & size = Math::Vec2<unsigned int>( 800, 600 ), GLFWmonitor * monitor = NULL, Window * share = NULL, unsigned int flags = 0 );
+		Window( const StringASCII & title, VideoMode videoMode = VideoMode::Windowed, const Math::Vec2<unsigned int> & size = Math::Vec2<unsigned int>( 800, 600 ), GLFWmonitor * monitor = NULL, Window * share = NULL, unsigned int flags = 0 );
 
 		///@brief Constructor for a windowed window.
 		///@param title Title of the window
 		///@param size Size in pixels of the window
 		///@param share Window used to share resource to.
 		///@param flags Flags to add at its creation
-		Window( const String & title, const Math::Vec2<unsigned int> & size, Window * share = NULL, unsigned int flags = 0 );
+		Window( const StringASCII & title, const Math::Vec2<unsigned int> & size, Window * share = NULL, unsigned int flags = 0 );
 
-		Window( const String & title, GLFWmonitor * monitor, Window * share = NULL, unsigned int flags = 0 );
+		Window( const StringASCII & title, GLFWmonitor * monitor, Window * share = NULL, unsigned int flags = 0 );
 
-		Window( const String & title, unsigned int refreshRate, GLFWmonitor * monitor, Window * share = NULL, unsigned int flags = 0 );
+		Window( const StringASCII & title, unsigned int refreshRate, GLFWmonitor * monitor, Window * share = NULL, unsigned int flags = 0 );
 
 		///@brief Set the window to be windowed
 		void setWindowed();
@@ -276,11 +276,11 @@ namespace GLFW {
 
 		///@brief Set the title of this window
 		///@param title Title of this window
-		void setTitle( const UTF8String & title );
+		void setTitle( const String & title );
 
 		///@brief Get the title of this window
 		///@return Title of this window
-		const UTF8String & getTitle() const;
+		const String & getTitle() const;
 
 
 		///@brief Set if the window will be resizable by the user or not (Only used for windowed window)
@@ -524,13 +524,13 @@ namespace GLFW {
 		void reset();
 
 		
-		///@brief Get the String from the clipboard
-		///@return String from the clipboard
-		UTF8String getClipboardString() const;
+		///@brief Get the StringASCII from the clipboard
+		///@return StringASCII from the clipboard
+		String getClipboardString() const;
 
 		///@brief Set the Clipboard with a new string
-		///@param string String to set to the clipboard
-		void setClipboardString( const UTF8String & string );
+		///@param string StringASCII to set to the clipboard
+		void setClipboardString( const String & string );
 
 		///@brief Get if the mouse is actually hover is window
 		///@return True if the mouse is actually hover, false otherwise
@@ -540,14 +540,14 @@ namespace GLFW {
 		/* Static                                                               */
 		/************************************************************************/
 		///@brief Get a human readable string representing a Key
-		///@param key Key to convert into a String
-		///@return Human Readable String
-		static String & key2String( Key key );
+		///@param key Key to convert into a StringASCII
+		///@return Human Readable StringASCII
+		static StringASCII & key2String( Key key );
 
 		///@brief Get a human readable string representing a MouseButton
-		///@param mouseButton MouseButton to convert into a String
-		///@return Human Readable String
-		static String & mouseButton2String( MouseButton mouseButton );
+		///@param mouseButton MouseButton to convert into a StringASCII
+		///@return Human Readable StringASCII
+		static StringASCII & mouseButton2String( MouseButton mouseButton );
 
 
 		/************************************************************************/
@@ -594,7 +594,7 @@ namespace GLFW {
 
 		///@brief Event handler when files are dropped into the window
 		///@param filePathsVector Vector of UTF8String representing the files dropped into the window
-		virtual void onDrop( Vector<UTF8String> filePathsVector );
+		virtual void onDrop( Vector<String> filePathsVector );
 
 		///@brief Event handler when the mouse enter or leave the window
 		///@param entered Boolean if the mouse is now hover the window or not
@@ -624,7 +624,7 @@ namespace GLFW {
 
 
 		Math::Vec2<unsigned int> size;
-		UTF8String title;
+		String title;
 		VideoMode videoMode;
 		const Graphic::Texture<unsigned char> * icon;
 		Graphic::Texture<unsigned char> * iconLoaded;

@@ -22,7 +22,7 @@ size_t IO::readToBuffer( std::fstream * fileStream, char ** buffer ) {
 	return length;
 }
 
-size_t IO::readToBuffer( const UTF8String & fileName, char ** data ) {
+size_t IO::readToBuffer( const String & fileName, char ** data ) {
 	std::fstream file( fileName.getData(), std::ios::in | std::ios::binary );
 	if ( file.is_open() ) {
 		size_t nbChars = readToBuffer( &file, data );

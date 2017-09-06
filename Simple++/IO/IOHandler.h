@@ -56,7 +56,7 @@
 			///@brief Set the object using a file path (memory management is assured)
 			///@param filePath Path to the file to be loaded.
 			///@return Boolean if the init has worked
-			bool setObject( const UTF8String & filePath );
+			bool setObject( const String & filePath );
 
 			///@brief Set the object using an externally generated object (you still have to handle memory management in this case)
 			///@param dataObject Object already defined to link to this handler

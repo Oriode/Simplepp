@@ -2,32 +2,28 @@
 
 
 
-std::ostream * SimpleLog::Out = &(std::cout);
 
 
 void(*SimpleLog::mErrorHandlerFn)(
-	const char *,
+	const TCHAR *,
 	MessageSeverity,
-	const char *,
+	const TCHAR *,
 	unsigned int) = &SimpleLog::errorHandler;
 
 
-std::ostream & SimpleLog::getOutStream() {
-	return *SimpleLog::Out;
-}
 
-void SimpleLog::setOutStream( std::ostream * stream ) {
-	SimpleLog::Out = stream;
-}
-
-void SimpleLog::getTimeStr( char * strBuffer, size_t bufferSize ) {
+void SimpleLog::getTimeStr( TCHAR * strBuffer, size_t bufferSize ) {
 	auto now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm timeinfo;
 	localtime_s( &timeinfo, &now );
-	std::strftime( strBuffer, bufferSize, "%H:%M:%S", &timeinfo );
+	#ifdef WIN32
+		std::wcsftime( strBuffer, bufferSize, TEXT( "%H:%M:%S" ), &timeinfo );
+	#else
+		std::strftime( strBuffer, bufferSize, TEXT( "%H:%M:%S" ), &timeinfo );
+	#endif
 }
 
-void SimpleLog::errorHandler( const char * message, MessageSeverity severity, const char * fileName, unsigned int lineNumber ) {
+void SimpleLog::errorHandler( const TCHAR * message, MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber ) {
 	switch ( severity ) {
 			case MessageSeverity::Error:
 			#if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
@@ -53,18 +49,26 @@ void SimpleLog::errorHandler( const char * message, MessageSeverity severity, co
 		}
 
 
-	char timeBuffer[50];
+	TCHAR timeBuffer[50];
 	getTimeStr( timeBuffer, sizeof( timeBuffer ) );
 
-	char logBuffer[2048];
-	if ( strlen( fileName ) ) {
-		snprintf( logBuffer, 2048, "[%s][%s@%i] : %s\n", timeBuffer, fileName, lineNumber, message );
+	TCHAR logBuffer[2048];
+	#ifdef WIN32
+		if ( wcslen( fileName ) ) {
+			_snwprintf_s( logBuffer, 2048, 2048, TEXT( "[%s][%s@%i] : %s\n" ), timeBuffer, fileName, lineNumber, message );
 		} else {
-		snprintf( logBuffer, 2048, "[%s] : %s\n", timeBuffer, message );
+			_snwprintf_s( logBuffer, 2048, 2048, TEXT( "[%s] : %s\n" ), timeBuffer, message );
 		}
-
-	getOutStream() << logBuffer;
-
+		std::wcout << logBuffer;
+	#else
+		if ( strlen( fileName ) ) {
+			snprintf( logBuffer, 2048, TEXT( "[%s][%s@%i] : %s\n" ), timeBuffer, fileName, lineNumber, message );
+		} else {
+			snprintf( logBuffer, 2048, TEXT( "[%s] : %s\n" ), timeBuffer, message );
+		}
+		std::cout << timeBuffer;
+	#endif
+	
 	setConsoleColor();
 }
 
@@ -73,7 +77,7 @@ void SimpleLog::errorHandler( const char * message, MessageSeverity severity, co
 
 
 
-void SimpleLog::callErrorHandler(const char * message, MessageSeverity severity /*= MessageSeverity::Error*/, const char * fileName /*= ""*/, unsigned int lineNumber /*= 0 */) {
+void SimpleLog::callErrorHandler(const TCHAR * message, MessageSeverity severity /*= MessageSeverity::Error*/, const TCHAR * fileName /*= ""*/, unsigned int lineNumber /*= 0 */) {
 	mErrorHandlerFn(message, severity, fileName, lineNumber);
 }
 
@@ -85,7 +89,7 @@ void SimpleLog::setConsoleColor(MessageColor color /*= MessageColor::White*/) {
 #else
 	std::stringstream stream;
 	stream << std::hex << color;
-	system( std::string("Color " + stream.str()).c_str() );
+	system( std::string(TEXT( "Color " ) + stream.str()).c_str() );
 #endif
 }
 
@@ -100,14 +104,14 @@ SimpleLog::~SimpleLog(){
 
 
 #if defined WIN32 && defined ENABLE_WIN32
-void SimpleLog::displayWindowsDebug(const char * message, const char * fileName, unsigned int lineNumber) {
+void SimpleLog::displayWindowsDebug(const TCHAR * message, const TCHAR * fileName, unsigned int lineNumber) {
 	if (GetLastError()) {
-		SimpleLog::callErrorHandler(std::string(message + std::string(" : Code [") + std::to_string(GetLastError()) + "] : " + SimpleLog::getWindowsLastError()).c_str(), SimpleLog::MessageSeverity::Error, fileName, lineNumber);
+		SimpleLog::callErrorHandler(std::wstring(message + std::wstring(TEXT( " : Code [" )) + std::to_wstring(GetLastError()) + TEXT( "] : " ) + SimpleLog::getWindowsLastError()).c_str(), SimpleLog::MessageSeverity::Error, fileName, lineNumber);
 	}
 }
 
-const char * SimpleLog::getWindowsLastError() {
-	static char windowsLastError[500];
+const TCHAR * SimpleLog::getWindowsLastError() {
+	static TCHAR windowsLastError[500];
 	LPTSTR lpMsgBuf;
 	DWORD strlen = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -120,7 +124,7 @@ const char * SimpleLog::getWindowsLastError() {
 		0, NULL);
 
 
-	memcpy(windowsLastError, lpMsgBuf, sizeof(char) * strlen);
+	memcpy(windowsLastError, lpMsgBuf, sizeof( TCHAR ) * strlen);
 	LocalFree(lpMsgBuf);
 
 	return windowsLastError;
@@ -128,6 +132,6 @@ const char * SimpleLog::getWindowsLastError() {
 #endif
 
 
-void SimpleLog::setErrorHandler( void( *errorHandlerFn ) ( const char * , MessageSeverity, const char *, unsigned int ) ) {
+void SimpleLog::setErrorHandler( void( *errorHandlerFn ) ( const TCHAR * , MessageSeverity, const TCHAR *, unsigned int ) ) {
 	SimpleLog::mErrorHandlerFn = errorHandlerFn;
 }

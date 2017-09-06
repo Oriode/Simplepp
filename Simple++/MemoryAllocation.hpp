@@ -2,7 +2,7 @@
 MemoryAllocation::MemoryAllocation( void ) {
 }
 
-MemoryAllocation::MemoryAllocation( unsigned long memoryAddress, unsigned long memorySize, const String & allocationFileName, unsigned int lineNumber ) {
+MemoryAllocation::MemoryAllocation( unsigned long memoryAddress, unsigned long memorySize, const StringASCII & allocationFileName, unsigned int lineNumber ) {
 	this -> memoryAddress = memoryAddress;
 	this -> memorySize = memorySize;
 	this -> allocationFileName = allocationFileName;
@@ -14,7 +14,7 @@ MemoryAllocation::MemoryAllocation( unsigned long memoryAddress, unsigned long m
 MemoryAllocation::~MemoryAllocation( void ) {
 }
 
-void MemoryAllocation::setAllocationFileName( const String & fileName ) {
+void MemoryAllocation::setAllocationFileName( const StringASCII & fileName ) {
 	this -> allocationFileName = fileName;
 }
 
@@ -22,7 +22,7 @@ void MemoryAllocation::setAllocationLineNumber( int lineNumber ) {
 	this -> allocationFileName = lineNumber;
 }
 
-void MemoryAllocation::setDeleteFileName( const String & fileName ) {
+void MemoryAllocation::setDeleteFileName( const StringASCII & fileName ) {
 	this -> deleteFileName = fileName;
 }
 
@@ -38,7 +38,7 @@ void MemoryAllocation::setMemorySize( unsigned long long size ) {
 	this -> memorySize = size;
 }
 
-const String & MemoryAllocation::getAllocationFileName() const {
+const StringASCII & MemoryAllocation::getAllocationFileName() const {
 	return this -> allocationFileName;
 }
 
@@ -46,7 +46,7 @@ int MemoryAllocation::getAllocationLineNumber() const {
 	return this -> allocationLineNumber;
 }
 
-const String & MemoryAllocation::getDeleteFileName() const {
+const StringASCII & MemoryAllocation::getDeleteFileName() const {
 	return this -> deleteFileName;
 }
 

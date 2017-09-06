@@ -24,7 +24,7 @@ namespace Graphic {
 
 		///@brief Constructor which render directly
 		///@param font Font file used to render
-		///@param str String to be rendered
+		///@param str StringASCII to be rendered
 		///@param centering How the text has to be centered in the image
 		///@param format Format of the resulting image
 		template<typename LoadingFunc>
@@ -50,7 +50,7 @@ namespace Graphic {
 
 		///@brief set the text to be rendered
 		///@param font Font file used to render
-		///@param str String to be rendered
+		///@param str StringASCII to be rendered
 		///@param centering How the text has to be centered in the image
 		template<typename LoadingFunc>
 		void setText( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering = Math::Vec2<bool>( false ) );

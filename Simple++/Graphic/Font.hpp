@@ -23,7 +23,7 @@ namespace Graphic {
 		_setPixSize( pixSize );
 		this -> memorySize = IO::readToBuffer( fileName, &this -> memoryFontObject );
 		if ( this -> memorySize == -1 ) {
-			Log::displayError( String( "Unable to open the font file : " ) << fileName );
+			Log::displayError( StringASCII( "Unable to open the font file : " ) << fileName );
 			this -> memorySize = 0;
 			this -> ftLib = NULL;
 			this -> ftFace = NULL;
@@ -410,7 +410,7 @@ namespace Graphic {
 
 			//Load the Font file in FreeType
 			if ( FT_New_Memory_Face( this -> ftLib, ( FT_Byte * ) fileDump, size, 0, &this -> ftFace ) ) {
-				Log::displayError( String( "Error while opening the font file " ) );
+				Log::displayError( StringASCII( "Error while opening the font file " ) );
 				FT_Done_FreeType( this -> ftLib );
 				this -> ftLib = NULL;
 				this -> ftFace = NULL;

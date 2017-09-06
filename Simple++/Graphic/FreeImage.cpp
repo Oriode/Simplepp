@@ -14,16 +14,13 @@ namespace Graphic {
 
 	}
 
-	FreeImage::FreeImage( const UTF8String & fileName, Format format, bool invertY, const Math::Vec2<Size> & size ) {
+	FreeImage::FreeImage( const String & fileName, Format format, bool invertY, const Math::Vec2<Size> & size ) {
 		setFile( fileName, format, invertY, size );
 	}
 
 	FreeImage::FreeImage( const FreeImage & freeImage, const Math::Vec2<Size> & newSize, Filter resampleFilter ) :
 		BasicLoadable( freeImage ),
 		fileName( freeImage.fileName ),
-		#if defined WIN32
-		fileNameW( freeImage.fileNameW ),
-		#endif
 		size( newSize ),
 		invertY( freeImage.invertY ),
 		loadingType( freeImage.loadingType ),
@@ -49,9 +46,6 @@ namespace Graphic {
 	FreeImage::FreeImage( const FreeImage & freeImage ) :
 		BasicLoadable( freeImage ),
 		fileName( freeImage.fileName ),
-		#if defined WIN32
-		fileNameW( freeImage.fileNameW ),
-		#endif
 		size( freeImage.size ),
 		invertY( invertY ),
 		loadingType( freeImage.loadingType ),
@@ -73,9 +67,6 @@ namespace Graphic {
 		BasicLoadable( Utility::toRValue( freeImage ) ),
 		freeImage( Utility::toRValue( freeImage.freeImage ) ),
 		fileName( Utility::toRValue( freeImage.fileName ) ),
-		#if defined WIN32
-		fileNameW( Utility::toRValue( freeImage.fileNameW ) ),
-		#endif
 		size( Utility::toRValue( freeImage.size ) ),
 		invertY( invertY ),
 		loadingType( Utility::toRValue( freeImage.loadingType ) ),
@@ -102,7 +93,7 @@ namespace Graphic {
 				{
 					// Check the file signature and deduce its format.
 					#if defined WIN32
-					FREE_IMAGE_FORMAT imageFormat = FreeImage_GetFileTypeU( fileNameW.toCString(), 0 );
+					FREE_IMAGE_FORMAT imageFormat = FreeImage_GetFileTypeU( fileName.toCString(), 0 );
 					#else
 					FREE_IMAGE_FORMAT imageFormat = FreeImage_GetFileType( fileName.toCString(), 0 );
 					#endif
@@ -110,7 +101,7 @@ namespace Graphic {
 					// If still unknown, try to guess the file format from the file extension.  
 					if ( imageFormat == FIF_UNKNOWN ) {
 						#if defined WIN32
-						imageFormat = FreeImage_GetFIFFromFilenameU( fileNameW.toCString() );
+						imageFormat = FreeImage_GetFIFFromFilenameU( fileName.toCString() );
 						#else
 						imageFormat = FreeImage_GetFIFFromFilename( fileName.toCString() );
 						#endif
@@ -118,21 +109,21 @@ namespace Graphic {
 
 					// If still unknown, return failure.  
 					if ( imageFormat == FIF_UNKNOWN ) {
-						error( String( "Free Image was unable to detect the file format : " ) << fileName );
+						error( String( TEXT( "Free Image was unable to detect the file format : " ) ) << fileName );
 						return false;
 					}
 
 					// Check that the plugin has reading capabilities and load the file.  
 					if ( FreeImage_FIFSupportsReading( imageFormat ) ) {
 						#if defined WIN32
-						this -> freeImage = FreeImage_LoadU( imageFormat, fileNameW.toCString() );
+						this -> freeImage = FreeImage_LoadU( imageFormat, fileName.toCString() );
 						#else
 						this -> freeImage = FreeImage_Load( imageFormat, fileName.toCString() );
 						#endif
 					}
 
 					if ( this -> freeImage == NULL ) {
-						error( String( "Free Image was unable to load the picture : " ) << fileName );
+						error( String( TEXT( "Free Image was unable to load the picture : " ) ) << fileName );
 						return false;
 					}
 					if ( this -> size.x == 0 || this -> size.y == 0 ) {
@@ -238,24 +229,20 @@ namespace Graphic {
 		}
 	}
 
-	bool FreeImage::saveToFile( const UTF8String & fileName, SavingFormat savingFormat, unsigned int quality ) {
-		#if defined WIN32
-		WString fileNameW( fileName );
-		#endif
-		
+	bool FreeImage::saveToFile( const String & fileName, SavingFormat savingFormat, unsigned int quality ) {
 		load();
 
 		#if defined WIN32
-		bool r( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileNameW.toCString(), quality ) );
+		bool r( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileName.toCString(), quality ) );
 		#else
 		bool r( FreeImage_Save( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, fileName.toCString(), quality ) );
 		#endif
 
 		if ( r ) {
-			log( String( "Success writing file : " ) << fileName );
+			log( String( TEXT( "Success writing file : " ) ) << fileName );
 			return true;
 		} else {
-			error( String( "error writing file : " ) << fileName );
+			error( String( TEXT( "Error writing file : " ) ) << fileName );
 			return false;
 		}
 	}
@@ -270,14 +257,11 @@ namespace Graphic {
 	}
 
 
-	void FreeImage::setFile( const UTF8String & fileName, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<Size> & size ) {
+	void FreeImage::setFile( const String & fileName, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<Size> & size ) {
 		unload();
 
 		this -> invertY = invertY;
 		this -> fileName = fileName;
-		#if defined WIN32
-		this -> fileNameW = WString( fileName );
-		#endif // WIN32
 
 		this -> loadingType = LoadingType::FILE;
 		_updateFormat( format );
@@ -298,9 +282,6 @@ namespace Graphic {
 		this -> invertY = datasInvertY;
 		this -> loadingType = LoadingType::EMPTY;
 		this -> fileName.clear();			//we have no reason to keep a filepath now.
-		#if defined WIN32
-		this -> fileNameW.clear();			//we have no reason to keep a filepath now.
-		#endif // WIN32
 
 		#if defined WIN32
 		if ( format == Format::RGB || format == Format::RGBA ) {
@@ -351,9 +332,6 @@ namespace Graphic {
 
 	FreeImage & FreeImage::operator=( const FreeImage & image ) {
 		this -> fileName = image.fileName;
-		#if defined WIN32
-		this -> fileNameW = image.fileNameW;
-		#endif
 		this -> size = size;
 		this -> invertY = image.invertY;
 		this -> loadingType = image.loadingType;
@@ -383,9 +361,6 @@ namespace Graphic {
 		BasicLoadable::operator=( Utility::toRValue( image ) );
 		this -> freeImage = Utility::toRValue( image.freeImage );
 		this -> fileName = Utility::toRValue( image.fileName );
-		#if defined WIN32
-		this -> fileNameW = Utility::toRValue( image.fileNameW );
-		#endif
 		this -> size = Utility::toRValue( size );
 		this -> invertY = Utility::toRValue( image.invertY );
 		this -> loadingType = Utility::toRValue( image.loadingType );
@@ -399,7 +374,7 @@ namespace Graphic {
 	}
 
 
-	const UTF8String & FreeImage::getFileName() const {
+	const String & FreeImage::getFileName() const {
 		return this -> fileName;
 	}
 
@@ -432,7 +407,7 @@ namespace Graphic {
 		} else if ( this -> BPP == 32 ) {
 			newBPPImage = FreeImage_ConvertTo32Bits( this -> freeImage );
 		} else {
-			error( "Wrong format for an image loading" );
+			error( TEXT( "Wrong format for an image loading" ) );
 			return;
 		}
 		//free this image, not needed now

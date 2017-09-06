@@ -23,13 +23,13 @@ namespace Network {
 	}
 
 
-	Address::Address(const String & ip, const String & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/) : 
+	Address::Address(const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/) : 
 		AddrInfo(ip, service, sockType, ipFamily)
 	{
 		_update();
 	}
 
-	Address::Address(const String & ip, const String & service, const AddrInfo & hints) :
+	Address::Address(const StringASCII & ip, const StringASCII & service, const AddrInfo & hints) :
 		AddrInfo(ip, service, hints)
 	{
 		_update();
@@ -56,7 +56,7 @@ namespace Network {
 
 
 
-	const String & Address::getIp() {
+	const StringASCII & Address::getIp() {
 		return this -> mIp;
 	}
 

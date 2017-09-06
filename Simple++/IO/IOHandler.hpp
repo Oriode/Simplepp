@@ -91,7 +91,7 @@ DataType * IOHandler<DataType>::getObject() {
 
 
 template<typename DataType>
-bool IOHandler<DataType>::setObject( const UTF8String & filePath ) {
+bool IOHandler<DataType>::setObject( const String & filePath ) {
 
 	if ( this -> manager ) {
 		this -> manager -> deleteObject( this -> objectId );

@@ -150,19 +150,19 @@ UTF8String & UTF8String::operator=( const BasicString<C> & str ) {
 
 template<typename C>
 UTF8String::UTF8String( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) :
-	String( ctor::null ) {
+	StringASCII( ctor::null ) {
 	_contructorEQUAL( str.data(), str.size() );
 }
 
 template<typename C>
 UTF8String::UTF8String( const BasicString<C> & str ) :
-	String( ctor::null ) {
+	StringASCII( ctor::null ) {
 	_contructorEQUAL( str.getData(), str.getSize() );
 }
 
 template<typename C>
 UTF8String::UTF8String( const C * str, Size size ) :
-	String( ctor::null ) {
+	StringASCII( ctor::null ) {
 	_contructorEQUAL( str, size );
 }
 
@@ -173,7 +173,7 @@ UTF8String::UTF8String( RandomAccessIterator<C> beginIt, RandomAccessIterator<C>
 
 template<typename C>
 UTF8String::UTF8String( const C * str ) :
-	String( str ) {
+	StringASCII( str ) {
 	_contructorEQUAL( str, BasicString<C>::getSize( str ) );
 }
 

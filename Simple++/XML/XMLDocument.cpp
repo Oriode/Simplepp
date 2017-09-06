@@ -109,11 +109,11 @@ namespace XML {
 									deep--;
 									activeNode = nodeTree.pop();
 									if ( nodeName != activeNode -> getName() ) {
-										error( String( "[XML ERROR] : Closing node do not match " ) << activeNode -> getName() << " != " << nodeName );
+										error( String( TEXT( "[XML ERROR] : Closing node do not match " ) ) << activeNode -> getName() << TEXT( " != " ) << nodeName );
 										//SYNTAX ERROR
 									}
 								} else {
-									error(String("[XML ERROR] : Trying to close ") << nodeName << " without opened it." );
+									error( String( TEXT( "[XML ERROR] : Trying to close " ) ) << nodeName << TEXT( " without opened it." ) );
 									//SYNTAX ERROR
 								}
 								
@@ -150,9 +150,9 @@ namespace XML {
 
 							
 							// We have a special node
-							static String xmlFlag( "xml" );
-							static String encodingStr( "encoding" );
-							static String versionStr( "version" );
+							static StringASCII xmlFlag( "xml" );
+							static StringASCII encodingStr( "encoding" );
+							static StringASCII versionStr( "version" );
 
 							static auto xmlFlagBegin( xmlFlag.getBegin() );
 							if ( str.cmp( &it, xmlFlag, &xmlFlagBegin, 3 ) ) {
@@ -171,7 +171,7 @@ namespace XML {
 							if ( ( *it ) == char( '?' ) ) {
 								it++;
 							} else {
-								error( "[XML ERROR] : Opened a special node with <? but not closing it correctly." );
+								error( TEXT( "[XML ERROR] : Opened a special node with <? but not closing it correctly." ) );
 								//SYNTAX ERROR
 							}
 						}
@@ -382,7 +382,7 @@ namespace XML {
 	}
 
 
-	const String & Document::getEncoding() const {
+	const StringASCII & Document::getEncoding() const {
 		return this -> encoding;
 	}
 
@@ -408,7 +408,7 @@ namespace XML {
 		fileStream -> put( char( 'n' ) );
 		fileStream -> put( char( '=' ) );
 		fileStream -> put( char( '"' ) );
-		String::toString<2,10>( this -> version ).writeReadable( fileStream );
+		StringASCII::toString<2,10>( this -> version ).writeReadable( fileStream );
 		fileStream -> put( char( '"' ) );
 		fileStream -> put( char( ' ' ) );
 		fileStream -> put( char( 'e' ) );

@@ -44,23 +44,23 @@ namespace Network {
 		setPort( port );
 	}
 
-	AddrInfo::AddrInfo( const String & ip, const String & service, SockType sockType, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
+	AddrInfo::AddrInfo( const StringASCII & ip, const StringASCII & service, SockType sockType, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
 		setSockType( sockType );
 		setIpFamily( ipFamily );
 
 		struct addrinfo * addrResults;
 		if ( getaddrinfo( ip.getData(), service.getData(), this, &addrResults ) ) {
-			error( String( "Unable to retrieve address info on address  " ) << ip << "@" << service );
+			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 		}
 
 		*this = *addrResults;
 		freeaddrinfo( addrResults );
 	}
 
-	AddrInfo::AddrInfo( const String & ip, const String & service, const AddrInfo & hints ) {
+	AddrInfo::AddrInfo( const StringASCII & ip, const StringASCII & service, const AddrInfo & hints ) {
 		struct addrinfo * addrResults;
 		if ( getaddrinfo( ip.getData(), service.getData(), &hints, &addrResults ) ) {
-			error( String( "Unable to retrieve address info on address  " ) << ip << "@" << service );
+			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 		}
 
 		*this = *addrResults;
@@ -97,7 +97,7 @@ namespace Network {
 		setSockAddr( addrInfo.ai_addr, addrInfo.ai_addrlen );
 
 		if ( addrInfo.ai_canonname != NULL ) {
-			size_t textSize = String::getSize( addrInfo.ai_canonname );
+			size_t textSize = StringASCII::getSize( addrInfo.ai_canonname );
 			this -> ai_canonname = new char[textSize + 1];
 			memcpy( this -> ai_canonname, addrInfo.ai_canonname, textSize + 1 );
 		} else
@@ -164,7 +164,7 @@ namespace Network {
 		return ( SockType ) this -> ai_socktype;
 	}
 
-	void AddrInfo::setCanonName( const String & name ) {
+	void AddrInfo::setCanonName( const StringASCII & name ) {
 		delete[] this -> ai_canonname;
 		if ( name.getSize() ) {
 			this -> ai_canonname = new char[name.getSize() + 1];
@@ -189,18 +189,18 @@ namespace Network {
 		}
 	}
 
-	const String & AddrInfo::getSockTypeS() const {
-		static const String tcp( "TCP" );
-		static const String udp( "UDP" );
+	const StringASCII & AddrInfo::getSockTypeS() const {
+		static const StringASCII tcp( "TCP" );
+		static const StringASCII udp( "UDP" );
 
 
 		return ( ( SockType )this -> ai_socktype == SockType::TCP ? tcp : udp );
 	}
 
-	const String & AddrInfo::getIpFamilyS() const {
-		static const String ipv4( "IPv4" );
-		static const String ipv6( "IPv6" );
-		static const String ipUndefined( "IPv4 & IPv6" );
+	const StringASCII & AddrInfo::getIpFamilyS() const {
+		static const StringASCII ipv4( "IPv4" );
+		static const StringASCII ipv6( "IPv6" );
+		static const StringASCII ipUndefined( "IPv4 & IPv6" );
 
 
 		switch ( ( IpFamily )this -> ai_family ) {
@@ -211,7 +211,7 @@ namespace Network {
 		case IpFamily::Undefined:
 		return ipUndefined;
 		}
-		return String::null;
+		return StringASCII::null;
 	}
 
 	const struct addrinfo * AddrInfo::getAddrInfoStruct() const {
@@ -220,22 +220,22 @@ namespace Network {
 
 
 
-	String AddrInfo::getNameInfo( const struct sockaddr & sockAddr, size_t sockAddrLen ) {
+	StringASCII AddrInfo::getNameInfo( const struct sockaddr & sockAddr, size_t sockAddrLen ) {
 		char nameBuffer[100];
 		if ( getnameinfo( &sockAddr, ( socklen_t ) sockAddrLen, nameBuffer, sizeof( nameBuffer ), NULL, 0, NI_NUMERICHOST ) == SOCKET_ERROR )
-			return String::null;
+			return StringASCII::null;
 		else
-			return String( nameBuffer );
+			return StringASCII( nameBuffer );
 	}
 
-	String AddrInfo::getNameInfo( const struct addrinfo & addrInfo ) {
+	StringASCII AddrInfo::getNameInfo( const struct addrinfo & addrInfo ) {
 		if ( addrInfo.ai_addr )
 			return getNameInfo( *addrInfo.ai_addr, addrInfo.ai_addrlen );
 		else
-			return String::null;
+			return StringASCII::null;
 	}
 
-	String AddrInfo::getNameInfo() const {
+	StringASCII AddrInfo::getNameInfo() const {
 		return getNameInfo( *this );
 	}
 
