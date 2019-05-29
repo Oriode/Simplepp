@@ -68,7 +68,9 @@ template<typename T>
 class ImageFunctor {
 public:
 	ImageFunctor() {};
-	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorR<T> & color ) { return *this; }
+	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorR<T> & color ) {
+		return *this;
+	}
 	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGB<T> & color ) {
 		unsigned int len = Math::length( p );
 		color.r += len;
@@ -76,7 +78,9 @@ public:
 		color.b += color.r + color.g;
 		return *this;
 	}
-	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGBA<T> & color ) { return *this; }
+	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGBA<T> & color ) {
+		return *this;
+	}
 };
 
 
@@ -84,7 +88,7 @@ public:
 
 
 int main( int argc, char * argv[] ) {
-	#ifdef DEBUG 
+#ifdef DEBUG 
 	/************************************************************************/
 	/* DEBUG PART															*/
 	/************************************************************************/
@@ -98,7 +102,7 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 	/* IO                                                                   */
 	/************************************************************************/
-	#ifdef DEBUG_IO
+#ifdef DEBUG_IO
 	{
 
 		{
@@ -146,13 +150,13 @@ int main( int argc, char * argv[] ) {
 		freeImage.saveToFile( "sanctum test manager i will delete.png", Graphic::FreeImage::SavingFormat::PNG );
 		*/
 	}
-	#endif
+#endif
 
 
 	/************************************************************************/
 	/* UI                                                                   */
 	/************************************************************************/
-	#ifdef DEBUG_UI
+#ifdef DEBUG_UI
 	{
 		Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB, true );
 		freeImage.load();
@@ -163,9 +167,9 @@ int main( int argc, char * argv[] ) {
 
 		texture.setDatas( imageTmp.toFormat( Graphic::Format::RGBA ) );
 		texture.generateMipmaps();
-		
-		
-		
+
+
+
 		GLFW::load();
 
 
@@ -188,7 +192,7 @@ int main( int argc, char * argv[] ) {
 		window.show();
 
 	}
-	#endif
+#endif
 
 
 
@@ -196,11 +200,11 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 	/* XML PART																*/
 	/************************************************************************/
-	#ifdef DEBUG_XML
+#ifdef DEBUG_XML
 	{
 		UTF8String testStr( "Hello world" );
 		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
-		XML::Document testDocument( WString("test.xml") );
+		XML::Document testDocument( WString( "test.xml" ) );
 
 		assert( IO::write( WString( "testXML.cxml" ), &testDocument ) );
 		assert( IO::read( WString( "testXML.cxml" ), &testDocument ) );
@@ -210,15 +214,15 @@ int main( int argc, char * argv[] ) {
 		auto nodeTest( testDocument.getElementsById( "test" ) );
 
 		if ( nodeTest.getSize() ) {
-			log( nodeTest[0] -> getValue() );
+			log( nodeTest[ 0 ] -> getValue() );
 		}
 
 		int test;
 
 	}
-	#endif
+#endif
 
-	#ifdef DEBUG_MAP
+#ifdef DEBUG_MAP
 	{
 
 		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
@@ -271,52 +275,52 @@ int main( int argc, char * argv[] ) {
 			}
 			testMap.eraseIndex( j );
 		}
-	
+
 		for ( size_t i( 0 ); i < 1000; i++ ) {
 			testMap.insert( Math::random( 0, 1000 ), i );
 		}
 
 
 		for ( size_t i( 0 ); i < 1000; i++ ) {
-			testMap.eraseIndex( Math::random( 0, 1000 ));
+			testMap.eraseIndex( Math::random( 0, 1000 ) );
 		}
 		//log( StringASCII( testMap ) );
-		
+
 
 	}
-	#endif
+#endif
 
 
 
 
 
-	#ifdef DEBUG_GRAPHIC
+#ifdef DEBUG_GRAPHIC
 	/************************************************************************/
 	/* GRAPHIC PART									                        */
 	/************************************************************************/
 
 	Graphic::ColorRGB<unsigned char> colorUC( 6, 0, 8 );
-	Graphic::ColorRGB<float> colorF(0.33, 0.86, 0.96);
+	Graphic::ColorRGB<float> colorF( 0.33, 0.86, 0.96 );
 
 	log( StringASCII( colorF.HSLtoRGB() ) );
 
 
-/*
-	Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 40 );
-	font.load();
-	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
-	font.writeToFile( L"consola.cfont" );
+	/*
+		Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 40 );
+		font.load();
+		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
+		font.writeToFile( L"consola.cfont" );
 
 
-	Graphic::FontLoadable<unsigned char> font2( L"consola.cfont" );
-	font2.load();
+		Graphic::FontLoadable<unsigned char> font2( L"consola.cfont" );
+		font2.load();
 
-	font.writeToFile( L"consola2.cfont" );
+		font.writeToFile( L"consola2.cfont" );
 
-	Graphic::FreeImage glyphFreeImage;
-	glyphFreeImage.loadFromDatas( ( unsigned char * ) font2['A'] -> getDatas(), font2['A'] -> getSize(), Graphic::FreeImage::Format::R );
-	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
-*/
+		Graphic::FreeImage glyphFreeImage;
+		glyphFreeImage.loadFromDatas( ( unsigned char * ) font2['A'] -> getDatas(), font2['A'] -> getSize(), Graphic::FreeImage::Format::R );
+		glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
+	*/
 
 	Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB );
 	freeImage.load();
@@ -326,7 +330,7 @@ int main( int argc, char * argv[] ) {
 	texture.generateMipmaps();
 	texture.writeToFile( "sanctum.ctexture" );
 
-	
+
 	Graphic::TextureLoadable<unsigned char> texture2( WString( "sanctum.ctexture" ) );
 	texture2.load();
 	texture2.writeToFile( "sanctum2.ctexture" );
@@ -341,7 +345,7 @@ int main( int argc, char * argv[] ) {
 	Graphic::ColorRGBA<unsigned char> colorBlack( 0, 0, 0, 150 );
 	Graphic::ColorRGBA<unsigned char> colorTransluscient( 0, 0, 0, 0 );
 
-	
+
 	Graphic::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientVertical;
 	gradientVertical.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
 	gradientVertical.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 100, 100, 100, 255 ) );
@@ -370,7 +374,7 @@ int main( int argc, char * argv[] ) {
 	gradientRadial.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 	gradientRadial.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
-	Graphic::Image image( texture2[0] );
+	Graphic::Image image( texture2[ 0 ] );
 
 
 	/*{
@@ -452,74 +456,74 @@ int main( int argc, char * argv[] ) {
 	}*/
 
 
-	
-		/*{
-			//////////////////////////////////////////////////////////////////////////
-			// Draw Line										//
-			Graphic::ColorR<unsigned char> colorBlack(0);
 
-			Graphic::ColorRGB<unsigned char> colorRed(255,0,0);
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Line										//
+		Graphic::ColorR<unsigned char> colorBlack(0);
 
-			image.drawLine(Graphic::LineF(250, 250, 500, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 400), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 300), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 250), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 200), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 100), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 0), colorBlack, 5);
+		Graphic::ColorRGB<unsigned char> colorRed(255,0,0);
 
-			image.drawLine(Graphic::LineF(250, 250, 0, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 0, 400), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 0, 300), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 0, 250), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 0, 200), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 0, 100), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 0, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 400), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 300), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 250), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 200), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 100), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 0), colorBlack, 5);
 
-			image.drawLine(Graphic::LineF(250, 250, 0, 0), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 100, 0), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 200, 0), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 250, 0), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 300, 0), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 400, 0), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 400), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 300), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 250), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 200), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 100), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 0), colorBlack, 5);
 
-			image.drawLine(Graphic::LineF(250, 250, 100, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 200, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 250, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 300, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 400, 500), colorBlack, 5);
-			image.drawLine(Graphic::LineF(250, 250, 500, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 0, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 100, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 200, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 250, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 300, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 400, 0), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 0), colorBlack, 5);
 
-		}*/
-		/*{
-			//////////////////////////////////////////////////////////////////////////
-			// Draw Bezier UChar									//
+		image.drawLine(Graphic::LineF(250, 250, 100, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 200, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 250, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 300, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 400, 500), colorBlack, 5);
+		image.drawLine(Graphic::LineF(250, 250, 500, 500), colorBlack, 5);
 
-
-			Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 128);
-			image.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, colorRed);
-			image.drawBezierCurve(Graphic::PointF(0, 499), Graphic::PointF(100, 100), Graphic::PointF(400, 400), Graphic::PointF(500, 0), 3, colorRed);
-
-		}*/
+	}*/
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Bezier UChar									//
 
 
-		/*{
-			//////////////////////////////////////////////////////////////////////////
-			// Draw Bezier float									//
+		Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 128);
+		image.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, colorRed);
+		image.drawBezierCurve(Graphic::PointF(0, 499), Graphic::PointF(100, 100), Graphic::PointF(400, 400), Graphic::PointF(500, 0), 3, colorRed);
 
-			Graphic::_Image<float> imageF(image);
-
-			Graphic::ColorRGBA<float> colorRed(1.0f, 0.0f, 0.0f, 0.5f);
-			imageF.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, colorRed);
-			imageF.drawBezierCurve(Graphic::PointF(0, 499), Graphic::PointF(100, 100), Graphic::PointF(400, 400), Graphic::PointF(500, 0), 3, colorRed);
+	}*/
 
 
+	/*{
+		//////////////////////////////////////////////////////////////////////////
+		// Draw Bezier float									//
+
+		Graphic::_Image<float> imageF(image);
+
+		Graphic::ColorRGBA<float> colorRed(1.0f, 0.0f, 0.0f, 0.5f);
+		imageF.drawBezierCurve(Graphic::PointF(0, 0), Graphic::PointF(100, 400), Graphic::PointF(400, 100), Graphic::PointF(500, 500), 3, colorRed);
+		imageF.drawBezierCurve(Graphic::PointF(0, 499), Graphic::PointF(100, 100), Graphic::PointF(400, 400), Graphic::PointF(500, 0), 3, colorRed);
 
 
-			image = imageF;
 
-		}*/
+
+		image = imageF;
+
+	}*/
 
 
 
@@ -547,31 +551,31 @@ int main( int argc, char * argv[] ) {
 		Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> testFunctorGradient( gradientVertical );
 		image.drawRectangleFunctor( Graphic::Rectangle( 0, 0, 500, 500 ), testFunctorGradient );
 	}*/
-/*
-	{
-		//////////////////////////////////////////////////////////////////////////
-		// Draw Text Point									//
-		image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
+	/*
+		{
+			//////////////////////////////////////////////////////////////////////////
+			// Draw Text Point									//
+			image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
 
-		Graphic::Image imageTxt( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Format::R );
-		imageTxt.fillImage( Graphic::ColorR<unsigned char>( 0 ) );
-		UTF8String testStr( "Hello World" );
-		Graphic::drawText( &imageTxt, font, Graphic::Point( 250, 250 ), testStr, Graphic::ColorR<unsigned char>( 255 ), Math::Vec2<bool>( true, true ) );
+			Graphic::Image imageTxt( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Format::R );
+			imageTxt.fillImage( Graphic::ColorR<unsigned char>( 0 ) );
+			UTF8String testStr( "Hello World" );
+			Graphic::drawText( &imageTxt, font, Graphic::Point( 250, 250 ), testStr, Graphic::ColorR<unsigned char>( 255 ), Math::Vec2<bool>( true, true ) );
 
-		image.drawImageShadow( Graphic::Point( 0, 0 ), 0, imageTxt, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+			image.drawImageShadow( Graphic::Point( 0, 0 ), 0, imageTxt, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
 
-		Graphic::ColorFunc::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientRadial( gradientRadial );
-		Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientVertical( gradientVertical );
+			Graphic::ColorFunc::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientRadial( gradientRadial );
+			Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> testFunctorGradientVertical( gradientVertical );
 
 
-		image.drawImageFunctor<Graphic::ColorFunc::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), testFunctorGradientRadial, Graphic::Rectangle( imageTxt.getSize() ), imageTxt );
+			image.drawImageFunctor<Graphic::ColorFunc::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), testFunctorGradientRadial, Graphic::Rectangle( imageTxt.getSize() ), imageTxt );
 
-		image.drawStrokeFunctor<Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), imageTxt, 1, testFunctorGradientVertical, Graphic::Image::StrokeType::Middle );
+			image.drawStrokeFunctor<Graphic::ColorFunc::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic>>( Graphic::Point( 10, 10 ), imageTxt, 1, testFunctorGradientVertical, Graphic::Image::StrokeType::Middle );
 
-		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) imageTxt.getDatas(), imageTxt.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::SavingFormat::PNG );
-	}*/
+			Graphic::FreeImage freeImage;
+			freeImage.loadFromDatas( ( unsigned char * ) imageTxt.getDatas(), imageTxt.getSize(), Graphic::FreeImage::Format::R );
+			freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::SavingFormat::PNG );
+		}*/
 
 
 
@@ -605,17 +609,17 @@ int main( int argc, char * argv[] ) {
 
 
 		FontType myFontCp;
-		
+
 
 		assert( IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCp ) );
 
 
 
-		auto maskTest = myFontCp['A'];
+		auto maskTest = myFontCp[ 'A' ];
 		//image.drawImage(Graphic::Point(300, 300), *maskTest);
 
 		Graphic::Text<unsigned char> myText;
-		myText.setText( myFontCp, testStr, Math::Vec2<bool>(true, true) );
+		myText.setText( myFontCp, testStr, Math::Vec2<bool>( true, true ) );
 
 		//Graphic::drawText( &image, myFontCp, Graphic::Point(250,250), testStr,  Math::Vec2<bool>( true, true ) );
 
@@ -623,8 +627,8 @@ int main( int argc, char * argv[] ) {
 		Graphic::Text<unsigned char> myTextCp;
 		assert( IO::read( WString( "myText.cimg" ), &myTextCp ) );
 
-		auto mipmap = myTextCp.resample(Math::Vec2<Graphic::Size>( myTextCp.getSize() / 2 ), Graphic::Image::ResamplingMode::Lanczos);
-		image.drawImage( Graphic::Point( myTextCp.getBias() / 2.0f ) + Graphic::Point(250,250), mipmap );
+		auto mipmap = myTextCp.resample( Math::Vec2<Graphic::Size>( myTextCp.getSize() / 2 ), Graphic::Image::ResamplingMode::Lanczos );
+		image.drawImage( Graphic::Point( myTextCp.getBias() / 2.0f ) + Graphic::Point( 250, 250 ), mipmap );
 
 	}
 
@@ -682,48 +686,48 @@ int main( int argc, char * argv[] ) {
 
 	}*/
 
-/*
-	{
-		//////////////////////////////////////////////////////////////////////////
-		// Draw Polygon															//
+	/*
 		{
-			Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.2f, 0.5f ), Math::Vec2<float>( 0.0f, 0.8f ), Math::Vec2<float>( 1.0f, 0.5f ) };
+			//////////////////////////////////////////////////////////////////////////
+			// Draw Polygon															//
+			{
+				Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.2f, 0.5f ), Math::Vec2<float>( 0.0f, 0.8f ), Math::Vec2<float>( 1.0f, 0.5f ) };
+				Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
+
+				image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 150, 150, 250, 250 ), colorFunc );
+
+			}
+			{
+
+				Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.5f ), Math::Vec2<float>( 1.0f, 0.2f ), Math::Vec2<float>( 0.8f, 0.5f ), Math::Vec2<float>( 1.0f, 0.8f ) };
+				Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
+
+				image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 150, 250, 250, 350 ), colorFunc );
+
+			}
+			{
+
+				Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.5f, 0.0f ), Math::Vec2<float>( 0.2f, 1.0f ), Math::Vec2<float>( 0.5f, 0.8f ), Math::Vec2<float>( 0.8f, 1.0f ) };
+				Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
+
+				image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 150, 350, 250 ), colorFunc );
+
+			}
+
+			{
+				Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.2f, 0.0f ), Math::Vec2<float>( 0.5f, 0.2f ), Math::Vec2<float>( 0.8f, 0.0f ), Math::Vec2<float>( 0.5f, 1.0f ) };
+				Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
+
+				image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 250, 350, 350 ), colorFunc );
+
+			}
+		}*/
+		/*{
+			//////////////////////////////////////////////////////////////////////////
+			// Draw Disk															//
 			Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
-
-			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 150, 150, 250, 250 ), colorFunc );
-
-		}
-		{
-
-			Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.5f ), Math::Vec2<float>( 1.0f, 0.2f ), Math::Vec2<float>( 0.8f, 0.5f ), Math::Vec2<float>( 1.0f, 0.8f ) };
-			Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
-
-			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 150, 250, 250, 350 ), colorFunc );
-
-		}
-		{
-
-			Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.5f, 0.0f ), Math::Vec2<float>( 0.2f, 1.0f ), Math::Vec2<float>( 0.5f, 0.8f ), Math::Vec2<float>( 0.8f, 1.0f ) };
-			Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
-
-			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 150, 350, 250 ), colorFunc );
-
-		}
-
-		{
-			Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.2f, 0.0f ), Math::Vec2<float>( 0.5f, 0.2f ), Math::Vec2<float>( 0.8f, 0.0f ), Math::Vec2<float>( 0.5f, 1.0f ) };
-			Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
-
-			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( vertices, 4, Graphic::Rectangle( 250, 250, 350, 350 ), colorFunc );
-
-		}
-	}*/
-	/*{
-		//////////////////////////////////////////////////////////////////////////
-		// Draw Disk															//
-		Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>> colorFunc( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 128 ) );
-		image.drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( Graphic::Point( 250, 250 ), 250, colorFunc );
-	}*/
+			image.drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>>( Graphic::Point( 250, 250 ), 250, colorFunc );
+		}*/
 
 
 
@@ -732,49 +736,49 @@ int main( int argc, char * argv[] ) {
 
 
 
-	/*{
-		//////////////////////////////////////////////////////////////////////////
-		// re sampling															//
+		/*{
+			//////////////////////////////////////////////////////////////////////////
+			// re sampling															//
 
-		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
-		freeImageOriginal.load();
-		freeImageOriginal.resize( Graphic::Point( 100, 500 ), Graphic::FreeImage::Filter::Lanczos3 );
-		Graphic::ImageT<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
+			Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
+			freeImageOriginal.load();
+			freeImageOriginal.resize( Graphic::Point( 100, 500 ), Graphic::FreeImage::Filter::Lanczos3 );
+			Graphic::ImageT<unsigned char> imageLanczos( freeImageOriginal.getDatas(), freeImageOriginal.getSize(), Graphic::LoadingFormat::BGR, false, freeImageOriginal.getStride() );
 
-		Graphic::FreeImage freeImageLinearIn( "sanctum200linear.png", Graphic::FreeImage::Format::RGB );
-		freeImageLinearIn.load();
-		Graphic::ImageT<unsigned char> imageExampleLinear( freeImageLinearIn.getDatas(), freeImageLinearIn.getSize(), Graphic::LoadingFormat::BGR, false );
+			Graphic::FreeImage freeImageLinearIn( "sanctum200linear.png", Graphic::FreeImage::Format::RGB );
+			freeImageLinearIn.load();
+			Graphic::ImageT<unsigned char> imageExampleLinear( freeImageLinearIn.getDatas(), freeImageLinearIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
-		Graphic::FreeImage freeImageBicubicIn( "sanctum200bicubic.png", Graphic::FreeImage::Format::RGB );
-		freeImageBicubicIn.load();
-		Graphic::ImageT<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
+			Graphic::FreeImage freeImageBicubicIn( "sanctum200bicubic.png", Graphic::FreeImage::Format::RGB );
+			freeImageBicubicIn.load();
+			Graphic::ImageT<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
-		//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
-		image.drawImage( Graphic::Point( 0, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Lanczos ) );
-		image.drawImage( Graphic::Point( 200, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Image::ResamplingMode::Lanczos ) );
-		image.drawImage( Graphic::Point( 300, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 50, 50 ), Graphic::Image::ResamplingMode::Lanczos ) );
-		image.drawImage( Graphic::Point( 350, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 25, 25 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
+			image.drawImage( Graphic::Point( 0, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 200, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 300, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 50, 50 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 350, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 25, 25 ), Graphic::Image::ResamplingMode::Lanczos ) );
 
-		//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
-		//image.drawImage( Graphic::Point( 0, 200 ), imageExampleBicubic );
-		image.drawImage( Graphic::Point( 100, 0 ), imageLanczos );
-
-
-	}*/
+			//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
+			//image.drawImage( Graphic::Point( 0, 200 ), imageExampleBicubic );
+			image.drawImage( Graphic::Point( 100, 0 ), imageLanczos );
 
 
+		}*/
 
 
-					/*{
-						//////////////////////////////////////////////////////////////////////////
-						// Draw Graph Points									//
-						Math::Vec2<float> vStatic[] = { Math::Vec2<float>(-2.0f, 0.0f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
-						Vector<Math::Vec2<float>> v(vStatic);
-						image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
-					}*/
 
 
-	texture2[0] = image;
+		/*{
+			//////////////////////////////////////////////////////////////////////////
+			// Draw Graph Points									//
+			Math::Vec2<float> vStatic[] = { Math::Vec2<float>(-2.0f, 0.0f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
+			Vector<Math::Vec2<float>> v(vStatic);
+			image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 0, 0, 128)));
+		}*/
+
+
+	texture2[ 0 ] = image;
 
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -797,20 +801,20 @@ int main( int argc, char * argv[] ) {
 	Graphic::FreeImage freeImage2;
 	freeImage2.loadFromDatas( ( unsigned char * ) texture2.getDatas( 0 ), texture2.getSize( 0 ), Graphic::FreeImage::Format::RGB );
 	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
-	#endif
+#endif
 
 
-	#else		//DEBUG
-constexpr unsigned long long G10( 10000000000 );
-constexpr unsigned long long G1( 1000000000 );
-constexpr unsigned long long M100( 100000000 );
-constexpr unsigned long long M10( 10000000 );
-constexpr unsigned long long M1( 1000000 );
-constexpr unsigned long long K100( 100000 );
-constexpr unsigned long long K10( 10000 );
-constexpr unsigned long long K1( 1000 );
+#else		//DEBUG
+	constexpr unsigned long long G10( 10000000000 );
+	constexpr unsigned long long G1( 1000000000 );
+	constexpr unsigned long long M100( 100000000 );
+	constexpr unsigned long long M10( 10000000 );
+	constexpr unsigned long long M1( 1000000 );
+	constexpr unsigned long long K100( 100000 );
+	constexpr unsigned long long K10( 10000 );
+	constexpr unsigned long long K1( 1000 );
 
-	#ifdef SPEEDTEST_DRAWLINE
+#ifdef SPEEDTEST_DRAWLINE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
@@ -838,9 +842,9 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "drawline.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_DRAWLINE_FLOAT
+#ifdef SPEEDTEST_DRAWLINE_FLOAT
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
@@ -861,9 +865,9 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_GRAPH
+#ifdef SPEEDTEST_GRAPH
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Graph									//
@@ -885,10 +889,10 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "graph.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
 
-	#ifdef SPEEDTEST_ROUNDEDRECTANGLE
+#ifdef SPEEDTEST_ROUNDEDRECTANGLE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
@@ -908,9 +912,9 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_DISK
+#ifdef SPEEDTEST_DISK
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
@@ -940,9 +944,9 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_DRAWTEXT
+#ifdef SPEEDTEST_DRAWTEXT
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Text											//
@@ -966,10 +970,10 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
 		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
 
-	#ifdef SPEEDTEST_RESAMPLE
+#ifdef SPEEDTEST_RESAMPLE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Re sample												//
@@ -1028,10 +1032,10 @@ constexpr unsigned long long K1( 1000 );
 		freeImageOut.saveToFile( "resample.png", Graphic::FreeImage::SavingFormat::PNG );
 
 	}
-	#endif
+#endif
 
 
-	#ifdef SPEEDTEST_POLYGON
+#ifdef SPEEDTEST_POLYGON
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Polygon									//
@@ -1053,9 +1057,9 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "polygon.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_FILTER
+#ifdef SPEEDTEST_FILTER
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Filter											//
@@ -1092,10 +1096,10 @@ constexpr unsigned long long K1( 1000 );
 		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
 		freeImageOut.saveToFile( "filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
 
-	#ifdef SPEEDTEST_STROKE
+#ifdef SPEEDTEST_STROKE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Stroke											//
@@ -1115,10 +1119,10 @@ constexpr unsigned long long K1( 1000 );
 		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
 		freeImageOut.saveToFile( "stroke.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
 
-	#ifdef SPEEDTEST_LOGICAL
+#ifdef SPEEDTEST_LOGICAL
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Logicals								//
 	{
@@ -1138,13 +1142,13 @@ constexpr unsigned long long K1( 1000 );
 		Log::stopChrono();
 		Log::displayChrono( StringASCII( "LOGICAL <= (Last : 8281ms) " ) + sum );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_ARRAYACCESS
+#ifdef SPEEDTEST_ARRAYACCESS
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : INT VS UINT Array access times.					//
 	{
-		int * testArray = new int[10000000];
+		int * testArray = new int[ 10000000 ];
 		int sum = 0;
 		int iteratorInt;
 		int iteratorAdd = Math::random( 0, 100 );
@@ -1183,9 +1187,9 @@ constexpr unsigned long long K1( 1000 );
 		//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
 		delete[] testArray;
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_BLENDING
+#ifdef SPEEDTEST_BLENDING
 	//////////////////////////////////////////////////////////////////////////
 	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
 	{
@@ -1202,7 +1206,7 @@ constexpr unsigned long long K1( 1000 );
 		Graphic::ImageT<float> testBlendRGBAFloat2( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
 
 		Graphic::ColorRGBA<float> colorWhiteF( 1.0f, 1.0f, 1.0f, float( 127 ) / float( 255 ) );
-		Graphic::ColorRGBA<float> colorRedF( 1.0f, 0.0f, 0.0f, float(127) / float(255) );
+		Graphic::ColorRGBA<float> colorRedF( 1.0f, 0.0f, 0.0f, float( 127 ) / float( 255 ) );
 
 		testBlendRGBAFloat1.fillImage( colorRedF );
 		testBlendRGBAFloat2.fillImage( colorWhiteF );
@@ -1245,9 +1249,9 @@ constexpr unsigned long long K1( 1000 );
 		freeImage.loadFromDatas( ( unsigned char * ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA );
 		freeImage.saveToFile( "blending.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_DATE
+#ifdef SPEEDTEST_DATE
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Dates									//
 	{
@@ -1268,9 +1272,9 @@ constexpr unsigned long long K1( 1000 );
 		Log::stopChrono();
 		Log::displayChrono( StringASCII() << "localtime_s" );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_STRING_CONCAT
+#ifdef SPEEDTEST_STRING_CONCAT
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
@@ -1295,9 +1299,9 @@ constexpr unsigned long long K1( 1000 );
 		Log::stopChrono();
 		Log::displayChrono( testStr2.substr( 0, 30 ) );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_STRING_CAST
+#ifdef SPEEDTEST_STRING_CAST
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Cast Strings								//
 	{
@@ -1316,9 +1320,9 @@ constexpr unsigned long long K1( 1000 );
 		Log::stopChrono();
 		Log::displayChrono( "toFloat : " + StringASCII( sum ) );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_REGEX
+#ifdef SPEEDTEST_REGEX
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Regex									//
 	{
@@ -1354,9 +1358,9 @@ constexpr unsigned long long K1( 1000 );
 		Log::stopChrono();
 		Log::displayChrono( "Vector .regex_match(); Mine : " + StringASCII( mineResult ) );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_VECTOR
+#ifdef SPEEDTEST_VECTOR
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Vectors									//
 	{
@@ -1377,9 +1381,9 @@ constexpr unsigned long long K1( 1000 );
 		Log::stopChrono();
 		Log::displayChrono( "Vector .push_back(); STD" );
 	}
-	#endif
+#endif
 
-	#ifdef SPEEDTEST_MAP
+#ifdef SPEEDTEST_MAP
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Maps									//
 	{
@@ -1410,10 +1414,10 @@ constexpr unsigned long long K1( 1000 );
 				mapSTD.insert( std::pair<unsigned long, unsigned long>( i, i ) );
 				mapRedBlackTree.insert( i, i );
 			}
-			volatile unsigned long tmp(0);
+			volatile unsigned long tmp( 0 );
 			Log::startChrono();
 			for ( unsigned long i = 0; i < M1; i++ ) {
-				tmp += mapSTD[i];
+				tmp += mapSTD[ i ];
 			}
 			Log::stopChrono();
 			Log::displayChrono( "Map .operator[] STD" );
@@ -1421,28 +1425,28 @@ constexpr unsigned long long K1( 1000 );
 
 			Log::startChrono();
 			for ( unsigned long i = 0; i < M1; i++ ) {
-				tmp += *( mapRedBlackTree[i] );
+				tmp += *( mapRedBlackTree[ i ] );
 			}
 			Log::stopChrono();
-			Log::displayChrono( StringASCII( "Map Red Black Tree .operator[] Mine " )  );
+			Log::displayChrono( StringASCII( "Map Red Black Tree .operator[] Mine " ) );
 
 		}
 
-		
+
 	}
-	#endif
-	#ifdef SPEEDTEST_ARITHMETIC 
+#endif
+#ifdef SPEEDTEST_ARITHMETIC 
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Arithmetic												//
 	{
 
-		volatile float f0(1);
+		volatile float f0( 1 );
 		Log::startChrono();
 		for ( unsigned long i = 0; i < M100; i++ ) {
 			f0 += f0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII("Float ADD ( Last 284ms ) : " ) << f0 );
+		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " ) << f0 );
 
 		volatile float f1( 1 );
 		Log::startChrono();
@@ -1458,7 +1462,7 @@ constexpr unsigned long long K1( 1000 );
 			i0 += i0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " ) << StringASCII(int(i0)) );
+		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " ) << StringASCII( int( i0 ) ) );
 
 		volatile int i1( 1 );
 		Log::startChrono();
@@ -1472,10 +1476,10 @@ constexpr unsigned long long K1( 1000 );
 
 	}
 
-	#endif 
+#endif 
 
 
-	#ifdef SPEEDTEST_CAST
+#ifdef SPEEDTEST_CAST
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Cast									//
 	{
@@ -1518,10 +1522,10 @@ constexpr unsigned long long K1( 1000 );
 		}
 
 	}
-	#endif
+#endif
 
 
-	#ifdef SPEEDTEST_NETWORK
+#ifdef SPEEDTEST_NETWORK
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Network									//
 	{
@@ -1529,8 +1533,8 @@ constexpr unsigned long long K1( 1000 );
 		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
 		scanf_s( "%d", &result );
 
-		char testData[50] = "Hello World";
-		char testData2[50] = "";
+		char testData[ 50 ] = "Hello World";
+		char testData2[ 50 ] = "";
 
 		if ( result == 0 ) {
 			/////CLIENT
@@ -1568,9 +1572,9 @@ constexpr unsigned long long K1( 1000 );
 			}
 		}
 	}
-	#endif
+#endif
 
-	#endif	//DEBUG
+#endif	//DEBUG
 	return 0;
 }
 
