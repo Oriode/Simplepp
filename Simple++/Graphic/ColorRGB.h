@@ -117,7 +117,7 @@ namespace Graphic {
 
 
 		///@brief Convert this color into an another type (values are normalized to the new type)
-		///@template U Type to convert to
+		///@tparam U Type to convert to
 		///@return ColorRGB<U> Color of a new type
 		template<typename U>
 		ColorRGB<U> toType() const;

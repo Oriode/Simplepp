@@ -18,7 +18,7 @@ namespace Time {
 
 
 	///@brief Class representing a time duration, 
-	///@template ratio fractional number representing the number of seconds of one unit in this object
+	///@tparam ratio fractional number representing the number of seconds of one unit in this object
 	template<class ratio = Math::Ratio<1, 1>>
 	class Duration {
 	public:

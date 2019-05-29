@@ -14,7 +14,7 @@
 
 //namespace IO {
 
-	///@template DataType Type of the data to be handled inside this structure, (DO NOT USE POINTER)
+	///@tparam DataType Type of the data to be handled inside this structure, (DO NOT USE POINTER)
 	///					  DataType must have an empty constructor, and have the read()/write() method for BasicIO or BasicLoadableIO
 	template<typename DataType>
 	class IOManager : public BasicIO {

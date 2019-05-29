@@ -1,3 +1,4 @@
+#include "Map.h"
 
 template<typename T>
 RBNode<T>::RBNode( ctor ) {
@@ -10,10 +11,9 @@ RBNode<T>::RBNode( RBNode<T> * parent, const T & value ) :
 	value( value ),
 	left( NULL ),
 	right( NULL ),
-	color(Color::Red)
-{
+	color( Color::Red ) {
 
-		
+
 }
 
 template<typename T>
@@ -27,11 +27,10 @@ RBNode<T>::RBNode( RBNode<T> * parent ) :
 }
 
 template<typename T>
-RBNode<T>::RBNode() : 
+RBNode<T>::RBNode() :
 	parent( NULL ),
 	left( NULL ),
-	right( NULL )
-{
+	right( NULL ) {
 
 }
 
@@ -59,8 +58,7 @@ RBNode<T>::RBNode( RBNode<T> && node ) :
 
 template<typename T>
 RBNode<T>::RBNode( const RBNode<T> & node ) :
-	parent( NULL )
-{
+	parent( NULL ) {
 
 	// Using an explicit stack for high performances and be sure to never crash with a stack overflow exception
 	struct Stack {
@@ -77,7 +75,7 @@ RBNode<T>::RBNode( const RBNode<T> & node ) :
 
 	while ( stack.getSize() ) {
 		Stack e( stack.pop() );
-		const RBNode<T> & nodeSrc( *(e.nodeSrc) );
+		const RBNode<T> & nodeSrc( *( e.nodeSrc ) );
 		RBNode<T> * nodeDst( e.nodeDst );
 
 		nodeDst -> color = nodeSrc.color;
@@ -103,21 +101,21 @@ RBNode<T>::RBNode( const RBNode<T> & node ) :
 
 
 
-/*
-	if ( node.getLeft() ) {
-		RBNode<T> * leftCopy( new RBNode<T>( *( node.getLeft() ) ) );
-		leftCopy -> setParent( this );
-		this -> left = leftCopy;
-	} else {
-		this -> left = NULL;
-	}
-	if ( node.getRight() ) {
-		RBNode<T> * rightCopy( new RBNode<T>( *( node.getRight() ) ) );
-		rightCopy -> setParent( this );
-		this -> right = rightCopy;
-	} else {
-		this -> right = NULL;
-	}*/
+	/*
+		if ( node.getLeft() ) {
+			RBNode<T> * leftCopy( new RBNode<T>( *( node.getLeft() ) ) );
+			leftCopy -> setParent( this );
+			this -> left = leftCopy;
+		} else {
+			this -> left = NULL;
+		}
+		if ( node.getRight() ) {
+			RBNode<T> * rightCopy( new RBNode<T>( *( node.getRight() ) ) );
+			rightCopy -> setParent( this );
+			this -> right = rightCopy;
+		} else {
+			this -> right = NULL;
+		}*/
 }
 
 template<typename T>
@@ -150,7 +148,7 @@ RBNode<T> & RBNode<T>::operator=( const RBNode<T> & node ) {
 	struct Stack {
 	public:
 		Stack() {}
-		Stack( RBNode<T> * nodeDst, const RBNode<T> & nodeSrc ) : nodeDst(nodeDst), nodeSrc(&nodeSrc) {}
+		Stack( RBNode<T> * nodeDst, const RBNode<T> & nodeSrc ) : nodeDst( nodeDst ), nodeSrc( &nodeSrc ) {}
 		const RBNode<T> * nodeSrc;
 		RBNode<T> * nodeDst;
 	};
@@ -163,7 +161,7 @@ RBNode<T> & RBNode<T>::operator=( const RBNode<T> & node ) {
 
 	while ( stack.getSize() ) {
 		Stack e( stack.pop() );
-		const RBNode<T> & nodeSrc( *(e.nodeSrc) );
+		const RBNode<T> & nodeSrc( *( e.nodeSrc ) );
 		RBNode<T> * nodeDst( e.nodeDst );
 
 		nodeDst -> color = nodeSrc.color;
@@ -254,7 +252,7 @@ bool RBNode<T>::write( std::fstream * fileStream ) const {
 			stack.push( node -> right );
 		if ( !IO::write( fileStream, &isLeft ) )
 			return false;
-		if ( isLeft ) 
+		if ( isLeft )
 			stack.push( node -> left );
 	}
 
@@ -338,41 +336,41 @@ bool RBNode<T>::read( std::fstream * fileStream ) {
 
 
 
-/*
+	/*
 
-	_clear();
+		_clear();
 
-	if ( !IO::read( fileStream, &this -> value ) ) {
-		_clear();
-		return false;
-	}
-	bool isLeft, isRight;
-	if ( !IO::read( fileStream, &isLeft ) ) {
-		_clear();
-		return false;
-	}
-	if ( isLeft ) {
-		this -> left = new RBNode<T>( this );
-		if ( !IO::read( fileStream, this -> left ) ) {
+		if ( !IO::read( fileStream, &this -> value ) ) {
 			_clear();
 			return false;
 		}
-	} else {
-		this -> left = NULL;
-	}
-	if ( !IO::read( fileStream, &isRight ) ) {
-		_clear();
-		return false;
-	}
-	if ( isLeft ) {
-		this -> right = new RBNode<T>( this );
-		if ( !IO::read( fileStream, this -> right ) ) {
+		bool isLeft, isRight;
+		if ( !IO::read( fileStream, &isLeft ) ) {
 			_clear();
 			return false;
 		}
-	} else {
-		this -> right = NULL;
-	}*/
+		if ( isLeft ) {
+			this -> left = new RBNode<T>( this );
+			if ( !IO::read( fileStream, this -> left ) ) {
+				_clear();
+				return false;
+			}
+		} else {
+			this -> left = NULL;
+		}
+		if ( !IO::read( fileStream, &isRight ) ) {
+			_clear();
+			return false;
+		}
+		if ( isLeft ) {
+			this -> right = new RBNode<T>( this );
+			if ( !IO::read( fileStream, this -> right ) ) {
+				_clear();
+				return false;
+			}
+		} else {
+			this -> right = NULL;
+		}*/
 
 	return true;
 }
@@ -456,7 +454,7 @@ void RBNode<T>::swapColor() {
 }
 
 template<typename T>
-RBNode<T> * RBNode<T>::getGrandParent( const RBNode<T> & n )  {
+RBNode<T> * RBNode<T>::getGrandParent( const RBNode<T> & n ) {
 	if ( n.getParent() -> parent )
 		return n.getParent() -> getParent();
 	else
@@ -562,9 +560,9 @@ void RBNode<T>::insertNode( RBNode<T> * node, RBNode<T> ** root ) {
 							node = node -> getRight();
 						}
 					}
-					
-					
-		
+
+
+
 					P -> setColor( Color::Black );
 					G -> setColor( Color::Red );
 
@@ -582,15 +580,15 @@ void RBNode<T>::insertNode( RBNode<T> * node, RBNode<T> ** root ) {
 						if ( _R ) _R -> setParent( _P );
 
 						if ( _G ) {
-							if ( _G -> getLeft() == _P ) 
+							if ( _G -> getLeft() == _P )
 								_G -> setLeft( _N );
-							else 
+							else
 								_G -> setRight( _N );
 							_N -> setParent( _G );
 						} else {
 							_N -> setParent( NULL );
 							( *root ) = _N;
-						}	
+						}
 					} else {
 						// Tree rotation Left
 						RBNode<T> * _P( G );
@@ -647,7 +645,7 @@ void RBNode<T>::deleteNode( RBNode<T> * node, RBNode<T> ** root ) {
 
 		bool successorIsLeft;
 
-			
+
 		successor -> setLeft( node -> getLeft() );
 		node -> getLeft() -> setParent( successor );
 
@@ -674,7 +672,7 @@ void RBNode<T>::deleteNode( RBNode<T> * node, RBNode<T> ** root ) {
 		if ( P ) {
 			if ( P -> getLeft() == node )
 				P -> setLeft( successor );
-			else 
+			else
 				P -> setRight( successor );
 		} else {
 			( *root ) = successor;
@@ -683,7 +681,7 @@ void RBNode<T>::deleteNode( RBNode<T> * node, RBNode<T> ** root ) {
 		if ( sColor == Color::Black )
 			_deleteFixUp( C, root, sP, successorIsLeft );
 	} else {
-			
+
 
 		RBNode<T> * child;
 		Color childColor;
@@ -820,9 +818,9 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 		//if ( !S ) return;
 
 		if ( P -> getColor() == Color::Black &&
-				S -> getColor() == Color::Black &&
-				( !S -> getLeft() || S -> getLeft() -> getColor() == Color::Black ) &&
-				( !S -> getRight() || S -> getRight() -> getColor() == Color::Black ) ) {
+			 S -> getColor() == Color::Black &&
+			 ( !S -> getLeft() || S -> getLeft() -> getColor() == Color::Black ) &&
+			 ( !S -> getRight() || S -> getRight() -> getColor() == Color::Black ) ) {
 
 			S -> setColor( Color::Red );
 			N = P;
@@ -833,9 +831,9 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 			}
 		} else {
 			if ( P -> getColor() == Color::Red &&
-					S -> getColor() == Color::Black &&
-					( !S -> getLeft() || S -> getLeft() -> getColor() == Color::Black ) &&
-					( !S -> getRight() || S -> getRight() -> getColor() == Color::Black ) ) {
+				 S -> getColor() == Color::Black &&
+				 ( !S -> getLeft() || S -> getLeft() -> getColor() == Color::Black ) &&
+				 ( !S -> getRight() || S -> getRight() -> getColor() == Color::Black ) ) {
 				// Case 4
 
 				S -> setColor( Color::Red );
@@ -972,9 +970,9 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 
 
 
-	
 
-	
+
+
 
 
 
@@ -998,7 +996,7 @@ BasicString<C> RBNode<T>::toString( RBNode<T> * root ) {
 
 	struct Stack {
 	public:
-		Stack(){}
+		Stack() {}
 		Stack( RBNode<T> * node, unsigned int tabs ) : node( node ), tabs( tabs ) {}
 		RBNode<T> * node;
 		unsigned int tabs;
@@ -1139,7 +1137,7 @@ void RBTree<I, T, Compare>::_clear() {
 
 template<typename I, typename T, typename Compare>
 template<typename C>
-RBTree<I, T, Compare>::operator BasicString<C>() const {
+inline RBTree<I, T, Compare>::operator BasicString<C>() const {
 	return toString<C>();
 }
 
@@ -1170,9 +1168,9 @@ RBNode< MapObject< I, T > > * RBTree<I, T, Compare>::_insert( const I & index, c
 					RBNode< MapObject< I, T > > * newNode( new RBNode< MapObject< I, T > >( node, MapObject< I, T >( index, value ) ) );
 					RBNode< MapObject< I, T > >::insertNodeLeft( node, newNode, &this -> rootNode );
 
-					#ifdef DEBUG
+#ifdef DEBUG
 					RBTree<I, T, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
-					#endif
+#endif
 					return newNode;
 				}
 			} else {
@@ -1183,9 +1181,9 @@ RBNode< MapObject< I, T > > * RBTree<I, T, Compare>::_insert( const I & index, c
 					RBNode< MapObject< I, T > > * newNode( new RBNode< MapObject< I, T > >( node, MapObject< I, T >( index, value ) ) );
 					RBNode< MapObject< I, T > >::insertNodeRight( node, newNode, &this -> rootNode );
 
-					#ifdef DEBUG
+#ifdef DEBUG
 					RBTree<I, T, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
-					#endif
+#endif
 					return newNode;
 				}
 			}
@@ -1290,9 +1288,9 @@ bool RBTree<I, T, Compare>::eraseIndex( const I & index ) {
 				RBNode< MapObject< I, T > >::deleteNode( node, &this -> rootNode );
 
 				// DEBUG
-				#ifdef DEBUG
+#ifdef DEBUG
 				RBTree<I, T, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
-				#endif
+#endif
 
 				return true;
 			} else if ( compareResult == Math::Compare::Value::Less ) {
@@ -1532,7 +1530,7 @@ Map<I, T, Compare>::Map( const Map<I, T, Compare> & map ) : Vector< MapObject<I,
 }
 
 template<typename I, typename T, typename Compare>
-Map<I, T, Compare>::Map( Map<I, T, Compare> && map ) : 
+Map<I, T, Compare>::Map( Map<I, T, Compare> && map ) :
 	Vector< MapObject<I, T> *>( Utility::toRValue( map ) ),
 	RBTree<I, T, Compare>( Utility::toRValue( map ) )
 {

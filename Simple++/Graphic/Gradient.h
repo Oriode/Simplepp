@@ -17,7 +17,7 @@ namespace Graphic {
 	namespace Gradient {
 
 		///@brief A point in a gradient
-		///@template C Type for one color.
+		///@tparam C Type for one color.
 		template<typename C = ColorRGBA<unsigned char>>
 		class Point {
 		public:

@@ -64,6 +64,18 @@
 #include "IO/IOManagerLoadable.h"
 
 
+
+
+/**
+ * @class	ImageFunctor
+ *
+ * @brief	An image functor.
+ *
+ * @author	Clement
+ * @date	29-May-19
+ *
+ * @tparam	T	Generic type parameter.
+ */
 template<typename T>
 class ImageFunctor {
 public:
