@@ -5,7 +5,6 @@
  * @author	Clément Gerber
  * @date		??
  */
-
 #pragma once
 
 namespace Math {

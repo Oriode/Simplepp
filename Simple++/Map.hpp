@@ -324,54 +324,6 @@ bool RBNode<T>::read( std::fstream * fileStream ) {
 			node -> left = NULL;
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-	/*
-
-		_clear();
-
-		if ( !IO::read( fileStream, &this -> value ) ) {
-			_clear();
-			return false;
-		}
-		bool isLeft, isRight;
-		if ( !IO::read( fileStream, &isLeft ) ) {
-			_clear();
-			return false;
-		}
-		if ( isLeft ) {
-			this -> left = new RBNode<T>( this );
-			if ( !IO::read( fileStream, this -> left ) ) {
-				_clear();
-				return false;
-			}
-		} else {
-			this -> left = NULL;
-		}
-		if ( !IO::read( fileStream, &isRight ) ) {
-			_clear();
-			return false;
-		}
-		if ( isLeft ) {
-			this -> right = new RBNode<T>( this );
-			if ( !IO::read( fileStream, this -> right ) ) {
-				_clear();
-				return false;
-			}
-		} else {
-			this -> right = NULL;
-		}*/
-
 	return true;
 }
 
@@ -381,12 +333,10 @@ const T & RBNode<T>::getValue() const {
 	return this -> value;
 }
 
-
 template<typename T>
 T & RBNode<T>::getValue() {
 	return this -> value;
 }
-
 
 template<typename T>
 void RBNode<T>::setValue( const T & value ) {
@@ -1168,9 +1118,9 @@ RBNode< MapObject< I, T > > * RBTree<I, T, Compare>::_insert( const I & index, c
 					RBNode< MapObject< I, T > > * newNode( new RBNode< MapObject< I, T > >( node, MapObject< I, T >( index, value ) ) );
 					RBNode< MapObject< I, T > >::insertNodeLeft( node, newNode, &this -> rootNode );
 
-#ifdef DEBUG
+					#ifdef DEBUG
 					RBTree<I, T, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
-#endif
+					#endif
 					return newNode;
 				}
 			} else {
@@ -1181,9 +1131,9 @@ RBNode< MapObject< I, T > > * RBTree<I, T, Compare>::_insert( const I & index, c
 					RBNode< MapObject< I, T > > * newNode( new RBNode< MapObject< I, T > >( node, MapObject< I, T >( index, value ) ) );
 					RBNode< MapObject< I, T > >::insertNodeRight( node, newNode, &this -> rootNode );
 
-#ifdef DEBUG
+					#ifdef DEBUG
 					RBTree<I, T, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
-#endif
+					#endif
 					return newNode;
 				}
 			}
@@ -1244,27 +1194,41 @@ RBNode< MapObject<I, T> > * RBTree<I, T, Compare>::getNodeI( const I & index ) {
 
 
 template<typename I, typename T, typename Compare>
-T * RBTree<I, T, Compare>::getValueI( const I & index ) {
+const RBNode< MapObject<I, T> > * RBTree<I, T, Compare>::getNearestNodeLessI( const I & index ) const {
+	return const_cast< RBTree<I, T, Compare> * >( this ) -> getNearestNodeI( index );
+}
+
+template<typename I, typename T, typename Compare>
+RBNode< MapObject<I, T> > * RBTree<I, T, Compare>::getNearestNodeLessI( const I & index ) {
 	if ( this -> rootNode ) {
 		RBNode< MapObject< I, T > > * node( this -> rootNode );
 		while ( true ) {
 			Math::Compare::Value compareResult( this -> compareFunc( index, node -> getValue().getIndex() ) );
 
 			if ( compareResult == Math::Compare::Value::Equal ) {
-				return const_cast< T * >( &( node -> getValue().getValue() ) );
+				return node;
 			} else if ( compareResult == Math::Compare::Value::Less ) {
-				node = node -> getLeft();
-				if ( !node )
-					return NULL;
+				if ( !node -> getLeft() )
+					return node;
+				else
+					node = node -> getLeft();
 			} else {
-				node = node -> getRight();
-				if ( !node )
-					return NULL;
+				if ( !node -> getRight() )
+					return node;
+				else
+					node = node -> getRight();
 			}
 		}
 	} else {
 		return NULL;
 	}
+}
+
+
+
+template<typename I, typename T, typename Compare>
+T * RBTree<I, T, Compare>::getValueI( const I & index ) {
+	return &( getNodeI( index ) -> getValue().getValue() );
 }
 
 template<typename I, typename T, typename Compare>
@@ -1288,9 +1252,9 @@ bool RBTree<I, T, Compare>::eraseIndex( const I & index ) {
 				RBNode< MapObject< I, T > >::deleteNode( node, &this -> rootNode );
 
 				// DEBUG
-#ifdef DEBUG
+				#ifdef DEBUG
 				RBTree<I, T, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
-#endif
+				#endif
 
 				return true;
 			} else if ( compareResult == Math::Compare::Value::Less ) {

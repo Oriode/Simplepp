@@ -214,6 +214,7 @@
     <ClInclude Include="MapObject.hpp" />
     <ClInclude Include="Math\BasicComparable.h" />
     <ClInclude Include="Math\BasicComparable.hpp" />
+    <ClInclude Include="Math\BasicDistanceable.h" />
     <ClInclude Include="Math\BasicMath.h" />
     <ClInclude Include="Math\Compare.h" />
     <ClInclude Include="Math\Compare.hpp" />

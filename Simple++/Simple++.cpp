@@ -1,27 +1,29 @@
-///@file Simple++.cpp
-///@brief Main file used for doing some test
-///@author Clement Gerber
-///@date 26/05/2016 (DMY) 
+/**
+ * @file		Simple++.cpp.
+ *
+ * @brief		Main file used for doing some test. ( Will be ignored in release )
+ * @author	Clément Gerber
+ * @date		26/05/2016 (DMY)
+ */
 
-
-//#define SPEEDTEST_DRAWLINE
-//#define SPEEDTEST_DRAWLINE_FLOAT
-//#define SPEEDTEST_GRAPH
-//#define SPEEDTEST_ROUNDEDRECTANGLE
-//#define SPEEDTEST_DISK
-//#define SPEEDTEST_POLYGON
-//#define SPEEDTEST_STROKE
-//#define SPEEDTEST_RESAMPLE
-//#define SPEEDTEST_DRAWTEXT
-//#define SPEEDTEST_FILTER
-//#define SPEEDTEST_ARRAYACCESS
-//#define SPEEDTEST_LOGICAL
-//#define SPEEDTEST_BLENDING
-//#define SPEEDTEST_DATE
-//#define SPEEDTEST_STRING_CONCAT
-//#define SPEEDTEST_STRING_CAST
-//#define SPEEDTEST_REGEX
-//#define SPEEDTEST_VECTOR
+ //#define SPEEDTEST_DRAWLINE
+ //#define SPEEDTEST_DRAWLINE_FLOAT
+ //#define SPEEDTEST_GRAPH
+ //#define SPEEDTEST_ROUNDEDRECTANGLE
+ //#define SPEEDTEST_DISK
+ //#define SPEEDTEST_POLYGON
+ //#define SPEEDTEST_STROKE
+ //#define SPEEDTEST_RESAMPLE
+ //#define SPEEDTEST_DRAWTEXT
+ //#define SPEEDTEST_FILTER
+ //#define SPEEDTEST_ARRAYACCESS
+ //#define SPEEDTEST_LOGICAL
+ //#define SPEEDTEST_BLENDING
+ //#define SPEEDTEST_DATE
+ //#define SPEEDTEST_STRING_CONCAT
+ //#define SPEEDTEST_STRING_CAST
+ //#define SPEEDTEST_REGEX
+ //#define SPEEDTEST_VECTOR
 #define SPEEDTEST_MAP
 //#define SPEEDTEST_NETWORK
 //#define SPEEDTEST_CAST
@@ -62,17 +64,151 @@
 #include "IO/IOHandler.h"
 #include "IO/IOHandlerLoadable.h"
 #include "IO/IOManagerLoadable.h"
+#include "Math/BasicDistanceable.h"
+#include "MultiMap.h"
+
+namespace AI {
+
+
+	class BasicInput {
+	public:
+		BasicInput() {}
+	};
+
+
+	/**
+	 * @brief		Basic Class representing a Data ( An Entry of our AI Database )
+	 *
+	 * @tparam	InputT		Type of the input of the AI ( eg : for an AI doing image upscaling, the input will be an Image )
+	 * @tparam	OutpuT		Type of the output of the AI
+	 * @tparam	DistanceT		Type of the distance between two Data.
+	 */
+	template< typename InputT, typename OutputT, typename DistanceT = int >
+	class BasicData {
+	public:
+		typedef DistanceT Distance;
+		typedef InputT Input;
+		typedef OutputT Output;
+
+		BasicData( const Input & input ) :
+			_input( input ),
+			_distance( 1 ) {}
+
+		const typename Distance & getDistance() const {
+			return this ->_distance;
+		}
+
+		const typename Distance getDistance( const typename Input & input ) const {
+			return this ->_distance;
+		}
+
+		void setDistance( const typename Distance & distance ) {
+			this -> _distance = distance;
+		}
+
+	private:
+		typename Distance _distance;
+		typename Input _input;
+
+	};
+
+
+	/**
+	 * @brief		An AI Neurode.
+	 * @tparam	Distanceable	Object Base of Math.Compare.BasicDistanceable.
+	 * @tparam	T			Entry of our AI Database.
+	 */
+	template< typename Input, typename DataT, typename HashTypeT = int >
+	class BasicNeurode {
+	public:
+		typedef DataT Data;
+		typedef HashTypeT HashType;
+
+		/** @brief	Default constructor */
+		BasicNeurode() {
+
+		}
+
+		/**
+		 * @brief		Function to be implemented. Should retreive the Sub Data for this Neurode using the inputData.
+		 *
+		 * @param		inputData		Input Data to be comared.
+		 *
+		 * @returns	Null if no data has been founded ( or empty Vector )
+		 * @sa		this.getDataMap();
+		 */
+		const Vector< typename Data * > * getSubData( const Input & inputData ) const {
+			/** to be overloaded */
+			return NULL;
+		}
+
+		/**
+		 * @brief		Get the Data Map.
+		 *
+		 * @returns	The Data Map.
+		 */
+		const MultiMap< typename Data::HashType, typename Data * > & getDataMap() {
+			return this -> _dataMap;
+		}
+
+		/**
+		 * @brief		Gets the nearest value of a given one.
+		 * @param		distanceable	Object to be compared.
+		 * @param		resultMap [in, out]	Map to be edited.
+		 */
+		void updateResultMap( const Input & inputData, Map< const typename Data *, typename Data::Distance > & resultMap ) const {
+			// Retrieve the sub data for this neurode.
+			const Vector< Data * > * nearestData = getSubData( inputData );
+
+			// Check if we have founded something.
+			if ( nearestData ) {
+				for ( auto it( nearestData -> getBegin() ); it != nearestData -> getEnd() ; nearestData -> iterate( &it ) ) {
+					const typename Data * data = nearestData -> getValueIt( it );
+					const typename Map< const typename Data *, typename Data::Distance >::Iterator distanceNodeIt( resultMap.getNodeI( data ) );
+
+					// If the Value has already been founded.
+					if ( distanceNodeIt ) {
+						const typename Data::Distance oldDistance( resultMap.getValueIt( distanceNodeIt ) );
+						const typename Data::Distance newDistance( oldDistance + data.getDistance( inputData ) );
+
+						// Update the old Value.
+						resultMap.setValueIt( distanceNodeIt, newDistance );
+					} else {
+						// The value does'nt exists actually.
+						const typename Data::Distance newDistance( data.getDistance( inputData ) );
+
+						// Insert into the Map.
+						resultMap.insert( data, newDistance );
+					}
+				}
+			}
+		}
+
+
+		/**
+		 * @brief		Learn operation of this neurode.
+		 *
+		 * @param		inputData Data used to learn.
+		 */
+		void learn( const Input & inputData ) {
+
+		}
+
+
+	private:
+		/** @brief	The data map */
+		MultiMap< typename Data::HashType, typename Data * > _dataMap;
+
+	};
+}
 
 
 
 
 /**
- * @class	ImageFunctor
+ * @class		ImageFunctor
  *
- * @brief	An image functor.
- *
- * @author	Clement
- * @date	29-May-19
+ * @brief		Test of an Image Functor.
  *
  * @tparam	T	Generic type parameter.
  */
@@ -100,21 +236,17 @@ public:
 
 
 int main( int argc, char * argv[] ) {
-#ifdef DEBUG 
+	#ifdef DEBUG 
 	/************************************************************************/
-	/* DEBUG PART															*/
+	/* DEBUG PART														*/
 	/************************************************************************/
-
 	Application<char> app( argc, argv );
-
-
-	error( TEXT( "Hello World !" ) );
 
 
 	/************************************************************************/
 	/* IO                                                                   */
 	/************************************************************************/
-#ifdef DEBUG_IO
+	#ifdef DEBUG_IO
 	{
 
 		{
@@ -162,13 +294,13 @@ int main( int argc, char * argv[] ) {
 		freeImage.saveToFile( "sanctum test manager i will delete.png", Graphic::FreeImage::SavingFormat::PNG );
 		*/
 	}
-#endif
+	#endif
 
 
 	/************************************************************************/
 	/* UI                                                                   */
 	/************************************************************************/
-#ifdef DEBUG_UI
+	#ifdef DEBUG_UI
 	{
 		Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB, true );
 		freeImage.load();
@@ -204,7 +336,7 @@ int main( int argc, char * argv[] ) {
 		window.show();
 
 	}
-#endif
+	#endif
 
 
 
@@ -212,7 +344,7 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 	/* XML PART																*/
 	/************************************************************************/
-#ifdef DEBUG_XML
+	#ifdef DEBUG_XML
 	{
 		UTF8String testStr( "Hello world" );
 		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
@@ -232,9 +364,9 @@ int main( int argc, char * argv[] ) {
 		int test;
 
 	}
-#endif
+	#endif
 
-#ifdef DEBUG_MAP
+	#ifdef DEBUG_MAP
 	{
 
 		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
@@ -300,13 +432,13 @@ int main( int argc, char * argv[] ) {
 
 
 	}
-#endif
+	#endif
 
 
 
 
 
-#ifdef DEBUG_GRAPHIC
+	#ifdef DEBUG_GRAPHIC
 	/************************************************************************/
 	/* GRAPHIC PART									                        */
 	/************************************************************************/
@@ -813,10 +945,10 @@ int main( int argc, char * argv[] ) {
 	Graphic::FreeImage freeImage2;
 	freeImage2.loadFromDatas( ( unsigned char * ) texture2.getDatas( 0 ), texture2.getSize( 0 ), Graphic::FreeImage::Format::RGB );
 	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
-#endif
+	#endif
 
 
-#else		//DEBUG
+	#else		//DEBUG
 	constexpr unsigned long long G10( 10000000000 );
 	constexpr unsigned long long G1( 1000000000 );
 	constexpr unsigned long long M100( 100000000 );
@@ -826,7 +958,7 @@ int main( int argc, char * argv[] ) {
 	constexpr unsigned long long K10( 10000 );
 	constexpr unsigned long long K1( 1000 );
 
-#ifdef SPEEDTEST_DRAWLINE
+	#ifdef SPEEDTEST_DRAWLINE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
@@ -854,9 +986,9 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "drawline.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_DRAWLINE_FLOAT
+	#ifdef SPEEDTEST_DRAWLINE_FLOAT
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
@@ -877,9 +1009,9 @@ int main( int argc, char * argv[] ) {
 		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 
-#endif
+	#endif
 
-#ifdef SPEEDTEST_GRAPH
+	#ifdef SPEEDTEST_GRAPH
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Graph									//
@@ -901,10 +1033,10 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "graph.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
 
-#ifdef SPEEDTEST_ROUNDEDRECTANGLE
+	#ifdef SPEEDTEST_ROUNDEDRECTANGLE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
@@ -924,9 +1056,9 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_DISK
+	#ifdef SPEEDTEST_DISK
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
@@ -956,9 +1088,9 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_DRAWTEXT
+	#ifdef SPEEDTEST_DRAWTEXT
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Text											//
@@ -982,10 +1114,10 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
 		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
 
-#ifdef SPEEDTEST_RESAMPLE
+	#ifdef SPEEDTEST_RESAMPLE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Re sample												//
@@ -1044,10 +1176,10 @@ int main( int argc, char * argv[] ) {
 		freeImageOut.saveToFile( "resample.png", Graphic::FreeImage::SavingFormat::PNG );
 
 	}
-#endif
+	#endif
 
 
-#ifdef SPEEDTEST_POLYGON
+	#ifdef SPEEDTEST_POLYGON
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Polygon									//
@@ -1069,9 +1201,9 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
 		freeImage.saveToFile( "polygon.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_FILTER
+	#ifdef SPEEDTEST_FILTER
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Filter											//
@@ -1108,10 +1240,10 @@ int main( int argc, char * argv[] ) {
 		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
 		freeImageOut.saveToFile( "filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
 
-#ifdef SPEEDTEST_STROKE
+	#ifdef SPEEDTEST_STROKE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Stroke											//
@@ -1131,10 +1263,10 @@ int main( int argc, char * argv[] ) {
 		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
 		freeImageOut.saveToFile( "stroke.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
 
-#ifdef SPEEDTEST_LOGICAL
+	#ifdef SPEEDTEST_LOGICAL
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Logicals								//
 	{
@@ -1154,9 +1286,9 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( StringASCII( "LOGICAL <= (Last : 8281ms) " ) + sum );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_ARRAYACCESS
+	#ifdef SPEEDTEST_ARRAYACCESS
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : INT VS UINT Array access times.					//
 	{
@@ -1199,9 +1331,9 @@ int main( int argc, char * argv[] ) {
 		//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
 		delete[] testArray;
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_BLENDING
+	#ifdef SPEEDTEST_BLENDING
 	//////////////////////////////////////////////////////////////////////////
 	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
 	{
@@ -1261,9 +1393,9 @@ int main( int argc, char * argv[] ) {
 		freeImage.loadFromDatas( ( unsigned char * ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA );
 		freeImage.saveToFile( "blending.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_DATE
+	#ifdef SPEEDTEST_DATE
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Dates									//
 	{
@@ -1284,9 +1416,9 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( StringASCII() << "localtime_s" );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_STRING_CONCAT
+	#ifdef SPEEDTEST_STRING_CONCAT
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
@@ -1311,9 +1443,9 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( testStr2.substr( 0, 30 ) );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_STRING_CAST
+	#ifdef SPEEDTEST_STRING_CAST
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Cast Strings								//
 	{
@@ -1332,9 +1464,9 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( "toFloat : " + StringASCII( sum ) );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_REGEX
+	#ifdef SPEEDTEST_REGEX
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Regex									//
 	{
@@ -1370,9 +1502,9 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( "Vector .regex_match(); Mine : " + StringASCII( mineResult ) );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_VECTOR
+	#ifdef SPEEDTEST_VECTOR
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Vectors									//
 	{
@@ -1393,9 +1525,9 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( "Vector .push_back(); STD" );
 	}
-#endif
+	#endif
 
-#ifdef SPEEDTEST_MAP
+	#ifdef SPEEDTEST_MAP
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Maps									//
 	{
@@ -1446,8 +1578,8 @@ int main( int argc, char * argv[] ) {
 
 
 	}
-#endif
-#ifdef SPEEDTEST_ARITHMETIC 
+	#endif
+	#ifdef SPEEDTEST_ARITHMETIC 
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Arithmetic												//
 	{
@@ -1488,10 +1620,10 @@ int main( int argc, char * argv[] ) {
 
 	}
 
-#endif 
+	#endif 
 
 
-#ifdef SPEEDTEST_CAST
+	#ifdef SPEEDTEST_CAST
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Cast									//
 	{
@@ -1534,10 +1666,10 @@ int main( int argc, char * argv[] ) {
 		}
 
 	}
-#endif
+	#endif
 
 
-#ifdef SPEEDTEST_NETWORK
+	#ifdef SPEEDTEST_NETWORK
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Network									//
 	{
@@ -1584,9 +1716,9 @@ int main( int argc, char * argv[] ) {
 			}
 		}
 	}
-#endif
+	#endif
 
-#endif	//DEBUG
+	#endif	//DEBUG
 	return 0;
 }
 

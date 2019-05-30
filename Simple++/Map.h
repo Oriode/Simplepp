@@ -607,7 +607,7 @@ public:
 	/**
 	 * @brief 	Access from a value using and index
 	 *
-	 * @param 	index	Index to be used.
+	 * @param 	index	Index of the Element to be retreived.
 	 *
 	 * @returns	The indexed value.
 	 *
@@ -617,7 +617,7 @@ public:
 	/**
 	 * @brief 	Array indexer operator
 	 *
-	 * @param 	index	Zero-based index of the.
+	 * @param 	index	Index of the Element to be retreived.
 	 *
 	 * @returns	The indexed value.
 	 */
@@ -626,17 +626,15 @@ public:
 	/**
 	 * @brief 	Access from a value using and index
 	 *
-	 * @param 	index	Index to be used.
+	 * @param 	index	Index of the Element to be retreived.
 	 *
-	 * @returns	Null if it fails, else the value i.
-	 *
-	 * ### param	Pointer	to the value if founded, if not, return NULL.
+	 * @returns	Pointer	to the value if founded, if not, return NULL.
 	 */
 	const T * getValueI( const I & index ) const;
 	/**
 	 * @brief 	Gets value i
 	 *
-	 * @param 	index	Zero-based index of the.
+	 * @param 	index	Index of the Element to be retreived.
 	 *
 	 * @returns	Null if it fails, else the value i.
 	 */
@@ -645,21 +643,39 @@ public:
 	/**
 	 * @brief 	Access from a value using and index
 	 *
-	 * @param 	index	Index to be used.
+	 * @param 	index	Index of the Element to be retreived.
 	 *
-	 * @returns	Null if it fails, else the node i.
-	 *
-	 * ### param	Pointer	to the node if founded, if not, return NULL.
+	 * @returns	Pointer	to the node if founded, if not, return NULL.
 	 */
 	const RBNode< MapObject<I, T> > * getNodeI( const I & index ) const;
+
 	/**
 	 * @brief 	Gets node i
 	 *
-	 * @param 	index	Zero-based index of the.
+	 * @param 	index	Index of the Element to be retreived.
 	 *
 	 * @returns	Null if it fails, else the node i.
 	 */
 	RBNode< MapObject<I, T> > * getNodeI( const I & index );
+
+
+	/**
+	 * @brief			Get the nearest Node for a specified Index.
+	 *
+	 * @param			index	Index of the Element to be retreived.
+	 *
+	 * @returns		Null if it fails, else the nearest node i.
+	 */
+	const RBNode< MapObject<I, T> > * getNearestNodeLessI( const I & index ) const;
+
+	/**
+	 * @brief			Get the nearest Node for a specified Index.
+	 *
+	 * @param			index	Index of the Element to be retreived.
+	 *
+	 * @returns		Null if it fails, else the nearest node i.
+	 */
+	RBNode< MapObject<I, T> > * getNearestNodeLessI( const I & index );
 
 	/**
 	 * @brief 	Get the Value associated with an iterator
@@ -835,180 +851,9 @@ protected:
 	Compare compareFunc;
 };
 
-
-
-
-
-
 /** @brief	Alias of RBTree */
 template<typename I, typename T, typename Compare = Math::Compare::Template>
 using Map = RBTree<I, T, Compare>;
-
-
-
-
-
-
-
-
-
-
-/*
-///@brief Data structure where datas of types T are ordered in a binary Red Black Tree
-///@see https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
-template<typename I, typename T, typename Compare = Math::Logical::Less>
-class Map : protected Vector< MapObject<I, T> * >, public RBTree<I, T, Compare>, public virtual BasicSimpleIO {
-public:
-	using Vector< MapObject<I, T> * >::Iterator;
-	using Vector< MapObject<I, T> * >::Size;
-
-	///@brief Empty Constructor
-	///@param compareFunc Functor used to order the Tree
-	Map( const Compare & compareFunc = Compare() );
-
-	///@brief Copy Constructor
-	///@param tree Tree to copy
-	Map( const Map<I, T, Compare> & tree );
-
-	///@brief Move Constructor
-	///@param tree Tree to move from
-	Map( Map<I, T, Compare> && tree );
-
-	///@brief Conversion to StringASCII operator
-	///@return StringASCII
-	template<typename C = char>
-	operator BasicString<C>() const;
-
-	///@brief Copy operator
-	///@param tree Tree to copy
-	///@return reference to THIS
-	Map<I, T, Compare> & operator=( const Map<I, T, Compare> & tree );
-
-	///@brief Move operator
-	///@param tree Tree to move from
-	///@return reference to THIS
-	Map<I, T, Compare> & operator=( Map<I, T, Compare> && tree );
-
-	///@see RBTree::operator[]
-	using RBTree<I, T, Compare>::operator[];
-
-
-	/ ************************************************************************ /
-	/ * Iterations                                                           * /
-	/ ************************************************************************ /
-
-	///@brief iterate ONE time the iterator and return if there is still data
-	///@return it in out Iterator to iterate
-	///@return If the iterator can return data
-	bool iterate( typename Map<I, T, Compare>::Iterator * it ) const;
-
-	///@brief Iterate ONE time and set the pointer to the pointer of the data retrieved
-	///@param it in out Iterator to iterate
-	///@param i out Pointer to a pointer to the index retrieved
-	///@param v out Pointer to a pointer to the value retrieved
-	///@return True if a data has been retrieved or False if the end has been reached
-	bool iterate( typename Map<I, T, Compare>::Iterator * it, I ** i, T ** v ) const;
-
-	///@brief Iterate ONE time and set the pointer to the pointer of the data retrieved
-	///@param it in out Iterator to iterate
-	///@param i out Pointer to a pointer to the index retrieved
-	///@param v out Pointer to a pointer to the value retrieved
-	///@param testFunctor Functor to check a condition before incrementing the iterator
-	///								bool operator()( const ElemType & e );
-	///@return True if a data has been retrieved or False if the end has been reached or false is the functor return false
-	template<typename TestFunctor>
-	bool iterate( typename Map<I, T, Compare>::Iterator * it, I ** i, T ** v, TestFunctor & testFunctor ) const;
-
-	///@see Vector::getBegin()
-	using Vector< MapObject<I, T> * >::getBegin;
-	using Vector< MapObject<I, T> * >::begin;
-
-	///@see Vector::getEnd()
-	using Vector< MapObject<I, T> * >::getEnd;
-	using Vector< MapObject<I, T> * >::end;
-
-
-	/ ************************************************************************ /
-	/ * Access                                                               * /
-	/ ************************************************************************ /
-
-	///@brief Get the Value associated with an iterator
-	///@param it Iterator used to retrieve the value (no bound check is done here)
-	///@return Value founded
-	const T & getValueIt( typename Map<I, T, Compare>::Iterator it ) const;
-	T & getValueIt( typename Map<I, T, Compare>::Iterator it );
-
-	///@brief Get the Index associated with an iterator
-	///@param it Iterator used to retrieve the index (no bound check is done here)
-	///@return Index founded
-	const I & getIndexIt( typename Map<I, T, Compare>::Iterator it ) const;
-	I & getIndexIt( typename Map<I, T, Compare>::Iterator it );
-
-	///@brief Get the Value associated with an direct access index (of type Size)
-	///@param i Iterator used to retrieve the value (no bound check is done here)
-	///@return Value founded
-	const T & getValueI( typename Map<I, T, Compare>::Size i ) const;
-	T & getValueI( typename Map<I, T, Compare>::Size i );
-
-	///@brief Get the Index associated with an iterator
-	///@param i Iterator used to retrieve the index (no bound check is done here)
-	///@return Index founded
-	const I & getIndexI( typename Map<I, T, Compare>::Size i ) const;
-	I & getIndexI( typename Map<I, T, Compare>::Size i );
-
-	///@brief Set the Value associated with an iterator
-	///@param it Iterator used to set the value
-	void setValueIt( typename Map<I, T, Compare>::Iterator it, const T & v );
-
-	///@brief Set the Index associated with an iterator
-	///@param it Iterator used to set the index
-	void setIndexIt( typename Map<I, T, Compare>::Iterator it, const I & v );
-
-	///@brief Set the Value associated with an direct access index (of type Size)
-	///@param i Iterator used to set the value (no bound check is done here)
-	void setValueI( typename Map<I, T, Compare>::Size i, const T & v );
-
-	///@brief Set the Index associated with an iterator
-	///@param i Iterator used to set the index (no bound check is done here)
-	void setIndexI( typename Map<I, T, Compare>::Size i, const I & v );
-
-
-
-	///@brief Get if the Map is empty of not
-	///@return True if the Map is empty, false otherwise.
-	bool isEmpty() const;
-
-	///@brief Clear the complete map
-	void clear();
-
-	///@brief Insert a new [ Index => Value ] into the map
-	///@param index Index of the value to insert
-	///@param value Value to be inserted
-	///@return Pointer to the value just inserted, NULL if nothing has been inserted
-	T * insert( const I & index, const T & value );
-
-	///@brief Create an human readable string from this map
-	///@return StringASCII
-	template<typename C = char>
-	BasicString<C> toString() const;
-
-	///@brief Read from a file stream (children will be read recursively)
-	///@param fileStream stream used to read load this object
-	///@return boolean to know if the operation is a success of not.
-	bool read( std::fstream * fileStream );
-
-	///@brief Write this object as binary into a file stream (children will be wrote recursively)
-	///@param fileStream stream used to write this object
-	///@return boolean to know if the operation is a success of not.
-	bool write( std::fstream * fileStream ) const;
-
-protected:
-	void _clear();
-
-};*/
-
-
-
 
 
 #include "MapObject.hpp"
