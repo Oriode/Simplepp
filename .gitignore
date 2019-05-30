@@ -158,3 +158,5 @@ $RECYCLE.BIN/
 *Browse.VC.db
 *VC.db
 .vs
+TODO.txt
+*.sh

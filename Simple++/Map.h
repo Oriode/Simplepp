@@ -1,9 +1,9 @@
 /**
  * @file	Map.h.
  *
- * @brief	Declares the map class
+ * @brief 	Declares the map class
  * @author	Clément Gerber
- * @date	26/10/16 (D/M/Y)
+ * @date		26/10/16 (D/M/Y)
  */
 #pragma once
 
@@ -14,11 +14,11 @@
 
 
  /**
-  * @brief	A map object.
-  *
-  * @tparam	I	Generic type parameter.
-  * @tparam	T	Generic type parameter.
-  */
+   * @brief 	An Element of a Map.
+   *
+   * @tparam	I	Generic type parameter.
+   * @tparam	T	Generic type parameter.
+   */
 template<typename I, typename T>
 class MapObject : public BasicSimpleIO {
 public:
@@ -26,10 +26,10 @@ public:
 	MapObject();
 
 	/**
-	 * @brief	Constructor
+	 * @brief 	Constructor
 	 *
-	 * @param	index	Zero-based index of the.
-	 * @param	value	The value.
+	 * @param 	index	Zero-based index of the.
+	 * @param 	value	The value.
 	 */
 	MapObject( const I & index, const T & value );
 
@@ -37,7 +37,7 @@ public:
 	~MapObject();
 
 	/**
-	 * @brief	Cast that converts the given  to a BasicString
+	 * @brief 	Cast that converts the given  to a BasicString
 	 *
 	 * @returns	The result of the operation.
 	 */
@@ -45,82 +45,82 @@ public:
 	operator BasicString<C>() const;
 
 	/**
-	 * @brief	Get the Index of this Key
+	 * @brief 	Get the Index of this Key
 	 *
 	 * @returns	Index.
 	 */
 	const I & getIndex() const;
 	/**
-	 * @brief	Gets the index
+	 * @brief 	Gets the index
 	 *
 	 * @returns	The index.
 	 */
 	I & getIndex();
 
 	/**
-	 * @brief	Set the index of this key
+	 * @brief 	Set the index of this key
 	 *
-	 * @param	index	Index to be set.
+	 * @param 	index	Index to be set.
 	 */
 	void setIndex( const I & index );
 
 	/**
-	 * @brief	Get the value of this key
+	 * @brief 	Get the value of this key
 	 *
 	 * @returns	Value.
 	 */
 	const T & getValue() const;
 	/**
-	 * @brief	Gets the value
+	 * @brief 	Gets the value
 	 *
 	 * @returns	The value.
 	 */
 	T & getValue();
 
 	/**
-	 * @brief	Set the value of this key
+	 * @brief 	Set the value of this key
 	 *
-	 * @param	value	Value to be set.
+	 * @param 	value	Value to be set.
 	 */
 	void setValue( const T & value );
 
 	/**
-	 * @brief	Equality operator
+	 * @brief 	Equality operator
 	 *
-	 * @param	o	A MapObject to process.
+	 * @param 	o	A MapObject to process.
 	 *
 	 * @returns	True if the parameters are considered equivalent.
 	 */
 	bool operator==( const MapObject & o ) const;
 	/**
-	 * @brief	Greater-than comparison operator
+	 * @brief 	Greater-than comparison operator
 	 *
-	 * @param	o	A MapObject to process.
+	 * @param 	o	A MapObject to process.
 	 *
 	 * @returns	True if the first parameter is greater than to the second.
 	 */
 	bool operator>( const MapObject & o ) const;
 	/**
-	 * @brief	Less-than comparison operator
+	 * @brief 	Less-than comparison operator
 	 *
-	 * @param	o	A MapObject to process.
+	 * @param 	o	A MapObject to process.
 	 *
 	 * @returns	True if the first parameter is less than the second.
 	 */
 	bool operator<( const MapObject & o ) const;
 	/**
-	 * @brief	Greater-than-or-equal comparison operator
+	 * @brief 	Greater-than-or-equal comparison operator
 	 *
-	 * @param	o	A MapObject to process.
+	 * @param 	o	A MapObject to process.
 	 *
 	 * @returns	True if the first parameter is greater than or equal to the second.
 	 */
 	bool operator>=( const MapObject & o ) const;
 
 	/**
-	 * @brief	Less-than-or-equal comparison operator
+	 * @brief 	Less-than-or-equal comparison operator
 	 *
-	 * @param	o	A MapObject to process.
+	 * @param 	o	A MapObject to process.
 	 *
 	 * @returns	True if the first parameter is less than or equal to the second.
 	 */
@@ -132,7 +132,7 @@ public:
 	T value;
 
 	/**
-	 * @brief	read from a file stream
+	 * @brief 	read from a file stream
 	 *
 	 * @param [in,out]	fileStream	stream used to read load this object.
 	 *
@@ -141,7 +141,7 @@ public:
 	bool read( std::fstream * fileStream );
 
 	/**
-	 * @brief	write this object as binary into a file stream
+	 * @brief 	write this object as binary into a file stream
 	 *
 	 * @param [in,out]	fileStream	stream used to write this object.
 	 *
@@ -161,7 +161,7 @@ public:
 
 
 /**
- * @brief	A rb node.
+ * @brief 	A rb node.
  *
  * @tparam	T	Generic type parameter.
  */
@@ -177,14 +177,14 @@ public:
 	RBNode();
 
 	/**
-	 * @brief	Constructor from parent
+	 * @brief 	Constructor from parent
 	 *
 	 * @param [in,out]	parent	Pointer to the parent Node.
 	 */
 	RBNode( RBNode<T> * parent );
 
 	/**
-	 * @brief	Constructor from parent and a value
+	 * @brief 	Constructor from parent and a value
 	 *
 	 * @param [in,out]	parent	Pointer to the parent Node.
 	 * @param 		  	value 	Value of this node.
@@ -192,14 +192,14 @@ public:
 	RBNode( RBNode<T> * parent, const T & value );
 
 	/**
-	 * @brief	Copy Constructor ( The node and all the sub tree is copied too, Parent is set to NULL )
+	 * @brief 	Copy Constructor ( The node and all the sub tree is copied too, Parent is set to NULL )
 	 *
-	 * @param	node	Node to be copied.
+	 * @param 	node	Node to be copied.
 	 */
 	RBNode( const RBNode<T> & node );
 
 	/**
-	 * @brief	Move Constructor
+	 * @brief 	Move Constructor
 	 *
 	 * @param [in,out]	node	Node to be moved.
 	 */
@@ -209,16 +209,16 @@ public:
 	~RBNode();
 
 	/**
-	 * @brief	Copy operator (The node and all the sub tree is copied too, Parent is set to NULL)
+	 * @brief 	Copy operator (The node and all the sub tree is copied too, Parent is set to NULL)
 	 *
-	 * @param	node	Node to be copied.
+	 * @param 	node	Node to be copied.
 	 *
 	 * @returns	reference to THIS.
 	 */
 	RBNode<T> & operator=( const RBNode<T> & node );
 
 	/**
-	 * @brief	Move operator
+	 * @brief 	Move operator
 	 *
 	 * @param [in,out]	node	Node to be moved.
 	 *
@@ -227,73 +227,73 @@ public:
 	RBNode<T> & operator=( RBNode<T> && node );
 
 	/**
-	 * @brief	Get the parent of this node
+	 * @brief 	Get the parent of this node
 	 *
 	 * @returns	Pointer to the parent node of this one.
 	 */
 	const RBNode<T> * getParent() const;
 	/**
-	 * @brief	Gets the parent of this item
+	 * @brief 	Gets the parent of this item
 	 *
 	 * @returns	Null if it fails, else the parent.
 	 */
 	RBNode<T> * getParent();
 
 	/**
-	 * @brief	Get the left child of this node
+	 * @brief 	Get the left child of this node
 	 *
 	 * @returns	Pointer to the left child node of this one.
 	 */
 	const RBNode<T> * getLeft() const;
 	/**
-	 * @brief	Gets the left
+	 * @brief 	Gets the left
 	 *
 	 * @returns	Null if it fails, else the left.
 	 */
 	RBNode<T> * getLeft();
 
 	/**
-	 * @brief	Get the right child of this node
+	 * @brief 	Get the right child of this node
 	 *
 	 * @returns	Pointer to the right child node of this one.
 	 */
 	const RBNode<T> * getRight() const;
 	/**
-	 * @brief	Gets the right
+	 * @brief 	Gets the right
 	 *
 	 * @returns	Null if it fails, else the right.
 	 */
 	RBNode<T> * getRight();
 
 	/**
-	 * @brief	Set the value of this node
+	 * @brief 	Set the value of this node
 	 *
-	 * @param	value	Value of this node.
+	 * @param 	value	Value of this node.
 	 */
 	void setValue( const T & value );
 
 	/**
-	 * @brief	Get the Value of this node
+	 * @brief 	Get the Value of this node
 	 *
 	 * @returns	Value of this node.
 	 */
 	const T & getValue() const;
 	/**
-	 * @brief	Gets the value
+	 * @brief 	Gets the value
 	 *
 	 * @returns	The value.
 	 */
 	T & getValue();
 
 	/**
-	 * @brief	Get the color of this node
+	 * @brief 	Get the color of this node
 	 *
 	 * @returns	Color of this node.
 	 */
 	typename RBNode<T>::Color getColor() const;
 
 	/**
-	 * @brief	Create a human readable string with this sub tree
+	 * @brief 	Create a human readable string with this sub tree
 	 *
 	 * @tparam	C	Type of the c.
 	 *
@@ -303,7 +303,7 @@ public:
 	BasicString<C> toString() const;
 
 	/**
-	 * @brief	read from a file stream (children will be read recursively)
+	 * @brief 	read from a file stream (children will be read recursively)
 	 *
 	 * @param [in,out]	fileStream	stream used to read load this object.
 	 *
@@ -312,7 +312,7 @@ public:
 	bool read( std::fstream * fileStream );
 
 	/**
-	 * @brief	write this object as binary into a file stream (children will be wrote recursively)
+	 * @brief 	write this object as binary into a file stream (children will be wrote recursively)
 	 *
 	 * @param [in,out]	fileStream	stream used to write this object.
 	 *
@@ -324,25 +324,25 @@ public:
 	/* STATIC                                                               */
 	/************************************************************************/
 	/**
-	 * @brief	Get the Grand Parent of this node
+	 * @brief 	Get the Grand Parent of this node
 	 *
-	 * @param	n	Node from where to retrieve the uncle.
+	 * @param 	n	Node from where to retrieve the uncle.
 	 *
 	 * @returns	Grand Parent of this node (Parent of the Parent)
 	 */
 	static RBNode<T> * getGrandParent( const RBNode<T> & n );
 
 	/**
-	 * @brief	Get the Uncle of this node
+	 * @brief 	Get the Uncle of this node
 	 *
-	 * @param	n	Node from where to retrieve the uncle.
+	 * @param 	n	Node from where to retrieve the uncle.
 	 *
 	 * @returns	Uncle of this node.
 	 */
 	static RBNode<T> * getUncle( const RBNode<T> & n );
 
 	/**
-	 * @brief	Call this method when you have just inserted a new left in the tree to keep the tree balanced
+	 * @brief 	Call this method when you have just inserted a new left in the tree to keep the tree balanced
 	 *
 	 * @param [in,out]	node	Pointer to the node just inserted (parent and child correctly set)
 	 * @param [in,out]	root	out root Pointer to the Pointer of the root.
@@ -350,7 +350,7 @@ public:
 	static void insertNode( RBNode<T> * node, RBNode<T> ** root );
 
 	/**
-	 * @brief	Call this method when you want to insert a node at the left on one another and keep the tree balanced
+	 * @brief 	Call this method when you want to insert a node at the left on one another and keep the tree balanced
 	 *
 	 * @param [in,out]	parentNode	Node where to place the new one.
 	 * @param [in,out]	newNode   	Pointer to the node you want to insert.
@@ -359,7 +359,7 @@ public:
 	static void insertNodeLeft( RBNode<T> * parentNode, RBNode<T> * newNode, RBNode<T> ** root );
 
 	/**
-	 * @brief	Call this method when you want to insert a node at the right on one another and keep the tree balanced
+	 * @brief 	Call this method when you want to insert a node at the right on one another and keep the tree balanced
 	 *
 	 * @param [in,out]	parentNode	Node where to place the new one.
 	 * @param [in,out]	newNode   	Pointer to the node you want to insert.
@@ -368,7 +368,7 @@ public:
 	static void insertNodeRight( RBNode<T> * parentNode, RBNode<T> * newNode, RBNode<T> ** root );
 
 	/**
-	 * @brief	Delete a node from the tree
+	 * @brief 	Delete a node from the tree
 	 *
 	 * @param [in,out]	node	Node to be deleted from the tree.
 	 * @param [in,out]	root	out root Pointer to the Pointer of the root.
@@ -376,7 +376,7 @@ public:
 	static void deleteNode( RBNode<T> * node, RBNode<T> ** root );
 
 	/**
-	 * @brief	Create a human readable string with a sub tree (can be NULL)
+	 * @brief 	Create a human readable string with a sub tree (can be NULL)
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param [in,out]	root	Pointer to the root node of the tree.
@@ -388,7 +388,7 @@ public:
 
 
 	/**
-	 * @brief	DEBUG stuff, do not use it
+	 * @brief 	DEBUG stuff, do not use it
 	 *
 	 * @param [in,out]	node			If non-null, the node.
 	 * @param 		  	nbBlackNodes	The nb black nodes.
@@ -402,38 +402,38 @@ protected:
 		null
 	};
 	/**
-	 * @brief	Constructor
+	 * @brief 	Constructor
 	 *
-	 * @param	parameter1	The first parameter.
+	 * @param 	parameter1	The first parameter.
 	 */
 	RBNode( ctor );
 
 private:
 	/**
-	 * @brief	Set the parent of this node
+	 * @brief 	Set the parent of this node
 	 *
 	 * @param [in,out]	parent Pointer to the parent node of this one
 	 */
 	void setParent( RBNode<T> * parent );
 
 	/**
-	 * @brief	Set the left child of this node
+	 * @brief 	Set the left child of this node
 	 *
 	 * @param [in,out]	left	Pointer to the left child node of this one.
 	 */
 	void setLeft( RBNode<T> * left );
 
 	/**
-	 * @brief	Set the right child of this node
+	 * @brief 	Set the right child of this node
 	 *
 	 * @param [in,out]	right	Pointer to the right child node of this one.
 	 */
 	void setRight( RBNode<T> * right );
 
 	/**
-	 * @brief	Set the color of this node
+	 * @brief 	Set the color of this node
 	 *
-	 * @param	color	Color to set.
+	 * @param 	color	Color to set.
 	 */
 	void setColor( typename RBNode<T>::Color color );
 
@@ -446,7 +446,7 @@ private:
 	void _unload();
 
 	/**
-	 * @brief	Deletes the fix up
+	 * @brief 	Deletes the fix up
 	 *
 	 * @param [in,out]	node   	If non-null, the node.
 	 * @param [in,out]	root   	If non-null, the root.
@@ -470,15 +470,8 @@ private:
 };
 
 
-
-
-
-
-
-
-
 /**
- * @brief	Data structure where datas of types T are ordered in a binary Red Black Tree
+ * @brief 	Data structure used to store a "list" of elements represented by a "key" and a "value" ( The elements will be stored in a red-black tree )
  *
  * @tparam	I	   	Generic type parameter.
  * @tparam	T	   	Generic type parameter.
@@ -493,22 +486,22 @@ public:
 	typedef RBNode< MapObject<I, T> > * Iterator;
 
 	/**
-	 * @brief	Empty Constructor
+	 * @brief 	Empty Constructor
 	 *
-	 * @param	compareFunc	(Optional) Functor with operator() overloaded with : Math::Compare::Value operator()( const T & , const T & ) const;
+	 * @param 	compareFunc	(Optional) Functor with operator() overloaded with : Math::Compare::Value operator()( const T & , const T & ) const;
 	 * 						For security reasons, the functor should inherite from Math::Compare::Template.
 	 */
 	RBTree( const Compare & compareFunc = Compare() );
 
 	/**
-	 * @brief	Copy Constructor
+	 * @brief 	Copy Constructor
 	 *
-	 * @param	tree	Tree to copy.
+	 * @param 	tree	Tree to copy.
 	 */
 	RBTree( const RBTree<I, T, Compare> & tree );
 
 	/**
-	 * @brief	Move Constructor
+	 * @brief 	Move Constructor
 	 *
 	 * @param [in,out]	tree	Tree to move from.
 	 */
@@ -518,7 +511,7 @@ public:
 	~RBTree();
 
 	/**
-	 * @brief	Conversion to StringASCII operator
+	 * @brief 	Conversion to StringASCII operator
 	 *
 	 * @returns	The result of the operation.
 	 */
@@ -526,16 +519,16 @@ public:
 	operator BasicString<C>() const;
 
 	/**
-	 * @brief	Copy operator
+	 * @brief 	Copy operator
 	 *
-	 * @param	tree	Tree to copy.
+	 * @param 	tree	Tree to copy.
 	 *
 	 * @returns	reference to THIS.
 	 */
 	RBTree<I, T, Compare> & operator=( const RBTree<I, T, Compare> & tree );
 
 	/**
-	 * @brief	Move operator
+	 * @brief 	Move operator
 	 *
 	 * @param [in,out]	tree	Tree to move from.
 	 *
@@ -547,7 +540,7 @@ public:
 	/* Iterations                                                           */
 	/************************************************************************/
 	/**
-	 * @brief	iterate ONE time the iterator and return if there is still data
+	 * @brief 	iterate ONE time the iterator and return if there is still data
 	 *
 	 * @param [in,out]	it	If non-null, the iterator.
 	 *
@@ -557,7 +550,7 @@ public:
 	bool iterate( typename RBTree<I, T, Compare>::Iterator * it ) const;
 
 	/**
-	 * @brief	Iterate ONE time and set the pointer to the pointer of the data retrieved
+	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
 	 *
 	 * @param [in,out]	it	in out Iterator to iterate.
 	 * @param [in,out]	i 	out Pointer to a pointer to the index retrieved.
@@ -568,7 +561,7 @@ public:
 	bool iterate( typename RBTree<I, T, Compare>::Iterator * it, I ** i, T ** v ) const;
 
 	/**
-	 * @brief	Iterate ONE time and set the pointer to the pointer of the data retrieved
+	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
 	 *
 	 * @tparam	TestFunctor	Type of the test functor.
 	 * @param [in,out]	it		   	in out Iterator to iterate.
@@ -583,26 +576,26 @@ public:
 	bool iterate( typename RBTree<I, T, Compare>::Iterator * it, I ** i, T ** v, TestFunctor & testFunctor ) const;
 
 	/**
-	 * @brief	get the Begin Iterator
+	 * @brief 	get the Begin Iterator
 	 *
 	 * @returns	Begin Iterator.
 	 */
 	typename RBTree<I, T, Compare>::Iterator getBegin() const;
 	/**
-	 * @brief	Gets the begin
+	 * @brief 	Gets the begin
 	 *
 	 * @returns	A RBTree<I,T,Compare>::Iterator.
 	 */
 	typename RBTree<I, T, Compare>::Iterator begin() const;
 
 	/**
-	 * @brief	get the End Iterator
+	 * @brief 	get the End Iterator
 	 *
 	 * @returns	End Iterator.
 	 */
 	typename RBTree<I, T, Compare>::Iterator getEnd() const;
 	/**
-	 * @brief	Gets the end
+	 * @brief 	Gets the end
 	 *
 	 * @returns	A RBTree<I,T,Compare>::Iterator.
 	 */
@@ -612,9 +605,9 @@ public:
 	/* Access                                                               */
 	/************************************************************************/
 	/**
-	 * @brief	Access from a value using and index
+	 * @brief 	Access from a value using and index
 	 *
-	 * @param	index	Index to be used.
+	 * @param 	index	Index to be used.
 	 *
 	 * @returns	The indexed value.
 	 *
@@ -622,18 +615,18 @@ public:
 	 */
 	const T * operator[]( const I & index ) const;
 	/**
-	 * @brief	Array indexer operator
+	 * @brief 	Array indexer operator
 	 *
-	 * @param	index	Zero-based index of the.
+	 * @param 	index	Zero-based index of the.
 	 *
 	 * @returns	The indexed value.
 	 */
 	T * operator[]( const I & index );
 
 	/**
-	 * @brief	Access from a value using and index
+	 * @brief 	Access from a value using and index
 	 *
-	 * @param	index	Index to be used.
+	 * @param 	index	Index to be used.
 	 *
 	 * @returns	Null if it fails, else the value i.
 	 *
@@ -641,18 +634,18 @@ public:
 	 */
 	const T * getValueI( const I & index ) const;
 	/**
-	 * @brief	Gets value i
+	 * @brief 	Gets value i
 	 *
-	 * @param	index	Zero-based index of the.
+	 * @param 	index	Zero-based index of the.
 	 *
 	 * @returns	Null if it fails, else the value i.
 	 */
 	T * getValueI( const I & index );
 
 	/**
-	 * @brief	Access from a value using and index
+	 * @brief 	Access from a value using and index
 	 *
-	 * @param	index	Index to be used.
+	 * @param 	index	Index to be used.
 	 *
 	 * @returns	Null if it fails, else the node i.
 	 *
@@ -660,76 +653,76 @@ public:
 	 */
 	const RBNode< MapObject<I, T> > * getNodeI( const I & index ) const;
 	/**
-	 * @brief	Gets node i
+	 * @brief 	Gets node i
 	 *
-	 * @param	index	Zero-based index of the.
+	 * @param 	index	Zero-based index of the.
 	 *
 	 * @returns	Null if it fails, else the node i.
 	 */
 	RBNode< MapObject<I, T> > * getNodeI( const I & index );
 
 	/**
-	 * @brief	Get the Value associated with an iterator
+	 * @brief 	Get the Value associated with an iterator
 	 *
-	 * @param	it	Iterator used to retrieve the value (no bound check is done here)
+	 * @param 	it	Iterator used to retrieve the value (no bound check is done here)
 	 *
 	 * @returns	Value founded.
 	 */
 	const T & getValueIt( typename RBTree<I, T, Compare>::Iterator it ) const;
 	/**
-	 * @brief	Gets value iterator
+	 * @brief 	Gets value iterator
 	 *
-	 * @param	it	The iterator.
+	 * @param 	it	The iterator.
 	 *
 	 * @returns	The value iterator.
 	 */
 	T & getValueIt( typename RBTree<I, T, Compare>::Iterator it );
 
 	/**
-	 * @brief	Get the Index associated with an iterator
+	 * @brief 	Get the Index associated with an iterator
 	 *
-	 * @param	it	Iterator used to retrieve the index (no bound check is done here)
+	 * @param 	it	Iterator used to retrieve the index (no bound check is done here)
 	 *
 	 * @returns	Index founded.
 	 */
 	const I & getIndexIt( typename RBTree<I, T, Compare>::Iterator it ) const;
 	/**
-	 * @brief	Gets index iterator
+	 * @brief 	Gets index iterator
 	 *
-	 * @param	it	The iterator.
+	 * @param 	it	The iterator.
 	 *
 	 * @returns	The index iterator.
 	 */
 	I & getIndexIt( typename RBTree<I, T, Compare>::Iterator it );
 
 	/**
-	 * @brief	Set the Value associated with an index ( The index has to already exists )
+	 * @brief 	Set the Value associated with an index ( The index has to already exists )
 	 *
-	 * @param	index	Index used to set the value.
-	 * @param	v	 	A T to process.
+	 * @param 	index	Index used to set the value.
+	 * @param 	v	 	A T to process.
 	 */
 	void setValueI( const I & index, const T & v );
 
 	/**
-	 * @brief	Set the Value associated with an iterator
+	 * @brief 	Set the Value associated with an iterator
 	 *
-	 * @param	it	Iterator used to set the value.
-	 * @param	v 	A T to process.
+	 * @param 	it	Iterator used to set the value.
+	 * @param 	v 	A T to process.
 	 */
 	void setValueIt( typename RBTree<I, T, Compare>::Iterator it, const T & v );
 
 	/**
-	 * @brief	Set the Index associated with an iterator
+	 * @brief 	Set the Index associated with an iterator
 	 *
-	 * @param	it	Iterator used to set the index.
-	 * @param	v 	An I to process.
+	 * @param 	it	Iterator used to set the index.
+	 * @param 	v 	An I to process.
 	 */
 	void setIndexIt( typename RBTree<I, T, Compare>::Iterator it, const I & v );
 
 
 
 	/**
-	 * @brief	Get if the Tree is empty of not
+	 * @brief 	Get if the Tree is empty of not
 	 *
 	 * @returns	True if the Tree is empty, false otherwise.
 	 */
@@ -739,20 +732,20 @@ public:
 	void clear();
 
 	/**
-	 * @brief	Insert a new [ Index => Value ] into the map
+	 * @brief 	Insert a new [ Index => Value ] into the map
 	 *
-	 * @param	index	Index of the value to insert.
-	 * @param	value	Value to be inserted.
+	 * @param 	index	Index of the value to insert.
+	 * @param 	value	Value to be inserted.
 	 *
 	 * @returns	Pointer to the value just inserted, NULL if nothing has been inserted.
 	 */
 	T * insert( const I & index, const T & value );
 
 	/**
-	 * @brief	Insert a new [ Index => Value ] into the map and return the Node just insert (prefere using insert())
+	 * @brief 	Insert a new [ Index => Value ] into the map and return the Node just insert (prefere using insert())
 	 *
-	 * @param	index	Index of the value to insert.
-	 * @param	value	Value to be inserted.
+	 * @param 	index	Index of the value to insert.
+	 * @param 	value	Value to be inserted.
 	 *
 	 * @returns	Pointer to the node just inserted, NULL if nothing has been inserted.
 	 */
@@ -760,16 +753,16 @@ public:
 
 
 	/**
-	 * @brief	Delete a node from the map
+	 * @brief 	Delete a node from the map
 	 *
-	 * @param	index	Index to search and to be deleted.
+	 * @param 	index	Index to search and to be deleted.
 	 *
 	 * @returns	Boolean if a key has been deleted.
 	 */
 	bool eraseIndex( const I & index );
 
 	/**
-	 * @brief	Delete a node from the map
+	 * @brief 	Delete a node from the map
 	 *
 	 * @param [in,out]	node	Node to be deleted from the map.
 	 *
@@ -779,7 +772,7 @@ public:
 
 
 	/**
-	 * @brief	Create an human readable string from this tree
+	 * @brief 	Create an human readable string from this tree
 	 *
 	 * @tparam	C	Type of the c.
 	 *
@@ -789,7 +782,7 @@ public:
 	BasicString<C> toString() const;
 
 	/**
-	 * @brief	Read from a file stream (children will be read recursively)
+	 * @brief 	Read from a file stream (children will be read recursively)
 	 *
 	 * @param [in,out]	fileStream	stream used to read load this object.
 	 *
@@ -798,7 +791,7 @@ public:
 	bool read( std::fstream * fileStream );
 
 	/**
-	 * @brief	Write this object as binary into a file stream (children will be wrote recursively)
+	 * @brief 	Write this object as binary into a file stream (children will be wrote recursively)
 	 *
 	 * @param [in,out]	fileStream	stream used to write this object.
 	 *
@@ -812,24 +805,24 @@ protected:
 	void _unload();
 
 	/**
-	 * @brief	Create a new node [Index => Value] and insert it into the tree
+	 * @brief 	Create a new node [Index => Value] and insert it into the tree
 	 *
-	 * @param	index	Zero-based index of the.
-	 * @param	value	The value.
+	 * @param 	index	Zero-based index of the.
+	 * @param 	value	The value.
 	 *
 	 * @returns	Node freshly created (NULL if nothing has been inserted)
 	 */
 	RBNode< MapObject< I, T > > * _insert( const I & index, const T & value );
 
 	/**
-	 * @brief	Check the integrity of the tree
+	 * @brief 	Check the integrity of the tree
 	 *
 	 * @param [in,out]	root   	Pointer of the root.
 	 * @param [in,out]	functor	Comparison functor.
 	 */
 	static void _checkTree( RBNode< MapObject<I, T> > * root, Compare & functor );
 	/**
-	 * @brief	Check tree sorted
+	 * @brief 	Check tree sorted
 	 *
 	 * @param [in,out]	root   	If non-null, the root.
 	 * @param [in,out]	functor	The functor.
@@ -847,7 +840,7 @@ protected:
 
 
 
-/** @brief	The map */
+/** @brief	Alias of RBTree */
 template<typename I, typename T, typename Compare = Math::Compare::Template>
 using Map = RBTree<I, T, Compare>;
 

@@ -1,10 +1,11 @@
-///@file TimePoint.h
-///@brief TimePoint Class
-///@author Clément Gerber
-///@date 11/07/2016 (DMY) 
-
+/**
+ * @file		Time\TimePoint.h.
+ *
+ * @brief		Declares the time point class
+ * @author	Clément Gerber
+ * @date		11/07/2016 (DMY)
+ */
 #pragma once
-
 
 #include <ctime>
 #include "Duration.h"
@@ -12,19 +13,21 @@
 
 namespace Time {
 
-	///@brief Class representing a precise moment in the time
+	/** @brief	Class representing a precise moment in the time ( extension of std time_t ) */
 	class TimePoint {
 	public:
 
-		///@brief create an uninitialized TimePoint. See getTime() of getting the timepoint of the current time.
+		/** @brief	create an uninitialized TimePoint. See getTime() of getting the timepoint of the current time. */
 		TimePoint();
 
-		///@brief Create a TimePoint from an old school time_t object
+		/**
+		 * @brief			Create a TimePoint from an old school time_t object
+		 *
+		 * @param			timeT	The time t.
+		 */
 		TimePoint( const TimeT & timeT );
 
-
-
-		///@brief set this object to store the current moment.
+		/** @brief	Set this object to store the current moment. */
 		void setNow();
 
 		/************************************************************************/
@@ -57,16 +60,23 @@ namespace Time {
 		TimePoint & operator+=( TimeT t );
 		TimePoint & operator-=( TimeT t );
 
-
-
-
-
-
-
+		/** @brief	Destructor */
 		~TimePoint();
 
+
+		/**
+		 * @brie	f	Sets an old school time_t.
+		 *
+		 * @param	t	A TimeT to process.
+		 */
 		void setTime( const TimeT & t );
 
+
+		/**
+		 * @brief		Gets the time
+		 *
+		 * @returns	The time.
+		 */
 		const TimeT & getTime() const;
 
 		static TimePoint getNow();
@@ -75,7 +85,11 @@ namespace Time {
 
 	};
 
-	///@brief get the TimePoint of Now
+	/**
+	 * @brief		Get the TimePoint of Now
+	 *
+	 * @returns	The time.
+	 */
 	TimePoint getTime();
 
 

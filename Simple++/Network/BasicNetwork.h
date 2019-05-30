@@ -1,8 +1,10 @@
+/**
+ * @file		Network\BasicNetwork.h.
+ *
+ * @brief		Declares the basic network class
+ */
+
 #pragma once
-
-
-
-
 
 #if defined WIN32
 #include <WinSock2.h>
@@ -36,6 +38,7 @@ typedef struct sockaddr_in6 SOCKADDR_IN6;
 
 namespace Network {
 
+	/** @brief	IpFamily ( IPv4 or IPv6 ) */
 	enum class IpFamily : int {
 		IPv4 = PF_INET,
 		IPv6 = PF_INET6,
@@ -43,6 +46,7 @@ namespace Network {
 	};
 
 
+	/** @brief	Type of a Socket ( TCP or UDP ) */
 	enum class SockType : int {
 		TCP = SOCK_STREAM,
 		UDP = SOCK_DGRAM
@@ -51,7 +55,6 @@ namespace Network {
 	enum class Flags : unsigned int {
 		Passive = AI_PASSIVE,
 		NumericHost = AI_NUMERICHOST
-
 	};
 
 	enum class Error : int {
@@ -61,7 +64,7 @@ namespace Network {
 	};
 
 
-	class Network{
+	class Network {
 	public:
 
 		static bool init();

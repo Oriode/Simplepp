@@ -1,7 +1,7 @@
 /**
  * @file	String.h.
  *
- * @brief	Declares the string class
+ * @brief		Declares the string class
  */
 
 #pragma once
@@ -20,7 +20,7 @@
 #endif
 
  /**
-  * @brief	.
+  * @brief		.
   *
   * @tparam	T	buffer type
   */
@@ -34,7 +34,7 @@ public:
 
 
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -43,7 +43,7 @@ public:
 	BasicString( const C * str );
 
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str 	The string.
@@ -52,7 +52,7 @@ public:
 	template<typename C>
 	BasicString( const C * str, Size size );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	beginIt	The begin iterator.
@@ -63,7 +63,7 @@ public:
 
 
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -71,13 +71,13 @@ public:
 	template<typename C>
 	BasicString( const BasicString<C> & str );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	str	The string.
 	 */
 	BasicString( const BasicString<T> & str );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param [in,out]	str	The string.
 	 */
@@ -85,7 +85,7 @@ public:
 
 
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -94,74 +94,74 @@ public:
 	BasicString( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	ui	The user interface.
 	 */
 	BasicString( const unsigned char & ui );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	ui	The user interface.
 	 */
 	BasicString( const unsigned short & ui );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	i	Zero-based index of the.
 	 */
 	BasicString( const int & i );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	ui	The user interface.
 	 */
 	BasicString( const unsigned int & ui );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	l	A long to process.
 	 */
 	BasicString( const long & l );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	ul	The ul.
 	 */
 	BasicString( const unsigned long & ul );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	ll	The ll.
 	 */
 	BasicString( const long long & ll );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	ull	The ull.
 	 */
 	BasicString( const unsigned long long & ull );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	d	A double to process.
 	 */
 	BasicString( const double & d );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	f	A float to process.
 	 */
 	BasicString( const float & f );
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	b	True to b.
 	 */
 	BasicString( const bool & b );
 
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	c	A T to process.
 	 */
@@ -175,7 +175,7 @@ public:
 	/************************************************************************/
 	/* OPERATOR EQUAL                                                       */
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -185,7 +185,7 @@ public:
 	BasicString & operator=( const C * str );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -194,7 +194,7 @@ public:
 	template<typename C>
 	BasicString & operator=( const BasicString<C> & str );
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -202,7 +202,7 @@ public:
 	 */
 	BasicString & operator=( const BasicString<T> & str );
 	/**
-	 * @brief	Move assignment operator
+	 * @brief		Move assignment operator
 	 *
 	 * @param [in,out]	str	The string.
 	 *
@@ -212,7 +212,7 @@ public:
 
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -222,7 +222,7 @@ public:
 	BasicString & operator=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -230,7 +230,7 @@ public:
 	 */
 	BasicString & operator=( const unsigned char & i );
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -239,7 +239,7 @@ public:
 	BasicString & operator=( const unsigned short & i );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -247,7 +247,7 @@ public:
 	 */
 	BasicString & operator=( const int & i );
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -256,7 +256,7 @@ public:
 	BasicString & operator=( const unsigned int & i );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -264,7 +264,7 @@ public:
 	 */
 	BasicString & operator=( const long & i );
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -273,7 +273,7 @@ public:
 	BasicString & operator=( const unsigned long & i );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -281,7 +281,7 @@ public:
 	 */
 	BasicString & operator=( const long long & i );
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -290,7 +290,7 @@ public:
 	BasicString & operator=( const unsigned long long & i );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -298,7 +298,7 @@ public:
 	 */
 	BasicString & operator=( const double & i );
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -307,7 +307,7 @@ public:
 	BasicString & operator=( const float & i );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	b	True to b.
 	 *
@@ -316,7 +316,7 @@ public:
 	BasicString & operator=( const bool & b );
 
 	/**
-	 * @brief	Assignment operator
+	 * @brief		Assignment operator
 	 *
 	 * @param	c	A T to process.
 	 *
@@ -363,7 +363,7 @@ public:
 	/************************************************************************/
 	/* OPERATOR +=	                                                      */
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -373,7 +373,7 @@ public:
 	BasicString & operator+=( const C * str );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -383,7 +383,7 @@ public:
 	BasicString & operator+=( const BasicString<C> & str );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	str	The string.
 	 *
@@ -393,7 +393,7 @@ public:
 	BasicString & operator+=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	uc	The uc.
 	 *
@@ -401,7 +401,7 @@ public:
 	 */
 	BasicString & operator+=( const unsigned char & uc );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	us	The us.
 	 *
@@ -410,7 +410,7 @@ public:
 	BasicString & operator+=( const unsigned short & us );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	i	Zero-based index of the.
 	 *
@@ -418,7 +418,7 @@ public:
 	 */
 	BasicString & operator+=( const int & i );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	ui	The user interface.
 	 *
@@ -427,7 +427,7 @@ public:
 	BasicString & operator+=( const unsigned int & ui );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	l	A long to process.
 	 *
@@ -435,7 +435,7 @@ public:
 	 */
 	BasicString & operator+=( const long & l );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	ul	The ul.
 	 *
@@ -444,7 +444,7 @@ public:
 	BasicString & operator+=( const unsigned long & ul );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	ll	The ll.
 	 *
@@ -452,7 +452,7 @@ public:
 	 */
 	BasicString & operator+=( const long long & ll );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	ull	The ull.
 	 *
@@ -461,7 +461,7 @@ public:
 	BasicString & operator+=( const unsigned long long & ull );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	d	A double to process.
 	 *
@@ -469,7 +469,7 @@ public:
 	 */
 	BasicString & operator+=( const double & d );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	f	A float to process.
 	 *
@@ -478,7 +478,7 @@ public:
 	BasicString & operator+=( const float & f );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	b	True to b.
 	 *
@@ -487,7 +487,7 @@ public:
 	BasicString & operator+=( const bool & b );
 
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	c	A C to process.
 	 *
@@ -496,7 +496,7 @@ public:
 	template<typename C>
 	BasicString & operator+=( const C & c );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	c	A char to process.
 	 *
@@ -504,7 +504,7 @@ public:
 	 */
 	BasicString & operator+=( const char & c );
 	/**
-	 * @brief	Addition assignment operator
+	 * @brief		Addition assignment operator
 	 *
 	 * @param	c	A wchar_t to process.
 	 *
@@ -518,7 +518,7 @@ public:
 	/************************************************************************/
 	/* OPERATOR CONCAT                                                      */
 	/**
-	 * @brief	Concatenates the given string
+	 * @brief		Concatenates the given string
 	 *
 	 * @param	str	The string.
 	 *
@@ -527,7 +527,7 @@ public:
 
 	BasicString & concat( const BasicString<T> & str );
 	/**
-	 * @brief	Concatenates the given string
+	 * @brief		Concatenates the given string
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -538,7 +538,7 @@ public:
 	BasicString & concat( const BasicString<C> & str );
 
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	buffer	  	The buffer.
@@ -550,7 +550,7 @@ public:
 	BasicString & concat( const C * buffer, typename const BasicString<C>::Size & bufferSize );
 
 	/**
-	 * @brief	Concatenates the given buffer
+	 * @brief		Concatenates the given buffer
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	buffer	The buffer.
@@ -561,7 +561,7 @@ public:
 	BasicString & concat( const C * buffer );
 
 	/**
-	 * @brief	Concatenates the given string
+	 * @brief		Concatenates the given string
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -572,7 +572,7 @@ public:
 	BasicString & concat( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 
 	/**
-	 * @brief	Concatenates the given b
+	 * @brief		Concatenates the given b
 	 *
 	 * @param	b	True to b.
 	 *
@@ -582,7 +582,7 @@ public:
 
 
 	/**
-	 * @brief	Concatenates the given c
+	 * @brief		Concatenates the given c
 	 *
 	 * @param	c	A char to process.
 	 *
@@ -590,7 +590,7 @@ public:
 	 */
 	BasicString & concat( const char & c );
 	/**
-	 * @brief	Concatenates the given c
+	 * @brief		Concatenates the given c
 	 *
 	 * @param	c	A wchar_t to process.
 	 *
@@ -599,7 +599,7 @@ public:
 	BasicString & concat( const wchar_t & c );
 
 	/**
-	 * @brief	Concatenates the given uc
+	 * @brief		Concatenates the given uc
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	uc	The uc.
@@ -610,7 +610,7 @@ public:
 	BasicString & concat( const unsigned char & uc );
 
 	/**
-	 * @brief	Concatenates the given us
+	 * @brief		Concatenates the given us
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	us	The us.
@@ -621,7 +621,7 @@ public:
 	BasicString & concat( const unsigned short & us );
 
 	/**
-	 * @brief	Concatenates the given i
+	 * @brief		Concatenates the given i
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	i	Zero-based index of the.
@@ -632,7 +632,7 @@ public:
 	BasicString & concat( const int & i );
 
 	/**
-	 * @brief	Concatenates the given user interface
+	 * @brief		Concatenates the given user interface
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ui	The user interface.
@@ -643,7 +643,7 @@ public:
 	BasicString & concat( const unsigned int & ui );
 
 	/**
-	 * @brief	Concatenates the given l
+	 * @brief		Concatenates the given l
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	l	A long to process.
@@ -654,7 +654,7 @@ public:
 	BasicString & concat( const long & l );
 
 	/**
-	 * @brief	Concatenates the given ul
+	 * @brief		Concatenates the given ul
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ul	The ul.
@@ -665,7 +665,7 @@ public:
 	BasicString & concat( const unsigned long & ul );
 
 	/**
-	 * @brief	Concatenates the given ll
+	 * @brief		Concatenates the given ll
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ll	The ll.
@@ -676,7 +676,7 @@ public:
 	BasicString & concat( const long long & ll );
 
 	/**
-	 * @brief	Concatenates the given ull
+	 * @brief		Concatenates the given ull
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ull	The ull.
@@ -687,7 +687,7 @@ public:
 	BasicString & concat( const unsigned long long & ull );
 
 	/**
-	 * @brief	Concatenates the given d
+	 * @brief		Concatenates the given d
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -699,7 +699,7 @@ public:
 	BasicString & concat( const double & d );
 
 	/**
-	 * @brief	Concatenates the given f
+	 * @brief		Concatenates the given f
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -712,7 +712,7 @@ public:
 
 
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	uc  	The uc.
 	 * @param	base	The base.
@@ -721,7 +721,7 @@ public:
 	 */
 	BasicString & concat( const unsigned char & uc, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	us  	The us.
 	 * @param	base	The base.
@@ -730,7 +730,7 @@ public:
 	 */
 	BasicString & concat( const unsigned short & us, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	i   	Zero-based index of the.
 	 * @param	base	The base.
@@ -739,7 +739,7 @@ public:
 	 */
 	BasicString & concat( const int & i, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	ui  	The user interface.
 	 * @param	base	The base.
@@ -748,7 +748,7 @@ public:
 	 */
 	BasicString & concat( const unsigned int & ui, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	l   	A long to process.
 	 * @param	base	The base.
@@ -757,7 +757,7 @@ public:
 	 */
 	BasicString & concat( const long & l, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	ul  	The ul.
 	 * @param	base	The base.
@@ -766,7 +766,7 @@ public:
 	 */
 	BasicString & concat( const unsigned long & ul, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	ll  	The ll.
 	 * @param	base	The base.
@@ -775,7 +775,7 @@ public:
 	 */
 	BasicString & concat( const long long & ll, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	ull 	The ull.
 	 * @param	base	The base.
@@ -784,7 +784,7 @@ public:
 	 */
 	BasicString & concat( const unsigned long long & ull, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	d		 	A double to process.
 	 * @param	precision	The precision.
@@ -794,7 +794,7 @@ public:
 	 */
 	BasicString & concat( const double & d, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Concats
+	 * @brief		Concats
 	 *
 	 * @param	f		 	A float to process.
 	 * @param	precision	The precision.
@@ -809,7 +809,7 @@ public:
 	/************************************************************************/
 	/* toCString()                                                          */
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param 		  	c	  	A C to process.
@@ -820,7 +820,7 @@ public:
 	template<typename C>
 	static typename BasicString<T>::Size toCString( const C & c, T * buffer );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	c	  	A char to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -829,7 +829,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( const char & c, T * buffer );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	c	  	A wchar_t to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -840,7 +840,7 @@ public:
 
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -852,7 +852,7 @@ public:
 	static typename BasicString<T>::Size toCString( unsigned char number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -864,7 +864,7 @@ public:
 	static typename BasicString<T>::Size toCString( unsigned short number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -876,7 +876,7 @@ public:
 	static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -888,7 +888,7 @@ public:
 	static typename BasicString<T>::Size toCString( int number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -900,7 +900,7 @@ public:
 	static typename BasicString<T>::Size toCString( unsigned long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -912,7 +912,7 @@ public:
 	static typename BasicString<T>::Size toCString( long long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -924,7 +924,7 @@ public:
 	static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -936,7 +936,7 @@ public:
 	static typename BasicString<T>::Size toCString( long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -949,7 +949,7 @@ public:
 	static typename BasicString<T>::Size toCString( double number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -963,7 +963,7 @@ public:
 
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -973,7 +973,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( unsigned char number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -983,7 +983,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( unsigned short number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -993,7 +993,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1003,7 +1003,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( int number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1013,7 +1013,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( unsigned long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1023,7 +1023,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( long long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1033,7 +1033,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1043,7 +1043,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number   	Number of.
 	 * @param [in,out]	buffer   	If non-null, the buffer.
@@ -1054,7 +1054,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( double number, T * buffer, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	number   	Number of.
 	 * @param [in,out]	buffer   	If non-null, the buffer.
@@ -1065,7 +1065,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCString( float number, T * buffer, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @param 		  	b	  	True to b.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1078,7 +1078,7 @@ public:
 	/************************************************************************/
 	/* ToCString() without adding sentinel                                  */
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param 		  	c	  	A C to process.
@@ -1090,7 +1090,7 @@ public:
 	template<typename C>
 	static typename BasicString<T>::Size toCStringwhithout \0( const C & c, T * buffer );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	c	  	A char to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1099,7 +1099,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( const char & c, T * buffer );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	c	  	A wchar_t to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1110,7 +1110,7 @@ public:
 
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1122,7 +1122,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned char number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1134,7 +1134,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned short number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1146,7 +1146,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned int  number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1158,7 +1158,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( int number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1170,7 +1170,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1182,7 +1182,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( long long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1194,7 +1194,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param 		  	number	Number of.
@@ -1206,7 +1206,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( long number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -1219,7 +1219,7 @@ public:
 	static typename BasicString<T>::Size toCStringwhithout \0( double number, T * buffer );
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -1233,7 +1233,7 @@ public:
 
 
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1243,7 +1243,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned char number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1253,7 +1253,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned short number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1263,7 +1263,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned int  number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1273,7 +1273,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( int number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1283,7 +1283,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1293,7 +1293,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( long long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1303,7 +1303,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1313,7 +1313,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( long number, T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number   	Number of.
 	 * @param [in,out]	buffer   	If non-null, the buffer.
@@ -1324,7 +1324,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( double number, T * buffer, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	number   	Number of.
 	 * @param [in,out]	buffer   	If non-null, the buffer.
@@ -1335,7 +1335,7 @@ public:
 	 */
 	static typename BasicString<T>::Size toCStringwhithout \0( float number, T * buffer, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Converts this object to a c string whithout \0
+	 * @brief		Converts this object to a c string whithout \0
 	 *
 	 * @param 		  	b	  	True to b.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1348,7 +1348,7 @@ public:
 	/************************************************************************/
 	/* From StringASCII to number                                                */
 	/**
-	 * @brief	Converts this object to a character
+	 * @brief		Converts this object to a character
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1358,7 +1358,7 @@ public:
 	char toChar();
 
 	/**
-	 * @brief	Converts this object to an int
+	 * @brief		Converts this object to an int
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1368,7 +1368,7 @@ public:
 	int toInt();
 
 	/**
-	 * @brief	Converts this object to a short
+	 * @brief		Converts this object to a short
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1378,7 +1378,7 @@ public:
 	short toShort();
 
 	/**
-	 * @brief	Converts this object to a long
+	 * @brief		Converts this object to a long
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1388,7 +1388,7 @@ public:
 	long toLong();
 
 	/**
-	 * @brief	Converts this object to a long
+	 * @brief		Converts this object to a long
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1398,7 +1398,7 @@ public:
 	long long toLongLong();
 
 	/**
-	 * @brief	Converts this object to an u character
+	 * @brief		Converts this object to an u character
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1408,7 +1408,7 @@ public:
 	unsigned char toUChar();
 
 	/**
-	 * @brief	Converts this object to an u int
+	 * @brief		Converts this object to an u int
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1418,7 +1418,7 @@ public:
 	unsigned int toUInt();
 
 	/**
-	 * @brief	Converts this object to an u short
+	 * @brief		Converts this object to an u short
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1428,7 +1428,7 @@ public:
 	unsigned short toUShort();
 
 	/**
-	 * @brief	Converts this object to an u long
+	 * @brief		Converts this object to an u long
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1438,7 +1438,7 @@ public:
 	unsigned long toULong();
 
 	/**
-	 * @brief	Converts this object to an u long
+	 * @brief		Converts this object to an u long
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1448,7 +1448,7 @@ public:
 	unsigned long long toULongLong();
 
 	/**
-	 * @brief	Converts this object to a float
+	 * @brief		Converts this object to a float
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1458,7 +1458,7 @@ public:
 	float toFloat();
 
 	/**
-	 * @brief	Converts this object to a double
+	 * @brief		Converts this object to a double
 	 *
 	 * @tparam	Base	Type of the base.
 	 *
@@ -1469,7 +1469,7 @@ public:
 
 
 	/**
-	 * @brief	Converts a base to a character
+	 * @brief		Converts a base to a character
 	 *
 	 * @param	base	The base.
 	 *
@@ -1477,7 +1477,7 @@ public:
 	 */
 	char toChar( unsigned int base );
 	/**
-	 * @brief	Converts a base to an int
+	 * @brief		Converts a base to an int
 	 *
 	 * @param	base	The base.
 	 *
@@ -1485,7 +1485,7 @@ public:
 	 */
 	int toInt( unsigned int base );
 	/**
-	 * @brief	Converts a base to a short
+	 * @brief		Converts a base to a short
 	 *
 	 * @param	base	The base.
 	 *
@@ -1493,7 +1493,7 @@ public:
 	 */
 	short toShort( unsigned int base );
 	/**
-	 * @brief	Converts a base to a long
+	 * @brief		Converts a base to a long
 	 *
 	 * @param	base	The base.
 	 *
@@ -1501,7 +1501,7 @@ public:
 	 */
 	long toLong( unsigned int base );
 	/**
-	 * @brief	Converts a base to a long
+	 * @brief		Converts a base to a long
 	 *
 	 * @param	base	The base.
 	 *
@@ -1509,7 +1509,7 @@ public:
 	 */
 	long long toLongLong( unsigned int base );
 	/**
-	 * @brief	Converts a base to an u character
+	 * @brief		Converts a base to an u character
 	 *
 	 * @param	base	The base.
 	 *
@@ -1517,7 +1517,7 @@ public:
 	 */
 	unsigned char toUChar( unsigned int base );
 	/**
-	 * @brief	Converts a base to an u int
+	 * @brief		Converts a base to an u int
 	 *
 	 * @param	base	The base.
 	 *
@@ -1525,7 +1525,7 @@ public:
 	 */
 	unsigned int toUInt( unsigned int base );
 	/**
-	 * @brief	Converts a base to an u short
+	 * @brief		Converts a base to an u short
 	 *
 	 * @param	base	The base.
 	 *
@@ -1533,7 +1533,7 @@ public:
 	 */
 	unsigned short toUShort( unsigned int base );
 	/**
-	 * @brief	Converts a base to an u long
+	 * @brief		Converts a base to an u long
 	 *
 	 * @param	base	The base.
 	 *
@@ -1541,7 +1541,7 @@ public:
 	 */
 	unsigned long toULong( unsigned int base );
 	/**
-	 * @brief	Converts a base to an u long
+	 * @brief		Converts a base to an u long
 	 *
 	 * @param	base	The base.
 	 *
@@ -1549,7 +1549,7 @@ public:
 	 */
 	unsigned long long toULongLong( unsigned int base );
 	/**
-	 * @brief	Converts a base to a float
+	 * @brief		Converts a base to a float
 	 *
 	 * @param	base	The base.
 	 *
@@ -1557,7 +1557,7 @@ public:
 	 */
 	float toFloat( unsigned int base );
 	/**
-	 * @brief	Converts a base to a double
+	 * @brief		Converts a base to a double
 	 *
 	 * @param	base	The base.
 	 *
@@ -1570,7 +1570,7 @@ public:
 	/************************************************************************/
 	/* FromCString()                                                        */
 	/**
-	 * @brief	Converts a buffer to a character
+	 * @brief		Converts a buffer to a character
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1581,7 +1581,7 @@ public:
 	static char toChar( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an int
+	 * @brief		Converts a buffer to an int
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1592,7 +1592,7 @@ public:
 	static int toInt( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to a short
+	 * @brief		Converts a buffer to a short
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1603,7 +1603,7 @@ public:
 	static short toShort( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to a long
+	 * @brief		Converts a buffer to a long
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1614,7 +1614,7 @@ public:
 	static long toLong( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to a long
+	 * @brief		Converts a buffer to a long
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1625,7 +1625,7 @@ public:
 	static long long toLongLong( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an u character
+	 * @brief		Converts a buffer to an u character
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1636,7 +1636,7 @@ public:
 	static unsigned char toUChar( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an u int
+	 * @brief		Converts a buffer to an u int
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1647,7 +1647,7 @@ public:
 	static unsigned int toUInt( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an u short
+	 * @brief		Converts a buffer to an u short
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1658,7 +1658,7 @@ public:
 	static unsigned short toUShort( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an u long
+	 * @brief		Converts a buffer to an u long
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1669,7 +1669,7 @@ public:
 	static unsigned long toULong( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an u long
+	 * @brief		Converts a buffer to an u long
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1680,7 +1680,7 @@ public:
 	static unsigned long long toULongLong( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to a float
+	 * @brief		Converts a buffer to a float
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1691,7 +1691,7 @@ public:
 	static float toFloat( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to a double
+	 * @brief		Converts a buffer to a double
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -1703,7 +1703,7 @@ public:
 
 
 	/**
-	 * @brief	Converts this object to a character
+	 * @brief		Converts this object to a character
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1712,7 +1712,7 @@ public:
 	 */
 	static char toChar( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to an int
+	 * @brief		Converts this object to an int
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1721,7 +1721,7 @@ public:
 	 */
 	static int toInt( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a short
+	 * @brief		Converts this object to a short
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1730,7 +1730,7 @@ public:
 	 */
 	static short toShort( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a long
+	 * @brief		Converts this object to a long
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1739,7 +1739,7 @@ public:
 	 */
 	static long toLong( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a long
+	 * @brief		Converts this object to a long
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1748,7 +1748,7 @@ public:
 	 */
 	static long long toLongLong( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to an u character
+	 * @brief		Converts this object to an u character
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1757,7 +1757,7 @@ public:
 	 */
 	static unsigned char toUChar( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to an u int
+	 * @brief		Converts this object to an u int
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1766,7 +1766,7 @@ public:
 	 */
 	static unsigned int toUInt( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to an u short
+	 * @brief		Converts this object to an u short
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1775,7 +1775,7 @@ public:
 	 */
 	static unsigned short toUShort( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to an u long
+	 * @brief		Converts this object to an u long
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1784,7 +1784,7 @@ public:
 	 */
 	static unsigned long toULong( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to an u long
+	 * @brief		Converts this object to an u long
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1793,7 +1793,7 @@ public:
 	 */
 	static unsigned long long toULongLong( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a float
+	 * @brief		Converts this object to a float
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1802,7 +1802,7 @@ public:
 	 */
 	static float toFloat( T * buffer, unsigned int base );
 	/**
-	 * @brief	Converts this object to a double
+	 * @brief		Converts this object to a double
 	 *
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
@@ -1815,7 +1815,7 @@ public:
 	/************************************************************************/
 	/* Logical                                                              */
 	/**
-	 * @brief	Inequality operator
+	 * @brief		Inequality operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1823,7 +1823,7 @@ public:
 	 */
 	bool operator!=( const BasicString<T> & text ) const;
 	/**
-	 * @brief	Equality operator
+	 * @brief		Equality operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1831,7 +1831,7 @@ public:
 	 */
 	bool operator==( const BasicString<T> & text ) const;
 	/**
-	 * @brief	Greater-than comparison operator
+	 * @brief		Greater-than comparison operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1839,7 +1839,7 @@ public:
 	 */
 	bool operator>( const BasicString<T> & text ) const;
 	/**
-	 * @brief	Less-than comparison operator
+	 * @brief		Less-than comparison operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1847,7 +1847,7 @@ public:
 	 */
 	bool operator<( const BasicString<T> & text ) const;
 	/**
-	 * @brief	Greater-than-or-equal comparison operator
+	 * @brief		Greater-than-or-equal comparison operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1858,7 +1858,7 @@ public:
 	bool operator<=( const BasicString<T> & text ) const;
 
 	/**
-	 * @brief	Inequality operator
+	 * @brief		Inequality operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1866,7 +1866,7 @@ public:
 	 */
 	bool operator!=( const T & text ) const;
 	/**
-	 * @brief	Equality operator
+	 * @brief		Equality operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1874,7 +1874,7 @@ public:
 	 */
 	bool operator==( const T & text ) const;
 	/**
-	 * @brief	Greater-than comparison operator
+	 * @brief		Greater-than comparison operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1882,7 +1882,7 @@ public:
 	 */
 	bool operator>( const T & text ) const;
 	/**
-	 * @brief	Less-than comparison operator
+	 * @brief		Less-than comparison operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1890,7 +1890,7 @@ public:
 	 */
 	bool operator<( const T & text ) const;
 	/**
-	 * @brief	Greater-than-or-equal comparison operator
+	 * @brief		Greater-than-or-equal comparison operator
 	 *
 	 * @param	text	The text.
 	 *
@@ -1904,7 +1904,7 @@ public:
 	/************************************************************************/
 	/* To StringASCII                                                            */
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	c	A T to process.
 	 *
@@ -1913,7 +1913,7 @@ public:
 	static BasicString<T> toString( const T & c );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1924,7 +1924,7 @@ public:
 	static BasicString<T> toString( unsigned char number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1935,7 +1935,7 @@ public:
 	static BasicString<T> toString( unsigned short number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1946,7 +1946,7 @@ public:
 	static BasicString<T> toString( unsigned int number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1957,7 +1957,7 @@ public:
 	static BasicString<T> toString( int number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1968,7 +1968,7 @@ public:
 	static BasicString<T> toString( unsigned long number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1979,7 +1979,7 @@ public:
 	static BasicString<T> toString( long long number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -1990,7 +1990,7 @@ public:
 	static BasicString<T> toString( unsigned long long number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	number	Number of.
@@ -2001,7 +2001,7 @@ public:
 	static BasicString<T> toString( long number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -2013,7 +2013,7 @@ public:
 	static BasicString<T> toString( double number );
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -2027,7 +2027,7 @@ public:
 
 
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2036,7 +2036,7 @@ public:
 	 */
 	static BasicString<T> toString( unsigned char number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2045,7 +2045,7 @@ public:
 	 */
 	static BasicString<T> toString( unsigned short number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2054,7 +2054,7 @@ public:
 	 */
 	static BasicString<T> toString( unsigned int number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2063,7 +2063,7 @@ public:
 	 */
 	static BasicString<T> toString( int number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2072,7 +2072,7 @@ public:
 	 */
 	static BasicString<T> toString( unsigned long number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2081,7 +2081,7 @@ public:
 	 */
 	static BasicString<T> toString( long long number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2090,7 +2090,7 @@ public:
 	 */
 	static BasicString<T> toString( unsigned long long number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number	Number of.
 	 * @param	base  	The base.
@@ -2099,7 +2099,7 @@ public:
 	 */
 	static BasicString<T> toString( long number, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number   	Number of.
 	 * @param	precision	The precision.
@@ -2109,7 +2109,7 @@ public:
 	 */
 	static BasicString<T> toString( double number, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	number   	Number of.
 	 * @param	precision	The precision.
@@ -2119,7 +2119,7 @@ public:
 	 */
 	static BasicString<T> toString( float number, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Convert this object into a string representation
+	 * @brief		Convert this object into a string representation
 	 *
 	 * @param	b	True to b.
 	 *
@@ -2130,7 +2130,7 @@ public:
 	/************************************************************************/
 	/* Others                                                               */
 	/**
-	 * @brief	Splits the given delimiter
+	 * @brief		Splits the given delimiter
 	 *
 	 * @param	delimiter	The delimiter.
 	 *
@@ -2138,14 +2138,14 @@ public:
 	 */
 	Vector<BasicString<T>> split( const T & delimiter ) const;
 	/**
-	 * @brief	Query if this object is numeric
+	 * @brief		Query if this object is numeric
 	 *
 	 * @returns	True if numeric, false if not.
 	 */
 	bool isNumeric() const;
 
 	/**
-	 * @brief	Resize the string
+	 * @brief		Resize the string
 	 *
 	 * @param	newSize	New size of this string.
 	 */
@@ -2154,7 +2154,7 @@ public:
 	/** @brief	. */
 	using Vector<T>::getSize;
 	/**
-	 * @brief	Gets a size
+	 * @brief		Gets a size
 	 *
 	 * @param	str	The string.
 	 *
@@ -2163,7 +2163,7 @@ public:
 	static typename Vector<T>::Size getSize( const T * str );
 
 	/**
-	 * @brief	Converts this object to a c string
+	 * @brief		Converts this object to a c string
 	 *
 	 * @returns	This object as a const T*.
 	 */
@@ -2173,7 +2173,7 @@ public:
 	void clear();
 
 	/**
-	 * @brief	Gets the first iterator
+	 * @brief		Gets the first iterator
 	 *
 	 * @param	c	A T to process.
 	 *
@@ -2181,7 +2181,7 @@ public:
 	 */
 	typename BasicString<T>::Iterator getFirstIt( const T & c ) const;
 	/**
-	 * @brief	Gets the last iterator
+	 * @brief		Gets the last iterator
 	 *
 	 * @param	c	A T to process.
 	 *
@@ -2190,7 +2190,7 @@ public:
 	typename BasicString<T>::Iterator getLastIt( const T & c ) const;
 
 	/**
-	 * @brief	Gets the first iterator
+	 * @brief		Gets the first iterator
 	 *
 	 * @param	str	The string.
 	 *
@@ -2198,7 +2198,7 @@ public:
 	 */
 	typename BasicString<T>::Iterator getFirstIt( const BasicString<T> & str ) const;
 	/**
-	 * @brief	Gets the last iterator
+	 * @brief		Gets the last iterator
 	 *
 	 * @param	str	The string.
 	 *
@@ -2207,7 +2207,7 @@ public:
 	typename BasicString<T>::Iterator getLastIt( const BasicString<T> & str ) const;
 
 	/**
-	 * @brief	Gets a first
+	 * @brief		Gets a first
 	 *
 	 * @param	c	A T to process.
 	 *
@@ -2215,7 +2215,7 @@ public:
 	 */
 	typename BasicString<T>::Size getFirst( const T & c ) const;
 	/**
-	 * @brief	Gets a last
+	 * @brief		Gets a last
 	 *
 	 * @param	c	A T to process.
 	 *
@@ -2224,7 +2224,7 @@ public:
 	typename BasicString<T>::Size getLast( const T & c ) const;
 
 	/**
-	 * @brief	Gets a first
+	 * @brief		Gets a first
 	 *
 	 * @param	str	The string.
 	 *
@@ -2232,7 +2232,7 @@ public:
 	 */
 	typename BasicString<T>::Size getFirst( const BasicString<T> & str ) const;
 	/**
-	 * @brief	Gets a last
+	 * @brief		Gets a last
 	 *
 	 * @param	str	The string.
 	 *
@@ -2241,21 +2241,21 @@ public:
 	typename BasicString<T>::Size getLast( const BasicString<T> & str ) const;
 
 	/**
-	 * @brief	Replaces
+	 * @brief		Replaces
 	 *
 	 * @param	toReplace	to replace.
 	 * @param	byThis   	The by this.
 	 */
 	void replace( const T & toReplace, const T & byThis );
 	/**
-	 * @brief	Replaces
+	 * @brief		Replaces
 	 *
 	 * @param	toReplace	to replace.
 	 * @param	byThis   	The by this.
 	 */
 	void replace( const T & toReplace, const BasicString<T> & byThis );
 	/**
-	 * @brief	Replaces
+	 * @brief		Replaces
 	 *
 	 * @param	toReplace	to replace.
 	 * @param	byThis   	The by this.
@@ -2263,19 +2263,19 @@ public:
 	void replace( const BasicString<T> & toReplace, const BasicString<T> & byThis );
 
 	/**
-	 * @brief	Gets the directory
+	 * @brief		Gets the directory
 	 *
 	 * @returns	The directory.
 	 */
 	BasicString<T> getDirectory() const;
 	/**
-	 * @brief	Gets file name
+	 * @brief		Gets file name
 	 *
 	 * @returns	The file name.
 	 */
 	BasicString<T> getFileName() const;
 	/**
-	 * @brief	Gets sub string
+	 * @brief		Gets sub string
 	 *
 	 * @param	index	Zero-based index of the.
 	 * @param	size 	The size.
@@ -2284,7 +2284,7 @@ public:
 	 */
 	BasicString<T> getSubStr( Size index, Size size ) const;
 	/**
-	 * @brief	Gets sub string
+	 * @brief		Gets sub string
 	 *
 	 * @param	beginIt	The begin iterator.
 	 * @param	size   	The size.
@@ -2293,7 +2293,7 @@ public:
 	 */
 	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const;
 	/**
-	 * @brief	Gets sub string
+	 * @brief		Gets sub string
 	 *
 	 * @param	beginIt	The begin iterator.
 	 * @param	endIt  	The end iterator.
@@ -2304,7 +2304,7 @@ public:
 
 
 	/**
-	 * @brief	Function to compare two elements
+	 * @brief		Function to compare two elements
 	 *
 	 * @param	x	First Element.
 	 * @param	y	Second Element.
@@ -2315,7 +2315,7 @@ public:
 
 
 	/**
-	 * @brief	Write this string into a file as readable (non binary)
+	 * @brief		Write this string into a file as readable (non binary)
 	 *
 	 * @param [in,out]	fileStream	Stream used to write this string.
 	 *
@@ -2324,7 +2324,7 @@ public:
 	bool writeReadable( std::fstream * fileStream ) const;
 
 	/**
-	 * @brief	read from a file stream
+	 * @brief		read from a file stream
 	 *
 	 * @param [in,out]	fileStream	stream used to read load this object.
 	 *
@@ -2333,7 +2333,7 @@ public:
 	bool read( std::fstream * fileStream );
 
 	/**
-	 * @brief	read from a file stream
+	 * @brief		read from a file stream
 	 *
 	 * @param [in,out]	fileStream	stream used to read load this object.
 	 * @param 		  	size	  	Number of characters to read.
@@ -2345,7 +2345,7 @@ public:
 	/************************************************************************/
 	/* Some static methods                                                  */
 	/**
-	 * @brief	Query if 'v' is numeric
+	 * @brief		Query if 'v' is numeric
 	 *
 	 * @param	v	A BasicString<T> to process.
 	 *
@@ -2353,7 +2353,7 @@ public:
 	 */
 	static bool isNumeric( const BasicString<T> & v );
 	/**
-	 * @brief	Splits
+	 * @brief		Splits
 	 *
 	 * @param	s		 	A BasicString<T> to process.
 	 * @param	delimiter	The delimiter.
@@ -2363,7 +2363,7 @@ public:
 	static Vector<BasicString<T>> split( const BasicString<T> & s, const T & delimiter );
 
 	/**
-	 * @brief	Formats
+	 * @brief		Formats
 	 *
 	 * @tparam	T1   	Generic type parameter.
 	 * @tparam	Types	Type of the types.
@@ -2378,7 +2378,7 @@ public:
 
 
 	/**
-	 * @brief	Gets a first
+	 * @brief		Gets a first
 	 *
 	 * @param	buffer	  	The buffer.
 	 * @param	bufferSize	Size of the buffer.
@@ -2388,7 +2388,7 @@ public:
 	 */
 	static typename BasicString<T>::Size getFirst( const T * buffer, Size bufferSize, const T & c );
 	/**
-	 * @brief	Gets a last
+	 * @brief		Gets a last
 	 *
 	 * @param	buffer	  	The buffer.
 	 * @param	bufferSize	Size of the buffer.
@@ -2399,7 +2399,7 @@ public:
 	static typename BasicString<T>::Size getLast( const T * buffer, Size bufferSize, const T & c );
 
 	/**
-	 * @brief	Gets a first
+	 * @brief		Gets a first
 	 *
 	 * @param	buffer			The buffer.
 	 * @param	bufferSize  	Size of the buffer.
@@ -2410,7 +2410,7 @@ public:
 	 */
 	static typename BasicString<T>::Size getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 	/**
-	 * @brief	Gets a last
+	 * @brief		Gets a last
 	 *
 	 * @param	buffer			The buffer.
 	 * @param	bufferSize  	Size of the buffer.
@@ -2422,7 +2422,7 @@ public:
 	static typename BasicString<T>::Size getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 
 	/**
-	 * @brief	Gets a first
+	 * @brief		Gets a first
 	 *
 	 * @param	buffer	The buffer.
 	 * @param	c	  	A T to process.
@@ -2431,7 +2431,7 @@ public:
 	 */
 	static typename BasicString<T>::Size getFirst( const T * buffer, const T & c );
 	/**
-	 * @brief	Gets a last
+	 * @brief		Gets a last
 	 *
 	 * @param	buffer	The buffer.
 	 * @param	c	  	A T to process.
@@ -2441,7 +2441,7 @@ public:
 	static typename BasicString<T>::Size getLast( const T * buffer, const T & c );
 
 	/**
-	 * @brief	Gets a first
+	 * @brief		Gets a first
 	 *
 	 * @param	buffer  	The buffer.
 	 * @param	toSearch	to search.
@@ -2450,7 +2450,7 @@ public:
 	 */
 	static typename BasicString<T>::Size getFirst( const T * buffer, const T * toSearch );
 	/**
-	 * @brief	Gets a last
+	 * @brief		Gets a last
 	 *
 	 * @param	buffer  	The buffer.
 	 * @param	toSearch	to search.
@@ -2466,7 +2466,7 @@ public:
 
 protected:
 	/**
-	 * @brief	Constructor
+	 * @brief		Constructor
 	 *
 	 * @param	parameter1	The first parameter.
 	 */
@@ -2475,7 +2475,7 @@ protected:
 	/************************************************************************/
 	/* concat() without adding sentinel                                     */
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	str	The string.
 	 *
@@ -2483,7 +2483,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const BasicString<T> & str );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -2494,7 +2494,7 @@ protected:
 	BasicString & _concatwhithout \0( const BasicString<C> & str );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	buffer	  	The buffer.
@@ -2506,7 +2506,7 @@ protected:
 	BasicString & _concatwhithout \0( const C * buffer, typename const BasicString<C>::Size & bufferSize );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	buffer	The buffer.
@@ -2517,7 +2517,7 @@ protected:
 	BasicString & _concatwhithout \0( const C * buffer );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
@@ -2528,7 +2528,7 @@ protected:
 	BasicString & _concatwhithout \0( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	b	True to b.
 	 *
@@ -2538,7 +2538,7 @@ protected:
 
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	c	A char to process.
 	 *
@@ -2546,7 +2546,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const char & c );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	c	A wchar_t to process.
 	 *
@@ -2555,7 +2555,7 @@ protected:
 	BasicString & _concatwhithout \0( const wchar_t & c );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	uc	The uc.
@@ -2566,7 +2566,7 @@ protected:
 	BasicString & _concatwhithout \0( const unsigned char & uc );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	us	The us.
@@ -2577,7 +2577,7 @@ protected:
 	BasicString & _concatwhithout \0( const unsigned short & us );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	i	Zero-based index of the.
@@ -2588,7 +2588,7 @@ protected:
 	BasicString & _concatwhithout \0( const int & i );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ui	The user interface.
@@ -2599,7 +2599,7 @@ protected:
 	BasicString & _concatwhithout \0( const unsigned int & ui );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	l	A long to process.
@@ -2610,7 +2610,7 @@ protected:
 	BasicString & _concatwhithout \0( const long & l );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ul	The ul.
@@ -2621,7 +2621,7 @@ protected:
 	BasicString & _concatwhithout \0( const unsigned long & ul );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ll	The ll.
@@ -2632,7 +2632,7 @@ protected:
 	BasicString & _concatwhithout \0( const long long & ll );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Base	Type of the base.
 	 * @param	ull	The ull.
@@ -2643,7 +2643,7 @@ protected:
 	BasicString & _concatwhithout \0( const unsigned long long & ull );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -2655,7 +2655,7 @@ protected:
 	BasicString & _concatwhithout \0( const double & d );
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
@@ -2668,7 +2668,7 @@ protected:
 
 
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	uc  	The uc.
 	 * @param	base	The base.
@@ -2677,7 +2677,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const unsigned char & uc, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	us  	The us.
 	 * @param	base	The base.
@@ -2686,7 +2686,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const unsigned short & us, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	i   	Zero-based index of the.
 	 * @param	base	The base.
@@ -2695,7 +2695,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const int & i, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	ui  	The user interface.
 	 * @param	base	The base.
@@ -2704,7 +2704,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const unsigned int & ui, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	l   	A long to process.
 	 * @param	base	The base.
@@ -2713,7 +2713,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const long & l, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	ul  	The ul.
 	 * @param	base	The base.
@@ -2722,7 +2722,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const unsigned long & ul, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	ll  	The ll.
 	 * @param	base	The base.
@@ -2731,7 +2731,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const long long & ll, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	ull 	The ull.
 	 * @param	base	The base.
@@ -2740,7 +2740,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const unsigned long long & ull, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	d		 	A double to process.
 	 * @param	precision	The precision.
@@ -2750,7 +2750,7 @@ protected:
 	 */
 	BasicString & _concatwhithout \0( const double & d, unsigned int precision, unsigned int base );
 	/**
-	 * @brief	Concatenate whithout \0
+	 * @brief		Concatenate whithout \0
 	 *
 	 * @param	f		 	A float to process.
 	 * @param	precision	The precision.
@@ -2765,7 +2765,7 @@ protected:
 private:
 
 	/**
-	 * @brief	Formats
+	 * @brief		Formats
 	 *
 	 * @tparam	T1   	Generic type parameter.
 	 * @tparam	Types	Type of the types.
@@ -2778,7 +2778,7 @@ private:
 	template<typename T1, typename... Types>
 	static void _format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... vars );
 	/**
-	 * @brief	Formats
+	 * @brief		Formats
 	 *
 	 * @param 		  	referenceStringBegin	The reference string begin.
 	 * @param 		  	referenceStringEnd  	The reference string end.
@@ -2787,7 +2787,7 @@ private:
 	static void _format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString );
 
 	/**
-	 * @brief	Concatenate integer
+	 * @brief		Concatenate integer
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -2799,7 +2799,7 @@ private:
 	BasicString & _concatInteger( const Type & i );
 
 	/**
-	 * @brief	Concatenate integer
+	 * @brief		Concatenate integer
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param	i   	Zero-based index of the.
@@ -2811,7 +2811,7 @@ private:
 	BasicString & _concatInteger( const Type & i, unsigned int base );
 
 	/**
-	 * @brief	Concatenate float
+	 * @brief		Concatenate float
 	 *
 	 * @tparam	Type	 	Type of the type.
 	 * @tparam	Precision	Type of the precision.
@@ -2824,7 +2824,7 @@ private:
 	BasicString & _concatFloat( const Type & f );
 
 	/**
-	 * @brief	Concatenate float
+	 * @brief		Concatenate float
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param	f		 	A Type to process.
@@ -2839,7 +2839,7 @@ private:
 
 
 	/**
-	 * @brief	Concatenate integer whithout \0
+	 * @brief		Concatenate integer whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -2851,7 +2851,7 @@ private:
 	BasicString & _concatIntegerwhithout \0( const Type & i );
 
 	/**
-	 * @brief	Concatenate integer whithout \0
+	 * @brief		Concatenate integer whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param	i   	Zero-based index of the.
@@ -2863,7 +2863,7 @@ private:
 	BasicString & _concatIntegerwhithout \0( const Type & i, unsigned int base );
 
 	/**
-	 * @brief	Concatenate float whithout \0
+	 * @brief		Concatenate float whithout \0
 	 *
 	 * @tparam	Type	 	Type of the type.
 	 * @tparam	Precision	Type of the precision.
@@ -2876,7 +2876,7 @@ private:
 	BasicString & _concatFloatwhithout \0( const Type & f );
 
 	/**
-	 * @brief	Concatenate float whithout \0
+	 * @brief		Concatenate float whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param	f		 	A Type to process.
@@ -2891,7 +2891,7 @@ private:
 
 
 	/**
-	 * @brief	Converts a buffer to a float
+	 * @brief		Converts a buffer to a float
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -2903,7 +2903,7 @@ private:
 	static Type _toFloat( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to a signed integer
+	 * @brief		Converts a buffer to a signed integer
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -2915,7 +2915,7 @@ private:
 	static Type _toSignedInteger( T * buffer );
 
 	/**
-	 * @brief	Converts a buffer to an unsigned integer
+	 * @brief		Converts a buffer to an unsigned integer
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -2928,7 +2928,7 @@ private:
 
 
 	/**
-	 * @brief	Converts this object to a float
+	 * @brief		Converts this object to a float
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -2940,7 +2940,7 @@ private:
 	static Type _toFloat( T * buffer, unsigned int base );
 
 	/**
-	 * @brief	Converts this object to a signed integer
+	 * @brief		Converts this object to a signed integer
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -2952,7 +2952,7 @@ private:
 	static Type _toSignedInteger( T * buffer, unsigned int base );
 
 	/**
-	 * @brief	Converts this object to an unsigned integer
+	 * @brief		Converts this object to an unsigned integer
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param [in,out]	buffer	If non-null, the buffer.
@@ -2966,7 +2966,7 @@ private:
 
 
 	/**
-	 * @brief	Convert i 2 string
+	 * @brief		Convert i 2 string
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -2979,7 +2979,7 @@ private:
 	static typename BasicString<T>::Size _convertI2String( Type number, T * buffer );
 
 	/**
-	 * @brief	Convert i 2 string
+	 * @brief		Convert i 2 string
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param 		  	number	Number of.
@@ -2992,7 +2992,7 @@ private:
 	static typename BasicString<T>::Size _convertI2String( Type number, T * buffer, unsigned int base );
 
 	/**
-	 * @brief	Convert user interface 2 string
+	 * @brief		Convert user interface 2 string
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -3005,7 +3005,7 @@ private:
 	static typename BasicString<T>::Size _convertUI2String( Type number, T * buffer );
 
 	/**
-	 * @brief	Convert user interface 2 string
+	 * @brief		Convert user interface 2 string
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param 		  	number	Number of.
@@ -3018,7 +3018,7 @@ private:
 	static typename BasicString<T>::Size _convertUI2String( Type number, T * buffer, unsigned int base );
 
 	/**
-	 * @brief	Convert float 2 string
+	 * @brief		Convert float 2 string
 	 *
 	 * @tparam	Type	 	Type of the type.
 	 * @tparam	Precision	Type of the precision.
@@ -3032,7 +3032,7 @@ private:
 	static typename BasicString<T>::Size _convertFloat2String( Type number, T * buffer );
 
 	/**
-	 * @brief	Convert float 2 string
+	 * @brief		Convert float 2 string
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param 		  	number   	Number of.
@@ -3049,7 +3049,7 @@ private:
 
 
 	/**
-	 * @brief	Convert i 2 string whithout \0
+	 * @brief		Convert i 2 string whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -3062,7 +3062,7 @@ private:
 	static typename BasicString<T>::Size _convertI2Stringwhithout \0( Type number, T * buffer );
 
 	/**
-	 * @brief	Convert i 2 string whithout \0
+	 * @brief		Convert i 2 string whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param 		  	number	Number of.
@@ -3075,7 +3075,7 @@ private:
 	static typename BasicString<T>::Size _convertI2Stringwhithout \0( Type number, T * buffer, unsigned int base );
 
 	/**
-	 * @brief	Convert user interface 2 string whithout \0
+	 * @brief		Convert user interface 2 string whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @tparam	Base	Type of the base.
@@ -3088,7 +3088,7 @@ private:
 	static typename BasicString<T>::Size _convertUI2Stringwhithout \0( Type number, T * buffer );
 
 	/**
-	 * @brief	Convert user interface 2 string whithout \0
+	 * @brief		Convert user interface 2 string whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param 		  	number	Number of.
@@ -3101,7 +3101,7 @@ private:
 	static typename BasicString<T>::Size _convertUI2Stringwhithout \0( Type number, T * buffer, unsigned int base );
 
 	/**
-	 * @brief	Convert float 2 string whithout \0
+	 * @brief		Convert float 2 string whithout \0
 	 *
 	 * @tparam	Type	 	Type of the type.
 	 * @tparam	Precision	Type of the precision.
@@ -3115,7 +3115,7 @@ private:
 	static typename BasicString<T>::Size _convertFloat2Stringwhithout \0( Type number, T * buffer );
 
 	/**
-	 * @brief	Convert float 2 string whithout \0
+	 * @brief		Convert float 2 string whithout \0
 	 *
 	 * @tparam	Type	Type of the type.
 	 * @param 		  	number   	Number of.
@@ -3199,7 +3199,7 @@ BasicString<T> & operator<<(BasicString<T> basicString, const T & c);
 /************************************************************************/
 /* OPERATOR +                                                           */
 /**
- * @brief	*********************************************************************
+ * @brief		*********************************************************************
  *
  * @param	str1	The first value.
  * @param	str2	A value to add to it.
@@ -3210,7 +3210,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str1, const BasicString<T> & str2 );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str1	The first value.
  * @param	str2	A value to add to it.
@@ -3221,7 +3221,7 @@ template<typename T, typename C>
 BasicString<T> operator+( const BasicString<T> & str1, const BasicString<C> & str2 );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	i  	A value to add to it.
@@ -3232,7 +3232,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const int & i );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	i  	The first value.
  * @param	str	A value to add to it.
@@ -3243,7 +3243,7 @@ template<typename T>
 BasicString<T> operator+( const int & i, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	ui 	A value to add to it.
@@ -3254,7 +3254,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const unsigned char & ui );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	ui 	The first value.
  * @param	str	A value to add to it.
@@ -3265,7 +3265,7 @@ template<typename T>
 BasicString<T> operator+( const unsigned char & ui, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	ui 	A value to add to it.
@@ -3276,7 +3276,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const unsigned short & ui );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	ui 	The first value.
  * @param	str	A value to add to it.
@@ -3287,7 +3287,7 @@ template<typename T>
 BasicString<T> operator+( const unsigned short & ui, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	ui 	A value to add to it.
@@ -3298,7 +3298,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const unsigned int & ui );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	ui 	The first value.
  * @param	str	A value to add to it.
@@ -3309,7 +3309,7 @@ template<typename T>
 BasicString<T> operator+( const unsigned int & ui, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	l  	A value to add to it.
@@ -3320,7 +3320,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const long & l );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	l  	The first value.
  * @param	str	A value to add to it.
@@ -3331,7 +3331,7 @@ template<typename T>
 BasicString<T> operator+( const long & l, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	ul 	A value to add to it.
@@ -3342,7 +3342,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const unsigned long & ul );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	ul 	The first value.
  * @param	str	A value to add to it.
@@ -3353,7 +3353,7 @@ template<typename T>
 BasicString<T> operator+( const unsigned long & ul, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	ll 	A value to add to it.
@@ -3364,7 +3364,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const long long & ll );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	ll 	The first value.
  * @param	str	A value to add to it.
@@ -3375,7 +3375,7 @@ template<typename T>
 BasicString<T> operator+( const long long & ll, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	ull	A value to add to it.
@@ -3386,7 +3386,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const unsigned long long & ull );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	ull	The first value.
  * @param	str	A value to add to it.
@@ -3397,7 +3397,7 @@ template<typename T>
 BasicString<T> operator+( const unsigned long long & ull, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	f  	A value to add to it.
@@ -3408,7 +3408,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const float & f );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	f  	The first value.
  * @param	str	A value to add to it.
@@ -3419,7 +3419,7 @@ template<typename T>
 BasicString<T> operator+( const float & f, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	b  	A value to add to it.
@@ -3430,7 +3430,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const bool & b );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	b  	The first value.
  * @param	str	A value to add to it.
@@ -3441,7 +3441,7 @@ template<typename T>
 BasicString<T> operator+( const bool & b, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	d  	A value to add to it.
@@ -3452,7 +3452,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const double & d );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	d  	The first value.
  * @param	str	A value to add to it.
@@ -3463,7 +3463,7 @@ template<typename T>
 BasicString<T> operator+( const double & d, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str	The first value.
  * @param	c  	A value to add to it.
@@ -3474,7 +3474,7 @@ template<typename T>
 BasicString<T> operator+( const BasicString<T> & str, const T & c );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	c  	The first value.
  * @param	str	A value to add to it.
@@ -3485,7 +3485,7 @@ template<typename T>
 BasicString<T> operator+( const T & c, const BasicString<T> & str );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str1	The first value.
  * @param	str2	A value to add to it.
@@ -3496,7 +3496,7 @@ template<typename T, typename C>
 BasicString<T> operator+( const BasicString<T> & str1, const C * str2 );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str1	The first value.
  * @param	str2	A value to add to it.
@@ -3508,7 +3508,7 @@ BasicString<T> operator+( const C * str1, const BasicString<T> & str2 );
 
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str1	The first value.
  * @param	str2	A value to add to it.
@@ -3519,7 +3519,7 @@ template<typename T, typename C>
 BasicString<T> operator+( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str1, const BasicString<T> & str2 );
 
 /**
- * @brief	Addition operator
+ * @brief		Addition operator
  *
  * @param	str1	The first value.
  * @param	str2	A value to add to it.
@@ -3530,41 +3530,24 @@ template<typename T, typename C>
 BasicString<T> operator+( const BasicString<T> & str1, const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str2 );
 
 
-
-
-
-///< .
 template<typename T>
 std::ostream & operator <<( std::ostream & stream, const BasicString<T> & str );
 
-
-
-
-
-
-
-
-
-
-/** @brief	Defines an alias representing the string a scii */
+/** @brief	Defines an alias representing an ASCII String */
 typedef BasicString<char> StringASCII;
-/** @brief	Defines an alias representing the string */
+/** @brief	Defines an alias representing an UTF16 String */
 typedef BasicString<wchar_t> WString;
-/** @brief	Defines an alias representing the UTF 32 string */
+/** @brief	Defines an alias representing an UTF32 String */
 typedef BasicString<unsigned int> UTF32String;
 
 #ifdef WIN32
-/** @brief	Defines an alias representing the string */
+/** @brief	If in Win32, Standard String will be UTF16 */
 typedef WString String;
 #else
-/** @brief	Defines an alias representing the string */
+/** @brief	If not in Win32, Standard String will be ASCII */
 typedef StringASCII String;
 #endif
 
 
 
 #include "String.hpp"
-
-
-
-

@@ -1,30 +1,28 @@
+/**
+ * @file		Log.h.
+ *
+ * @brief 	Logging functions.
+ * @author	Clément Gerber
+ * @date		20/05/15 (DMY)
+ */
 #pragma once
 
 
-///
-/// @file	Log.h
-/// @brief	Logging functions.
-/// @author	Clément Gerber
-/// @date	20/05/15
-/// @version	1.0
-///
-///
 
-///@function debug
-///@brief macro function to write something that will only exists in the DEBUG build.
+ ///@fn debug
+ ///@brief macro function to write something that will only exists in the DEBUG build.
 
-///@function error
-///@brief macro function that will write an error message to the debug output only in the DEBUG build.
+ ///@fn error
+ ///@brief macro function that will write an error message to the debug output only in the DEBUG build.
 
-///@function log
-///@brief macro function that will write an log message to the debug output only in the DEBUG build. The default error handler will only output the log message if the LOG_SEVERITY <= 1
+ ///@fn log
+ ///@brief macro function that will write an log message to the debug output only in the DEBUG build. The default error handler will only output the log message if the LOG_SEVERITY <= 1
 
-///@function warn
-///@brief macro function that will write an warning message to the debug output only in the DEBUG build. The default error handler will only output the warning message if the LOG_SEVERITY <= 2
+ ///@fn warn
+ ///@brief macro function that will write an warning message to the debug output only in the DEBUG build. The default error handler will only output the warning message if the LOG_SEVERITY <= 2
 
-///@function assert
-///@brief macro function that will test the inputed condition and write and error if not true. Works only in DEBUG build. The default error handler will only output the error message if the LOG_SEVERITY <= 3
-
+ ///@fn assert
+ ///@brief macro function that will test the inputed condition and write and error if not true. Works only in DEBUG build. The default error handler will only output the error message if the LOG_SEVERITY <= 3
 
 #include <ctime>
 #include <chrono>
@@ -35,12 +33,8 @@
 #include "BuildConfig.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
-	#include <Windows.h>
+#include <Windows.h>
 #endif
-
-
-
- 
 
 #if defined DEBUG
 #undef debug
@@ -73,46 +67,55 @@
 
 #endif
 
-
-
 #include "SimpleLog.h"
 #include "String.h"
 
-
-
 class Log : public SimpleLog {
 public:
+	/** @brief	Default constructor */
 	Log( void );
+
+	/** @brief	Destructor */
 	~Log( void );
 
-
-	///@brief Display a log message even if we are in debug build or not.
-	///@param text Text to display
+	/**
+	 * @brief 	Display a log message even if we are in debug build or not.
+	 * @param 	text	Text to display.
+	 */
 	static void displayLog( const String & text );
 
-	///@brief Display a warning message even if we are in debug build or not.
-	///@param text Text to display
+	/**
+	 * @brief 	Display a warning message even if we are in debug build or not.
+	 * @param 	text	Text to display.
+	 */
 	static void displayWarning( const String & text );
 
-
-	///@brief Display a error message even if we are in debug build or not.
-	///@param text Text to display
+	/**
+	 * @brief 	Display a error message even if we are in debug build or not.
+	 * @param 	text	Text to display.
+	 */
 	static void displayError( const String & text );
 
-	///@brief Start the chrono, see stopChrono();
+	/** @brief	Start the chrono, see stopChrono(); */
 	static void startChrono();
 
-	///@brief stop chrono, see displayChrono();
+	/** @brief	stop chrono, see displayChrono(); */
 	static void stopChrono();
 
-	///@brief Display the last chrono result computed with startChrono() and displayChrono();
-	///@param text Text to display with the time result.
+	/**
+	 * @brief 	Display the last chrono result computed with startChrono() and displayChrono();
+	 * @param 	text	(Optional) Text to display with the time result.
+	 */
 	static void displayChrono( const String & text = "Elapsed Time" );
 
-
-
-
-
+	/**
+	 * @brief 	Handler, called when the error
+	 *
+	 * @param 	parameter1	String to be displayed.
+	 * @param 	severity  	(Optional) The severity.
+	 * @param 	fileName  	(Optional) Filename of the file.
+	 * @param 	lineNumber	(Optional) The line number.
+	 */
 	static void errorHandler(
 		const String &,
 		MessageSeverity severity = MessageSeverity::Error,
