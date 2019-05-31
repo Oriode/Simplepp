@@ -1423,11 +1423,12 @@ bool RBTree<I, T, Compare>::iterate( typename RBTree<I, T, Compare>::Iterator * 
 }
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::iterateGreater( typename RBTree<I, T, Compare>::Iterator * it ) const {
+bool RBTree<I, T, Compare>::iterateAscending( typename RBTree<I, T, Compare>::Iterator * it ) const {
 	auto node( ( *it ) );
 
 	// While there is still data bigger, go to it.
 	if (node->getRight()) {
+		node = node->getRight();
 		while (node->getLeft()) {
 			node = node->getLeft();
 		}
@@ -1437,33 +1438,30 @@ bool RBTree<I, T, Compare>::iterateGreater( typename RBTree<I, T, Compare>::Iter
 	}
 	else {
 		// Ok, no more greater at this stage, let's go back.
-		while (true) {
-			if (node->getParent()) {
-				// Check if the current node come from left or right.
-				if (node == node->getParent()->getLeft()) {
-					// We came from left. This mean the parent this greater, fine !
-					(*it) = node;
-					return true;
-				}
-				else {
-					// We came from right. This mean the parent is smaller, go back one more time.
-					node = node->getParent();
-				}
-				
+		while (node->getParent()) {
+			// Check if the current node come from left or right.
+			if (node == node->getParent()->getLeft()) {
+				// We came from left. This mean the parent this greater, fine !
+				(*it) = node->getParent();
+				return true;
 			}
 			else {
-				// No parent, look's like we finished here.
-				(*it) = NULL;
-				return false;
+				// We came from right. This mean the parent is smaller, go back one more time.
+				node = node->getParent();
 			}
+
 		}
+
+		// No parent, look's like we finished here.
+		(*it) = NULL;
+		return false;
 	}
 	// Should never access here.
 	return false;
 }
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::iterateGreater(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v) const {
+bool RBTree<I, T, Compare>::iterateAscending(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v) const {
 	auto node((*it));
 	if (node == NULL)
 		return false;
@@ -1471,13 +1469,13 @@ bool RBTree<I, T, Compare>::iterateGreater(typename RBTree<I, T, Compare>::Itera
 	(*i) = &(node->getValue()->getIndex());
 	(*v) = &(node->getValue()->getValue());
 
-	iterateGreater(it);
+	iterateAscending(it);
 	return true;
 }
 
 template<typename I, typename T, typename Compare>
 template<typename TestFunctor>
-bool RBTree<I, T, Compare>::iterateGreater(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v, TestFunctor& testFunctor) const {
+bool RBTree<I, T, Compare>::iterateAscending(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v, TestFunctor& testFunctor) const {
 	auto node((*it));
 	if (node == NULL)
 		return false;
@@ -1486,7 +1484,7 @@ bool RBTree<I, T, Compare>::iterateGreater(typename RBTree<I, T, Compare>::Itera
 	(*v) = &(node->getValue()->getValue());
 
 	if (testFunctor((*v))) {
-		iterateGreater(it);
+		iterateAscending(it);
 		return true;
 	}
 	else {

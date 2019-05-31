@@ -485,6 +485,13 @@ public:
 	/** @brief	Defines an alias representing the iterator */
 	typedef RBNode< MapObject<I, T> > * Iterator;
 
+	/** Type of the Index */
+	typedef I Index;
+
+	/** Type of the Value */
+	typedef T Value;
+
+
 	/**
 	 * @brief 	Empty Constructor
 	 *
@@ -584,7 +591,7 @@ public:
 	 *
 	 * @returns True if the iterator is still valid, False otherwise.
 	 */
-	bool iterateGreater(typename RBTree<I, T, Compare>::Iterator* it) const;
+	bool iterateAscending(typename RBTree<I, T, Compare>::Iterator* it) const;
 
 	/**
 	 * @brief 	Iterate ONE time in Ascending direction and set the pointer to the pointer of the data retrieved
@@ -597,7 +604,7 @@ public:
 	 *
 	 * @returns True if the iterator is still valid, False otherwise.
 	 */
-	bool iterateGreater(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v) const;
+	bool iterateAscending(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v) const;
 
 	/**
 	 * @brief 	Iterate ONE time in Ascending direction and set the pointer to the pointer of the data retrieved
@@ -614,7 +621,7 @@ public:
 	 * @returns True if the iterator is still valid, False otherwise.
 	 */
 	template<typename TestFunctor>
-	bool iterateGreater(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v, TestFunctor& testFunctor) const;
+	bool iterateAscending(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v, TestFunctor& testFunctor) const;
 	
 
 

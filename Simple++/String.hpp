@@ -1,3 +1,4 @@
+#include "String.h"
 
 
 
@@ -42,7 +43,7 @@ const BasicString<T> BasicString<T>::null = BasicString<T>( "" );
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const C * str ) :
-	Vector( ctor::null ) {
+	Vector<T>( ctor::null ) {
 	this -> size = BasicString<C>::getSize( str );
 	this -> maxSize = this -> size + 1;
 	this -> dataTable = new T[this -> maxSize];
@@ -55,27 +56,27 @@ BasicString<T>::BasicString( const C * str ) :
 template<typename T>
 template<typename C, size_t N>
 BasicString<T>::BasicString(const C(&s)[N]) :
-Vector(ctor::null)
+Vector<T>(ctor::null)
 {
 	this -> size = N - 1;
 	this -> maxSize = N;
 	this -> dataTable = new T[N];
-	Vector::copy(this -> dataTable, s, N);
+	Vector<T>::copy(this -> dataTable, s, N);
 	_updateIterators();
 }*/
 
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( const C * str, Size size ) :
-	Vector( str, size, size + 1 ) {
+BasicString<T>::BasicString( const C * str, typename const Vector<T>::Size & size ) :
+	Vector<T>( str, size, size + 1 ) {
 	this -> dataTable[size] = T( '\0' );
 }
 
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt ) :
-	Vector( beginIt, Size(endIt - beginIt), Size(endIt - beginIt + 1) ) {
+	Vector<T>( beginIt, typename BasicString<T>::Size(endIt - beginIt), typename BasicString<T>::Size(endIt - beginIt + 1) ) {
 	this -> dataTable[size] = T( '\0' );
 }
 
@@ -83,14 +84,14 @@ BasicString<T>::BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterat
 
 template<typename T>
 BasicString<T>::BasicString() :
-	Vector( Size( 0 ), Size( 1 ) ) {
+	Vector<T>( typename BasicString<T>::Size( 0 ), typename BasicString<T>::Size( 1 ) ) {
 	this -> dataTable[0] = T( '\0' );
 }
 
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned char & ui ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 5;
 	this -> dataTable = new T[5];
 	this -> size = toCString( ui, this -> dataTable );
@@ -100,7 +101,7 @@ BasicString<T>::BasicString( const unsigned char & ui ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned short & ui ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 7;
 	this -> dataTable = new T[7];
 	this -> size = toCString( ui, this -> dataTable );
@@ -110,7 +111,7 @@ BasicString<T>::BasicString( const unsigned short & ui ) :
 
 template<typename T>
 BasicString<T>::BasicString( const int & i ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 12;
 	this -> dataTable = new T[12];
 	this -> size = toCString( i, this -> dataTable );
@@ -119,7 +120,7 @@ BasicString<T>::BasicString( const int & i ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned int & ui ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 11;
 	this -> dataTable = new T[11];
 	this -> size = toCString( ui, this -> dataTable );
@@ -128,7 +129,7 @@ BasicString<T>::BasicString( const unsigned int & ui ) :
 
 template<typename T>
 BasicString<T>::BasicString( const long & l ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( l, this -> dataTable );
@@ -137,7 +138,7 @@ BasicString<T>::BasicString( const long & l ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned long & ul ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( ul, this -> dataTable );
@@ -146,7 +147,7 @@ BasicString<T>::BasicString( const unsigned long & ul ) :
 
 template<typename T>
 BasicString<T>::BasicString( const long long & ll ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( ll, this -> dataTable );
@@ -155,7 +156,7 @@ BasicString<T>::BasicString( const long long & ll ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned long long & ull ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( ull, this -> dataTable );
@@ -164,7 +165,7 @@ BasicString<T>::BasicString( const unsigned long long & ull ) :
 
 template<typename T>
 BasicString<T>::BasicString( const double & d ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 50;
 	this -> dataTable = new T[50];
 	this -> size = toCString( d, this -> dataTable );
@@ -173,28 +174,25 @@ BasicString<T>::BasicString( const double & d ) :
 
 template<typename T>
 BasicString<T>::BasicString( const float & f ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 30;
 	this -> dataTable = new T[30];
 	this -> size = toCString( f, this -> dataTable );
 	_updateIterators();
 }
 
-
-
 template<typename T>
 BasicString<T>::BasicString( const bool & b ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector<T>::null ) {
 	this -> maxSize = 6;
 	this -> dataTable = new T[6];
 	this -> size = toCString( b, this -> dataTable );
 	_updateIterators();
 }
 
-
 template<typename T>
 BasicString<T>::BasicString( const T & c ) :
-	Vector( 1, 2 ) {
+	Vector<T>( 1, 2 ) {
 	this -> dataTable[0] = T( c );
 	this -> dataTable[1] = T( '\0' );
 }
@@ -204,34 +202,44 @@ BasicString<T>::BasicString( const T & c ) :
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) :
-	Vector( str.data(), str.size(), str.size() + 1 ) {
+	Vector<T>( str.data(), str.size(), str.size() + 1 ) {
 	this -> dataTable[size] = T( '\0' );
 }
 
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const BasicString<C> & str ) :
-	Vector( str.getSize(), str.getSize() + 1 ) {
+	Vector<T>( str.getSize(), str.getSize() + 1 ) {
 	Vector<T>::copy( this -> dataTable, str.getData(), getMaxSize() );
 }
 
 template<typename T>
 BasicString<T>::BasicString( const BasicString<T> & str ) :
-	Vector( str.getSize(), str.getSize() + 1 ) {
+	Vector<T>( str.getSize(), str.getSize() + 1 ) {
 	Vector<T>::copy( this -> dataTable, str.dataTable, getMaxSize() );
 }
 
-
-
 template<typename T>
 BasicString<T>::BasicString( BasicString<T> && str ) :
-	Vector( Utility::toRValue( str ) ) {
+	Vector<T>( Utility::toRValue( str ) ) {
 
 }
 
+template<typename T>
+BasicString<T>::BasicString( ctor ) : Vector<T>( ctor::null ) {
+
+}
 
 template<typename T>
-BasicString<T>::BasicString( ctor ) : Vector( ctor::null ) {
+inline BasicString<T>::BasicString(const typename Math::Compare::Value& compareValue) : 
+	Vector<T>(Vector<T>::null) {
+	this->maxSize = 8;
+	this->dataTable = new T[8];
+	this->size = toCString(compareValue, this->dataTable);
+	_updateIterators();
+
+
+
 
 }
 
@@ -1094,7 +1102,7 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type numb
 		buffer[0] = T( 'I' );
 		buffer[1] = T( 'N' );
 		buffer[2] = T( 'F' );
-		return Size( 3 );
+		return typename BasicString<T>::Size( 3 );
 	}
 
 
@@ -1311,7 +1319,7 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number,
 		buffer[0] = T( 'I' );
 		buffer[1] = T( 'N' );
 		buffer[2] = T( 'F' );
-		return Size( 3 );
+		return typename BasicString<T>::Size( 3 );
 	}
 
 
@@ -1422,21 +1430,21 @@ template<typename C>
 typename BasicString<T>::Size BasicString<T>::toCString( const C & c, T * buffer ) {
 	buffer[0] = c;
 	buffer[1] = T( '\0' );
-	return Size( 1 );
+	return typename BasicString<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( const char & c, T * buffer ) {
 	buffer[0] = c;
 	buffer[1] = T( '\0' );
-	return Size( 1 );
+	return typename BasicString<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( const wchar_t & c, T * buffer ) {
 	buffer[0] = c;
 	buffer[1] = T( '\0' );
-	return Size( 1 );
+	return typename BasicString<T>::Size( 1 );
 }
 
 template<typename T>
@@ -1547,32 +1555,46 @@ typename BasicString<T>::Size BasicString<T>::toCString( long number, T * buffer
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( double number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2String<double, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2String<double>( number, buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( float number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2String<float, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2String<float>( number, buffer, precision, base );
 }
-
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( bool b, T * buffer ) {
 	if ( b ) {
-		buffer[0] = T( 't' );
-		buffer[1] = T( 'r' );
-		buffer[2] = T( 'u' );
-		buffer[3] = T( 'e' );
-		buffer[4] = T( '\0' );
-		return Size( 4 );
+		static const T staticValues[] = { T('T'), T('R'), T('U'), T('E'), T('\0') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size( (sizeof(staticValues) / sizeof(T)) - 1 );
 	} else {
-		buffer[0] = T( 'f' );
-		buffer[1] = T( 'a' );
-		buffer[2] = T( 'l' );
-		buffer[3] = T( 's' );
-		buffer[4] = T( 'e' );
-		buffer[5] = T( '\0' );
-		return Size( 5 );
+		static const T staticValues[] = { T('F'), T('A'), T('L'), T('S'), T('E'), T('\0') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)) - 1);
+	}
+}
+
+template<typename T>
+inline typename BasicString<T>::Size BasicString<T>::toCString(const typename Math::Compare::Value& compareValue, T* buffer)
+{
+	switch (compareValue) {
+	case Math::Compare::Value::Equal: {
+		static const T staticValues[] = { T('E'), T('Q'), T('U'), T('A'), T('L'), T('\0') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)) - 1);
+	}
+	case Math::Compare::Value::Greater: {
+		static const T staticValues[] = { T('G'), T('R'), T('E'), T('A'), T('T'), T('E'), T('R'), T('\0') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)) - 1);
+	}
+	case Math::Compare::Value::Less: {
+		static const T staticValues[] = { T('L'), T('E'), T('S'), T('S'), T('\0') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)) - 1);
+	}
 	}
 }
 
@@ -1587,19 +1609,19 @@ template<typename T>
 template<typename C>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( const C & c, T * buffer ) {
 	buffer[0] = c;
-	return Size( 1 );
+	return typename BasicString<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( const char & c, T * buffer ) {
 	buffer[0] = c;
-	return Size( 1 );
+	return typename BasicString<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( const wchar_t & c, T * buffer ) {
 	buffer[0] = c;
-	return Size( 1 );
+	return typename BasicString<T>::Size( 1 );
 }
 
 template<typename T>
@@ -1710,30 +1732,47 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( long number, T * buf
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( double number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2StringWOS<double, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2StringWOS<double>( number, buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( float number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2StringWOS<float, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2StringWOS<float>( number, buffer, precision, base );
 }
-
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( bool b, T * buffer ) {
-	if ( b ) {
-		buffer[0] = T( 't' );
-		buffer[1] = T( 'r' );
-		buffer[2] = T( 'u' );
-		buffer[3] = T( 'e' );
-		return Size( 4 );
-	} else {
-		buffer[0] = T( 'f' );
-		buffer[1] = T( 'a' );
-		buffer[2] = T( 'l' );
-		buffer[3] = T( 's' );
-		buffer[4] = T( 'e' );
-		return Size( 5 );
+	if (b) {
+		static const T staticValues[] = { T('T'), T('R'), T('U'), T('E') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)));
+	}
+	else {
+		static const T staticValues[] = { T('F'), T('A'), T('L'), T('S'), T('E') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)));
+	}
+}
+
+template<typename T>
+inline typename BasicString<T>::Size BasicString<T>::toCStringWOS(const typename Math::Compare::Value& compareValue, T* buffer)
+{
+	switch (compareValue) {
+	case Math::Compare::Value::Equal: {
+		static const T staticValues[] = { T('E'), T('Q'), T('U'), T('A'), T('L') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)));
+	}
+	case Math::Compare::Value::Greater: {
+		static const T staticValues[] = { T('G'), T('R'), T('E'), T('A'), T('T'), T('E'), T('R') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)));
+	}
+	case Math::Compare::Value::Less: {
+		static const T staticValues[] = { T('L'), T('E'), T('S'), T('S') };
+		Vector<T>::copy(buffer, staticValues, (sizeof(staticValues) / sizeof(T)));
+		return typename BasicString<T>::Size((sizeof(staticValues) / sizeof(T)));
+	}
 	}
 }
 
@@ -2369,7 +2408,7 @@ BasicString<T> BasicString<T>::toString( unsigned int number, unsigned int base 
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2396,7 +2435,7 @@ BasicString<T> BasicString<T>::toString( long long number, unsigned int base ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2414,7 +2453,7 @@ BasicString<T> BasicString<T>::toString( long number, unsigned int base ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2423,7 +2462,7 @@ BasicString<T> BasicString<T>::toString( double number, unsigned int precision, 
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( double ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2432,7 +2471,7 @@ BasicString<T> BasicString<T>::toString( float number, unsigned int precision, u
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
@@ -2441,7 +2480,7 @@ template<typename T>
 BasicString<T> BasicString<T>::toString( bool b ) {
 	BasicString<T> newStr( ctor::null );
 	newStr._allocateNoNullDelete( 6 );
-	newStr.size = toCString( b );
+	newStr.size = toCString( b, newStr.dataTable );
 	newStr._updateIterators();
 	return newStr;
 }
@@ -2626,7 +2665,7 @@ BasicString<T> & BasicString<T>::operator=( const bool & b ) {
 /************************************************************************/
 template<typename T>
 bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename BasicString<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2639,7 +2678,7 @@ bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename BasicString<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2652,7 +2691,7 @@ bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator<( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename BasicString<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2665,7 +2704,7 @@ bool BasicString<T>::operator<( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator>( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename BasicString<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2678,43 +2717,43 @@ bool BasicString<T>::operator>( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator==( const BasicString<T> & text ) const {
-	return Vector::operator==( text );
+	return Vector<T>::operator==( text );
 }
 
 template<typename T>
 bool BasicString<T>::operator!=( const BasicString<T> & text ) const {
-	return Vector::operator!=( text );
+	return Vector<T>::operator!=( text );
 }
 
 
 
 template<typename T>
 bool BasicString<T>::operator==( const T & c ) const {
-	return Vector::operator==( c );
+	return Vector<T>::operator==( c );
 }
 
 template<typename T>
 bool BasicString<T>::operator!=( const T & c ) const {
-	return Vector::operator!=( c );
+	return Vector<T>::operator!=( c );
 }
 
 
 template<typename T>
 bool BasicString<T>::operator<( const T & c ) const {
-	return Vector::operator<( c );
+	return Vector<T>::operator<( c );
 }
 template<typename T>
 bool BasicString<T>::operator>( const T & c ) const {
-	return Vector::operator>( c );
+	return Vector<T>::operator>( c );
 }
 
 template<typename T>
 bool BasicString<T>::operator<=( const T & c ) const {
-	return Vector::operator<=( c );
+	return Vector<T>::operator<=( c );
 }
 template<typename T>
 bool BasicString<T>::operator>=( const T & c ) const {
-	return Vector::operator>=( c );
+	return Vector<T>::operator>=( c );
 }
 
 
@@ -2739,7 +2778,7 @@ typename BasicString<T>::Iterator BasicString<T>::getLastIt( const BasicString<T
 
 	auto iteratorSize( getEnd() - str.getSize() + 1 );
 	for ( auto it( iteratorSize - 1 ); it >= getBegin();) {
-		for ( Size j = 0; j < str.getSize(); j++ ) {
+		for ( typename BasicString<T>::Size j = 0; j < str.getSize(); j++ ) {
 			if ( *( it + j ) != str[j] ) {
 				goto getLastItENDLOOP;
 			}
@@ -2757,7 +2796,7 @@ typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const BasicString<
 
 	auto iteratorSize = getEnd() - str.getSize() + 1;
 	for ( auto it = getBegin(); it < iteratorSize;) {
-		for ( Size j = 0; j < str.getSize(); j++ ) {
+		for ( typename BasicString<T>::Size j = 0; j < str.getSize(); j++ ) {
 			if ( *( it + j ) != str[j] ) {
 				goto getFirstItENDLOOP;
 			}
@@ -2811,13 +2850,13 @@ typename BasicString<T>::Size BasicString<T>::getFirst( const T & c ) const {
 
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
+typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer,const typename BasicString<T>::Size & bufferSize, const T * toSearch, const typename BasicString<T>::Size & toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
 	Size iteratorSize = bufferSize - toSearchSize;
-	for ( Size i = iteratorSize; i >= 0;) {
-		for ( Size j = 0; j < toSearchSize; j++ ) {
+	for ( typename BasicString<T>::Size i = iteratorSize; i >= 0;) {
+		for ( typename BasicString<T>::Size j = 0; j < toSearchSize; j++ ) {
 			if ( buffer[i + j] != toSearch[j] ) {
 				goto ENDLOOP;
 			}
@@ -2830,13 +2869,13 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
+typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const typename BasicString<T>::Size& bufferSize, const T * toSearch, const typename BasicString<T>::Size& toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
 	Size iteratorSize = bufferSize - toSearchSize + 1;
-	for ( Size i = 0; i < iteratorSize;) {
-		for ( Size j = 0; j < toSearchSize; j++ ) {
+	for ( typename BasicString<T>::Size i = 0; i < iteratorSize;) {
+		for ( typename BasicString<T>::Size j = 0; j < toSearchSize; j++ ) {
 			if ( buffer[i + j] != toSearch[j] ) {
 				goto ENDLOOP;
 			}
@@ -2849,8 +2888,8 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T & c ) {
-	for ( Size i = bufferSize - 1; i >= 0; i-- ) {
+typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const typename BasicString<T>::Size & bufferSize, const T & c ) {
+	for ( typename BasicString<T>::Size i = bufferSize - 1; i >= 0; i-- ) {
 		if ( buffer[i] == c ) {
 			return i;
 		}
@@ -2859,8 +2898,8 @@ typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bu
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T & c ) {
-	for ( Size i = 0; i < bufferSize; i++ ) {
+typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const typename BasicString<T>::Size& bufferSize, const T & c ) {
+	for ( typename BasicString<T>::Size i = 0; i < bufferSize; i++ ) {
 		if ( buffer[i] == c ) {
 			return i;
 		}
@@ -2876,16 +2915,11 @@ typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const T
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const T * toSearch ) {
-	if ( !toSearchSize || bufferSize < toSearchSize )
-		goto NOTFOUND;
+	T c(buffer[0]);
+	for ( typename BasicString<T>::Size i = 0; c != T( '\0' );) {
 
-
-	Size iteratorSize = bufferSize - toSearchSize + 1;
-	const T & c = buffer[0];
-	for ( Size i = 0; c != T( '\0' );) {
-
-		const T & d = toSearch[0];
-		for ( Size j = 0; d != T( '\0' ); j++, d = toSearch[j] ) {
+		T d(toSearch[0]);
+		for ( typename BasicString<T>::Size j = 0; d != T( '\0' ); j++, d = toSearch[j] ) {
 			if ( buffer[i + j] != d ) {
 				goto ENDLOOP;
 			}
@@ -2906,8 +2940,8 @@ typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const T
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const T & c ) {
-	const T & d = buffer[0];
-	for ( Size i = 0; d != T( '\0' ); i++, d = buffer[i] ) {
+	T d(buffer[0]);
+	for ( typename BasicString<T>::Size i = 0; d != T( '\0' ); i++, d = buffer[i] ) {
 		if ( d == c )
 			return i;
 	}
@@ -2949,8 +2983,8 @@ Vector<BasicString<T>> BasicString<T>::split( const BasicString<T> & s, const T 
 
 template<typename T>
 bool BasicString<T>::isNumeric( const BasicString<T> & v ) {
-	for ( Size i = 0; i < this -> size; i++ ) {
-		const T & c = this -> dataTable[i];
+	for (typename BasicString<T>::Size i = 0; i < v.getSize(); i++) {
+		const T & c(v[0]);
 		if ( c < 40 || c > 57 )
 			return false;
 	}
@@ -2971,16 +3005,19 @@ const T * BasicString<T>::toCString() const {
 
 
 template<typename T>
-BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const {
+BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator beginIt, const typename BasicString<T>::Size& size ) const {
+	BasicString<T>::Size newSize;
 	if ( beginIt >= getEnd() )
 		return BasicString<T>();
 
 	if ( beginIt < getBegin() )
 		beginIt = getBegin();
-	if ( size > getEnd() - beginIt )
-		size = getEnd() - beginIt;
+	if (size > getEnd() - beginIt)
+		newSize = getEnd() - beginIt;
+	else
+		newSize = size;
 
-	return BasicString<T>( beginIt, size );
+	return BasicString<T>( beginIt, newSize);
 }
 
 template<typename T>
@@ -2994,19 +3031,22 @@ BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator begi
 	if ( endIt > getEnd() )
 		endIt = getEnd();
 
-	return BasicString<T>( beginIt, Size(endIt - beginIt) );
+	return BasicString<T>( beginIt, typename BasicString<T>::Size(endIt - beginIt) );
 }
 
 
 template<typename T>
-BasicString<T> BasicString<T>::getSubStr( Size index, Size size ) const {
+BasicString<T> BasicString<T>::getSubStr(const typename BasicString<T>::Size& index, const typename BasicString<T>::Size& size ) const {
+	typename BasicString<T>::Size newSize;
 	if ( index > this -> size )
 		return BasicString<T>();
 
-	if ( size > this -> size - index )
-		size = this -> size - index;
+	if (size > this->size - index)
+		newSize = this->size - index;
+	else
+		newSize = size;
 
-	return BasicString<T>( this -> dataTable + index, size );
+	return BasicString<T>( this -> dataTable + index, newSize);
 }
 
 template<typename T>
@@ -3433,7 +3473,7 @@ BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, con
 
 template<typename T>
 Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const BasicString<T> & y ) {
-	for ( Size i( 0 ); i < x.getSize(); i++ ) {
+	for ( typename BasicString<T>::Size i( 0 ); i < x.getSize(); i++ ) {
 		const T & t1 = x[i];
 		const T & t2 = y[i];
 
