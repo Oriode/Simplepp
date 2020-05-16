@@ -50,7 +50,7 @@ public:
 	 * @param	size	The size.
 	 */
 	template<typename C>
-	BasicString( const C * str, typename Vector<T>::Size size );
+	BasicString( const C * str, typename BasicString<T>::Size size );
 	/**
 	 * @brief		Constructor
 	 *
@@ -2178,7 +2178,7 @@ public:
 	 *
 	 * @param	newSize	New size of this string.
 	 */
-	void resize( typename Vector<T>::Size newSize );
+	void resize( typename BasicString<T>::Size newSize );
 
 	/** @brief	. */
 	using Vector<T>::getSize;
@@ -2189,7 +2189,7 @@ public:
 	 *
 	 * @returns	The size.
 	 */
-	static typename Vector<T>::Size getSize( const T * str );
+	static typename BasicString<T>::Size getSize( const T * str );
 
 	/**
 	 * @brief		Converts this object to a c string
@@ -2311,7 +2311,7 @@ public:
 	 *
 	 * @returns	The sub string.
 	 */
-	BasicString<T> getSubStr( typename Vector<T>::Size index, typename Vector<T>::Size size ) const;
+	BasicString<T> getSubStr( typename BasicString<T>::Size index, typename BasicString<T>::Size size ) const;
 	/**
 	 * @brief		Gets sub string
 	 *
@@ -2320,7 +2320,7 @@ public:
 	 *
 	 * @returns	The sub string.
 	 */
-	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename Vector<T>::Size size ) const;
+	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename BasicString<T>::Size size ) const;
 	/**
 	 * @brief		Gets sub string
 	 *
@@ -2369,7 +2369,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream, typename Vector<T>::Size size );
+	bool read( std::fstream * fileStream, typename BasicString<T>::Size size );
 
 	/************************************************************************/
 	/* Some static methods                                                  */
@@ -2415,7 +2415,7 @@ public:
 	 *
 	 * @returns	The first.
 	 */
-	static typename BasicString<T>::Size getFirst( const T * buffer, typename Vector<T>::Size bufferSize, const T & c );
+	static typename BasicString<T>::Size getFirst( const T * buffer, typename BasicString<T>::Size bufferSize, const T & c );
 	/**
 	 * @brief		Gets a last
 	 *
@@ -2425,7 +2425,7 @@ public:
 	 *
 	 * @returns	The last.
 	 */
-	static typename BasicString<T>::Size getLast( const T * buffer, typename Vector<T>::Size bufferSize, const T & c );
+	static typename BasicString<T>::Size getLast( const T * buffer, typename BasicString<T>::Size bufferSize, const T & c );
 
 	/**
 	 * @brief		Gets a first
@@ -2437,7 +2437,7 @@ public:
 	 *
 	 * @returns	The first.
 	 */
-	static typename BasicString<T>::Size getFirst( const T * buffer, typename Vector<T>::Size bufferSize, const T * toSearch, typename Vector<T>::Size toSearchSize );
+	static typename BasicString<T>::Size getFirst( const T * buffer, typename BasicString<T>::Size bufferSize, const T * toSearch, typename BasicString<T>::Size toSearchSize );
 	/**
 	 * @brief		Gets a last
 	 *
@@ -2448,7 +2448,7 @@ public:
 	 *
 	 * @returns	The last.
 	 */
-	static typename BasicString<T>::Size getLast( const T * buffer, typename Vector<T>::Size bufferSize, const T * toSearch, typename Vector<T>::Size toSearchSize );
+	static typename BasicString<T>::Size getLast( const T * buffer, typename BasicString<T>::Size bufferSize, const T * toSearch, typename BasicString<T>::Size toSearchSize );
 
 	/**
 	 * @brief		Gets a first
