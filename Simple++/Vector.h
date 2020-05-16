@@ -47,13 +47,13 @@ public:
 	 * @param 	size   	The size.
 	 * @param 	maxSize	The maximum size of the.
 	 */
-	Vector( const typename Vector<T>::Size & size, const typename Vector<T>::Size & maxSize );
+	Vector( const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize );
 	/**
 	 * @brief 	Constructor
 	 *
 	 * @param 	maxSize	The maximum size of the.
 	 */
-	Vector( const typename Vector<T>::Size & maxSize );
+	Vector( const typename Vector<T>::Size maxSize );
 
 	/**
 	 * @brief 	Copy constructor
@@ -97,7 +97,7 @@ public:
 	 * @param 	maxSize	The maximum size of the.
 	 */
 	template<typename C>
-	Vector( const C * data, const typename Vector<T>::Size & maxSize );
+	Vector( const C * data, const typename Vector<T>::Size maxSize );
 
 	/**
 	 * @brief 	Constructor
@@ -108,7 +108,7 @@ public:
 	 * @param 	maxSize	The maximum size of the.
 	 */
 	template<typename C>
-	Vector( const C * data, const typename Vector<T>::Size & size, const typename Vector<T>::Size & maxSize );
+	Vector( const C * data, const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize );
 
 
 	/**
@@ -131,21 +131,21 @@ public:
 	 *
 	 * @param 	newMax	New size of the inner buffer (the size won't be changed)
 	 */
-	void reserve( const typename Vector<T>::Size & newMax );
+	void reserve( const typename Vector<T>::Size newMax );
 
 	/**
 	 * @brief 	allocate the new buffer size (without copying the olds datas and update the size)
 	 *
 	 * @param 	newMax	New size of the inner buffer (the size won't be changed and the data wont be copied)
 	 */
-	void allocate( const typename Vector<T>::Size & newMax );
+	void allocate( const typename Vector<T>::Size newMax );
 
 	/**
 	 * @brief 	Set a new size, and reallocate and copy old datas if necessary.
 	 *
 	 * @param 	newSize	New size to be set for the vector.
 	 */
-	void resize( const typename Vector<T>::Size & newSize );
+	void resize( const typename Vector<T>::Size newSize );
 
 
 	/************************************************************************/
@@ -224,7 +224,7 @@ public:
 	 *
 	 * @returns	Value founded.
 	 */
-	const T & operator[]( const typename Vector<T>::Size & index ) const;
+	const T & operator[]( const typename Vector<T>::Size index ) const;
 	/**
 	 * @brief 	Array indexer operator
 	 *
@@ -232,16 +232,16 @@ public:
 	 *
 	 * @returns	The indexed value.
 	 */
-	T & operator[]( const typename Vector<T>::Size & index );
+	T & operator[]( const typename Vector<T>::Size index );
 
 	/**
-	 * @brief 	Get the Value associated with an direct access index (of type const typename Vector<T>::Size &)
+	 * @brief 	Get the Value associated with an direct access index (of type const typename Vector<T>::Size)
 	 *
 	 * @param 	i	Iterator used to retrieve the value (no bound check is done here)
 	 *
 	 * @returns	Value founded.
 	 */
-	const T & getValueI( const typename Vector<T>::Size & i ) const;
+	const T & getValueI( const typename Vector<T>::Size i ) const;
 	/**
 	 * @brief 	Gets value i
 	 *
@@ -249,7 +249,7 @@ public:
 	 *
 	 * @returns	The value i.
 	 */
-	T & getValueI( const typename Vector<T>::Size & i );
+	T & getValueI( const typename Vector<T>::Size i );
 
 	/**
 	 * @brief 	Get the Value associated with an iterator
@@ -274,7 +274,7 @@ public:
 	 * @param 	i   	Iterator used to set the value (no bound check is done here)
 	 * @param 	data	The data.
 	 */
-	void setValueI( const typename Vector<T>::Size & i, const T & data );
+	void setValueI( const typename Vector<T>::Size i, const T & data );
 
 	/**
 	 * @brief 	Set the Value associated with an iterator
@@ -481,7 +481,7 @@ public:
 	 * @param 	i	Index.
 	 * @param 	v	Value to insert.
 	 */
-	void inserti( const typename Vector<T>::Size & i, const T & v );
+	void inserti( const typename Vector<T>::Size i, const T & v );
 
 	/**
 	 * @brief 	Fill the complete vector with the specified data.
@@ -495,21 +495,21 @@ public:
 	 *
 	 * @returns	Number of datas of this vector.
 	 */
-	const typename Vector<T>::Size & getSize() const;
+	const typename Vector<T>::Size getSize() const;
 
 	/**
 	 * @brief 	Get the size of this vector in bytes
 	 *
-	 * @returns	const typename Vector<T>::Size & of this vector in bytes.
+	 * @returns	const typename Vector<T>::Size of this vector in bytes.
 	 */
-	const typename Vector<T>::Size & getSizeBytes() const;
+	const typename Vector<T>::Size getSizeBytes() const;
 
 	/**
 	 * @brief 	Get the size of the inner buffer
 	 *
-	 * @returns	const typename Vector<T>::Size & of the inner buffer.
+	 * @returns	const typename Vector<T>::Size of the inner buffer.
 	 */
-	const typename Vector<T>::Size & getMaxSize() const;
+	const typename Vector<T>::Size getMaxSize() const;
 
 	/** @brief	Set the size = 0 */
 	void clear();
@@ -566,7 +566,7 @@ public:
 	 * @param 	size	 	Number of elements in the table to be read.
 	 */
 	template<typename C>
-	void createFromData( const C * dataTable, const typename Vector<T>::Size & size );
+	void createFromData( const C * dataTable, const typename Vector<T>::Size size );
 
 	/**
 	 * @brief 	Replace the first occurrence of the data
@@ -611,7 +611,7 @@ public:
 	 *
 	 * @param 	index	Index to be erased.
 	 */
-	void eraseIndex( const typename Vector<T>::Size & index );
+	void eraseIndex( const typename Vector<T>::Size index );
 
 	/** @brief	Quicksort the vector using the operator>() */
 	void sortDesc();
@@ -625,7 +625,7 @@ public:
 	 * @tparam	Func	Type of the function.
 	 * @param [in,out]	functor	(Optional) Functor with operator () overloaded with : bool operator()(const T &, const T &) const;
 	 */
-	template<typename Func = Math::Logical::Less>
+	template<typename Func = Math::Logical::Less()>
 	void sort( Func & functor = Func() );
 
 	/**
@@ -638,7 +638,7 @@ public:
 	 * @param 	size	 	Number of elements to copy.
 	 */
 	template<typename C>
-	void copy( Vector<C> vector, typename Vector<C>::Size indexSrc, const typename Vector<T>::Size & indexDest, typename Vector<C>::Size size );
+	void copy( Vector<C> vector, typename Vector<C>::Size indexSrc, const typename Vector<T>::Size indexDest, typename Vector<C>::Size size );
 
 	/**
 	 * @brief 	Copy datas from a buffer into this vector
@@ -649,7 +649,7 @@ public:
 	 * @param 	size	 	Number of elements to copy.
 	 */
 	template<typename C>
-	void copy( const C * datas, const typename Vector<T>::Size & indexDest, const typename Vector<T>::Size & size );
+	void copy( const C * datas, const typename Vector<T>::Size indexDest, const typename Vector<T>::Size size );
 
 	/**
 	 * @brief 	Copy datas from a buffer into this vector
@@ -659,7 +659,7 @@ public:
 	 * @param 	size 	Number of elements to copy.
 	 */
 	template<typename C>
-	void copy( const C * datas, const typename Vector<T>::Size & size );
+	void copy( const C * datas, const typename Vector<T>::Size size );
 
 	/**
 	 * @brief 	read from a file stream
@@ -686,7 +686,7 @@ public:
 	 *
 	 * @returns	Index where the data has bee founded if founded. return Vector<T>::overflow instead.
 	 */
-	const typename Vector<T>::Size & search( const T & data ) const;
+	const typename Vector<T>::Size search( const T & data ) const;
 
 	/************************************************************************/
 	/* Static                                                               */
@@ -702,7 +702,7 @@ public:
 	 * @param 		  	size			 	Number of elements to copy.
 	 */
 	template<typename C, typename D>
-	static void copy( C * destinationBuffer, const D * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( C * destinationBuffer, const D * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -713,7 +713,7 @@ public:
 	 * @param 		  	size			 	The size.
 	 */
 	template<typename C, typename D>
-	static void copy( C ** destinationBuffer, D * const * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( C ** destinationBuffer, D * const * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -721,7 +721,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( char * destinationBuffer, const char * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( char * destinationBuffer, const char * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -729,7 +729,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned char * destinationBuffer, const unsigned char * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( unsigned char * destinationBuffer, const unsigned char * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -737,7 +737,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( short * destinationBuffer, const short * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( short * destinationBuffer, const short * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -745,7 +745,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned short * destinationBuffer, const unsigned short * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( unsigned short * destinationBuffer, const unsigned short * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -753,7 +753,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( int * destinationBuffer, const int * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( int * destinationBuffer, const int * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -761,7 +761,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned int * destinationBuffer, const unsigned int * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( unsigned int * destinationBuffer, const unsigned int * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -769,7 +769,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( long * destinationBuffer, const long * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( long * destinationBuffer, const long * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -777,7 +777,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned long * destinationBuffer, const unsigned long * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( unsigned long * destinationBuffer, const unsigned long * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -785,7 +785,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( long long * destinationBuffer, const long long * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( long long * destinationBuffer, const long long * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -793,7 +793,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned long long * destinationBuffer, const unsigned long long * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( unsigned long long * destinationBuffer, const unsigned long long * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -801,7 +801,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( float * destinationBuffer, const float * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( float * destinationBuffer, const float * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -809,7 +809,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( double * destinationBuffer, const double * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( double * destinationBuffer, const double * sourceBuffer, const typename Vector<T>::Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -817,7 +817,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer, const typename Vector<T>::Size & size );
+	static void copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer, const typename Vector<T>::Size size );
 
 	/**
 	 * @brief 	Gets the overflow
@@ -827,7 +827,7 @@ public:
 	static const typename Vector<T>::Size overflow;
 protected:
 	/** @brief	Values that represent Constructors */
-	enum ctor {
+	enum class ctor {
 		null
 	};
 	/**
@@ -835,7 +835,7 @@ protected:
 	 *
 	 * @param 	parameter1	The first parameter.
 	 */
-	Vector( ctor );
+	Vector( Vector<T>::ctor );
 
 	/**
 	 * @brief 	Quicksorts
@@ -856,21 +856,21 @@ protected:
 	 *
 	 * @param 	newMax	The new maximum.
 	 */
-	void _allocateNoNull( const typename Vector<T>::Size & newMax );
+	void _allocateNoNull( const typename Vector<T>::Size newMax );
 
 	/**
 	 * @brief 	allocate a new buffer; Set the new maxSize;
 	 *
 	 * @param 	newMax	The new maximum.
 	 */
-	void _allocateNoNullDelete( const typename Vector<T>::Size & newMax );
+	void _allocateNoNullDelete( const typename Vector<T>::Size newMax );
 
 	/**
 	 * @brief 	Extend the actual buffer to be able to handle AT LEAST the newSizeNeeded (possible algo is *2), size has to be NOT null
 	 *
 	 * @param 	newSizeNeeded	The new size needed.
 	 */
-	void _extendBuffer( const typename Vector<T>::Size & newSizeNeeded );
+	void _extendBuffer( const typename Vector<T>::Size newSizeNeeded );
 
 	/**
 	 * @brief 	Swaps
@@ -878,7 +878,7 @@ protected:
 	 * @param 	index1	The first index.
 	 * @param 	index2	The second index.
 	 */
-	void swap( const typename Vector<T>::Size & index1, const typename Vector<T>::Size & index2 );
+	void swap( const typename Vector<T>::Size index1, const typename Vector<T>::Size index2 );
 	/**
 	 * @brief 	Swaps
 	 *
@@ -893,7 +893,7 @@ protected:
 	 * @param 	index1	The first index.
 	 * @param 	index2	The second index.
 	 */
-	void assign( const typename Vector<T>::Size & index1, const typename Vector<T>::Size & index2 ); // index1 = index2
+	void assign( const typename Vector<T>::Size index1, const typename Vector<T>::Size index2 ); // index1 = index2
 	/** @brief	Updates the iterators */
 	void _updateIterators();
 
@@ -902,7 +902,7 @@ protected:
 	 *
 	 * @param 	index	Zero-based index.
 	 */
-	void _erasei( const typename Vector<T>::Size & index );
+	void _erasei( const typename Vector<T>::Size index );
 	/**
 	 * @brief 	Erase a value at a specified iterator.
 	 *

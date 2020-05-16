@@ -851,7 +851,7 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 				// Case 6	
 
 				assert( S );
-				assert( S -> getColor() == Color::Black );
+				assert( S && S -> getColor() == Color::Black );
 
 				S -> setColor( P -> getColor() );
 				P -> setColor( Color::Black );

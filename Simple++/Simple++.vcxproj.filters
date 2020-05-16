@@ -468,6 +468,9 @@
     <ClInclude Include="Thread.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Log.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -505,9 +508,6 @@
     </ClCompile>
     <ClCompile Include="Network\BasicNetwork.cpp">
       <Filter>Source Files\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\BasicIO.cpp">
       <Filter>Source Files</Filter>

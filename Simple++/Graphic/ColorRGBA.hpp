@@ -6,7 +6,7 @@ namespace Graphic {
 	template<typename T> const ColorRGBA<T> ColorRGBA<T>::green = ColorRGBA<T>( T( 0 ), Color<T>::getMax(), T( 0 ), Color<T>::getMax() );
 	template<typename T> const ColorRGBA<T> ColorRGBA<T>::blue = ColorRGBA<T>( T( 0 ), T( 0 ), Color<T>::getMax(), Color<T>::getMax() );
 
-	template<typename T> const ColorRGBA<T> ColorRGBA<T>::format = Format::RGBA;
+	template<typename T> const Format ColorRGBA<T>::format = Format::RGBA;
 
 	template<typename T>
 	template<typename U>

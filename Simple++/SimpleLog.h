@@ -90,12 +90,12 @@ public:
 	};
 
 
-	static void errorHandler( const T * message, MessageSeverity severity = MessageSeverity::Error, const T * fileName = TEXT( "" ), unsigned int lineNumber = 0 );
+	static void errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, const TCHAR * fileName = TEXT( "" ), unsigned int lineNumber = 0 );
 
 	static void callErrorHandler(
 		const T * message,
-		MessageSeverity severity = MessageSeverity::Error,
-		const T * fileName = TEXT( "" ),
+		MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error,
+		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
 	);
 
@@ -107,10 +107,10 @@ public:
 	static void setErrorHandler( void( *errorHandlerFn ) (
 		const T * msg,
 		MessageSeverity severity,
-		const T * file,
+		const TCHAR * file,
 		unsigned int line ) );
 
-	static void setConsoleColor( MessageColor color = MessageColor::White );
+	static void setConsoleColor( typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::White );
 
 #if defined WIN32 && defined ENABLE_WIN32
 	static void displayWindowsDebug( const T * message, const T * fileName, unsigned int lineNumber );
@@ -127,12 +127,12 @@ protected:
 	static void( *mErrorHandlerFn ) (
 		const T *,
 		MessageSeverity,
-		const T *,
+		const TCHAR *,
 		unsigned int );
 
 private:
-
-
+	static void parseMessage( T * buffer, int bufferSize, T * timeBuffer, const TCHAR * fileName, unsigned int lineNumber, const T * message );
+	static void parseMessage( T * buffer, int bufferSize, T * timeBuffer, const T * message );
 };
 
 using SimpleLog = SimpleLogT<TCHAR>;

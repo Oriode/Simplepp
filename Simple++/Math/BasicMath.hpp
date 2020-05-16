@@ -26,9 +26,9 @@ namespace Math {
 	MATH_FUNC_QUALIFIER int random( int min, int max ) {
 		static std::random_device _randomDevice;
 		static unsigned long long randomMax( _randomDevice.max() );
-		unsigned long long range( max - min );
+		unsigned long long range( static_cast< unsigned long long >( max ) - static_cast< unsigned long long >( min ) );
 		unsigned long long rng( _randomDevice() );
-		return int(rng * range / randomMax) + min;
+		return int( rng * range / randomMax ) + min;
 	}
 
 	MATH_FUNC_QUALIFIER unsigned int random( unsigned int min, unsigned int max ) {
@@ -43,19 +43,19 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T random() {
 		static std::random_device _randomDevice;
-		return T(_randomDevice());
+		return T( _randomDevice() );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T randomF() {
 		static std::random_device _randomDevice;
-		return T(_randomDevice()) / T( _randomDevice.max());
+		return T( _randomDevice() ) / T( _randomDevice.max() );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T randomMax() {
 		static std::random_device _randomDevice;
-		return T(_randomDevice.max());
+		return T( _randomDevice.max() );
 	}
 
 	template<typename T>
@@ -85,7 +85,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER constexpr T gcd( const T & M, const T & N ) {
-		return ( N == 0 ) ? M : gcd( N, M%N );
+		return ( N == 0 ) ? M : gcd( N, M % N );
 	}
 
 	template<typename T>
@@ -108,7 +108,7 @@ namespace Math {
 	}
 
 
-	
+
 
 
 	template<typename T>
@@ -157,7 +157,7 @@ namespace Math {
 		if ( x == T( 0 ) )
 			return T( 1 );
 		else
-			return ( sin( pi() * x ) ) / ( pi()  * x );
+			return ( sin( pi() * x ) ) / ( pi() * x );
 	}
 
 	template<typename T>
@@ -179,7 +179,7 @@ namespace Math {
 			do { r -= d; } while ( r > d );
 		} else if ( r < float( 0 ) ) {
 			while ( r < float( 0 ) ) r += d;
-		} 
+		}
 		return r;
 	}
 	MATH_FUNC_QUALIFIER double modulus( const double & x, const double & d ) {
@@ -191,7 +191,7 @@ namespace Math {
 		}
 		return r;
 	}
-	
+
 
 }
 

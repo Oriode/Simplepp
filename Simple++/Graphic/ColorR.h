@@ -131,7 +131,7 @@ namespace Graphic {
 		static const ColorR<T> green;
 		static const ColorR<T> blue;
 
-		static const Format format;
+		static const typename Format format;
 	};
 
 	

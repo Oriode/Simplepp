@@ -1,5 +1,5 @@
 /**
- * @file		Log.h.
+ * @file		LogT.h.
  *
  * @brief 	Logging functions.
  * @author	Clément Gerber
@@ -70,32 +70,35 @@
 #include "SimpleLog.h"
 #include "String.h"
 
-
-class Log : public SimpleLog {
+template<typename T>
+class LogT : public SimpleLogT<T> {
 public:
+	using SimpleLogT<T>::MessageSeverity;
+	using SimpleLogT<T>::MessageColor;
+
 	/** @brief	Default constructor */
-	Log(void);
+	LogT( void );
 
 	/** @brief	Destructor */
-	~Log(void);
+	~LogT( void );
 
 	/**
 		* @brief 	Display a log message even if we are in debug build or not.
 		* @param 	text	Text to display.
 		*/
-	static void displayLog(const String& text);
+	static void displayLog( const BasicString<T> & text );
 
 	/**
 		* @brief 	Display a warning message even if we are in debug build or not.
 		* @param 	text	Text to display.
 		*/
-	static void displayWarning(const String& text);
+	static void displayWarning( const BasicString<T> & text );
 
 	/**
 		* @brief 	Display a error message even if we are in debug build or not.
 		* @param 	text	Text to display.
 		*/
-	static void displayError(const String& text);
+	static void displayError( const BasicString<T> & text );
 
 	/** @brief	Start the chrono, see stopChrono(); */
 	static void startChrono();
@@ -107,36 +110,41 @@ public:
 		* @brief 	Display the last chrono result computed with startChrono() and displayChrono();
 		* @param 	text	(Optional) Text to display with the time result.
 		*/
-	static void displayChrono(const String& text = "Elapsed Time");
+	static void displayChrono( const BasicString<T> & text = "Elapsed Time" );
 
 	/**
 		* @brief 	Handler, called when the error
 		*
-		* @param 	parameter1	String to be displayed.
+		* @param 	parameter1	BasicString<T> to be displayed.
 		* @param 	severity  	(Optional) The severity.
 		* @param 	fileName  	(Optional) Filename of the file.
 		* @param 	lineNumber	(Optional) The line number.
 		*/
 	static void errorHandler(
-		const String&,
-		MessageSeverity severity = MessageSeverity::Error,
-		const TCHAR* fileName = TEXT(""),
-		unsigned int lineNumber = 0);
+		const BasicString<T> &,
+		MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
+		const TCHAR * fileName = TEXT( "" ),
+		unsigned int lineNumber = 0 );
 
 
 	static void callErrorHandler(
-		const String& message,
-		MessageSeverity severity = MessageSeverity::Error,
-		const TCHAR* fileName = TEXT(""),
+		const BasicString<T> & message,
+		MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
+		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
 	);
 
 
 #if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug(const String& message, const TCHAR* fileName, unsigned int lineNumber);
+	static void displayWindowsDebug( const BasicString<T> & message, const TCHAR * fileName, unsigned int lineNumber );
 #endif
 
 private:
 	static std::chrono::high_resolution_clock::time_point startTime;
 	static std::chrono::high_resolution_clock::time_point endTime;
 };
+
+using Log = LogT<char>;
+
+
+#include "Log.hpp"

@@ -398,7 +398,7 @@ public:
 	static unsigned int _checkNbBlackNode( RBNode<T> * node, unsigned int nbBlackNodes );
 protected:
 	/** @brief	Values that represent Constructors */
-	enum ctor {
+	enum class ctor {
 		null
 	};
 	/**
@@ -479,7 +479,7 @@ private:
  *
  * @sa	https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
  */
-template<typename I, typename T, typename Compare = Math::Compare::BasicComparable>
+template<typename I, typename T, typename Compare = Math::Compare::Template()>
 class RBTree : public BasicIO {
 public:
 	/** @brief	Defines an alias representing the iterator */

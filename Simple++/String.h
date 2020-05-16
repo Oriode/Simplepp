@@ -27,6 +27,8 @@
 template<typename T>
 class BasicString : public Vector<T>, public Math::Compare::BasicComparable {
 public:
+	using Vector<T>::Size;
+
 	/** @brief	Default constructor */
 	BasicString();
 

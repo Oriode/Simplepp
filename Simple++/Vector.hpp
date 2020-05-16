@@ -63,7 +63,7 @@ Vector<T>::Vector( Vector && v ) :
 
 
 template<typename T>
-Vector<T>::Vector(const typename Vector<T>::Size& size, const typename Vector<T>::Size& maxSize ) :
+Vector<T>::Vector(const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize ) :
 	size( size ),
 	maxSize( maxSize ),
 	dataTable( new T[maxSize] ) {
@@ -72,7 +72,7 @@ Vector<T>::Vector(const typename Vector<T>::Size& size, const typename Vector<T>
 }
 
 template<typename T>
-Vector<T>::Vector(const typename Vector<T>::Size& maxSize ) :
+Vector<T>::Vector(const typename Vector<T>::Size maxSize ) :
 	maxSize( maxSize ),
 	size( maxSize ),
 	dataTable( new T[maxSize] ),
@@ -116,7 +116,7 @@ Vector<T>::Vector(const T * data, typename Vector<T>::Size size, typename Vector
 
 template<typename T>
 template<typename C>
-Vector<T>::Vector( const C * data, const typename Vector<T>::Size& size ) :
+Vector<T>::Vector( const C * data, const typename Vector<T>::Size size ) :
 	maxSize( size ),
 	size( size ),
 	dataTable( new T[size] ) {
@@ -127,7 +127,7 @@ Vector<T>::Vector( const C * data, const typename Vector<T>::Size& size ) :
 
 template<typename T>
 template<typename C>
-Vector<T>::Vector( const C * data, const typename Vector<T>::Size& size, const typename Vector<T>::Size& maxSize ) :
+Vector<T>::Vector( const C * data, const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize ) :
 	maxSize( maxSize ),
 	size( size ),
 	dataTable( new T[maxSize] ) {
@@ -163,7 +163,7 @@ Vector<T>::~Vector( void ) {
 
 
 template<typename T>
-const typename Vector<T>::Size& Vector<T>::getSizeBytes() const {
+const typename Vector<T>::Size Vector<T>::getSizeBytes() const {
 	return this -> size * sizeof( T );
 }
 
@@ -171,7 +171,7 @@ const typename Vector<T>::Size& Vector<T>::getSizeBytes() const {
 
 template<typename T>
 template<typename C>
-void Vector<T>::copy( Vector<C> vector, typename Vector<C>::Size indexSrc, const typename Vector<T>::Size& indexDst, typename Vector<C>::Size size ) {
+void Vector<T>::copy( Vector<C> vector, typename Vector<C>::Size indexSrc, const typename Vector<T>::Size indexDst, typename Vector<C>::Size size ) {
 	allocate( size + indexDst );
 	copy( this -> dataTable + indexDst, vector.getData() + indexSrc, size );
 }
@@ -180,7 +180,7 @@ void Vector<T>::copy( Vector<C> vector, typename Vector<C>::Size indexSrc, const
 
 template<typename T>
 template<typename C>
-void Vector<T>::copy( const C * datas, const typename Vector<T>::Size& index, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( const C * datas, const typename Vector<T>::Size index, const typename Vector<T>::Size size ) {
 	copy( this -> dataTable + index, datas, size );
 }
 
@@ -189,12 +189,12 @@ void Vector<T>::copy( const C * datas, const typename Vector<T>::Size& index, co
 
 template<typename T>
 template<typename C>
-void Vector<T>::copy( const C * datas, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( const C * datas, const typename Vector<T>::Size size ) {
 	copy( this -> dataTable, datas, size );
 }
 
 template<typename T>
-void Vector<T>::assign(const typename Vector<T>::Size& index1, const typename Vector<T>::Size& index2 ) {
+void Vector<T>::assign(const typename Vector<T>::Size index1, const typename Vector<T>::Size index2 ) {
 	this -> dataTable[index1] = this -> dataTable[index2];
 }
 
@@ -220,7 +220,7 @@ void Vector<T>::concat( const Vector<T> & vector ) {
 
 template<typename T>
 template<typename C>
-void Vector<T>::createFromData( const C * dataTable, const typename Vector<T>::Size& size ) {
+void Vector<T>::createFromData( const C * dataTable, const typename Vector<T>::Size size ) {
 	delete[] this -> dataTable;
 	this -> dataTable = new T[size];
 
@@ -431,7 +431,7 @@ void Vector<T>::quicksort( typename Vector<T>::Iterator start, typename Vector<T
 
 
 template<typename T>
-void Vector<T>::swap(const typename Vector<T>::Size& index1, const typename Vector<T>::Size& index2 ) {
+void Vector<T>::swap(const typename Vector<T>::Size index1, const typename Vector<T>::Size index2 ) {
 	Utility::swap<T>( this -> dataTable[index1], this -> dataTable[index2] );
 }
 
@@ -455,7 +455,7 @@ bool Vector<T>::eraseAll( const T & value ) {
 }
 
 template<typename T>
-const typename Vector<T>::Size& Vector<T>::search( const T & data ) const {
+const typename Vector<T>::Size Vector<T>::search( const T & data ) const {
 	for ( typename Vector<T>::Size i(0); i < this -> size; i++ ) {
 		if ( this -> dataTable[i] == data )
 			return i;
@@ -490,12 +490,12 @@ T & Vector<T>::getFirst() {
 
 template<typename T>
 void Vector<T>::sortAsc() {
-	sort( Math::Logical::Less<T>::operator() );
+	sort( Math::Logical::Less() );
 }
 
 template<typename T>
 void Vector<T>::sortDesc() {
-	sort( Math::Logical::Greater<T>::operator() );
+	sort( Math::Logical::Greater() );
 }
 
 template<typename T>
@@ -505,7 +505,7 @@ void Vector<T>::sort( Func & functor ) {
 }
 
 template<typename T>
-void Vector<T>::resize(const typename Vector<T>::Size& newSize ) {
+void Vector<T>::resize(const typename Vector<T>::Size newSize ) {
 	if ( newSize > this -> maxSize )
 		reserve( newSize );
 
@@ -561,7 +561,7 @@ bool Vector<T>::eraseFirst( const T & v ) {
 }
 
 template<typename T>
-void Vector<T>::eraseIndex(const typename Vector<T>::Size& index ) {
+void Vector<T>::eraseIndex(const typename Vector<T>::Size index ) {
 	for ( typename Vector<T>::Size i(index); i < this -> maxSize - 1; i++ ) {
 		this -> dataTable[i] = this -> dataTable[i + 1];
 	}
@@ -685,12 +685,12 @@ void Vector<T>::clear() {
 }
 
 template<typename T>
-const typename Vector<T>::Size& Vector<T>::getMaxSize() const {
+const typename Vector<T>::Size Vector<T>::getMaxSize() const {
 	return this -> maxSize;
 }
 
 template<typename T>
-const typename Vector<T>::Size& Vector<T>::getSize() const {
+const typename Vector<T>::Size Vector<T>::getSize() const {
 	return this -> size;
 }
 
@@ -703,7 +703,7 @@ void Vector<T>::fill( const T & data ) {
 
 
 template<typename T>
-void Vector<T>::reserve(const typename Vector<T>::Size& newMax ) {
+void Vector<T>::reserve(const typename Vector<T>::Size newMax ) {
 	if ( this -> size > newMax )
 		this -> size = newMax;
 
@@ -741,7 +741,7 @@ T * Vector<T>::push( const T & data ) {
 }
 
 template<typename T>
-void Vector<T>::inserti(const typename Vector<T>::Size& i, const T & v ) {
+void Vector<T>::inserti(const typename Vector<T>::Size i, const T & v ) {
 	if ( this -> maxSize == this -> size ) {
 		this -> size++;
 		_extendBuffer( this -> size );
@@ -749,14 +749,14 @@ void Vector<T>::inserti(const typename Vector<T>::Size& i, const T & v ) {
 		this -> size++;
 		_updateIterators();
 	}
-	for (const typename Vector<T>::Size& k = this -> size - 1, j = this -> size - 2; k > i; k--, j-- )
+	for (typename Vector<T>::Size k = this -> size - 1, j = this -> size - 2; k > i; k--, j-- )
 		setValueI( k, getValueI( j ) );
 	this -> dataTable[i] = v;
 }
 
 
 template<typename T>
-void Vector<T>::_extendBuffer(const typename Vector<T>::Size& newSizeNeeded ) {
+void Vector<T>::_extendBuffer(const typename Vector<T>::Size newSizeNeeded ) {
 	this -> maxSize = newSizeNeeded * 2;
 	T * newBuffer = new T[this -> maxSize];
 	if ( this -> dataTable != NULL ) {
@@ -769,7 +769,7 @@ void Vector<T>::_extendBuffer(const typename Vector<T>::Size& newSizeNeeded ) {
 
 
 template<typename T>
-void Vector<T>::allocate(const typename Vector<T>::Size& newMax ) {
+void Vector<T>::allocate(const typename Vector<T>::Size newMax ) {
 	delete[] this -> dataTable;
 	if ( newMax )
 		this -> dataTable = new T[newMax];
@@ -782,14 +782,14 @@ void Vector<T>::allocate(const typename Vector<T>::Size& newMax ) {
 
 
 template<typename T>
-void Vector<T>::_allocateNoNullDelete(const typename Vector<T>::Size& newMax ) {
+void Vector<T>::_allocateNoNullDelete(const typename Vector<T>::Size newMax ) {
 	this -> dataTable = new T[newMax];
 	this -> maxSize = newMax;
 }
 
 
 template<typename T>
-void Vector<T>::_allocateNoNull(const typename Vector<T>::Size& newMax ) {
+void Vector<T>::_allocateNoNull(const typename Vector<T>::Size newMax ) {
 	delete[] this -> dataTable;
 	this -> dataTable = new T[newMax];
 	this -> maxSize = newMax;
@@ -797,12 +797,12 @@ void Vector<T>::_allocateNoNull(const typename Vector<T>::Size& newMax ) {
 
 
 template<typename T>
-T & Vector<T>::operator[]( const typename Vector<T>::Size & index ) {
+T & Vector<T>::operator[]( const typename Vector<T>::Size index ) {
 	return *( this -> dataTable + index );
 }
 
 template<typename T>
-const T & Vector<T>::operator[]( const typename Vector<T>::Size & index ) const {
+const T & Vector<T>::operator[]( const typename Vector<T>::Size index ) const {
 	return *( this -> dataTable + index );
 }
 
@@ -863,7 +863,7 @@ const T & Vector<T>::operator[]( typename Vector<T>::RandomAccessIterator i ) co
 */
 
 template<typename T>
-void Vector<T>::setValueI(const typename Vector<T>::Size& i, const T & data ) {
+void Vector<T>::setValueI(const typename Vector<T>::Size i, const T & data ) {
 	this -> dataTable[i] = data;
 }
 
@@ -876,13 +876,13 @@ void Vector<T>::setValueIt( typename Vector<T>::Iterator i, const T & data ) {
 
 
 template<typename T>
-const T & Vector<T>::getValueI(const typename Vector<T>::Size& i ) const {
+const T & Vector<T>::getValueI(const typename Vector<T>::Size i ) const {
 	return this -> dataTable[i];
 }
 
 
 template<typename T>
-T & Vector<T>::getValueI(const typename Vector<T>::Size& i ) {
+T & Vector<T>::getValueI(const typename Vector<T>::Size i ) {
 	return this -> dataTable[i];
 }
 
@@ -899,7 +899,7 @@ T & Vector<T>::getValueIt( typename Vector<T>::Iterator i ) {
 
 
 template<typename T>
-void Vector<T>::_erasei(const typename Vector<T>::Size& index ) {
+void Vector<T>::_erasei(const typename Vector<T>::Size index ) {
 	_eraseit(getData() + index);
 }
 
@@ -918,7 +918,7 @@ void Vector<T>::_eraseit( typename Vector<T>::Iterator index ) {
 //Default implementation with a one per one copy.
 template<typename T>
 template<typename C, typename D>
-void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, const typename Vector<T>::Size & size ) {
+void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, const typename Vector<T>::Size size ) {
 	if ( Utility::isSame<C, D>::value ) {
 		for ( typename Vector<T>::Size i (0); i < size; i++ ) {
 			destinationBuffer[i] = static_cast<C>( sourceBuffer[i] );
@@ -933,59 +933,59 @@ void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, const typen
 
 template<typename T>
 template<typename C, typename D>
-void Vector<T>::copy( C ** destinationBuffer, D * const * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( C ** destinationBuffer, D * const * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( C* ) );
 }
 template<typename T>
-void Vector<T>::copy( char * destinationBuffer, const char * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( char * destinationBuffer, const char * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size );
 }
 template<typename T>
-void Vector<T>::copy( unsigned char * destinationBuffer, const unsigned char * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( unsigned char * destinationBuffer, const unsigned char * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size );
 }
 template<typename T>
-void Vector<T>::copy( short * destinationBuffer, const short * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( short * destinationBuffer, const short * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( short ) );
 }
 template<typename T>
-void Vector<T>::copy( unsigned short * destinationBuffer, const unsigned short * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( unsigned short * destinationBuffer, const unsigned short * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( short ) );
 }
 template<typename T>
-void Vector<T>::copy( int * destinationBuffer, const int * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( int * destinationBuffer, const int * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( int ) );
 }
 template<typename T>
-void Vector<T>::copy( unsigned int * destinationBuffer, const unsigned int * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( unsigned int * destinationBuffer, const unsigned int * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( int ) );
 }
 template<typename T>
-void Vector<T>::copy( long * destinationBuffer, const long * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( long * destinationBuffer, const long * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long ) );
 }
 template<typename T>
-void Vector<T>::copy( unsigned long * destinationBuffer, const unsigned long * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( unsigned long * destinationBuffer, const unsigned long * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long ) );
 }
 template<typename T>
-void Vector<T>::copy( long long * destinationBuffer, const long long * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( long long * destinationBuffer, const long long * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long ) );
 }
 template<typename T>
-void Vector<T>::copy( unsigned long long * destinationBuffer, const unsigned long long * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( unsigned long long * destinationBuffer, const unsigned long long * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long ) );
 }
 template<typename T>
-void Vector<T>::copy( float * destinationBuffer, const float * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( float * destinationBuffer, const float * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( float ) );
 }
 template<typename T>
-void Vector<T>::copy( double * destinationBuffer, const double * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( double * destinationBuffer, const double * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( double ) );
 }
 template<typename T>
-void Vector<T>::copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer, const typename Vector<T>::Size& size ) {
+void Vector<T>::copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer, const typename Vector<T>::Size size ) {
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( wchar_t ) );
 }
 

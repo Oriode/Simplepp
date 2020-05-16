@@ -6,7 +6,7 @@ namespace Graphic {
 	template<typename T> const ColorRGB<T> ColorRGB<T>::green = ColorRGB<T>( T( 0 ), Color<T>::getMax(), T( 0 ) );
 	template<typename T> const ColorRGB<T> ColorRGB<T>::blue = ColorRGB<T>( T( 0 ), T( 0 ), Color<T>::getMax() );
 
-	template<typename T> const ColorRGB<T> ColorRGB<T>::format = Format::RGB;
+	template<typename T> const Format ColorRGB<T>::format = Format::RGB;
 
 
 	template<typename T>

@@ -9,7 +9,7 @@ namespace Math {
 		}
 
 		template<typename T>
-		Value Math::Compare::_compare( const T & x, const T & y, ... ) {
+		Value _compare( const T & x, const T & y, ... ) {
 			if ( x == y )
 				return Math::Compare::Value::Equal;
 			else if ( x < y )
@@ -19,12 +19,12 @@ namespace Math {
 		}
 
 		template<typename T>
-		Value Math::Compare::_compare( const T & x, const T & y, const BasicComparable * ) {
+		Value _compare( const T & x, const T & y, const BasicComparable * ) {
 			return T::compare( x, y );
 		}
 		
 		template<typename T>
-		Value Math::Compare::compare( const T & x, const T & y ) {
+		Value compare( const T & x, const T & y ) {
 			return Math::Compare::_compare( x, y, static_cast< const T * >( NULL ) );
 		}
 

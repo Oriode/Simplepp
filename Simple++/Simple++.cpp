@@ -418,20 +418,20 @@ int main( int argc, char * argv[] ) {
 
 		}
 
-		for ( size_t j( 0 ); j < 100; j++ ) {
+		for ( unsigned long j( 0 ); j < 100; j++ ) {
 			Map<unsigned long, unsigned long> testMap;
-			for ( size_t i( 0 ); i < 100; i++ ) {
+			for ( unsigned long i( 0 ); i < 100; i++ ) {
 				testMap.insert( i, i );
 			}
 			testMap.eraseIndex( j );
 		}
 
-		for ( size_t i( 0 ); i < 1000; i++ ) {
+		for ( unsigned long i( 0 ); i < 1000; i++ ) {
 			testMap.insert( Math::random( 0, 1000 ), i );
 		}
 
 
-		for ( size_t i( 0 ); i < 1000; i++ ) {
+		for ( unsigned long i( 0 ); i < 1000; i++ ) {
 			testMap.eraseIndex( Math::random( 0, 1000 ) );
 		}
 		//log( StringASCII( testMap ) );

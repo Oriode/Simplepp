@@ -114,6 +114,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -180,6 +181,7 @@
     <ClInclude Include="IO\IOManager.h" />
     <ClInclude Include="IO\IOManager.hpp" />
     <ClInclude Include="IO\IOManagerLoadable.hpp" />
+    <ClInclude Include="Log.hpp" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="IO\BasicIO.h" />
@@ -319,7 +321,6 @@
     <ClCompile Include="Graphic\FreeImage.cpp" />
     <ClCompile Include="IO\IO.cpp" />
     <ClCompile Include="IO\BasicLoadableIO.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Debug.cpp" />
