@@ -138,41 +138,34 @@ public:
 	/**
 	 * @brief		Constructor
 	 *
-	 * @param		ull	The ull.
+	 * @param	ull	The ull.
 	 */
 	BasicString( const unsigned long long & ull );
 	/**
 	 * @brief		Constructor
 	 *
-	 * @param		d	A double to process.
+	 * @param	d	A double to process.
 	 */
 	BasicString( const double & d );
 	/**
 	 * @brief		Constructor
 	 *
-	 * @param		f	A float to process.
+	 * @param	f	A float to process.
 	 */
 	BasicString( const float & f );
 	/**
 	 * @brief		Constructor
 	 *
-	 * @param		b	True to b.
+	 * @param	b	True to b.
 	 */
 	BasicString( const bool & b );
 
 	/**
 	 * @brief		Constructor
 	 *
-	 * @param		c	A T to process.
+	 * @param	c	A T to process.
 	 */
 	BasicString( const T & c );
-
-	/**
-	 * @brief		Constructor from a comparable value.
-	 *
-	 * @param		compareValue	Value of a compare.
-	 */
-	BasicString(const typename Math::Compare::Value & compareValue);
 
 
 
@@ -822,7 +815,7 @@ public:
 	 * @param 		  	c	  	A C to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<typename C>
 	static typename BasicString<T>::Size toCString( const C & c, T * buffer );
@@ -832,7 +825,7 @@ public:
 	 * @param 		  	c	  	A char to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( const char & c, T * buffer );
 	/**
@@ -841,7 +834,7 @@ public:
 	 * @param 		  	c	  	A wchar_t to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( const wchar_t & c, T * buffer );
 
@@ -853,7 +846,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( unsigned char number, T * buffer );
@@ -865,7 +858,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( unsigned short number, T * buffer );
@@ -877,7 +870,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer );
@@ -889,7 +882,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( int number, T * buffer );
@@ -901,7 +894,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( unsigned long number, T * buffer );
@@ -910,10 +903,10 @@ public:
 	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( long long number, T * buffer );
@@ -922,10 +915,10 @@ public:
 	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer );
@@ -934,10 +927,10 @@ public:
 	 * @brief		Converts this object to a c string
 	 *
 	 * @tparam	Base	Type of the base.
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( long number, T * buffer );
@@ -947,10 +940,10 @@ public:
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Precision = 10, unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( double number, T * buffer );
@@ -960,10 +953,10 @@ public:
 	 *
 	 * @tparam	Precision	Type of the precision.
 	 * @tparam	Base	 	Type of the base.
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Precision = 5, unsigned int Base = 10>
 	static typename BasicString<T>::Size toCString( float number, T * buffer );
@@ -972,127 +965,114 @@ public:
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.s
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned char number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned short number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( int number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( long long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number	Value to converted to a String.
+	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( long number, T * buffer, unsigned int base );
-
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number   	Value to converted to a String.
+	 * @param 		  	number   	Number of.
 	 * @param [in,out]	buffer   	If non-null, the buffer.
 	 * @param 		  	precision	The precision.
 	 * @param 		  	base	 	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( double number, T * buffer, unsigned int precision, unsigned int base );
-
 	/**
 	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	number   	Value to converted to a String.
+	 * @param 		  	number   	Number of.
 	 * @param [in,out]	buffer   	If non-null, the buffer.
 	 * @param 		  	precision	The precision.
 	 * @param 		  	base	 	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( float number, T * buffer, unsigned int precision, unsigned int base );
-
 	/**
-	 * @brief				Write in the buffer a value representing a bool
+	 * @brief		Converts this object to a c string
 	 *
-	 * @param 		  	b	  	Value to converted to a String.
+	 * @param 		  	b	  	True to b.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCString( bool b, T * buffer );
-
-	/**
-	 * @brief			Write in the buffer a value representing a Math::Compare::Value
-	 *
-	 * @param 		  	compareValue	  	Value to converted to a String.
-	 * @param [in,out]	buffer				Buffer where to write
-	 *
-	 * @returns			Number of characters written.
-	 */
-	static typename BasicString<T>::Size toCString(const typename Math::Compare::Value& compareValue, T* buffer);
 
 
 	/************************************************************************/
@@ -1104,7 +1084,7 @@ public:
 	 * @param 		  	c	  	A C to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 
 	template<typename C>
@@ -1115,7 +1095,7 @@ public:
 	 * @param 		  	c	  	A char to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( const char & c, T * buffer );
 	/**
@@ -1124,7 +1104,7 @@ public:
 	 * @param 		  	c	  	A wchar_t to process.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( const wchar_t & c, T * buffer );
 
@@ -1136,7 +1116,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer );
@@ -1148,7 +1128,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer );
@@ -1160,7 +1140,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer );
@@ -1172,7 +1152,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( int number, T * buffer );
@@ -1184,7 +1164,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer );
@@ -1196,7 +1176,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer );
@@ -1208,7 +1188,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer );
@@ -1220,7 +1200,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( long number, T * buffer );
@@ -1233,7 +1213,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Precision = 10, unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( double number, T * buffer );
@@ -1246,7 +1226,7 @@ public:
 	 * @param 		  	number	Number of.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Precision = 5, unsigned int Base = 10>
 	static typename BasicString<T>::Size toCStringWOS( float number, T * buffer );
@@ -1259,7 +1239,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer, unsigned int base );
 	/**
@@ -1269,7 +1249,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer, unsigned int base );
 	/**
@@ -1279,7 +1259,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer, unsigned int base );
 	/**
@@ -1289,7 +1269,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( int number, T * buffer, unsigned int base );
 	/**
@@ -1299,7 +1279,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer, unsigned int base );
 	/**
@@ -1309,7 +1289,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer, unsigned int base );
 	/**
@@ -1319,7 +1299,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer, unsigned int base );
 	/**
@@ -1329,7 +1309,7 @@ public:
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 * @param 		  	base  	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( long number, T * buffer, unsigned int base );
 	/**
@@ -1340,7 +1320,7 @@ public:
 	 * @param 		  	precision	The precision.
 	 * @param 		  	base	 	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( double number, T * buffer, unsigned int precision, unsigned int base );
 	/**
@@ -1351,7 +1331,7 @@ public:
 	 * @param 		  	precision	The precision.
 	 * @param 		  	base	 	The base.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( float number, T * buffer, unsigned int precision, unsigned int base );
 	/**
@@ -1360,19 +1340,10 @@ public:
 	 * @param 		  	b	  	True to b.
 	 * @param [in,out]	buffer	If non-null, the buffer.
 	 *
-	 * @returns			Number of characters written.
+	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( bool b, T * buffer );
 
-	/**
-	 * @brief			Write in the buffer a value representing a Math::Compare::Value without \0
-	 *
-	 * @param 		  	compareValue	  	Value to converted to a String.
-	 * @param [in,out]	buffer				Buffer where to write
-	 *
-	 * @returns			Number of characters written.
-	 */
-	static typename BasicString<T>::Size toCStringWOS(const typename Math::Compare::Value& compareValue, T* buffer);
 
 	/************************************************************************/
 	/* From StringASCII to number                                                */
