@@ -368,8 +368,11 @@ int main( int argc, char * argv[] ) {
 
 	#ifdef DEBUG_MAP
 	{
-
+		// Test if the compare is working fine.
 		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
+
+		// Test if the convertion to String is working.
+		log(String(r));
 
 		Map<unsigned long, unsigned long> testMap;
 
@@ -384,11 +387,14 @@ int main( int argc, char * argv[] ) {
 		testMap.insert( 8, 8 );
 		testMap.insert( 9, 9 );
 
-
+		log("Map : ");
 		for ( auto it( testMap.getBegin() ); it != testMap.getEnd(); testMap.iterate( &it ) ) {
 			log( testMap.getValueIt( it ) );
+		}
 
-
+		log("Map Ascending : ");
+		for (auto it(testMap.getSmallest()); it != testMap.getEnd(); testMap.iterateAscending(&it)) {
+			log(testMap.getValueIt(it));
 		}
 
 		log( StringASCII( testMap ) );

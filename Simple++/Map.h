@@ -485,6 +485,13 @@ public:
 	/** @brief	Defines an alias representing the iterator */
 	typedef RBNode< MapObject<I, T> > * Iterator;
 
+	/** Type of the Index */
+	typedef I Index;
+
+	/** Type of the Value */
+	typedef T Value;
+
+
 	/**
 	 * @brief 	Empty Constructor
 	 *
@@ -542,26 +549,67 @@ public:
 	/**
 	 * @brief 	iterate ONE time the iterator and return if there is still data
 	 *
-	 * @param [in,out]	it	If non-null, the iterator.
+	 * @param [in,out]	it	The Iterator.
 	 *
-	 * @returns	it in out Iterator to iterate.
-	 * @returns	If the iterator can return data.
+	 * @returns True if the iterator is still valid, False otherwise.
 	 */
 	bool iterate( typename RBTree<I, T, Compare>::Iterator * it ) const;
 
 	/**
 	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
 	 *
-	 * @param [in,out]	it	in out Iterator to iterate.
+	 * @param [in,out]	it	The Iterator.
 	 * @param [in,out]	i 	out Pointer to a pointer to the index retrieved.
 	 * @param [in,out]	v 	out Pointer to a pointer to the value retrieved.
 	 *
-	 * @returns	True if a data has been retrieved or False if the end has been reached.
+	 * @returns True if the iterator is still valid, False otherwise.
 	 */
 	bool iterate( typename RBTree<I, T, Compare>::Iterator * it, I ** i, T ** v ) const;
 
 	/**
 	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
+	 *
+	 * @tparam	TestFunctor	Type of the test functor.
+	 * @param [in,out]	it			The Iterator.
+	 * @param [in,out]	i		   	out Pointer to a pointer to the index retrieved.
+	 * @param [in,out]	v		   	out Pointer to a pointer to the value retrieved.
+	 * @param [in,out]	testFunctor	Functor to check a condition before incrementing the iterator
+	 * 								  		bool operator()( const T & e );
+	 *
+	 * @returns True if the iterator is still valid, False otherwise.
+	 */
+	template<typename TestFunctor>
+	bool iterate( typename RBTree<I, T, Compare>::Iterator * it, I ** i, T ** v, TestFunctor & testFunctor ) const;
+
+
+	/**
+	 * @brief 	iterate ONE time in Ascending direction the iterator and return if there is still data
+	 * 			/!\ Warning /!\ Iterating from the root ( getBegin() ) Will not iterate the whole datas.
+	 * 			see with getSmallest().
+	 *
+	 * @param [in,out]	it	If non-null, the iterator.
+	 *
+	 * @returns True if the iterator is still valid, False otherwise.
+	 */
+	bool iterateAscending(typename RBTree<I, T, Compare>::Iterator* it) const;
+
+	/**
+	 * @brief 	Iterate ONE time in Ascending direction and set the pointer to the pointer of the data retrieved
+	 * 			/!\ Warning /!\ Iterating from the root ( getBegin() ) Will not iterate the whole datas.
+	 * 			see with getSmallest().
+	 *
+	 * @param [in,out]	it	The Iterator.
+	 * @param [in,out]	i 	out Pointer to a pointer to the index retrieved.
+	 * @param [in,out]	v 	out Pointer to a pointer to the value retrieved.
+	 *
+	 * @returns True if the iterator is still valid, False otherwise.
+	 */
+	bool iterateAscending(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v) const;
+
+	/**
+	 * @brief 	Iterate ONE time in Ascending direction and set the pointer to the pointer of the data retrieved
+	 * 			/!\ Warning /!\ Iterating from the root ( getBegin() ) Will not iterate the whole datas.
+	 * 			see with getSmallest().
 	 *
 	 * @tparam	TestFunctor	Type of the test functor.
 	 * @param [in,out]	it		   	in out Iterator to iterate.
@@ -570,10 +618,12 @@ public:
 	 * @param [in,out]	testFunctor	Functor to check a condition before incrementing the iterator
 	 * 								  		bool operator()( const T & e );
 	 *
-	 * @returns	True if a data has been retrieved or False if the end has been reached or false is the functor return false.
+	 * @returns True if the iterator is still valid, False otherwise.
 	 */
 	template<typename TestFunctor>
-	bool iterate( typename RBTree<I, T, Compare>::Iterator * it, I ** i, T ** v, TestFunctor & testFunctor ) const;
+	bool iterateAscending(typename RBTree<I, T, Compare>::Iterator* it, I** i, T** v, TestFunctor& testFunctor) const;
+	
+
 
 	/**
 	 * @brief 	get the Begin Iterator
@@ -600,6 +650,14 @@ public:
 	 * @returns	A RBTree<I,T,Compare>::Iterator.
 	 */
 	typename RBTree<I, T, Compare>::Iterator end() const;
+
+	/**
+	 * @brief 	get the Begin Iterator
+	 *
+	 * @returns	Begin Iterator.
+	 */
+	typename RBTree<I, T, Compare>::Iterator getSmallest() const;
+
 
 	/************************************************************************/
 	/* Access                                                               */
