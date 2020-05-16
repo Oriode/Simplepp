@@ -22,6 +22,7 @@ namespace Math {
 
 		return rng * range / randomMax + min;
 	}
+
 	MATH_FUNC_QUALIFIER int random( int min, int max ) {
 		static std::random_device _randomDevice;
 		static unsigned long long randomMax( _randomDevice.max() );
@@ -29,6 +30,7 @@ namespace Math {
 		unsigned long long rng( _randomDevice() );
 		return int(rng * range / randomMax) + min;
 	}
+
 	MATH_FUNC_QUALIFIER unsigned int random( unsigned int min, unsigned int max ) {
 		static std::random_device _randomDevice;
 		static unsigned long long randomMax( _randomDevice.max() );

@@ -1,20 +1,17 @@
-#include "BasicLoadable.h"
+template<typename T>
+BasicLoadableT<T>::BasicLoadableT() :
+	mIsloaded( false ) {}
 
-
-BasicLoadable::BasicLoadable() :
-	mIsloaded( false ) 
-{
-}
-
-BasicLoadable::BasicLoadable( const BasicLoadable & loadable ) {
+template<typename T>
+BasicLoadableT<T>::BasicLoadableT( const BasicLoadableT<T> & loadable ) {
 	*this = loadable;
 }
 
+template<typename T>
+BasicLoadableT<T>::~BasicLoadableT() {}
 
-BasicLoadable::~BasicLoadable() {
-}
-
-bool BasicLoadable::load() {
+template<typename T>
+bool BasicLoadableT<T>::load() {
 	lock();
 	if ( this -> mIsloaded ) {
 		unlock();
@@ -34,7 +31,8 @@ bool BasicLoadable::load() {
 	}
 }
 
-bool BasicLoadable::unload() {
+template<typename T>
+bool BasicLoadableT<T>::unload() {
 	lock();
 
 	if ( !this -> mIsloaded ) {
@@ -52,27 +50,33 @@ bool BasicLoadable::unload() {
 	}
 }
 
-bool BasicLoadable::onLoad() {
+template<typename T>
+bool BasicLoadableT<T>::onLoad() {
 	return true;
 }
 
-bool BasicLoadable::onUnload() {
+template<typename T>
+bool BasicLoadableT<T>::onUnload() {
 	return true;
 }
 
-bool BasicLoadable::isLoaded() const {
+template<typename T>
+bool BasicLoadableT<T>::isLoaded() const {
 	return this -> mIsloaded;
 }
 
-void BasicLoadable::setLoaded( bool loaded ) {
+template<typename T>
+void BasicLoadableT<T>::setLoaded( bool loaded ) {
 	this -> mIsloaded = loaded;
 }
 
-void BasicLoadable::setLoading( bool isLoading ) {
+template<typename T>
+void BasicLoadableT<T>::setLoading( bool isLoading ) {
 	this -> bIsLoading = isLoading;
 }
 
-bool BasicLoadable::reload() {
+template<typename T>
+bool BasicLoadableT<T>::reload() {
 	if ( isLoaded() ) {
 		if ( unload() && load() )
 			return true;
@@ -83,19 +87,23 @@ bool BasicLoadable::reload() {
 	}
 }
 
-bool BasicLoadable::isLoading() const {
+template<typename T>
+bool BasicLoadableT<T>::isLoading() const {
 	return this -> bIsLoading;
 }
 
-void BasicLoadable::lock() {
+template<typename T>
+void BasicLoadableT<T>::lock() {
 	this -> mutex.lock();
 }
 
-void BasicLoadable::unlock() {
+template<typename T>
+void BasicLoadableT<T>::unlock() {
 	this -> mutex.unlock();
 }
 
-BasicLoadable & BasicLoadable::operator=( const BasicLoadable & loadable ) {
+template<typename T>
+BasicLoadableT<T> & BasicLoadableT<T>::operator=( const BasicLoadableT<T> & loadable ) {
 	lock();
 
 	this ->  bIsLoading = loadable.bIsLoading;

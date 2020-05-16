@@ -479,7 +479,7 @@ private:
  *
  * @sa	https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
  */
-template<typename I, typename T, typename Compare = Math::Compare::Template>
+template<typename I, typename T, typename Compare = Math::Compare::BasicComparable>
 class RBTree : public BasicIO {
 public:
 	/** @brief	Defines an alias representing the iterator */

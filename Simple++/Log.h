@@ -70,31 +70,32 @@
 #include "SimpleLog.h"
 #include "String.h"
 
+
 class Log : public SimpleLog {
 public:
 	/** @brief	Default constructor */
-	Log( void );
+	Log(void);
 
 	/** @brief	Destructor */
-	~Log( void );
+	~Log(void);
 
 	/**
-	 * @brief 	Display a log message even if we are in debug build or not.
-	 * @param 	text	Text to display.
-	 */
-	static void displayLog( const String & text );
+		* @brief 	Display a log message even if we are in debug build or not.
+		* @param 	text	Text to display.
+		*/
+	static void displayLog(const String& text);
 
 	/**
-	 * @brief 	Display a warning message even if we are in debug build or not.
-	 * @param 	text	Text to display.
-	 */
-	static void displayWarning( const String & text );
+		* @brief 	Display a warning message even if we are in debug build or not.
+		* @param 	text	Text to display.
+		*/
+	static void displayWarning(const String& text);
 
 	/**
-	 * @brief 	Display a error message even if we are in debug build or not.
-	 * @param 	text	Text to display.
-	 */
-	static void displayError( const String & text );
+		* @brief 	Display a error message even if we are in debug build or not.
+		* @param 	text	Text to display.
+		*/
+	static void displayError(const String& text);
 
 	/** @brief	Start the chrono, see stopChrono(); */
 	static void startChrono();
@@ -103,42 +104,39 @@ public:
 	static void stopChrono();
 
 	/**
-	 * @brief 	Display the last chrono result computed with startChrono() and displayChrono();
-	 * @param 	text	(Optional) Text to display with the time result.
-	 */
-	static void displayChrono( const String & text = "Elapsed Time" );
+		* @brief 	Display the last chrono result computed with startChrono() and displayChrono();
+		* @param 	text	(Optional) Text to display with the time result.
+		*/
+	static void displayChrono(const String& text = "Elapsed Time");
 
 	/**
-	 * @brief 	Handler, called when the error
-	 *
-	 * @param 	parameter1	String to be displayed.
-	 * @param 	severity  	(Optional) The severity.
-	 * @param 	fileName  	(Optional) Filename of the file.
-	 * @param 	lineNumber	(Optional) The line number.
-	 */
+		* @brief 	Handler, called when the error
+		*
+		* @param 	parameter1	String to be displayed.
+		* @param 	severity  	(Optional) The severity.
+		* @param 	fileName  	(Optional) Filename of the file.
+		* @param 	lineNumber	(Optional) The line number.
+		*/
 	static void errorHandler(
-		const String &,
+		const String&,
 		MessageSeverity severity = MessageSeverity::Error,
-		const TCHAR * fileName = TEXT( "" ),
-		unsigned int lineNumber = 0 );
+		const TCHAR* fileName = TEXT(""),
+		unsigned int lineNumber = 0);
 
 
 	static void callErrorHandler(
-		const String & message,
+		const String& message,
 		MessageSeverity severity = MessageSeverity::Error,
-		const TCHAR * fileName = TEXT( "" ),
+		const TCHAR* fileName = TEXT(""),
 		unsigned int lineNumber = 0
 	);
 
 
-	#if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug( const String & message, const TCHAR * fileName, unsigned int lineNumber );
-	#endif
+#if defined WIN32 && defined ENABLE_WIN32
+	static void displayWindowsDebug(const String& message, const TCHAR* fileName, unsigned int lineNumber);
+#endif
 
 private:
 	static std::chrono::high_resolution_clock::time_point startTime;
 	static std::chrono::high_resolution_clock::time_point endTime;
 };
-
-
-

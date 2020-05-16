@@ -490,12 +490,12 @@ T & Vector<T>::getFirst() {
 
 template<typename T>
 void Vector<T>::sortAsc() {
-	sort( Math::Logical::Less<T>() );
+	sort( Math::Logical::Less<T>::operator() );
 }
 
 template<typename T>
 void Vector<T>::sortDesc() {
-	sort( Math::Logical::Greater<T>() );
+	sort( Math::Logical::Greater<T>::operator() );
 }
 
 template<typename T>
@@ -908,7 +908,7 @@ template<typename T>
 void Vector<T>::_eraseit( typename Vector<T>::Iterator index ) {
 	this -> size--;
 	_updateIterators();
-	for ( auto it( index ), it != getEnd(); iterate(&it) ) {
+	for (typename Vector<T>::Iterator it(index); it != getEnd(); iterate(&it)) {
 		*it = *( it + 1 );
 	}
 }

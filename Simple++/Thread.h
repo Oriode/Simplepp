@@ -2,9 +2,9 @@
 
 
 #include <thread>
-#include <mutex>
 #include "Log.h"
 #include "Time/Time.h"
+#include "Mutex.h"
 
 
 
@@ -13,14 +13,14 @@
 #endif
 
 
-
-class Thread {
+template<typename T>
+class ThreadT {
 public:
 	typedef unsigned long Id;
 
 
-	Thread();
-	~Thread();
+	ThreadT();
+	~ThreadT();
 
 
 	/*
@@ -56,15 +56,15 @@ public:
 	void unlock();
 
 
-	static Thread::Id getCurrentThreadId();
+	static ThreadT::Id getCurrentThreadId();
 
 
 	void _run();
-	static void _staticRun( Thread * t );
+	static void _staticRun( ThreadT * t );
 
 
 private:
-	std::mutex mutex;
+	Mutex mutex;
 	std::thread * thread;
 
 
@@ -72,3 +72,6 @@ private:
 
 };
 
+using Thread = ThreadT<int>;
+
+#include "Thread.hpp"

@@ -1,5 +1,5 @@
 /**
- * @file	Mutex.h.
+ * @file	MutexT.h.
  *
  * @brief	Declares the mutex class
  */
@@ -10,22 +10,24 @@
 
 #include <mutex>
 
+
  /** @brief	A mutex. */
-class Mutex {
+template<typename T>
+class MutexT {
 public:
 	/** @brief	Default constructor */
-	Mutex();
+	MutexT();
 
 	/**
 	 * @brief	Copy constructor
 	 *
 	 * @param	mutex	The mutex.
 	 */
-	Mutex( const Mutex & mutex );
+	MutexT( const MutexT & mutex );
 
 
 	/** @brief	Destructor */
-	~Mutex();
+	~MutexT();
 
 	/**
 	 * @brief	Copy operator
@@ -34,7 +36,7 @@ public:
 	 *
 	 * @returns	A shallow copy of this object.
 	 */
-	Mutex & operator=( const Mutex & mutex );
+	MutexT & operator=( const MutexT & mutex );
 
 
 
@@ -55,6 +57,9 @@ private:
 	/** @brief	True to lock, false to unlock */
 	/** @brief	True to lock, false to unlock */
 	bool bLocked;
-	std::mutex mMutex;
+	T mMutex;
 };
 
+using Mutex = MutexT<std::mutex>;
+
+#include "Mutex.hpp"

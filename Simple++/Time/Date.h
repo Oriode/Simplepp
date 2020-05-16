@@ -25,7 +25,7 @@ namespace Time {
 
 
 		/************************************************************************/
-		/* CONSTRUCTOR													*/
+		/* CONSTRUCTOR															*/
 		/************************************************************************/
 		/** @brief	Empty constructor, not initialized, use Time::getDate() to get the current date */
 		Date();

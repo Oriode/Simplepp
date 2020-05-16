@@ -20,14 +20,8 @@
 #include "BuildConfig.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
-	#include <windows.h>
+#include <windows.h>
 #endif // !WIN32
-
-
-
-
-#if defined DEBUG
-#undef debug
 
 
 #if defined WIN32
@@ -38,9 +32,7 @@
 #ifndef TCHAR
 #define TCHAR wchar_t
 #endif
-#if defined ENABLE_WIN32
-#define _windowsDebug(msg); SimpleLog::displayWindowsDebug(msg, TEXT(__FILE__), __LINE__);
-#endif
+
 #else
 #ifndef TEXT
 #define TEXT(str) str
@@ -51,12 +43,16 @@
 #ifndef TCHAR
 #define TCHAR char
 #endif
-#define _windowsDebug(msg);
 #endif
 
+#if defined DEBUG
+#undef debug
 
-
-
+#if defined WIN32 && defined ENABLE_WIN32
+#define _windowsDebug(msg); SimpleLog::displayWindowsDebug(msg, TEXT(__FILE__), __LINE__);
+#else
+#define _windowsDebug(msg);
+#endif
 
 #define debug(code); code
 #define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, TEXT(__FILE__), __LINE__);
@@ -74,14 +70,11 @@
 #define _assert(condition);
 #endif
 
-
-#include "BuildConfig.h"
-
-
-class SimpleLog {
+template<typename T>
+class SimpleLogT {
 public:
-	SimpleLog();
-	~SimpleLog();
+	SimpleLogT();
+	~SimpleLogT();
 
 	enum class MessageSeverity : unsigned char {
 		Error,
@@ -97,14 +90,14 @@ public:
 	};
 
 
-	static void errorHandler( const TCHAR * message, MessageSeverity severity = MessageSeverity::Error, const TCHAR * fileName = TEXT(""), unsigned int lineNumber = 0);
+	static void errorHandler( const T * message, MessageSeverity severity = MessageSeverity::Error, const T * fileName = TEXT( "" ), unsigned int lineNumber = 0 );
 
 	static void callErrorHandler(
-		const TCHAR * message,
+		const T * message,
 		MessageSeverity severity = MessageSeverity::Error,
-		const TCHAR *  fileName = TEXT(""),
+		const T * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
-		);
+	);
 
 
 
@@ -112,33 +105,37 @@ public:
 	///@param msg Message to be displayed
 	///@param 
 	static void setErrorHandler( void( *errorHandlerFn ) (
-		const TCHAR * msg,
+		const T * msg,
 		MessageSeverity severity,
-		const TCHAR * file,
+		const T * file,
 		unsigned int line ) );
 
 	static void setConsoleColor( MessageColor color = MessageColor::White );
 
 #if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug( const TCHAR * message, const TCHAR * fileName, unsigned int lineNumber );
-	static const TCHAR * getWindowsLastError();
+	static void displayWindowsDebug( const T * message, const T * fileName, unsigned int lineNumber );
+	static const T * getWindowsLastError();
 #endif
 
 	///@brief Fill a char * buffer with the current time
 	///@param strBuffer Buffer to be filled
 	///@param bufferSize size of the buffer
-	static void getTimeStr( TCHAR * strBuffer, size_t bufferSize );
+	static void getTimeStr( T * strBuffer, size_t bufferSize );
 
 
 protected:
-	static void(*mErrorHandlerFn) (
-		const TCHAR *,
+	static void( *mErrorHandlerFn ) (
+		const T *,
 		MessageSeverity,
-		const TCHAR *,
-		unsigned int);
+		const T *,
+		unsigned int );
 
 private:
 
 
 };
 
+using SimpleLog = SimpleLogT<TCHAR>;
+
+
+#include "SimpleLog.hpp"

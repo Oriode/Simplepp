@@ -24,7 +24,7 @@
  //#define SPEEDTEST_STRING_CAST
  //#define SPEEDTEST_REGEX
  //#define SPEEDTEST_VECTOR
-#define SPEEDTEST_MAP
+//#define SPEEDTEST_MAP
 //#define SPEEDTEST_NETWORK
 //#define SPEEDTEST_CAST
 //#define SPEEDTEST_ARITHMETIC
@@ -32,9 +32,9 @@
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-//#define DEBUG_MAP
+#define DEBUG_MAP
 //#define DEBUG_UI
-#define DEBUG_IO
+//#define DEBUG_IO
 
 #ifndef _LIB
 #include <iostream>
@@ -58,8 +58,8 @@
 #include "Time/Time.h"
 #include "Test.h"
 #include "XML/XMLDocument.h"
-#include "UI/UI.h"
-#include "UI/Window.h"
+// #include "UI/UI.h"
+// #include "UI/Window.h"
 #include <functional>
 #include "IO/IOHandler.h"
 #include "IO/IOHandlerLoadable.h"

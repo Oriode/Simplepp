@@ -371,18 +371,19 @@ namespace Time {
 
 	const long long Date::_retrieveLocalUTCBias() {
 		#if defined WIN32
-		DYNAMIC_TIME_ZONE_INFORMATION dtzi;
+			#if defined ENABLE_WIN32
+				DYNAMIC_TIME_ZONE_INFORMATION dtzi;
 
-		DWORD r = GetDynamicTimeZoneInformation( &dtzi );
-		if ( dtzi.DynamicDaylightTimeDisabled )
-			return dtzi.Bias * 60;
-		else
-			return ( dtzi.Bias + dtzi.DaylightBias ) * 60 ;
-
-
+				DWORD r = GetDynamicTimeZoneInformation( &dtzi );
+				if ( dtzi.DynamicDaylightTimeDisabled )
+					return dtzi.Bias * 60;
+				else
+					return ( dtzi.Bias + dtzi.DaylightBias ) * 60 ;
+			#else
+		return 0;
+			#endif
 		#else
 		return localtime;		//Should be present in ctime
-
 		#endif
 	}
 

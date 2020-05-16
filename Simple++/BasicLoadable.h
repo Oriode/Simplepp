@@ -1,5 +1,5 @@
 /**
- * @file	BasicLoadable.h.
+ * @file	BasicLoadableT.h.
  *
  * @brief	Declares the basic loadable class
  * @author	Clément Gerber
@@ -10,14 +10,15 @@
 #include "Mutex.h"
 
  /** @brief	A basic loadable. */
-class BasicLoadable {
+template<typename T>
+class BasicLoadableT {
 public:
 	/**
-	 * @fn	BasicLoadable::BasicLoadable();
+	 * @fn	BasicLoadableT::BasicLoadableT();
 	 *
 	 * @brief	Empty constructor initialized at "NOT loaded" and "NOT loading".
 	 */
-	BasicLoadable();
+	BasicLoadableT();
 
 
 	/**
@@ -25,10 +26,10 @@ public:
 	 *
 	 * @param	loadable	Another loadable object to be copied.
 	 */
-	BasicLoadable( const BasicLoadable & loadable );
+	BasicLoadableT( const BasicLoadableT & loadable );
 
 	/** @brief	Destructor */
-	virtual ~BasicLoadable();
+	virtual ~BasicLoadableT();
 
 	/**
 	 * @brief	load the object (this function may not be overloaded)
@@ -79,7 +80,7 @@ public:
 	 *
 	 * @returns	reference to this object.
 	 */
-	BasicLoadable & operator = ( const BasicLoadable & loadable );
+	BasicLoadableT & operator = ( const BasicLoadableT & loadable );
 
 protected:
 	/**
@@ -118,3 +119,6 @@ private:
 	Mutex mutex;
 };
 
+using BasicLoadable = BasicLoadableT<int>;
+
+#include "BasicLoadable.hpp"

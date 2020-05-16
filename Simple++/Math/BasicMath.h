@@ -12,7 +12,13 @@
  //If we are on windows, include it to avoid problems
 #if defined WIN32 && defined ENABLE_WIN32
 #include <windows.h>
+#endif
+
+#if defined min
 #undef min
+#endif
+
+#if defined max
 #undef max
 #endif
 

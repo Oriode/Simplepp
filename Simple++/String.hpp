@@ -42,12 +42,12 @@ const BasicString<T> BasicString<T>::null = BasicString<T>( "" );
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const C * str ) :
-	Vector( ctor::null ) {
+	Vector( Vector<T>::ctor::null ) {
 	this -> size = BasicString<C>::getSize( str );
 	this -> maxSize = this -> size + 1;
 	this -> dataTable = new T[this -> maxSize];
-	_updateIterators();
-	copy( str, getMaxSize() );
+	Vector<T>::_updateIterators();
+	copy( str, Vector<T>::getMaxSize() );
 }
 
 
@@ -67,134 +67,134 @@ Vector(ctor::null)
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( const C * str, Size size ) :
+BasicString<T>::BasicString( const C * str, typename Vector<T>::Size size ) :
 	Vector( str, size, size + 1 ) {
-	this -> dataTable[size] = T( '\0' );
+	this -> dataTable[this -> size] = T( '\0' );
 }
 
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt ) :
-	Vector( beginIt, Size(endIt - beginIt), Size(endIt - beginIt + 1) ) {
-	this -> dataTable[size] = T( '\0' );
+	Vector<T>( beginIt, typename Vector<T>::Size(endIt - beginIt), typename Vector<T>::Size(endIt - beginIt + 1) ) {
+	this -> dataTable[this -> size] = T( '\0' );
 }
 
 
 
 template<typename T>
 BasicString<T>::BasicString() :
-	Vector( Size( 0 ), Size( 1 ) ) {
+	Vector<T>( typename Vector<T>::Size( 0 ), typename Vector<T>::Size( 1 ) ) {
 	this -> dataTable[0] = T( '\0' );
 }
 
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned char & ui ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 5;
 	this -> dataTable = new T[5];
 	this -> size = toCString( ui, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned short & ui ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 7;
 	this -> dataTable = new T[7];
 	this -> size = toCString( ui, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 
 template<typename T>
 BasicString<T>::BasicString( const int & i ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 12;
 	this -> dataTable = new T[12];
 	this -> size = toCString( i, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned int & ui ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 11;
 	this -> dataTable = new T[11];
 	this -> size = toCString( ui, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const long & l ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( l, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned long & ul ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( ul, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const long long & ll ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( ll, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned long long & ull ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[21];
 	this -> size = toCString( ull, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const double & d ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 50;
 	this -> dataTable = new T[50];
 	this -> size = toCString( d, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 template<typename T>
 BasicString<T>::BasicString( const float & f ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 30;
 	this -> dataTable = new T[30];
 	this -> size = toCString( f, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 
 
 template<typename T>
 BasicString<T>::BasicString( const bool & b ) :
-	Vector( Vector::null ) {
+	Vector<T>( Vector::null ) {
 	this -> maxSize = 6;
 	this -> dataTable = new T[6];
 	this -> size = toCString( b, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 }
 
 
 template<typename T>
 BasicString<T>::BasicString( const T & c ) :
-	Vector( 1, 2 ) {
+	Vector<T>( 1, 2 ) {
 	this -> dataTable[0] = T( c );
 	this -> dataTable[1] = T( '\0' );
 }
@@ -204,34 +204,34 @@ BasicString<T>::BasicString( const T & c ) :
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) :
-	Vector( str.data(), str.size(), str.size() + 1 ) {
-	this -> dataTable[size] = T( '\0' );
+	Vector<T>( str.data(), str.size(), str.size() + 1 ) {
+	this -> dataTable[this -> size] = T( '\0' );
 }
 
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const BasicString<C> & str ) :
-	Vector( str.getSize(), str.getSize() + 1 ) {
-	Vector<T>::copy( this -> dataTable, str.getData(), getMaxSize() );
+	Vector<T>( str.getSize(), str.getSize() + 1 ) {
+	Vector<T>::copy( this -> dataTable, str.getData(), Vector<T>::getMaxSize() );
 }
 
 template<typename T>
 BasicString<T>::BasicString( const BasicString<T> & str ) :
-	Vector( str.getSize(), str.getSize() + 1 ) {
-	Vector<T>::copy( this -> dataTable, str.dataTable, getMaxSize() );
+	Vector<T>( str.getSize(), str.getSize() + 1 ) {
+	Vector<T>::copy( this -> dataTable, str.dataTable, Vector<T>::getMaxSize() );
 }
 
 
 
 template<typename T>
 BasicString<T>::BasicString( BasicString<T> && str ) :
-	Vector( Utility::toRValue( str ) ) {
+	Vector<T>( Utility::toRValue( str ) ) {
 
 }
 
 
 template<typename T>
-BasicString<T>::BasicString( ctor ) : Vector( ctor::null ) {
+BasicString<T>::BasicString( typename Vector<T>::ctor ) : Vector<T>( Vector<T>::ctor::null ) {
 
 }
 
@@ -513,7 +513,7 @@ BasicString<T> & BasicString<T>::concat( const bool & b ) {
 		_extendBuffer( newMaxSize );
 
 	this -> size += toCString( b, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -527,7 +527,7 @@ BasicString<T> & BasicString<T>::concat( const char & c ) {
 	}
 
 	toCString( c, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -540,7 +540,7 @@ BasicString<T> & BasicString<T>::concat( const wchar_t & c ) {
 	}
 
 	toCString( c, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -555,7 +555,7 @@ BasicString<T> & BasicString<T>::_concatInteger( const Type & i ) {
 		_extendBuffer( newSize );
 
 	this -> size += toCString<Base>( i, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -567,7 +567,7 @@ BasicString<T> & BasicString<T>::_concatInteger( const Type & i, unsigned int ba
 		_extendBuffer( newSize );
 
 	this -> size += toCString( i, this -> iteratorEnd, base );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -580,7 +580,7 @@ BasicString<T> & BasicString<T>::_concatFloat( const Type & f ) {
 		_extendBuffer( newSize );
 
 	this -> size += toCString<Precision, Base>( f, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -592,7 +592,7 @@ BasicString<T> & BasicString<T>::_concatFloat( const Type & f, unsigned int prec
 		_extendBuffer( newSize );
 
 	this -> size += toCString( f, this -> iteratorEnd, precision, base );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -636,7 +636,7 @@ BasicString<T> & BasicString<T>::concat( const unsigned long & ul ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> & BasicString<T>::concat( const long long & ll ) {
-	return _concatInteger<long long, Base>( l );
+	return _concatInteger<long long, Base>( ll );
 }
 
 template<typename T>
@@ -714,7 +714,7 @@ BasicString<T> & BasicString<T>::concat( const BasicString<T> & str ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::concat( const C * buffer, typename const BasicString<C>::Size & bufferSize ) {
+BasicString<T> & BasicString<T>::concat( const C * buffer, const typename BasicString<C>::Size & bufferSize ) {
 	typename BasicString<T>::Size newSize = getSize() + bufferSize;
 
 	if ( newSize >= this -> maxSize )
@@ -723,7 +723,7 @@ BasicString<T> & BasicString<T>::concat( const C * buffer, typename const BasicS
 	copy( this -> iteratorEnd, buffer, bufferSize );
 	this -> dataTable[newSize] = T( '\0' );
 	this -> size = newSize;
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -764,7 +764,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const bool & b ) {
 		_extendBuffer( newMaxSize );
 
 	this -> size += toCString( b, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -778,7 +778,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const char & c ) {
 	}
 
 	toCStringWOS( c, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -791,7 +791,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const wchar_t & c ) {
 	}
 
 	toCStringWOS( c, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -806,7 +806,7 @@ BasicString<T> & BasicString<T>::_concatIntegerWOS( const Type & i ) {
 		_extendBuffer( newSize );
 
 	this -> size += toCStringWOS<Base>( i, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -818,7 +818,7 @@ BasicString<T> & BasicString<T>::_concatIntegerWOS( const Type & i, unsigned int
 		_extendBuffer( newSize );
 
 	this -> size += toCStringWOS( i, this -> iteratorEnd, base );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -831,7 +831,7 @@ BasicString<T> & BasicString<T>::_concatFloatWOS( const Type & f ) {
 		_extendBuffer( newSize );
 
 	this -> size += toCStringWOS<Precision, Base>( f, this -> iteratorEnd );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -843,7 +843,7 @@ BasicString<T> & BasicString<T>::_concatFloatWOS( const Type & f, unsigned int p
 		_extendBuffer( newSize );
 
 	this -> size += toCStringWOS( f, this -> iteratorEnd, precision, base );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -887,7 +887,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const unsigned long & ul ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> & BasicString<T>::_concatWOS( const long long & ll ) {
-	return _concatIntegerWOS<long long, Base>( l );
+	return _concatIntegerWOS<long long, Base>( ll );
 }
 
 template<typename T>
@@ -965,7 +965,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const BasicString<T> & str ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( const C * buffer, typename const BasicString<C>::Size & bufferSize ) {
+BasicString<T> & BasicString<T>::_concatWOS( const C * buffer, const typename BasicString<C>::Size & bufferSize ) {
 	typename BasicString<T>::Size newSize = getSize() + bufferSize;
 
 	if ( newSize >= this -> maxSize )
@@ -973,7 +973,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const C * buffer, typename const Ba
 
 	copy( this -> iteratorEnd, buffer, bufferSize );
 	this -> size = newSize;
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -1094,7 +1094,7 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type numb
 		buffer[0] = T( 'I' );
 		buffer[1] = T( 'N' );
 		buffer[2] = T( 'F' );
-		return Size( 3 );
+		return typename Vector<T>::Size( 3 );
 	}
 
 
@@ -1311,7 +1311,7 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number,
 		buffer[0] = T( 'I' );
 		buffer[1] = T( 'N' );
 		buffer[2] = T( 'F' );
-		return Size( 3 );
+		return typename Vector<T>::Size( 3 );
 	}
 
 
@@ -1422,21 +1422,21 @@ template<typename C>
 typename BasicString<T>::Size BasicString<T>::toCString( const C & c, T * buffer ) {
 	buffer[0] = c;
 	buffer[1] = T( '\0' );
-	return Size( 1 );
+	return typename Vector<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( const char & c, T * buffer ) {
 	buffer[0] = c;
 	buffer[1] = T( '\0' );
-	return Size( 1 );
+	return typename Vector<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( const wchar_t & c, T * buffer ) {
 	buffer[0] = c;
 	buffer[1] = T( '\0' );
-	return Size( 1 );
+	return typename Vector<T>::Size( 1 );
 }
 
 template<typename T>
@@ -1547,12 +1547,12 @@ typename BasicString<T>::Size BasicString<T>::toCString( long number, T * buffer
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( double number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2String<double, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2String<double>( number, buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( float number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2String<float, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2String<float>( number, buffer, precision, base );
 }
 
 
@@ -1564,7 +1564,7 @@ typename BasicString<T>::Size BasicString<T>::toCString( bool b, T * buffer ) {
 		buffer[2] = T( 'u' );
 		buffer[3] = T( 'e' );
 		buffer[4] = T( '\0' );
-		return Size( 4 );
+		return typename Vector<T>::Size( 4 );
 	} else {
 		buffer[0] = T( 'f' );
 		buffer[1] = T( 'a' );
@@ -1572,7 +1572,7 @@ typename BasicString<T>::Size BasicString<T>::toCString( bool b, T * buffer ) {
 		buffer[3] = T( 's' );
 		buffer[4] = T( 'e' );
 		buffer[5] = T( '\0' );
-		return Size( 5 );
+		return typename Vector<T>::Size( 5 );
 	}
 }
 
@@ -1587,19 +1587,19 @@ template<typename T>
 template<typename C>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( const C & c, T * buffer ) {
 	buffer[0] = c;
-	return Size( 1 );
+	return typename Vector<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( const char & c, T * buffer ) {
 	buffer[0] = c;
-	return Size( 1 );
+	return typename Vector<T>::Size( 1 );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( const wchar_t & c, T * buffer ) {
 	buffer[0] = c;
-	return Size( 1 );
+	return typename Vector<T>::Size( 1 );
 }
 
 template<typename T>
@@ -1710,12 +1710,12 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( long number, T * buf
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( double number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2StringWOS<double, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2StringWOS<double>( number, buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( float number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2StringWOS<float, Precision, Base>( number, buffer, precision, base );
+	return _convertFloat2StringWOS<float>( number, buffer, precision, base );
 }
 
 
@@ -1726,14 +1726,14 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( bool b, T * buffer )
 		buffer[1] = T( 'r' );
 		buffer[2] = T( 'u' );
 		buffer[3] = T( 'e' );
-		return Size( 4 );
+		return typename Vector<T>::Size( 4 );
 	} else {
 		buffer[0] = T( 'f' );
 		buffer[1] = T( 'a' );
 		buffer[2] = T( 'l' );
 		buffer[3] = T( 's' );
 		buffer[4] = T( 'e' );
-		return Size( 5 );
+		return typename Vector<T>::Size( 5 );
 	}
 }
 
@@ -2238,7 +2238,7 @@ double BasicString<T>::toDouble( unsigned int base ) {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( const T & c ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( 2 );
 	newStr.size = toCString( c, newStr.dataTable );
 	newStr._updateIterators();
@@ -2248,7 +2248,7 @@ BasicString<T> BasicString<T>::toString( const T & c ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned char number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned char ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2258,7 +2258,7 @@ BasicString<T> BasicString<T>::toString( unsigned char number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned short number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( short ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2268,7 +2268,7 @@ BasicString<T> BasicString<T>::toString( unsigned short number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned int number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2278,7 +2278,7 @@ BasicString<T> BasicString<T>::toString( unsigned int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( int number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2288,7 +2288,7 @@ BasicString<T> BasicString<T>::toString( int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned long long number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2298,7 +2298,7 @@ BasicString<T> BasicString<T>::toString( unsigned long long number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( long long number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2308,7 +2308,7 @@ BasicString<T> BasicString<T>::toString( long long number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned long number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2318,7 +2318,7 @@ BasicString<T> BasicString<T>::toString( unsigned long number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( long number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2338,7 +2338,7 @@ BasicString<T> BasicString<T>::toString( double number ) {
 template<typename T>
 template<unsigned int Precision, unsigned int Base>
 BasicString<T> BasicString<T>::toString( float number ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + Precision );
 	newStr.size = toCString<Precision, Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2347,7 +2347,7 @@ BasicString<T> BasicString<T>::toString( float number ) {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned char number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned char ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -2356,7 +2356,7 @@ BasicString<T> BasicString<T>::toString( unsigned char number, unsigned int base
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned short number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned short ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -2366,16 +2366,16 @@ BasicString<T> BasicString<T>::toString( unsigned short number, unsigned int bas
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned int number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( int number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -2384,7 +2384,7 @@ BasicString<T> BasicString<T>::toString( int number, unsigned int base ) {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned long long number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -2393,16 +2393,16 @@ BasicString<T> BasicString<T>::toString( unsigned long long number, unsigned int
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( long long number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned long number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -2411,35 +2411,35 @@ BasicString<T> BasicString<T>::toString( unsigned long number, unsigned int base
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( long number, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( long ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( double number, unsigned int precision, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( double ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( float number, unsigned int precision, unsigned int base ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
-	newStr._updateIterators()
+	newStr._updateIterators();
 	return newStr;
 }
 
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( bool b ) {
-	BasicString<T> newStr( ctor::null );
+	BasicString<T> newStr( Vector<T>::ctor::null );
 	newStr._allocateNoNullDelete( 6 );
 	newStr.size = toCString( b );
 	newStr._updateIterators();
@@ -2454,92 +2454,92 @@ BasicString<T> BasicString<T>::toString( bool b ) {
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const unsigned short & ui ) {
-	if ( getMaxSize() < 7 )
-		_allocateNoNull( 7 );
+	if ( Vector<T>::getMaxSize() < 7 )
+		Vector<T>::_allocateNoNull( 7 );
 	this -> size = toCString( ui, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const unsigned char & ui ) {
-	if ( getMaxSize() < 5 )
-		_allocateNoNull( 5 );
+	if ( Vector<T>::getMaxSize() < 5 )
+		Vector<T>::_allocateNoNull( 5 );
 	this -> size = toCString( ui, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const int & i ) {
-	if ( getMaxSize() < 10 )
-		_allocateNoNull( 10 );
+	if ( Vector<T>::getMaxSize() < 10 )
+		Vector<T>::_allocateNoNull( 10 );
 	this -> size = toCString( i, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const unsigned int & ui ) {
-	if ( getMaxSize() < 10 )
-		_allocateNoNull( 10 );
+	if ( Vector<T>::getMaxSize() < 10 )
+		Vector<T>::_allocateNoNull( 10 );
 	this -> size = toCString( ui, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const long & l ) {
-	if ( getMaxSize() < 21 )
-		_allocateNoNull( 21 );
+	if ( Vector<T>::getMaxSize() < 21 )
+		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( l, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const unsigned long & ul ) {
-	if ( getMaxSize() < 21 )
-		_allocateNoNull( 21 );
+	if ( Vector<T>::getMaxSize() < 21 )
+		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( ul, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const long long & ll ) {
-	if ( getMaxSize() < 21 )
-		_allocateNoNull( 21 );
+	if ( Vector<T>::getMaxSize() < 21 )
+		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( ll, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const unsigned long long & ull ) {
-	if ( getMaxSize() < 21 )
-		_allocateNoNull( 21 );
+	if ( Vector<T>::getMaxSize() < 21 )
+		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( ull, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const double & d ) {
-	if ( getMaxSize() < 11 )
-		_allocateNoNull( 11 );
+	if ( Vector<T>::getMaxSize() < 11 )
+		Vector<T>::_allocateNoNull( 11 );
 	this -> size = toCString( d, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
 template<typename T>
 BasicString<T> & BasicString<T>::operator=( const float & d ) {
-	if ( getMaxSize() < 6 )
-		_allocateNoNull( 6 );
+	if ( Vector<T>::getMaxSize() < 6 )
+		Vector<T>::_allocateNoNull( 6 );
 	this -> size = toCString( d, this -> dataTable );
-	_updateIterators();
+	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -2626,7 +2626,7 @@ BasicString<T> & BasicString<T>::operator=( const bool & b ) {
 /************************************************************************/
 template<typename T>
 bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename Vector<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2639,7 +2639,7 @@ bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename Vector<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2652,7 +2652,7 @@ bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator<( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename Vector<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2665,7 +2665,7 @@ bool BasicString<T>::operator<( const BasicString<T> & text ) const {
 
 template<typename T>
 bool BasicString<T>::operator>( const BasicString<T> & text ) const {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename Vector<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & t1 = this -> dataTable[i];
 		const T & t2 = text.dataTable[i];
 
@@ -2739,7 +2739,7 @@ typename BasicString<T>::Iterator BasicString<T>::getLastIt( const BasicString<T
 
 	auto iteratorSize( getEnd() - str.getSize() + 1 );
 	for ( auto it( iteratorSize - 1 ); it >= getBegin();) {
-		for ( Size j = 0; j < str.getSize(); j++ ) {
+		for ( typename Vector<T>::Size j = 0; j < str.getSize(); j++ ) {
 			if ( *( it + j ) != str[j] ) {
 				goto getLastItENDLOOP;
 			}
@@ -2757,7 +2757,7 @@ typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const BasicString<
 
 	auto iteratorSize = getEnd() - str.getSize() + 1;
 	for ( auto it = getBegin(); it < iteratorSize;) {
-		for ( Size j = 0; j < str.getSize(); j++ ) {
+		for ( typename Vector<T>::Size j = 0; j < str.getSize(); j++ ) {
 			if ( *( it + j ) != str[j] ) {
 				goto getFirstItENDLOOP;
 			}
@@ -2811,13 +2811,13 @@ typename BasicString<T>::Size BasicString<T>::getFirst( const T & c ) const {
 
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
+typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, typename Vector<T>::Size bufferSize, const T * toSearch, typename Vector<T>::Size toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
 	Size iteratorSize = bufferSize - toSearchSize;
-	for ( Size i = iteratorSize; i >= 0;) {
-		for ( Size j = 0; j < toSearchSize; j++ ) {
+	for ( typename Vector<T>::Size i = iteratorSize; i >= 0;) {
+		for ( typename Vector<T>::Size j = 0; j < toSearchSize; j++ ) {
 			if ( buffer[i + j] != toSearch[j] ) {
 				goto ENDLOOP;
 			}
@@ -2830,13 +2830,13 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
+typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, typename Vector<T>::Size bufferSize, const T * toSearch, typename Vector<T>::Size toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
 	Size iteratorSize = bufferSize - toSearchSize + 1;
-	for ( Size i = 0; i < iteratorSize;) {
-		for ( Size j = 0; j < toSearchSize; j++ ) {
+	for ( typename Vector<T>::Size i = 0; i < iteratorSize;) {
+		for ( typename Vector<T>::Size j = 0; j < toSearchSize; j++ ) {
 			if ( buffer[i + j] != toSearch[j] ) {
 				goto ENDLOOP;
 			}
@@ -2849,8 +2849,8 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T & c ) {
-	for ( Size i = bufferSize - 1; i >= 0; i-- ) {
+typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, typename Vector<T>::Size bufferSize, const T & c ) {
+	for ( typename Vector<T>::Size i = bufferSize - 1; i >= 0; i-- ) {
 		if ( buffer[i] == c ) {
 			return i;
 		}
@@ -2859,8 +2859,8 @@ typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, Size bu
 }
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T & c ) {
-	for ( Size i = 0; i < bufferSize; i++ ) {
+typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, typename Vector<T>::Size bufferSize, const T & c ) {
+	for ( typename Vector<T>::Size i = 0; i < bufferSize; i++ ) {
 		if ( buffer[i] == c ) {
 			return i;
 		}
@@ -2882,10 +2882,10 @@ typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const 
 
 	Size iteratorSize = bufferSize - toSearchSize + 1;
 	const T & c = buffer[0];
-	for ( Size i = 0; c != T( '\0' );) {
+	for ( typename Vector<T>::Size i = 0; c != T( '\0' );) {
 
 		const T & d = toSearch[0];
-		for ( Size j = 0; d != T( '\0' ); j++, d = toSearch[j] ) {
+		for ( typename Vector<T>::Size j = 0; d != T( '\0' ); j++, d = toSearch[j] ) {
 			if ( buffer[i + j] != d ) {
 				goto ENDLOOP;
 			}
@@ -2907,7 +2907,7 @@ typename BasicString<T>::Size BasicString<T>::getLast( const T * buffer, const T
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::getFirst( const T * buffer, const T & c ) {
 	const T & d = buffer[0];
-	for ( Size i = 0; d != T( '\0' ); i++, d = buffer[i] ) {
+	for ( typename Vector<T>::Size i = 0; d != T( '\0' ); i++, d = buffer[i] ) {
 		if ( d == c )
 			return i;
 	}
@@ -2949,7 +2949,7 @@ Vector<BasicString<T>> BasicString<T>::split( const BasicString<T> & s, const T 
 
 template<typename T>
 bool BasicString<T>::isNumeric( const BasicString<T> & v ) {
-	for ( Size i = 0; i < this -> size; i++ ) {
+	for ( typename Vector<T>::Size i = 0; i < this -> size; i++ ) {
 		const T & c = this -> dataTable[i];
 		if ( c < 40 || c > 57 )
 			return false;
@@ -2971,7 +2971,7 @@ const T * BasicString<T>::toCString() const {
 
 
 template<typename T>
-BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const {
+BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator beginIt, typename Vector<T>::Size size ) const {
 	if ( beginIt >= getEnd() )
 		return BasicString<T>();
 
@@ -2994,12 +2994,12 @@ BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator begi
 	if ( endIt > getEnd() )
 		endIt = getEnd();
 
-	return BasicString<T>( beginIt, Size(endIt - beginIt) );
+	return BasicString<T>( beginIt, typename Vector<T>::Size(endIt - beginIt) );
 }
 
 
 template<typename T>
-BasicString<T> BasicString<T>::getSubStr( Size index, Size size ) const {
+BasicString<T> BasicString<T>::getSubStr( typename Vector<T>::Size index, typename Vector<T>::Size size ) const {
 	if ( index > this -> size )
 		return BasicString<T>();
 
@@ -3433,7 +3433,7 @@ BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, con
 
 template<typename T>
 Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const BasicString<T> & y ) {
-	for ( Size i( 0 ); i < x.getSize(); i++ ) {
+	for ( typename Vector<T>::Size i( 0 ); i < x.getSize(); i++ ) {
 		const T & t1 = x[i];
 		const T & t2 = y[i];
 

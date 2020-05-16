@@ -19,7 +19,7 @@
 #define GRAPHIC_FAST_BLENDING
 
  /** @brief	Windows explicit parts on WIN32 system */
-#define ENABLE_WIN32
+//#define ENABLE_WIN32
 
 /** @brief	Enable or disable blending branching optimizations */
 #define GRAPHIC_BRANCHING_BLENDING
@@ -37,6 +37,8 @@
 //#define DEBUG_MEMORY										<= Please set it inside the compilations options
 
 /** @brief	Enable or disable the UI part */
-#define _UI
+// #define _UI
 
+/** @brief Additional information for lib export */
+#define EXPORT __declspec(dllexport)
 

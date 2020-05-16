@@ -50,7 +50,7 @@ public:
 	 * @param	size	The size.
 	 */
 	template<typename C>
-	BasicString( const C * str, Size size );
+	BasicString( const C * str, typename Vector<T>::Size size );
 	/**
 	 * @brief		Constructor
 	 *
@@ -547,7 +547,7 @@ public:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & concat( const C * buffer, typename const BasicString<C>::Size & bufferSize );
+	BasicString & concat( const C * buffer, const typename BasicString<C>::Size & bufferSize );
 
 	/**
 	 * @brief		Concatenates the given buffer
@@ -1088,7 +1088,7 @@ public:
 	 */
 
 	template<typename C>
-	static typename BasicString<T>::Size toCStringwhithout \0( const C & c, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( const C & c, T * buffer );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1097,7 +1097,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( const char & c, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( const char & c, T * buffer );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1106,7 +1106,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( const wchar_t & c, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( const wchar_t & c, T * buffer );
 
 
 	/**
@@ -1119,7 +1119,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned char number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1131,7 +1131,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned short number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1143,7 +1143,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned int  number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1155,7 +1155,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( int number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( int number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1167,7 +1167,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1179,7 +1179,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( long long number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1191,7 +1191,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long long number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1203,7 +1203,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( long number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( long number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1216,7 +1216,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Precision = 10, unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( double number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( double number, T * buffer );
 
 	/**
 	 * @brief		Converts this object to a c string whithout \0
@@ -1229,7 +1229,7 @@ public:
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
 	template<unsigned int Precision = 5, unsigned int Base = 10>
-	static typename BasicString<T>::Size toCStringwhithout \0( float number, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( float number, T * buffer );
 
 
 	/**
@@ -1241,7 +1241,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned char number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1251,7 +1251,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned short number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1261,7 +1261,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned int  number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1271,7 +1271,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( int number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( int number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1281,7 +1281,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1291,7 +1291,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( long long number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1301,7 +1301,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( unsigned long long number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1311,7 +1311,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( long number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( long number, T * buffer, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1322,7 +1322,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( double number, T * buffer, unsigned int precision, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( double number, T * buffer, unsigned int precision, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1333,7 +1333,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( float number, T * buffer, unsigned int precision, unsigned int base );
+	static typename BasicString<T>::Size toCStringWOS( float number, T * buffer, unsigned int precision, unsigned int base );
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 *
@@ -1342,7 +1342,7 @@ public:
 	 *
 	 * @returns	The given data converted to a BasicString<T>::Size.
 	 */
-	static typename BasicString<T>::Size toCStringwhithout \0( bool b, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( bool b, T * buffer );
 
 
 	/************************************************************************/
@@ -2282,7 +2282,7 @@ public:
 	 *
 	 * @returns	The sub string.
 	 */
-	BasicString<T> getSubStr( Size index, Size size ) const;
+	BasicString<T> getSubStr( typename Vector<T>::Size index, typename Vector<T>::Size size ) const;
 	/**
 	 * @brief		Gets sub string
 	 *
@@ -2291,7 +2291,7 @@ public:
 	 *
 	 * @returns	The sub string.
 	 */
-	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const;
+	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename Vector<T>::Size size ) const;
 	/**
 	 * @brief		Gets sub string
 	 *
@@ -2386,7 +2386,7 @@ public:
 	 *
 	 * @returns	The first.
 	 */
-	static typename BasicString<T>::Size getFirst( const T * buffer, Size bufferSize, const T & c );
+	static typename BasicString<T>::Size getFirst( const T * buffer, typename Vector<T>::Size bufferSize, const T & c );
 	/**
 	 * @brief		Gets a last
 	 *
@@ -2396,7 +2396,7 @@ public:
 	 *
 	 * @returns	The last.
 	 */
-	static typename BasicString<T>::Size getLast( const T * buffer, Size bufferSize, const T & c );
+	static typename BasicString<T>::Size getLast( const T * buffer, typename Vector<T>::Size bufferSize, const T & c );
 
 	/**
 	 * @brief		Gets a first
@@ -2408,7 +2408,7 @@ public:
 	 *
 	 * @returns	The first.
 	 */
-	static typename BasicString<T>::Size getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
+	static typename BasicString<T>::Size getFirst( const T * buffer, typename Vector<T>::Size bufferSize, const T * toSearch, typename Vector<T>::Size toSearchSize );
 	/**
 	 * @brief		Gets a last
 	 *
@@ -2419,7 +2419,7 @@ public:
 	 *
 	 * @returns	The last.
 	 */
-	static typename BasicString<T>::Size getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
+	static typename BasicString<T>::Size getLast( const T * buffer, typename Vector<T>::Size bufferSize, const T * toSearch, typename Vector<T>::Size toSearchSize );
 
 	/**
 	 * @brief		Gets a first
@@ -2470,7 +2470,7 @@ protected:
 	 *
 	 * @param	parameter1	The first parameter.
 	 */
-	BasicString( ctor );
+	BasicString( typename Vector<T>::ctor );
 
 	/************************************************************************/
 	/* concat() without adding sentinel                                     */
@@ -2481,7 +2481,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const BasicString<T> & str );
+	BasicString & _concatWOS( const BasicString<T> & str );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2491,7 +2491,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & _concatwhithout \0( const BasicString<C> & str );
+	BasicString & _concatWOS( const BasicString<C> & str );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2503,7 +2503,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & _concatwhithout \0( const C * buffer, typename const BasicString<C>::Size & bufferSize );
+	BasicString & _concatWOS( const C * buffer, const typename BasicString<C>::Size & bufferSize );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2514,7 +2514,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & _concatwhithout \0( const C * buffer );
+	BasicString & _concatWOS( const C * buffer );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2525,7 +2525,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & _concatwhithout \0( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	BasicString & _concatWOS( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2534,7 +2534,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const bool & b );
+	BasicString & _concatWOS( const bool & b );
 
 
 	/**
@@ -2544,7 +2544,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const char & c );
+	BasicString & _concatWOS( const char & c );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2552,7 +2552,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const wchar_t & c );
+	BasicString & _concatWOS( const wchar_t & c );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2563,7 +2563,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const unsigned char & uc );
+	BasicString & _concatWOS( const unsigned char & uc );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2574,7 +2574,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const unsigned short & us );
+	BasicString & _concatWOS( const unsigned short & us );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2585,7 +2585,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const int & i );
+	BasicString & _concatWOS( const int & i );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2596,7 +2596,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const unsigned int & ui );
+	BasicString & _concatWOS( const unsigned int & ui );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2607,7 +2607,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const long & l );
+	BasicString & _concatWOS( const long & l );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2618,7 +2618,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const unsigned long & ul );
+	BasicString & _concatWOS( const unsigned long & ul );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2629,7 +2629,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const long long & ll );
+	BasicString & _concatWOS( const long long & ll );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2640,7 +2640,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const unsigned long long & ull );
+	BasicString & _concatWOS( const unsigned long long & ull );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2652,7 +2652,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Precision = 10, unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const double & d );
+	BasicString & _concatWOS( const double & d );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2664,7 +2664,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<unsigned int Precision = 5, unsigned int Base = 10>
-	BasicString & _concatwhithout \0( const float & f );
+	BasicString & _concatWOS( const float & f );
 
 
 	/**
@@ -2675,7 +2675,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const unsigned char & uc, unsigned int base );
+	BasicString & _concatWOS( const unsigned char & uc, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2684,7 +2684,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const unsigned short & us, unsigned int base );
+	BasicString & _concatWOS( const unsigned short & us, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2693,7 +2693,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const int & i, unsigned int base );
+	BasicString & _concatWOS( const int & i, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2702,7 +2702,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const unsigned int & ui, unsigned int base );
+	BasicString & _concatWOS( const unsigned int & ui, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2711,7 +2711,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const long & l, unsigned int base );
+	BasicString & _concatWOS( const long & l, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2720,7 +2720,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const unsigned long & ul, unsigned int base );
+	BasicString & _concatWOS( const unsigned long & ul, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2729,7 +2729,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const long long & ll, unsigned int base );
+	BasicString & _concatWOS( const long long & ll, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2738,7 +2738,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const unsigned long long & ull, unsigned int base );
+	BasicString & _concatWOS( const unsigned long long & ull, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2748,7 +2748,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const double & d, unsigned int precision, unsigned int base );
+	BasicString & _concatWOS( const double & d, unsigned int precision, unsigned int base );
 	/**
 	 * @brief		Concatenate whithout \0
 	 *
@@ -2758,7 +2758,7 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	BasicString & _concatwhithout \0( const float & f, unsigned int precision, unsigned int base );
+	BasicString & _concatWOS( const float & f, unsigned int precision, unsigned int base );
 
 
 
@@ -2848,7 +2848,7 @@ private:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename Type, unsigned int Base = 10>
-	BasicString & _concatIntegerwhithout \0( const Type & i );
+	BasicString & _concatIntegerWOS( const Type & i );
 
 	/**
 	 * @brief		Concatenate integer whithout \0
@@ -2860,7 +2860,7 @@ private:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename Type>
-	BasicString & _concatIntegerwhithout \0( const Type & i, unsigned int base );
+	BasicString & _concatIntegerWOS( const Type & i, unsigned int base );
 
 	/**
 	 * @brief		Concatenate float whithout \0
@@ -2873,7 +2873,7 @@ private:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename Type, unsigned int Precision = 5, unsigned int Base = 10>
-	BasicString & _concatFloatwhithout \0( const Type & f );
+	BasicString & _concatFloatWOS( const Type & f );
 
 	/**
 	 * @brief		Concatenate float whithout \0
@@ -2886,7 +2886,7 @@ private:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename Type>
-	BasicString & _concatFloatwhithout \0( const Type & f, unsigned int precision, unsigned int base );
+	BasicString & _concatFloatWOS( const Type & f, unsigned int precision, unsigned int base );
 
 
 
@@ -3059,7 +3059,7 @@ private:
 	 * @returns	The i converted 2 string whithout \0.
 	 */
 	template<typename Type, unsigned int Base>
-	static typename BasicString<T>::Size _convertI2Stringwhithout \0( Type number, T * buffer );
+	static typename BasicString<T>::Size _convertI2StringWOS( Type number, T * buffer );
 
 	/**
 	 * @brief		Convert i 2 string whithout \0
@@ -3072,7 +3072,7 @@ private:
 	 * @returns	The i converted 2 string whithout \0.
 	 */
 	template< typename Type>
-	static typename BasicString<T>::Size _convertI2Stringwhithout \0( Type number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size _convertI2StringWOS( Type number, T * buffer, unsigned int base );
 
 	/**
 	 * @brief		Convert user interface 2 string whithout \0
@@ -3085,7 +3085,7 @@ private:
 	 * @returns	The user converted interface 2 string whithout \0.
 	 */
 	template<typename Type, unsigned int Base>
-	static typename BasicString<T>::Size _convertUI2Stringwhithout \0( Type number, T * buffer );
+	static typename BasicString<T>::Size _convertUI2StringWOS( Type number, T * buffer );
 
 	/**
 	 * @brief		Convert user interface 2 string whithout \0
@@ -3098,7 +3098,7 @@ private:
 	 * @returns	The user converted interface 2 string whithout \0.
 	 */
 	template<typename Type>
-	static typename BasicString<T>::Size _convertUI2Stringwhithout \0( Type number, T * buffer, unsigned int base );
+	static typename BasicString<T>::Size _convertUI2StringWOS( Type number, T * buffer, unsigned int base );
 
 	/**
 	 * @brief		Convert float 2 string whithout \0
@@ -3112,7 +3112,7 @@ private:
 	 * @returns	The float converted 2 string whithout \0.
 	 */
 	template<typename Type, unsigned int Precision = 10, unsigned int Base>
-	static typename BasicString<T>::Size _convertFloat2Stringwhithout \0( Type number, T * buffer );
+	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T * buffer );
 
 	/**
 	 * @brief		Convert float 2 string whithout \0
@@ -3126,7 +3126,7 @@ private:
 	 * @returns	The float converted 2 string whithout \0.
 	 */
 	template<typename Type>
-	static typename BasicString<T>::Size _convertFloat2Stringwhithout \0( Type number, T * buffer, unsigned int precision, unsigned int base );
+	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T * buffer, unsigned int precision, unsigned int base );
 };
 
 

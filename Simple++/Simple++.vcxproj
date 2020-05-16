@@ -18,6 +18,7 @@
     <ProjectGuid>{F3D0041C-5A46-400F-ACC4-65E287277165}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Simple++</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Runable|x64'" Label="Configuration">
@@ -27,11 +28,12 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Lib|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -61,6 +63,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)lib\x64\;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -80,7 +83,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;freetype.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -92,7 +95,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -101,16 +104,28 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CallingConvention>FastCall</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>FreeImage.lib;freetype.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>FreeImage.lib;freetype250.lib;SDL2.lib;Msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>FreeImage.lib;freetype.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Runable|x64'">
@@ -131,17 +146,18 @@
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ControlFlowGuard>false</ControlFlowGuard>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <CallingConvention>FastCall</CallingConvention>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;freetype26MT.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImage.lib;freetype.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <ProjectReference>
@@ -151,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
+    <ClInclude Include="BasicLoadable.hpp" />
     <ClInclude Include="GL\BasicGL.h" />
     <ClInclude Include="GL\BasicGlLoadable.h" />
     <ClInclude Include="GL\GLFW.h" />
@@ -226,6 +243,9 @@
     <ClInclude Include="Math\Transformations.hpp" />
     <ClInclude Include="MultiMap.h" />
     <ClInclude Include="MultiMap.hpp" />
+    <ClInclude Include="Mutex.hpp" />
+    <ClInclude Include="SimpleLog.hpp" />
+    <ClInclude Include="Thread.hpp" />
     <ClInclude Include="UI\BasicUI.h" />
     <ClInclude Include="UI\Event.h" />
     <ClInclude Include="UI\UI.h" />
@@ -298,20 +318,16 @@
     <ClCompile Include="IO\BasicSimpleLoadableIO.cpp" />
     <ClCompile Include="Graphic\FreeImage.cpp" />
     <ClCompile Include="IO\IO.cpp" />
-    <ClCompile Include="BasicLoadable.cpp" />
     <ClCompile Include="IO\BasicLoadableIO.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Mutex.cpp" />
     <ClCompile Include="Network\Address.cpp" />
     <ClCompile Include="Network\AddrInfo.cpp" />
     <ClCompile Include="Network\Server.cpp" />
     <ClCompile Include="Network\BasicNetwork.cpp" />
     <ClCompile Include="Network\Connection.cpp" />
-    <ClCompile Include="SimpleLog.cpp" />
-    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="Time\Date.cpp" />
     <ClCompile Include="Time\Tick.cpp" />
@@ -319,7 +335,6 @@
     <ClCompile Include="Time\TimePoint.cpp" />
     <ClCompile Include="UI\Event.cpp" />
     <ClCompile Include="UI\Window.cpp" />
-    <ClCompile Include="UTF8String.cpp" />
     <ClCompile Include="XML\Node.cpp" />
     <ClCompile Include="XML\XMLDocument.cpp" />
   </ItemGroup>

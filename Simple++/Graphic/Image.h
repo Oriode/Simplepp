@@ -1742,8 +1742,7 @@ namespace Graphic {
 
 
 	private:
-		/**
-		 /**
+
 		  /**
 		   * @brief	Kernel from float 2 int
 		   *
@@ -1755,40 +1754,8 @@ namespace Graphic {
 		   *
 		   * @returns	A K.
 		   */
-		* @brief	Kernel from float 2 int
-			*
-			* @tparam	K				 	Generic type parameter.
-			* @tparam	ComputeKernelFunc	Type of the compute kernel function.
-			* @param[ in, out ]	kernel			 	If non - null, the kernel.
-			* @param 		   	size			 	The size.
-			* @param[ in, out ]	computeKernelFunc	The compute kernel function.
-			*
-			* @returns	A K.
-			* /
-			*@fn	template<typename K, typename ComputeKernelFunc> static K ImageT::_kernelFromFloat2Int( K * kernel, size_t size, ComputeKernelFunc & computeKernelFunc );
-		/**
-		 * @brief	Kernel from float 2 int
-		 *
-		 * @tparam	K				 	Generic type parameter.
-		 * @tparam	ComputeKernelFunc	Type of the compute kernel function.
-		 * @param [in,out]	kernel			 	If non-null, the kernel.
-		 * @param 		  	size			 	The size.
-		 * @param [in,out]	computeKernelFunc	The compute kernel function.
-		 *
-		 * @returns	A K.
-		 */
-		*
-			* @brief	Kernel from float 2 int
-			*
-			* @tparam	K				 	Generic type parameter.
-			* @tparam	ComputeKernelFunc	Type of the compute kernel function.
-			* @param[ in, out ]	kernel			 	If non - null, the kernel.
-			* @param 		  	size			 	The size.
-			* @param[ in, out ]	computeKernelFunc	The compute kernel function.
-			*
-			* @returns	A K.
-			* /
-			template<typename K, typename ComputeKernelFunc>
+
+		template<typename K, typename ComputeKernelFunc>
 		static K _kernelFromFloat2Int( K * kernel, size_t size, ComputeKernelFunc & computeKernelFunc );
 		/**
 		 * @brief	Calculates the gaussian kernelf

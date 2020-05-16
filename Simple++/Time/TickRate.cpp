@@ -30,7 +30,7 @@ namespace Time {
 		this -> timePerTick = Time::Duration<Time::MilliSecond>( Time::getClock().getValue() - this -> endTicks.getValue() );
 
 		if ( this -> timePerTick < this -> targetTimePerTick ) {
-			Time::sleep( this -> targetTimePerTick.getValue() - this -> timePerTick.getValue() );
+			Time::sleep( static_cast<unsigned int>( this -> targetTimePerTick.getValue() - this -> timePerTick.getValue() ) );
 			this -> timePerTick = this -> targetTimePerTick;
 		}
 
