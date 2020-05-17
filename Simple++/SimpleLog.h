@@ -113,15 +113,25 @@ public:
 	static void setConsoleColor( typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::White );
 
 #if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug( const T * message, const T * fileName, unsigned int lineNumber );
-	static const T * getWindowsLastError();
+	static void displayWindowsDebug( const T * message, const TCHAR * fileName, unsigned int lineNumber );
+	static size_t getWindowsLastError( T * messageBuffer, size_t bufferSize );
 #endif
 
 	///@brief Fill a char * buffer with the current time
 	///@param strBuffer Buffer to be filled
 	///@param bufferSize size of the buffer
-	static void getTimeStr( T * strBuffer, size_t bufferSize );
+	template<typename C>
+	static void getTimeStr( C * strBuffer, size_t bufferSize );
+	static void getTimeStr( char * strBuffer, size_t bufferSize );
+	static void getTimeStr( wchar_t * strBuffer, size_t bufferSize );
 
+
+	///@brief Print a message to the Console.
+	///@param messageBuffer Message to be printed.
+	template<typename C>
+	static void printMessage( const C * messageBuffer );
+	static void printMessage( const char * messageBuffer );
+	static void printMessage( const wchar_t * messageBuffer );
 
 protected:
 	static void( *mErrorHandlerFn ) (
@@ -131,8 +141,22 @@ protected:
 		unsigned int );
 
 private:
-	static void parseMessage( T * buffer, int bufferSize, T * timeBuffer, const TCHAR * fileName, unsigned int lineNumber, const T * message );
-	static void parseMessage( T * buffer, int bufferSize, T * timeBuffer, const T * message );
+	template<typename C>
+	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber, const C * message );
+	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber, const char * message );
+	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber, const wchar_t * message );
+
+	template<typename C>
+	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * message );
+	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * message );
+	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * message );
+
+
+	template<typename O, typename I>
+	static void convertMessage( O * outputBuffer, const I * inputBuffer, size_t bufferSize );
+
+	template<typename O, typename I>
+	static void convertFileName( O * outputBuffer, const I * inputBuffer, size_t bufferSize );
 };
 
 using SimpleLog = SimpleLogT<TCHAR>;

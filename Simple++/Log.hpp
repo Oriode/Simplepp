@@ -47,12 +47,12 @@ void LogT<T>::displayChrono( const BasicString<T> & text ) {
 
 template<typename T>
 void LogT<T>::errorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber ) {
-	SimpleLog::errorHandler( message.toCString(), severity, fileName, lineNumber );
+	SimpleLogT<T>::errorHandler( message.toCString(), severity, fileName, lineNumber );
 }
 
 template<typename T>
 void LogT<T>::callErrorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity /*= typename LogT<T>::MessageSeverity::Error*/, const TCHAR * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
-	LogT<T>::mErrorHandlerFn( message.toCString(), severity, fileName, lineNumber );
+	LogT<T>::errorHandler( message.toCString(), severity, fileName, lineNumber );
 }
 
 #if defined WIN32 && defined ENABLE_WIN32

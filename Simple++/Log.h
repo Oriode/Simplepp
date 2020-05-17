@@ -122,14 +122,14 @@ public:
 		*/
 	static void errorHandler(
 		const BasicString<T> &,
-		MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
+		typename LogT<T>::MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
 		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0 );
 
 
 	static void callErrorHandler(
 		const BasicString<T> & message,
-		MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
+		typename LogT<T>::MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
 		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
 	);

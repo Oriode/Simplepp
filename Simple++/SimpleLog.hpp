@@ -8,20 +8,24 @@ void( *SimpleLogT<T>::mErrorHandlerFn )(
 
 
 template<typename T>
-void SimpleLogT<T>::getTimeStr( T * strBuffer, size_t bufferSize ) {
-	// Not Implemented.
+template<typename C>
+void SimpleLogT<T>::getTimeStr( C * strBuffer, size_t bufferSize ) {
+	char * tmpBuffer = new char[ bufferSize ];
+	getTimeStr( tmpBuffer, bufferSize );
+	convertMessage<C, char>( strBuffer, tmpBuffer, bufferSize );
+	delete[] tmpBuffer;
 }
 
-template<>
-void SimpleLogT<char>::getTimeStr( char * strBuffer, size_t bufferSize ) {
+template<typename T>
+void SimpleLogT<T>::getTimeStr( char * strBuffer, size_t bufferSize ) {
 	auto now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm timeinfo;
 	localtime_s( &timeinfo, &now );
 	std::strftime( strBuffer, bufferSize, "%H:%M:%S", &timeinfo );
 }
 
-template<>
-void SimpleLogT<wchar_t>::getTimeStr( wchar_t * strBuffer, size_t bufferSize ) {
+template<typename T>
+void SimpleLogT<T>::getTimeStr( wchar_t * strBuffer, size_t bufferSize ) {
 	auto now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm timeinfo;
 	localtime_s( &timeinfo, &now );
@@ -55,61 +59,59 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 	}
 
 	T timeBuffer[ 50 ];
-	getTimeStr( timeBuffer, sizeof( timeBuffer ) );
+	getTimeStr<T>( timeBuffer, sizeof( timeBuffer ) );
 
 	T logBuffer[ 2048 ];
-#ifdef WIN32
-	if ( wcslen( fileName ) ) {
-		parseMessage( logBuffer, 2048, timeBuffer, fileName, lineNumber, message );
+
+	// If we have a fileName.
+	if ( fileName[ 0 ] != TCHAR( '\0' ) ) {
+		T fileNameBuffer[ 100 ];
+		convertFileName<T, TCHAR>( fileNameBuffer, fileName, sizeof( fileNameBuffer ) );
+
+		parseMessage( logBuffer, 2048, timeBuffer, fileNameBuffer, lineNumber, message );
 	} else {
 		parseMessage( logBuffer, 2048, timeBuffer, message );
 	}
-	std::wcout << logBuffer;
-#else
-	if ( strlen( fileName ) ) {
-		parseMessage( logBuffer, 2048, timeBuffer, fileName, lineNumber, message );
-	} else {
-		parseMessage( logBuffer, 2048, timeBuffer, message );
-	}
-	std::cout << timeBuffer;
-#endif
 
 	setConsoleColor();
+	printMessage( logBuffer );
 }
 
 template<typename T>
-void SimpleLogT<T>::parseMessage( T * buffer, int bufferSize, T * timeBuffer, const TCHAR * fileName, unsigned int lineNumber, const T * message ) {
+template<typename C>
+void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber, const C * message ) {
 	// Not Implemented.
 }
 
-template<>
-void SimpleLogT<char>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const TCHAR * fileName, unsigned int lineNumber, const char * message ) {
+template<typename T>
+void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber, const char * message ) {
 	snprintf( buffer, bufferSize, "[%s][%s@%i] : %s\n", timeBuffer, fileName, lineNumber, message );
 }
 
-template<>
-void SimpleLogT<wchar_t>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const TCHAR * fileName, unsigned int lineNumber, const wchar_t * message ) {
+template<typename T>
+void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber, const wchar_t * message ) {
 	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%s][%s@%i] : %s\n", timeBuffer, fileName, lineNumber, message );
 }
 
 template<typename T>
-void SimpleLogT<T>::parseMessage( T * buffer, int bufferSize, T * timeBuffer, const T * message ) {
+template<typename C>
+void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * message ) {
 	// Not Implemented.
 }
 
-template<>
-void SimpleLogT<char>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * message ) {
+template<typename T>
+void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * message ) {
 	snprintf( buffer, bufferSize, "[%s] : %s\n", timeBuffer, message );
 }
 
-template<>
-void SimpleLogT<wchar_t>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * message ) {
+template<typename T>
+void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * message ) {
 	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%s] : %s\n", timeBuffer, message );
 }
 
 
 template<typename T>
-void SimpleLogT<T>::callErrorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity /*= typename SimpleLogT<T>::MessageSeverity::Error*/, const TCHAR * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
+void SimpleLogT<T>::callErrorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber ) {
 	mErrorHandlerFn( message, severity, fileName, lineNumber );
 }
 
@@ -136,15 +138,16 @@ SimpleLogT<T>::~SimpleLogT() {}
 
 #if defined WIN32 && defined ENABLE_WIN32
 template<typename T>
-void SimpleLogT<T>::displayWindowsDebug( const T * message, const T * fileName, unsigned int lineNumber ) {
+void SimpleLogT<T>::displayWindowsDebug( const T * message, const TCHAR * fileName, unsigned int lineNumber ) {
 	if ( GetLastError() ) {
-		SimpleLogT<T>::callErrorHandler( std::wstring( message + std::wstring( TEXT( " : Code [" ) ) + std::to_wstring( GetLastError() ) + TEXT( "] : " ) + SimpleLogT<T>::getWindowsLastError() ).c_str(), SimpleLogT<T>::MessageSeverity::Error, fileName, lineNumber );
+		T messageBuffer[ 2048 ];
+		getWindowsLastError( messageBuffer, sizeof( messageBuffer ) );
+		SimpleLogT<T>::callErrorHandler( messageBuffer, SimpleLogT<T>::MessageSeverity::Error, fileName, lineNumber );
 	}
 }
 
 template<typename T>
-const T * SimpleLogT<T>::getWindowsLastError() {
-	static T windowsLastError[ 500 ];
+size_t SimpleLogT<T>::getWindowsLastError( T * messageBuffer, size_t bufferSize ) {
 	LPTSTR lpMsgBuf;
 	DWORD strlen = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -156,15 +159,54 @@ const T * SimpleLogT<T>::getWindowsLastError() {
 		( LPTSTR ) &lpMsgBuf,
 		0, NULL );
 
-
-	memcpy( windowsLastError, lpMsgBuf, sizeof( T ) * strlen );
+	size_t sizeToCopy( ( strlen > bufferSize ) ? bufferSize : strlen );
+	convertMessage<T, wchar_t>( messageBuffer, lpMsgBuf, sizeToCopy );
 	LocalFree( lpMsgBuf );
 
-	return windowsLastError;
+	return sizeToCopy;
 }
 #endif
 
 template<typename T>
 void SimpleLogT<T>::setErrorHandler( void( *errorHandlerFn ) ( const T *, typename SimpleLogT<T>::MessageSeverity, const TCHAR *, unsigned int ) ) {
 	SimpleLogT<T>::mErrorHandlerFn = errorHandlerFn;
+}
+
+template<typename T>
+template<typename O, typename I>
+void SimpleLogT<T>::convertMessage( O * outputBuffer, const I * inputBuffer, size_t bufferSize ) {
+	size_t bufferSizeMinusOne( bufferSize - size_t( 1 ) );
+	O * ito( outputBuffer );
+	const I * iti( inputBuffer );
+	for ( size_t i( 0 ) ; i < bufferSizeMinusOne && *iti != I( '\0' ) ; iti++, ito++, i++ ) {
+		O castedChar( static_cast< O >( *iti ) );
+		*ito = castedChar;
+	}
+	*ito = O( '\0' );
+}
+
+template<typename T>
+template<typename O, typename I>
+void SimpleLogT<T>::convertFileName( O * outputBuffer, const I * inputBuffer, size_t bufferSize ) {
+	const I * iti( inputBuffer );
+	for ( size_t i( 0 ) ; i < bufferSize && *iti != I( '\0' ); i++, iti++ );
+	for ( ; iti >= inputBuffer && ( *iti != I( '\\' ) && *iti != I( '/' ) ); iti-- );
+	iti++;
+	return convertMessage<O, I>( outputBuffer, iti, bufferSize );
+}
+
+template<typename T>
+template<typename C>
+void SimpleLogT<T>::printMessage( const C * messageBuffer ) {
+	// Not Implemented.
+}
+
+template<typename T>
+void SimpleLogT<T>::printMessage( const char * messageBuffer ) {
+	std::cout << messageBuffer;
+}
+
+template<typename T>
+void SimpleLogT<T>::printMessage( const wchar_t * messageBuffer ) {
+	std::wcout << messageBuffer;
 }

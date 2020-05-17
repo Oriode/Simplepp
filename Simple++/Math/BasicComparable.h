@@ -27,6 +27,12 @@ namespace Math {
 			 */
 			static Math::Compare::Value compare( const BasicComparable & x, const BasicComparable & y );
 		};
+
+		/** @brief	Class Template for doing Compare. */
+		class Template {
+		public:
+			template<typename T> inline Value operator() ( const T & x, const T & y ) const;
+		};
 	}
 }
 

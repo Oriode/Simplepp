@@ -20,11 +20,7 @@ namespace Math {
 		 */
 		template<typename T> inline static Value compare( const T & x, const T & y );
 
-		/** @brief	Class Template for doing Compare. */
-		class Template {
-		public:
-			template<typename T> inline Value operator() ( const T & x, const T & y ) const;
-		};
+
 
 		/** @brief	Private, do not use it */
 		template<typename T> inline static Value _compare( const T & x, const T & y, ... );
