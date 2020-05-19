@@ -25,16 +25,17 @@
  //#define SPEEDTEST_REGEX
  //#define SPEEDTEST_VECTOR
 //#define SPEEDTEST_MAP
-//#define SPEEDTEST_NETWORK
 //#define SPEEDTEST_CAST
 //#define SPEEDTEST_ARITHMETIC
 
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-#define DEBUG_MAP
+//#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
+#define DEBUG_NETWORK
+
 
 #ifndef _LIB
 #include <iostream>
@@ -953,6 +954,55 @@ int main( int argc, char * argv[] ) {
 	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
 	#endif
 
+#ifdef DEBUG_NETWORK
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Network									//
+	{
+		int result;
+		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
+		scanf_s( "%d", &result );
+
+		char testData[ 50 ] = "Hello World";
+		char testData2[ 50 ] = "";
+
+		if ( result == 0 ) {
+			/////CLIENT
+			Network::Server myUDPServer;
+			myUDPServer.listen( 5001, Network::SockType::UDP, Network::IpFamily::Undefined );
+
+			Network::Connection myTCPConnection;
+			myTCPConnection.connect( "::1", 5001, Network::SockType::TCP );
+
+			Network::Address addressFrom;
+			if ( myUDPServer.receive( testData2, sizeof( testData2 ), &addressFrom ) )
+				Log::displayLog( StringASCII() << "We got an UDP message from the server " << testData2 );
+
+		} else if ( result == 1 ) {
+			//SERVER
+			Network::Server myTCPServer;
+			myTCPServer.listen( 5001, Network::SockType::TCP, Network::IpFamily::Undefined );
+			myTCPServer.listen( 5002, Network::SockType::TCP, Network::IpFamily::Undefined );
+
+			Network::Connection clientConnection;
+			while ( myTCPServer.accept( &clientConnection ) ) {
+				clientConnection.setSockType( Network::SockType::UDP );
+				clientConnection.connect();
+
+				Log::displayLog( "Sending UDP Message to client." );
+
+				clientConnection.send( testData, sizeof( testData ) );
+			}
+		} else {
+			/////GOOGLE TEST
+			Network::Connection myTCPConnection;
+
+			if ( myTCPConnection.connect( "www.google.fr", 80, Network::SockType::TCP ) ) {
+				Log::displayLog( StringASCII( "Connected to Google ! IP:" ) << myTCPConnection.getIp() );
+			}
+		}
+	}
+#endif
+
 
 	#else		//DEBUG
 	constexpr unsigned long long G10( 10000000000 );
@@ -1675,54 +1725,7 @@ int main( int argc, char * argv[] ) {
 	#endif
 
 
-	#ifdef SPEEDTEST_NETWORK
-	//////////////////////////////////////////////////////////////////////////
-	// SPEED TEST : Network									//
-	{
-		int result;
-		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
-		scanf_s( "%d", &result );
-
-		char testData[ 50 ] = "Hello World";
-		char testData2[ 50 ] = "";
-
-		if ( result == 0 ) {
-			/////CLIENT
-			Network::Server myUDPServer;
-			myUDPServer.listen( 5001, Network::SockType::UDP, Network::IpFamily::Undefined );
-
-			Network::Connection myTCPConnection;
-			myTCPConnection.connect( "::1", 5001, Network::SockType::TCP );
-
-			Network::Address addressFrom;
-			if ( myUDPServer.receive( testData2, sizeof( testData2 ), &addressFrom ) )
-				Log::displayLog( StringASCII() << "We got an UDP message from the server " << testData2 );
-
-		} else if ( result == 1 ) {
-			//SERVER
-			Network::Server myTCPServer;
-			myTCPServer.listen( 5001, Network::SockType::TCP, Network::IpFamily::Undefined );
-			myTCPServer.listen( 5002, Network::SockType::TCP, Network::IpFamily::Undefined );
-
-			Network::Connection clientConnection;
-			while ( myTCPServer.accept( &clientConnection ) ) {
-				clientConnection.setSockType( Network::SockType::UDP );
-				clientConnection.connect();
-
-				Log::displayLog( "Sending UDP Message to client." );
-
-				clientConnection.send( testData, sizeof( testData ) );
-			}
-		} else {
-			/////GOOGLE TEST
-			Network::Connection myTCPConnection;
-
-			if ( myTCPConnection.connect( "www.google.fr", 80, Network::SockType::TCP ) ) {
-				Log::displayLog( StringASCII( "Connected to Google ! IP:" ) << myTCPConnection.getIp() );
-			}
-		}
-	}
-	#endif
+	
 
 	#endif	//DEBUG
 	return 0;

@@ -471,6 +471,9 @@
     <ClInclude Include="Log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Network\Address.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -478,9 +481,6 @@
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\Address.cpp">
-      <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="Network\AddrInfo.cpp">
       <Filter>Source Files\Network</Filter>

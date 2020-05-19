@@ -1,5 +1,5 @@
 /**
- * @file		Network\Address.h.
+ * @file		Network\AddressT.h.
  *
  * @brief		Declares the address class
  * @author	Clément Gerber
@@ -14,15 +14,16 @@ namespace Network {
 
 
 	/** @brief	Extended and safer version of AddrInfo */
-	class Address : protected AddrInfo {
+	template<typename T>
+	class AddressT : protected AddrInfo {
 	public:
 		/**
 		 * @brief		Constructor from a SockType and an IpFamily
 		 *
-		 * @param		sockType SockType of this Address (TCP or UDP).
+		 * @param		sockType SockType of this AddressT (TCP or UDP).
 		 * @param		ipFamily IpFamily to set (IPv4, IPv6 or Undefined).
 		 */
-		Address( SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		AddressT( SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 
 		/**
@@ -33,7 +34,7 @@ namespace Network {
 		 * @param		sockType	(Optional) SockType.
 		 * @param		ipFamily	(Optional) IpFamily.
 		 */
-		Address( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		AddressT( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 		/**
 		 * @brief		Constructor from a IP, Service, SockType and IpFamily
@@ -42,14 +43,14 @@ namespace Network {
 		 * @param		service	Service to be used.
 		 * @param		hints  	Hints to be used (sockType, ipFamily, flags, protocol)
 		 */
-		Address( const StringASCII & address, const StringASCII & service, const AddrInfo & hints );
+		AddressT( const StringASCII & address, const StringASCII & service, const AddrInfo & hints );
 
 		/**
 		 * @brief		copy constructor to up cast
 		 *
 		 * @param		addrInfo	.
 		 */
-		Address( const AddrInfo & addrInfo );
+		AddressT( const AddrInfo & addrInfo );
 
 
 		/**
@@ -57,24 +58,24 @@ namespace Network {
 		 *
 		 * @param		address	object to copy.
 		 */
-		Address( const Address & address );
+		AddressT( const AddressT<T> & address );
 
 		/**
 		 * @brief		move constructor
 		 *
 		 * @param [in,out]	address	Object to move from.
 		 */
-		Address( Address && address );
+		AddressT( AddressT<T> && address );
 
 		/**
 		 * @brief		copy constructor from an old-school struct addrinfo
 		 *
 		 * @param		addrInfo	struct addrinfo to copy.
 		 */
-		Address( const struct addrinfo & addrInfo );
+		AddressT( const struct addrinfo & addrInfo );
 
 		/** @brief	destructor */
-		~Address();
+		~AddressT();
 
 		/**
 		 * @brief		copy operator from an AddrInfo
@@ -83,7 +84,7 @@ namespace Network {
 		 *
 		 * @returns	A shallow copy of this object.
 		 */
-		Address & operator=( const AddrInfo & addrInfo );
+		AddressT<T> & operator=( const AddrInfo & addrInfo );
 
 
 		/**
@@ -93,7 +94,7 @@ namespace Network {
 		 *
 		 * @returns	A shallow copy of this object.
 		 */
-		Address & operator=( const Address & address );
+		AddressT<T> & operator=( const AddressT<T> & address );
 
 
 		/**
@@ -103,7 +104,7 @@ namespace Network {
 		 *
 		 * @returns	reference to this.
 		 */
-		Address & operator = ( Address && address );
+		AddressT<T> & operator = ( AddressT<T> && address );
 
 		/** @brief	Information describing the address information get name */
 		using AddrInfo::getNameInfo;
@@ -150,7 +151,7 @@ namespace Network {
 		 *
 		 * @param		ctor Special parameter for accessing this constructor.
 		 */
-		Address( ctor );
+		AddressT( ctor );
 
 		/** @brief	Updates this object */
 		void _update();
@@ -161,6 +162,12 @@ namespace Network {
 
 
 	};
+
+	using Address = AddressT<int>;
+
 }
+
+
+#include "Address.hpp"
 
 
