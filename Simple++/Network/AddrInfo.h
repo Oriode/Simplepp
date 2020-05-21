@@ -1,5 +1,5 @@
 /**
- * @file		Network\AddrInfo.h.
+ * @file		Network\AddrInfoT<T>.h.
  *
  * @brief 	Declares the address information class
  * @author	Clément Gerber
@@ -17,18 +17,19 @@ namespace Network {
 
 
 	/**
-	 * @brief 	Representing a struct addrinfo, all the info of an address without the "list" side ai_next is not used. This class can be down casted freely to struct addrinfo.
+	 * @brief 	Representing a addrinfo, all the info of an address without the "list" side ai_next is not used. This class can be down casted freely to addrinfo.
 	 * 			Warning when using this class, you may prefer using Address Class which is more safer.
 	 */
-	class AddrInfo : public addrinfo {
+	template<typename T>
+	class AddrInfoT : public addrinfo {
 	public:
 		/**
-		 * @brief 	Create an AddrInfo from a SockType and an IpFamily
+		 * @brief 	Create an AddrInfoT<T> from a SockType and an IpFamily
 		 *
 		 * @param 	sockType	(Optional) Type of the socket used for this connection (TCP or UDP).
 		 * @param 	ipFamily	(Optional) The IP family used for this connection (IPv4, IPv6 or both).
 		 */
-		AddrInfo( SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		AddrInfoT( SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 		/**
 		 * @brief 	Constructor from a IP, Service, SockType and IpFamily
@@ -38,7 +39,7 @@ namespace Network {
 		 * @param 	sockType	(Optional) SockType.
 		 * @param 	ipFamily	(Optional) IpFamily.
 		 */
-		AddrInfo( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		AddrInfoT( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
 		/**
 		 * @brief 	Constructor from a IP, Service, SockType and IpFamily
@@ -47,14 +48,14 @@ namespace Network {
 		 * @param 	service	Service to be used.
 		 * @param 	hints  	Hints to be used (sockType, ipFamily, flags, protocol)
 		 */
-		AddrInfo( const StringASCII & address, const StringASCII & service, const AddrInfo & hints );
+		AddrInfoT( const StringASCII & address, const StringASCII & service, const AddrInfoT<T> & hints );
 
 		/**
 		 * @brief 	Copy constructor
 		 *
 		 * @param 	addrInfo	object to copy.
 		 */
-		AddrInfo( const AddrInfo & addrInfo );
+		AddrInfoT( const AddrInfoT<T> & addrInfo );
 
 
 		/**
@@ -62,7 +63,7 @@ namespace Network {
 		 *
 		 * @param [in,out]	addrInfo	object to be moved from.
 		 */
-		AddrInfo( AddrInfo && addrInfo );
+		AddrInfoT( AddrInfoT<T> && addrInfo );
 
 
 		/**
@@ -73,34 +74,34 @@ namespace Network {
 		 * @param 	ipFamily	The IP family.
 		 * @param 	port		The port.
 		 */
-		AddrInfo( const AddrInfo & addrInfo, SockType sockType, IpFamily ipFamily, unsigned short port );
+		AddrInfoT( const AddrInfoT<T> & addrInfo, SockType sockType, IpFamily ipFamily, unsigned short port );
 
 
 		/**
-		 * @brief 	Copy constructor from an old-school struct addrinfo
+		 * @brief 	Copy constructor from an old-school addrinfo
 		 *
-		 * @param 	addrInfo	old-school struct addrinfo.
+		 * @param 	addrInfo	old-school addrinfo.
 		 */
-		AddrInfo( const struct addrinfo & addrInfo );
+		AddrInfoT( const addrinfo & addrInfo );
 
 		/** @brief	destructor */
-		~AddrInfo();
+		~AddrInfoT();
 
 		/**
-		 * @brief 	get the old-school struct addrinfo inside this type.
+		 * @brief 	get the old-school addrinfo inside this type.
 		 *
-		 * @returns	the old-school struct addrinfo structure.
+		 * @returns	the old-school addrinfo structure.
 		 */
-		const struct addrinfo * getAddrInfoStruct() const;
+		const addrinfo * getAddrInfoStruct() const;
 
 
 		/**
-		 * @brief 	set the struct sockaddr contained inside this object
+		 * @brief 	set the sockaddr contained inside this object
 		 *
-		 * @param 	sockAddr   	struct sockaddr to set (can be NULL)
+		 * @param 	sockAddr   	sockaddr to set (can be NULL)
 		 * @param 	sockAddrLen	size of the sockAddr in bytes.
 		 */
-		void setSockAddr( const struct sockaddr * sockAddr, size_t sockAddrLen );
+		void setSockAddr( const sockaddr * sockAddr, size_t sockAddrLen );
 
 
 		/**
@@ -119,17 +120,17 @@ namespace Network {
 		  *
 		  * @returns	this object as a reference.
 		  */
-		AddrInfo & operator = ( const AddrInfo & addrInfo );
+		AddrInfoT<T> & operator = ( const AddrInfoT<T> & addrInfo );
 
 
 		/**
-		 * @brief 	copy operator from a old-school struct addrinfo
+		 * @brief 	copy operator from a old-school addrinfo
 		 *
-		 * @param 	addrInfo	struct addrinfo to copy.
+		 * @param 	addrInfo	addrinfo to copy.
 		 *
 		 * @returns	this object as a reference.
 		 */
-		AddrInfo & operator = ( const struct addrinfo & addrInfo );
+		AddrInfoT<T> & operator = ( const addrinfo & addrInfo );
 
 
 
@@ -140,14 +141,14 @@ namespace Network {
 		 *
 		 * @returns	reference of this.
 		 */
-		AddrInfo & operator = ( AddrInfo && addrInfo );
+		AddrInfoT<T> & operator = ( AddrInfoT<T> && addrInfo );
 
-		/** @brief	get the struct sockaddr of this object */
-		const struct sockaddr * getSockAddr() const;
+		/** @brief	get the sockaddr of this object */
+		const sockaddr * getSockAddr() const;
 
 
 		/**
-		 * @brief 	set the struct sockaddr to a new one filled with 0
+		 * @brief 	set the sockaddr to a new one filled with 0
 		 *
 		 * @param 	newSize	size in bytes of the new sockaddr.
 		 */
@@ -157,13 +158,13 @@ namespace Network {
 		/**
 		 * @brief 	set the sockaddr port from an another sockaddr
 		 *
-		 * @param 	sockAddr	struct sockaddr where to copy the port.
+		 * @param 	sockAddr	sockaddr where to copy the port.
 		 */
-		void setPort( const struct sockaddr * sockAddr );
+		void setPort( const sockaddr * sockAddr );
 
 
 		/**
-		 * @brief 	get the length in bytes of the struct sockaddr
+		 * @brief 	get the length in bytes of the sockaddr
 		 *
 		 * @returns	length in bytes of the sockaddr.
 		 */
@@ -183,7 +184,7 @@ namespace Network {
 		/**
 		 * @brief 	get the port
 		 *
-		 * @returns	port if the struct sockaddr * is not NULL, 0 else.
+		 * @returns	port if the sockaddr * is not NULL, 0 else.
 		 */
 		unsigned short getPort() const;
 
@@ -261,39 +262,39 @@ namespace Network {
 		 * @brief 	alias of getnameinfo() and cast the result to a StringASCII
 		 *
 		 * @param 	sockAddr   	SockAddr from which to get the name.
-		 * @param 	sockAddrLen	length in bytes of the struct sockaddr.
+		 * @param 	sockAddrLen	length in bytes of the sockaddr.
 		 *
-		 * @returns	StringASCII representing the struct sockaddr.
+		 * @returns	StringASCII representing the sockaddr.
 		 */
-		static StringASCII getNameInfo( const struct sockaddr & sockAddr, size_t sockAddrLen );
+		static StringASCII getNameInfo( const sockaddr & sockAddr, size_t sockAddrLen );
 
 		/**
-		 * @brief 	alias of getnameinfo() of the  struct sockaddr inside the struct addrinfo
+		 * @brief 	alias of getnameinfo() of the  sockaddr inside the addrinfo
 		 *
-		 * @param 	addrInfo	getnameinfo() will be executed to the struct sockaddr inside.
+		 * @param 	addrInfo	getnameinfo() will be executed to the sockaddr inside.
 		 *
 		 * @returns	StringASCII.
 		 */
-		static StringASCII getNameInfo( const struct addrinfo & addrInfo );
+		static StringASCII getNameInfo( const addrinfo & addrInfo );
 
 
 
 		/**
-		 * @brief 	getnameinfo() on the struct sockaddr inside this object
+		 * @brief 	getnameinfo() on the sockaddr inside this object
 		 *
-		 * @returns	StringASCII representing the struct sockaddr.
+		 * @returns	StringASCII representing the sockaddr.
 		 */
 		StringASCII getNameInfo() const;
 
 
 		/**
-		 * @brief 	get the port a struct sockaddr as an unsigned short
+		 * @brief 	get the port a sockaddr as an unsigned short
 		 *
 		 * @param 	sockAddr	The sock address.
 		 *
 		 * @returns	Port as unsigned short.
 		 */
-		static unsigned short getPort( const struct sockaddr & sockAddr );
+		static unsigned short getPort( const sockaddr & sockAddr );
 
 
 		/**
@@ -305,21 +306,21 @@ namespace Network {
 
 
 		/**
-		 * @brief 	set the IP family of this addrinfo (this won't change the struct sockaddr and may corrupt this object)
+		 * @brief 	set the IP family of this addrinfo (this won't change the sockaddr and may corrupt this object)
 		 *
 		 * @param 	ipFamily	IP Family to set.
 		 */
 		void setIpFamily( IpFamily ipFamily );
 
 		/**
-		 * @brief 	set the Protocol of this (this won't change the struct sockaddr and may corrupt this object)
+		 * @brief 	set the Protocol of this (this won't change the sockaddr and may corrupt this object)
 		 *
 		 * @param 	protocol	Protocol.
 		 */
 		void setProtocol( int protocol );
 
 		/**
-		 * @brief 	set the SockType (TCP or UDP) (this won't change the struct sockaddr and may corrupt this object)
+		 * @brief 	set the SockType (TCP or UDP) (this won't change the sockaddr and may corrupt this object)
 		 *
 		 * @param 	sockType	.
 		 */
@@ -330,11 +331,15 @@ namespace Network {
 		enum ctor {
 			null
 		};
-		AddrInfo( ctor );
+		AddrInfoT( ctor );
 
 	};
 
+	using AddrInfo = AddrInfoT<int>;
+
 }
+
+#include "AddrInfo.hpp"
 
 
 

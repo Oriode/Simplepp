@@ -12,7 +12,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	AddressT<T>::AddressT( const struct addrinfo & addrInfo ) :
+	AddressT<T>::AddressT( const addrinfo & addrInfo ) :
 		AddrInfo( addrInfo ) {
 		_update();
 	}

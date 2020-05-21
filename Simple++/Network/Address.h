@@ -68,11 +68,11 @@ namespace Network {
 		AddressT( AddressT<T> && address );
 
 		/**
-		 * @brief		copy constructor from an old-school struct addrinfo
+		 * @brief		copy constructor from an old-school addrinfo
 		 *
-		 * @param		addrInfo	struct addrinfo to copy.
+		 * @param		addrInfo	addrinfo to copy.
 		 */
-		AddressT( const struct addrinfo & addrInfo );
+		AddressT( const addrinfo & addrInfo );
 
 		/** @brief	destructor */
 		~AddressT();

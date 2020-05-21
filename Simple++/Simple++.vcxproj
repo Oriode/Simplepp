@@ -248,6 +248,10 @@
     <ClInclude Include="MultiMap.hpp" />
     <ClInclude Include="Mutex.hpp" />
     <ClInclude Include="Network\Address.hpp" />
+    <ClInclude Include="Network\AddrInfo.hpp" />
+    <ClInclude Include="Network\BasicNetwork.hpp" />
+    <ClInclude Include="Network\Connection.hpp" />
+    <ClInclude Include="Network\Server.hpp" />
     <ClInclude Include="SimpleLog.hpp" />
     <ClInclude Include="Thread.hpp" />
     <ClInclude Include="UI\BasicUI.h" />
@@ -325,10 +329,6 @@
     <ClCompile Include="IO\BasicLoadableIO.cpp" />
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
-    <ClCompile Include="Network\AddrInfo.cpp" />
-    <ClCompile Include="Network\Server.cpp" />
-    <ClCompile Include="Network\BasicNetwork.cpp" />
-    <ClCompile Include="Network\Connection.cpp" />
     <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="Time\Date.cpp" />
     <ClCompile Include="Time\Tick.cpp" />

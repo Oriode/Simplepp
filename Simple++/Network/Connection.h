@@ -1,5 +1,5 @@
 /**
- * @file		Network\Connection.h.
+ * @file		Network\ConnectionT<T>.h.
  *
  * @brief 		Declares the connection class
  * @author	Clément Gerber
@@ -19,11 +19,12 @@
  /** @brief	. */
 namespace Network {
 
-	/** @brief	Connection/Socket Class */
-	class Connection : public Address {
+	/** @brief	ConnectionT<T>/Socket Class */
+	template<typename T>
+	class ConnectionT : public Address {
 	public:
 		/** @brief	Create a connection not initialized. */
-		Connection();
+		ConnectionT();
 
 		/**
 		 * @brief 	Create a connection already initialized
@@ -32,25 +33,25 @@ namespace Network {
 		 * @param 	sockType	(Optional) TCP or UDP.
 		 * @param 	ipFamily	(Optional) IPv4 or IPv6 or Undefined for testing the two.
 		 */
-		 //Connection( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
-		 //Connection(const AddrInfo & addrInfo);
+		 //ConnectionT( const StringASCII & address, const StringASCII & service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		 //ConnectionT(const AddrInfo & addrInfo);
 
 		 /**
 		  * @brief 	Constructor from an address
 		  *
 		  * @param 	address	Address to asign to this connection.
 		  */
-		Connection( const Address & address );
+		ConnectionT( const Address & address );
 
 		/**
 		 * @brief 	Move constructor
 		 *
 		 * @param [in,out]	connection	Object to be moved from.
 		 */
-		Connection( Connection && connection );
+		ConnectionT( ConnectionT<T> && connection );
 
 		/** @brief	destructor */
-		~Connection();
+		~ConnectionT();
 
 		/**
 		 * @brief 	brief move operator
@@ -59,8 +60,8 @@ namespace Network {
 		 *
 		 * @returns	reference to this.
 		 */
-		Connection & operator =( Connection && socket );
-		//Connection & operator =(const AddrInfo & addrInfo);
+		ConnectionT<T> & operator =( ConnectionT<T> && socket );
+		//ConnectionT<T> & operator =(const AddrInfo & addrInfo);
 
 		/**
 		 * @brief 	get the Address of this connection
@@ -181,11 +182,11 @@ namespace Network {
 		/**
 		 * @brief 	Accept a new client (only when listening on TCP). This is a blocking method.
 		 *
-		 * @param [in,out]	clientSocket	clientSocket Pointer to a Connection object that will be filled when a client connect (the object has to be already allocated)
+		 * @param [in,out]	clientSocket	clientSocket Pointer to a ConnectionT<T> object that will be filled when a client connect (the object has to be already allocated)
 		 *
 		 * @returns	true when a new client has connected.
 		 */
-		bool accept( Connection * clientSocket );
+		bool accept( ConnectionT<T> * clientSocket );
 
 
 		/**
@@ -276,7 +277,7 @@ namespace Network {
 		 *
 		 * @param 	parameter1	The first parameter.
 		 */
-		Connection( ctor );
+		ConnectionT( ctor );
 
 		/** @brief	The address information set flags */
 		using AddrInfo::setFlags;
@@ -318,7 +319,7 @@ namespace Network {
 		 *
 		 * @returns	True if it succeeds, false if it fails.
 		 */
-		bool _tryConnect( const struct addrinfo * addrResults );
+		bool _tryConnect( const addrinfo * addrResults );
 
 		/**
 		 * @brief 	Try connect
@@ -337,7 +338,7 @@ namespace Network {
 		 *
 		 * @returns	True if it succeeds, false if it fails.
 		 */
-		bool _tryListen( const struct addrinfo * addrResults, int maxClients );
+		bool _tryListen( const addrinfo * addrResults, int maxClients );
 
 		/**
 		 * @brief 	Try listen
@@ -357,10 +358,11 @@ namespace Network {
 		bool mIsListening;
 	};
 
-
-
+	using Connection = ConnectionT<int>;
 
 }
+
+#include "Connection.hpp"
 
 
 

@@ -1,10 +1,7 @@
-#include "Connection.h"
-
-
 namespace Network {
 
-
-	Connection::Connection( const Address & address ) :
+	template<typename T>
+	ConnectionT<T>::ConnectionT( const Address & address ) :
 		Address( address ),
 		mSocket( 0 ),
 		mIsCreated( false ),
@@ -14,7 +11,7 @@ namespace Network {
 	/*
 
 
-	Connection::Connection(const StringASCII & ip, const StringASCII & service, SockType sockType / *= SockType::TCP* /, IpFamily ipFamily / *= IpFamily::Undefined* /) :
+	ConnectionT<T>::ConnectionT(const StringASCII & ip, const StringASCII & service, SockType sockType / *= SockType::TCP* /, IpFamily ipFamily / *= IpFamily::Undefined* /) :
 		Address(ip, service, sockType, ipFamily),
 		mSocket(0),
 		mIsCreated(false),
@@ -23,7 +20,7 @@ namespace Network {
 
 	}
 
-	Connection::Connection(const Address & address) :
+	ConnectionT<T>::ConnectionT(const Address & address) :
 		Address(address),
 		mSocket(0),
 		mIsCreated(false),
@@ -32,19 +29,20 @@ namespace Network {
 
 	}*/
 
-
-	Connection::Connection( ctor ) : Address( ctor::null ) {
+	template<typename T>
+	ConnectionT<T>::ConnectionT( ctor ) : Address( ctor::null ) {
 
 	}
 
 
-
-	Connection::Connection( Connection && connection ) :
+	template<typename T>
+	ConnectionT<T>::ConnectionT( ConnectionT<T> && connection ) :
 		Address( ctor::null ) {
 		*this = Utility::toRValue( connection );
 	}
 
-	Connection::Connection() :
+	template<typename T>
+	ConnectionT<T>::ConnectionT() :
 		Address( ctor::null ),
 		mSocket( 0 ),
 		mIsCreated( false ),
@@ -53,28 +51,31 @@ namespace Network {
 	}
 
 	/*
-		Connection & Connection::operator=(const AddrInfo & addrInfo) {
+		ConnectionT<T> & ConnectionT<T>::operator=(const AddrInfo & addrInfo) {
 			close();
 			Address::operator=(addrInfo);
 			return *this;
 		}*/
 
-	Connection::~Connection() {
+	template<typename T>
+	ConnectionT<T>::~ConnectionT() {
 		close();
 	}
 
 
-
-	const Address & Connection::getAddress() const {
+	template<typename T>
+	const Address & ConnectionT<T>::getAddress() const {
 		return *this;
 	}
 
-	void Connection::setAddess( const Address & address ) {
+	template<typename T>
+	void ConnectionT<T>::setAddess( const Address & address ) {
 		close();
 		Address::operator=( address );
 	}
 
-	bool Connection::listen( int maxClients ) {
+	template<typename T>
+	bool ConnectionT<T>::listen( int maxClients ) {
 		if ( !Network::init() ) return false;
 
 		if ( this -> mIsCreated ) {
@@ -96,8 +97,8 @@ namespace Network {
 
 
 
-
-	SOCKET Connection::listenStatic( const AddrInfo & addrInfo, int maxClients ) {
+	template<typename T>
+	SOCKET ConnectionT<T>::listenStatic( const AddrInfo & addrInfo, int maxClients ) {
 		SOCKET newSocket = ::socket( ( int ) addrInfo.getIpFamily(), ( int ) addrInfo.getSockType(), ( int ) addrInfo.getProtocol() );
 		if ( newSocket == INVALID_SOCKET ) {
 			return SOCKET_ERROR;
@@ -118,24 +119,29 @@ namespace Network {
 		return newSocket;
 	}
 
-	bool Connection::listen( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::listen( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
 		return _listen( ip.getData(), service.getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Connection::listen( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::listen( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
 		return _listen( ip.getData(), StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Connection::listen( unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::listen( unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/, int maxClients /*= 100*/ ) {
 		return _listen( NULL, StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Connection::listen( const Address & address, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::listen( const Address & address, int maxClients /*= 100*/ ) {
 		setAddess( address );
 		return listen( maxClients );
 	}
 
-	bool Connection::_listen( const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::_listen( const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/ ) {
 		if ( !Network::init() ) return false;
 
 		if ( this -> mIsCreated ) {
@@ -146,7 +152,7 @@ namespace Network {
 		setSockType( sockType );
 		setIpFamily( ipFamily );
 
-		struct addrinfo * addrResults;
+		addrinfo * addrResults;
 		if ( getaddrinfo( ip, service, getAddrInfoStruct(), &addrResults ) ) {
 			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 			return false;
@@ -165,8 +171,8 @@ namespace Network {
 		return true;
 	}
 
-
-	bool Connection::connect() {
+	template<typename T>
+	bool ConnectionT<T>::connect() {
 		if ( !Network::init() ) return false;
 
 		if ( this -> mIsCreated ) {
@@ -184,16 +190,18 @@ namespace Network {
 		return true;
 	}
 
-
-	bool Connection::connect( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::connect( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
 		return _connect( ip.toCString(), service.toCString(), sockType, ipFamily );
 	}
 
-	bool Connection::connect( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
+	template<typename T>
+	bool ConnectionT<T>::connect( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
 		return _connect( ip.toCString(), StringASCII( port ).toCString(), sockType, ipFamily );
 	}
 
-	SOCKET Connection::connectStatic( const AddrInfo & addrInfo ) {
+	template<typename T>
+	SOCKET ConnectionT<T>::connectStatic( const AddrInfo & addrInfo ) {
 		SOCKET newSocket = ::socket( ( int ) addrInfo.getIpFamily(), ( int ) addrInfo.getSockType(), ( int ) addrInfo.getProtocol() );
 		if ( newSocket == INVALID_SOCKET ) {
 			return SOCKET_ERROR;
@@ -208,20 +216,21 @@ namespace Network {
 		return newSocket;
 	}
 
-
-	bool Connection::isConnected() const {
+	template<typename T>
+	bool ConnectionT<T>::isConnected() const {
 		return this -> mIsCreated;
 	}
 
-	bool Connection::connect( const Address & address ) {
+	template<typename T>
+	bool ConnectionT<T>::connect( const Address & address ) {
 		setAddess( address );
 		return connect();
 	}
 
 
 
-
-	bool Connection::_connect( const char * ip, const char * service, SockType sockType, IpFamily ipFamily ) {
+	template<typename T>
+	bool ConnectionT<T>::_connect( const char * ip, const char * service, SockType sockType, IpFamily ipFamily ) {
 		if ( !Network::init() ) return false;
 
 		if ( this -> mIsCreated ) {
@@ -232,7 +241,7 @@ namespace Network {
 		setSockType( sockType );
 		setIpFamily( ipFamily );
 
-		struct addrinfo * addrResults;
+		addrinfo * addrResults;
 		if ( ::getaddrinfo( ip, service, getAddrInfoStruct(), &addrResults ) ) {
 			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 			return false;
@@ -253,10 +262,10 @@ namespace Network {
 		return true;
 	}
 
-
-	bool Connection::_tryConnect( const struct addrinfo * addrResults ) {
-		for ( const struct addrinfo * AI = addrResults; AI != NULL; AI = AI -> ai_next ) {
-			AddrInfo * addrInfo = ( AddrInfo* ) AI;
+	template<typename T>
+	bool ConnectionT<T>::_tryConnect( const addrinfo * addrResults ) {
+		for ( const addrinfo * AI = addrResults; AI != NULL; AI = AI -> ai_next ) {
+			AddrInfo * addrInfo = ( AddrInfo * ) AI;
 
 			return _tryConnect( addrInfo );
 
@@ -264,8 +273,8 @@ namespace Network {
 		return false;
 	}
 
-
-	bool Connection::_tryConnect( AddrInfo * addrInfo ) {
+	template<typename T>
+	bool ConnectionT<T>::_tryConnect( AddrInfo * addrInfo ) {
 		if ( addrInfo -> getIpFamily() == IpFamily::Undefined ) {
 			addrInfo -> setIpFamily( IpFamily::IPv6 );
 			SOCKET newSocket = connectStatic( *addrInfo );
@@ -294,16 +303,17 @@ namespace Network {
 	}
 
 
-
-	bool Connection::_tryListen( const struct addrinfo * addrResults, int maxClients ) {
+	template<typename T>
+	bool ConnectionT<T>::_tryListen( const addrinfo * addrResults, int maxClients ) {
 		for ( auto AI = addrResults; AI != NULL; AI = AI -> ai_next ) {
-			AddrInfo * addrInfo = ( AddrInfo* ) AI;
+			AddrInfo * addrInfo = ( AddrInfo * ) AI;
 			return _tryListen( addrInfo, maxClients );
 		}
 		return false;
 	}
 
-	bool Connection::_tryListen( AddrInfo * addrInfo, int maxClients ) {
+	template<typename T>
+	bool ConnectionT<T>::_tryListen( AddrInfo * addrInfo, int maxClients ) {
 		if ( addrInfo -> getIpFamily() == IpFamily::Undefined ) {
 			addrInfo -> setIpFamily( IpFamily::IPv6 );
 
@@ -343,8 +353,8 @@ namespace Network {
 
 
 
-
-	void Connection::close() {
+	template<typename T>
+	void ConnectionT<T>::close() {
 		if ( this -> mIsCreated )
 			closesocket( this -> mSocket );
 
@@ -355,8 +365,8 @@ namespace Network {
 
 
 
-
-	bool Connection::send( const char * buffer, int size ) {
+	template<typename T>
+	bool ConnectionT<T>::send( const char * buffer, int size ) {
 		if ( getSockType() == SockType::TCP ) {
 			if ( ::send( this -> mSocket, buffer, size, 0 ) == SOCKET_ERROR ) {
 				error( "Unable to send TCP data." );
@@ -371,7 +381,8 @@ namespace Network {
 		return true;
 	}
 
-	bool Connection::accept( Connection * clientSocket ) {
+	template<typename T>
+	bool ConnectionT<T>::accept( ConnectionT<T> * clientSocket ) {
 		if ( !this -> mIsCreated ) {
 			error( "Socket not binded." );
 			return false;
@@ -408,13 +419,13 @@ namespace Network {
 		return true;
 	}
 
-
-	SOCKET Connection::getSocket() const {
+	template<typename T>
+	SOCKET ConnectionT<T>::getSocket() const {
 		return this -> mSocket;
 	}
 
-
-	int Connection::receive( char * buffer, int maxSize ) {
+	template<typename T>
+	int ConnectionT<T>::receive( char * buffer, int maxSize ) {
 		int amountRead = ::recv( this -> mSocket, buffer, maxSize, 0 );
 		if ( amountRead <= 0 ) {
 			if ( amountRead == SOCKET_ERROR ) {
@@ -425,11 +436,12 @@ namespace Network {
 		return amountRead;
 	}
 
-	int Connection::receive( char * buffer, int maxSize, Address * addressFrom ) {
+	template<typename T>
+	int ConnectionT<T>::receive( char * buffer, int maxSize, Address * addressFrom ) {
 		//cast in order to resolve access problem
-		Connection * castedAddress = ( Connection* ) addressFrom;
+		ConnectionT<T> * castedAddress = ( ConnectionT<T> * ) addressFrom;
 		castedAddress -> newSockAddr( sizeof( SOCKADDR_STORAGE ) );
-		int amountRead = ::recvfrom( this -> mSocket, buffer, maxSize, 0, castedAddress -> ai_addr, ( int* ) &castedAddress -> ai_addrlen );
+		int amountRead = ::recvfrom( this -> mSocket, buffer, maxSize, 0, castedAddress -> ai_addr, ( int * ) &castedAddress -> ai_addrlen );
 		if ( amountRead <= 0 ) {
 			if ( amountRead == SOCKET_ERROR ) {
 				error( "Error while ReceiveFrom." );
@@ -440,7 +452,8 @@ namespace Network {
 		return amountRead;
 	}
 
-	Connection & Connection::operator=( Connection && socket ) {
+	template<typename T>
+	ConnectionT<T> & ConnectionT<T>::operator=( ConnectionT<T> && socket ) {
 		Address::operator=( Utility::toRValue( socket ) );
 		this -> mSocket = Utility::toRValue( socket.mSocket );
 		this -> mIsCreated = Utility::toRValue( socket.mIsCreated );
@@ -448,10 +461,10 @@ namespace Network {
 		return *this;
 	}
 
-
-	bool Connection::send( char * buffer, int size, const Address & addressTo ) {
+	template<typename T>
+	bool ConnectionT<T>::send( char * buffer, int size, const Address & addressTo ) {
 		//cast in order to resolve access problem
-		const Connection * castedAddress = ( const Connection* ) &addressTo;
+		const ConnectionT<T> * castedAddress = ( const ConnectionT<T> * ) & addressTo;
 		if ( ::sendto( this -> mSocket, buffer, size, 0, castedAddress -> getSockAddr(), ( int ) castedAddress  -> getSockAddrLen() ) == SOCKET_ERROR ) {
 			error( "Unable to send UDP data." );
 			return false;

@@ -1,33 +1,34 @@
-#include "Server.h"
-
-
 namespace Network {
 
-	Server::Server() :
+	template<typename T>
+	ServerT<T>::ServerT() :
 		mIsBinded( false ) {
 
 	}
 
-
-	Server::~Server() {
+	template<typename T>
+	ServerT<T>::~ServerT() {
 		close();
 	}
 
 
-
-	bool Server::listen( unsigned short port, SockType sockType, IpFamily ipFamily, int maxClients ) {
+	template<typename T>
+	bool ServerT<T>::listen( unsigned short port, SockType sockType, IpFamily ipFamily, int maxClients ) {
 		return _listen( NULL, StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Server::listen( const StringASCII & address, const StringASCII & service, SockType sockType, IpFamily ipFamily, int maxClients ) {
+	template<typename T>
+	bool ServerT<T>::listen( const StringASCII & address, const StringASCII & service, SockType sockType, IpFamily ipFamily, int maxClients ) {
 		return _listen( address.getData(), service.getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Server::listen( const StringASCII & address, unsigned int port, SockType sockType, IpFamily ipFamily, int maxClients ) {
+	template<typename T>
+	bool ServerT<T>::listen( const StringASCII & address, unsigned int port, SockType sockType, IpFamily ipFamily, int maxClients ) {
 		return _listen( address.getData(), StringASCII( port ).getData(), sockType, ipFamily, maxClients );
 	}
 
-	bool Server::listen( const Address & address, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ServerT<T>::listen( const Address & address, int maxClients /*= 100*/ ) {
 		if ( !Network::init() ) return false;
 
 		AddrInfo thisAddrInfo( *( ( AddrInfo * ) &address ) );
@@ -41,14 +42,15 @@ namespace Network {
 		return true;
 	}
 
-	bool Server::_listen( const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/ ) {
+	template<typename T>
+	bool ServerT<T>::_listen( const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/ ) {
 		if ( !Network::init() ) return false;
 
 		AddrInfo hints( sockType, ipFamily );
 		hints.addFlag( Flags::Passive );
 		hints.addFlag( Flags::NumericHost );
 
-		struct addrinfo * addrResults;
+		addrinfo * addrResults;
 		if ( ::getaddrinfo( ip, service, hints.getAddrInfoStruct(), &addrResults ) ) {
 			error( StringASCII( "Unable to retreive address info on address  " ) << ip << "@" << service );
 			return false;
@@ -67,13 +69,13 @@ namespace Network {
 		return true;
 	}
 
-
-	bool Server::_tryListen( const struct addrinfo * addrResults, int maxClients ) {
+	template<typename T>
+	bool ServerT<T>::_tryListen( const addrinfo * addrResults, int maxClients ) {
 		Vector<const AddrInfo *> addrInfoVector;
 
 		bool result = false;
-		for ( const struct addrinfo * AI = addrResults; AI != NULL; AI = AI -> ai_next ) {
-			AddrInfo * addrInfo = ( AddrInfo* ) AI;
+		for ( const addrinfo * AI = addrResults; AI != NULL; AI = AI -> ai_next ) {
+			AddrInfo * addrInfo = ( AddrInfo * ) AI;
 			addrInfoVector.push( addrInfo );
 
 			if ( this -> mSocketVector.getSize() >= FD_SETSIZE ) {
@@ -88,8 +90,8 @@ namespace Network {
 	}
 
 
-
-	bool Server::_tryListen( AddrInfo * addrInfo, int maxClients ) {
+	template<typename T>
+	bool ServerT<T>::_tryListen( AddrInfo * addrInfo, int maxClients ) {
 		if ( addrInfo -> getIpFamily() == IpFamily::Undefined ) {
 			addrInfo -> setIpFamily( IpFamily::IPv6 );
 
@@ -106,8 +108,8 @@ namespace Network {
 		return false;
 	}
 
-
-	bool Server::_tryListen( Connection * socket, int maxClients ) {
+	template<typename T>
+	bool ServerT<T>::_tryListen( Connection * socket, int maxClients ) {
 		if ( this -> mSocketVector.getSize() >= FD_SETSIZE ) {
 			warn( "getaddrinfo returned more addresses than we could use.\n" );
 			return false;
@@ -124,13 +126,13 @@ namespace Network {
 
 
 
-
-	bool Server::close() {
+	template<typename T>
+	bool ServerT<T>::close() {
 		if ( !this -> mIsBinded ) return false;
 
 		for ( unsigned int i = 0; i < this -> mSocketVector.getSize(); i++ ) {
-			this -> mSocketVector[i] -> close();
-			delete this -> mSocketVector[i];
+			this -> mSocketVector[ i ] -> close();
+			delete this -> mSocketVector[ i ];
 		}
 		this -> mSocketVector.clear();
 
@@ -139,9 +141,10 @@ namespace Network {
 		return true;
 	}
 
-	bool Server::accept( Connection * clientSocket ) {
+	template<typename T>
+	bool ServerT<T>::accept( Connection * clientSocket ) {
 		if ( getNumConnections() == 1 )
-			return this -> mSocketVector[0] -> accept( clientSocket );
+			return this -> mSocketVector[ 0 ] -> accept( clientSocket );
 
 		Connection * selectedSocket = _select();
 		if ( selectedSocket )
@@ -152,23 +155,26 @@ namespace Network {
 	}
 
 
-
-	void Server::updateFdSet() {
+	template<typename T>
+	void ServerT<T>::updateFdSet() {
 		this -> mFdSet.fd_count = ( u_int ) Math::min<Vector<Connection * >::Size>( this -> mSocketVector.getSize(), FD_SETSIZE );
 		for ( unsigned int i = 0; i < this -> mFdSet.fd_count; i++ ) {
-			this -> mFdSet.fd_array[i] = this -> mSocketVector[i] -> getSocket();
+			this -> mFdSet.fd_array[ i ] = this -> mSocketVector[ i ] -> getSocket();
 		}
 	}
 
-	typename Vector<Connection * >::Size Server::getNumConnections() const {
+	template<typename T>
+	typename Vector<Connection * >::Size ServerT<T>::getNumConnections() const {
 		return this -> mSocketVector.getSize();
 	}
 
-	size_t Server::getMaximumNbConnections() {
+	template<typename T>
+	size_t ServerT<T>::getMaximumNbConnections() {
 		return FD_SETSIZE;
 	}
 
-	Connection * Server::_select() {
+	template<typename T>
+	Connection * ServerT<T>::_select() {
 		if ( this -> mFdSet.fd_count > 0 ) {
 			memcpy( &this -> mFdSetTmp, &this -> mFdSet, sizeof( fd_set ) );
 			if ( ::select( ( int ) getNumConnections(), &this -> mFdSetTmp, 0, 0, 0 ) == SOCKET_ERROR ) {
@@ -178,7 +184,7 @@ namespace Network {
 
 			while ( this -> mFdSetTmp.fd_count > 0 ) {
 				this -> mFdSetTmp.fd_count--;
-				SOCKET activeSocket = this -> mFdSetTmp.fd_array[this -> mFdSetTmp.fd_count];
+				SOCKET activeSocket = this -> mFdSetTmp.fd_array[ this -> mFdSetTmp.fd_count ];
 
 				for ( auto i = this -> mSocketVector.begin(); i != this -> mSocketVector.end(); i++ ) {
 					if ( ( *i ) -> getSocket() == activeSocket ) {
@@ -190,7 +196,8 @@ namespace Network {
 		return NULL;
 	}
 
-	int Server::receive( char * buffer, int maxSize, Address * addressFrom ) {
+	template<typename T>
+	int ServerT<T>::receive( char * buffer, int maxSize, Address * addressFrom ) {
 		Connection * selectedSocket = _select();
 		if ( selectedSocket )
 			return selectedSocket -> receive( buffer, maxSize, addressFrom );

@@ -35,8 +35,8 @@
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
-//#define DEBUG_NETWORK
-#define DEBUG_STRING
+#define DEBUG_NETWORK
+//#define DEBUG_STRING
 
 
 #ifndef _LIB

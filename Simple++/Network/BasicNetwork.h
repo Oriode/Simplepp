@@ -21,7 +21,7 @@
 #define SOCKET_ERROR -1
 #define closesocket(s) close(s)
 typedef struct sockaddr_in SOCKADDR_IN;
-typedef struct sockaddr SOCKADDR;
+typedef sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 #else
 #error "This software is not availible on this platform."
@@ -63,8 +63,8 @@ namespace Network {
 		SocketError = 2
 	};
 
-
-	class Network {
+	template<typename T>
+	class NetworkT {
 	public:
 
 		static bool init();
@@ -75,7 +75,11 @@ namespace Network {
 
 	};
 
+	using Network = NetworkT<int>;
+
 }
+
+#include "BasicNetwork.hpp"
 
 
 

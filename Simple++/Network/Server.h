@@ -18,13 +18,14 @@
 namespace Network {
 
 	/** @brief	Represent a listening server who can handle multiple protocol or ip family */
-	class Server {
+	template<typename T>
+	class ServerT {
 	public:
-		/** @brief	Create a new Server. */
-		Server();
+		/** @brief	Create a new ServerT<T>. */
+		ServerT();
 
 		/** @brief	destructor */
-		~Server();
+		~ServerT();
 
 		/**
 		 * @brief 	Add a listen address to this server
@@ -140,7 +141,7 @@ namespace Network {
 		 *
 		 * @returns	True if it succeeds, false if it fails.
 		 */
-		bool _tryListen( const struct addrinfo * addrResults, int maxClients );
+		bool _tryListen( const addrinfo * addrResults, int maxClients );
 
 		/**
 		 * @brief 	Try listen
@@ -177,6 +178,10 @@ namespace Network {
 		fd_set mFdSet;
 		fd_set mFdSetTmp;
 	};
+
+	using Server = ServerT<int>;
 }
+
+#include "Server.hpp"
 
 
