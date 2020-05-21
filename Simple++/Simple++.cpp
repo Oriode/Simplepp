@@ -1018,7 +1018,6 @@ int main( int argc, char * argv[] ) {
 		Log::displayLog( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
 		Log::displayLog( StringASCII::format( "__%__%__%__", "Hello World !", 50, 2.5f ) );
-
 	}
 #endif
 

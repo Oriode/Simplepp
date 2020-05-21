@@ -3428,34 +3428,21 @@ bool BasicString<T>::writeReadable( std::fstream * fileStream ) const {
 /* format()                                                             */
 /************************************************************************/
 template<typename T>
-void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString ) {
-	/*
-	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
-		if ( *it == T( '%' ) ) {
-			newString -> _concatWOS( arg1 );
-			it += 1;
-		} else {
-			auto itBegin( it );
-			for ( ; *it != T( '%' ) && *it != T( '\0' ); it++ );
-			it--;
-			newString -> _concatWOS( itBegin, BasicString<T>::Size( it - itBegin ) );
-		}
-	}
-	*/
-
+template<typename C>
+void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString ) {
 	newString -> _concatWOS( referenceStringBegin, BasicString<T>::Size( referenceStringEnd - referenceStringBegin ) );
 }
 
 template<typename T>
-template<typename T1, typename... Types>
-void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
+template<typename C, typename T1, typename... Types>
+void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
 		if ( *it == T( '%' ) && *(it+1) == T('%') ) {
 			it++;
 			newString -> _concatWOS( T( '%' ) );
 		} else if ( *it == T( '%' ) ) {
 			newString -> _concatWOS( arg1 );
-			return _format( it + 1, referenceStringEnd, newString, args... );
+			return __format( it + 1, referenceStringEnd, newString, args... );
 		} else {
 			auto itBegin( it );
 			for ( ; *it != T( '%' ) && *it != T( '\0' ); it++ );
@@ -3468,21 +3455,46 @@ void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringB
 template<typename T>
 template<typename T1, typename... Types>
 BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, const T1 & arg1, Types ... args ) {
+	return _format( referenceString.getBegin(), referenceString.getEnd(), arg1, args... );
+}
+
+template<typename T>
+template<typename C, typename T1, typename... Types>
+BasicString<T> BasicString<T>::_format( const C * referenceStringBegin, const C * referenceStringEnd, const T1 & arg1, Types ... args ) {
 	BasicString<T> newString( BasicString<T>::null );
 
+	typename BasicString<C>::Size referenceStringSize( referenceStringEnd - referenceStringBegin );
+
 	newString.size = 0;
-	if ( referenceString.getSize() == 0 )
+	if ( referenceStringSize == 0 )
 		newString._allocateNoNullDelete( 1 );
 	else
-		newString._allocateNoNullDelete( referenceString.getSize() * 2 );
+		newString._allocateNoNullDelete( referenceStringSize * 2 );
 
 	newString.iteratorEnd = newString.dataTable;
 
-
-	_format( referenceString.getBegin(), referenceString.getEnd(), &newString, arg1, args... );
+	__format( referenceStringBegin, referenceStringEnd, &newString, arg1, args... );
 	*( newString.dataTable + newString.size ) = T( '\0' );
 
 	return newString;
+}
+
+template<typename T>
+template<typename C, typename T1, typename... Types>
+BasicString<T> BasicString<T>::format( C * const & str, const T1 & arg1, Types ... args ) {
+	const C * referenceStringIteratorBegin( str );
+	const C * referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
+
+	return _format( referenceStringIteratorBegin, referenceStringIteratorEnd, arg1, args... );
+}
+
+template<typename T>
+template<typename C, size_t N, typename T1, typename... Types>
+BasicString<T> BasicString<T>::format( const C( &str )[ N ], const T1 & arg1, Types ... args ) {
+	const C * referenceStringIteratorBegin( str );
+	const C * referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
+
+	return _format( referenceStringIteratorBegin, referenceStringIteratorEnd, arg1, args... );
 }
 
 

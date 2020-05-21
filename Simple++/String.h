@@ -2408,16 +2408,47 @@ public:
 	/**
 	 * @brief		Formats
 	 *
-	 * @tparam	T1   	Generic type parameter.
-	 * @tparam	Types	Type of the types.
+	 * @tparam	T1   	First element type.
+	 * @tparam	Types	Others elements.
 	 * @param	referenceString	The reference string.
 	 * @param	arg1		   	The first argument.
-	 * @param	vars		   	Variable arguments providing the variables.
+	 * @param	args		   	Variable arguments providing the variables.
 	 *
 	 * @returns	The formatted value.
 	 */
 	template<typename T1, typename... Types>
-	static BasicString<T> format( const BasicString<T> referenceString, const T1 & arg1, Types ... vars );
+	static BasicString<T> format( const BasicString<T> referenceString, const T1 & arg1, Types ... args );
+
+	/**
+	 * @brief		Formats
+	 *
+	 * @tparam	C		Reference string type.
+	 * @tparam	T1   	First element type.
+	 * @tparam	Types	Others elements.
+	 * @param	str		The reference string.
+	 * @param	arg1		   	The first argument.
+	 * @param	args		   	Variable arguments providing the variables.
+	 *
+	 * @returns	The formatted value.
+	 */
+	template<typename C, typename T1, typename... Types>
+	static BasicString<T> format( C * const & str, const T1 & arg1, Types ... args );
+
+	/**
+	 * @brief		Formats
+	 *
+	 * @tparam	C		Reference string type.
+	 * @tparam	N		Refernce string size.
+	 * @tparam	T1   	First element type.
+	 * @tparam	Types	Others elements.
+	 * @param	str		The reference string.
+	 * @param	arg1		   	The first argument.
+	 * @param	args		   	Variable arguments providing the variables.
+	 *
+	 * @returns	The formatted value.
+	 */
+	template<typename C, size_t N, typename T1, typename... Types>
+	static BasicString<T> format( const C( &str )[ N ], const T1 & arg1, Types ... args );
 
 
 	/**
@@ -2810,6 +2841,22 @@ private:
 	/**
 	 * @brief		Formats
 	 *
+	 * @tparam	C		Reference string type.
+	 * @tparam	T1   	First element type.
+	 * @tparam	Types	Others elements.
+	 * @param	referenceStringBegin	Pointer to the reference string begin.
+	 * @param	referenceStringEnd		Pointer to the reference string end.
+	 * @param	arg1		   	The first argument.
+	 * @param	args		   	Variable arguments providing the variables.
+	 *
+	 * @returns	The formatted value.
+	 */
+	template<typename C, typename T1, typename... Types>
+	static BasicString<T> _format( const C * referenceStringBegin, const C * referenceStringEnd, const T1 & arg1, Types ... args );
+
+	/**
+	 * @brief		Formats
+	 *
 	 * @tparam	T1   	Generic type parameter.
 	 * @tparam	Types	Type of the types.
 	 * @param 		  	referenceStringBegin	The reference string begin.
@@ -2818,8 +2865,9 @@ private:
 	 * @param 		  	arg1					The first argument.
 	 * @param 		  	vars					Variable arguments providing the variables.
 	 */
-	template<typename T1, typename... Types>
-	static void _format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... vars );
+	template<typename C, typename T1, typename... Types>
+	static void __format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args );
+
 	/**
 	 * @brief		Formats
 	 *
@@ -2827,7 +2875,8 @@ private:
 	 * @param 		  	referenceStringEnd  	The reference string end.
 	 * @param [in,out]	newString				If non-null, the new string.
 	 */
-	static void _format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString );
+	template<typename C>
+	static void __format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString );
 
 	/**
 	 * @brief		Concatenate integer
