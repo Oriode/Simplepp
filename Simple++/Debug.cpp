@@ -23,7 +23,7 @@ void Debug::_debugNew( const char * fileName, int lineNumber, unsigned long memo
 			_debugMemoryAllocations.erase( _debugMemoryAllocations.begin() + i );
 		}
 	}
-	_debugMemoryAllocations.push_back( MemoryAllocation( memoryAddress, memorySize, std::string( fileName ), lineNumber ) );
+	_debugMemoryAllocations.push_back( MemoryAllocation( memoryAddress, memorySize, fileName, lineNumber ) );
 }
 
 void Debug::_debugNew( unsigned long memoryAddress, unsigned long memorySize ) {

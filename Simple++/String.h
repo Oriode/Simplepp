@@ -42,7 +42,7 @@ public:
 	 * @param	str	The string.
 	 */
 	template<typename C>
-	BasicString( const C * str );
+	BasicString( C * const & str );
 
 	/**
 	 * @brief		Constructor
@@ -92,8 +92,8 @@ public:
 	 * @tparam	C	Type of the c.
 	 * @param	str	The string.
 	 */
-	template<typename C>
-	BasicString( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	template<typename C, size_t N>
+	BasicString( const C (& str)[N] );
 
 	/**
 	 * @brief		Constructor
@@ -191,7 +191,7 @@ public:
 	 * @returns	A shallow copy of this object.
 	 */
 	template<typename C>
-	BasicString & operator=( const C * str );
+	BasicString & operator=( C * const & str );
 
 	/**
 	 * @brief		Assignment operator
@@ -227,8 +227,8 @@ public:
 	 *
 	 * @returns	A shallow copy of this object.
 	 */
-	template<typename C>
-	BasicString & operator=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	template<typename C, size_t N>
+	BasicString & operator=( const C (& str)[N] );
 
 	/**
 	 * @brief		Assignment operator
@@ -341,15 +341,15 @@ public:
 	/************************************************************************/
 
 	template<typename C>
-	BasicString & operator<<( const C * str );
+	BasicString & operator<<( C * const & str );
 
 
 	template<typename C>
 	BasicString & operator<<( const BasicString<C> & str );
 
 
-	template<typename C>
-	BasicString & operator<<( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	template<typename C, size_t N>
+	BasicString & operator<<( const C (& str)[N] );
 
 
 	BasicString & operator<<( const unsigned char & uc );
@@ -379,7 +379,7 @@ public:
 	 * @returns	The result of the operation.
 	 */
 	template<typename C>
-	BasicString & operator+=( const C * str );
+	BasicString & operator+=( C * const & str );
 
 	/**
 	 * @brief		Addition assignment operator
@@ -398,8 +398,8 @@ public:
 	 *
 	 * @returns	The result of the operation.
 	 */
-	template<typename C>
-	BasicString & operator+=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	template<typename C, size_t N>
+	BasicString & operator+=( const C (& str)[N] );
 
 	/**
 	 * @brief		Addition assignment operator
@@ -567,7 +567,7 @@ public:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & concat( const C * buffer );
+	BasicString & concat( C * const & buffer );
 
 	/**
 	 * @brief		Concatenates the given string
@@ -577,8 +577,8 @@ public:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	template<typename C>
-	BasicString & concat( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	template<typename C, size_t N>
+	BasicString & concat( const C (& str)[N] );
 
 	/**
 	 * @brief		Concatenates the given b
@@ -2184,6 +2184,7 @@ public:
 
 	/** @brief	. */
 	using Vector<T>::getSize;
+
 	/**
 	 * @brief		Gets a size
 	 *
@@ -2191,7 +2192,18 @@ public:
 	 *
 	 * @returns	The size.
 	 */
-	static typename BasicString<T>::Size getSize( const T * str );
+	template<typename C>
+	static typename BasicString<T>::Size getSize( C * const & str );
+
+	/**
+	 * @brief		Gets a size
+	 *
+	 * @param	str	The string.
+	 *
+	 * @returns	The size.
+	 */
+	template<typename C, size_t N>
+	static typename BasicString<T>::Size getSize( const C (&str)[N] );
 
 	/**
 	 * @brief		Converts this object to a c string
@@ -2534,7 +2546,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & _concatWOS( const C * buffer, const typename BasicString<C>::Size & bufferSize );
+	BasicString & _concatWOS( C * const & buffer, const typename BasicString<C>::Size & bufferSize );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2545,7 +2557,7 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	template<typename C>
-	BasicString & _concatWOS( const C * buffer );
+	BasicString & _concatWOS( C * const & buffer);
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -2555,8 +2567,8 @@ protected:
 	 *
 	 * @returns	A reference to a BasicString.
 	 */
-	template<typename C>
-	BasicString & _concatWOS( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	template<typename C, size_t N>
+	BasicString & _concatWOS( const C (& str)[N] );
 
 	/**
 	 * @brief		Concatenate whithout \0
@@ -3176,15 +3188,15 @@ private:
 /*
 template<typename T>
 template<typename C>
-BasicString<T> & operator<<(BasicString<T> basicString, const C * str);
+BasicString<T> & operator<<(BasicString<T> basicString, C * const & str);
 
 template<typename T>
 template<typename C>
 BasicString<T> & operator<<(BasicString<T> basicString, const BasicString<C> & str);
 
 template<typename T>
-template<typename C>
-BasicString<T> & operator<<(BasicString<T> basicString, const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str);
+template<typename C, size_t N>
+BasicString<T> & operator<<(BasicString<T> basicString, const C (& str)[N]);
 
 template<typename T>
 BasicString<T> & operator<<(BasicString<T> basicString, const unsigned char & i);
@@ -3524,7 +3536,7 @@ BasicString<T> operator+( const T & c, const BasicString<T> & str );
  * @returns	The result of the operation.
  */
 template<typename T, typename C>
-BasicString<T> operator+( const BasicString<T> & str1, const C * str2 );
+BasicString<T> operator+( const BasicString<T> & str1, C * const & str2);
 
 /**
  * @brief		Addition operator
@@ -3535,7 +3547,7 @@ BasicString<T> operator+( const BasicString<T> & str1, const C * str2 );
  * @returns	The result of the operation.
  */
 template<typename T, typename C>
-BasicString<T> operator+( const C * str1, const BasicString<T> & str2 );
+BasicString<T> operator+( C * const & str1, const BasicString<T> & str2 );
 
 
 /**
@@ -3546,8 +3558,8 @@ BasicString<T> operator+( const C * str1, const BasicString<T> & str2 );
  *
  * @returns	The result of the operation.
  */
-template<typename T, typename C>
-BasicString<T> operator+( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str1, const BasicString<T> & str2 );
+template<typename T, typename C, size_t N>
+BasicString<T> operator+( const C (&str1)[N], const BasicString<T> & str2 );
 
 /**
  * @brief		Addition operator
@@ -3557,8 +3569,8 @@ BasicString<T> operator+( const std::basic_string<C, std::char_traits<C>, std::a
  *
  * @returns	The result of the operation.
  */
-template<typename T, typename C>
-BasicString<T> operator+( const BasicString<T> & str1, const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str2 );
+template<typename T, typename C, size_t N>
+BasicString<T> operator+( const BasicString<T> & str1, const C (&str2)[N] );
 
 
 template<typename T>

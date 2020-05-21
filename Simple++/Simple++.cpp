@@ -6,24 +6,24 @@
  * @date		26/05/2016 (DMY)
  */
 
- //#define SPEEDTEST_DRAWLINE
- //#define SPEEDTEST_DRAWLINE_FLOAT
- //#define SPEEDTEST_GRAPH
- //#define SPEEDTEST_ROUNDEDRECTANGLE
- //#define SPEEDTEST_DISK
- //#define SPEEDTEST_POLYGON
- //#define SPEEDTEST_STROKE
- //#define SPEEDTEST_RESAMPLE
- //#define SPEEDTEST_DRAWTEXT
- //#define SPEEDTEST_FILTER
- //#define SPEEDTEST_ARRAYACCESS
- //#define SPEEDTEST_LOGICAL
- //#define SPEEDTEST_BLENDING
- //#define SPEEDTEST_DATE
- //#define SPEEDTEST_STRING_CONCAT
- //#define SPEEDTEST_STRING_CAST
- //#define SPEEDTEST_REGEX
- //#define SPEEDTEST_VECTOR
+//#define SPEEDTEST_DRAWLINE
+//#define SPEEDTEST_DRAWLINE_FLOAT
+//#define SPEEDTEST_GRAPH
+//#define SPEEDTEST_ROUNDEDRECTANGLE
+//#define SPEEDTEST_DISK
+//#define SPEEDTEST_POLYGON
+//#define SPEEDTEST_STROKE
+//#define SPEEDTEST_RESAMPLE
+//#define SPEEDTEST_DRAWTEXT
+//#define SPEEDTEST_FILTER
+//#define SPEEDTEST_ARRAYACCESS
+//#define SPEEDTEST_LOGICAL
+//#define SPEEDTEST_BLENDING
+//#define SPEEDTEST_DATE
+#define SPEEDTEST_STRING_CONCAT
+//#define SPEEDTEST_STRING_CAST
+//#define SPEEDTEST_REGEX
+//#define SPEEDTEST_VECTOR
 //#define SPEEDTEST_MAP
 //#define SPEEDTEST_CAST
 //#define SPEEDTEST_ARITHMETIC
@@ -34,7 +34,8 @@
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
-#define DEBUG_NETWORK
+//#define DEBUG_NETWORK
+#define DEBUG_STRING
 
 
 #ifndef _LIB
@@ -1002,6 +1003,22 @@ int main( int argc, char * argv[] ) {
 		}
 	}
 #endif
+#ifdef DEBUG_STRING
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Concat Strings							//
+	{
+		StringASCII testStr( "STRING 1 : " );
+		StringASCII strConcat( "Hello World!" );
+
+		for ( size_t i( 0 ) ; i < 2 ; i++ ) {
+			testStr += StringASCII( testStr );
+		}
+		Log::displayLog( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+
+		Log::displayLog( StringASCII::format( "__%__%__%__", "Hello World !", 50, 2.5f ) );
+
+	}
+#endif
 
 
 	#else		//DEBUG
@@ -1478,8 +1495,8 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
-		StringASCII testStr( "STRING STREAM : " );
-		std::string testStr2( "STRING : " );
+		StringASCII testStr( "STRING 1 : " );
+		std::string testStr2( "STRING 2 : " );
 
 		StringASCII strConcat( "Hello World!" );
 		std::string strConcat2( "Hello World!" );
@@ -1490,14 +1507,14 @@ int main( int argc, char * argv[] ) {
 			testStr += StringASCII( "Hello World!" );
 		}
 		Log::stopChrono();
-		Log::displayChrono( testStr.getSubStr( 0, 30 ) );
+		Log::displayChrono( testStr.getSubStr( StringASCII::Size(0), StringASCII::Size(30) ) );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M10; i++ ) {
 			testStr2 += std::string( "Hello World!" );
 		}
 		Log::stopChrono();
-		Log::displayChrono( testStr2.substr( 0, 30 ) );
+		Log::displayChrono( testStr2.substr( 0, 30 ).c_str() );
 	}
 	#endif
 

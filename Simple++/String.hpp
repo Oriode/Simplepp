@@ -41,7 +41,7 @@ const BasicString<T> BasicString<T>::null = BasicString<T>( "" );
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( const C * str ) :
+BasicString<T>::BasicString( C * const & str ) :
 	Vector( Vector<T>::ctor::null ) {
 	this -> size = BasicString<C>::getSize( str );
 	this -> maxSize = this -> size + 1;
@@ -199,10 +199,10 @@ BasicString<T>::BasicString( const T & c ) :
 
 
 template<typename T>
-template<typename C>
-BasicString<T>::BasicString( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) :
-	Vector<T>( str.data(), str.size(), str.size() + 1 ) {
-	this -> dataTable[this -> size] = T( '\0' );
+template<typename C, size_t N>
+BasicString<T>::BasicString( const C (& str)[N] ) :
+	Vector<T>( N - 1, N ) {
+	Vector<T>::copy( this -> dataTable, str, N );
 }
 
 template<typename T>
@@ -274,14 +274,14 @@ BasicString<T> operator+( const BasicString<T> & str1, const BasicString<C> & st
 
 
 template<typename T, typename C>
-BasicString<T> operator+( const BasicString<T> & str1, const C * str2 ) {
+BasicString<T> operator+( const BasicString<T> & str1, C * const & str2) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
 }
 
 template<typename T, typename C>
-BasicString<T> operator+( const C * str1, const BasicString<T> & str2 ) {
+BasicString<T> operator+( C * const & str1, const BasicString<T> & str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -459,16 +459,16 @@ BasicString<T> operator+( const T & c, const BasicString<T> & str ) {
 	return newStr;
 }
 
-template<typename T, typename C>
-BasicString<T> operator+( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str1, const BasicString<T> & str2 ) {
+template<typename T, typename C, size_t N>
+BasicString<T> operator+( const C (&str1)[N], const BasicString<T> & str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
 }
 
 
-template<typename T, typename C>
-BasicString<T> operator+( const BasicString<T> & str1, const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str2 ) {
+template<typename T, typename C, size_t N>
+BasicString<T> operator+( const BasicString<T> & str1, const C (&str2)[N] ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -486,9 +486,9 @@ BasicString<T> operator+( const BasicString<T> & str1, const std::basic_string<C
 
 
 template<typename T>
-template<typename C>
-BasicString<T> & BasicString<T>::concat( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
-	this -> concat( str.data(), str.size() );
+template<typename C, size_t N>
+BasicString<T> & BasicString<T>::concat( const C (& str)[N] ) {
+	this -> concat( str, N - 1 );
 	return *this;
 }
 
@@ -496,17 +496,9 @@ BasicString<T> & BasicString<T>::concat( const std::basic_string<C, std::char_tr
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::concat( const C * str ) {
-	if ( !str ) return *this;
-	for ( ; *str != C( '\0' ); str++ ) {
-		this -> size++;
-		if ( this -> size >= this -> maxSize ) {
-			_extendBuffer( this -> size );
-			this -> iteratorEnd--;
-		}
-		*this -> iteratorEnd = T( *str );
-		this -> iteratorEnd++;
-	}
+BasicString<T> & BasicString<T>::concat( C * const & str ) {
+	_concatWOS( str );
+
 	*this -> iteratorEnd = T( '\0' );
 	return *this;
 }
@@ -721,15 +713,10 @@ BasicString<T> & BasicString<T>::concat( const BasicString<T> & str ) {
 template<typename T>
 template<typename C>
 BasicString<T> & BasicString<T>::concat( const C * buffer, const typename BasicString<C>::Size & bufferSize ) {
-	typename BasicString<T>::Size newSize = getSize() + bufferSize;
+	_concatWOS( buffer, bufferSize );
 
-	if ( newSize >= this -> maxSize )
-		_extendBuffer( newSize );
+	*this -> iteratorEnd = T( '\0' );
 
-	copy( this -> iteratorEnd, buffer, bufferSize );
-	this -> dataTable[newSize] = T( '\0' );
-	this -> size = newSize;
-	Vector<T>::_updateIterators();
 	return *this;
 }
 
@@ -739,9 +726,9 @@ BasicString<T> & BasicString<T>::concat( const C * buffer, const typename BasicS
 /* concat() without adding sentinnel                                    */
 /************************************************************************/
 template<typename T>
-template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
-	this -> concat( str.data(), str.size() );
+template<typename C, size_t N>
+BasicString<T> & BasicString<T>::_concatWOS( const C (& str)[N] ) {
+	this -> concat( str );
 	return *this;
 }
 
@@ -749,16 +736,9 @@ BasicString<T> & BasicString<T>::_concatWOS( const std::basic_string<C, std::cha
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( const C * str ) {
-	for ( ; *str != C( '\0' ); str++ ) {
-		this -> size++;
-		if ( this -> size >= this -> maxSize ) {
-			_extendBuffer( this -> size );
-			this -> iteratorEnd--;
-		}
-		*this -> iteratorEnd = T( *str );
-		this -> iteratorEnd++;
-	}
+BasicString<T> & BasicString<T>::_concatWOS( C * const & str ) {
+	_concatWOS( str, BasicString<T>::getSize( str ) );
+
 	return *this;
 }
 
@@ -971,7 +951,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const BasicString<T> & str ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( const C * buffer, const typename BasicString<C>::Size & bufferSize ) {
+BasicString<T> & BasicString<T>::_concatWOS( C * const & buffer, const typename BasicString<C>::Size & bufferSize ) {
 	typename BasicString<T>::Size newSize = getSize() + bufferSize;
 
 	if ( newSize >= this -> maxSize )
@@ -2583,9 +2563,10 @@ BasicString<T> & BasicString<T>::operator=( const float & d ) {
 }
 
 template<typename T>
-template<typename C>
-BasicString<T> & BasicString<T>::operator=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
-	*this = str.c_str();
+template<typename C, size_t N>
+BasicString<T> & BasicString<T>::operator=( const C (& str)[N] ) {
+	//*this = str;
+	//FIXME
 	return *this;
 }
 
@@ -2616,14 +2597,14 @@ BasicString<T> & BasicString<T>::operator=( BasicString<T> && str ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator=( const C * str ) {
+BasicString<T> & BasicString<T>::operator=( C * const & str ) {
 	this -> size = BasicString<C>::getSize( str );
 	if ( getMaxSize() < this -> size + 1 ) {
 		_allocateNoNull( this -> size + 1 );
 	}
 	_updateIterators();
 	setValueI( this -> size, T( '\0' ) );
-	copy( str, 0, this -> size );
+	copy( this->dataTable, str, this -> size );
 
 	return *this;
 }
@@ -2763,11 +2744,18 @@ bool BasicString<T>::operator>=( const T & c ) const {
 
 
 template<typename T>
-typename BasicString<T>::Size BasicString<T>::getSize( const T * str ) {
+template<typename C>
+typename BasicString<T>::Size BasicString<T>::getSize( C * const & str ) {
 	typename BasicString<T>::Size size( 0 );
-	constexpr const T end( '\0' );
+	constexpr const C end( '\0' );
 	for ( size; str[size] != end; size++ );
 	return size;
+}
+
+template<typename T>
+template<typename C, size_t N>
+typename BasicString<T>::Size BasicString<T>::getSize( const C( &str )[ N ] ) {
+	return typename BasicString<T>::Size( N - 1 );
 }
 
 
@@ -3173,7 +3161,7 @@ std::ostream & operator<<( std::ostream & stream, const BasicString<T> & str ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator<<( const C * str ) {
+BasicString<T> & BasicString<T>::operator<<( C * const & str ) {
 	return concat( str );
 }
 
@@ -3185,8 +3173,8 @@ BasicString<T> & BasicString<T>::operator<<( const BasicString<C> & str ) {
 }
 
 template<typename T>
-template<typename C>
-BasicString<T> & BasicString<T>::operator<<( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
+template<typename C, size_t N>
+BasicString<T> & BasicString<T>::operator<<( const C (& str)[N] ) {
 	return concat( str );
 }
 
@@ -3285,7 +3273,7 @@ BasicString<T> & BasicString<T>::operator<<( const Vector<C> & v ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator+=( const C * str ) {
+BasicString<T> & BasicString<T>::operator+=( C * const & str ) {
 	return concat( str );
 }
 
@@ -3293,12 +3281,20 @@ BasicString<T> & BasicString<T>::operator+=( const C * str ) {
 template<typename T>
 template<typename C>
 BasicString<T> & BasicString<T>::operator+=( const BasicString<C> & str ) {
-	return concat( str );
+	typename BasicString<T>::Size newSize = getSize() + str.getSize();
+
+	if ( newSize >= this -> maxSize )
+		_extendBuffer( newSize );
+
+	copy( this -> iteratorEnd, str.getData(), str.getSize() + 1 );
+	this -> size = newSize;
+	Vector<T>::_updateIterators();
+	return *this;
 }
 
 template<typename T>
-template<typename C>
-BasicString<T> & BasicString<T>::operator+=( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) {
+template<typename C, size_t N>
+BasicString<T> & BasicString<T>::operator+=( const C (& str)[N] ) {
 	return concat( str );
 }
 
@@ -3433,21 +3429,38 @@ bool BasicString<T>::writeReadable( std::fstream * fileStream ) const {
 /************************************************************************/
 template<typename T>
 void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString ) {
-	newString -> _concatWOS( referenceStringBegin, referenceStringEnd - referenceStringBegin );
+	/*
+	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
+		if ( *it == T( '%' ) ) {
+			newString -> _concatWOS( arg1 );
+			it += 1;
+		} else {
+			auto itBegin( it );
+			for ( ; *it != T( '%' ) && *it != T( '\0' ); it++ );
+			it--;
+			newString -> _concatWOS( itBegin, BasicString<T>::Size( it - itBegin ) );
+		}
+	}
+	*/
+
+	newString -> _concatWOS( referenceStringBegin, BasicString<T>::Size( referenceStringEnd - referenceStringBegin ) );
 }
 
 template<typename T>
 template<typename T1, typename... Types>
 void BasicString<T>::_format( typename BasicString<T>::Iterator referenceStringBegin, typename BasicString<T>::Iterator referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
-
-
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
-		if ( *it == T( '%' ) ) {
+		if ( *it == T( '%' ) && *(it+1) == T('%') ) {
+			it++;
+			newString -> _concatWOS( T( '%' ) );
+		} else if ( *it == T( '%' ) ) {
 			newString -> _concatWOS( arg1 );
-			_format( it + 1, referenceStringEnd, newString, args... );
-			return;
+			return _format( it + 1, referenceStringEnd, newString, args... );
 		} else {
-			newString -> _concatWOS( *it );
+			auto itBegin( it );
+			for ( ; *it != T( '%' ) && *it != T( '\0' ); it++ );
+			newString -> _concatWOS( itBegin, BasicString<T>::Size( it - itBegin ) );
+			it--;
 		}
 	}
 }
@@ -3462,6 +3475,8 @@ BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, con
 		newString._allocateNoNullDelete( 1 );
 	else
 		newString._allocateNoNullDelete( referenceString.getSize() * 2 );
+
+	newString.iteratorEnd = newString.dataTable;
 
 
 	_format( referenceString.getBegin(), referenceString.getEnd(), &newString, arg1, args... );
