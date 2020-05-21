@@ -6,24 +6,25 @@
 
 
 #ifdef DEBUG
-#define debugNew(address, size); Debug::_debugNew((unsigned long)address, size);
-#define debugDelete(address); Debug::_debugDelete((unsigned long)address);
+#define debugNew(address, size); Debug::_debugNew((unsigned long long)address, size);
+#define debugDelete(address); Debug::_debugDelete((unsigned long long)address);
 #else
 #define debugNew(address, size);
 #define debugDelete(address);
 #endif
 
-class Debug {
+template<typename T>
+class DebugT {
 public:
-	Debug( void );
-	virtual ~Debug( void );
+	DebugT( void );
+	virtual ~DebugT( void );
 
 
-	static void _debugNew( const char * fileName, int lineNumber, unsigned long memoryAddress, unsigned long memorySize );
-	static void _debugNew( unsigned long memoryAddress, unsigned long memorySize );
+	static void _debugNew( const TCHAR * fileName, int lineNumber, T memoryAddress, T memorySize );
+	static void _debugNew( T memoryAddress, T memorySize );
 
-	static void _debugDelete( const char * fileName, int lineNumber, unsigned long address );
-	static void _debugDelete( unsigned long address );
+	static void _debugDelete( const TCHAR * fileName, int lineNumber, T address );
+	static void _debugDelete( T address );
 
 
 	static std::vector<MemoryAllocation> _debugMemoryAllocations;
@@ -31,8 +32,12 @@ public:
 
 
 private:
-	static MemoryAllocation * getMemoryAllocationByAddress( unsigned long memoryAddress );
-	static unsigned int getMemoryAllocationIndexByAddress( unsigned long memoryAddress );
+	static MemoryAllocation * getMemoryAllocationByAddress( T memoryAddress );
+	static unsigned int getMemoryAllocationIndexByAddress( T memoryAddress );
 
 };
+
+using Debug = DebugT<unsigned long long>;
+
+#include "Debug.hpp"
 

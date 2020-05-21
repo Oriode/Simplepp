@@ -169,6 +169,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="BasicLoadable.hpp" />
+    <ClInclude Include="Debug.hpp" />
     <ClInclude Include="GL\BasicGL.h" />
     <ClInclude Include="GL\BasicGlLoadable.h" />
     <ClInclude Include="GL\GLFW.h" />
@@ -324,7 +325,6 @@
     <ClCompile Include="IO\BasicLoadableIO.cpp" />
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
-    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Network\AddrInfo.cpp" />
     <ClCompile Include="Network\Server.cpp" />
     <ClCompile Include="Network\BasicNetwork.cpp" />
