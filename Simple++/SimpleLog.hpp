@@ -65,8 +65,11 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 
 	// If we have a fileName.
 	if ( fileName[ 0 ] != TCHAR( '\0' ) ) {
-		T fileNameBuffer[ 100 ];
-		convertFileName<T, TCHAR>( fileNameBuffer, fileName, sizeof( fileNameBuffer ) );
+		T fileNameBuffer[ FILENAME_MAX_SIZE ];
+
+		convertFileName<T, TCHAR>( fileNameBuffer, fileName, 50 );
+		//fileNameBuffer[ 10 ] = T( '\0' );
+
 
 		parseMessage( logBuffer, 2048, timeBuffer, fileNameBuffer, lineNumber, message );
 	} else {
@@ -85,12 +88,12 @@ void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, co
 
 template<typename T>
 void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber, const char * message ) {
-	snprintf( buffer, bufferSize, "[%s][%s@%i] : %s\n", timeBuffer, fileName, lineNumber, message );
+	snprintf( buffer, bufferSize, "[%8s][%20s@%5i] : %s\n", timeBuffer, fileName, lineNumber, message );
 }
 
 template<typename T>
 void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber, const wchar_t * message ) {
-	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%s][%s@%i] : %s\n", timeBuffer, fileName, lineNumber, message );
+	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s][%20s@%5i] : %s\n", timeBuffer, fileName, lineNumber, message );
 }
 
 template<typename T>
@@ -101,12 +104,12 @@ void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, co
 
 template<typename T>
 void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * message ) {
-	snprintf( buffer, bufferSize, "[%s] : %s\n", timeBuffer, message );
+	snprintf( buffer, bufferSize, "[%8s][                          ] : %s\n", timeBuffer, message );
 }
 
 template<typename T>
 void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * message ) {
-	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%s] : %s\n", timeBuffer, message );
+	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s][                          ] : %s\n", timeBuffer, message );
 }
 
 
@@ -192,7 +195,7 @@ void SimpleLogT<T>::convertFileName( O * outputBuffer, const I * inputBuffer, si
 	for ( size_t i( 0 ) ; i < bufferSize && *iti != I( '\0' ); i++, iti++ );
 	for ( ; iti >= inputBuffer && ( *iti != I( '\\' ) && *iti != I( '/' ) ); iti-- );
 	iti++;
-	return convertMessage<O, I>( outputBuffer, iti, bufferSize );
+	return convertMessage<O, I>( outputBuffer, iti, FILENAME_MAX_SIZE );
 }
 
 template<typename T>

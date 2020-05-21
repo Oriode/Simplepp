@@ -73,8 +73,11 @@
 template<typename T>
 class SimpleLogT {
 public:
+	static constexpr unsigned int FILENAME_MAX_SIZE = 20;
+
 	SimpleLogT();
 	~SimpleLogT();
+
 
 	enum class MessageSeverity : unsigned char {
 		Error,

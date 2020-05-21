@@ -20,7 +20,8 @@
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
-#define SPEEDTEST_STRING_CONCAT
+//#define SPEEDTEST_STRING_CONCAT
+#define SPEEDTEST_STRING_FORMAT
 //#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
 //#define SPEEDTEST_VECTOR
@@ -1007,6 +1008,7 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
+		log( "Hello World !" );
 		StringASCII testStr( "STRING 1 : " );
 		StringASCII strConcat( "Hello World!" );
 
@@ -1517,6 +1519,24 @@ int main( int argc, char * argv[] ) {
 		Log::displayChrono( testStr2.substr( 0, 30 ).c_str() );
 	}
 	#endif
+
+#ifdef SPEEDTEST_STRING_FORMAT
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Concat Strings							//
+	{
+		StringASCII testStr( "STRING 1 : (%)" );
+		StringASCII strConcat( "STR %" );
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K100; i++ ) {
+			testStr = StringASCII::format( testStr, strConcat );
+		}
+		Log::stopChrono();
+		Log::displayChrono( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+	}
+#endif
+
+	
 
 	#ifdef SPEEDTEST_STRING_CAST
 	//////////////////////////////////////////////////////////////////////////
