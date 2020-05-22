@@ -28,6 +28,7 @@ template<typename T>
 class BasicString : public Vector<T>, public Math::Compare::BasicComparable {
 public:
 	using Vector<T>::Size;
+	using Vector<T>::ElemType;
 
 	/** @brief	Default constructor */
 	BasicString();
@@ -337,7 +338,6 @@ public:
 
 	/************************************************************************/
 	/* OPERATOR STREAM                                                      */
-///< .
 	/************************************************************************/
 
 	template<typename C>

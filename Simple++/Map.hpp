@@ -1228,7 +1228,12 @@ RBNode< MapObject<I, T> > * RBTree<I, T, Compare>::getNearestNodeLessI( const I 
 
 template<typename I, typename T, typename Compare>
 T * RBTree<I, T, Compare>::getValueI( const I & index ) {
-	return &( getNodeI( index ) -> getValue().getValue() );
+	RBNode< MapObject<I, T> > * nodeFounded( getNodeI( index ) );
+	if ( nodeFounded ) {
+		return &( nodeFounded -> getValue().getValue() );
+	} else {
+		return NULL;
+	}
 }
 
 template<typename I, typename T, typename Compare>

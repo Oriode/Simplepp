@@ -227,8 +227,8 @@ namespace XML {
 		///@brief Get a child from his index
 		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
 		///@return Child
-		const Node & getChild( typename Vector< Node * >::Size i ) const;
-		Node & getChild( typename Vector< Node * >::Size i );
+		const Node * getChild( typename Vector< Node * >::Size i ) const;
+		Node * getChild( typename Vector< Node * >::Size i );
 
 		///@brief Add a child to this node
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
@@ -274,6 +274,12 @@ namespace XML {
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
 		bool write( std::fstream * fileStream ) const;
+
+		///@brief Print an human-readable String of this Node and it's children.
+		///@param indent Identation.
+		///@return Human-redable String.
+		UTF8String toString( unsigned int indent = 0 ) const;
+
 	protected:
 		void _clear();
 		void _unload();

@@ -106,7 +106,7 @@ namespace Graphic {
 
 
 
-		///@brief return a pixel as a Math::vec4 object. Value will be between 0.0f and 0.1f.
+		///@brief return a pixel as a Math::vec4 object. Value will be between 0.0f and 1.0f.
 		Math::vec4 getPixelf( Size x, Size y ) const;
 
 

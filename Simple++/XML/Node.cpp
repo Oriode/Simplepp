@@ -381,14 +381,20 @@ namespace XML {
 	}
 
 	void Node::addChild( Node * child ) {
-		if ( child -> parent ) 
-			child -> parent -> removeChild( child );
-		if ( child -> getId().getSize() )
-			this -> childrenByIdMap.insert( child -> getId(), child );
-		
-		child -> parent = this;
-		this -> childrenMap.insert( child -> getName(), child );
-		this -> childrenVector.push( child );
+		if ( this -> type == Type::Text ) {
+			if ( this -> parent ) {
+				this -> parent -> addChild( child );
+			}
+		} else {
+			if ( child -> parent )
+				child -> parent -> removeChild( child );
+			if ( child -> getId().getSize() )
+				this -> childrenByIdMap.insert( child -> getId(), child );
+
+			child -> parent = this;
+			this -> childrenMap.insert( child -> getName(), child );
+			this -> childrenVector.push( child );
+		}
 	}
 
 	void Node::_clear() {
@@ -427,13 +433,17 @@ namespace XML {
 	}
 
 
-	const Node & Node::getChild( typename Vector< Node * >::Size i ) const {
-		return *(this -> childrenVector.getValueI( i ));
+	const Node * Node::getChild( typename Vector< Node * >::Size i ) const {
+		return const_cast< Node * >( this ) -> getChild( i );
 	}
 
 
-	Node & Node::getChild( typename Vector< Node * >::Size i ) {
-		return *( this -> childrenVector.getValueI( i ) );
+	Node * Node::getChild( typename Vector< Node * >::Size i ) {
+		if ( i < this->childrenVector.getSize() ) {
+			return this->childrenVector.getValueI( i );
+		} else {
+			return NULL;
+		}
 	}
 
 	bool Node::deleteChild( Node * child ) {
@@ -715,7 +725,50 @@ namespace XML {
 		return true;
 	}
 
+	UTF8String Node::toString( unsigned int indent ) const {
+		UTF8String newString;
+		newString.reserve( 100 );
 
+		for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
+			newString << UTF8String::ElemType( '\t' );
+		}
+
+		newString << UTF8String::ElemType( '<' );
+		newString << this -> name;
+
+		for ( auto it( this -> paramsVector.getBegin() ); it != this -> paramsVector.getEnd(); this -> paramsVector.iterate( &it ) ) {
+			newString << UTF8String::ElemType( ' ' );
+			newString << this -> paramsVector.getValueIt( it ) -> toString();
+		}
+
+		newString << UTF8String::ElemType( '>' );
+		newString << UTF8String::ElemType( '\n' );
+
+		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
+			newString << this -> childrenVector.getValueIt( it ) -> toString( indent + 1 );
+			newString << UTF8String::ElemType( '\n' );
+		}
+
+		if ( this -> type == Type::Text ) {
+			for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
+				newString << UTF8String::ElemType( '\t' );
+			}
+
+			newString << this -> toText() -> getValue();
+			newString << UTF8String::ElemType( '\n' );
+		}
+
+		for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
+			newString << UTF8String::ElemType( '\t' );
+		}
+
+		newString << UTF8String::ElemType( '<' );
+		newString << UTF8String::ElemType( '/' );
+		newString << this -> name;
+		newString << UTF8String::ElemType( '>' );
+
+		return newString;
+	}
 
 
 
@@ -734,9 +787,11 @@ namespace XML {
 	bool NodeText::read( std::fstream * fileStream ) {
 		this -> value.clear();
 
+		/*
 		if ( !Node::_read( fileStream ) ) {
 			return false;
 		}
+		*/
 		if ( !IO::read( fileStream, &this -> value ) ) {
 			_clear();
 			return false;
@@ -746,8 +801,10 @@ namespace XML {
 
 
 	bool NodeText::write( std::fstream * fileStream ) const {
+		/*
 		if ( !Node::_write( fileStream ) ) 
 			return false;
+		*/
 		if ( !IO::write( fileStream, &this -> value ) ) 
 			return false;
 		return true;

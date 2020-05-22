@@ -429,7 +429,7 @@ namespace XML {
 
 		for ( typename Vector< Node *>::Size i( 0 ); i < this -> rootNode -> getNbChildren(); i++ ) {
 			fileStream -> put( char( '\n' ) );
-			this -> rootNode -> getChild( i ).writeXML( fileStream );
+			this -> rootNode -> getChild( i ) -> writeXML( fileStream );
 		}
 
 		return !( fileStream -> bad() );
