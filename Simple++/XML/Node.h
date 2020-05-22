@@ -1,5 +1,5 @@
-///@file Node.h
-///@brief File containing the Node Class, an XML Node
+///@file NodeT<T>.h
+///@brief File containing the NodeT<T> Class, an XML NodeT<T>
 ///@author Clement Gerber
 ///@date 20/10/16
 #pragma once
@@ -9,95 +9,19 @@
 #include "../Vector.h"
 #include "../MultiMap.h"
 #include "../Math/Math.h"
-
+#include "Param.h"
 
 
 
 namespace XML {
 
-
-	class Param : public BasicIO {
-	public:
-		///@brief Empty constructor
-		Param();
-
-		///brief Constructor from a name and a value
-		///@param name Name of this param
-		///@param value Value of this param
-		Param( const UTF8String & name, const UTF8String & value );
-
-		///@brief Copy Constructor
-		///@param param Object to copy
-		Param( const Param & param );
-
-		///@brief Move Constructor
-		///@param param Object to move
-		Param( Param && param );
-
-		///@brief Convert to StringASCII operator
-		///@return StringASCII generated
-		operator UTF8String() const;
-
-		///@brief Move operator
-		///@param param Object to be copied
-		///@return reference to THIS
-		Param & operator=( const Param & param );
-
-		///@brief Move operator
-		///@param param Object to be copied
-		///@return reference to THIS
-		Param & operator=( Param && param );
-
-		///@brief get the name of this param
-		///@return Name of the param
-		const UTF8String & getName() const;
-
-		///@brief Set the name of this param (Warning: Changing this param name to "id" will not change the id of the node associated, @see Node::setId())
-		///@param name Name of this param
-		void setName( const UTF8String & name );
-
-		///@brief get the value of this param 
-		///@return value of the param
-		const UTF8String & getValue() const;
-
-		///@brief Set the value of this param (Warning: Changing this param value if name is "id" will not change the id of the node associated, @see Node::setId())
-		///@param value Value of this param
-		void setValue( const UTF8String & value );
-
-		///@brief Generate a StringASCII from this object
-		///@return StringASCII
-		UTF8String toString() const;
-
-		///@brief Write this object in the XML syntax into the fileStream
-		///@param fileStream stream used to write this object
-		///@return True if success, False otherwise
-		bool writeXML( std::fstream * fileStream ) const;
-
-		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
-		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
-
-		///@brief write this object as binary into a file stream (@see writeXML for writing non binary)
-		///@param fileStream stream used to write this object
-		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
-	private:
-		void _clear();
-		
-		UTF8String name;
-		UTF8String value;
-	};
-
-
-
-
-	class NodeText;
-
+	template<typename T>
+	class NodeTextT;
 
 	///@brief Represent a node in the XML Tree, Only 3 Types available ( Element, Text and Document )
 	/// 
-	class Node : public BasicIO {
+	template<typename T>
+	class NodeT : public BasicIO {
 	public:
 		enum class Type : unsigned int { 
 			Element = 1,
@@ -107,163 +31,164 @@ namespace XML {
 
 		///@brief Empty constructor
 		///@param type Type of this node
-		Node( );
+		NodeT( );
 
 		///@brief create node
 		///@param name Name of the node
 		///@param type Type of this node
-		Node( const UTF8String & name, Type type = Type::Element );
+		NodeT( const T & name, Type type = Type::Element );
 
 		///@brief Copy Constructor
-		///@param node Node to be copied
-		Node( const Node & node );
+		///@param node NodeT<T> to be copied
+		NodeT( const NodeT<T> & node );
 
 		///@brief Move Constructor
-		///@param node Node to be moved
-		Node( Node && node );
+		///@param node NodeT<T> to be moved
+		NodeT( NodeT<T> && node );
 
 		///@brief Copy operator
-		///@param node Node to be copied
+		///@param node NodeT<T> to be copied
 		///@return reference to THIS
-		Node & operator=( const Node & node );
+		NodeT<T> & operator=( const NodeT<T> & node );
 
 		///@brief Move operator
-		///@param node Node to be moved
+		///@param node NodeT<T> to be moved
 		///@return reference to THIS
-		Node & operator=( Node && node );
+		NodeT<T> & operator=( NodeT<T> && node );
 
 
-		///@brief Get the type of this Node (If the node is of type Text, it can be casted freely into NodeText, or the method toText can be used)
+		///@brief Get the type of this NodeT<T> (If the node is of type Text, it can be casted freely into NodeTextT, or the method toText can be used)
 		///@return Type of this node
-		Node::Type getType() const;
+		NodeT<T>::Type getType() const;
 
-		///@brief Cast this node into a text one, ONLY appliable if getType() return Node::Type::Text
-		///@return Pointer to a NodeText
-		const NodeText * toText() const;
-		NodeText * toText();
+		///@brief Cast this node into a text one, ONLY appliable if getType() return NodeT<T>::Type::Text
+		///@return Pointer to a NodeTextT
+		const NodeTextT<T> * toText() const;
+		NodeTextT<T> * toText();
 
 		///@brief Get the parent of this node
 		///@return Pointer to the parent if there is one (NULL otherwise)
-		const Node * getParent() const;
-		Node * getParent();
+		const NodeT<T> * getParent() const;
+		NodeT<T> * getParent();
 
 		///@brief Get the Value of this node (Only appliable if getType() == Text) or of the child if a text child is present 
 		///@return Value of this node
-		const UTF8String & getValue() const;
+		const T & getValue() const;
 
 		///@brief Set the value of this node (Will change this node value if getType() == Text, otherwise will try to change the first child value)
 		///@param value Value to be set
-		void setValue( const UTF8String & value );
+		void setValue( const T & value );
 
 		///@brief set the name of this node
 		///@param name Name of this node
-		void setName( const UTF8String & name );
+		void setName( const T & name );
 
 		///@brief get the name of this node
 		///@return name of this node
-		const UTF8String & getName() const;
+		const T & getName() const;
 
 		///@brief Add a param to this node
-		///@param param Param to add to this node
-		void addParam( const Param & param );
+		///@param param ParamT<T> to add to this node
+		void addParam( const ParamT<T> & param );
 
 		///@brief Add a param to this node
-		///@param param Pointer to the Param to add (Has to be allocated but NOT deallocated)
-		void addParam( Param * param );
+		///@param param Pointer to the ParamT<T> to add (Has to be allocated but NOT deallocated)
+		void addParam( ParamT<T> * param );
 
 		///brief Add a param to this node
 		///@param name Name of the param to add
 		///@param value Value of the param to add
-		void addParam( const UTF8String & name, const UTF8String & value );
+		void addParam( const T & name, const T & value );
 
 		///@brief get a param from his name
 		///@param name Name of the param to retrieve
 		///@return Pointer to the founded param or NULL of nothing has bee founded
-		const Param * getParam( const UTF8String & name ) const;
-		Param * getParam( const UTF8String & name );
+		const ParamT<T> * getParam( const T & name ) const;
+		ParamT<T> * getParam( const T & name );
 
 		///@brief Get the number of params of this node
 		///@return Number of params of this node
-		typename Vector< Param * >::Size getNbParams() const;
+		typename Vector< ParamT<T> * >::Size getNbParams() const;
 		
 		///@brief Get a param from his index
 		///@param i Index of the param to retrieve (between [0 ; getNbParams() - 1])
-		///@return Param
-		const Param & getParam( typename Vector< Param * >::Size i ) const;
-		Param & getParam( typename Vector< Param * >::Size i );
+		///@return ParamT<T>
+		const ParamT<T> & getParam( typename Vector< ParamT<T> * >::Size i ) const;
+		ParamT<T> & getParam( typename Vector< ParamT<T> * >::Size i );
 
 		///@brief Delete a param from this node
-		///@param param Param to be removed (The param itself is deleted during this operation, NEVER call delete directly from a param)
+		///@param param ParamT<T> to be removed (The param itself is deleted during this operation, NEVER call delete directly from a param)
 		///@return True if something has been removed, False otherwise
-		bool deleteParam( Param * param );
+		bool deleteParam( ParamT<T> * param );
 
 		///@brief Remove a child from this node
 		///@param i Index of the param to be removed (The child itself is deleted during this operation, NEVER call delete directly from a param)
 		///@return True if something has been removed, False otherwise
-		bool deleteParam( typename Vector< Param * >::Size i );
+		bool deleteParam( typename Vector< ParamT<T> * >::Size i );
 
 		///@brief Set the id of this node
 		///@param id StringASCII representing the identifier if this node
-		void setId( const UTF8String & id );
+		void setId( const T & id );
 
 		///@brief Get the id of this node
 		///@return Id of this node
-		const UTF8String & getId() const;
+		const T & getId() const;
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the id searched in this sub tree.
 		///@param id Id to look for
-		///@return Vector of Node's pointers with the searched id
-		Vector< Node * > getElementsById( const UTF8String & id ) const;
+		///@return Vector of NodeT<T>'s pointers with the searched id
+		Vector< NodeT<T> * > getElementsById( const T & id ) const;
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
-		///@return Vector of Node's pointers with the searched name
-		Vector< Node * > getElementsByName( const UTF8String & name ) const;
+		///@return Vector of NodeT<T>'s pointers with the searched name
+		Vector< NodeT<T> * > getElementsByName( const T & name ) const;
 
 		///@brief Get the number of children of this node
 		///@return Number of children of this node
-		typename Vector< Node * >::Size getNbChildren() const;
+		typename Vector< NodeT<T> * >::Size getNbChildren() const;
 
 		///@brief Get a child from his index
 		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
 		///@return Child
-		const Node * getChild( typename Vector< Node * >::Size i ) const;
-		Node * getChild( typename Vector< Node * >::Size i );
+		const NodeT<T> * getChild( typename Vector< NodeT<T> * >::Size i ) const;
+		NodeT<T> * getChild( typename Vector< NodeT<T> * >::Size i );
 
 		///@brief Add a child to this node
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
-		void addChild( Node * child );
+		void addChild( NodeT<T> * child );
 
 		///@brief Get Vector of children from a name
 		///@param name Name to look for
 		///@return pointer to the Vector of children if one has been founded, NULL instead
-		const Vector<Node *> getChild( const UTF8String & name ) const;
-		Vector<Node *> getChild( const UTF8String & name );
+		const Vector<NodeT<T> *> getChild( const T & name ) const;
+		Vector<NodeT<T> *> getChild( const T & name );
 
 		///@brief Delete a child from this node (And delete it)
 		///@param child Child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		bool deleteChild( Node * child );
+		bool deleteChild( NodeT<T> * child );
 
 		///@brief Delete a child from this node (And delete it)
 		///@param i Index of the child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		bool deleteChild( typename Vector< Node * >::Size i );
+		bool deleteChild( typename Vector< NodeT<T> * >::Size i );
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param child Child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		Node * removeChild( Node * child );
+		NodeT<T> * removeChild( NodeT<T> * child );
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param i Index of the child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		Node * removeChild( typename Vector< Node * >::Size i );
+		NodeT<T> * removeChild( typename Vector< NodeT<T> * >::Size i );
 
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object
+		///@param tabs Indentation.
 		///@return True if success, False otherwise
-		bool writeXML( std::fstream * fileStream ) const;
+		bool writeXML( std::fstream * fileStream, unsigned int tabs = 0 ) const;
 
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
@@ -275,72 +200,83 @@ namespace XML {
 		///@return boolean to know if the operation is a success of not.
 		bool write( std::fstream * fileStream ) const;
 
-		///@brief Print an human-readable String of this Node and it's children.
+		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.
 		///@return Human-redable String.
-		UTF8String toString( unsigned int indent = 0 ) const;
+		template<typename C = T>
+		C toString( unsigned int indent = 0 ) const;
+
+		///@brief Print an human-readable String of this NodeT<T> and it's children.
+		///@param indent Identation.
+		///@return Human-redable String.
+		T toStringDebug( unsigned int indent = 0 ) const;
+
+		template<typename C = T, typename Elem = C::ElemType>
+		void _writeXML( C & o, unsigned int tabs = 0 ) const;
 
 	protected:
 		void _clear();
 		void _unload();
-		bool _writeXML( std::fstream * fileStream, unsigned int tabs ) const;
 		bool _write( std::fstream * fileStream ) const;
 		bool _read( std::fstream * fileStream );
-		bool _setChildName( Node * child, const UTF8String & name );
-		bool _setChildId( Node * child, const UTF8String & id );
-		void _getElementsById( Vector < Node * > * nodeVector, const UTF8String & id ) const;
-		void _getElementsByName( Vector < Node * > * nodeVector, const UTF8String & name ) const;
+		bool _setChildName( NodeT<T> * child, const T & name );
+		bool _setChildId( NodeT<T> * child, const T & id );
+		void _getElementsById( Vector < NodeT<T> * > * nodeVector, const T & id ) const;
+		void _getElementsByName( Vector < NodeT<T> * > * nodeVector, const T & name ) const;
+		
 
 	private:
 		Type type;
-		UTF8String name;
-		UTF8String id;
+		T name;
+		T id;
 
-		Node * parent;
+		NodeT<T> * parent;
 
-		Map< UTF8String, Param * > paramsMap;
-		MultiMap< UTF8String, Node * > childrenMap;
-		Vector< Param * > paramsVector;
-		Vector< Node * > childrenVector;
+		Map< T, ParamT<T> * > paramsMap;
+		MultiMap< T, NodeT<T> * > childrenMap;
+		Vector< ParamT<T> * > paramsVector;
+		Vector< NodeT<T> * > childrenVector;
 
-		MultiMap< UTF8String, Node * > childrenByIdMap;
+		MultiMap< T, NodeT<T> * > childrenByIdMap;
 	};
 
+	using Node = NodeT<UTF8String>;
 
-	class NodeText : public Node {
+	template<typename T>
+	class NodeTextT : public NodeT<T> {
 	public:
 		///@brief Empty constructor
-		NodeText();
+		NodeTextT();
 
 		///@brief create node
 		///@param value value of the node
-		NodeText( const UTF8String & value );
+		NodeTextT( const T & value );
 
 		///@brief Copy Constructor
-		///@param node Node to be copied
-		NodeText( const NodeText & node );
+		///@param node NodeT<T> to be copied
+		NodeTextT( const NodeTextT<T> & node );
 
 		///@brief Move Constructor
-		///@param node Node to be moved
-		NodeText( NodeText && node );
+		///@param node NodeT<T> to be moved
+		NodeTextT( NodeTextT<T> && node );
 
 		///@brief Copy operator
-		///@param node Node to be copied
+		///@param node NodeT<T> to be copied
 		///@return reference to THIS
-		NodeText & operator=( const NodeText & node );
+		NodeTextT<T> & operator=( const NodeTextT<T> & node );
 
 		///@brief Move operator
-		///@param node Node to be moved
+		///@param node NodeT<T> to be moved
 		///@return reference to THIS
-		NodeText & operator=( NodeText && node );
+		NodeTextT<T> & operator=( NodeTextT<T> && node );
 
 		///@brief Get the value of this node
 		///@return Value
-		const UTF8String & getValue() const;
+		const T & getValue() const;
 
 		///@brief Set the value of this node
 		///@param value Value to be set
-		void setValue( const UTF8String & value );
+		void setValue( const T & value );
 
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object
@@ -356,15 +292,29 @@ namespace XML {
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
 		bool write( std::fstream * fileStream ) const;
+
+		///@brief Print an human-readable String of this NodeT<T> and it's children.
+		///@param indent Identation.
+		///@return Human-redable String.
+		template<typename C = T>
+		C toString( unsigned int indent = 0 ) const;
+
+		template<typename C = T, typename Elem = C::ElemType>
+		void _writeXML( C & o, unsigned int tabs = 0 ) const;
 	private:
 		void _clear();
+		
 
 		
-		UTF8String value;
+		T value;
 
 
 	};
 
+	using NodeText = NodeTextT<UTF8String>;
+
 
 
 }
+
+#include "Node.hpp"

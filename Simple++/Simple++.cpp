@@ -367,7 +367,7 @@ int main( int argc, char * argv[] ) {
 
 		
 
-		Log::displayLog( testDocument.getRoot()->toString() );
+		Log::displayLog( testDocument.toString<WString>() );
 		testDocument.writeXML( WString( "testOut.xml" ) );
 
 

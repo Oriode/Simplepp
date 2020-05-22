@@ -11,54 +11,55 @@
 
 namespace XML {
 
-	class Document : public BasicIO {
+	template<typename T>
+	class DocumentT : public BasicIO {
 	public:
 		///@brief Empty constructor
-		Document();
+		DocumentT();
 
 		///@brief Constructor from a buffer
 		///@param str StringASCII buffer to be parsed
-		Document( const UTF8String & str );
+		DocumentT( const T & str );
 
 		///@brief Constructor from an XML file
 		///@param fileName File to be opened and parsed
-		Document( const WString & fileName );
+		DocumentT( const WString & fileName );
 
 		///@brief Destructor
-		~Document();
+		~DocumentT();
 
 		///@brief Copy Constructor
-		///@param document Document to be copied
-		Document( const Document & document );
+		///@param document DocumentT<T> to be copied
+		DocumentT( const DocumentT<T> & document );
 
 		///@brief Move Constructor
-		///@param document Document to be moved
-		Document( Document && document );
+		///@param document DocumentT<T> to be moved
+		DocumentT( DocumentT<T> && document );
 
 		///@brief Copy operator
-		///@param document Document to be copied
+		///@param document DocumentT<T> to be copied
 		///@return Reference to THIS
-		Document & operator=( const Document & document );
+		DocumentT<T> & operator=( const DocumentT<T> & document );
 
 		///@brief Move operator
-		///@param document Document to be moved
+		///@param document DocumentT<T> to be moved
 		///@return Reference to THIS
-		Document & operator=( Document && document );
+		DocumentT<T> & operator=( DocumentT<T> && document );
 
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the id searched in this sub tree.
 		///@param id Id to look for
-		///@return Vector of Node's pointers with the searched id
-		Vector< Node * > getElementsById( const UTF8String & id ) const;
+		///@return Vector of NodeT<T>'s pointers with the searched id
+		Vector< NodeT<T> * > getElementsById( const T & id ) const;
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
-		///@return Vector of Node's pointers with the searched name
-		Vector< Node * > getElementsByName( const UTF8String & name ) const;
+		///@return Vector of NodeT<T>'s pointers with the searched name
+		Vector< NodeT<T> * > getElementsByName( const T & name ) const;
 
 		///@brief Get the root node of this document
 		///@return Pointer to the root document node (will never be NULL)
-		Node * getRoot();
+		NodeT<T> * getRoot();
 
 		///@brief Get the version of this document
 		///@return Version
@@ -74,7 +75,7 @@ namespace XML {
 
 		///@brief Set the encoding of this document
 		///@param encoding Encoding to be set
-		void setEncoding( const UTF8String & encoding );
+		void setEncoding( const T & encoding );
 
 		///@brief Write this object as an XML file
 		///@param fileName Where to write
@@ -101,10 +102,22 @@ namespace XML {
 		///@return boolean to know if the operation is a success of not.
 		bool write( std::fstream * fileStream ) const;
 
+		///@brief Create an human-readable string of this param.
+		///@return Human-readable string of this param.
+		template<typename C = T>
+		C toString() const;
+
+		///@brief Create an human-readable string of this document.
+		///@return Human-readable string of this document.
+		T toStringDebug() const;
+
+		template<typename C = T, typename Elem = C::ElemType>
+		void _writeXML( C & o ) const;
+
 	private:
-		void _parse( const UTF8String & str );
-		bool _parseParameter( const UTF8String & str, RandomAccessIterator<char> * it, UCodePoint * lastCodePoint, Node * node );
-		bool _parseParameterSpecial( const UTF8String & str, RandomAccessIterator<char> * it, UCodePoint * lastCodePoint, UTF8String * name, UTF8String * value );
+		void _parse( const T & str );
+		bool _parseParameter( const T & str, RandomAccessIterator<char> * it, UCodePoint * lastCodePoint, NodeT<T> * node );
+		bool _parseParameterSpecial( const T & str, RandomAccessIterator<char> * it, UCodePoint * lastCodePoint, T * name, T * value );
 
 		void _clear();
 		void _unload();
@@ -113,11 +126,15 @@ namespace XML {
 		float version;
 		StringASCII encoding;
 
-		Node * rootNode;
+		NodeT<T> * rootNode;
 	};
+
+	using Document = DocumentT<UTF8String>;
 
 	
 
 }
+
+#include "XMLDocument.hpp"
 
 

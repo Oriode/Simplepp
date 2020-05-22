@@ -489,6 +489,18 @@
     <ClInclude Include="Network\Server.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XML\XMLDocument.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XML\Param.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XML\Param.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XML\Node.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -526,12 +538,6 @@
     </ClCompile>
     <ClCompile Include="Time\Time.cpp">
       <Filter>Source Files\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="XML\XMLDocument.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XML\Node.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\BasicComparable.cpp">
       <Filter>Source Files</Filter>

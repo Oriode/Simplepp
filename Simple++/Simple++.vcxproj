@@ -259,6 +259,9 @@
     <ClInclude Include="UI\UI.h" />
     <ClInclude Include="UI\Window.h" />
     <ClInclude Include="XML\Node.h" />
+    <ClInclude Include="XML\Node.hpp" />
+    <ClInclude Include="XML\Param.h" />
+    <ClInclude Include="XML\Param.hpp" />
     <ClInclude Include="XML\XMLDocument.h" />
     <ClInclude Include="IO\SimpleIO.h" />
     <ClInclude Include="IO\SimpleIO.hpp" />
@@ -316,6 +319,7 @@
     <ClInclude Include="Utility.hpp" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vector.hpp" />
+    <ClInclude Include="XML\XMLDocument.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GL\BasicGlLoadable.cpp" />
@@ -336,8 +340,6 @@
     <ClCompile Include="Time\TimePoint.cpp" />
     <ClCompile Include="UI\Event.cpp" />
     <ClCompile Include="UI\Window.cpp" />
-    <ClCompile Include="XML\Node.cpp" />
-    <ClCompile Include="XML\XMLDocument.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Graphic\HELPER.txt" />
