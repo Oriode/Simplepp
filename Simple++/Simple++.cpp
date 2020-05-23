@@ -31,7 +31,8 @@
 
 
 //#define DEBUG_GRAPHIC
-#define DEBUG_XML
+//#define DEBUG_XML
+#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
@@ -61,6 +62,7 @@
 #include "Time/Time.h"
 #include "Test.h"
 #include "XML/XMLDocument.h"
+#include "JSON/Node.h"
 // #include "UI/UI.h"
 // #include "UI/Window.h"
 #include <functional>
@@ -376,6 +378,25 @@ int main( int argc, char * argv[] ) {
 
 	}
 	#endif
+
+
+
+
+	/************************************************************************/
+	/* JSON PART															*/
+	/************************************************************************/
+#ifdef DEBUG_JSON
+	{
+		JSON::Node rootNode;
+		JSON::Node childNode( "childNode" );
+		rootNode.addChild( &childNode );
+
+		childNode.addChild( new JSON::NodeValue( "test", 43 ) );
+		childNode.addChild( NULL );
+
+		Log::displayLog( rootNode.toStringDebug() );
+	}
+#endif
 
 	#ifdef DEBUG_MAP
 	{

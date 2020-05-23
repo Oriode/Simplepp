@@ -109,12 +109,11 @@ namespace XML {
 	const T & NodeT<T>::getValue() const {
 		if ( getType() == Type::Text ) {
 			return toText() -> getValue();
-		} else if ( this -> childrenVector.getSize() == 1 && this -> childrenVector[ 0 ] -> getType() == Type::Text ) {
-			return this -> childrenVector[ 0 ] -> toText() -> getValue();
+		} else if ( this -> childrenVector.getSize() == 1 ) {
+			return this -> childrenVector[ 0 ] -> getValue();
 		} else {
 			//Error, you shouldn't call this method, return an empty string
-			static const T emptyString;
-			return emptyString;
+			return T::null;
 		}
 	}
 
@@ -684,7 +683,7 @@ namespace XML {
 	bool NodeTextT<T>::writeXML( std::fstream * fileStreamP ) const {
 		std::fstream & fileStream( *fileStreamP );
 
-		_writeXML<std::fstream, char>( fileStream, tabs );
+		_writeXML<std::fstream, char>( fileStream, 0 );
 
 		return !( fileStreamP -> bad() );
 	}
@@ -723,12 +722,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	NodeTextT<T>::NodeTextT() : NodeT( T( "#text" ), typename NodeT<T>::Type::Text ) {
+	NodeTextT<T>::NodeTextT() : NodeT<T>( T( "#text" ), NodeT<T>::Type::Text ) {
 
 	}
 
 	template<typename T>
-	NodeTextT<T>::NodeTextT( const T & value ) : NodeT( T( "#text" ), typename NodeT<T>::Type::Text ),
+	NodeTextT<T>::NodeTextT( const T & value ) : NodeT<T>( T( "#text" ), NodeT<T>::Type::Text ),
 		value( value ) {
 
 	}

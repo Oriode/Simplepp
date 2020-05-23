@@ -501,6 +501,12 @@
     <ClInclude Include="XML\Node.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="JSON\Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JSON\Node.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

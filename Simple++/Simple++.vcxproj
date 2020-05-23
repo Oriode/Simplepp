@@ -182,6 +182,8 @@
     <ClInclude Include="IO\IOManager.h" />
     <ClInclude Include="IO\IOManager.hpp" />
     <ClInclude Include="IO\IOManagerLoadable.hpp" />
+    <ClInclude Include="JSON\Node.h" />
+    <ClInclude Include="JSON\Node.hpp" />
     <ClInclude Include="Log.hpp" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map.hpp" />
