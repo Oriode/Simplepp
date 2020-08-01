@@ -21,8 +21,8 @@
 //#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
 //#define SPEEDTEST_STRING_CONCAT
-#define SPEEDTEST_STRING_FORMAT
-//#define SPEEDTEST_STRING_CAST
+//#define SPEEDTEST_STRING_FORMAT
+#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
 //#define SPEEDTEST_VECTOR
 //#define SPEEDTEST_MAP
@@ -32,12 +32,12 @@
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-#define DEBUG_JSON
+//#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-//#define DEBUG_STRING
+#define DEBUG_STRING
 
 
 #ifndef _LIB
@@ -1047,6 +1047,19 @@ int main( int argc, char * argv[] ) {
 		Log::displayLog( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
 		Log::displayLog( StringASCII::format( "__%__%__%__", "Hello World !", 50, 2.5f ) );
+
+		class EndFunc {
+		public:
+			bool operator()( const char * it ) const {
+				return ( *it == char( ' ' ) );
+			}
+		};
+
+		const char * testParse = "42 18.4";
+		const char ** iterable( &testParse );
+		Log::displayLog( StringASCII::toInt( iterable, EndFunc() ) );
+		Log::displayLog( StringASCII::toFloat( testParse ) );
+
 	}
 #endif
 
@@ -1570,7 +1583,7 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Cast Strings								//
 	{
-		float sum = 0;
+		float sum = 0.0f;
 		Log::startChrono();
 		for ( unsigned long i = 0; i < 10000000; i++ ) {
 			sum += atof( "42.054217" );
@@ -1578,6 +1591,7 @@ int main( int argc, char * argv[] ) {
 		Log::stopChrono();
 		Log::displayChrono( "ATOF : " + StringASCII( sum ) );
 
+		sum = 0.0f;
 		Log::startChrono();
 		for ( unsigned long i = 0; i < 10000000; i++ ) {
 			sum += StringASCII::toFloat( "42.054217" );

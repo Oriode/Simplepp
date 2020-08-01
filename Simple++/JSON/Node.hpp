@@ -1,7 +1,7 @@
 namespace JSON {
 
 	template<typename T>
-	NodeT<T>::NodeT( Type type = Type::Object ) :
+	NodeT<T>::NodeT( Type type ) :
 		type( type ),
 		parent( NULL ) {
 
@@ -313,7 +313,7 @@ namespace JSON {
 		}
 		nbChilds = Math::min( nbChilds, Vector< NodeT<T> * >::Size( 1000 ) );
 		for ( Vector< NodeT<T> * >::Size i( 0 ); i < nbChilds; i++ ) {
-			boolean isNull;
+			bool isNull;
 			if ( !IO::read( fileStream, &isNull ) ) {
 				_clear();
 				return false;
@@ -399,7 +399,7 @@ namespace JSON {
 		if ( !IO::write( fileStream, &nbChilds ) )
 			return false;
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
-			boolean isNull( *it == NULL );
+			bool isNull( *it == NULL );
 			if ( !IO::write( fileStream, &isNull ) )
 				return false;
 			if ( !isNull ) {
