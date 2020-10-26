@@ -1766,7 +1766,8 @@ inline typename BasicString<T>::Size BasicString<T>::toCStringWOS( const typenam
 /************************************************************************/
 template<typename T>
 template<typename Type, unsigned int Base, typename EndFunc>
-static Type BasicString<T>::_toSignedInteger( const T ** it, const EndFunc & endFunc ) {
+static Type BasicString<T>::_toSignedInteger( const T ** itParam, const EndFunc & endFunc ) {
+	const T *& it( *itParam );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc(it) )
@@ -1798,7 +1799,8 @@ static Type BasicString<T>::_toSignedInteger( const T ** it, const EndFunc & end
 
 template<typename T>
 template<typename Type, unsigned int Base, typename EndFunc>
-static Type BasicString<T>::_toUnsignedInteger( const T ** it, const EndFunc & endFunc ) {
+static Type BasicString<T>::_toUnsignedInteger( const T ** itParam, const EndFunc & endFunc ) {
+	const T *& it( *itParam );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -1822,7 +1824,8 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** it, const EndFunc & e
 
 template<typename T>
 template<typename Type, unsigned int Base, typename EndFunc>
-static Type BasicString<T>::_toFloat( const T ** it, const EndFunc & endFunc ) {
+static Type BasicString<T>::_toFloat( const T ** itParam, const EndFunc & endFunc ) {
+	const T *& it( *itParam );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -1861,7 +1864,8 @@ static Type BasicString<T>::_toFloat( const T ** it, const EndFunc & endFunc ) {
 
 template<typename T>
 template<typename Type, typename EndFunc>
-static Type BasicString<T>::_toSignedInteger( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+static Type BasicString<T>::_toSignedInteger( const T ** itParam, unsigned int base, const EndFunc & endFunc ) {
+	const T *& it( *itParam );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -1893,7 +1897,8 @@ static Type BasicString<T>::_toSignedInteger( const T ** it, unsigned int base, 
 
 template<typename T>
 template<typename Type, typename EndFunc>
-static Type BasicString<T>::_toUnsignedInteger( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+static Type BasicString<T>::_toUnsignedInteger( const T ** itParam, unsigned int base, const EndFunc & endFunc ) {
+	const T *& it( *itParam );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -1917,7 +1922,8 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** it, unsigned int base
 
 template<typename T>
 template<typename Type, typename EndFunc>
-static Type BasicString<T>::_toFloat( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+static Type BasicString<T>::_toFloat( const T ** itParam, unsigned int base, const EndFunc & endFunc ) {
+	const T *& it( *itParam );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -2017,7 +2023,8 @@ unsigned long long BasicString<T>::toULongLong( const T * it, const EndFunc & en
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 float BasicString<T>::toFloat( const T * buffer, const EndFunc & endFunc ) {
-	return _toFloat<float, Base, EndFunc>( buffer, endFunc );
+	const T ** tmpBuffer( &buffer );
+	return _toFloat<float, Base, EndFunc>( tmpBuffer, endFunc );
 }
 
 template<typename T>
@@ -2039,73 +2046,85 @@ double BasicString<T>::toDouble( const T * buffer, const EndFunc & endFunc ) {
 template<typename T>
 template<typename EndFunc>
 char BasicString<T>::toChar( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toSignedInteger<char, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toSignedInteger<char, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 short BasicString<T>::toShort( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toSignedInteger<short, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toSignedInteger<short, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 int BasicString<T>::toInt( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toSignedInteger<int, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toSignedInteger<int, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 long BasicString<T>::toLong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toSignedInteger<long, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toSignedInteger<long, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 long long BasicString<T>::toLongLong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toSignedInteger<long long, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toSignedInteger<long long, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 unsigned char BasicString<T>::toUChar( const T * it, unsigned int base, const EndFunc & endFunc ) {
+	const T ** tmpBuffer( &buffer );
 	return _toUnsignedInteger<unsigned char, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 unsigned short BasicString<T>::toUShort( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned short, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toUnsignedInteger<unsigned short, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 unsigned int BasicString<T>::toUInt( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned int, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toUnsignedInteger<unsigned int, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 unsigned long BasicString<T>::toULong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned long, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toUnsignedInteger<unsigned long, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 unsigned long long BasicString<T>::toULongLong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned long long, EndFunc>( it, base, endFunc );
+	const T ** tmpBuffer( &it );
+	return _toUnsignedInteger<unsigned long long, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 float BasicString<T>::toFloat( const T * buffer, unsigned int base, const EndFunc & endFunc ) {
-	return _toFloat<float, EndFunc>( buffer, base, endFunc );
+	const T ** tmpBuffer( &buffer );
+	return _toFloat<float, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
 double BasicString<T>::toDouble( const T * buffer, unsigned int base, const EndFunc & endFunc ) {
-	return _toFloat<double, EndFunc>( buffer, base, endFunc );
+	const T ** tmpBuffer( &buffer );
+	return _toFloat<double, EndFunc>( tmpBuffer, base, endFunc );
 }
 
 
@@ -2119,73 +2138,73 @@ double BasicString<T>::toDouble( const T * buffer, unsigned int base, const EndF
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 char BasicString<T>::toChar( const T ** it, const EndFunc & endFunc ) {
-	return _toSignedInteger<char, Base, EndFunc>( *it, endFunc );
+	return _toSignedInteger<char, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 short BasicString<T>::toShort( const T ** it, const EndFunc & endFunc ) {
-	return _toSignedInteger<short, Base, EndFunc>( *it, endFunc );
+	return _toSignedInteger<short, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 int BasicString<T>::toInt( const T ** it, const EndFunc & endFunc ) {
-	return _toSignedInteger<int, Base, EndFunc>( *it, endFunc );
+	return _toSignedInteger<int, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 long BasicString<T>::toLong( const T ** it, const EndFunc & endFunc ) {
-	return _toSignedInteger<long, Base, EndFunc>( *it, endFunc );
+	return _toSignedInteger<long, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 long long BasicString<T>::toLongLong( const T ** it, const EndFunc & endFunc ) {
-	return _toSignedInteger<long long, Base, EndFunc>( *it, endFunc );
+	return _toSignedInteger<long long, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 unsigned char BasicString<T>::toUChar( const T ** it, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned char, Base, EndFunc>( *it, endFunc );
+	return _toUnsignedInteger<unsigned char, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 unsigned short BasicString<T>::toUShort( const T ** it, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned short, Base, EndFunc>( *it, endFunc );
+	return _toUnsignedInteger<unsigned short, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 unsigned int BasicString<T>::toUInt( const T ** it, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned int, Base, EndFunc>( *it, endFunc );
+	return _toUnsignedInteger<unsigned int, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 unsigned long BasicString<T>::toULong( const T ** it, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned long, Base, EndFunc>( *it, endFunc );
+	return _toUnsignedInteger<unsigned long, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 unsigned long long BasicString<T>::toULongLong( const T ** it, const EndFunc & endFunc ) {
-	return _toUnsignedInteger<unsigned long long, Base, EndFunc>( *it, endFunc );
+	return _toUnsignedInteger<unsigned long long, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 float BasicString<T>::toFloat( const T ** it, const EndFunc & endFunc ) {
-	return _toFloat<float, Base, EndFunc>( *it, endFunc );
+	return _toFloat<float, Base, EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<unsigned int Base, typename EndFunc>
 double BasicString<T>::toDouble( const T ** it, const EndFunc & endFunc ) {
-	return _toFloat<double, Base, EndFunc>( *it, endFunc );
+	return _toFloat<double, Base, EndFunc>( it, endFunc );
 }
 
 
@@ -3615,8 +3634,7 @@ template<typename T>
 template<typename C, typename T1, typename... Types>
 void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
-		if ( *it == T( '%' ) && *( it + 1 ) == T( '%' ) ) {
-			it++;
+		if ( *it == T( '%' ) && it > referenceStringBegin && *( it - 1 ) == T( '/' ) ) {
 			newString -> _concatWOS( T( '%' ) );
 		} else if ( *it == T( '%' ) ) {
 			newString -> _concatWOS( arg1 );
@@ -3698,7 +3716,6 @@ bool BasicString<T>::IsEndSentinel::operator()( const T * it ) const {
 template<typename T>
 BasicString<T>::IsEndIterator::IsEndIterator( const T * endIt ) :
 	endIt( endIt ) {
-
 }
 
 template<typename T>

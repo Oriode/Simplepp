@@ -1046,7 +1046,7 @@ int main( int argc, char * argv[] ) {
 		}
 		Log::displayLog( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
-		Log::displayLog( StringASCII::format( "__%__%__%__", "Hello World !", 50, 2.5f ) );
+		Log::displayLog( StringASCII::format( "__/%__%__%__%__", "Hello World !", 50, 2.5f ) );
 
 		class EndFunc {
 		public:
@@ -1055,10 +1055,10 @@ int main( int argc, char * argv[] ) {
 			}
 		};
 
-		const char * testParse = "42 18.4";
+		const char * testParse = "42.0 18";
 		const char ** iterable( &testParse );
-		Log::displayLog( StringASCII::toInt( iterable, EndFunc() ) );
-		Log::displayLog( StringASCII::toFloat( testParse ) );
+		Log::displayLog( StringASCII::toFloat( iterable, EndFunc() ) );
+		Log::displayLog( StringASCII::toInt( iterable ) );
 
 	}
 #endif
