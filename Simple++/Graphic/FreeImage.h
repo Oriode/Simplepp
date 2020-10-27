@@ -6,7 +6,9 @@
 
 
 
-
+#if defined WIN32 && defined ENABLE_WIN32
+#include <windows.h>
+#endif // !WIN32
 #include <FreeImage.h>
 
 

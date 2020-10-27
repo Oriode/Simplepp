@@ -37,7 +37,8 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-#define DEBUG_STRING
+//#define DEBUG_STRING
+#define DEBUG_DATE
 
 
 #ifndef _LIB
@@ -987,7 +988,7 @@ int main( int argc, char * argv[] ) {
 
 #ifdef DEBUG_NETWORK
 	//////////////////////////////////////////////////////////////////////////
-	// SPEED TEST : Network									//
+	// DEBUG : Network									//
 	{
 		int result;
 		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
@@ -1035,7 +1036,7 @@ int main( int argc, char * argv[] ) {
 #endif
 #ifdef DEBUG_STRING
 	//////////////////////////////////////////////////////////////////////////
-	// SPEED TEST : Concat Strings							//
+	// DEBUG : Strings											//
 	{
 		log( "Hello World !" );
 		StringASCII testStr( "STRING 1 : " );
@@ -1060,6 +1061,18 @@ int main( int argc, char * argv[] ) {
 		Log::displayLog( StringASCII::toFloat( iterable, EndFunc() ) );
 		Log::displayLog( StringASCII::toInt( iterable ) );
 
+	}
+#endif
+#ifdef DEBUG_DATE
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Date															//
+	{
+		log( "Debuging Date..." );
+		error( "TEST" );
+		Time::Date nowDate = Time::getDate();
+		log( nowDate.toString() );
+		log( nowDate.toStringISO() );
+		log( Time::Date::getLocalUTCBias() );
 	}
 #endif
 

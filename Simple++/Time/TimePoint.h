@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include <ctime>
+#include <time.h>
 #include "Duration.h"
 
 

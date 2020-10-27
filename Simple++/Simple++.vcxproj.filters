@@ -524,9 +524,6 @@
     <ClCompile Include="Time\Tick.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Time\Date.cpp">
-      <Filter>Source Files\Time</Filter>
-    </ClCompile>
     <ClCompile Include="IO\BasicIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

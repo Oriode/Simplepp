@@ -76,8 +76,8 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 		parseMessage( logBuffer, 2048, timeBuffer, message );
 	}
 
-	setConsoleColor();
 	printMessage( logBuffer );
+	setConsoleColor();
 }
 
 template<typename T>
@@ -122,7 +122,8 @@ template<typename T>
 void SimpleLogT<T>::setConsoleColor( typename SimpleLogT<T>::MessageColor color /*= typename SimpleLogT<T>::MessageColor::White*/ ) {
 #if defined WIN32
 #if defined ENABLE_WIN32
-	SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), ( unsigned char ) color );
+	static HANDLE consoleHandle( GetStdHandle( STD_OUTPUT_HANDLE ) );
+	SetConsoleTextAttribute( consoleHandle, ( WORD ) color );
 #endif
 #else
 	std::stringstream stream;
