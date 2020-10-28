@@ -71,7 +71,7 @@ namespace Math {
 	 * @brief 	get a random value between 0.0 and 1.0
 	 * @returns	Random number between 0.0 and 1.0.
 	 */
-	template<typename T>
+	template<typename T = float>
 	MATH_FUNC_QUALIFIER T randomF();
 
 	/**

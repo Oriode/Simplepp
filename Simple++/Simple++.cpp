@@ -20,9 +20,10 @@
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
-//#define SPEEDTEST_STRING_CONCAT
+//#define SPEEDTEST_STRING_CONCAT_STRING
+// #define SPEEDTEST_STRING_CONCAT_NUMBER
 //#define SPEEDTEST_STRING_FORMAT
-#define SPEEDTEST_STRING_CAST
+//#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
 //#define SPEEDTEST_VECTOR
 //#define SPEEDTEST_MAP
@@ -37,8 +38,8 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-//#define DEBUG_STRING
-#define DEBUG_DATE
+#define DEBUG_STRING
+//#define DEBUG_DATE
 
 
 #ifndef _LIB
@@ -1041,6 +1042,9 @@ int main( int argc, char * argv[] ) {
 		log( "Hello World !" );
 		StringASCII testStr( "STRING 1 : " );
 		StringASCII strConcat( "Hello World!" );
+		Log::displayLog( StringASCII("10 in binary : ") << StringASCII( 10, 2 ) );
+		Log::displayLog( StringASCII("test:").concatFill( 255, StringASCII::Size(5), '-', 16 ) );
+		Log::displayLog( StringASCII( 0.2f ) );
 
 		for ( size_t i( 0 ) ; i < 2 ; i++ ) {
 			testStr += StringASCII( testStr );
@@ -1058,7 +1062,7 @@ int main( int argc, char * argv[] ) {
 
 		const char * testParse = "42.0 18";
 		const char ** iterable( &testParse );
-		Log::displayLog( StringASCII::toFloat( iterable, EndFunc() ) );
+		Log::displayLog( StringASCII::toFloat( iterable, 10, EndFunc() ) );
 		Log::displayLog( StringASCII::toInt( iterable ) );
 
 	}
@@ -1547,32 +1551,66 @@ int main( int argc, char * argv[] ) {
 	}
 	#endif
 
-	#ifdef SPEEDTEST_STRING_CONCAT
+	#ifdef SPEEDTEST_STRING_CONCAT_STRING
 	//////////////////////////////////////////////////////////////////////////
-	// SPEED TEST : Concat Strings							//
+	// SPEED TEST : Concat Strings with Strings							//
 	{
-		StringASCII testStr( "STRING 1 : " );
+		StringASCII testStr1( "STRING 1 : " );
 		std::string testStr2( "STRING 2 : " );
 
-		StringASCII strConcat( "Hello World!" );
+		StringASCII strConcat1( "Hello World!" );
 		std::string strConcat2( "Hello World!" );
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i < M10; i++ ) {
-			testStr += StringASCII( "Hello World!" );
+		for ( size_t i = 0; i < M100; i++ ) {
+			testStr1 += strConcat1;
 		}
 		Log::stopChrono();
-		Log::displayChrono( testStr.getSubStr( StringASCII::Size(0), StringASCII::Size(30) ) );
+		Log::displayChrono( testStr1.getSubStr( StringASCII::Size(0), StringASCII::Size(30) ) );
 
 		Log::startChrono();
-		for ( size_t i = 0; i < M10; i++ ) {
-			testStr2 += std::string( "Hello World!" );
+		for ( size_t i = 0; i < M100; i++ ) {
+			testStr2 += strConcat2;
 		}
 		Log::stopChrono();
 		Log::displayChrono( testStr2.substr( 0, 30 ).c_str() );
 	}
 	#endif
+
+#ifdef SPEEDTEST_STRING_CONCAT_NUMBER
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Concat Strings with numbers							//
+	{
+		StringASCII testMyStr1( "STRING 1 : " );
+		StringASCII testMyStr2( "STRING 1 : " );
+		std::string testStdStr1( "STRING 2 : " );
+
+		int numberInt = Math::random();
+		double numberFloat = 0.123456789123456789;
+
+		Log::startChrono();
+		for ( size_t i = 0; i < M10; i++ ) {
+			testMyStr1.concat( numberFloat, 7, 2);
+		}
+		Log::stopChrono();
+		Log::displayChrono( StringASCII("Simple++ concat float.") << testMyStr1.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+
+		Log::startChrono();
+		for ( size_t i = 0; i < M10; i++ ) {
+			testMyStr2.concat( numberInt, 2 );
+		}
+		Log::stopChrono();
+		Log::displayChrono( StringASCII("Simple++ concat int.") << testMyStr2.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+
+		Log::startChrono();
+		for ( size_t i = 0; i < M10; i++ ) {
+			testStdStr1 += std::to_string( numberFloat );
+		}
+		Log::stopChrono();
+		Log::displayChrono( (std::string("std concat float.") + testStdStr1.substr( 0, 30 ).c_str()).data() );
+	}
+#endif
 
 #ifdef SPEEDTEST_STRING_FORMAT
 	//////////////////////////////////////////////////////////////////////////

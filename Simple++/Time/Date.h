@@ -1,6 +1,5 @@
 /**
  * @file	Time\DateT.h.
- *
  * @brief		Declares the date class
  * @author	Clément Gerber
  * @date		19/04/2016 (DMY)
@@ -43,7 +42,6 @@ namespace Time {
 
 		/**
 		 * @brief	Constructor from a struct tm
-		 *
 		 * @param 	date	DateT to copy.
 		 */
 		DateT( const tm & date );
@@ -51,7 +49,6 @@ namespace Time {
 
 		/**
 		 * @brief	Constructor from a time point
-		 *
 		 * @param 	timePoint	Time point to use.
 		 */
 		DateT( const TimePoint & timePoint );
@@ -62,9 +59,7 @@ namespace Time {
 		/************************************************************************/
 		/**
 		 * @brief	Addition assignment operator
-		 *
 		 * @param 	duration	The duration.
-		 *
 		 * @returns	The result of the operation.
 		 */
 		template<typename ratio>
@@ -72,9 +67,7 @@ namespace Time {
 
 		/**
 		 * @brief	Subtraction assignment operator
-		 *
 		 * @param 	duration	The duration.
-		 *
 		 * @returns	The result of the operation.
 		 */
 		template<typename ratio>
@@ -82,17 +75,13 @@ namespace Time {
 
 		/**
 		 * @brief	Addition assignment operator
-		 *
 		 * @param 	timeT	The time t.
-		 *
 		 * @returns	The result of the operation.
 		 */
 		DateT & operator+=( TimeT timeT );
 		/**
 		 * @brief	Subtraction assignment operator
-		 *
 		 * @param 	timeT	The time t.
-		 *
 		 * @returns	The result of the operation.
 		 */
 		DateT & operator-=( TimeT timeT );
@@ -102,49 +91,37 @@ namespace Time {
 		/************************************************************************/
 		/**
 		 * @brief	Equality operator
-		 *
 		 * @param 	d	A DateT to process.
-		 *
 		 * @returns	True if the parameters are considered equivalent.
 		 */
 		bool operator==( const DateT & d );
 		/**
 		 * @brief	Inequality operator
-		 *
 		 * @param 	d	A DateT to process.
-		 *
 		 * @returns	True if the parameters are not considered equivalent.
 		 */
 		bool operator!=( const DateT & d );
 		/**
 		 * @brief	Less-than comparison operator
-		 *
 		 * @param 	d	A DateT to process.
-		 *
 		 * @returns	True if the first parameter is less than the second.
 		 */
 		bool operator<( const DateT & d );
 		/**
 		 * @brief	Greater-than comparison operator
-		 *
 		 * @param 	d	A DateT to process.
-		 *
 		 * @returns	True if the first parameter is greater than to the second.
 		 */
 		bool operator>( const DateT & d );
 		/**
 		 * @brief	Greater-than-or-equal comparison operator
-		 *
 		 * @param 	d	A DateT to process.
-		 *
 		 * @returns	True if the first parameter is greater than or equal to the second.
 		 */
 		bool operator>=( const DateT & d );
 		/**
 		 * @brief	< .
-		 *
 		 * @param 	d	A DateT to process.
-		 *
 		 * @returns	True if the first parameter is less than or equal to the second.
 		 */
 		bool operator<=( const DateT & d );
@@ -154,25 +131,19 @@ namespace Time {
 		/* OPERATOR =															*/
 		/**
 		 * @brief	Assignment operator
-		 *
 		 * @param 	date	The date.
-		 *
 		 * @returns	A shallow copy of this object.
 		 */
 		DateT & operator=( const DateT & date );
 		/**
 		 * @brief	Assignment operator
-		 *
 		 * @param 	date	The date.
-		 *
 		 * @returns	A shallow copy of this object.
 		 */
 		DateT & operator=( const tm & date );
 		/**
 		 * @brief	Assignment operator
-		 *
 		 * @param 	timePoint	The time point.
-		 *
 		 * @returns	A shallow copy of this object.
 		 */
 		DateT & operator=( const TimePoint & timePoint );
@@ -180,14 +151,12 @@ namespace Time {
 
 		/**
 		 * @brief	get the seconds of this date
-		 *
 		 * @returns	seconds [0-59].
 		 */
 		unsigned char getSeconds() const;
 
 		/**
 		 * @brief	get the minutes of this date
-		 *
 		 * @returns	minutes [0-59].
 		 */
 		unsigned char getMinutes() const;
@@ -195,14 +164,12 @@ namespace Time {
 
 		/**
 		 * @brief	get the hours of this date
-		 *
 		 * @returns	hours [0-23].
 		 */
 		unsigned char getHours() const;
 
 		/**
 		 * @brief	get the day of the month of this date
-		 *
 		 * @returns	day of the month [1-31].
 		 */
 		unsigned char getDay() const;
@@ -210,7 +177,6 @@ namespace Time {
 
 		/**
 		 * @brief	get the month of this date
-		 *
 		 * @returns	Month [0-11].
 		 */
 		unsigned char getMonth() const;
@@ -218,7 +184,6 @@ namespace Time {
 
 		/**
 		 * @brief	get the year of this date
-		 *
 		 * @returns	year.
 		 */
 		int getYear() const;
@@ -230,42 +195,36 @@ namespace Time {
 
 		/**
 		 * @brief	set the seconds of this date
-		 *
 		 * @param 	s	seconds [0-59].
 		 */
 		void setSeconds( unsigned char s );
 
 		/**
 		 * @brief	set the minutes of this date
-		 *
 		 * @param 	m	minutes [0-59].
 		 */
 		void setMinutes( unsigned char m );
 
 		/**
 		 * @brief	set the hours of this date
-		 *
 		 * @param 	h	hours [0-23].
 		 */
 		void setHours( unsigned char h );
 
 		/**
 		 * @brief	set the day of this date
-		 *
 		 * @param 	d	day of the month [1-31].
 		 */
 		void setDay( unsigned char d );
 
 		/**
 		 * @brief	set the month of this date
-		 *
 		 * @param 	m	.
 		 */
 		void setMonth( unsigned char m );
 
 		/**
 		 * @brief	set the year of this date
-		 *
 		 * @param 	y	.
 		 */
 		void setYear( int y );
@@ -273,9 +232,7 @@ namespace Time {
 
 		/**
 		 * @brief	Create an human readable string of this date with a default template "<WeekDay> <MonthName> <DayNumber> <Hour>:<Minutes>:<Seconds>"
-		 *
 		 * @tparam	T	Generic type parameter.
-		 *
 		 * @returns	Human readable string of this date.
 		 */
 		template<typename T = char>
@@ -283,7 +240,6 @@ namespace Time {
 
 		/**
 		 * @brief	Create an human readable string of this date using a specified template
-		 *
 		 * @tparam	T	Generic type parameter.
 		 * @param 	str	template to be used. Available symbols to be used : Y : Year (four digits)
 		 * 				y : Year (two last digits)
@@ -292,7 +248,6 @@ namespace Time {
 		 * 				a : Week Day Name u : Day number of the week H : Hours (with zeros)
 		 * 				M : Minutes (with zeros)
 		 * 				S : Seconds (with zeros)
-		 *
 		 * @returns	Str as a BasicString<T>
 		 */
 		template<typename C = char>
@@ -307,36 +262,29 @@ namespace Time {
 
 		/**
 		 * @brief	convert this date to a TimePoint
-		 *
 		 * @returns	This object as a TimePoint.
 		 */
 		TimePoint toTimePoint() const;
 
 		/**
 		 * @brief	get the day number of the week (Monday is the first one)
-		 *
 		 * @param 	date	The date.
-		 *
 		 * @returns	day number of the week [0-6].
 		 */
 		static unsigned char getWeekDay( const DateT & date );
 
 		/**
 		 * @brief	compute if a year is a leap one
-		 *
 		 * @param 	year	Year to be used.
-		 *
 		 * @returns	True of the year is a leap one, false instead.
 		 */
 		static const bool isYearLeapYear( int year );
 
 		/**
 		 * @brief	compute the day number of the week from a day number of the month, a month and a year
-		 *
 		 * @param 	day  	day number of the month [1-31].
 		 * @param 	month	month number [0-11].
 		 * @param 	year 	year.
-		 *
 		 * @returns	day number of the week.
 		 */
 		static const unsigned char getWeekDay( unsigned char day, unsigned char month, int year );
@@ -344,10 +292,8 @@ namespace Time {
 
 		/**
 		 * @brief	get the week day English name from the day number of the week.
-		 *
 		 * @tparam	T	Generic type parameter.
 		 * @param 	weekDay	Day number of the week [0-6].
-		 *
 		 * @returns	Weekday name as a StringASCII<T>
 		 */
 		template<typename T = char>
@@ -356,10 +302,8 @@ namespace Time {
 
 		/**
 		 * @brief	get the month English name from the month number
-		 *
 		 * @tparam	T	Generic type parameter.
 		 * @param 	month	number [0-11].
-		 *
 		 * @returns	Month name as a StringASCII<T>
 		 */
 		template<typename T = char>
@@ -368,9 +312,7 @@ namespace Time {
 
 		/**
 		 * @brief	get the number of day in a specified year
-		 *
 		 * @param 	year	Year.
-		 *
 		 * @returns	number of day of the year.
 		 */
 		static const unsigned int getNumDays( int year );
@@ -378,7 +320,6 @@ namespace Time {
 
 		/**
 		 * @brief	Gets local UTC bias
-		 *
 		 * @returns	local time bias.
 		 */
 		static const long long getLocalUTCBias();
@@ -413,7 +354,6 @@ namespace Time {
 
 		/**
 		 * @brief	Retrieves local UTC bias
-		 *
 		 * @returns	A const long.
 		 */
 		static const long _retrieveLocalUTCBias();
@@ -424,30 +364,24 @@ namespace Time {
 
 	/**
 	 * @brief	Addition operator
-	 *
 	 * @param 	date		The first value.
 	 * @param 	duration	A value to add to it.
-	 *
 	 * @returns	The result of the operation.
 	 */
 	template<typename ratio, typename T>
 	DateT<T> operator+( const DateT<T> & date, const Duration<ratio> & duration );
 	/**
 	 * @brief	Addition operator
-	 *
 	 * @param 	duration	The first value.
 	 * @param 	date		A value to add to it.
-	 *
 	 * @returns	The result of the operation.
 	 */
 	template<typename ratio, typename T>
 	DateT<T> operator+( const Duration<ratio> & duration, const DateT<T> & date );
 	/**
 	 * @brief	Subtraction operator
-	 *
 	 * @param 	date		The first value.
 	 * @param 	duration	A value to subtract from it.
-	 *
 	 * @returns	The result of the operation.
 	 */
 	template<typename ratio, typename T>
@@ -457,10 +391,8 @@ namespace Time {
 
 	/**
 	 * @brief	Subtraction operator
-	 *
 	 * @param 	d1	The first value.
 	 * @param 	d2	A value to subtract from it.
-	 *
 	 * @returns	The result of the operation.
 	 */
 	template<typename T>
@@ -470,9 +402,7 @@ namespace Time {
 
 	/**
 	 * @brief	Gets the date
-	 *
 	 * @tparam	T	Generic type parameter.
-	 *
 	 * @returns	The date.
 	 */
 	template<typename T = char>
