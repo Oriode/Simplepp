@@ -38,8 +38,8 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-#define DEBUG_STRING
-//#define DEBUG_DATE
+//#define DEBUG_STRING
+#define DEBUG_DATE
 
 
 #ifndef _LIB
@@ -1073,7 +1073,7 @@ int main( int argc, char * argv[] ) {
 	{
 		log( "Debuging Date..." );
 		error( "TEST" );
-		Time::Date nowDate = Time::getDate();
+		Time::Date nowDate = Time::getDate(-3660);
 		log( nowDate.toString() );
 		log( nowDate.toStringISO() );
 		log( Time::Date::getLocalUTCBias() );

@@ -9,7 +9,7 @@ namespace Time {
 	template<typename T>
 	const unsigned char DateT<T>::MonthTableLeapYear[ 12 ] = { 6, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
 	template<typename T>
-	const long DateT<T>::localUTCBias = DateT<T>::_retrieveLocalUTCBias();
+	const TimeT DateT<T>::localUTCBias = DateT<T>::_retrieveLocalUTCBias();
 
 
 	/************************************************************************/
@@ -48,7 +48,7 @@ namespace Time {
 		this -> hours = date.hours;
 		this -> minutes = date.minutes;
 		this -> seconds = date.seconds;
-
+		this -> utcBias = date.utcBias;
 
 		return *this;
 	}
@@ -61,8 +61,7 @@ namespace Time {
 		this -> hours = date.tm_hour;
 		this -> minutes = date.tm_min;
 		this -> seconds = date.tm_sec;
-
-
+		this -> utcBias = DateT<T>::getLocalUTCBias();
 
 		return *this;
 	}
@@ -70,10 +69,22 @@ namespace Time {
 
 	template<typename T>
 	DateT<T> & DateT<T>::operator=( const TimePoint & timePoint ) {
+		setToTimePoint( timePoint );
+		return *this;
+	}
+
+	template<typename T>
+	void DateT<T>::setNow( TimeT utcBias ) {
+		setToTimePoint( TimePoint::getNow(), utcBias );
+	}
+
+	template<typename T>
+	void DateT<T>::setToTimePoint( const TimePoint & timePoint, TimeT utcBias ) {
+		this -> utcBias = utcBias;
 		this -> year = 1970;
 		this -> month = 0;
 
-		TimeT unixTime = timePoint.getTime() + getLocalUTCBias();
+		TimeT unixTime = timePoint.getTime() + this -> utcBias;
 		bool isLeapYear = true;
 
 		//Get the Year Number
@@ -126,17 +137,7 @@ namespace Time {
 		this -> minutes = ( unsigned char ) ( unixTime / 60 );
 		unixTime %= ( 60 );
 		this -> seconds = ( unsigned char ) ( unixTime );
-
-
-		return *this;
 	}
-
-	template<typename T>
-	void DateT<T>::setNow() {
-		operator=( TimePoint::getNow() );
-	}
-
-
 
 	template<typename T>
 	unsigned char DateT<T>::getSeconds() const {
@@ -161,6 +162,10 @@ namespace Time {
 	template<typename T>
 	int DateT<T>::getYear() const {
 		return this -> year;
+	}
+	template<typename T>
+	TimeT DateT<T>::getUtcBias() const {
+		return this -> utcBias;
 	}
 	template<typename T>
 	unsigned char DateT<T>::getWeekDay( const DateT & date ) {
@@ -190,6 +195,11 @@ namespace Time {
 	void DateT<T>::setYear( int y ) {
 		this -> year = y;
 	}
+	template<typename T>
+	void DateT<T>::setUTCBias( TimeT s ) {
+		this -> utcBias = s;
+	}
+
 
 
 	/*
@@ -348,12 +358,12 @@ template<typename T>
 		t += ( this -> minutes ) * ( 60 );
 		t += ( this -> seconds );
 
-		t -= getLocalUTCBias();
+		t -= this -> utcBias;
 
 		return t;
 	}
 	template<typename T>
-	const unsigned char DateT<T>::getWeekDay( unsigned char day, unsigned char month, int year ) {
+	unsigned char DateT<T>::getWeekDay( unsigned char day, unsigned char month, int year ) {
 		static int centuryTable[ 4 ] = { 0, 5, 3, 1 };
 
 		bool isLeapYear = isYearLeapYear( year );
@@ -373,7 +383,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	const bool DateT<T>::isYearLeapYear( int year ) {
+	bool DateT<T>::isYearLeapYear( int year ) {
 		//https://en.wikipedia.org/wiki/Leap_year
 		if ( year % 4 != 0 ) return false;
 		else if ( year % 100 != 0 ) return true;
@@ -381,7 +391,7 @@ template<typename T>
 		else return true;
 	}
 	template<typename T>
-	const unsigned int DateT<T>::getNumDays( int year ) {
+	unsigned int DateT<T>::getNumDays( int year ) {
 		if ( isYearLeapYear( year ) )
 			return 365;
 		else
@@ -389,18 +399,18 @@ template<typename T>
 	}
 
 	template<typename T>
-	const long long DateT<T>::getLocalUTCBias() {
+	TimeT DateT<T>::getLocalUTCBias() {
 		return DateT<T>::localUTCBias;
 	}
 	template<typename T>
-	const long DateT<T>::_retrieveLocalUTCBias() {
+	TimeT DateT<T>::_retrieveLocalUTCBias() {
 		std::time_t timeTNow( std::time(NULL) );
 		std::tm tmLocal;
 		std::tm tmUtc;
 		localtime_s( &tmLocal, &timeTNow );
 		gmtime_s( &tmUtc, &timeTNow );
 
-		long utcBias = 0;
+		long long utcBias( 0 );
 		utcBias = tmLocal.tm_sec - tmUtc.tm_sec;
 		utcBias += ( tmLocal.tm_min - tmUtc.tm_min ) * 60;
 		utcBias += ( tmLocal.tm_hour - tmUtc.tm_hour ) * 3600;
@@ -433,9 +443,9 @@ template<typename T>
 
 
 	template<typename T>
-	DateT<T> getDate() {
+	DateT<T> getDate( TimeT utcBias ) {
 		DateT<T> newDate;
-		newDate.setNow();
+		newDate.setNow( utcBias );
 		return newDate;
 	}
 
@@ -789,28 +799,17 @@ template<typename T>
 		BasicString<C> newString;
 		newString.reserve( 100 );
 
-
-		newString << getWeekDayStr( DateT<T>::getWeekDay( *this ) ) << ' ' << getMonthStr( getMonth() ) << ' ' << getDay() << ' ';
-
-
-		if ( getHours() < 10 )
-			newString << C( '0' ) << C( '0' + getHours() );
-		else
-			newString << getHours();
-
-		newString << C( ':' );
-
-		if ( getMinutes() < 10 )
-			newString << C( '0' ) << C( '0' + getMinutes() );
-		else
-			newString << getMinutes();
-
-		newString << C( ':' );
-
-		if ( getSeconds() < 10 )
-			newString << C( '0' ) << C( '0' + getSeconds() );
-		else
-			newString << getSeconds();
+		newString.concat( getWeekDayStr( DateT<T>::getWeekDay( *this ) ) );
+		newString.concat( C( ' ' ) );
+		newString.concat( getMonthStr( getMonth() ) );
+		newString.concat( C( ' ' ) );
+		newString.concat( getDay() );
+		newString.concat( C( ' ' ) );
+		newString.concatFill( getHours(), 2, C( '0' ) );
+		newString.concat( C( ':' ) );
+		newString.concatFill( getMinutes(), 2, C( '0' ) );
+		newString.concat( C( ':' ) );
+		newString.concatFill( getSeconds(), 2, C( '0' ) );
 
 		return newString;
 	}
@@ -829,26 +828,24 @@ template<typename T>
 			break;
 			//YEAR
 			case C('Y'):
-			newString << getYear();
+			newString.concatFill( getYear(), 4 );
 			break;
 			case C('y'):
-			newString << getYear() % 100;
+			newString.concatFill( getYear() % 100, 4 );
 			break;
 			//MONTH
 			case C('b'):
 			newString << getMonthStr( getMonth() );
 			break;
 			case C('m'):
-			if ( getMonth() < 9 ) newString << C( '0' ) << C( '0' + (getMonth() + 1) );
-			else newString << (getMonth() + 1);
+			newString.concatFill( getMonth() + 1, 2 );
 			break;
 			//DAY OF THE MONTH
 			case C('d'):
-			if ( getDay() < 10 ) newString << C( '0' ) << C( '0' + getDay() );
-			else newString << getDay();
+			newString.concatFill( getDay(), 2 );
 			break;
 			case C('e'):
-			newString << getDay();
+			newString.concatFill( getDay(), 2 );
 			break;
 			//DAY OF THE WEEK
 			case C('a'):
@@ -859,16 +856,13 @@ template<typename T>
 			break;
 			//HOURS
 			case C('H'):
-			if ( getHours() < 10 ) newString << C( '0' ) << C( '0' + getHours() );
-			else newString << getHours();
+			newString.concatFill( getHours(), 2 );
 			break;
 			case C('M'):
-			if ( getMinutes() < 10 ) newString << C( '0' ) << C( '0' + getMinutes() );
-			else newString << getMinutes();
+			newString.concatFill( getMinutes(), 2 );
 			break;
 			case C('S'):
-			if ( getSeconds() < 10 ) newString << C( '0' ) << C( '0' + getSeconds() );
-			else newString << getSeconds();
+			newString.concatFill( getSeconds(), 2 );
 			break;
 			default:
 			newString << *it;
@@ -884,7 +878,40 @@ template<typename T>
 		BasicString<C> newString;
 		newString.reserve( 100 );
 
-		newString << getYear() << C( '-' ) << getMonth() << C( '-' ) << getDay();
+		TimeT utcBias( this -> utcBias );
+		TimeT utcBiasH( utcBias / ( 3600 ) );
+		utcBias %= 3600;
+		TimeT utcBiasM( utcBias / ( 60 ) );
+		utcBias %= 60;
+		TimeT utcBiasS( utcBias );
+
+
+		newString.concatFill( getYear(), 4, C( '0' ) );
+		newString.concat( C( '-' ) );
+		newString.concatFill( getMonth(), 2, C( '0' ) );
+		newString.concat( C( '-' ) );
+		newString.concatFill( getDay(), 2, C( '0' ) );
+		newString.concat( C( 'T' ) );
+		newString.concatFill( getHours(), 2, C( '0' ) );
+		newString.concat( C( ':' ) );
+		newString.concatFill( getMinutes(), 2, C( '0' ) );
+		newString.concat( C( ':' ) );
+		newString.concatFill( getSeconds(), 2, C( '0' ) );
+
+		if ( this -> utcBias == 0 ) {
+			newString.concat( C( 'Z' ) );
+		} else if ( this -> utcBias > 0 ) {
+			newString.concat( C( '+' ) );
+			newString.concatFill( utcBiasH, 2, C( '0' ) );
+			newString.concat( C( ':' ) );
+			newString.concatFill( utcBiasM, 2, C( '0' ) );
+		} else {
+			newString.concat( C( '-' ) );
+			newString.concatFill( -utcBiasH, 2, C( '0' ) );
+			newString.concat( C( ':' ) );
+			newString.concatFill( -utcBiasM, 2, C( '0' ) );
+		}
+
 		return newString;
 	}
 

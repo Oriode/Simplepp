@@ -188,10 +188,25 @@ namespace Time {
 		 */
 		int getYear() const;
 
+		/**
+		 * @brief	Gets UTC bias
+		 * @returns	The UTC bias.
+		 */
+		TimeT getUtcBias() const;
 
-		/** @brief	set the date to now */
-		void setNow();
 
+		/**
+		 * @brief	set the date to now
+		 * @param 	utcBias	(Optional) The UTC bias.
+		 */
+		void setNow( TimeT utcBias = getLocalUTCBias() );
+
+		/**
+		 * @brief	Sets to time point
+		 * @param 	timePoint	The time point.
+		 * @param 	utcBias  	(Optional) The UTC bias.
+		 */
+		void setToTimePoint( const TimePoint & timePoint, TimeT utcBias = getLocalUTCBias() );
 
 		/**
 		 * @brief	set the seconds of this date
@@ -228,6 +243,12 @@ namespace Time {
 		 * @param 	y	.
 		 */
 		void setYear( int y );
+
+		/**
+		 * @brief	Sets UTC bias
+		 * @param 	s	The UTC Bias in seconds.
+		 */
+		void setUTCBias( TimeT s );
 
 
 		/**
@@ -278,7 +299,7 @@ namespace Time {
 		 * @param 	year	Year to be used.
 		 * @returns	True of the year is a leap one, false instead.
 		 */
-		static const bool isYearLeapYear( int year );
+		static bool isYearLeapYear( int year );
 
 		/**
 		 * @brief	compute the day number of the week from a day number of the month, a month and a year
@@ -287,7 +308,7 @@ namespace Time {
 		 * @param 	year 	year.
 		 * @returns	day number of the week.
 		 */
-		static const unsigned char getWeekDay( unsigned char day, unsigned char month, int year );
+		static unsigned char getWeekDay( unsigned char day, unsigned char month, int year );
 
 
 		/**
@@ -315,14 +336,14 @@ namespace Time {
 		 * @param 	year	Year.
 		 * @returns	number of day of the year.
 		 */
-		static const unsigned int getNumDays( int year );
+		static unsigned int getNumDays( int year );
 
 
 		/**
 		 * @brief	Gets local UTC bias
 		 * @returns	local time bias.
 		 */
-		static const long long getLocalUTCBias();
+		static TimeT getLocalUTCBias();
 
 		/** @brief	Destructor */
 		~DateT();
@@ -335,7 +356,7 @@ namespace Time {
 		static const unsigned char MonthTableLeapYear[ 12 ];
 
 		/** @brief	The local UTC bias */
-		static const long localUTCBias;
+		static const TimeT localUTCBias;
 
 		/** @brief	Year */
 		int year;
@@ -349,6 +370,8 @@ namespace Time {
 		unsigned char minutes;
 		/** @brief	seconds after the minute (0-59) */
 		unsigned char seconds;
+		/** @brief UTC bias */
+		TimeT utcBias;
 
 
 
@@ -356,7 +379,7 @@ namespace Time {
 		 * @brief	Retrieves local UTC bias
 		 * @returns	A const long.
 		 */
-		static const long _retrieveLocalUTCBias();
+		static TimeT _retrieveLocalUTCBias();
 	};
 
 
@@ -403,10 +426,11 @@ namespace Time {
 	/**
 	 * @brief	Gets the date
 	 * @tparam	T	Generic type parameter.
+	 * @param 	utcBias	(Optional) The UTC bias.
 	 * @returns	The date.
 	 */
 	template<typename T = char>
-	DateT<T> getDate();
+	DateT<T> getDate( TimeT utcBias = getLocalUTCBias() );
 
 	/** @brief	The date */
 	using Date = DateT<char>;
