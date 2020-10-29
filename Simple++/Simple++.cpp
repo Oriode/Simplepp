@@ -1074,9 +1074,11 @@ int main( int argc, char * argv[] ) {
 		log( "Debuging Date..." );
 		error( "TEST" );
 		Time::Date nowDate = Time::getDate(-3660);
+		log( nowDate.toString( StringASCII("HHH") ) );
 		log( nowDate.toString() );
 		log( nowDate.toStringISO() );
 		log( Time::Date::getLocalUTCBias() );
+		log( StringASCII( "This is the date ! " ) << Time::getDate() << " YES !" );
 	}
 #endif
 

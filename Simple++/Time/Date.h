@@ -275,11 +275,39 @@ namespace Time {
 		BasicString<C> toString( const BasicString<C> & str ) const;
 
 		/**
+		 * @brief	Concatenates this date to the given string.
+		 *
+		 * @tparam	C	Type of the string.
+		 * @param [in,out]	str	The string.
+		 */
+		template<typename C = char>
+		void concat( BasicString<C> & str ) const;
+
+		/**
+		 * @brief	Concatenates this date to the given string with a template string.
+		 *
+		 * @tparam	C	Type of the string.
+		 * @param [in,out]	str	The string.
+		 * @param 		  	tpl	The template.
+		 */
+		template<typename C = char>
+		void concat( BasicString<C> & str, const BasicString<C> & tpl ) const;
+
+		/**
 		 * @brief		Generate an ISO 8601 String of this Date.
 		 * @return		ISO 8601 String.		  
 		 */
 		template<typename C = char>
 		BasicString<C> toStringISO() const;
+
+		/**
+		 * @brief	Concatenates this date to the given string as ISO 8601.
+		 *
+		 * @tparam	C	Type of the string.
+		 * @param [in,out]	str	The string.
+		 */
+		template<typename C = char>
+		void concatISO( BasicString<C> & str ) const;
 
 		/**
 		 * @brief	convert this date to a TimePoint
@@ -410,8 +438,6 @@ namespace Time {
 	template<typename ratio, typename T>
 	DateT<T> operator-( const DateT<T> & date, const Duration<ratio> & duration );
 
-
-
 	/**
 	 * @brief	Subtraction operator
 	 * @param 	d1	The first value.
@@ -421,7 +447,16 @@ namespace Time {
 	template<typename T>
 	Duration<Second> operator-( const DateT<T> & d1, const DateT<T> & d2 );
 
-
+	/**
+	 * @brief	Concatenate a date to a string using the ISO 8601.
+	 *
+	 * @param [in,out]	str 	The string.
+	 * @param 		  	date	The date.
+	 *
+	 * @returns	The string.
+	 */
+	template<typename C, typename T>
+	BasicString<C> & operator<<( BasicString<C> & str, const DateT<T> & date );
 
 	/**
 	 * @brief	Gets the date
@@ -430,11 +465,13 @@ namespace Time {
 	 * @returns	The date.
 	 */
 	template<typename T = char>
-	DateT<T> getDate( TimeT utcBias = getLocalUTCBias() );
+	DateT<T> getDate( TimeT utcBias = DateT<T>::getLocalUTCBias() );
 
 	/** @brief	The date */
 	using Date = DateT<char>;
 }
+
+
 
 
 

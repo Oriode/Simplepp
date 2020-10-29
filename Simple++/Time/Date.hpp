@@ -712,6 +712,15 @@ template<typename T>
 		return timeT;
 	}
 
+	/************************************************************************/
+	/* OPERATOR CONCATENATE                                                 */
+	/************************************************************************/
+	template<typename C, typename T>
+	BasicString<C> & operator<<( BasicString<C> & str, const DateT<T> & date ) {
+		date.concatISO( str );
+		return str;
+	}
+
 
 	/************************************************************************/
 	/* OPERATOR LOGICAL                                                     */
@@ -783,7 +792,6 @@ template<typename T>
 		return weekDayShortStr[weekDay];
 	}
 
-
 	template<typename T>
 	template<typename C>
 	const BasicString<C> & DateT<T>::getMonthStr( unsigned char month ) {
@@ -791,85 +799,90 @@ template<typename T>
 		return monthShortStr[month];
 	}
 
-
-
 	template<typename T>
 	template<typename C>
 	BasicString<C> DateT<T>::toString() const {
 		BasicString<C> newString;
 		newString.reserve( 100 );
-
-		newString.concat( getWeekDayStr( DateT<T>::getWeekDay( *this ) ) );
-		newString.concat( C( ' ' ) );
-		newString.concat( getMonthStr( getMonth() ) );
-		newString.concat( C( ' ' ) );
-		newString.concat( getDay() );
-		newString.concat( C( ' ' ) );
-		newString.concatFill( getHours(), 2, C( '0' ) );
-		newString.concat( C( ':' ) );
-		newString.concatFill( getMinutes(), 2, C( '0' ) );
-		newString.concat( C( ':' ) );
-		newString.concatFill( getSeconds(), 2, C( '0' ) );
-
+		concat( newString );
 		return newString;
 	}
 
 	template<typename T>
 	template<typename C>
-	BasicString<C> DateT<T>::toString( const BasicString<C> & str ) const {
+	void DateT<T>::concat( BasicString<C> & str ) const {
+		str.concat( getWeekDayStr( DateT<T>::getWeekDay( *this ) ) );
+		str.concat( C( ' ' ) );
+		str.concat( getMonthStr( getMonth() ) );
+		str.concat( C( ' ' ) );
+		str.concat( getDay() );
+		str.concat( C( ' ' ) );
+		str.concatFill( getHours(), 2, C( '0' ) );
+		str.concat( C( ':' ) );
+		str.concatFill( getMinutes(), 2, C( '0' ) );
+		str.concat( C( ':' ) );
+		str.concatFill( getSeconds(), 2, C( '0' ) );
+	}
 
+	template<typename T>
+	template<typename C>
+	BasicString<C> DateT<T>::toString( const BasicString<C> & tpl ) const {
 		BasicString<C> newString;
 		newString.reserve( 100 );
+		concat( newString, tpl );
+		return newString;
+	}
 
-		for ( auto it = str.getBegin(); it != str.getEnd(); it++ ) {
+	template<typename T>
+	template<typename C>
+	void DateT<T>::concat( BasicString<C> & str, const BasicString<C> & tpl ) const {
+		for ( auto it = tpl.getBegin(); it != tpl.getEnd(); it++ ) {
 			switch ( *it ) {
-			case C('\\'):
-			it++;
-			break;
-			//YEAR
-			case C('Y'):
-			newString.concatFill( getYear(), 4 );
-			break;
-			case C('y'):
-			newString.concatFill( getYear() % 100, 4 );
-			break;
-			//MONTH
-			case C('b'):
-			newString << getMonthStr( getMonth() );
-			break;
-			case C('m'):
-			newString.concatFill( getMonth() + 1, 2 );
-			break;
-			//DAY OF THE MONTH
-			case C('d'):
-			newString.concatFill( getDay(), 2 );
-			break;
-			case C('e'):
-			newString.concatFill( getDay(), 2 );
-			break;
-			//DAY OF THE WEEK
-			case C('a'):
-			newString << getWeekDayStr( DateT<T>::getWeekDay( *this ) );
-			break;
-			case C('u'):
-			newString << (DateT<T>::getWeekDay( *this ) + 1);
-			break;
-			//HOURS
-			case C('H'):
-			newString.concatFill( getHours(), 2 );
-			break;
-			case C('M'):
-			newString.concatFill( getMinutes(), 2 );
-			break;
-			case C('S'):
-			newString.concatFill( getSeconds(), 2 );
-			break;
-			default:
-			newString << *it;
+				case C( '\\' ):
+				it++;
+				break;
+				//YEAR
+				case C( 'Y' ):
+				str.concatFill( getYear(), 4 );
+				break;
+				case C( 'y' ):
+				str.concatFill( getYear() % 100, 4 );
+				break;
+				//MONTH
+				case C( 'b' ):
+				str << getMonthStr( getMonth() );
+				break;
+				case C( 'm' ):
+				str.concatFill( getMonth() + 1, 2 );
+				break;
+				//DAY OF THE MONTH
+				case C( 'd' ):
+				str.concatFill( getDay(), 2 );
+				break;
+				case C( 'e' ):
+				str.concatFill( getDay(), 2 );
+				break;
+				//DAY OF THE WEEK
+				case C( 'a' ):
+				str << getWeekDayStr( DateT<T>::getWeekDay( *this ) );
+				break;
+				case C( 'u' ):
+				str << ( DateT<T>::getWeekDay( *this ) + 1 );
+				break;
+				//HOURS
+				case C( 'H' ):
+				str.concatFill( getHours(), 2 );
+				break;
+				case C( 'M' ):
+				str.concatFill( getMinutes(), 2 );
+				break;
+				case C( 'S' ):
+				str.concatFill( getSeconds(), 2 );
+				break;
+				default:
+				str << *it;
 			}
 		}
-
-		return newString;
 	}
 
 	template<typename T>
@@ -877,7 +890,13 @@ template<typename T>
 	BasicString<C> DateT<T>::toStringISO() const {
 		BasicString<C> newString;
 		newString.reserve( 100 );
+		concatISO( newString );
+		return newString;
+	}
 
+	template<typename T>
+	template<typename C>
+	void DateT<T>::concatISO( BasicString<C> & str ) const {
 		TimeT utcBias( this -> utcBias );
 		TimeT utcBiasH( utcBias / ( 3600 ) );
 		utcBias %= 3600;
@@ -885,34 +904,31 @@ template<typename T>
 		utcBias %= 60;
 		TimeT utcBiasS( utcBias );
 
-
-		newString.concatFill( getYear(), 4, C( '0' ) );
-		newString.concat( C( '-' ) );
-		newString.concatFill( getMonth(), 2, C( '0' ) );
-		newString.concat( C( '-' ) );
-		newString.concatFill( getDay(), 2, C( '0' ) );
-		newString.concat( C( 'T' ) );
-		newString.concatFill( getHours(), 2, C( '0' ) );
-		newString.concat( C( ':' ) );
-		newString.concatFill( getMinutes(), 2, C( '0' ) );
-		newString.concat( C( ':' ) );
-		newString.concatFill( getSeconds(), 2, C( '0' ) );
+		str.concatFill( getYear(), 4, C( '0' ) );
+		str.concat( C( '-' ) );
+		str.concatFill( getMonth(), 2, C( '0' ) );
+		str.concat( C( '-' ) );
+		str.concatFill( getDay(), 2, C( '0' ) );
+		str.concat( C( 'T' ) );
+		str.concatFill( getHours(), 2, C( '0' ) );
+		str.concat( C( ':' ) );
+		str.concatFill( getMinutes(), 2, C( '0' ) );
+		str.concat( C( ':' ) );
+		str.concatFill( getSeconds(), 2, C( '0' ) );
 
 		if ( this -> utcBias == 0 ) {
-			newString.concat( C( 'Z' ) );
+			str.concat( C( 'Z' ) );
 		} else if ( this -> utcBias > 0 ) {
-			newString.concat( C( '+' ) );
-			newString.concatFill( utcBiasH, 2, C( '0' ) );
-			newString.concat( C( ':' ) );
-			newString.concatFill( utcBiasM, 2, C( '0' ) );
+			str.concat( C( '+' ) );
+			str.concatFill( utcBiasH, 2, C( '0' ) );
+			str.concat( C( ':' ) );
+			str.concatFill( utcBiasM, 2, C( '0' ) );
 		} else {
-			newString.concat( C( '-' ) );
-			newString.concatFill( -utcBiasH, 2, C( '0' ) );
-			newString.concat( C( ':' ) );
-			newString.concatFill( -utcBiasM, 2, C( '0' ) );
+			str.concat( C( '-' ) );
+			str.concatFill( -utcBiasH, 2, C( '0' ) );
+			str.concat( C( ':' ) );
+			str.concatFill( -utcBiasM, 2, C( '0' ) );
 		}
-
-		return newString;
 	}
 
 
