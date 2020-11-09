@@ -590,15 +590,19 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 
 	if ( i != 0 ) {
 		nbCharNumber = 0;
-
-		Type tmpI( 1 );
-		while ( tmpI <= i ) {
-			nbCharNumber++;
-			tmpI *= base;
-		}
-
 		if ( i < 0 ) {
 			nbCharNumber++;
+			Type tmpI( -1 );
+			while ( tmpI >= i ) {
+				nbCharNumber++;
+				tmpI *= base;
+			}
+		} else {
+			Type tmpI( 1 );
+			while ( tmpI <= i ) {
+				nbCharNumber++;
+				tmpI *= base;
+			}
 		}
 	} else {
 		nbCharNumber = 1;
@@ -1605,7 +1609,6 @@ typename BasicString<T>::Size BasicString<T>::toCString( unsigned int number, T 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( int number, T * buffer, unsigned int base ) {
 	return _convertI2String<int>( number, buffer, base );
-
 }
 
 template<typename T>
@@ -3830,4 +3833,10 @@ BasicString<T>::IsEndIterator::IsEndIterator( const T * endIt ) :
 template<typename T>
 bool BasicString<T>::IsEndIterator::operator()( const T * it ) const {
 	return ( it == this -> endIt );
+}
+
+template<typename T>
+template<typename N>
+static N BasicString<T>::charToNumber( const T & c ) {
+	return N( c ) - N( T( '0' ) );
 }

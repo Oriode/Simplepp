@@ -931,6 +931,55 @@ template<typename T>
 		}
 	}
 
+	template<typename T>
+	template<typename C>
+	DateT<T> DateT<T>::parse( const C ** buffer, const C * tpl ) {
+		DateT<T> newDate;
+		const C *& bufferIt( *buffer );
+
+		for ( const C * tplIt( tpl ) ; ; tplIt++ ) {
+			const C & tplR( *tplIt );
+			switch ( tplR ) {
+				case C( 'H' ):
+				{
+					unsigned char h = BasicString<C>::charToNumber( bufferIt[ 0 ] ) * C( 10 ) + BasicString<C>::charToNumber( bufferIt[ 1 ] );
+					newDate.setHours( h );
+					bufferIt += 2;
+					break;
+				}
+				case C('m'):
+				{
+					unsigned char m = BasicString<C>::charToNumber( bufferIt[ 0 ] ) * C( 10 ) + BasicString<C>::charToNumber( bufferIt[ 1 ] );
+					newDate.setMinutes( m );
+					bufferIt += 2;
+					break;
+				}
+				case C('s'):
+				{
+					unsigned char s = BasicString<C>::charToNumber( bufferIt[ 0 ] ) * C( 10 ) + BasicString<C>::charToNumber( bufferIt[ 1 ] );
+					newDate.setSeconds( s );
+					bufferIt += 2;
+					break;
+				}
+				default:
+				return newDate;
+			}
+		}
+	}
+
+	template<typename T>
+	template<typename C>
+	DateT<T> DateT<T>::parse( const C * buffer, const C * tpl ) {
+		const C ** tmpBuffer( &buffer );
+		return DateT<T>::parse( tmpBuffer, tpl );
+	}
+
+	template<typename T>
+	template<typename C>
+	static DateT<T> DateT<T>::parse( const BasicString<C> & str, const BasicString<C> & tpl ) {
+		str.allocate( 10 );
+		return DateT<T>::parse( str.toCString(), tpl.toCString() );
+	}
 
 	template<typename ratio, typename T>
 	DateT<T> operator+( const DateT<T> & date, const Duration<ratio> & duration ) {

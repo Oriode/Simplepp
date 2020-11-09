@@ -368,6 +368,21 @@ namespace Time {
 
 
 		/**
+		 * @brief	Parses the given buffer
+		 * @param [in,out]	buffer	If non-null, the buffer.
+		 * @returns	A DateT.
+		 */
+		template<typename C>
+		static DateT parse( const C ** buffer, const C * tpl );
+
+		template<typename C>
+		static DateT parse( const C * buffer, const C * tpl );
+
+		template<typename C>
+		static DateT parse( const BasicString<C> & str, const BasicString<C> & tpl );
+
+
+		/**
 		 * @brief	Gets local UTC bias
 		 * @returns	local time bias.
 		 */

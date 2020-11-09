@@ -2287,6 +2287,14 @@ public:
 	 */
 	static typename BasicString<T>::Size getLast( const T * buffer, const T * toSearch );
 
+	/**
+	 * @brief	Convert a character to a number.
+	 * @param 	c	The character to be converted.
+	 * @returns	The number.
+	 */
+	template<typename N = char>
+	static N charToNumber( const T & c );
+
 	/** @brief	The numbers[ 16] */
 	static const T numbers[ 16 ];
 	/** @brief	The null */
@@ -2884,6 +2892,9 @@ private:
 	 */
 	template<typename Type>
 	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+
+
+	
 
 	
 
