@@ -26,6 +26,12 @@ namespace Time {
 	class DateT {
 	public:
 
+		enum class ISOFormat : unsigned char {
+			DateOnly = 0,
+			DateTime = 1,
+			DateTimeOffset = 2
+		};
+
 
 		/************************************************************************/
 		/* CONSTRUCTOR															*/
@@ -177,7 +183,7 @@ namespace Time {
 
 		/**
 		 * @brief	get the month of this date
-		 * @returns	Month [0-11].
+		 * @returns	Month [1-12].
 		 */
 		unsigned char getMonth() const;
 
@@ -298,7 +304,7 @@ namespace Time {
 		 * @return		ISO 8601 String.		  
 		 */
 		template<typename C = char>
-		BasicString<C> toStringISO() const;
+		BasicString<C> toStringISO( DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
 
 		/**
 		 * @brief	Concatenates this date to the given string as ISO 8601.
@@ -307,7 +313,7 @@ namespace Time {
 		 * @param [in,out]	str	The string.
 		 */
 		template<typename C = char>
-		void concatISO( BasicString<C> & str ) const;
+		void concatISO( BasicString<C> & str, DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
 
 		/**
 		 * @brief	convert this date to a TimePoint
@@ -372,14 +378,24 @@ namespace Time {
 		 * @param [in,out]	buffer	If non-null, the buffer.
 		 * @returns	A DateT.
 		 */
-		template<typename C>
-		static DateT parse( const C ** buffer, const C * tpl );
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		static DateT parse( const C ** buffer, const C ** tpl, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
-		template<typename C>
-		static DateT parse( const C * buffer, const C * tpl );
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		static DateT parse( const C * buffer, const C * tpl, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
-		template<typename C>
-		static DateT parse( const BasicString<C> & str, const BasicString<C> & tpl );
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		static DateT parse( const BasicString<C> & str, const BasicString<C> & tpl, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		static DateT parse( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		static DateT parse( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		static DateT parse( const BasicString<C> & str, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
 
 
 		/**
@@ -393,10 +409,15 @@ namespace Time {
 
 
 	private:
-		/** @brief	The month table[ 12] */
-		static const unsigned char MonthTable[ 12 ];
-		/** @brief	The month table leap year[ 12] */
-		static const unsigned char MonthTableLeapYear[ 12 ];
+		/** @brief	The month table */
+		static const unsigned char MonthTable[  ];
+		/** @brief	The month table leap year */
+		static const unsigned char MonthTableLeapYear[  ];
+
+		/** @brief Number of days in a month in a non-leap year. */
+		static const TimeT numberOfDaysInMonth[];
+		/** @brief Number of days in a month in a leap year */
+		static const TimeT numberOfDaysInMonthLeap[];
 
 		/** @brief	The local UTC bias */
 		static const TimeT localUTCBias;
@@ -423,6 +444,9 @@ namespace Time {
 		 * @returns	A const long.
 		 */
 		static TimeT _retrieveLocalUTCBias();
+
+		template<typename C>
+		void readUTCBias( const C ** buffer );
 	};
 
 

@@ -1075,10 +1075,14 @@ int main( int argc, char * argv[] ) {
 		Time::Date nowDate = Time::getDate(-3660);
 		log( nowDate.toString( StringASCII("HHH") ) );
 		log( nowDate.toString() );
-		log( nowDate.toStringISO() );
+		log( nowDate.toStringISO(Time::Date::ISOFormat::DateOnly) );
 		log( Time::Date::getLocalUTCBias() );
 		log( StringASCII( "This is the date ! " ) << Time::getDate() << " YES !" );
-		log( Time::Date::parse( "103518", "Hms" ).toStringISO() );
+		log( Time::Date::parse( "2000-03-05T10:35:18-01:00" ).toStringISO() );
+		log( Time::Date::parse( "2000-03-05" ).toStringISO() );
+		log( Time::Date::parse( "T10:35:18.54547221Z" ).toStringISO() );
+		// int n = StringASCII::charToNumber<int, 4>( "2242" );
+		// log( StringASCII( n ) );
 	}
 #endif
 

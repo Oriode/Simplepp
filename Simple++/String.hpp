@@ -3836,7 +3836,7 @@ bool BasicString<T>::IsEndIterator::operator()( const T * it ) const {
 }
 
 template<typename T>
-template<typename N>
-static N BasicString<T>::charToNumber( const T & c ) {
-	return N( c ) - N( T( '0' ) );
+template<typename N, int nbChars, int base>
+N BasicString<T>::parseNumber( const T ** c ) {
+	return __ParseNumber<N, nbChars, base>::compute( c );
 }

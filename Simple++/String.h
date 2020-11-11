@@ -2292,13 +2292,16 @@ public:
 	 * @param 	c	The character to be converted.
 	 * @returns	The number.
 	 */
-	template<typename N = char>
-	static N charToNumber( const T & c );
+	template<typename N = char, int nbChars = 1, int base = 10>
+	static N parseNumber( const T ** c );
 
 	/** @brief	The numbers[ 16] */
 	static const T numbers[ 16 ];
 	/** @brief	The null */
 	static const BasicString<T> null;
+
+	/** Default EndFunc */
+	static const IsEndSentinel IS_END_SENTINEL;
 
 protected:
 	/**
@@ -2898,7 +2901,7 @@ private:
 
 	
 
-	static const IsEndSentinel IS_END_SENTINEL;
+	
 };
 
 
@@ -3260,6 +3263,37 @@ typedef WString String;
 typedef StringASCII String;
 #endif
 
+
+template<typename N, int nbChars, int base = 10>
+class __ParseNumber {
+public:
+
+	template<typename T>
+	static N compute(const T ** c ) {
+
+		T cVal( **c );
+		( *c )++;
+
+		return N( cVal - T( '0' ) ) * pow( N(base), N(nbChars - 1) ) + __ParseNumber<N, nbChars - 1, base>::compute( c );
+	}
+
+private:
+	static constexpr N pow( const N & v, const N & e ) {
+		return ( e == N( 0 ) ) ? N( 1 ) : v * pow( v, e - N( 1 ) );
+	}
+
+};
+
+template<typename N, int base>
+class __ParseNumber< N, 0, base > {
+public:
+
+	template<typename T>
+	static N compute( const T ** c ) {
+		return N( 0 );
+	}
+
+};
 
 
 #include "String.hpp"

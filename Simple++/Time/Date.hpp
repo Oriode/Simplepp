@@ -5,9 +5,13 @@
 namespace Time {
 
 	template<typename T>
-	const unsigned char DateT<T>::MonthTable[ 12 ] = { 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
+	const unsigned char DateT<T>::MonthTable[  ] = { 0, 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
 	template<typename T>
-	const unsigned char DateT<T>::MonthTableLeapYear[ 12 ] = { 6, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
+	const unsigned char DateT<T>::MonthTableLeapYear[  ] = { 0, 6, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
+	template<typename T>
+	const TimeT DateT<T>::numberOfDaysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	template<typename T>
+	const TimeT DateT<T>::numberOfDaysInMonthLeap[] = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	template<typename T>
 	const TimeT DateT<T>::localUTCBias = DateT<T>::_retrieveLocalUTCBias();
 
@@ -82,7 +86,7 @@ namespace Time {
 	void DateT<T>::setToTimePoint( const TimePoint & timePoint, TimeT utcBias ) {
 		this -> utcBias = utcBias;
 		this -> year = 1970;
-		this -> month = 0;
+		this -> month = 1;
 
 		TimeT unixTime = timePoint.getTime() + this -> utcBias;
 		bool isLeapYear = true;
@@ -106,9 +110,6 @@ namespace Time {
 			}
 		}
 
-		static TimeT numberOfDaysInMonth[ 12 ] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		static TimeT numberOfDaysInMonthLeap[ 12 ] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
 		//Get the Month Number
 		while ( true ) {
 			TimeT numSeconds;
@@ -127,7 +128,6 @@ namespace Time {
 				break;
 			}
 		}
-
 
 
 		this -> dayInMonth = ( unsigned char ) ( unixTime / ( 3600 * 24 ) + 1 );
@@ -338,9 +338,6 @@ template<typename T>
 			t += numSeconds;
 		}
 
-		static TimeT numberOfDaysInMonth[ 12 ] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		static TimeT numberOfDaysInMonthLeap[ 12 ] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
 		//Get the Month Number
 		while ( true ) {
 			unsigned long long numSeconds;
@@ -474,15 +471,9 @@ template<typename T>
 			}
 		}
 
-		static unsigned char numberOfDaysInMonth[ 12 ] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		static unsigned char numberOfDaysInMonthLeap[ 12 ] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-
-
-
 		//Get the Month Number
 		TimeT numSecondsOfMonth;
-		unsigned char numberOfDaysInThisMonth;
+		TimeT numberOfDaysInThisMonth;
 		while ( true ) {
 			if ( isLeapYear )
 				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[ this -> month ];
@@ -573,15 +564,9 @@ template<typename T>
 			}
 		}
 
-		static unsigned char numberOfDaysInMonth[ 12 ] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		static unsigned char numberOfDaysInMonthLeap[ 12 ] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-
-
-
 		//Get the Month Number
 		TimeT numSecondsOfMonth;
-		unsigned char numberOfDaysInThisMonth;
+		TimeT numberOfDaysInThisMonth;
 		while ( true ) {
 			if ( isLeapYear )
 				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[ this -> month ];
@@ -678,12 +663,9 @@ template<typename T>
 			}
 		}
 
-		static unsigned char numberOfDaysInMonth[ 12 ] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		static unsigned char numberOfDaysInMonthLeap[ 12 ] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
 		//Get the Month Number
 		TimeT numSecondsOfMonth;
-		unsigned char numberOfDaysInThisMonth;
+		TimeT numberOfDaysInThisMonth;
 		while ( true ) {
 			if ( isLeapYear )
 				numberOfDaysInThisMonth = numberOfDaysInMonthLeap[ tmpMonth ];
@@ -853,7 +835,7 @@ template<typename T>
 				str << getMonthStr( getMonth() );
 				break;
 				case C( 'm' ):
-				str.concatFill( getMonth() + 1, 2 );
+				str.concatFill( getMonth(), 2 );
 				break;
 				//DAY OF THE MONTH
 				case C( 'd' ):
@@ -887,98 +869,230 @@ template<typename T>
 
 	template<typename T>
 	template<typename C>
-	BasicString<C> DateT<T>::toStringISO() const {
+	BasicString<C> DateT<T>::toStringISO( DateT<T>::ISOFormat isoFormat ) const {
 		BasicString<C> newString;
 		newString.reserve( 100 );
-		concatISO( newString );
+		concatISO( newString, isoFormat );
 		return newString;
 	}
 
 	template<typename T>
 	template<typename C>
-	void DateT<T>::concatISO( BasicString<C> & str ) const {
-		TimeT utcBias( this -> utcBias );
-		TimeT utcBiasH( utcBias / ( 3600 ) );
-		utcBias %= 3600;
-		TimeT utcBiasM( utcBias / ( 60 ) );
-		utcBias %= 60;
-		TimeT utcBiasS( utcBias );
-
+	void DateT<T>::concatISO( BasicString<C> & str, DateT<T>::ISOFormat isoFormat ) const {
+		
 		str.concatFill( getYear(), 4, C( '0' ) );
 		str.concat( C( '-' ) );
 		str.concatFill( getMonth(), 2, C( '0' ) );
 		str.concat( C( '-' ) );
 		str.concatFill( getDay(), 2, C( '0' ) );
-		str.concat( C( 'T' ) );
-		str.concatFill( getHours(), 2, C( '0' ) );
-		str.concat( C( ':' ) );
-		str.concatFill( getMinutes(), 2, C( '0' ) );
-		str.concat( C( ':' ) );
-		str.concatFill( getSeconds(), 2, C( '0' ) );
 
-		if ( this -> utcBias == 0 ) {
-			str.concat( C( 'Z' ) );
-		} else if ( this -> utcBias > 0 ) {
-			str.concat( C( '+' ) );
-			str.concatFill( utcBiasH, 2, C( '0' ) );
+		if ( isoFormat != DateT<T>::ISOFormat::DateOnly ) {
+			str.concat( C( 'T' ) );
+			str.concatFill( getHours(), 2, C( '0' ) );
 			str.concat( C( ':' ) );
-			str.concatFill( utcBiasM, 2, C( '0' ) );
-		} else {
-			str.concat( C( '-' ) );
-			str.concatFill( -utcBiasH, 2, C( '0' ) );
+			str.concatFill( getMinutes(), 2, C( '0' ) );
 			str.concat( C( ':' ) );
-			str.concatFill( -utcBiasM, 2, C( '0' ) );
+			str.concatFill( getSeconds(), 2, C( '0' ) );
 		}
+		
+		if ( isoFormat == DateT<T>::ISOFormat::DateTimeOffset ) {
+			if ( this -> utcBias == 0 ) {
+				str.concat( C( 'Z' ) );
+			} else {
+				TimeT utcBias( this -> utcBias );
+				TimeT utcBiasH( utcBias / ( 3600 ) );
+				utcBias %= 3600;
+				TimeT utcBiasM( utcBias / ( 60 ) );
+				utcBias %= 60;
+				TimeT utcBiasS( utcBias );
+
+				if ( this -> utcBias > 0 ) {
+					str.concat( C( '+' ) );
+					str.concatFill( utcBiasH, 2, C( '0' ) );
+					str.concat( C( ':' ) );
+					str.concatFill( utcBiasM, 2, C( '0' ) );
+				} else {
+					str.concat( C( '-' ) );
+					str.concatFill( -utcBiasH, 2, C( '0' ) );
+					str.concat( C( ':' ) );
+					str.concatFill( -utcBiasM, 2, C( '0' ) );
+				}
+			}
+		}
+		
 	}
 
 	template<typename T>
-	template<typename C>
-	DateT<T> DateT<T>::parse( const C ** buffer, const C * tpl ) {
+	template<typename C, typename EndFunc>
+	DateT<T> DateT<T>::parse( const C ** buffer, const C ** tpl, const EndFunc & endFunc ) {
 		DateT<T> newDate;
 		const C *& bufferIt( *buffer );
+		const C * tplIt( *tpl );
 
-		for ( const C * tplIt( tpl ) ; ; tplIt++ ) {
+		for ( ; !endFunc(tplIt) ; tplIt++ ) {
 			const C & tplR( *tplIt );
 			switch ( tplR ) {
 				case C( 'H' ):
 				{
-					unsigned char h = BasicString<C>::charToNumber( bufferIt[ 0 ] ) * C( 10 ) + BasicString<C>::charToNumber( bufferIt[ 1 ] );
+					unsigned char h = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
 					newDate.setHours( h );
-					bufferIt += 2;
+					break;
+				}
+				case C('M'):
+				{
+					unsigned char m = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+					newDate.setMinutes( m );
+					break;
+				}
+				case C('S'):
+				{
+					unsigned char s = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+					newDate.setSeconds( s );
+					break;
+				}
+				case C('Y'):
+				{
+					int y = BasicString<C>::parseNumber<int, 4>( &bufferIt );
+					newDate.setYear( y );
 					break;
 				}
 				case C('m'):
 				{
-					unsigned char m = BasicString<C>::charToNumber( bufferIt[ 0 ] ) * C( 10 ) + BasicString<C>::charToNumber( bufferIt[ 1 ] );
-					newDate.setMinutes( m );
-					bufferIt += 2;
+					int m = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+					newDate.setMonth( m );
 					break;
 				}
-				case C('s'):
+				case C('d'):
 				{
-					unsigned char s = BasicString<C>::charToNumber( bufferIt[ 0 ] ) * C( 10 ) + BasicString<C>::charToNumber( bufferIt[ 1 ] );
-					newDate.setSeconds( s );
-					bufferIt += 2;
+					int d = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+					newDate.setDay( d );
 					break;
+				}
+				case C('Z'):
+				{
+					
 				}
 				default:
-				return newDate;
+				{
+					bufferIt++;
+				}
 			}
 		}
+		return newDate;
 	}
 
 	template<typename T>
 	template<typename C>
-	DateT<T> DateT<T>::parse( const C * buffer, const C * tpl ) {
+	void DateT<T>::readUTCBias( const C ** buffer ) {
+		const C *& bufferIt( *buffer );
+
+		TimeT z;
+		C firstChar( bufferIt[ 0 ] );
+		if ( firstChar == C( 'Z' ) ) {
+			z = 0;
+			bufferIt++;
+		} else {
+			if ( firstChar == C( '+' ) ) {
+				bufferIt++;
+			} else if ( firstChar == C( '-' ) ) {
+				bufferIt++;
+			}
+			TimeT utcBiasH = BasicString<C>::parseNumber<TimeT, 2>( &bufferIt );
+			if ( bufferIt[ 0 ] == C( ':' ) ) {
+				bufferIt++;
+			}
+			TimeT utcBiasM = BasicString<C>::parseNumber<TimeT, 2>( &bufferIt );
+			z = utcBiasH * 3600 + utcBiasM * 60;
+			if ( firstChar == C( '-' ) ) {
+				z = -z;
+			}
+		}
+		this -> setUTCBias( z );
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	DateT<T> DateT<T>::parse( const C ** buffer, const EndFunc & endFunc ) {
+		DateT<T> newDate;
+		newDate.setUTCBias( DateT<T>::getLocalUTCBias() );
+
+		const C *& bufferIt( *buffer );
+
+		// If the string start with the date.
+		if ( bufferIt[ 0 ] != C( 'T' ) ) {
+			int y = BasicString<C>::parseNumber<int, 4>( &bufferIt );
+			if ( bufferIt[ 0 ] == C( '-' ) ) bufferIt++;
+			int m = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+			if ( bufferIt[ 0 ] == C( '-' ) ) bufferIt++;
+			int d = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+
+			newDate.setYear( y );
+			newDate.setMonth( m );
+			newDate.setDay( d );
+		} else {
+			newDate.setYear( 0 );
+			newDate.setMonth( 0 );
+			newDate.setDay( 0 );
+		}
+
+		// If the string start with a T character.
+		if ( bufferIt[ 0 ] == C( 'T' ) ) {
+			bufferIt++;
+			unsigned char h = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+			if ( bufferIt[ 0 ] == C( ':' ) ) bufferIt++;
+			unsigned char m = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+			if ( bufferIt[ 0 ] == C( ':' ) ) bufferIt++;
+			unsigned char s = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
+
+			newDate.setHours( h );
+			newDate.setMinutes( m );
+			newDate.setSeconds( s );
+
+			while ( true ) {
+				if ( endFunc( bufferIt ) ) {
+					return newDate;
+				}
+				C c( *bufferIt );
+				if ( c == C( 'Z' ) || c == C( '+' ) || c == C( '-' ) ) {
+					break;
+				}
+				bufferIt++;
+			}
+			newDate.readUTCBias( buffer );
+		} else {
+			newDate.setHours( 0 );
+			newDate.setMinutes( 0 );
+			newDate.setSeconds( 0 );
+		}
+		return newDate;
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	static DateT<T> DateT<T>::parse( const C * buffer, const EndFunc & endFunc ) {
 		const C ** tmpBuffer( &buffer );
-		return DateT<T>::parse( tmpBuffer, tpl );
+		return DateT<T>::parse( tmpBuffer, endFunc );
 	}
 
 	template<typename T>
-	template<typename C>
-	static DateT<T> DateT<T>::parse( const BasicString<C> & str, const BasicString<C> & tpl ) {
+	template<typename C, typename EndFunc>
+	static DateT<T> DateT<T>::parse( const BasicString<C> & str, const EndFunc & endFunc ) {
+		return DateT<T>::parse( str.toCString(), endFunc );
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	DateT<T> DateT<T>::parse( const C * buffer, const C * tpl, const EndFunc & endFunc ) {
+		const C ** tmpBuffer( &buffer );
+		const C ** tmpTpl( &tpl );
+		return DateT<T>::parse( tmpBuffer, tmpTpl, endFunc );
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	static DateT<T> DateT<T>::parse( const BasicString<C> & str, const BasicString<C> & tpl, const EndFunc & endFunc ) {
 		str.allocate( 10 );
-		return DateT<T>::parse( str.toCString(), tpl.toCString() );
+		return DateT<T>::parse( str.toCString(), tpl.toCString(), endFunc );
 	}
 
 	template<typename ratio, typename T>

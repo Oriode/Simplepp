@@ -80,7 +80,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER constexpr T pow( const T & v, int e ) {
-		return ( e == 0 ) ? 1 : v * pow( v, e - 1 );
+		return ( e == int( 0 ) ) ? T( 1 ) : v * pow( v, e - int( 1 ) );
 	}
 
 	template<typename T>
