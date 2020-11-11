@@ -20,6 +20,7 @@
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
+#define SPEEDTEST_DATE_PARSE
 //#define SPEEDTEST_STRING_CONCAT_STRING
 // #define SPEEDTEST_STRING_CONCAT_NUMBER
 //#define SPEEDTEST_STRING_FORMAT
@@ -1556,6 +1557,27 @@ int main( int argc, char * argv[] ) {
 		Log::displayChrono( StringASCII() << "localtime_s" );
 	}
 	#endif
+#ifdef  SPEEDTEST_DATE_PARSE
+	//////////////////////////////////////////////////////////////////////////
+	// SPEED TEST : Dates Parse									//
+	{
+		StringASCII dateStr( "2020-11-11T16:17:00.00+01:00" );
+		std::string dateStrStd( "2020-11-11T16:17:00.00+01:00" );
+
+		Time::Date date;
+		tm dateStd;
+
+		int tmpVar = 0;
+
+		Log::startChrono();
+		for ( unsigned long i = 0; i < M10; i++ ) {
+			tmpVar += Time::Date::parse( dateStr ).getMinutes();
+		}
+		Log::stopChrono(  );
+		Log::displayChrono( StringASCII( tmpVar ) );
+	}
+#endif //  SPEEDTEST_DATE_PARSE
+
 
 	#ifdef SPEEDTEST_STRING_CONCAT_STRING
 	//////////////////////////////////////////////////////////////////////////
