@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <breakfast_menu>
 	<food>
-		<name id="test">
-Belgian Waffles
-Hello World!
-		</name>
+		<name id="test">Belgian WafflesHello World!</name>
 		<price>$5.95</price>
 		<description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
 		<calories>650</calories>

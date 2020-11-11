@@ -1,4 +1,8 @@
 template<typename T>
+const UTF8StringT<T> UTF8StringT<T>::null = UTF8StringT<T>( "" );
+
+
+template<typename T>
 UTF8StringT<T>::UTF8StringT() {}
 
 template<typename T>

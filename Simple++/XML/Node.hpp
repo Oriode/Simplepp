@@ -46,6 +46,11 @@ namespace XML {
 	}
 
 	template<typename T>
+	NodeT<T>::~NodeT() {
+		_unload();
+	}
+
+	template<typename T>
 	NodeT<T> & NodeT<T>::operator=( const NodeT<T> & node ) {
 		this -> name = node.name;
 		this -> id = node.id;
@@ -272,8 +277,16 @@ namespace XML {
 	template<typename T>
 	void NodeT<T>::addChild( NodeT<T> * child ) {
 		if ( this -> type == Type::Text ) {
-			if ( this -> parent ) {
-				this -> parent -> addChild( child );
+			if ( child -> getType() == Type::Text ) {
+				NodeTextT<T> * nodeTextThis( this -> toText() );
+				NodeTextT<T> * nodeTextChild( child -> toText() );
+
+				nodeTextThis -> getValue().concat( nodeTextChild -> getValue() );
+				delete nodeTextChild;
+			} else {
+				if ( this -> parent ) {
+					this -> parent -> addChild( child );
+				}
 			}
 		} else {
 			if ( child -> parent )
@@ -307,7 +320,20 @@ namespace XML {
 			delete this -> paramsVector.getValueIt( it );
 		}
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
-			delete this -> childrenVector.getValueIt( it );
+			NodeT<T> * node( this -> childrenVector.getValueIt( it ) );
+			switch ( node->getType() ) {
+				case NodeT<T>::Type::Text:
+				{
+					NodeTextT<T> * nodeText( ( NodeTextT<T> * ) node );
+					delete nodeText;
+					break;
+				}
+				default:
+				{
+					delete node;
+					break;
+				}
+			}
 		}
 	}
 
@@ -760,6 +786,11 @@ namespace XML {
 
 	template<typename T>
 	const T & NodeTextT<T>::getValue() const {
+		return this -> value;
+	}
+
+	template<typename T>
+	T & NodeTextT<T>::getValue() {
 		return this -> value;
 	}
 

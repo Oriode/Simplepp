@@ -20,9 +20,9 @@
 //#define SPEEDTEST_LOGICAL
 //#define SPEEDTEST_BLENDING
 //#define SPEEDTEST_DATE
-#define SPEEDTEST_DATE_PARSE
+//#define SPEEDTEST_DATE_PARSE
 //#define SPEEDTEST_STRING_CONCAT_STRING
-// #define SPEEDTEST_STRING_CONCAT_NUMBER
+//#define SPEEDTEST_STRING_CONCAT_NUMBER
 //#define SPEEDTEST_STRING_FORMAT
 //#define SPEEDTEST_STRING_CAST
 //#define SPEEDTEST_REGEX
@@ -34,13 +34,13 @@
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-//#define DEBUG_JSON
+#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_STRING
-#define DEBUG_DATE
+//#define DEBUG_DATE
 
 
 #ifndef _LIB
@@ -360,9 +360,12 @@ int main( int argc, char * argv[] ) {
 
 		auto nodeTest( testDocument.getElementsById( "test" ) );
 
+		UTF8String TEST = UTF8String::null;
+
 		if ( nodeTest.getSize() ) {
 			nodeTest[ 0 ] -> getChild( 0 ) -> addChild( new XML::NodeText( "Hello World!" ) );
-			log( nodeTest[ 0 ] -> getValue() );
+			UTF8String value( nodeTest[ 0 ] -> getValue() );
+			log( value );
 		}
 
 		assert( IO::write( WString( "testXML.cxml" ), &testDocument ) );
@@ -391,11 +394,11 @@ int main( int argc, char * argv[] ) {
 #ifdef DEBUG_JSON
 	{
 		JSON::Node rootNode;
-		JSON::Node childNode( "childNode" );
-		rootNode.addChild( &childNode );
+		JSON::Node * childNode = new JSON::Node( "childNode" );
+		rootNode.addChild( childNode );
 
-		childNode.addChild( new JSON::NodeValue( "test", 43 ) );
-		childNode.addChild( NULL );
+		childNode -> addChild( new JSON::NodeValue( "test", 43 ) );
+		childNode -> addChild( NULL );
 
 		Log::displayLog( rootNode.toStringDebug() );
 	}

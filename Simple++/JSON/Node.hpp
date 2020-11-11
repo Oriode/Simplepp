@@ -37,6 +37,11 @@ namespace JSON {
 	}
 
 	template<typename T>
+	NodeT<T>::~NodeT() {
+		_unload();
+	}
+
+	template<typename T>
 	NodeT<T> & NodeT<T>::operator=( const NodeT<T> & node ) {
 		this -> name = node.name;
 		this -> type = node.type;
@@ -182,8 +187,23 @@ namespace JSON {
 	template<typename T>
 	void NodeT<T>::_unload() {
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
-			if (*it )
-				delete this -> childrenVector.getValueIt( it );
+			NodeT<T> * node( this -> childrenVector.getValueIt( it ) );
+
+			if ( node ) {
+				switch ( node->getType() ) {
+					case NodeT<T>::Type::Value:
+					{
+						NodeValueT<T> * nodeValue( (NodeValueT<T> *) node );
+						delete nodeValue;
+						break;
+					}
+					default:
+					{
+						delete node;
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -448,7 +468,8 @@ namespace JSON {
 					newString << T::ElemType( '\n' );
 				}
 
-				if ( *it == NULL ) {
+				NodeT<T> * child( this -> childrenVector.getValueIt( it ) );
+				if ( child == NULL ) {
 
 					for ( unsigned int i( 0 ) ; i < indent + 1 ; i++ ) {
 						newString << T::ElemType( '\t' );
@@ -459,7 +480,7 @@ namespace JSON {
 					newString << T::ElemType( 'l' );
 					newString << T::ElemType( 'l' );
 				} else {
-					newString << this -> childrenVector.getValueIt( it ) -> toStringDebug( indent + 1 );
+					newString << child -> toStringDebug( indent + 1 );
 				}
 			}
 

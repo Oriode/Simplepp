@@ -162,6 +162,9 @@ public:
 	///@param in out buffer where to write
 	///@return BasicString<T> result
 	static UTF8StringT<T> codePoint2String( const typename UTF8StringT<T>::CodePoint & codePoint );
+
+	/** @brief	The null */
+	static const UTF8StringT<T> null;
 private:
 	template<typename C>
 	UTF8StringT<T> & _operatorEQUAL( const C * str, const typename UTF8StringT<T>::Size & bufferSize );

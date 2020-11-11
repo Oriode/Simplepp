@@ -577,7 +577,7 @@ namespace XML {
 		o << Elem( 'n' );
 		o << Elem( '=' );
 		o << Elem( '"' );
-		o << BasicString<Elem>::toString<2, 10>( this -> version );
+		o << BasicString<Elem>::toString( this -> version, 2 );
 		o << Elem( '"' );
 		o << Elem( ' ' );
 		o << Elem( 'e' );

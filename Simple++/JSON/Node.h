@@ -43,6 +43,9 @@ namespace JSON {
 		///@param node NodeT<T> to be moved
 		NodeT( NodeT<T> && node );
 
+		///@brief Destructor
+		~NodeT();
+
 		///@brief Copy operator
 		///@param node NodeT<T> to be copied
 		///@return reference to THIS

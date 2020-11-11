@@ -45,6 +45,9 @@ namespace XML {
 		///@param node NodeT<T> to be moved
 		NodeT( NodeT<T> && node );
 
+		///@brief Destructor.
+		~NodeT();
+
 		///@brief Copy operator
 		///@param node NodeT<T> to be copied
 		///@return reference to THIS
@@ -272,6 +275,8 @@ namespace XML {
 		///@brief Get the value of this node
 		///@return Value
 		const T & getValue() const;
+		T & getValue();
+
 
 		///@brief Set the value of this node
 		///@param value Value to be set
