@@ -1,7 +1,7 @@
 namespace XML {
 
 	template<typename T>
-	ParamT<T>::ParamT( const UTF8String & name, const UTF8String & value ) : name( name ), value( value ) {
+	ParamT<T>::ParamT( const T & name, const T & value ) : name( name ), value( value ) {
 
 	}
 
@@ -25,7 +25,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	ParamT<T>::operator UTF8String() const {
+	ParamT<T>::operator T() const {
 		return toString();
 	}
 
@@ -44,22 +44,22 @@ namespace XML {
 	}
 
 	template<typename T>
-	const UTF8String & ParamT<T>::getName() const {
+	const T & ParamT<T>::getName() const {
 		return this -> name;
 	}
 
 	template<typename T>
-	void ParamT<T>::setName( const UTF8String & name ) {
+	void ParamT<T>::setName( const T & name ) {
 		this -> name = name;
 	}
 
 	template<typename T>
-	const UTF8String & ParamT<T>::getValue() const {
+	const T & ParamT<T>::getValue() const {
 		return this -> value;
 	}
 
 	template<typename T>
-	void ParamT<T>::setValue( const UTF8String & value ) {
+	void ParamT<T>::setValue( const T & value ) {
 		this -> value = value;
 	}
 

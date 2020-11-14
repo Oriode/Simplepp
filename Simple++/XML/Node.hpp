@@ -5,6 +5,9 @@ namespace XML {
 		type( Type::Element ),
 		parent( NULL ) {
 
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+
 	}
 
 	template<typename T>
@@ -12,6 +15,9 @@ namespace XML {
 		name( name ),
 		type( type ),
 		parent( NULL ) {
+
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
 
 	}
 
@@ -21,6 +27,10 @@ namespace XML {
 		id( node.id ),
 		type( node.type ),
 		parent( NULL ) {
+
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
 			NodeT<T> * newNode( new NodeT<T>( *( node.childrenVector.getValueIt( it ) ) ) );
 			addChild( newNode );
@@ -41,6 +51,10 @@ namespace XML {
 		childrenMap( Utility::toRValue( node.childrenMap ) ),
 		childrenVector( Utility::toRValue( node.childrenVector ) ),
 		parent( Utility::toRValue( node.parent ) ) {
+
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+
 		node.childrenVector.clear();
 		node.paramsVector.clear();
 	}
@@ -426,6 +440,256 @@ namespace XML {
 
 	template<typename T>
 	template<typename C>
+	bool NodeT<T>::writeXML( C & str, unsigned int tabs ) const {
+		_writeXML<C, C::ElemType>( str, tabs );
+		return true;
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	bool NodeT<T>::_readXML( const C ** buffer, const EndFunc & endFunc ) {
+		struct FunctorNodeName {
+			bool operator()( const C & c ) { return c != C( ' ' ) && c != C( '\t' ) && c != C( '>' ) && c != C( '/' ); }
+		};
+		struct FunctorContent {
+			bool operator()( const C & c ) { return c != C( '<' ); }
+		};
+		struct FunctorSpace {
+			bool operator()( const C & c ) { return c == C( '\n' ) || c == C( '\t' ) || c == C( ' ' ); }
+		};
+		struct FunctorNoSpace {
+			bool operator()( const C & c ) { return c != C( '<' ) && c != C( '\n' ) && c != C( '\t' ) && c != C( ' ' ); }
+		};
+		static FunctorNodeName functorNodeName;
+		static FunctorContent functorContent;
+		static FunctorSpace functorSpace;
+
+		const C *& it( *buffer );
+
+		{
+			while ( functorSpace( *it ) ) it++;
+
+			if ( !NodeT<T>::_expectChar( &it, C( '<' ) ) ) return false;
+
+			// We have an opening node or self closing
+			auto beginIt( it );
+			while ( true ) {
+				if ( endFunc( it ) ) {
+					error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+					return false;
+				}
+				if ( !functorNodeName( *it ) ) break;
+				it++;
+			}
+			// Call the constructor (pointer, size).
+			T nodeName( beginIt, T::Size( it - beginIt ) );
+
+			this -> setName( nodeName );
+
+			while ( _parseParameter( &it, endFunc ) );
+
+			if ( ( *it ) == C( '/' ) ) {
+				// Self closing node
+				it++;
+				while ( functorSpace( *it ) ) it++;
+
+				return NodeT<T>::_expectChar( &it, C( '>' ) );
+			} else {
+				while ( functorSpace( *it ) ) it++;
+				if ( ( *it ) != C( '>' ) ) {
+					error( TEXT( "[XML ERROR] : Expecting '>'." ) );
+					return false;
+				}
+				it++;
+				// End of opening node.
+			}
+		}
+
+		// Start of node content.
+
+		appendXML( &it, endFunc );
+
+		{
+			it++; // Skip the '/'
+			auto beginIt( it );
+			while ( true ) {
+				if ( endFunc( it ) ) {
+					error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+					return false;
+				}
+				if ( !functorNodeName( *it ) ) break;
+				it++;
+			}
+
+			// Call the constructor (pointer, size).
+			T nodeName( beginIt, T::Size( it - beginIt ) );
+
+			while ( functorSpace( *it ) ) it++;
+
+			if ( nodeName != this -> getName() ) {
+				error( String::format( TEXT( "[XML ERROR] : Closing node do not match. \"%\" != \"%\"." ), this -> getName(), nodeName ) );
+				// SYNTAX ERROR
+				return false;
+			} else {
+				return NodeT<T>::_expectChar( &it, C( '>' ) );
+			}
+		}
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	bool NodeT<T>::appendXML( const C ** buffer, const EndFunc & endFunc ) {
+		struct FunctorContent {
+			bool operator()( const C & c ) { return c != C( '<' ); }
+		};
+		struct FunctorSpace {
+			bool operator()( const C & c ) { return c == C( '\n' ) || c == C( '\t' ) || c == C( ' ' ); }
+		};
+		static FunctorContent functorContent;
+		static FunctorSpace functorSpace;
+
+		const C *& it( *buffer );
+
+		while ( true ) {
+			while ( functorSpace( *it ) ) it++;
+			const C * beginIt( it );
+			const C * endIt;
+			while ( functorContent( *it ) && !endFunc( it ) ) it++;
+
+			if ( it > beginIt ) {
+				// We probably found something.
+				endIt = it;
+				while ( functorSpace( *( endIt -1) ) ) endIt--;
+
+				if ( endIt != beginIt ) {
+					// We have content, so we gonna create a text node and add the content
+					// Call the constructor (pointer, size).
+					T textContent( beginIt, T::Size( endIt - beginIt ) );
+					NodeTextT<T> * nodeText( new NodeTextT<T>( textContent ) );
+
+					this -> addChild( nodeText );
+				}
+			}
+
+			if ( endFunc( it ) ) {
+				return true;
+			}
+
+			if ( ( *it ) == C( '<' ) ) {
+				const C * tmpIt( it );
+				tmpIt++;
+				while ( functorSpace( *tmpIt ) ) tmpIt++;
+				if ( ( *tmpIt ) == C( '/' ) ) {
+					it = tmpIt;
+					break;
+				} else {
+					NodeT<T> * newNode( new NodeT<T>() );
+					this -> addChild( newNode );
+
+					if ( !newNode -> _readXML( &it, endFunc ) )
+						return false;
+				}
+			} else {
+				error( TEXT( "[XML ERROR] : Expected '<'." ) );
+				return false;
+			}
+		}
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	bool NodeT<T>::appendXML( const C * buffer, const EndFunc & endFunc ) {
+		return appendXML( &buffer, endFunc );
+	}
+
+	template<typename T>
+	bool NodeT<T>::appendXML( const T & str ) {
+		const T::ElemType * buffer( str.toCString() );
+		return appendXML<T::ElemType>( &buffer );
+	}
+
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	bool NodeT<T>::_parseParameter( const C ** buffer, const EndFunc & endFunc ) {
+		const C *& it( *buffer );
+
+		struct FunctorValue {
+			bool operator()( const C & c ) { return c != C( '"' ); }
+		};
+		struct FunctorSpace {
+			bool operator()( const C & c ) { return c == C( '\n' ) || c == C( '\t' ) || c == C( ' ' ); }
+		};
+		struct FunctorName {
+			bool operator()( const C & c ) { return c != C( '=' ) && c != C( '\t' ) && c != C( ' ' ) && c != C( '>' ) && c != C( '/' ); }
+		};
+		static FunctorName functorName;
+		static FunctorSpace functorSpace;
+		static FunctorValue functorValue;
+
+		// Now lets skip all the blanks
+		while ( functorSpace( *it ) ) it++;
+
+		// ? is a special char
+		if ( ( *it ) == C( '?' ) || ( *it ) == C( '/' ) || endFunc( it ) ) return false;
+		auto iteratorBegin( it );
+		while ( true ) {
+			if ( endFunc( it ) ) {
+				error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+				return false;
+			}
+			if ( !functorName( *it ) )
+				break;
+			it++;
+		}
+
+		if ( iteratorBegin != it ) {
+			ParamT<T> * newParam( new ParamT<T>() );
+
+			newParam -> setName( T( iteratorBegin, T::Size( it - iteratorBegin ) ) );
+
+			if ( ( *it ) == C( '=' ) ) {
+				( it )++; // Just to skip the equal sign
+
+				if ( ( *it ) == C( '"' ) ) {
+					( it )++; // Skip the quotes too
+
+					iteratorBegin = it;
+					while ( true ) {
+						if ( endFunc( it ) ) {
+							error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							return false;
+						}
+						if ( !functorValue( *it ) )
+							break;
+						it++;
+					}
+					newParam -> setValue( T( iteratorBegin, T::Size( it - iteratorBegin ) ) );
+
+					if ( ( *it ) == C( '"' ) ) ( it )++; // Skip the quotes again
+				} else {
+					iteratorBegin = it;
+					while ( true ) {
+						if ( endFunc( it ) ) {
+							error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							return false;
+						}
+						if ( !functorName( *it ) )
+							break;
+						it++;
+					}
+					newParam -> setValue( T( iteratorBegin, T::Size( it - iteratorBegin ) ) );
+				}
+
+			}
+			this -> addParam( newParam );
+			return true;
+		}
+		return false;
+	}
+
+	template<typename T>
+	template<typename C>
 	C NodeT<T>::toString( unsigned int indent ) const {
 		C newString;
 		newString.reserve( 128 );
@@ -676,7 +940,12 @@ namespace XML {
 			for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 				if ( getNbChildren() > 1 )
 					o << Elem( '\n' );
-				this -> childrenVector.getValueIt( it ) -> _writeXML<C, Elem>( o, tabs + 1 );
+				NodeT<T> * child( this -> childrenVector.getValueIt( it ) );
+				if ( child -> getType() == NodeT<T>::Type::Text && getNbChildren() == 1 ) {
+					this -> childrenVector.getValueIt( it ) -> _writeXML<C, Elem>( o, 0 );
+				} else {
+					this -> childrenVector.getValueIt( it ) -> _writeXML<C, Elem>( o, tabs + 1 );
+				}
 			}
 
 			// Now Close
@@ -694,6 +963,21 @@ namespace XML {
 			o << Elem( '/' );
 			o << Elem( '>' );
 		}
+	}
+
+	template<typename T>
+	template<typename C>
+	bool NodeT<T>::_expectChar( const C ** buffer, const C & c ) {
+		const C *& it( *buffer );
+
+		if ( ( *it ) == c ) {
+			it++;
+			return true;
+		} else {
+			error( String::format(TEXT( "[XML ERROR] : Expected '%'." ), c) );
+			return false;
+		}
+
 	}
 
 
@@ -802,6 +1086,8 @@ namespace XML {
 	template<typename T>
 	template<typename C, typename Elem>
 	void NodeTextT<T>::_writeXML( C & o, unsigned int tabs ) const {
+		for ( unsigned int i( 0 ); i < tabs; i++ )
+			o << Elem( '\t' );
 		o << this -> value;
 	}
 

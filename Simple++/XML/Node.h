@@ -192,6 +192,28 @@ namespace XML {
 		///@return True if success, False otherwise
 		bool writeXML( std::fstream * fileStream, unsigned int tabs = 0 ) const;
 
+		///@brief Write this Node to an Object that support operator '<<'.
+		///@param str Object to write to.
+		///@param tabs Number of tabulation to be added.
+		///@return bool True if success, False otherwise.
+		template<typename C = T>
+		bool writeXML( C & str, unsigned int tabs = 0 ) const;
+
+		///@brief Parse some XML as text and append it to this object.
+		///@param buffer Buffer to be read.
+		///@param endFunc Functor to check the buffer end.
+		///@return bool True if success, False otherwise.
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		bool appendXML( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		bool appendXML( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
+		///@brief Parse some XML as text and append it to this object.
+		///@param str String to be read.
+		///@param endFunc Functor to check the buffer end.
+		///@return bool True if success, False otherwise.
+		bool appendXML( const T & str );
+
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
@@ -213,8 +235,25 @@ namespace XML {
 		///@return Human-redable String.
 		T toStringDebug( unsigned int indent = 0 ) const;
 
+		///@brief Read this node using a pointer to a String Iterator.
+		///@param buffer Pointer to a String iterator
+		///@param endFunc Functor to check the buffer end.
+		///@return bool True if success, False otherwise.
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		bool _readXML( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
+		///@brief Write this node to an Object that support opperator '<<'.
+		///@param o Object to write to.
+		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
 		void _writeXML( C & o, unsigned int tabs = 0 ) const;
+
+		///@brief Check if the buffer at the current position is the expected character. Increment the buffer it True.
+		///@param buffer Buffer to check.
+		///@param c Character to be compared.
+		///@return bool True if the buffer is the expected character at the current position.
+		template<typename C>
+		static bool _expectChar( const C ** buffer, const C & c );
 
 	protected:
 		void _clear();
@@ -225,6 +264,10 @@ namespace XML {
 		bool _setChildId( NodeT<T> * child, const T & id );
 		void _getElementsById( Vector < NodeT<T> * > * nodeVector, const T & id ) const;
 		void _getElementsByName( Vector < NodeT<T> * > * nodeVector, const T & name ) const;
+		
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		bool _parseParameter( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
 		
 
 	private:

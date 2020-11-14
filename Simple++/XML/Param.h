@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../UTF8String.h"
 #include "../IO/IO.h"
 #include "../Math/Math.h"
 
@@ -15,7 +14,7 @@ namespace XML {
 		///brief Constructor from a name and a value
 		///@param name Name of this param
 		///@param value Value of this param
-		ParamT( const UTF8String & name, const UTF8String & value );
+		ParamT( const T & name, const T & value );
 
 		///@brief Copy Constructor
 		///@param param Object to copy
@@ -27,7 +26,7 @@ namespace XML {
 
 		///@brief Convert to StringASCII operator
 		///@return StringASCII generated
-		operator UTF8String() const;
+		operator T() const;
 
 		///@brief Move operator
 		///@param param Object to be copied
@@ -41,19 +40,19 @@ namespace XML {
 
 		///@brief get the name of this param
 		///@return Name of the param
-		const UTF8String & getName() const;
+		const T & getName() const;
 
 		///@brief Set the name of this param (Warning: Changing this param name to "id" will not change the id of the node associated, @see Node::setId())
 		///@param name Name of this param
-		void setName( const UTF8String & name );
+		void setName( const T & name );
 
 		///@brief get the value of this param 
 		///@return value of the param
-		const UTF8String & getValue() const;
+		const T & getValue() const;
 
 		///@brief Set the value of this param (Warning: Changing this param value if name is "id" will not change the id of the node associated, @see Node::setId())
 		///@param value Value of this param
-		void setValue( const UTF8String & value );
+		void setValue( const T & value );
 
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object
@@ -81,8 +80,8 @@ namespace XML {
 		void _clear();
 		
 
-		UTF8String name;
-		UTF8String value;
+		T name;
+		T value;
 	};
 
 }

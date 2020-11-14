@@ -14,6 +14,8 @@ public:
 	UTF8StringT( const char * str );
 
 	///@brief Copy constructor from a NON-multibyte string
+	///@param str String to be copied.
+	///@param size buffer size (NOT the number of UTF8 characters).
 	template<typename C>
 	UTF8StringT( const C * str, typename UTF8StringT<T>::Size size );
 	UTF8StringT( const char * str, typename UTF8StringT<T>::Size size );

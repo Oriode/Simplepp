@@ -64,287 +64,86 @@ namespace XML {
 
 	template<typename T>
 	void DocumentT<T>::_parse( const T & str ) {
-
-		int deep( 0 );
-		Vector<NodeT<T> * > nodeTree;
-		nodeTree.reserve( 10 );
-
-
-		static T rootName( "#document" );
-		this -> rootNode = new NodeT<T>( rootName, NodeT<T>::Type::Document );
-
-		NodeT<T> * activeNode( this -> rootNode );
-		nodeTree.push( activeNode );
-
-		UCodePoint codePoint;
-		for ( auto it( str.getBegin() ); str.iterate( &it, &codePoint );) {
-
-
-			switch ( codePoint ) {
-				case UCodePoint( '<' ):
-				{
-
-
-
-					if ( ( *it ) != T::ElemType( '?' ) ) {
-
-						struct FunctorNodeName {
-							bool operator()( const UCodePoint & c ) { return c != UCodePoint( ' ' ) && c != UCodePoint( '\t' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' ); }
-						};
-						static FunctorNodeName functorNodeName;
-
-
-						// If we have a closing node
-						if ( ( *it ) == T::ElemType( '/' ) ) {
-							it++; // Skip the '/'
-							auto beginIt( it );
-							while ( str.iterate( &it, &codePoint, functorNodeName ) );
-							T nodeName( str.getSubStr( beginIt, it ) );
-
-							if ( deep ) {
-								deep--;
-								activeNode = nodeTree.pop();
-								if ( nodeName != activeNode -> getName() ) {
-									error( String( TEXT( "[XML ERROR] : Closing node do not match " ) ) << activeNode -> getName() << TEXT( " != " ) << nodeName );
-									//SYNTAX ERROR
-								}
-							} else {
-								error( String( TEXT( "[XML ERROR] : Trying to close " ) ) << nodeName << TEXT( " without opened it." ) );
-								//SYNTAX ERROR
-							}
-
-
-
-							while ( ( *it ) == T::ElemType( ' ' ) || ( *it ) == T::ElemType( '\t' ) || ( *it ) == T::ElemType( '\n' ) ) ( it )++;
-
-						} else {
-							// We have an opening node or self closing
-							auto beginIt( it );
-							while ( str.iterate( &it, &codePoint, functorNodeName ) );
-							T nodeName( str.getSubStr( beginIt, it ) );
-
-							// We have a new node ! let's create it !
-							activeNode = new NodeT<T>( nodeName );
-
-							while ( _parseParameter( str, &it, &codePoint, activeNode ) );
-
-							// Push the new NodeT<T>
-							nodeTree.getLast() -> addChild( activeNode );
-
-
-							if ( ( *it ) == T::ElemType( '/' ) ) {
-								// Self closing node
-								it++;
-								while ( ( *it ) == T::ElemType( ' ' ) || ( *it ) == T::ElemType( '\t' ) || ( *it ) == T::ElemType( '\n' ) ) ( it )++;
-							} else {
-								nodeTree.push( activeNode );
-								deep++;
-							}
-						}
-					} else {
-						it++; // Skip the '?'
-
-
-						// We have a special node
-						static StringASCII xmlFlag( "xml" );
-						static StringASCII encodingStr( "encoding" );
-						static StringASCII versionStr( "version" );
-
-						static auto xmlFlagBegin( xmlFlag.getBegin() );
-						if ( str.cmp( &it, xmlFlag, &xmlFlagBegin, 3 ) ) {
-							T paramName;
-							T paramValue;
-
-							while ( _parseParameterSpecial( str, &it, &codePoint, &paramName, &paramValue ) ) {
-								if ( paramName == encodingStr ) {
-									this -> encoding = paramValue;
-								} else if ( paramName == versionStr ) {
-									this -> version = paramValue.toFloat();
-								}
-
-							}
-						}
-						if ( ( *it ) == T::ElemType( '?' ) ) {
-							it++;
-						} else {
-							error( TEXT( "[XML ERROR] : Opened a special node with <? but not closing it correctly." ) );
-							//SYNTAX ERROR
-						}
-					}
-
-					assert( ( *it ) == T::ElemType( '>' ) );
-					it++;
-					if ( it == str.getEnd() )
-						break;
-
-					//NodeT<T> has been created, maybe we have content inside the active node
-					{
-						struct FunctorContent {
-							bool operator()( const UCodePoint & c ) { return c != UCodePoint( '<' ); }
-						};
-						struct FunctorNoSpace {
-							bool operator()( const UCodePoint & c ) { return c == UCodePoint( '\n' ) || c == UCodePoint( '\t' ) || c == UCodePoint( ' ' ); }
-						};
-						struct FunctorSpace {
-							bool operator()( const UCodePoint & c ) { return c != UCodePoint( '<' ) && c != UCodePoint( '\n' ) && c != UCodePoint( '\t' ) && c != UCodePoint( ' ' ); }
-						};
-						static FunctorContent functorContent;
-						static FunctorNoSpace functorNoSpace;
-						static FunctorSpace functorSpace;
-
-						while ( str.iterate( &it, &codePoint, functorNoSpace ) );
-						auto beginIt( it );
-						auto endIt( it );
-						while ( true ) {
-							while ( str.iterate( &it, &codePoint, functorSpace ) )
-								endIt = it;
-							if ( ( *it ) == T::ElemType( '<' ) || it == str.getEnd() )
-								break;
-							else
-								it++;
-
-						}
-
-						//while ( str.iterate( &it, &codePoint, functorContent ) );
-
-						if ( endIt != beginIt ) {
-							// We have content, so we gonna create a text node and add the content
-							NodeTextT<T> * nodeText( new NodeTextT<T>( str.getSubStr( beginIt, endIt ) ) );
-
-							T & strValue( *( const_cast< T * >( &( nodeText -> getValue() ) ) ) );
-
-
-							nodeTree.getLast() -> addChild( nodeText );
-						}
-					}
-
-
-
-
-					break;
-				}
-			}
-		}
+		const typename T::ElemType * buffer( str.toCString() );
+		readXML<T::ElemType>( &buffer );
 	}
 
-	template<typename T>
-	bool DocumentT<T>::_parseParameter( const T & str, RandomAccessIterator<char> * itp, UCodePoint * lastCodePoint, NodeT<T> * node ) {
-		RandomAccessIterator<char> & it( *itp );
-		UCodePoint & codePoint( *lastCodePoint );
-
-		struct FunctorNoQuote {
-			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( '"' );
-			}
-		};
-		struct FunctorNoSpace {
-			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( ' ' ) && c != UCodePoint( '\t' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
-			}
-		};
-		struct FunctorNoEqual {
-			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( '=' ) && c != UCodePoint( '\t' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
-			}
-		};
-		static FunctorNoEqual functorNoEqual;
-		static FunctorNoSpace functorNoSpace;
-		static FunctorNoQuote functorNoQuote;
-
-		//Now lets skip all the blanks
-		while ( ( *it ) == T::ElemType( ' ' ) || ( *it ) == T::ElemType( '\t' ) || ( *it ) == T::ElemType( '\n' ) ) ( it )++;
-
-		// ? is a special char
-		if ( ( *it ) == T::ElemType( '?' ) || ( *it ) == T::ElemType( '/' ) ) return false;
-		auto iteratorBegin( it );
-		while ( str.iterate( &it, &codePoint, functorNoEqual ) );
-
-
-		if ( iteratorBegin != it ) {
-			ParamT<T> * param = new ParamT<T>();
-			T & name( const_cast< T & >( param -> getName() ) );
-			T & value( const_cast< T & >( param -> getValue() ) );
-
-			name = str.getSubStr( iteratorBegin, it );
-
-			if ( codePoint == UCodePoint( '=' ) ) {
-				( it )++; // Just to skip the equal sign
-
-				if ( ( *it ) == T::ElemType( '"' ) ) {
-					( it )++; // Skip the quotes too
-					iteratorBegin = it;
-					while ( str.iterate( &it, &codePoint, functorNoQuote ) );
-					value = str.getSubStr( iteratorBegin, it );
-					if ( ( *it ) == T::ElemType( '"' ) ) ( it )++; // Skip the quotes again
-				} else {
-					iteratorBegin = it;
-					while ( str.iterate( &it, &codePoint, functorNoSpace ) );
-					value = str.getSubStr( iteratorBegin, it );
-				}
-			}
-
-			node -> addParam( param );
-			return true;
-		}
-		return false;
-	}
+	
 
 
 	template<typename T>
-	bool DocumentT<T>::_parseParameterSpecial( const T & str, RandomAccessIterator<char> * itp, UCodePoint * lastCodePoint, T * nameP, T * valueP ) {
-		RandomAccessIterator<char> & it( *itp );
-		UCodePoint & codePoint( *lastCodePoint );
+	template<typename C, typename EndFunc>
+	bool DocumentT<T>::_parseParameterSpecial( const C ** buffer, T * nameP, T * valueP, const EndFunc & endFunc ) {
+		const C *& it( *buffer );
 
-		struct FunctorNoQuote {
-			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( '"' );
-			}
+		struct FunctorValue {
+			bool operator()( const C & c ) { return c != C( '"' ); }
 		};
-		struct FunctorNoSpace {
-			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( ' ' ) && c != UCodePoint( '\t' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
-			}
+		struct FunctorSpace {
+			bool operator()( const C & c ) { return c == C( '\n' ) || c == C( '\t' ) || c == C( ' ' ); }
 		};
-		struct FunctorNoEqual {
-			bool operator()( const UCodePoint & c ) {
-				return c != UCodePoint( '=' ) && c != UCodePoint( '\t' ) && c != UCodePoint( ' ' ) && c != UCodePoint( '>' ) && c != UCodePoint( '/' );
-			}
+		struct FunctorName {
+			bool operator()( const C & c ) { return c != C( '=' ) && c != C( '\t' ) && c != C( ' ' ) && c != C( '>' ) && c != C( '/' ); }
 		};
-		static FunctorNoEqual functorNoEqual;
-		static FunctorNoSpace functorNoSpace;
-		static FunctorNoQuote functorNoQuote;
+		static FunctorName functorName;
+		static FunctorSpace functorSpace;
+		static FunctorValue functorValue;
 
-		//Now lets skip all the blanks
-		while ( ( *it ) == T::ElemType( ' ' ) || ( *it ) == T::ElemType( '\t' ) || ( *it ) == T::ElemType( '\n' ) ) ( it )++;
+		// Now lets skip all the blanks
+		while ( functorSpace(*it) ) it++;
 
 		// ? is a special char
-		if ( ( *it ) == T::ElemType( '?' ) || ( *it ) == T::ElemType( '/' ) ) return false;
+		if ( ( *it ) == C( '?' ) || ( *it ) == C( '/' ) || endFunc(it) ) return false;
 		auto iteratorBegin( it );
-		while ( str.iterate( &it, &codePoint, functorNoEqual ) );
-
-
-
+		while ( true ) {
+			if ( endFunc( it ) ) {
+				error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+				return false;
+			}
+			if ( !functorName( *it ) )
+				break;
+			it++;
+		}
 
 		if ( iteratorBegin != it ) {
 			T & name( *nameP );
 			T & value( *valueP );
 
-			name = str.getSubStr( iteratorBegin, it );
+			name = T( iteratorBegin, T::Size( it - iteratorBegin ) );
 
-			if ( codePoint == UCodePoint( '=' ) ) {
+			if ( (*it) == C( '=' ) ) {
 				( it )++; // Just to skip the equal sign
 
-				if ( ( *it ) == T::ElemType( '"' ) ) {
+				if ( ( *it ) == C( '"' ) ) {
 					( it )++; // Skip the quotes too
+
 					iteratorBegin = it;
-					while ( str.iterate( &it, &codePoint, functorNoQuote ) );
-					value = str.getSubStr( iteratorBegin, it );
-					if ( ( *it ) == T::ElemType( '"' ) ) ( it )++; // Skip the quotes again
+					while ( true ) {
+						if ( endFunc( it ) ) {
+							error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							return false;
+						}
+						if ( !functorValue( *it ) )
+							break;
+						it++;
+					}
+					value = T( iteratorBegin, T::Size( it - iteratorBegin ) );
+
+					if ( ( *it ) == C( '"' ) ) ( it )++; // Skip the quotes again
 				} else {
 					iteratorBegin = it;
-					while ( str.iterate( &it, &codePoint, functorNoSpace ) );
-					value = str.getSubStr( iteratorBegin, it );
+					while ( true ) {
+						if ( endFunc( it ) ) {
+							error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							return false;
+						}
+						if ( !functorName( *it ) )
+							break;
+						it++;
+					}
+					value = T( iteratorBegin, T::Size( it - iteratorBegin ) );
 				}
+
 			}
 			return true;
 		}
@@ -395,7 +194,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::writeXML( const WString & fileName ) const {
+	bool DocumentT<T>::writeFileXML( const WString & fileName ) const {
 		std::fstream fileStream( fileName.getData(), std::ios::out );
 		if ( fileStream.is_open() ) {
 
@@ -412,10 +211,82 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::readXML( const WString & fileName ) {
+	bool DocumentT<T>::readFileXML( const WString & fileName ) {
 		_clear();
 
 		return _readXML( fileName );
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	bool DocumentT<T>::readXML( const C ** buffer, const EndFunc & endFunc ) {
+		struct FunctorSpace {
+			bool operator()( const C & c ) { return c != C( '<' ) && c != C( '\n' ) && c != C( '\t' ) && c != C( ' ' ); }
+		};
+
+		static FunctorSpace functorSpace;
+
+		if ( this -> rootNode != NULL ) {
+			_clear();
+		}
+
+		const C *& it( *buffer );
+
+		T rootName( "#document" );
+		this -> rootNode = new NodeT<T>( rootName, NodeT<T>::Type::Document );
+
+		while ( functorSpace( *it ) ) it++;
+
+		if ( !NodeT<T>::_expectChar( &it, C( '<' ) ) ) return false;
+		if ( !NodeT<T>::_expectChar( &it, C( '?' ) ) ) {
+			// No special node. Directly parse the content.
+			it--; // Roll back to the '<'.
+			return this -> rootNode -> appendXML( &it, endFunc );
+		}
+
+
+		// We have a special node
+		static C xmlFlag[] = { C( 'x' ), C( 'm' ), C( 'l' ) };
+		static T encodingStr( "encoding" );
+		static T versionStr( "version" );
+
+		if ( DocumentT<T>::cmpStr( it, xmlFlag, 3 ) ) {
+			it += 3;
+			T paramName;
+			T paramValue;
+
+			while ( _parseParameterSpecial( &it, &paramName, &paramValue, endFunc ) ) {
+				if ( paramName == encodingStr ) {
+					this -> encoding = paramValue;
+				} else if ( paramName == versionStr ) {
+					this -> version = paramValue.toFloat();
+				}
+			}
+		} else {
+			error( TEXT( "[XML ERROR] : expecting \"<xml...\"." ) );
+			return false;
+		}
+
+		if ( !NodeT<T>::_expectChar( &it, C( '?' ) ) ) return false;
+		if ( !NodeT<T>::_expectChar( &it, C( '>' ) ) ) return false;
+
+
+		return this -> rootNode -> appendXML( &it, endFunc );
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	bool DocumentT<T>::readXML( const C * buffer, const EndFunc & endFunc ) {
+		return readXML( &buffer, endFunc );
+	}
+
+	template<typename T>
+	template<typename C>
+	bool DocumentT<T>::cmpStr( const C * b1, const C * b2, int size ) {
+		for ( int i( 0 ); i < size; i++ ) {
+			if ( b1[i] != b2[i] ) return false;
+		}
+		return true;
 	}
 
 	template<typename T>

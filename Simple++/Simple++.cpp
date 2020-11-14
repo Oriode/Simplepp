@@ -363,7 +363,9 @@ int main( int argc, char * argv[] ) {
 		UTF8String TEST = UTF8String::null;
 
 		if ( nodeTest.getSize() ) {
-			nodeTest[ 0 ] -> getChild( 0 ) -> addChild( new XML::NodeText( "Hello World!" ) );
+			nodeTest[ 0 ] -> appendXML( WString("<span id=\"new\"><child>New Value 1 !</child><child>New Value 2 !</child></span>") );
+
+			nodeTest[ 0 ] -> getChild( 0 ) -> addChild( new XML::NodeText( " Hello World!" ) );
 			UTF8String value( nodeTest[ 0 ] -> getValue() );
 			log( value );
 		}
@@ -393,14 +395,38 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 #ifdef DEBUG_JSON
 	{
-		JSON::Node rootNode;
-		JSON::Node * childNode = new JSON::Node( "childNode" );
-		rootNode.addChild( childNode );
+		{
+			JSON::Node rootNode;
+			JSON::Node * childNode = new JSON::Node( "childNode" );
+			JSON::Node * arrayNode = new JSON::NodeArray( "arrayNode" );
 
-		childNode -> addChild( new JSON::NodeValue( "test", 43 ) );
-		childNode -> addChild( NULL );
+			arrayNode -> addChild( new JSON::NodeValue( 1 ) );
+			arrayNode -> addChild( new JSON::NodeValue( 2 ) );
+			arrayNode -> addChild( new JSON::NodeValue( 3 ) );
+			arrayNode -> addChild( new JSON::NodeValue( 4 ) );
 
-		Log::displayLog( rootNode.toStringDebug() );
+			rootNode.addChild( childNode );
+			rootNode.addChild( arrayNode );
+
+			childNode -> addChild( new JSON::NodeValue( "test", 43 ) );
+			childNode -> addChild( NULL );
+
+			Log::displayLog( rootNode.toStringDebug() );
+			Log::displayLog( rootNode.toString() );
+		}
+		{
+			JSON::Node rootNode;
+			rootNode.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null }" );
+
+			Vector<JSON::Node *> searchNode = rootNode.getElementsByName( "test2" );
+
+			if ( searchNode.getSize() ) {
+				Log::displayLog( searchNode[ 0 ]->getValue() );
+			}
+
+			Log::displayLog( rootNode.getName() );
+			Log::displayLog( rootNode.toString() );
+		}
 	}
 #endif
 
