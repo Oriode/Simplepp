@@ -101,6 +101,11 @@ namespace XML {
 		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
 		bool readXML( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
+		///@brief read this object using a type T.
+		///@param str String to read from.
+		///@return bool True if success, False otherwise.
+		bool readXML( const T & str );
+
 		///@brief read from a file stream ( Data has to be wrote by write() )
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
@@ -126,14 +131,13 @@ namespace XML {
 		void _writeXML( C & o ) const;
 
 	private:
-		void _parse( const T & str );
 		
 		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
 		bool _parseParameterSpecial( const C ** buffer, T * name, T * value, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
 		void _clear();
 		void _unload();
-		bool _readXML( const WString & fileName );
+		bool _readFileXML( const WString & fileName );
 
 		template<typename C>
 		static bool cmpStr( const C * b1, const C * b2, int size );

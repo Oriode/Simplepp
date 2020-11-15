@@ -7,7 +7,6 @@ namespace XML {
 
 		// Ensure T is a derived of BasicString.
 		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
-
 	}
 
 	template<typename T>
@@ -18,7 +17,6 @@ namespace XML {
 
 		// Ensure T is a derived of BasicString.
 		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
-
 	}
 
 	template<typename T>
@@ -27,9 +25,6 @@ namespace XML {
 		id( node.id ),
 		type( node.type ),
 		parent( NULL ) {
-
-		// Ensure T is a derived of BasicString.
-		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
 
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
 			NodeT<T> * newNode( new NodeT<T>( *( node.childrenVector.getValueIt( it ) ) ) );
@@ -51,9 +46,6 @@ namespace XML {
 		childrenMap( Utility::toRValue( node.childrenMap ) ),
 		childrenVector( Utility::toRValue( node.childrenVector ) ),
 		parent( Utility::toRValue( node.parent ) ) {
-
-		// Ensure T is a derived of BasicString.
-		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
 
 		node.childrenVector.clear();
 		node.paramsVector.clear();

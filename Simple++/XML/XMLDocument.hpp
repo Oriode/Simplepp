@@ -22,7 +22,7 @@ namespace XML {
 
 	template<typename T>
 	DocumentT<T>::DocumentT( const WString & fileName ) {
-		_readXML( fileName );
+		_readFileXML( fileName );
 	}
 
 	template<typename T>
@@ -61,15 +61,11 @@ namespace XML {
 		_unload();
 	}
 
-
 	template<typename T>
-	void DocumentT<T>::_parse( const T & str ) {
+	bool DocumentT<T>::readXML( const T & str ) {
 		const typename T::ElemType * buffer( str.toCString() );
-		readXML<T::ElemType>( &buffer );
+		return readXML<T::ElemType>( &buffer );
 	}
-
-	
-
 
 	template<typename T>
 	template<typename C, typename EndFunc>
@@ -207,7 +203,6 @@ namespace XML {
 			}
 		}
 		return false;
-
 	}
 
 	template<typename T>
@@ -338,7 +333,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::_readXML( const WString & fileName ) {
+	bool DocumentT<T>::_readFileXML( const WString & fileName ) {
 		_unload();
 		this -> rootNode = NULL;
 
@@ -357,9 +352,7 @@ namespace XML {
 
 			fileStream.close();
 
-			_parse( buffer );
-
-			return true;
+			return readXML( buffer );
 		} else {
 			_clear();
 			return false;

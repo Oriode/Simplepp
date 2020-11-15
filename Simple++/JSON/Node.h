@@ -30,14 +30,19 @@ namespace JSON {
 			Null
 		};
 
-		///@brief Constructor with only the type
-		///@param type Type of this node.
-		NodeT( Type type = Type::Object );
+		///@brief Anonymous Object Node Constructor.
+		///@param type Node type.
+		NodeT( typename NodeT<T>::Type type = NodeT<T>::Type::Object );
 
-		///@brief create node
+		///@brief Named Object Node Constructor.
 		///@param name Name of the node
-		///@param type Type of this node
-		NodeT( const T & name, Type type = Type::Object );
+		///@param type Node type.
+		NodeT( const T & name, typename NodeT<T>::Type type = NodeT<T>::Type::Object );
+
+		///@brief Value Node Constructor.
+		///@param name Name.
+		///@param value Value.
+		NodeT( const T & name, const T & value );
 
 		///@brief Copy Constructor
 		///@param node NodeT<T> to be copied
@@ -140,21 +145,6 @@ namespace JSON {
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
 		NodeT<T> * removeChild( typename Vector< NodeT<T> * >::Size i );
 
-		///@brief Parse some JSON as text and append it to this object.
-		///@param buffer Buffer to be read.
-		///@param endFunc Functor to check the buffer end.
-		///@return bool True if success, False otherwise.
-		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
-		bool appendJSON( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
-		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
-		bool appendJSON( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
-
-		///@brief Parse some JSON as text and append it to this object.
-		///@param str String to be read.
-		///@param endFunc Functor to check the buffer end.
-		///@return bool True if success, False otherwise.
-		bool appendJSON( const T & str );
-
 		///@brief Write this object as an XML file
 		///@param fileName Where to write
 		///@return True if success, False otherwise
@@ -178,6 +168,11 @@ namespace JSON {
 		bool readJSON( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
 		bool readJSON( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+
+		///@brief read this object using a type T.
+		///@param str String to read from.
+		///@return bool True if success, False otherwise.
+		bool readJSON( const T & str );
 
 		///@brief Write this object in the JSON syntax into the fileStream
 		///@param fileStream stream used to write this object
@@ -223,6 +218,7 @@ namespace JSON {
 		bool _setChildId( NodeT<T> * child, const T & id );
 		void _getElementsById( Vector < NodeT<T> * > * nodeVector, const T & id ) const;
 		void _getElementsByName( Vector < NodeT<T> * > * nodeVector, const T & name ) const;
+		bool _readFileJSON( const WString & fileName );
 
 		///@brief Check if the buffer at the current position is the expected character. Increment the buffer it True.
 		///@param buffer Buffer to check.
@@ -232,7 +228,7 @@ namespace JSON {
 		static bool _expectChar( const C ** buffer, const C & c );
 
 
-	private:
+	protected:
 		Type type;
 		T name;
 		T value;
@@ -267,68 +263,24 @@ namespace JSON {
 		///@brief Move Constructor
 		///@param node NodeT<T> to be moved
 		NodeValueT( NodeValueT<T> && node );
-
-		///@brief Copy operator
-		///@param node NodeT<T> to be copied
-		///@return reference to THIS
-		NodeValueT<T> & operator=( const NodeValueT<T> & node );
-
-		///@brief Move operator
-		///@param node NodeT<T> to be moved
-		///@return reference to THIS
-		NodeValueT<T> & operator=( NodeValueT<T> && node );
-
-		///@brief Get the value of this node
-		///@return Value
-		const T & getValue() const;
-
-		///@brief Set the value of this node
-		///@param value Value to be set
-		void setValue( const T & value );
-
-		///@brief Write this object in the XML syntax into the fileStream
-		///@param fileStream stream used to write this object
-		///@return True if success, False otherwise
-		bool writeJSON( std::fstream * fileStream ) const;
-
-		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
-		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
-
-		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
-		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
-
-		///@brief Print an human-readable String of this NodeT<T> and it's children.
-		///@param indent Identation.
-		///@return Human-redable String.
-		template<typename C = T>
-		C toString( unsigned int indent = 0 ) const;
-
-		template<typename C = T, typename Elem = C::ElemType>
-		void _writeJSON( C & o, unsigned int indent = 0 ) const;
 	private:
-		void _clear();
 
-		T value;
 	};
 
 	template<typename T>
-	class NodeArrayT : public NodeT<T>, Vector<NodeT<T>> {
+	class NodeArrayT : public NodeT<T> {
 	public:
 		///@brief Empty constructor
 		NodeArrayT();
 
-		///@brief create node
-		///@param v value of the node
-		NodeArrayT( const Vector<NodeT<T>> & v );
+		///@brief Named Object Node Constructor.
+		///@param name Name of the node
+		NodeArrayT( const T & name );
 
 		///@brief Constructor using a name and a value.
 		///@param name Node name.
 		///@param value Node value.
-		NodeArrayT( const T & name, const Vector<NodeT<T>> & v );
+		NodeArrayT( const T & name, const Vector<NodeT<T> *> & v );
 
 		///@brief Copy Constructor
 		///@param node NodeT<T> to be copied
@@ -338,25 +290,7 @@ namespace JSON {
 		///@param node NodeT<T> to be moved
 		NodeArrayT( NodeArrayT<T> && node );
 
-		///@brief Copy operator
-		///@param node NodeT<T> to be copied
-		///@return reference to THIS
-		NodeArrayT<T> & operator=( const NodeArrayT<T> & node );
-
-		///@brief Move operator
-		///@param node NodeT<T> to be moved
-		///@return reference to THIS
-		NodeArrayT<T> & operator=( NodeArrayT<T> && node );
-
-		///@brief Write this object in the XML syntax into the fileStream
-		///@param fileStream stream used to write this object
-		///@return True if success, False otherwise
-		bool writeJSON( std::fstream * fileStream ) const;
-
-		template<typename C = T, typename Elem = C::ElemType>
-		void _writeJSON( C & o, unsigned int indent = 0 ) const;
 	private:
-		void _clear();
 	};
 
 	using Node = NodeT<UTF8String>;

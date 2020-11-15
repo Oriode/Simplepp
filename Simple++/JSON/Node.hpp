@@ -1,24 +1,40 @@
 namespace JSON {
 
 	template<typename T>
-	NodeT<T>::NodeT( Type type ) :
+	NodeT<T>::NodeT( typename NodeT<T>::Type type ) :
 		type( type ),
 		parent( NULL ) {
 
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
 	}
 
 	template<typename T>
-	NodeT<T>::NodeT( const T & name, Type type ) :
+	NodeT<T>::NodeT( const T & name, typename NodeT<T>::Type type ) :
 		name( name ),
 		type( type ),
 		parent( NULL ) {
 
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+	}
+
+	template<typename T>
+	NodeT<T>::NodeT( const T & name, const T & value ) : 
+		name(name),
+		value(value),
+		type(Type::Value),
+		parent(NULL){
+
+		// Ensure T is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
 	}
 
 	template<typename T>
 	NodeT<T>::NodeT( const NodeT<T> & node ) :
 		name( node.name ),
 		type( node.type ),
+		value( node.value),
 		parent( NULL ) {
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
 			NodeT<T> * newNode( new NodeT<T>( *( node.childrenVector.getValueIt( it ) ) ) );
@@ -30,6 +46,7 @@ namespace JSON {
 	NodeT<T>::NodeT( NodeT<T> && node ) :
 		name( Utility::toRValue( node.name ) ),
 		type( Utility::toRValue( node.type ) ),
+		value( Utility::toRValue( node.value ) ),
 		childrenMap( Utility::toRValue( node.childrenMap ) ),
 		childrenVector( Utility::toRValue( node.childrenVector ) ),
 		parent( Utility::toRValue( node.parent ) ) {
@@ -45,6 +62,7 @@ namespace JSON {
 	NodeT<T> & NodeT<T>::operator=( const NodeT<T> & node ) {
 		this -> name = node.name;
 		this -> type = node.type;
+		this -> value = node.value;
 		this -> parent = NULL;
 
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
@@ -58,6 +76,7 @@ namespace JSON {
 	NodeT<T> & NodeT<T>::operator=( NodeT<T> && node ) {
 		this -> name = Utility::toRValue( node.name );
 		this -> type = Utility::toRValue( node.type );
+		this -> value = Utility::toRValue( node.value );
 		this -> childrenVector = Utility::toRValue( node.childrenVector );
 		this -> childrenMap = Utility::toRValue( node.childrenMap );
 		this -> parent = Utility::toRValue( node.parent );
@@ -192,21 +211,19 @@ namespace JSON {
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			NodeT<T> * node( this -> childrenVector.getValueIt( it ) );
 
-			if ( node ) {
-				delete node;
-				continue;
-				switch ( node->getType() ) {
-					case NodeT<T>::Type::Value:
-					{
-						NodeValueT<T> * nodeValue( (NodeValueT<T> *) node );
-						delete nodeValue;
-						break;
-					}
-					default:
-					{
-						delete node;
-						break;
-					}
+			delete node;
+			continue;
+			switch ( node->getType() ) {
+				case NodeT<T>::Type::Value:
+				{
+					NodeValueT<T> * nodeValue( (NodeValueT<T> *) node );
+					delete nodeValue;
+					break;
+				}
+				default:
+				{
+					delete node;
+					break;
 				}
 			}
 		}
@@ -318,10 +335,7 @@ namespace JSON {
 
 	template<typename T>
 	bool NodeT<T>::read( std::fstream * fileStream ) {
-		if ( getType() == Type::Value )
-			return this -> toValue() -> read( fileStream );
-		else
-			return _read( fileStream );
+		return _read( fileStream );
 	}
 
 	template<typename T>
@@ -332,6 +346,10 @@ namespace JSON {
 		this -> childrenVector.clear();
 
 		if ( !IO::read( fileStream, &this -> name ) ) {
+			_clear();
+			return false;
+		}
+		if ( !IO::read( fileStream, &this -> value ) ) {
 			_clear();
 			return false;
 		}
@@ -358,7 +376,7 @@ namespace JSON {
 					return false;
 				}
 				
-				NodeT<T> * newNode( new NodeT<T>() );
+				NodeT<T> * newNode( new NodeT<T>( newNodeType ) );
 				newNode -> parent = this;
 				if ( !IO::read( fileStream, newNode ) ) {
 					delete newNode;
@@ -403,15 +421,14 @@ namespace JSON {
 
 	template<typename T>
 	bool NodeT<T>::write( std::fstream * fileStream ) const {
-		if ( getType() == Type::Value )
-			return this -> toValue() -> write( fileStream );
-		else
-			return _write( fileStream );
+		return _write( fileStream );
 	}
 
 	template<typename T>
 	bool NodeT<T>::_write( std::fstream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> name ) )
+			return false;
+		if ( !IO::write( fileStream, &this -> value ) )
 			return false;
 
 		Vector< NodeT<T> * >::Size nbChilds( this -> childrenVector.getSize() );
@@ -507,10 +524,6 @@ namespace JSON {
 	template<typename C, typename Elem>
 	void NodeT<T>::_writeJSON( C & o, unsigned int indent ) const {
 
-		for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
-			o << Elem( '\t' );
-		}
-
 		if ( this -> name.getSize() ) {
 			o << Elem( '"' );
 			o << this -> name;
@@ -523,25 +536,41 @@ namespace JSON {
 			o << Elem( '"' );
 			o << this -> getValue();
 			o << Elem( '"' );
-		} else if (getType() == Type::Null ){
+		} else if ( getType() == Type::Null ) {
 			o << Elem( 'n' );
 			o << Elem( 'u' );
 			o << Elem( 'l' );
 			o << Elem( 'l' );
-		} else {
-			if ( getType() == Type::Array ) {
-				o << Elem( '[' );
-			} else {
-				o << Elem( '{' );
-			}
+		} else if (getType() == Type::Array ){
+			o << Elem( '[' );
+			for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
+				if ( it != this -> childrenVector.getBegin() ) {
+					o << Elem( ',' );
+					o << Elem( ' ' );
+				}
 
-			if (this -> childrenVector.getSize() )
+				NodeT<T> * child( this -> childrenVector.getValueIt( it ) );
+				child -> _writeJSON( o, indent );
+			}
+			o << Elem( ']' );
+
+		} else {
+			o << Elem( '{' );
+			if ( this -> childrenVector.getSize() ) {
 				o << Elem( '\n' );
+				for ( unsigned int i( 0 ) ; i < indent + 1 ; i++ ) {
+					o << Elem( '\t' );
+				}
+			}
 
 			for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 				if ( it != this -> childrenVector.getBegin() ) {
 					o << Elem( ',' );
 					o << Elem( '\n' );
+
+					for ( unsigned int i( 0 ) ; i < indent + 1 ; i++ ) {
+						o << Elem( '\t' );
+					}
 				}
 
 				NodeT<T> * child( this -> childrenVector.getValueIt( it ) );
@@ -550,18 +579,13 @@ namespace JSON {
 
 			if ( this -> childrenVector.getSize() ) {
 				o << Elem( '\n' );
-				o << Elem( '\t' );
+				for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
+					o << Elem( '\t' );
+				}
 			}
 
-			if ( getType() == Type::Array ) {
-				o << Elem( ']' );
-			} else {
-				o << Elem( '}' );
-			}
+			o << Elem( '}' );
 		}
-
-		
-
 	}
 
 	template<typename T>
@@ -657,7 +681,28 @@ namespace JSON {
 			this -> type = Type::Array;
 			it++;
 			while ( functorSpace( *it ) ) it++;
-			// TODO : parse array.
+
+			while ( true ) {
+				if ( ( *it ) == C( ']' ) ) {
+					it++;
+					break;
+				}
+
+				NodeT<T> * newNode( new NodeT<T>() );
+				this -> addChild( newNode );
+
+				if ( !newNode -> readJSON( &it, endFunc ) ) {
+					return false;
+				}
+				while ( functorSpace( *it ) ) it++;
+
+				if ( ( *it ) == C( ',' ) ) {
+					it++;
+				}
+
+			}
+
+			while ( functorSpace( *it ) ) it++;
 		} else {
 			// Value node.
 			if ( ( *it ) == C( '"' ) ) {
@@ -779,20 +824,75 @@ namespace JSON {
 			}
 
 		}
-
-		
-		
-
-		
-
-
 		return true;
+	}
+
+	template<typename T>
+	bool NodeT<T>::writeFileJSON( const WString & fileName ) const {
+		std::fstream fileStream( fileName.getData(), std::ios::out );
+		if ( fileStream.is_open() ) {
+
+			if ( !writeJSON( &fileStream ) ) {
+				fileStream.close();
+				return false;
+			} else {
+				fileStream.close();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	template<typename T>
+	bool NodeT<T>::writeJSON( std::fstream * fileStream ) const {
+		std::fstream & fileStream( *fileStreamP );
+		_writeJSON<std::fstream, char>( fileStream );
+		return !( fileStreamP -> bad() );
+	}
+
+	template<typename T>
+	bool NodeT<T>::readFileJSON( const WString & fileName ) {
+		_clear();
+
+		return _readFileJSON( fileName );
+	}
+
+	template<typename T>
+	bool NodeT<T>::_readFileJSON( const WString & fileName ) {
+		_unload();
+
+		std::fstream fileStream( fileName.getData(), std::ios::in );
+		if ( fileStream.is_open() ) {
+			auto beginPos( fileStream.tellg() );
+			fileStream.seekg( 0, fileStream.end );
+			auto endPos( fileStream.tellg() );
+			fileStream.seekg( 0, fileStream.beg );
+
+			T buffer;
+			if ( !buffer.read( &fileStream, endPos - beginPos ) ) {
+				_clear();
+				return false;
+			}
+
+			fileStream.close();
+
+			return readJSON( buffer );
+		} else {
+			_clear();
+			return false;
+		}
 	}
 
 	template<typename T>
 	template<typename C, typename EndFunc>
 	bool NodeT<T>::readJSON( const C * buffer, const EndFunc & endFunc ) {
 		return readJSON( &buffer, endFunc );
+	}
+
+	template<typename T>
+	bool NodeT<T>::readJSON( const T & str ) {
+		const typename T::ElemType * buffer( str.toCString() );
+		return readJSON<T::ElemType>( &buffer );
 	}
 
 	template<typename T>
@@ -818,119 +918,30 @@ namespace JSON {
 	/************************************************************************/
 
 	template<typename T>
-	bool NodeValueT<T>::writeJSON( std::fstream * fileStreamP ) const {
-		std::fstream & fileStream( *fileStreamP );
-
-		_writeJSON<std::fstream, char>( fileStream, 0 );
-
-		return !( fileStreamP -> bad() );
-	}
-
-	template<typename T>
-	bool NodeValueT<T>::read( std::fstream * fileStream ) {
-		this -> value.clear();
-
-		/*
-		if ( !NodeT<T>::_read( fileStream ) ) {
-			return false;
-		}
-		*/
-		if ( !IO::read( fileStream, &this -> value ) ) {
-			_clear();
-			return false;
-		}
-		return true;
-	}
-
-	template<typename T>
-	bool NodeValueT<T>::write( std::fstream * fileStream ) const {
-		/*
-		if ( !NodeT<T>::_write( fileStream ) )
-			return false;
-		*/
-		if ( !IO::write( fileStream, &this -> value ) )
-			return false;
-		return true;
-	}
-
-	template<typename T>
-	void NodeValueT<T>::_clear() {
-		NodeT<T>::_clear();
-		this -> value.clear();
-	}
-
-	template<typename T>
 	NodeValueT<T>::NodeValueT() : NodeT<T>( NodeT<T>::Type::Value ) {
 
 	}
 
 	template<typename T>
-	NodeValueT<T>::NodeValueT( const T & value ) : NodeT<T>( NodeT<T>::Type::Value ),
-		value( value ) {
-
-	}
-
-	template<typename T>
-	NodeValueT<T>::NodeValueT( const T & name, const T & value ) :
-		NodeT<T>( name, NodeT<T>::Type::Value ),
-		value( value ) {
-
-	}
-
-	template<typename T>
-	NodeValueT<T>::NodeValueT( const NodeValueT<T> & node ) : NodeT( node ),
-		value( node.value ) {
-
-	}
-
-	template<typename T>
-	NodeValueT<T>::NodeValueT( NodeValueT<T> && node ) : NodeT( Utility::toRValue( node ) ),
-		value( Utility::toRValue( node.value ) ) {
-
-	}
-
-	template<typename T>
-	NodeValueT<T> & NodeValueT<T>::operator=( const NodeValueT<T> & node ) {
-		NodeT<T>::operator=( node );
-		this -> value = node.value;
-		return *this;
-	}
-
-	template<typename T>
-	NodeValueT<T> & NodeValueT<T>::operator=( NodeValueT<T> && node ) {
-		NodeT<T>::operator=( Utility::toRValue( node ) );
-		this -> value = Utility::toRValue( node.value );
-		return *this;
-	}
-
-	template<typename T>
-	const T & NodeValueT<T>::getValue() const {
-		return this -> value;
-	}
-
-	template<typename T>
-	void NodeValueT<T>::setValue( const T & value ) {
+	NodeValueT<T>::NodeValueT( const T & value ) : NodeT<T>( NodeT<T>::Type::Value ) {
 		this -> value = value;
 	}
 
 	template<typename T>
-	template<typename C, typename Elem>
-	void NodeValueT<T>::_writeJSON( C & o, unsigned int indent ) const {
-		o << this -> value;
+	NodeValueT<T>::NodeValueT( const T & name, const T & value ) :
+		NodeT<T>( name, NodeT<T>::Type::Value ) {
+		this -> value = value;
 	}
 
 	template<typename T>
-	template<typename C>
-	C NodeValueT<T>::toString( unsigned int indent ) const {
-		C newString;
-		newString.reserve( 128 );
+	NodeValueT<T>::NodeValueT( const NodeValueT<T> & node ) : NodeT( node ) {
 
-		_writeJSON<C, C::ElemType>( newString, indent );
-		return newString;
 	}
 
+	template<typename T>
+	NodeValueT<T>::NodeValueT( NodeValueT<T> && node ) : NodeT( Utility::toRValue( node ) ) {
 
-
+	}
 
 
 	/************************************************************************/
@@ -938,85 +949,32 @@ namespace JSON {
 	/************************************************************************/
 
 	template<typename T>
-	bool NodeArrayT<T>::writeJSON( std::fstream * fileStreamP ) const {
-		std::fstream & fileStream( *fileStreamP );
-
-		_writeJSON<std::fstream, char>( fileStream, 0 );
-
-		return !( fileStreamP -> bad() );
-	}
-
-	template<typename T>
-	void NodeArrayT<T>::_clear() {
-		NodeT<T>::_clear();
-		Vector<NodeT<T>>::clear();
-	}
-
-	template<typename T>
 	NodeArrayT<T>::NodeArrayT() : NodeT<T>( NodeT<T>::Type::Array ) {
 
 	}
 
 	template<typename T>
-	NodeArrayT<T>::NodeArrayT( const Vector<NodeT<T>> & v ) : NodeT<T>( NodeT<T>::Type::Array ), Vector<NodeT<T>>( v ) {
+	NodeArrayT<T>::NodeArrayT( const T & name ) : NodeT<T>( name, NodeT<T>::Type::Array ) {
 
 	}
 
 	template<typename T>
-	NodeArrayT<T>::NodeArrayT( const T & name, const Vector<NodeT<T>> & v ) :
-		NodeT<T>( name, NodeT<T>::Type::Value ),
-		Vector<NodeT<T>>( v ) {
-
-	}
-
-	template<typename T>
-	NodeArrayT<T>::NodeArrayT( const NodeArrayT<T> & node ) : NodeT( node ), Vector<NodeT<T>>( node ) {
-
-	}
-
-	template<typename T>
-	NodeArrayT<T>::NodeArrayT( NodeArrayT<T> && node ) : NodeT( Utility::toRValue( node ) ), Vector<NodeT<T>>( Utility::toRValue( node.value ) ) {
-
-	}
-
-	template<typename T>
-	NodeArrayT<T> & NodeArrayT<T>::operator=( const NodeArrayT<T> & node ) {
-		NodeT<T>::operator=( node );
-		Vector<NodeT<T>>::operator=( node );
-		return *this;
-	}
-
-	template<typename T>
-	NodeArrayT<T> & NodeArrayT<T>::operator=( NodeArrayT<T> && node ) {
-		NodeT<T>::operator=( Utility::toRValue( node ) );
-		Vector<NodeT<T>>::operator=( Utility::toRValue( node ) );
-		return *this;
-	}
-
-	template<typename T>
-	template<typename C, typename Elem>
-	void NodeArrayT<T>::_writeJSON( C & o, unsigned int indent ) const {
-
-		/*
-		o << Elem( '[' );
-		o << Elem( ' ' );
-
-		for ( typename Vector<NodeT<T>>::Iterator & it( this->getBegin() ) ; it != this->getEnd(); this->iterate( &it ) ) {
-			const T & v( this ->getValueIt( it ) );
-
-			if ( it != this -> getBegin() ) {
-				o << Elem( ',' );
-				o << Elem( ' ' );
-			}
-
-			o << v;
+	NodeArrayT<T>::NodeArrayT( const T & name, const Vector<NodeT<T> *> & v ) :
+		NodeT<T>( name, NodeT<T>::Type::Array ) {
+		for ( auto it( v.getBegin() ); it != v.getEnd(); v.iterate( &it ) ) {
+			NodeT<T> * node( v.getValueIt( it ) );
+			this -> addChild( node );
 		}
+	}
 
-		o << Elem( ' ' );
-		o << Elem( ']' );
+	template<typename T>
+	NodeArrayT<T>::NodeArrayT( const NodeArrayT<T> & node ) : NodeT( node ) {
 
-		return true;
-		*/
+	}
+
+	template<typename T>
+	NodeArrayT<T>::NodeArrayT( NodeArrayT<T> && node ) : NodeT( Utility::toRValue( node ) ) {
+
 	}
 
 }

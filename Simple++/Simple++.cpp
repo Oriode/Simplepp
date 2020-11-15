@@ -416,7 +416,7 @@ int main( int argc, char * argv[] ) {
 		}
 		{
 			JSON::Node rootNode;
-			rootNode.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null }" );
+			rootNode.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }" );
 
 			Vector<JSON::Node *> searchNode = rootNode.getElementsByName( "test2" );
 
@@ -425,6 +425,15 @@ int main( int argc, char * argv[] ) {
 			}
 
 			Log::displayLog( rootNode.getName() );
+			Log::displayLog( rootNode.toString() );
+		}
+		{
+			JSON::Node rootNode;
+			rootNode.readFileJSON( "test.json" );
+
+			assert( IO::write( WString( "testJSON.cjson" ), &rootNode ) );
+			assert( IO::read( WString( "testJSON.cjson" ), &rootNode ) );
+
 			Log::displayLog( rootNode.toString() );
 		}
 	}

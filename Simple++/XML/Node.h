@@ -210,7 +210,6 @@ namespace XML {
 
 		///@brief Parse some XML as text and append it to this object.
 		///@param str String to be read.
-		///@param endFunc Functor to check the buffer end.
 		///@return bool True if success, False otherwise.
 		bool appendXML( const T & str );
 
