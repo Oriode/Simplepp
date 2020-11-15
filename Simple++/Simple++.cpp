@@ -411,7 +411,6 @@ int main( int argc, char * argv[] ) {
 			childNode -> addChild( new JSON::NodeValue( "test", 43 ) );
 			childNode -> addChild( NULL );
 
-			Log::displayLog( rootNode.toStringDebug() );
 			Log::displayLog( rootNode.toString() );
 		}
 		{
@@ -430,6 +429,9 @@ int main( int argc, char * argv[] ) {
 		{
 			JSON::Node rootNode;
 			rootNode.readFileJSON( "test.json" );
+
+			Log::displayLog( rootNode.toString() );
+
 
 			assert( IO::write( WString( "testJSON.cjson" ), &rootNode ) );
 			assert( IO::read( WString( "testJSON.cjson" ), &rootNode ) );
