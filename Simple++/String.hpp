@@ -1,3 +1,4 @@
+#include "String.h"
 
 
 
@@ -3329,6 +3330,54 @@ BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator begi
 		endIt = getEnd();
 
 	return BasicString<T>( beginIt, typename BasicString<T>::Size( endIt - beginIt ) );
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toLower() const {
+	// Pre allocate the new string with the same size.
+	BasicString<T> lowerString( BasicString<T>::ctor::null );
+	lowerString._allocateNoNullDelete( this -> getMaxSize() );
+	lowerString.size = this -> size;
+	lowerString._updateIterators();
+
+	static const T offset( BasicString<T>::ElemType( 'a' ) - BasicString<T>::ElemType( 'A' ) );
+
+	// Iterate
+	typename BasicString<T>::Iterator itLower( lowerString.getBegin() );
+	for ( typename BasicString<T>::Iterator it( this -> getBegin() ) ; it != this -> getEnd() ; it++, itLower++ ) {
+		const T & e( *it );
+		if ( e >= BasicString<T>::ElemType( 'A' ) && e <= BasicString<T>::ElemType( 'Z' ) ) {
+			*itLower = e + offset;
+		} else {
+			*itLower = e;
+		}
+	}
+	*itLower = T( '\0' );
+	return lowerString;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toUpper() const {
+	// Pre allocate the new string with the same size.
+	BasicString<T> lowerString( BasicString<T>::ctor::null );
+	lowerString._allocateNoNullDelete( this -> getMaxSize() );
+	lowerString.size = this -> size;
+	lowerString._updateIterators();
+
+	static const T offset( BasicString<T>::ElemType( 'a' ) - BasicString<T>::ElemType( 'A' ) );
+
+	// Iterate
+	typename BasicString<T>::Iterator itLower( lowerString.getBegin() );
+	for ( typename BasicString<T>::Iterator it( this -> getBegin() ) ; it != this -> getEnd() ; it++, itLower++ ) {
+		const T & e( *it );
+		if ( e >= BasicString<T>::ElemType( 'a' ) && e <= BasicString<T>::ElemType( 'z' ) ) {
+			*itLower = e - offset;
+		} else {
+			*itLower = e;
+		}
+	}
+	*itLower = T( '\0' );
+	return lowerString;
 }
 
 

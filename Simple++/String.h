@@ -2031,54 +2031,54 @@ public:
 	void clear();
 
 	/**
-	 * @brief		Gets the first iterator
-	 * @param	c	A T to process.
-	 * @returns	The first iterator.
+	 * @brief		Get the iterator of the first occurence of a character. May return getEnd() if nothing founded.
+	 * @param	c	The character to look for.
+	 * @returns	Iterator of the first occurence or getEnd() if nothing founded.
 	 */
 	typename BasicString<T>::Iterator getFirstIt( const T & c ) const;
 	/**
-	 * @brief		Gets the last iterator
-	 * @param	c	A T to process.
-	 * @returns	The last iterator.
+	 * @brief		Get the iterator of the last occurence of a character. May return getEnd() if nothing founded.
+	 * @param	c	The character to look for.
+	 * @returns	Iterator of the last occurence or getEnd() if nothing founded.
 	 */
 	typename BasicString<T>::Iterator getLastIt( const T & c ) const;
 
 	/**
-	 * @brief		Gets the first iterator
-	 * @param	str	The string.
-	 * @returns	The first iterator.
+	 * @brief		Get the iterator of the first occurence of a string. May return getEnd() if nothing founded.
+	 * @param	c	The string to look for.
+	 * @returns	Iterator of the first occurence or getEnd() if nothing founded.
 	 */
 	typename BasicString<T>::Iterator getFirstIt( const BasicString<T> & str ) const;
 	/**
-	 * @brief		Gets the last iterator
-	 * @param	str	The string.
-	 * @returns	The last iterator.
+	 * @brief		Get the iterator of the last occurence of a string. May return getEnd() if nothing founded.
+	 * @param	c	The string to look for.
+	 * @returns	Iterator of the last occurence or getEnd() if nothing founded.
 	 */
 	typename BasicString<T>::Iterator getLastIt( const BasicString<T> & str ) const;
 
 	/**
-	 * @brief		Gets a first
-	 * @param	c	A T to process.
-	 * @returns	The first.
+	 * @brief		Get the index of the first occurence of a character. May return BasicString<T>::overflow if nothing founded.
+	 * @param	c	The character to look for.
+	 * @returns	Index of the first occurence or BasicString<T>::overflow if nothing founded.
 	 */
 	typename BasicString<T>::Size getFirst( const T & c ) const;
 	/**
-	 * @brief		Gets a last
-	 * @param	c	A T to process.
-	 * @returns	The last.
+	 * @brief		Get the index of the last occurence of a character. May return BasicString<T>::overflow if nothing founded.
+	 * @param	c	The character to look for.
+	 * @returns	Index of the last occurence or BasicString<T>::overflow if nothing founded.
 	 */
 	typename BasicString<T>::Size getLast( const T & c ) const;
 
 	/**
-	 * @brief		Gets a first
-	 * @param	str	The string.
-	 * @returns	The first.
+	 * @brief		Get the index of the first occurence of a string. May return BasicString<T>::overflow if nothing founded.
+	 * @param	c	The string to look for.
+	 * @returns	Index of the first occurence or BasicString<T>::overflow if nothing founded.
 	 */
 	typename BasicString<T>::Size getFirst( const BasicString<T> & str ) const;
 	/**
-	 * @brief		Gets a last
-	 * @param	str	The string.
-	 * @returns	The last.
+	 * @brief		Get the index of the last occurence of a string. May return BasicString<T>::overflow if nothing founded.
+	 * @param	c	The string to look for.
+	 * @returns	Index of the last occurence or BasicString<T>::overflow if nothing founded.
 	 */
 	typename BasicString<T>::Size getLast( const BasicString<T> & str ) const;
 
@@ -2132,6 +2132,9 @@ public:
 	 * @returns	The sub string.
 	 */
 	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename BasicString<T>::Iterator endIt ) const;
+
+	BasicString<T> toLower() const;
+	BasicString<T> toUpper() const;
 
 
 	/**

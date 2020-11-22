@@ -30,17 +30,19 @@
 //#define SPEEDTEST_MAP
 //#define SPEEDTEST_CAST
 //#define SPEEDTEST_ARITHMETIC
+#define SPEEDTEST_PATH
 
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-#define DEBUG_JSON
+//#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_STRING
 //#define DEBUG_DATE
+#define DEBUG_PATH
 
 
 #ifndef _LIB
@@ -50,6 +52,8 @@
 #include <map>
 #include <regex>
 #include <functional>
+#include <filesystem>
+#include <sys/stat.h>
 
 #include "Network/Network.h"
 #include "Math/Math.h"
@@ -74,6 +78,7 @@
 #include "IO/IOManagerLoadable.h"
 #include "Math/BasicDistanceable.h"
 #include "MultiMap.h"
+#include "OS/Path.h"
 
 namespace AI {
 
@@ -1081,6 +1086,8 @@ int main( int argc, char * argv[] ) {
 	// DEBUG : Strings											//
 	{
 		log( "Hello World !" );
+		log( StringASCII( "hElLo WoRlD !" ).toUpper() );
+		log( StringASCII( "hElLo WoRlD !" ).toLower() );
 		StringASCII testStr( "STRING 1 : " );
 		StringASCII strConcat( "Hello World!" );
 		Log::displayLog( StringASCII("10 in binary : ") << StringASCII( 10, 2 ) );
@@ -1126,7 +1133,20 @@ int main( int argc, char * argv[] ) {
 		// log( StringASCII( n ) );
 	}
 #endif
+#ifdef DEBUG_PATH
+	{
+		log( "Debuging Pathes..." );
+		OS::Path path("C:\\testfolder");
 
+		log( path.exists() );
+		log( path.toString() );
+
+		path.join( "folder2", "HelloWorld.txt" );
+		log( path.toString() );
+
+		log( path.basename() );
+	}
+#endif
 
 	#else		//DEBUG
 	constexpr unsigned long long G10( 10000000000 );
@@ -1921,6 +1941,49 @@ int main( int argc, char * argv[] ) {
 
 	}
 	#endif
+#if defined SPEEDTEST_PATH
+	{
+		OS::Path path( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		StringASCII pathStrASCII( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		WString pathStringW( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		std::string pathStrStdASCII( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		std::wstring pathStrStdW( L"C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+
+		std::error_code ec;
+
+		int tmp;
+		struct _stat64 s;
+
+		Log::startChrono();
+		for ( unsigned long i( 0 ); i < K100; i++ ) {
+			// tmp += ( int ) OS::Path::exists( pathStrASCII );
+			tmp += ( int ) ( _wstat64( pathStringW.toCString(), &s ) == 0);
+		}
+		Log::stopChrono();
+		Log::displayChrono( String::format( "My Path.exists() : %", tmp ) );
+
+		Log::startChrono();
+		for ( unsigned long i( 0 ); i < K100; i++ ) {
+			tmp += ( int ) std::filesystem::exists( pathStrStdASCII.c_str(), ec );
+		}
+		Log::stopChrono();
+		Log::displayChrono( String::format( "Std Path.exists(ASCII) : %", tmp ) );
+
+		Log::startChrono();
+		for ( unsigned long i( 0 ); i < K100; i++ ) {
+			tmp += ( int ) std::filesystem::exists( pathStrStdW.c_str() );
+			/*
+			__std_fs_stats _Stats;
+
+			const auto _Error = __std_fs_get_stats( pathStrStdW.c_str(), &_Stats, __std_fs_stats_flags::_Attributes | __std_fs_stats_flags::_Follow_symlinks );
+
+			tmp += ( int ) ( _Stats._Attributes != __std_fs_file_attr::_Invalid );
+			*/
+		}
+		Log::stopChrono();
+		Log::displayChrono( String::format( "Std Path.exists(WString) : %", tmp ) );
+	}
+#endif
 
 
 	
