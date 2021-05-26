@@ -64,14 +64,14 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool ParamT<T>::writeXML( std::fstream * fileStreamP ) const {
-		std::fstream & fileStream( *fileStreamP );
-		_writeXML<std::fstream, char>( fileStream );
+	bool ParamT<T>::writeXML( IO::SimpleFileStream * fileStreamP ) const {
+		IO::SimpleFileStream & fileStream( *fileStreamP );
+		_writeXML<IO::SimpleFileStream, char>( fileStream );
 		return !( fileStreamP -> bad() );
 	}
 
 	template<typename T>
-	bool ParamT<T>::read( std::fstream * fileStream ) {
+	bool ParamT<T>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, &this -> name ) ) {
 			_clear();
 			return false;
@@ -84,7 +84,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool ParamT<T>::write( std::fstream * fileStream ) const {
+	bool ParamT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> name ) )
 			return false;
 		if ( !IO::write( fileStream, &this -> value ) )

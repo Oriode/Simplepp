@@ -40,7 +40,7 @@ namespace Graphic {
 	 * @tparam	T	Type of one pixel.
 	 */
 	template<typename T = unsigned char>
-	class ImageT : public BasicIO {
+	class ImageT : public IO::BasicIO {
 	public:
 		/** @brief	Values that represent resampling modes */
 		/** @brief	Values that represent resampling modes */
@@ -377,7 +377,7 @@ namespace Graphic {
 		 *
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		/**
 		 * @brief	write this object as binary into a file stream
@@ -386,7 +386,7 @@ namespace Graphic {
 		 *
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		/**
 		 * @brief	get the format of this image
@@ -2450,7 +2450,7 @@ namespace Graphic {
 		 *
 		 * @returns	True if it succeeds, false if it fails.
 		 */
-		bool _read( std::fstream * fileStream );
+		bool _read( IO::SimpleFileStream * fileStream );
 
 
 

@@ -68,7 +68,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool TextureLoadable<T>::onRead( std::fstream * fileStream ) {
+	bool TextureLoadable<T>::onRead( IO::SimpleFileStream * fileStream ) {
 		if ( !Texture<T>::_read( fileStream ) )
 			return false;
 
@@ -80,7 +80,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool TextureLoadable<T>::onWrite( std::fstream * fileStream ) const {
+	bool TextureLoadable<T>::onWrite( IO::SimpleFileStream * fileStream ) const {
 		return Texture<T>::write( fileStream );
 	}
 
@@ -103,7 +103,7 @@ namespace Graphic {
 				}
 			case FILE:
 				{
-					std::fstream file( this -> fileName.getData(), std::ios::in | std::ios::binary );
+					IO::SimpleFileStream file( this -> fileName.getData(), std::ios::in | std::ios::binary );
 					if ( file.is_open() ) {
 						if ( !onRead( &file ) ) {
 							error( StringASCII( "[IO] Error while reading the file : " ) << this -> fileName );

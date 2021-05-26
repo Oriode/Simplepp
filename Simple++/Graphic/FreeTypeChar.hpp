@@ -71,7 +71,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	FreeTypeChar<T>::FreeTypeChar( std::fstream * fileStream ) :
+	FreeTypeChar<T>::FreeTypeChar( IO::SimpleFileStream * fileStream ) :
 		ImageT<T>( fileStream ) {
 		IO::read( fileStream, &this -> uCodePoint );
 		IO::read( fileStream, &this -> size );
@@ -156,7 +156,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool FreeTypeChar<T>::read( std::fstream * fileStream ) {
+	bool FreeTypeChar<T>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !Image::read( fileStream ) ) {
 			_clear();
 			return false;
@@ -186,7 +186,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool FreeTypeChar<T>::write( std::fstream * fileStream ) const {
+	bool FreeTypeChar<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !Image::write( fileStream ) )
 			return false;
 

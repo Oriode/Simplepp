@@ -3503,6 +3503,12 @@ std::ostream & operator<<( std::ostream & stream, const BasicString<T> & str ) {
 	return stream;
 }
 
+template<typename T>
+IO::SimpleFileStream& operator<<(IO::SimpleFileStream& stream, const BasicString<T>& str) {
+	stream << str.toCString();
+	return stream;
+}
+
 
 
 
@@ -3743,8 +3749,8 @@ void BasicString<T>::resize( typename BasicString<T>::Size newSize ) {
 
 
 template<typename T>
-bool BasicString<T>::read( std::fstream * fileStream ) {
-	if ( !SimpleIO::read( fileStream, &this -> size ) ) {
+bool BasicString<T>::read( IO::SimpleFileStream * fileStream ) {
+	if ( !IO::read( fileStream, &this -> size ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
 		_updateIterators();
@@ -3755,14 +3761,14 @@ bool BasicString<T>::read( std::fstream * fileStream ) {
 }
 
 template<typename T>
-bool BasicString<T>::read( std::fstream * fileStream, typename BasicString<T>::Size size ) {
+bool BasicString<T>::read( IO::SimpleFileStream * fileStream, typename BasicString<T>::Size size ) {
 	this -> size = size;
 	this -> maxSize = this -> size + 1;
 	_allocateNoNull( this -> maxSize );
 	_updateIterators();
 
 
-	if ( !SimpleIO::readBuffer( fileStream, getData(), getSize() ) ) {
+	if ( !IO::readBuffer( fileStream, getData(), getSize() ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
 		_updateIterators();
@@ -3775,7 +3781,7 @@ bool BasicString<T>::read( std::fstream * fileStream, typename BasicString<T>::S
 
 
 template<typename T>
-bool BasicString<T>::writeReadable( std::fstream * fileStream ) const {
+bool BasicString<T>::writeReadable( IO::SimpleFileStream * fileStream ) const {
 	if ( !IO::writeBuffer( fileStream, getData(), getSize() ) )
 		return false;
 	return true;

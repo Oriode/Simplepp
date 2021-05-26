@@ -17,7 +17,7 @@ namespace Graphic {
 
 	///@brief base class of an interpolated gradient
 	template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-	class GradientInterpolation : public BasicIO {
+	class GradientInterpolation : public IO::BasicIO {
 	public:
 		GradientInterpolation();
 
@@ -52,12 +52,12 @@ namespace Graphic {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 	protected:
 
 		C * interpolatedArray;
@@ -102,12 +102,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 		private:
 			Graphic::Gradient::Horizontal<C, InterFunc> gradient;
 		};
@@ -147,12 +147,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 		private:
 			Graphic::Gradient::Vertical<C, InterFunc> gradient;
 		};
@@ -189,12 +189,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 		private:
 			Graphic::Gradient::Linear<C, InterFunc> gradient;
 			int sizeMinusOne;
@@ -232,12 +232,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 		private:
 			Graphic::Gradient::Radial<C, InterFunc> gradient;
 			int sizeMinusOne;

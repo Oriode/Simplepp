@@ -550,7 +550,7 @@ namespace GLFW {
 
 
 
-	bool Window::read( std::fstream * fileStream ) {
+	bool Window::read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, &this -> size ) ) {
 			reset();
 			return false;
@@ -695,7 +695,7 @@ namespace GLFW {
 	}
 
 
-	bool Window::write( std::fstream * fileStream ) const {
+	bool Window::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> size ) ) 
 			return false;
 		if ( !IO::write( fileStream, &this -> title ) ) 

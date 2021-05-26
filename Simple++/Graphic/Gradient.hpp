@@ -203,7 +203,7 @@ namespace Graphic {
 
 
 		template<typename C, typename InterFunc>
-		bool Template<C, InterFunc>::read( std::fstream * fileStream ) {
+		bool Template<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
 			_unload();
 
 			Vector<Point<C> * >::Size nbPoints;
@@ -236,7 +236,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Template<C, InterFunc>::write( std::fstream * fileStream ) const {
+		bool Template<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
 
 			Vector<Point<C> * >::Size nbPoints( this -> pointsVector.getSize() );
 			if ( !IO::write( fileStream, &nbPoints ) )
@@ -508,7 +508,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Linear<C, InterFunc>::read( std::fstream * fileStream ) {
+		bool Linear<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
 			if ( !Template<C, InterFunc>::read( fileStream ) )
 				return false;
 			if ( !IO::read( fileStream, &this -> length ) )
@@ -525,7 +525,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Linear<C, InterFunc>::write( std::fstream * fileStream ) const {
+		bool Linear<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
 			if ( !Template<C, InterFunc>::write( fileStream ) )
 				return false;
 			if ( !IO::write( fileStream, &this -> length ) )
@@ -613,7 +613,7 @@ namespace Graphic {
 
 
 		template<typename C, typename InterFunc>
-		bool Radial<C, InterFunc>::read( std::fstream * fileStream ) {
+		bool Radial<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
 			if ( !Template<C, InterFunc>::read( fileStream ) )
 				return false;
 			if ( !IO::read( fileStream, &this -> center ) )
@@ -625,7 +625,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Radial<C, InterFunc>::write( std::fstream * fileStream ) const {
+		bool Radial<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
 			if ( !Template<C, InterFunc>::write( fileStream ) )
 				return false;
 			if ( !IO::write( fileStream, &this -> center ) )

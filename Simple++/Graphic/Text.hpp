@@ -12,7 +12,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool Text<T>::write( std::fstream * fileStream ) const {
+	bool Text<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, (ImageT<T> *) this ) )
 			return false;
 		if ( !IO::write( fileStream, &this -> centering ) )
@@ -28,7 +28,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool Text<T>::read( std::fstream * fileStream ) {
+	bool Text<T>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, ( ImageT<T> * ) this ) ) {
 			_clear();
 			return false;

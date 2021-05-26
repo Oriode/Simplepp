@@ -1,4 +1,4 @@
-//namespace IO {
+namespace IO {
 
 	template<typename DataType>
 	IOManager<DataType>::IOManager() {
@@ -12,7 +12,7 @@
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::write( std::fstream * fileStream ) const {
+	bool IOManager<DataType>::write(FileStream* fileStream ) const {
 		Vector<DataType *>::Size nbDatas( this -> dataVector.getSize() );
 		if ( !IO::write( fileStream, &nbDatas ) )
 			return false;
@@ -29,7 +29,7 @@
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::read( std::fstream * fileStream ) {
+	bool IOManager<DataType>::read(FileStream* fileStream ) {
 		clear();
 
 		Vector<DataType *>::Size nbDatas;
@@ -67,7 +67,7 @@
 
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const String & filePath ) {
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const OS::Path & filePath ) {
 		ObjectContainer * objectFounded( this -> dataMap[filePath] );
 		if ( objectFounded ) {
 			( objectFounded -> nbUses )++;
@@ -99,7 +99,7 @@
 
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const String & filePath, ObjectContainer & objectContainer ) {
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const OS::Path & filePath, ObjectContainer & objectContainer ) {
 		RBNode<MapObject<String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, objectContainer ) );
 		ObjectContainer & objectContainerInserted( nodeInserted -> getValue().getValue() );
 		if ( !nodeInserted ) {
@@ -167,4 +167,4 @@
 		return const_cast< ObjectContainer * >( objectId );
 	}
 
-//}
+}

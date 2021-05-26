@@ -4,39 +4,39 @@
 #include "../UTF8String.h"
 #include "SimpleIO.h"
 #include "BasicIO.h"
+#include "../OS/Path.h"
 
-class IO : public SimpleIO {
-public:
-	using SimpleIO::write;
-	using SimpleIO::read;
+namespace IO {
 
 	///@brief write an object to the file, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own write method.
-	///@param fileName file where to write.
+	///@param filePath file where to write.
 	///@param object pointer to the object we wanna write.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool write( const String & fileName, const C * object );
+	static bool write( const OS::Path & filePath, const C * object );
 
 	///@brief read from a file to an object, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own read method.
-	///@param fileName file where to read.
+	///@param filePath file where to read.
 	///@param object pointer to the object we wanna read.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool read( const String & fileName, C * object );
-
-
-	///@brief read the complete file stream (from begin to end) and allocate a new data and copy data inside.
-	///@param fileStream file stream to read.
-	///@param data [out] data buffer to be allocated and filled with the content of the file stream.
-	///@return number of char read.
-	static size_t readToBuffer( std::fstream * fileStream, char ** data );
+	static bool read( const OS::Path & filePath, C * object );
 
 	///@brief open the file and read the complete file (from begin to end) and allocate a new data and copy data inside.
-	///@param fileName file to read.
+	///@param filePath file to read.
 	///@param data [out] data buffer to be allocated and filled with the content of the file.
+	///@return number of char read (-1) if an error has occurred. (Pointer will be set to NULL if failed, allocated otherwise.)
+	template<typename T = int>
+	static size_t readToBuffer( const OS::Path & filePath, char ** data );
+
+	///@brief Read the whole file and convert it to a String Object.
+	///@template C Should be a BasicStringT.
+	///@param filePath Path to be opened.
+	///@param [out] stringP String to be modified.
 	///@return number of char read (-1) if an error has occurred.
-	static size_t readToBuffer( const String & fileName, char ** data );
-};
+	template<typename C>
+	size_t readToString(const OS::Path& filePath, BasicString<C> * stringP );
+}
 
 
 #include "IO.hpp"

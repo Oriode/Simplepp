@@ -232,7 +232,7 @@ void RBNode<T>::_clear() {
 
 
 template<typename T>
-bool RBNode<T>::write( std::fstream * fileStream ) const {
+bool RBNode<T>::write( IO::SimpleFileStream * fileStream ) const {
 	// Using an explicit stack for high performances and be sure to never crash with a stack overflow exception
 	Vector<const RBNode<T> *> stack;
 	stack.reserve( 10 );
@@ -278,7 +278,7 @@ bool RBNode<T>::write( std::fstream * fileStream ) const {
 }
 
 template<typename T>
-bool RBNode<T>::read( std::fstream * fileStream ) {
+bool RBNode<T>::read( IO::SimpleFileStream * fileStream ) {
 	// Using an explicit stack for high performances and be sure to never crash with a stack overflow exception
 	Vector<RBNode<T> *> stack;
 	stack.reserve( 10 );
@@ -1312,7 +1312,7 @@ void RBTree<I, T, Compare>::_checkTreeSorted( RBNode< MapObject<I, T> > * node, 
 
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::read( std::fstream * fileStream ) {
+bool RBTree<I, T, Compare>::read( IO::SimpleFileStream * fileStream ) {
 	_clear();
 
 	if ( !IO::read( fileStream, &this -> compareFunc ) ) {
@@ -1342,7 +1342,7 @@ bool RBTree<I, T, Compare>::read( std::fstream * fileStream ) {
 
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::write( std::fstream * fileStream ) const {
+bool RBTree<I, T, Compare>::write( IO::SimpleFileStream * fileStream ) const {
 	if ( !IO::write( fileStream, &this -> compareFunc ) )
 		return false;
 
@@ -1615,7 +1615,7 @@ Map<I, T, Compare> & Map<I, T, Compare>::operator=( Map && tree ) {
 }
 
 template<typename I, typename T, typename Compare>
-bool Map<I, T, Compare>::write( std::fstream * fileStream ) const {
+bool Map<I, T, Compare>::write( IO::SimpleFileStream * fileStream ) const {
 	if ( !RBTree<I, T, Compare>::write( fileStream ) )
 		return false;
 	return true;
@@ -1638,7 +1638,7 @@ T * Map<I, T, Compare>::insert( const I & index, const T & value ) {
 }
 
 template<typename I, typename T, typename Compare>
-bool Map<I, T, Compare>::read( std::fstream * fileStream ) {
+bool Map<I, T, Compare>::read( IO::SimpleFileStream * fileStream ) {
 	if ( !RBTree<I, T, Compare>::read( fileStream ) ) {
 		_clear();
 		return false;

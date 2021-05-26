@@ -12,7 +12,7 @@
 namespace Graphic {
 
 	template<typename T = unsigned char>		//this is the type of ONE pixel
-	class Texture : public BasicIO {
+	class Texture : public IO::BasicIO {
 	public:
 		///@brief Empty constructor, create an image unallocated of size (0:0)
 		///@param format of the image
@@ -140,12 +140,12 @@ namespace Graphic {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief get the format of this image
 		///@return format of this image (its castable in unsigned char to retrieve the number of components)
@@ -160,7 +160,7 @@ namespace Graphic {
 		enum ctor { null };
 		Texture( ctor );
 
-		bool _read( std::fstream * fileStream );
+		bool _read( IO::SimpleFileStream * fileStream );
 		void _unload();
 
 		Vector<ImageT<T> * > datas;

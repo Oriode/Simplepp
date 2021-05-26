@@ -148,7 +148,7 @@ namespace Graphic {
 		}
 
 		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read( std::fstream * fileStream ) {
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read( IO::SimpleFileStream * fileStream ) {
 			if ( !IO::read( fileStream, (Template *) this ) ) {
 				clear();
 				return false;
@@ -197,7 +197,7 @@ namespace Graphic {
 		}
 
 		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::write( std::fstream * fileStream ) const {
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::write( IO::SimpleFileStream * fileStream ) const {
 			if ( !IO::write( fileStream, ( Template * ) this ) )
 				return false;
 

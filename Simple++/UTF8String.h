@@ -29,10 +29,18 @@ public:
 	UTF8StringT( const UTF8StringT<T> & str );
 	UTF8StringT( UTF8StringT<T> && str );
 
+	/**
+	 * @brief		Constructor
+	 * @tparam	C	String type.
+	 * @param	str	Constant string.
+	 */
+	template<typename C, size_t N>
+	UTF8StringT(const C(&str)[N]);
 
-	template<typename C>
-	UTF8StringT( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
-	UTF8StringT( const std::string & str );
+
+	// template<typename C>
+	// UTF8StringT( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str );
+	// UTF8StringT( const std::string & str );
 
 	//UTF8StringT( const typename UTF8StringT<T>::typename UTF8StringT<T>::CodePoint & codePoint );
 
@@ -48,6 +56,9 @@ public:
 
 	UTF8StringT( const char & c );
 
+	///@brief Convert an UTF8 String into a standard String.
+	///			Each Code point will be converted into the C type.
+	///			No Error handling for code point overflowing the C type capability.
 	template<typename C = char>
 	operator BasicString<C>() const;
 

@@ -6,16 +6,26 @@
 #include <sys/stat.h>
 #include <filesystem>
 
-#include "../String.h"
+#include "../UTF8String.h"
 
 namespace OS {
 
 	template<typename T>
-	class PathT {
+	class PathT : public T {
 	public:
+
+		typedef T StringType;
 
 		PathT();
 		PathT( const T & str );
+
+		/**
+		 * @brief		Constructor
+		 * @tparam	C	String type.
+		 * @param	str	Constant string.
+		 */
+		template<typename C, size_t N>
+		PathT(const C(&str)[N]);
 
 		bool exists() const;
 		PathT<T> & join( const T & str );
@@ -30,8 +40,6 @@ namespace OS {
 
 		static bool exists( const T & str );
 
-
-
 	#if defined WIN32
 		static constexpr typename T::ElemType separatorChar = T::ElemType( '\\' );
 	#else
@@ -42,12 +50,10 @@ namespace OS {
 	private:
 		PathT<T> & _join( const T & str );
 		PathT<T> & _join( const PathT<T> & path );
-
-
-		T path;
 	};
 
 
+///@brief Simple overloads for Windows & other systems not handling file names the same way.
 #if defined WIN32
 	using Path = PathT<WString>;
 #else

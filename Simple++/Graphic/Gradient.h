@@ -7,6 +7,7 @@
 #pragma once
 #include "../Math/Math.h"
 #include "BasicGraphic.h"
+#include "../IO/FileStream.h"
 
 
 
@@ -70,7 +71,7 @@ namespace Graphic {
 
 		///@brief Represent a 2D Gradient for 2D image processing.
 		template<typename C, typename InterFunc = Math::InterpolationFunc::Linear>
-		class Template : public BasicIO {
+		class Template : public IO::BasicIO {
 		public:
 			///@brief destructor
 			~Template();
@@ -120,12 +121,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 
 		protected:
 			///@brief Create a new gradient.
@@ -319,12 +320,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 
 		private:
 			Math::Vec2<float> center;
@@ -414,12 +415,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 		private:
 			unsigned int length;
 			Math::Vec2<float> p;

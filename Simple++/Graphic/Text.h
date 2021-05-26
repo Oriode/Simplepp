@@ -70,12 +70,12 @@ namespace Graphic {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 	private:
 		template<typename LoadingFunc, typename Functor>
 		void _setText( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Functor & func );

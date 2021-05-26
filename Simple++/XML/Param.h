@@ -6,7 +6,7 @@
 namespace XML {
 
 	template<typename T>
-	class ParamT : public BasicIO {
+	class ParamT : public IO::BasicIO {
 	public:
 		///@brief Empty constructor
 		ParamT();
@@ -57,17 +57,17 @@ namespace XML {
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object
 		///@return True if success, False otherwise
-		bool writeXML( std::fstream * fileStream ) const;
+		bool writeXML( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream (@see writeXML for writing non binary)
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief Create an human-readable string of this param.
 		///@return Human-readable string of this param.

@@ -85,7 +85,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool Texture<T>::write( std::fstream * fileStream ) const {
+	bool Texture<T>::write( IO::SimpleFileStream * fileStream ) const {
 		Vector<ImageT<T> *>::Size nbMipmaps = this -> datas.getSize();
 		if ( !IO::write( fileStream, &nbMipmaps ) )
 			return false;
@@ -99,7 +99,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool Texture<T>::read( std::fstream * fileStream ) {
+	bool Texture<T>::read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 		return _read( fileStream );
 	}
@@ -113,7 +113,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool Texture<T>::_read( std::fstream * fileStream ) {
+	bool Texture<T>::_read( IO::SimpleFileStream * fileStream ) {
 		Vector<ImageT<T> *>::Size nbDatas;
 		if ( !IO::read( fileStream, &nbDatas ) )
 			return false;

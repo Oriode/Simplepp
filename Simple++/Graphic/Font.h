@@ -16,7 +16,7 @@
 namespace Graphic {
 
 	template<typename T = unsigned char, typename LoadingFunc = FontLoadingFunc::Default>
-	class _Font : public BasicIO {
+	class _Font : public IO::BasicIO {
 	public:
 
 		class Template {
@@ -33,7 +33,7 @@ namespace Graphic {
 
 		///@brief Constructor from a fileStream
 		///@param fileStream Stream to read to create this object
-		_Font( std::fstream * fileStream );
+		_Font( IO::SimpleFileStream * fileStream );
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
@@ -99,12 +99,12 @@ namespace Graphic {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief get the line height of this font.
 		///@return line height
@@ -145,7 +145,7 @@ namespace Graphic {
 		enum ctor { null };
 		
 
-		bool _read( std::fstream * fileStream );
+		bool _read( IO::SimpleFileStream * fileStream );
 		void _clear();
 		void _nullify();
 		bool _loadFreeType( const char * fileDump, size_t size, float pixSize );

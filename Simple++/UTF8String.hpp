@@ -1,9 +1,84 @@
 template<typename T>
 const UTF8StringT<T> UTF8StringT<T>::null = UTF8StringT<T>( "" );
 
-
 template<typename T>
 UTF8StringT<T>::UTF8StringT() {}
+
+template<typename T>
+template<typename C>
+UTF8StringT<T>::UTF8StringT(const C* str) :
+	BasicString<T>(str) {
+	_contructorEQUAL(str, BasicString<C>::getSize(str));
+}
+
+template<typename T>
+UTF8StringT<T>::UTF8StringT(const char* str) :
+	BasicString<T>(str) {}
+
+template<typename T>
+template<typename C>
+UTF8StringT<T>::UTF8StringT(const C* str, typename UTF8StringT<T>::Size size) :
+	BasicString<T>(ctor::null) {
+	_contructorEQUAL(str, size);
+}
+
+template<typename T>
+UTF8StringT<T>::UTF8StringT(const char* str, typename UTF8StringT<T>::Size size) :
+	BasicString<T>(str, size) {}
+
+template<typename T>
+template<typename C>
+UTF8StringT<T>::UTF8StringT(RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt) : BasicString<T>(beginIt, endIt) {
+
+}
+
+template<typename T>
+template<typename C>
+UTF8StringT<T>::UTF8StringT(const BasicString<C>& str) :
+	BasicString<T>(ctor::null) {
+	_contructorEQUAL(str.getData(), str.getSize());
+}
+
+template<typename T>
+UTF8StringT<T>::UTF8StringT(const BasicString<T>& str) :
+	BasicString<T>(str) {}
+
+template<typename T>
+UTF8StringT<T>::UTF8StringT(const UTF8StringT<T>& str) :
+	BasicString<T>(str) {}
+
+template<typename T>
+UTF8StringT<T>::UTF8StringT(UTF8StringT<T>&& str) :
+	BasicString<T>(Utility::toRValue(str)) {}
+
+template<typename T>
+template<typename C, size_t N>
+UTF8StringT<T>::UTF8StringT(const C(&str)[N]) :
+	BasicString<T>(str) {}
+
+/*
+template<typename T>
+template<typename C>
+UTF8StringT<T>::UTF8StringT(const std::basic_string<C, std::char_traits<C>, std::allocator<C> >& str) :
+	BasicString<T>(ctor::null) {
+	_contructorEQUAL(str.data(), str.size());
+}
+
+template<typename T>
+UTF8StringT<T>::UTF8StringT(const std::string& str) :
+	BasicString<T>(str) {}
+*/
+
+
+
+
+
+
+
+
+
+
+
 
 template<typename T>
 UTF8StringT<T>::UTF8StringT( const int & i ) :
@@ -45,29 +120,17 @@ template<typename T>
 UTF8StringT<T>::UTF8StringT( const char & c ) :
 	BasicString<T>( c ) {}
 
-template<typename T>
-UTF8StringT<T>::UTF8StringT( const BasicString<T> & str ) :
-	BasicString<T>( str ) {}
 
-template<typename T>
-UTF8StringT<T>::UTF8StringT( const std::string & str ) :
-	BasicString<T>( str ) {}
 
-template<typename T>
-UTF8StringT<T>::UTF8StringT( const UTF8StringT<T> & str ) :
-	BasicString<T>( str ) {}
 
-template<typename T>
-UTF8StringT<T>::UTF8StringT( UTF8StringT<T> && str ) :
-	BasicString<T>( Utility::toRValue( str ) ) {}
 
-template<typename T>
-UTF8StringT<T>::UTF8StringT( const char * str, typename UTF8StringT<T>::Size size ) :
-	BasicString<T>( str, size ) {}
 
-template<typename T>
-UTF8StringT<T>::UTF8StringT( const char * str ) :
-	BasicString<T>( str ) {}
+
+
+
+
+
+
 
 /*
 template<typename T>
@@ -484,39 +547,7 @@ UTF8StringT<T> & UTF8StringT<T>::operator=( const BasicString<C> & str ) {
 	return _operatorEQUAL( str.getData(), str.getSize() );
 }
 
-template<typename T>
-template<typename C>
-UTF8StringT<T>::UTF8StringT( const std::basic_string<C, std::char_traits<C>, std::allocator<C> > & str ) :
-	BasicString<T>( ctor::null ) {
-	_contructorEQUAL( str.data(), str.size() );
-}
 
-template<typename T>
-template<typename C>
-UTF8StringT<T>::UTF8StringT( const BasicString<C> & str ) :
-	BasicString<T>( ctor::null ) {
-	_contructorEQUAL( str.getData(), str.getSize() );
-}
-
-template<typename T>
-template<typename C>
-UTF8StringT<T>::UTF8StringT( const C * str, typename UTF8StringT<T>::Size size ) :
-	BasicString<T>( ctor::null ) {
-	_contructorEQUAL( str, size );
-}
-
-template<typename T>
-template<typename C>
-UTF8StringT<T>::UTF8StringT( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt ) : BasicString<T>(beginIt, endIt) {
-
-}
-
-template<typename T>
-template<typename C>
-UTF8StringT<T>::UTF8StringT( const C * str ) :
-	BasicString<T>( str ) {
-	_contructorEQUAL( str, BasicString<C>::getSize( str ) );
-}
 
 template<typename T>
 template<typename C>

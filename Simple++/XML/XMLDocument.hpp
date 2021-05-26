@@ -21,8 +21,8 @@ namespace XML {
 	}
 
 	template<typename T>
-	DocumentT<T>::DocumentT( const WString & fileName ) {
-		_readFileXML( fileName );
+	DocumentT<T>::DocumentT( const OS::Path & filePath ) {
+		_readFileXML( filePath );
 	}
 
 	template<typename T>
@@ -183,33 +183,26 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::writeXML( std::fstream * fileStreamP ) const {
-		std::fstream & fileStream( *fileStreamP );
-		_writeXML<std::fstream, char>( fileStream );
-		return !( fileStreamP -> bad() );
+	bool DocumentT<T>::writeXML( IO::SimpleFileStream * fileStreamP ) const {
+		IO::SimpleFileStream & fileStream( *fileStreamP );
+		_writeXML<IO::SimpleFileStream, char>( fileStream );
+		return !( fileStreamP -> hasFailed() );
 	}
 
 	template<typename T>
-	bool DocumentT<T>::writeFileXML( const WString & fileName ) const {
-		std::fstream fileStream( fileName.getData(), std::ios::out );
-		if ( fileStream.is_open() ) {
-
-			if ( !writeXML( &fileStream ) ) {
-				fileStream.close();
-				return false;
-			} else {
-				fileStream.close();
-				return true;
-			}
+	bool DocumentT<T>::writeFileXML( const OS::Path & filePath ) const {
+		IO::FileStream fileStream( filePath, IO::OpenMode::Write );
+		if ( fileStream.isOpen() ) {
+			return writeXML(&fileStream);
 		}
 		return false;
 	}
 
 	template<typename T>
-	bool DocumentT<T>::readFileXML( const WString & fileName ) {
+	bool DocumentT<T>::readFileXML( const OS::Path & filePath ) {
 		_clear();
 
-		return _readXML( fileName );
+		return _readXML( filePath );
 	}
 
 	template<typename T>
@@ -285,7 +278,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::read( std::fstream * fileStream ) {
+	bool DocumentT<T>::read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 		this -> rootNode = NULL;
 
@@ -308,7 +301,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::write( std::fstream * fileStream ) const {
+	bool DocumentT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> version ) )
 			return false;
 		if ( !IO::write( fileStream, &this -> encoding ) )
@@ -333,27 +326,15 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::_readFileXML( const WString & fileName ) {
+	bool DocumentT<T>::_readFileXML( const OS::Path & filePath ) {
 		_unload();
 		this -> rootNode = NULL;
 
-		std::fstream fileStream( fileName.getData(), std::ios::in );
-		if ( fileStream.is_open() ) {
-			auto beginPos( fileStream.tellg() );
-			fileStream.seekg( 0, fileStream.end );
-			auto endPos( fileStream.tellg() );
-			fileStream.seekg( 0, fileStream.beg );
-
-			T buffer;
-			if ( !buffer.read( &fileStream, endPos - beginPos ) ) {
-				_clear();
-				return false;
-			}
-
-			fileStream.close();
-
-			return readXML( buffer );
-		} else {
+		T strOut;
+		if (IO::readToString(filePath, &strOut) != size_t(-1)) {
+			return readXML(strOut);
+		}
+		else {
 			_clear();
 			return false;
 		}

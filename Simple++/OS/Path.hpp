@@ -10,13 +10,28 @@ namespace OS {
 	}
 
 	template<typename T>
-	PathT<T>::PathT( const T & str ) : path(str) {
+	PathT<T>::PathT( const T & str ) : T(str) {
 
 	}
 
 	template<typename T>
+	template<typename C, size_t N>
+	PathT<T>::PathT(const C(&str)[N]) :
+		T(str)
+	{
+
+	}
+
+
+
+
+
+
+
+
+	template<typename T>
 	inline bool PathT<T>::exists() const {
-		return PathT<T>::exists( this -> path );
+		return PathT<T>::exists( *this );
 	}
 
 	template<typename T>
@@ -44,17 +59,17 @@ namespace OS {
 	T PathT<T>::basename() const {
 		T result;
 
-		const typename T::Iterator separetorIt( this -> path.getLastIt( PathT<T>::separatorChar ) );
-		if ( separetorIt == this -> path.getEnd() ) {
-			return this -> path;
+		const typename T::Iterator separetorIt( this -> getLastIt( PathT<T>::separatorChar ) );
+		if ( separetorIt == this -> getEnd() ) {
+			return *this;
 		} else {
-			return this -> path.getSubStr( separetorIt + 1, this -> path.getEnd() );
+			return this -> getSubStr( separetorIt + 1, this -> getEnd() );
 		}
 	}
 
 	template<typename T>
 	const T & PathT<T>::toString() const {
-		return this -> path;
+		return *this;
 	}
 
 	template<typename T>
@@ -64,8 +79,8 @@ namespace OS {
 
 	template<typename T>
 	inline PathT<T> & PathT<T>::_join( const T & str ) {
-		this -> path.concat( PathT<T>::separatorChar );
-		this -> path.concat( str );
+		this -> concat( PathT<T>::separatorChar );
+		this -> concat( str );
 		return *this;
 	}
 

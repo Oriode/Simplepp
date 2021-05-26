@@ -46,12 +46,12 @@ namespace Graphic {
 		///@brief function to be overloaded to set the action when reading from a stream.
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool onRead( std::fstream * fileStream ) override;
+		virtual bool onRead( IO::SimpleFileStream * fileStream ) override;
 
 		///@brief function to be overloaded to set the action when writing from a stream.
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool onWrite( std::fstream * fileStream ) const override;
+		virtual bool onWrite( IO::SimpleFileStream * fileStream ) const override;
 
 	private:
 		WString fileName;

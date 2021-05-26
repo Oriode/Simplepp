@@ -20,7 +20,7 @@
    * @tparam	T	Generic type parameter.
    */
 template<typename I, typename T>
-class MapObject : public BasicSimpleIO {
+class MapObject : public IO::BasicSimpleIO {
 public:
 	/** @brief	Default constructor */
 	MapObject();
@@ -138,7 +138,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream );
+	bool read( IO::SimpleFileStream * fileStream );
 
 	/**
 	 * @brief 	write this object as binary into a file stream
@@ -147,7 +147,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool write( std::fstream * fileStream ) const;
+	bool write( IO::SimpleFileStream * fileStream ) const;
 };
 
 
@@ -166,7 +166,7 @@ public:
  * @tparam	T	Generic type parameter.
  */
 template<typename T>
-class RBNode : public BasicIO {
+class RBNode : public IO::BasicIO {
 public:
 	/** @brief	Values that represent colors */
 	enum class Color : bool {
@@ -309,7 +309,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream );
+	bool read( IO::SimpleFileStream * fileStream );
 
 	/**
 	 * @brief 	write this object as binary into a file stream (children will be wrote recursively)
@@ -318,7 +318,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool write( std::fstream * fileStream ) const;
+	bool write( IO::SimpleFileStream * fileStream ) const;
 
 	/************************************************************************/
 	/* STATIC                                                               */
@@ -480,7 +480,7 @@ private:
  * @sa	https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
  */
 template<typename I, typename T, typename Compare = Math::Compare::Template()>
-class RBTree : public BasicIO {
+class RBTree : public IO::BasicIO {
 public:
 	/** @brief	Defines an alias representing the iterator */
 	typedef RBNode< MapObject<I, T> > * Iterator;
@@ -862,7 +862,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream );
+	bool read( IO::SimpleFileStream * fileStream );
 
 	/**
 	 * @brief 	Write this object as binary into a file stream (children will be wrote recursively)
@@ -871,7 +871,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool write( std::fstream * fileStream ) const;
+	bool write( IO::SimpleFileStream * fileStream ) const;
 protected:
 	/** @brief	Clears this object to its blank/initial state */
 	void _clear();

@@ -9,6 +9,7 @@
 #include "../Vector.h"
 #include "../MultiMap.h"
 #include "../Math/Math.h"
+#include "../OS/Path.h"
 
 
 namespace JSON {
@@ -24,7 +25,7 @@ namespace JSON {
 
 	///@brief Represent a node in the JSON Tree, Only 3 Types available ( Object, Array and Value )
 	template<typename T>
-	class BasicNodeT : public BasicIO {
+	class BasicNodeT : public IO::BasicIO {
 	public:
 		enum class Type : unsigned int {
 			Object,
@@ -149,14 +150,14 @@ namespace JSON {
 		virtual BasicNodeT<T> * removeChild( typename Vector< BasicNodeT<T> * >::Size i );
 
 		///@brief Write this object as an JSON file
-		///@param fileName Where to write
+		///@param filePath Where to write
 		///@return True if success, False otherwise
-		virtual bool writeFileJSON( const WString & fileName ) const;
+		virtual bool writeFileJSON( const OS::Path & filePath ) const;
 
 		///@brief Read this object as an JSON file
-		///@param fileName Where to write
+		///@param filePath Where to write
 		///@return True if success, False otherwise
-		bool readFileJSON( const WString & fileName );
+		bool readFileJSON( const OS::Path & filePath );
 
 		///@brief Read this object using a pointer to a String Iterator.
 		///@param buffer Pointer to a String iterator
@@ -176,7 +177,7 @@ namespace JSON {
 		///@param fileStream stream used to write this object
 		///@param indent Indentation.
 		///@return True if success, False otherwise
-		bool writeJSON( std::fstream * fileStream, unsigned int indent = 0 ) const;
+		bool writeJSON( IO::SimpleFileStream * fileStream, unsigned int indent = 0 ) const;
 
 		template<typename C = T>
 		bool writeJSON( C & str, unsigned int indent = 0 ) const;
@@ -184,12 +185,12 @@ namespace JSON {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool read( std::fstream * fileStream );
+		virtual bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool write( std::fstream * fileStream ) const;
+		virtual bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief Print an human-readable String of this BasicNodeT<T> and it's children.
 		///@param indent Identation.
@@ -328,12 +329,12 @@ namespace JSON {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream ) override;
+		bool read( IO::SimpleFileStream * fileStream ) override;
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const override;
+		bool write( IO::SimpleFileStream * fileStream ) const override;
 
 		///@brief Write this node to an Object that support opperator '<<'.
 		///@param o Object to write to.
@@ -403,12 +404,12 @@ namespace JSON {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream ) override;
+		bool read( IO::SimpleFileStream * fileStream ) override;
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const override;
+		bool write( IO::SimpleFileStream * fileStream ) const override;
 
 		///@brief Write this node to an Object that support opperator '<<'.
 		///@param o Object to write to.

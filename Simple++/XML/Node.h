@@ -20,7 +20,7 @@ namespace XML {
 
 	///@brief Represent a node in the XML Tree, Only 3 Types available ( Element, Text and Document )
 	template<typename T>
-	class NodeT : public BasicIO {
+	class NodeT : public IO::BasicIO {
 	public:
 		enum class Type : unsigned int { 
 			Element = 1,
@@ -190,7 +190,7 @@ namespace XML {
 		///@param fileStream stream used to write this object
 		///@param tabs Indentation.
 		///@return True if success, False otherwise
-		bool writeXML( std::fstream * fileStream, unsigned int tabs = 0 ) const;
+		bool writeXML( IO::SimpleFileStream * fileStream, unsigned int tabs = 0 ) const;
 
 		///@brief Write this Node to an Object that support operator '<<'.
 		///@param str Object to write to.
@@ -216,12 +216,12 @@ namespace XML {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.
@@ -257,8 +257,8 @@ namespace XML {
 	protected:
 		void _clear();
 		void _unload();
-		bool _write( std::fstream * fileStream ) const;
-		bool _read( std::fstream * fileStream );
+		bool _write( IO::SimpleFileStream * fileStream ) const;
+		bool _read( IO::SimpleFileStream * fileStream );
 		bool _setChildName( NodeT<T> * child, const T & name );
 		bool _setChildId( NodeT<T> * child, const T & id );
 		void _getElementsById( Vector < NodeT<T> * > * nodeVector, const T & id ) const;
@@ -327,17 +327,17 @@ namespace XML {
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object
 		///@return True if success, False otherwise
-		bool writeXML( std::fstream * fileStream ) const;
+		bool writeXML( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.

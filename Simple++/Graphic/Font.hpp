@@ -9,7 +9,7 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( std::fstream * fileStream ) {
+	_Font<T, LoadingFunc>::_Font( IO::SimpleFileStream * fileStream ) {
 		_nullify();
 		if ( !_read( fileStream ) )
 			_clear();
@@ -218,7 +218,7 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::write( std::fstream * fileStream ) const {
+	bool _Font<T, LoadingFunc>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> memorySize ) )
 			return false;
 		if ( !IO::writeBuffer( fileStream, this -> memoryFontObject, this -> memorySize ) )
@@ -274,7 +274,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::read( std::fstream * fileStream ) {
+	bool _Font<T, LoadingFunc>::read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 		_nullify();
 		if ( !_read( fileStream ) ) {
@@ -285,7 +285,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::_read( std::fstream * fileStream ) {
+	bool _Font<T, LoadingFunc>::_read( IO::SimpleFileStream * fileStream ) {
 
 
 		if ( !IO::read( fileStream, &this -> memorySize ) ) 

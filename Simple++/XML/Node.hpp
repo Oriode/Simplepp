@@ -422,10 +422,10 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::writeXML( std::fstream * fileStreamP, unsigned int tabs ) const {
-		std::fstream & fileStream( *fileStreamP );
+	bool NodeT<T>::writeXML( IO::SimpleFileStream * fileStreamP, unsigned int tabs ) const {
+		IO::SimpleFileStream & fileStream( *fileStreamP );
 		
-		_writeXML<std::fstream, char>( fileStream, tabs );
+		_writeXML<IO::SimpleFileStream, char>( fileStream, tabs );
 
 		return !( fileStreamP -> bad() );
 	}
@@ -691,7 +691,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::read( std::fstream * fileStream ) {
+	bool NodeT<T>::read( IO::SimpleFileStream * fileStream ) {
 		if ( getType() == Type::Text )
 			return this -> toText() -> read( fileStream );
 		else
@@ -699,7 +699,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::_read( std::fstream * fileStream ) {
+	bool NodeT<T>::_read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 		this -> paramsMap.clear();
 		this -> paramsVector.clear();
@@ -823,7 +823,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::write( std::fstream * fileStream ) const {
+	bool NodeT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( getType() == Type::Text )
 			return this -> toText() -> write( fileStream );
 		else
@@ -831,7 +831,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::_write( std::fstream * fileStream ) const {
+	bool NodeT<T>::_write( IO::SimpleFileStream * fileStream ) const {
 
 
 		if ( !IO::write( fileStream, &this -> name ) )
@@ -982,16 +982,16 @@ namespace XML {
 	/************************************************************************/
 
 	template<typename T>
-	bool NodeTextT<T>::writeXML( std::fstream * fileStreamP ) const {
-		std::fstream & fileStream( *fileStreamP );
+	bool NodeTextT<T>::writeXML( IO::SimpleFileStream * fileStreamP ) const {
+		IO::SimpleFileStream & fileStream( *fileStreamP );
 
-		_writeXML<std::fstream, char>( fileStream, 0 );
+		_writeXML<IO::SimpleFileStream, char>( fileStream, 0 );
 
 		return !( fileStreamP -> bad() );
 	}
 
 	template<typename T>
-	bool NodeTextT<T>::read( std::fstream * fileStream ) {
+	bool NodeTextT<T>::read( IO::SimpleFileStream * fileStream ) {
 		this -> value.clear();
 
 		/*
@@ -1007,7 +1007,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeTextT<T>::write( std::fstream * fileStream ) const {
+	bool NodeTextT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		/*
 		if ( !NodeT<T>::_write( fileStream ) )
 			return false;

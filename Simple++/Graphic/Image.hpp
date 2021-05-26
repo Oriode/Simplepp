@@ -441,7 +441,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool ImageT<T>::write( std::fstream * fileStream ) const {
+	bool ImageT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> size ) )
 			return false;
 		if ( !IO::write( fileStream, &this -> format ) )
@@ -472,7 +472,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool ImageT<T>::_read( std::fstream * fileStream ) {
+	bool ImageT<T>::_read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, &this -> size ) ) {
 			this -> size.x = 0;
 			this -> size.y = 0;
@@ -505,7 +505,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool ImageT<T>::read( std::fstream * fileStream ) {
+	bool ImageT<T>::read( IO::SimpleFileStream * fileStream ) {
 		delete[] this -> buffer;
 		return _read( fileStream );
 	}

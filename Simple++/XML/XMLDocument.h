@@ -12,7 +12,7 @@
 namespace XML {
 
 	template<typename T>
-	class DocumentT : public BasicIO {
+	class DocumentT : public IO::BasicIO {
 	public:
 		///@brief Empty constructor
 		DocumentT();
@@ -22,8 +22,8 @@ namespace XML {
 		DocumentT( const T & str );
 
 		///@brief Constructor from an XML file
-		///@param fileName File to be opened and parsed
-		DocumentT( const WString & fileName );
+		///@param filePath File to be opened and parsed
+		DocumentT( const OS::Path & filePath );
 
 		///@brief Destructor
 		~DocumentT();
@@ -78,19 +78,19 @@ namespace XML {
 		void setEncoding( const T & encoding );
 
 		///@brief Write this object as an XML file
-		///@param fileName Where to write
+		///@param filePath Where to write
 		///@return True if success, False otherwise
-		bool writeFileXML( const WString & fileName ) const;
+		bool writeFileXML( const OS::Path & filePath ) const;
 
 		///@brief Write this object as an XML file
 		///@param fileStream Where to write
 		///@return True if success, False otherwise
-		bool writeXML( std::fstream * fileStream ) const;
+		bool writeXML( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief Read this object as an XML file
-		///@param fileName Where to write
+		///@param filePath Where to write
 		///@return True if success, False otherwise
-		bool readFileXML( const WString & fileName );
+		bool readFileXML( const OS::Path & filePath );
 
 		///@brief Read this object using a pointer to a String Iterator.
 		///@param buffer Pointer to a String iterator
@@ -109,12 +109,12 @@ namespace XML {
 		///@brief read from a file stream ( Data has to be wrote by write() )
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( std::fstream * fileStream );
+		bool read( IO::SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( std::fstream * fileStream ) const;
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		///@brief Create an human-readable string of this param.
 		///@return Human-readable string of this param.
@@ -137,7 +137,7 @@ namespace XML {
 
 		void _clear();
 		void _unload();
-		bool _readFileXML( const WString & fileName );
+		bool _readFileXML( const OS::Path & filePath );
 
 		template<typename C>
 		static bool cmpStr( const C * b1, const C * b2, int size );

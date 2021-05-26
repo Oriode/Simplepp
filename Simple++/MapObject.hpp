@@ -77,19 +77,19 @@ bool MapObject<I, T>::operator<( const MapObject & o ) const {
 
 
 template<typename I, typename T>
-bool MapObject<I, T>::write( std::fstream * fileStream ) const {
-	if ( !SimpleIO::write( fileStream, &this -> index ) )
+bool MapObject<I, T>::write( IO::SimpleFileStream * fileStream ) const {
+	if ( !IO::write( fileStream, &this -> index ) )
 		return false;
-	if ( !SimpleIO::write( fileStream, &this -> value ) )
+	if ( !IO::write( fileStream, &this -> value ) )
 		return false;
 	return true;
 }
 
 template<typename I, typename T>
-bool MapObject<I, T>::read( std::fstream * fileStream ) {
-	if ( !SimpleIO::read( fileStream, &this -> index ) )
+bool MapObject<I, T>::read( IO::SimpleFileStream * fileStream ) {
+	if ( !IO::read( fileStream, &this -> index ) )
 		return false;
-	if ( !SimpleIO::read( fileStream, &this -> value ) )
+	if ( !IO::read( fileStream, &this -> value ) )
 		return false;
 	return true;
 }

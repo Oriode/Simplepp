@@ -9,10 +9,11 @@
 #include "BasicIO.h"
 #include "../Utility.h"
 
-//namespace IO  {
+namespace IO  {
 
+	///@brief Part of the IOManager.
 	template<typename DataType>
-	class IOHandler : BasicIO {
+	class IOHandler : public BasicIO {
 		public:
 			///@brief Empty Constructor
 			///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
@@ -56,7 +57,7 @@
 			///@brief Set the object using a file path (memory management is assured)
 			///@param filePath Path to the file to be loaded.
 			///@return Boolean if the init has worked
-			bool setObject( const String & filePath );
+			bool setObject( const OS::Path & filePath );
 
 			///@brief Set the object using an externally generated object (you still have to handle memory management in this case)
 			///@param dataObject Object already defined to link to this handler
@@ -66,12 +67,12 @@
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( FileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( FileStream * fileStream ) const;
 
 		private:
 			IOManager<DataType> * manager;
@@ -79,6 +80,7 @@
 			DataType * objectLoaded;
 			typename IOManager<DataType>::ObjectId objectId;
 	};
-//}
+
+}
 
 #include "IOHandler.hpp"

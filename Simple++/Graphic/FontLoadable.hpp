@@ -48,7 +48,7 @@ namespace Graphic {
 			break;
 		} case LoadingType::FILE:
 		{
-			std::fstream file( this -> fileName.getData(), std::ios::in | std::ios::binary );
+			IO::SimpleFileStream file( this -> fileName.getData(), std::ios::in | std::ios::binary );
 			if ( file.is_open() ) {
 				if ( !onRead( &file ) ) {
 					error( String( TEXT( "Error while reading the file : " ) ) << this -> fileName );
@@ -73,12 +73,12 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool _FontLoadable<T, LoadingFunc>::onRead( std::fstream * fileStream ) {
+	bool _FontLoadable<T, LoadingFunc>::onRead( IO::SimpleFileStream * fileStream ) {
 		return _Font::_read( fileStream );
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool _FontLoadable<T, LoadingFunc>::onWrite( std::fstream * fileStream ) const {
+	bool _FontLoadable<T, LoadingFunc>::onWrite( IO::SimpleFileStream * fileStream ) const {
 		return _Font::write( fileStream );
 	}
 

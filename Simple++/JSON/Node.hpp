@@ -185,13 +185,13 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::writeJSON( std::fstream * fileStreamP, unsigned int indent ) const {
-		std::fstream & fileStream( *fileStreamP );
+	bool BasicNodeT<T>::writeJSON( IO::SimpleFileStream * fileStreamP, unsigned int indent ) const {
+		IO::SimpleFileStream & fileStream( *fileStreamP );
 
 		// Call the virtual protected method.
-		_writeJSON<std::fstream, char>( fileStream, indent );
+		_writeJSON<IO::SimpleFileStream, char>( fileStream, indent );
 
-		return !( fileStreamP -> bad() );
+		return !( fileStreamP -> hasFailed() );
 	}
 
 	template<typename T>
@@ -223,7 +223,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::read( std::fstream * fileStream ) {
+	bool BasicNodeT<T>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, &this -> name ) ) {
 			_clear();
 			return false;
@@ -232,7 +232,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::write( std::fstream * fileStream ) const {
+	bool BasicNodeT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> name ) )
 			return false;
 		return true;
@@ -253,42 +253,23 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::writeFileJSON( const WString & fileName ) const {
-		std::fstream fileStream( fileName.getData(), std::ios::out );
-		if ( fileStream.is_open() ) {
-
-			if ( !writeJSON( &fileStream ) ) {
-				fileStream.close();
-				return false;
-			} else {
-				fileStream.close();
-				return true;
-			}
+	bool BasicNodeT<T>::writeFileJSON( const OS::Path & filePath ) const {
+		IO::FileStream fileStream( filePath, IO::OpenMode::Write );
+		if ( fileStream.isOpen() ) {
+			return writeJSON(&fileStream);
 		}
 		return false;
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::readFileJSON( const WString & fileName ) {
+	bool BasicNodeT<T>::readFileJSON( const OS::Path & filePath ) {
 		_unload();
 
-		std::fstream fileStream( fileName.getData(), std::ios::in );
-		if ( fileStream.is_open() ) {
-			auto beginPos( fileStream.tellg() );
-			fileStream.seekg( 0, fileStream.end );
-			auto endPos( fileStream.tellg() );
-			fileStream.seekg( 0, fileStream.beg );
-
-			T buffer;
-			if ( !buffer.read( &fileStream, endPos - beginPos ) ) {
-				_clear();
-				return false;
-			}
-
-			fileStream.close();
-
-			return readJSON( buffer );
-		} else {
+		T strOut;
+		if (IO::readToString(filePath, &strOut) != size_t(-1)) {
+			return readJSON(strOut);
+		}
+		else {
 			_clear();
 			return false;
 		}
@@ -578,7 +559,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::read( std::fstream * fileStream ) {
+	bool ObjectNodeT<T>::read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 
 		this -> childrenMap.clear();
@@ -705,7 +686,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::write( std::fstream * fileStream ) const {
+	bool ObjectNodeT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !BasicNodeT<T>::write( fileStream ) ) {
 			return false;
 		}
@@ -1126,7 +1107,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool NodeValueT<T>::read( std::fstream * fileStream ) {
+	bool NodeValueT<T>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !BasicNodeT<T>::read( fileStream ) ) {
 			_clear();
 			return false;
@@ -1139,7 +1120,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool NodeValueT<T>::write( std::fstream * fileStream ) const {
+	bool NodeValueT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !BasicNodeT<T>::write( fileStream ) ) {
 			return false;
 		}

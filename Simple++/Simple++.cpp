@@ -34,15 +34,15 @@
 
 
 //#define DEBUG_GRAPHIC
-//#define DEBUG_XML
-//#define DEBUG_JSON
+#define DEBUG_XML
+#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_STRING
 //#define DEBUG_DATE
-#define DEBUG_PATH
+//#define DEBUG_PATH
 
 
 #ifndef _LIB
@@ -361,7 +361,7 @@ int main( int argc, char * argv[] ) {
 	{
 		UTF8String testStr( "Hello world" );
 		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
-		XML::Document testDocument( WString( "test.xml" ) );
+		XML::Document testDocument( OS::Path( "test.xml" ) );
 
 		auto nodeTest( testDocument.getElementsById( "test" ) );
 
@@ -383,7 +383,7 @@ int main( int argc, char * argv[] ) {
 		
 
 		Log::displayLog( testDocument.toString<WString>() );
-		testDocument.writeXML( WString( "testOut.xml" ) );
+		testDocument.writeFileXML( OS::Path( "testOut.xml" ) );
 
 
 
@@ -425,7 +425,8 @@ int main( int argc, char * argv[] ) {
 			Vector<JSON::Node *> searchNode = rootNode.getElementsByName( "test2" );
 
 			if ( searchNode.getSize() ) {
-				Log::displayLog( searchNode[ 0 ]->getValue() );
+				// Should display "Hello World !"
+				Log::displayLog( searchNode[ 0 ] -> getValue() );
 			}
 
 			Log::displayLog( rootNode.getName() );
@@ -1041,8 +1042,8 @@ int main( int argc, char * argv[] ) {
 		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
 		scanf_s( "%d", &result );
 
-		char testData[ 50 ] = "Hello World";
-		char testData2[ 50 ] = "";
+		char messageToSend[] = "Hello World !\xE2\x9C\xAD";
+		char buffer[ 50 ] = "";
 
 		if ( result == 0 ) {
 			/////CLIENT
@@ -1051,25 +1052,38 @@ int main( int argc, char * argv[] ) {
 
 			Network::Connection myTCPConnection;
 			myTCPConnection.connect( "::1", 5001, Network::SockType::TCP );
+			myTCPConnection.receive( buffer, sizeof( buffer ) );
+			Log::displayLog( StringASCII() << "We are connected to the server and received the message : " << buffer );
 
 			Network::Address addressFrom;
-			if ( myUDPServer.receive( testData2, sizeof( testData2 ), &addressFrom ) )
-				Log::displayLog( StringASCII() << "We got an UDP message from the server " << testData2 );
+			if ( myUDPServer.receive( buffer, sizeof( buffer ), &addressFrom ) )
+				Log::displayLog( StringASCII() << "We got an UDP message from the server " << buffer );
 
 		} else if ( result == 1 ) {
 			//SERVER
 			Network::Server myTCPServer;
 			myTCPServer.listen( 5001, Network::SockType::TCP, Network::IpFamily::Undefined );
-			myTCPServer.listen( 5002, Network::SockType::TCP, Network::IpFamily::Undefined );
+			// myTCPServer.listen( 5002, Network::SockType::TCP, Network::IpFamily::Undefined );
 
 			Network::Connection clientConnection;
 			while ( myTCPServer.accept( &clientConnection ) ) {
+				
+				
+				while ( true ) {
+					if ( !clientConnection.receive(buffer, sizeof(buffer) ) ) {
+						break;
+					}
+					Log::displayLog( StringASCII::format( "Received String \"%\" from client.", buffer) );
+				}
+				
+				/*
 				clientConnection.setSockType( Network::SockType::UDP );
 				clientConnection.connect();
 
 				Log::displayLog( "Sending UDP Message to client." );
 
-				clientConnection.send( testData, sizeof( testData ) );
+				clientConnection.send( messageToSend, sizeof( messageToSend ) );
+				*/
 			}
 		} else {
 			/////GOOGLE TEST

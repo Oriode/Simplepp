@@ -98,21 +98,21 @@ public:
 
 	/**
 	 * @brief		Constructor
-	 * @tparam	C	Type of the c.
-	 * @param	str	The string.
+	 * @tparam	C	String type.
+	 * @param	str	Constant string.
 	 */
 	template<typename C, size_t N>
 	BasicString( const C (& str)[N] );
 
 	/**
 	 * @brief		Constructor
-	 * @param	ui	The user interface.
+	 * @param	ui	Unsigned int.
 	 * @param base	Base used for the conversion.
 	 */
 	BasicString( const unsigned char & ui, unsigned int base = 10 );
 	/**
 	 * @brief		Constructor
-	 * @param	ui	The user interface.
+	 * @param	ui	Unsigned short
 	 * @param base	Base used for the conversion.
 	 */
 	BasicString( const unsigned short & ui, unsigned int base = 10 );
@@ -124,7 +124,7 @@ public:
 	BasicString( const int & i, unsigned int base = 10 );
 	/**
 	 * @brief		Constructor
-	 * @param	ui	The user interface.
+	 * @param	ui	Unsigned int
 	 * @param base	Base used for the conversion.
 	 */
 	BasicString( const unsigned int & ui, unsigned int base = 10 );
@@ -2151,14 +2151,14 @@ public:
 	 * @param [in,out]	fileStream	Stream used to write this string.
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool writeReadable( std::fstream * fileStream ) const;
+	bool writeReadable( IO::SimpleFileStream * fileStream ) const;
 
 	/**
 	 * @brief		read from a file stream
 	 * @param [in,out]	fileStream	stream used to read load this object.
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream );
+	bool read( IO::SimpleFileStream * fileStream );
 
 	/**
 	 * @brief		read from a file stream
@@ -2166,7 +2166,7 @@ public:
 	 * @param 		  	size	  	Number of characters to read.
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream, typename BasicString<T>::Size size );
+	bool read( IO::SimpleFileStream * fileStream, typename BasicString<T>::Size size );
 
 	/************************************************************************/
 	/* Some static methods                                                  */
@@ -3249,7 +3249,10 @@ BasicString<T> operator+( const BasicString<T> & str1, const C (&str2)[N] );
 
 
 template<typename T>
-std::ostream & operator <<( std::ostream & stream, const BasicString<T> & str );
+std::ostream & operator<<( std::ostream & stream, const BasicString<T> & str );
+
+template<typename T>
+IO::SimpleFileStream& operator<<(IO::SimpleFileStream& stream, const BasicString<T>& str);
 
 /** @brief	Defines an alias representing an ASCII String */
 typedef BasicString<char> StringASCII;

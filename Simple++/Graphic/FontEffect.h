@@ -12,7 +12,7 @@ namespace Graphic {
 	namespace FontLoadingFunc {
 
 		template<typename OverlayColorFunc = ColorFunc::SimpleColor<ColorRGBA<unsigned char>>, typename StrokeColorFunc = ColorFunc::SimpleColor<ColorRGBA<unsigned char>>, typename ShadowColorFunc = ColorFunc::SimpleColor<ColorRGBA<unsigned char>>>
-		class Effect : public Template, public BasicIO {
+		class Effect : public Template, public IO::BasicIO {
 		public:
 			Effect();
 
@@ -92,12 +92,12 @@ namespace Graphic {
 			///@brief read from a file stream
 			///@param fileStream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( std::fstream * fileStream );
+			bool read( IO::SimpleFileStream * fileStream );
 
 			///@brief write this object as binary into a file stream
 			///@param fileStream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( std::fstream * fileStream ) const;
+			bool write( IO::SimpleFileStream * fileStream ) const;
 		private:
 			void _updateBias();
 

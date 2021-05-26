@@ -146,7 +146,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream );
+	bool read( IO::SimpleFileStream * fileStream );
 
 	/**
 	 * @brief	write this object as binary into a file stream
@@ -155,7 +155,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool write( std::fstream * fileStream ) const;
+	bool write( IO::SimpleFileStream * fileStream ) const;
 
 
 private:

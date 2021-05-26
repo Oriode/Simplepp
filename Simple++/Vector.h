@@ -28,7 +28,7 @@ using RandomAccessIterator = T *;
  * @tparam	T	Type of the Values to store.
  */
 template<typename T = int>
-class Vector : public BasicSimpleIO {
+class Vector : public IO::BasicSimpleIO {
 public:
 
 	/** @brief	Defines an alias representing the iterator */
@@ -668,7 +668,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( std::fstream * fileStream );
+	bool read( IO::SimpleFileStream * fileStream );
 
 	/**
 	 * @brief 	write this object as binary into a file stream
@@ -677,7 +677,7 @@ public:
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool write( std::fstream * fileStream ) const;
+	bool write( IO::SimpleFileStream * fileStream ) const;
 
 	/**
 	 * @brief 	Search a data and retrieve the index
