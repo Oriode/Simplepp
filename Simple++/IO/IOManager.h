@@ -27,7 +27,7 @@ namespace IO {
 
 		typedef const ObjectContainer * ObjectId;
 
-		
+
 		///@brief Empty Constructor
 		IOManager();
 
@@ -56,20 +56,20 @@ namespace IO {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read(FileStream* fileStream );
+		bool read( SimpleFileStream * fileStream );
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write(FileStream* fileStream ) const;
+		bool write( SimpleFileStream * fileStream ) const;
 	protected:
 		ObjectId _addObjectContainer( const OS::Path & filePath, ObjectContainer & objectContainer );
 		bool _load();
 		bool _unload();
 		ObjectContainer * _getObjectContainer( ObjectId objectId );
 
-		Map< OS::Path, ObjectContainer > dataMap;
-		Map< ObjectId , RBNode< MapObject< String, ObjectContainer > > * > dataNodeMap;
+		Map< OS::Path, ObjectContainer> dataMap;
+		Map< ObjectId, RBNode< MapObject< OS::Path, ObjectContainer> > * > dataNodeMap;
 		Vector< ObjectId > dataVector;
 	};
 

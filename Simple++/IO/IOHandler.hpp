@@ -99,7 +99,9 @@ namespace IO {
 	bool IOHandler<DataType>::setObject(const OS::Path & filePath) {
 
 		if (this->manager) {
-			this->manager->deleteObject(this->objectId);
+			if ( this->objectLoaded ) {
+				this->manager->deleteObject( this->objectId );
+			}
 			this->objectId = this->manager->addObject(filePath);
 			if (this->objectId) {
 				this->objectLoaded = const_cast<DataType*>(this->manager->getObject(this->objectId));
@@ -112,7 +114,9 @@ namespace IO {
 			}
 		}
 		else {
-			delete this->objectLoaded;
+			if ( this->objectLoaded ) {
+				delete this->objectLoaded;
+			}
 			this->objectLoaded = new DataType();
 			if (!IO::read(filePath, this->objectLoaded)) {
 				delete this->objectLoaded;
@@ -129,11 +133,13 @@ namespace IO {
 
 	template<typename DataType>
 	bool IOHandler<DataType>::setObject(DataType* dataObject) {
-		if (this->manager)
-			this->manager->deleteObject(this->objectId);
-		else
-			delete this->objectLoaded;
-
+		if ( this->objectLoaded ) {
+			if ( this->manager )
+				this->manager->deleteObject( this->objectId );
+			else
+				delete this->objectLoaded;
+		}
+		
 		this->objectLoaded = NULL;
 		this->object = dataObject;
 

@@ -33,12 +33,12 @@
 #define SPEEDTEST_PATH
 
 
-#define DEBUG_GRAPHIC
-#define DEBUG_XML
-#define DEBUG_JSON
-//#define DEBUG_MAP
+//#define DEBUG_GRAPHIC
+//#define DEBUG_XML
+//#define DEBUG_JSON
+#define DEBUG_MAP
 //#define DEBUG_UI
-//#define DEBUG_IO
+#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_STRING
 //#define DEBUG_DATE
@@ -263,8 +263,8 @@ int main( int argc, char * argv[] ) {
 	{
 
 		{
-			IOManager<Graphic::Texture<unsigned char>> manager;
-			IOHandler<Graphic::Texture<unsigned char>> textureHandler;
+			IO::IOManager<Graphic::Texture<unsigned char>> manager;
+			IO::IOHandler<Graphic::Texture<unsigned char>> textureHandler(&manager);
 
 
 			//assert( IO::write( "TextureManager.cmanager", &manager ) );
@@ -278,8 +278,8 @@ int main( int argc, char * argv[] ) {
 			assert( textureHandler.setObject( "sanctum.ctexture" ) );
 		}
 		{
-			IOManagerLoadable<Graphic::Texture<unsigned char>> manager;
-			IOHandlerLoadable<Graphic::Texture<unsigned char>> textureHandler;
+			IO::IOManagerLoadable<Graphic::Texture<unsigned char>> manager;
+			IO::IOHandlerLoadable<Graphic::Texture<unsigned char>> textureHandler(&manager);
 
 
 			//assert( IO::write( "TextureManager.cmanager", &manager ) );
@@ -289,6 +289,9 @@ int main( int argc, char * argv[] ) {
 			Graphic::Texture<unsigned char> textureTest;
 
 			assert( manager.load() );
+
+			// Should be loaded by the Manager.
+			assert( textureHandler.isLoaded() );
 			assert( textureHandler.load() );
 			assert( textureHandler.unload() );
 			assert( textureHandler.load() );
@@ -449,6 +452,8 @@ int main( int argc, char * argv[] ) {
 
 	#ifdef DEBUG_MAP
 	{
+		log( "Debuging Maps..." );
+
 		// Test if the compare is working fine.
 		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
 
@@ -517,6 +522,15 @@ int main( int argc, char * argv[] ) {
 		}
 		//log( StringASCII( testMap ) );
 
+		Map<int, String> mapTest;
+		mapTest.insert( 42, "Hello World !" );
+
+		String * nodeResult( mapTest[ 42 ] );
+		if ( nodeResult ) {
+			log( StringASCII( "Node 42 (expected : Hello World !) : " )<<*nodeResult );
+		} else {
+			error( "Index 42 not founded." );
+		}
 
 	}
 	#endif

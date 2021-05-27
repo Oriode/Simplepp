@@ -12,24 +12,24 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::write(FileStream* fileStream ) const {
-		Vector<DataType *>::Size nbDatas( this -> dataVector.getSize() );
+	bool IOManager<DataType>::write( SimpleFileStream * fileStream ) const {
+		Vector<DataType *>::Size nbDatas( this->dataVector.getSize() );
 		if ( !IO::write( fileStream, &nbDatas ) )
 			return false;
 
-		for ( auto it( this -> dataMap.getBegin() ); it != this -> dataMap.getEnd(); this -> dataMap.iterate( &it ) ) {
-			if ( !IO::write( fileStream, &( this -> dataMap.getIndexIt( it ) ) ) )
+		for ( auto it( this->dataMap.getBegin() ); it!=this->dataMap.getEnd(); this->dataMap.iterate( &it ) ) {
+			if ( !IO::write( fileStream, &( this->dataMap.getIndexIt( it ) ) ) )
 				return false;
-			if ( !IO::write( fileStream, &(this -> dataMap.getValueIt( it ).nbUses) ) )
+			if ( !IO::write( fileStream, &( this->dataMap.getValueIt( it ).nbUses ) ) )
 				return false;
-			if ( !IO::write( fileStream, this -> dataMap.getValueIt( it ).object ) )
+			if ( !IO::write( fileStream, this->dataMap.getValueIt( it ).object ) )
 				return false;
 		}
 		return true;
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::read(FileStream* fileStream ) {
+	bool IOManager<DataType>::read( SimpleFileStream * fileStream ) {
 		clear();
 
 		Vector<DataType *>::Size nbDatas;
@@ -37,10 +37,10 @@ namespace IO {
 			clear();
 			return false;
 		}
-		this -> dataVector.reserve( nbDatas );
+		this->dataVector.reserve( nbDatas );
 
-		for ( Vector<DataType *>::Size i( 0 ); i < nbDatas; i++ ) {
-			String filePath;
+		for ( Vector<DataType *>::Size i( 0 ); i<nbDatas; i++ ) {
+			OS::Path filePath;
 			if ( !IO::read( fileStream, &filePath ) ) {
 				clear();
 				return false;
@@ -68,9 +68,9 @@ namespace IO {
 
 	template<typename DataType>
 	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const OS::Path & filePath ) {
-		ObjectContainer * objectFounded( this -> dataMap[filePath] );
+		ObjectContainer * objectFounded( this->dataMap[ filePath ] );
 		if ( objectFounded ) {
-			( objectFounded -> nbUses )++;
+			( objectFounded->nbUses )++;
 			return ( objectFounded );
 		} else {
 			// Object doesn't exists, we have to add it
@@ -93,58 +93,60 @@ namespace IO {
 
 	template<typename DataType>
 	void IOManager<DataType>::incrUseCounter( ObjectId objectId ) {
-		( const_cast< ObjectContainer * >( objectId ) -> nbUses )++;
+		( const_cast< ObjectContainer * >( objectId )->nbUses )++;
 	}
 
 
 
 	template<typename DataType>
 	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const OS::Path & filePath, ObjectContainer & objectContainer ) {
-		RBNode<MapObject<String, ObjectContainer>> * nodeInserted( this -> dataMap.insertNode( filePath, objectContainer ) );
-		ObjectContainer & objectContainerInserted( nodeInserted -> getValue().getValue() );
+		RBNode<MapObject<OS::Path, ObjectContainer>> * nodeInserted( this->dataMap.insertNode( filePath, objectContainer ) );
+		ObjectContainer & objectContainerInserted( nodeInserted->getValue().getValue() );
 		if ( !nodeInserted ) {
 			delete objectContainer.object;
 			// Insert has failed
 			return NULL;
 		}
-		auto nodeNodeInserted( this -> dataNodeMap.insertNode( &objectContainerInserted, nodeInserted ) );
+		auto nodeNodeInserted( this->dataNodeMap.insertNode( &objectContainerInserted, nodeInserted ) );
 		if ( !nodeNodeInserted ) {
 			delete objectContainer.object;
-			this -> dataMap.eraseNode( nodeInserted );
+			this->dataMap.eraseNode( nodeInserted );
 			return NULL;
 		}
-		objectContainerInserted.filePath = &(nodeInserted -> getValue().getIndex());
-		this -> dataVector.push( &( objectContainerInserted ) );
+		objectContainerInserted.filePath = &( nodeInserted->getValue().getIndex() );
+		this->dataVector.push( &( objectContainerInserted ) );
 		return &( objectContainerInserted );
 	}
 
 
 	template<typename DataType>
 	bool IOManager<DataType>::deleteObject( ObjectId objectId ) {
-		auto foundedNodeNode( this -> dataNodeMap.getNodeI( objectId ) );
+		auto foundedNodeNode( this->dataNodeMap.getNodeI( objectId ) );
 		if ( foundedNodeNode ) {
-			auto foundedNode( foundedNodeNode -> getValue().getValue() );
-			ObjectContainer * objectContainer( &( foundedNode -> getValue().getValue() ) );
-			this -> dataVector.eraseFirst( objectId );
-			this -> dataMap.eraseNode( foundedNode );
-			this -> dataNodeMap.eraseNode( foundedNodeNode );
+			auto foundedNode( foundedNodeNode->getValue().getValue() );
+			ObjectContainer * objectContainer( &( foundedNode->getValue().getValue() ) );
+			this->dataVector.eraseFirst( objectId );
+			// This line handle the memory of the OS::Path and the ObjectContainer.
+			this->dataMap.eraseNode( foundedNode );
+			this->dataNodeMap.eraseNode( foundedNodeNode );
 
 		} else {
 			// Seems like the object looked for doesn't exists.
 		}
-		delete const_cast<ObjectContainer *>(objectId) -> object;
+		// Deletion is not necessary as the ObjectContainer is not a pointer. so it will be deleted whith the dataMap node.
+		// delete const_cast< ObjectContainer * >( objectId )-> object;
 		return true;
 	}
 
 	template<typename DataType>
 	const DataType * IOManager<DataType>::getObject( ObjectId objectId ) const {
-		return objectId -> object;
+		return objectId->object;
 	}
 
 	template<typename DataType>
 	bool IOManager<DataType>::_unload() {
-		for ( auto it( this -> dataVector.getBegin() ); it != this -> dataVector.getEnd(); this -> dataVector.iterate( &it ) ) {
-			delete this -> dataVector.getValueIt( it ) -> object;
+		for ( auto it( this->dataVector.getBegin() ); it!=this->dataVector.getEnd(); this->dataVector.iterate( &it ) ) {
+			delete this->dataVector.getValueIt( it )->object;
 		}
 		return true;
 	}
@@ -157,9 +159,9 @@ namespace IO {
 	template<typename DataType>
 	void IOManager<DataType>::clear() {
 		_unload();
-		this -> dataMap.clear();
-		this -> dataNodeMap.clear();
-		this -> dataVector.clear();
+		this->dataMap.clear();
+		this->dataNodeMap.clear();
+		this->dataVector.clear();
 	}
 
 	template<typename DataType>

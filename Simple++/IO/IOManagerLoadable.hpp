@@ -2,51 +2,48 @@
 namespace IO {
 
 	template<typename DataType>
-	IOManagerLoadable<DataType>::IOManagerLoadable(const IOManager<DataType>& manager) {
-		setLoaded(true);
+	IOManagerLoadable<DataType>::IOManagerLoadable( const IOManager<DataType> & manager ) {
+		setLoaded( true );
 
-		for (auto it(manager.dataMap.getBegin()); it != manager.dataMap.getEnd(); manager.dataMap.iterate(&it)) {
+		for ( auto it( manager.dataMap.getBegin() ); it!=manager.dataMap.getEnd(); manager.dataMap.iterate( &it ) ) {
 			ObjectContainer newContainer;
-			newContainer.object = new DataType(*(manager.dataMap.getValueIt(it).object));
-			newContainer.nbUses = manager.dataMap.getValueIt(it).nbUses;
+			newContainer.object = new DataType( *( manager.dataMap.getValueIt( it ).object ) );
+			newContainer.nbUses = manager.dataMap.getValueIt( it ).nbUses;
 
-			_addObjectContainer(manager.dataMap.getIndexIt(it), newContainer);
+			_addObjectContainer( manager.dataMap.getIndexIt( it ), newContainer );
 		}
 
 
 	}
 
 	template<typename DataType>
-	typename IOManagerLoadable<DataType>::ObjectId IOManagerLoadable<DataType>::addObject(const String& filePath) {
-		ObjectContainer* objectFounded(this->dataMap[filePath]);
-		if (objectFounded) {
-			(objectFounded->nbUses)++;
+	typename IOManagerLoadable<DataType>::ObjectId IOManagerLoadable<DataType>::addObject( const String & filePath ) {
+		ObjectContainer * objectFounded( this->dataMap[ filePath ] );
+		if ( objectFounded ) {
+			( objectFounded->nbUses )++;
 			return objectFounded;
-		}
-		else {
+		} else {
 			// Object doesn't exists, we have to add it
-			if (isLoaded()) {
-				DataType* newData(new DataType());
-				if (IO::read(filePath, newData)) {
+			if ( isLoaded() ) {
+				DataType * newData( new DataType() );
+				if ( IO::read( filePath, newData ) ) {
 
 					ObjectContainer newContainer;
 					newContainer.nbUses = 1;
 					newContainer.object = newData;
 
-					return _addObjectContainer(filePath, newContainer);
-				}
-				else {
+					return _addObjectContainer( filePath, newContainer );
+				} else {
 					delete newData;
 					// Loading has failed
 					return NULL;
 				}
-			}
-			else {
+			} else {
 				ObjectContainer newContainer;
 				newContainer.nbUses = 1;
 				newContainer.object = NULL;
 
-				return _addObjectContainer(filePath, newContainer);
+				return _addObjectContainer( filePath, newContainer );
 			}
 		}
 	}
@@ -54,8 +51,8 @@ namespace IO {
 
 	template<typename DataType>
 	bool IOManagerLoadable<DataType>::onUnload() {
-		for (auto it(this->dataVector.getBegin()); it != this->dataVector.getEnd(); this->dataVector.iterate(&it)) {
-			ObjectContainer* objectContainer(_getObjectContainer(this->dataVector.getValueIt(it)));
+		for ( auto it( this->dataVector.getBegin() ); it!=this->dataVector.getEnd(); this->dataVector.iterate( &it ) ) {
+			ObjectContainer * objectContainer( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
 			delete objectContainer->object;
 			objectContainer->object = NULL;
 		}
@@ -64,12 +61,12 @@ namespace IO {
 
 	template<typename DataType>
 	bool IOManagerLoadable<DataType>::onLoad() {
-		for (auto it(this->dataVector.getBegin()); it != this->dataVector.getEnd(); this->dataVector.iterate(&it)) {
-			ObjectContainer* objectContainer(_getObjectContainer(this->dataVector.getValueIt(it)));
+		for ( auto it( this->dataVector.getBegin() ); it!=this->dataVector.getEnd(); this->dataVector.iterate( &it ) ) {
+			ObjectContainer * objectContainer( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
 			objectContainer->object = new DataType();
-			if (!IO::read(*(objectContainer->filePath), objectContainer->object)) {
-				for (auto it2(this->dataVector.getBegin()); it2 != this->dataVector.getEnd(); this->dataVector.iterate(&it2)) {
-					ObjectContainer* objectContainer2(_getObjectContainer(this->dataVector.getValueIt(it)));
+			if ( !IO::read( *( objectContainer->filePath ), objectContainer->object ) ) {
+				for ( auto it2( this->dataVector.getBegin() ); it2!=this->dataVector.getEnd(); this->dataVector.iterate( &it2 ) ) {
+					ObjectContainer * objectContainer2( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
 					delete objectContainer2->object;
 					objectContainer2->object = NULL;
 				}
@@ -80,8 +77,7 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	IOManagerLoadable<DataType>::IOManagerLoadable() {
-	}
+	IOManagerLoadable<DataType>::IOManagerLoadable() {}
 
 	template<typename DataType>
 	IOManagerLoadable<DataType>::~IOManagerLoadable() {
@@ -89,13 +85,13 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool IOManagerLoadable<DataType>::onRead(IO::SimpleFileStream* fileStream) {
-		return IOManager<DataType>::read(fileStream);
+	bool IOManagerLoadable<DataType>::onRead( IO::SimpleFileStream * fileStream ) {
+		return IOManager<DataType>::read( fileStream );
 	}
 
 	template<typename DataType>
-	bool IOManagerLoadable<DataType>::onWrite(IO::SimpleFileStream* fileStream) const {
-		return IOManager<DataType>::write(fileStream);
+	bool IOManagerLoadable<DataType>::onWrite( IO::SimpleFileStream * fileStream ) const {
+		return IOManager<DataType>::write( fileStream );
 	}
 
 }

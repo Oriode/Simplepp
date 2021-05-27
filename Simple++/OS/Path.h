@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 #include <sys/stat.h>
 #include <filesystem>
 
@@ -10,6 +7,8 @@
 
 namespace OS {
 
+	///@brief Represent a Path in the current OS.
+	///@template T String Type.
 	template<typename T>
 	class PathT : public T {
 	public:
@@ -48,8 +47,7 @@ namespace OS {
 
 		// static constexpr typename T::ElemType separatorChar;
 	private:
-		PathT<T> & _join( const T & str );
-		PathT<T> & _join( const PathT<T> & path );
+		PathT<T> & _join( const BasicString<T> & str );
 	};
 
 

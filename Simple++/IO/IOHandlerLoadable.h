@@ -73,12 +73,12 @@ namespace IO {
 		///@brief function to be overloaded to set the action when reading from a stream.
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool onRead(FileStream* fileStream ) override;
+		virtual bool onRead(SimpleFileStream* fileStream ) override;
 
 		///@brief function to be overloaded to set the action when writing from a stream.
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool onWrite(FileStream* fileStream ) const override;
+		virtual bool onWrite(SimpleFileStream* fileStream ) const override;
 
 		///@brief function to be overloaded to add action during the loading process.
 		///@return True if the loading has succeeded, False otherwise

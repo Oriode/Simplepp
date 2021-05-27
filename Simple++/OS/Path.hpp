@@ -78,15 +78,10 @@ namespace OS {
 	}
 
 	template<typename T>
-	inline PathT<T> & PathT<T>::_join( const T & str ) {
+	inline PathT<T> & PathT<T>::_join( const BasicString<T> & str ) {
 		this -> concat( PathT<T>::separatorChar );
 		this -> concat( str );
 		return *this;
-	}
-
-	template<typename T>
-	inline PathT<T> & PathT<T>::_join( const PathT<T> & path ) {
-		return _join( path.toString() );
 	}
 
 }
