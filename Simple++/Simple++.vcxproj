@@ -176,6 +176,7 @@
     <ClInclude Include="GL\BasicGlLoadable.h" />
     <ClInclude Include="GL\GLFW.h" />
     <ClInclude Include="GL\GLFWWindow.h" />
+    <ClInclude Include="Graphic\FreeImage.hpp" />
     <ClInclude Include="IO\BasicLoadableIO.hpp" />
     <ClInclude Include="IO\BasicSimpleIO.hpp" />
     <ClInclude Include="IO\BasicSimpleLoadableIO.hpp" />
@@ -339,7 +340,6 @@
     <ClCompile Include="GL\GLFW.cpp" />
     <ClCompile Include="GL\GLFWWindow.cpp" />
     <ClCompile Include="IO\BasicSimpleIO.cpp" />
-    <ClCompile Include="Graphic\FreeImage.cpp" />
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Time\Time.cpp" />

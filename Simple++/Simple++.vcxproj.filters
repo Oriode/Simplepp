@@ -534,13 +534,13 @@
     <ClInclude Include="IO\SimpleFileStream.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphic\FreeImage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphic\FreeImage.cpp">
-      <Filter>Source Files\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="Time\TimePoint.cpp">
       <Filter>Source Files\Time</Filter>

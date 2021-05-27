@@ -1,5 +1,5 @@
 #pragma once
-///@class FreeImage
+///@class FreeImageT
 ///@brief load, resize et save almost every types of image file.
 
 
@@ -16,6 +16,7 @@
 #include "../Math/Math.h"
 #include "../Log.h"
 #include "../UTF8String.h"
+#include "../OS/Path.h"
 
 #include "BasicGraphic.h"
 
@@ -23,8 +24,8 @@
 
 namespace Graphic {
 
-
-	class FreeImage : public BasicLoadable {
+	template <typename T>
+	class FreeImageT : public BasicLoadable {
 	public:
 		enum class Format {
 			UNDEFINED,
@@ -54,48 +55,48 @@ namespace Graphic {
 
 
 		///@brief Empty constructor, it will generate an NULL image.
-		FreeImage();
+		FreeImageT();
 
 		///@brief Create a new Image using a file stored on the HD, the format can be specified if all the colors aren't usefully 
-		///@param fileName Path to the image to be opened.
+		///@param filePath Path to the image to be opened.
 		///@param format Format of the image (Format::UNDEFINED meens automatic detection. The file will be converted instead.)
 		///@param invertY Specify if the image has to be flipped vertically when loaded.
 		///@param size the size the image will have. (Math::Vec2<Size>::null meens the original one).
-		FreeImage( const String & fileName, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
+		FreeImageT( const OS::Path & filePath, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
 
 		///@brief Create a new Image, a copy from an another one existing but resize it directly.
 		///@param freeImage the image to be copied.
 		///@param newSize the new size to be applied to the copied version
 		///@param resampleFilter the re sample filter to be used during the resizing.
-		FreeImage( const FreeImage & freeImage, const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );
+		FreeImageT( const FreeImageT & freeImage, const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );
 
 		///@brief Create a new Image, a copy from an another one existing.
 		///@param freeImage the image to be copied.
-		FreeImage( const FreeImage & freeImage );
+		FreeImageT( const FreeImageT & freeImage );
 
 		///@brief Move constructor
-		FreeImage( FreeImage && freeImage );
+		FreeImageT( FreeImageT && freeImage );
 
 
 		///@brief destructor
-		~FreeImage( void );
+		~FreeImageT( void );
 
 
 		///@brief Copy operator
-		FreeImage & operator=( const FreeImage & image );
+		FreeImageT & operator=( const FreeImageT & image );
 
 		///@brief Move operator
-		FreeImage & operator=( FreeImage && image );
+		FreeImageT & operator=( FreeImageT && image );
 
 
 
 
 		///@brief define a new file to be this image. This object will be automatically reloaded if already loaded.
-		///@param fileName new file Path to be opened
+		///@param filePath new file Path to be opened
 		///@param format loading format to be used if every components are not useful. (Format::UNDEFINED will use the file's one.)
 		///@param invertY if we have to flip the image vertically.
 		///@param size the new size of the loaded image (Math::Vec2<Size>::null mean full image resolution).
-		void setFile( const String & fileName, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
+		void setFile( const OS::Path & filePath, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
 
 
 		///@brief load this object using raw datas
@@ -120,7 +121,7 @@ namespace Graphic {
 		///@brief Retrieve the actual image format                                    
 		Format getFormat() const;
 
-		///@brief Retrieve the inside FreeImage format object (not advised)
+		///@brief Retrieve the inside FreeImageT format object (not advised)
 		FIBITMAP * getFreeImage();
 
 		///@brief Retrieve the actual BPP of this image
@@ -135,7 +136,7 @@ namespace Graphic {
 
 
 		///@brief Save the image to a file, the quality is only for JPG from 0 to 100
-		bool saveToFile( const String & fileName, SavingFormat savingFormat, unsigned int quality = 100 );
+		bool saveToFile( const OS::Path & filePath, SavingFormat savingFormat, unsigned int quality = 100 );
 
 		///@brief Resize the image to the specified size using the specified Filter
 		void resize( const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );
@@ -153,8 +154,8 @@ namespace Graphic {
 		///@brief Set if the image should be Y flipped
 		void setFlipY( bool value );
 
-		///@brief Retrieve the fileName
-		const String & getFileName() const;
+		///@brief Retrieve the filePath
+		const OS::Path & getFileName() const;
 
 
 		///@brief Create a new image full black
@@ -163,7 +164,7 @@ namespace Graphic {
 
 
 		///@brief Create a copy of this image
-		FreeImage * copy();
+		FreeImageT * copy();
 
 
 
@@ -193,7 +194,7 @@ namespace Graphic {
 		LoadingType loadingType;
 		FIBITMAP * freeImage;
 
-		String fileName;
+		OS::Path filePath;
 
 		Math::Vec2<Size> size;
 		Filter resampleFilter;
@@ -204,7 +205,11 @@ namespace Graphic {
 		unsigned int BPP;
 	};
 
+	using FreeImage = FreeImageT<int>;
+
 }
+
+#include "FreeImage.hpp"
 
 
 

@@ -15,7 +15,7 @@
 namespace Graphic {
 
 	template<typename T = unsigned char>
-	class TextureLoadable : public BasicLoadableIO, public Texture<T> {
+	class TextureLoadable : public IO::BasicLoadableIO, public Texture<T> {
 	public:
 		enum LoadingType {
 			EMPTY,	///When loaded the buffer is allocated but NOT initialized.
@@ -33,7 +33,7 @@ namespace Graphic {
 		TextureLoadable( const Math::Vec2<Size> & size, typename Format format = Format::RGB );
 
 		///@brief create a new image using a path to a file (only support official file format)
-		TextureLoadable( const String & filePath );
+		TextureLoadable( const OS::Path & filePath );
 
 		///@brief copy constructor
 		TextureLoadable( const TextureLoadable<T> & image );
@@ -135,7 +135,7 @@ namespace Graphic {
 	private:
 		Math::Vec2<Size> size;	//If not loaded we have to keep the size of the mipmap 0
 		typename Format format;
-		String fileName;
+		OS::Path fileName;
 		LoadingType loadingType;
 	};
 

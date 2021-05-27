@@ -407,7 +407,7 @@ namespace Graphic {
 				
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -493,7 +493,7 @@ namespace Graphic {
 
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -615,7 +615,7 @@ namespace Graphic {
 				}
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -741,7 +741,7 @@ namespace Graphic {
 				colorDest.r = I( ( colorDest.r * oneMinusAlpha + F( colorSrc.getLightness() ) * a ) );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -814,7 +814,7 @@ namespace Graphic {
 				colorDest.b = I( ( F( colorDest.b ) * oneMinusAlpha + F( colorSrc.b ) * a ) );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -927,7 +927,7 @@ namespace Graphic {
 				}
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -1034,7 +1034,7 @@ namespace Graphic {
 				ColorRGBA<I> c( colorSrc.r, colorSrc.g, colorSrc.b, I( Bigger( colorSrc.a ) * Bigger( alpha ) / Bigger( Color<I>::getMax() ) ) );
 				blendColor( colorDest, c );
 			}
-			template<typename I>
+            template <typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				ColorRGBA<I> c( colorSrc.r, colorSrc.g, colorSrc.b, I( F( colorSrc.a ) * alpha ) );
@@ -1059,7 +1059,7 @@ namespace Graphic {
 				ColorRGBA<I> c( colorSrc.r, colorSrc.g, colorSrc.b, I( Bigger( colorSrc.a ) * Bigger( alpha ) / Bigger( Color<I>::getMax() ) ) );
 				blendColor( colorDest, c );
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				ColorRGBA<I> c( colorSrc.r, colorSrc.g, colorSrc.b, I( F( colorSrc.a ) * alpha ) );
@@ -1084,7 +1084,7 @@ namespace Graphic {
 				ColorRGBA<I> c( colorSrc.r, colorSrc.g, colorSrc.b, I( Bigger( colorSrc.a ) * Bigger( alpha ) / Bigger( Color<I>::getMax() ) ) );
 				blendColor( colorDest, c );
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				ColorRGBA<I> c( colorSrc.r, colorSrc.g, colorSrc.b, I( F( colorSrc.a ) * alpha ) );
@@ -1251,7 +1251,7 @@ namespace Graphic {
 
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorR<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -1327,7 +1327,7 @@ namespace Graphic {
 
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGB<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -1387,7 +1387,7 @@ namespace Graphic {
 				colorDest.b = colorSrc.r;
 				colorDest.a = alpha;
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorR<I> & colorSrc, typename Color<I>::Float alpha ) {
 				colorDest.r = colorSrc.r;
 				colorDest.g = colorSrc.r;
@@ -1429,7 +1429,7 @@ namespace Graphic {
 				colorDest.r = I( F( colorSrc.getLightness() ) * a );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorR<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -1498,7 +1498,7 @@ namespace Graphic {
 				colorDest.b = I( F( colorSrc.b ) * a );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				#ifdef GRAPHIC_BRANCHING_BLENDING
@@ -1557,7 +1557,7 @@ namespace Graphic {
 				colorDest.b = colorSrc.b;
 				colorDest.a = alpha;
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGB<I> & colorSrc, typename Color<I>::Float alpha ) {
 				colorDest.r = colorSrc.r;
 				colorDest.g = colorSrc.g;
@@ -1591,7 +1591,7 @@ namespace Graphic {
 				colorDest.r = I( ( F( alpha ) * F( colorSrc.a ) * F( colorSrc.getLightness() ) ) / F( ColorR<T>::getMax() * ColorR<I>::getMax() ) );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorR<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				colorDest.r = I( ( F( alpha ) * F( colorSrc.a ) * F( colorSrc.getLightness() ) ) / F( ColorR<I>::getMax() ) );
@@ -1624,7 +1624,7 @@ namespace Graphic {
 				colorDest.b = I( a * F( colorSrc.b ) );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGB<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				F a( F( alpha ) * F( colorSrc.a ) / F( ColorR<I>::getMax() ) );
@@ -1665,7 +1665,7 @@ namespace Graphic {
 				colorDest.a = F( ( F( alpha ) * F( colorSrc.a ) ) / F( ColorR<T>::getMax() ) );
 				#endif
 			}
-			template<typename I>
+			template<typename I, typename Color<I>::Float>
 			inline static void blendColor( ColorRGBA<I> & colorDest, const ColorRGBA<I> & colorSrc, typename Color<I>::Float alpha ) {
 				typedef typename Color<I>::Float F;
 				colorDest.r = colorSrc.r;

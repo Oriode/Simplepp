@@ -33,7 +33,7 @@
 #define SPEEDTEST_PATH
 
 
-//#define DEBUG_GRAPHIC
+#define DEBUG_GRAPHIC
 #define DEBUG_XML
 #define DEBUG_JSON
 //#define DEBUG_MAP
@@ -830,7 +830,7 @@ int main( int argc, char * argv[] ) {
 
 
 		myFont.setStrokeActivated( true );
-		myFont.setStrokeSize( 1.9 );
+		myFont.setStrokeSize( 1.9f );
 		myFont.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
 
 		FontType myFontCOPY = myFont;

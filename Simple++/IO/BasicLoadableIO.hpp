@@ -10,7 +10,7 @@ namespace IO {
 	}
 
 	template<typename T>
-	bool BasicLoadableIOT<T>::writeToFile(const OS::Path& path) {
+	bool BasicLoadableIOT<T>::writeToFile( const OS::Path & path ) {
 		FileStream fileStream(path, OpenMode::Write);
 		if (fileStream.isOpen()) {
 			load();
@@ -28,7 +28,7 @@ namespace IO {
 	}
 
 	template<typename T>
-	bool BasicLoadableIOT<T>::readFromFile(const OS::Path& path) {
+	bool BasicLoadableIOT<T>::readFromFile( const OS::Path & path ) {
 		FileStream fileStream(path, OpenMode::Read);
 		if (fileStream.isOpen()) {
 			if (!read(&fileStream)) {

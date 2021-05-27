@@ -26,7 +26,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	TextureLoadable<T>::TextureLoadable( const String & filePath ) :
+	TextureLoadable<T>::TextureLoadable( const OS::Path & filePath ) :
 		Texture<T>( ctor::null ),
 		fileName( filePath ),
 		loadingType( LoadingType::FILE ),
@@ -103,13 +103,12 @@ namespace Graphic {
 				}
 			case FILE:
 				{
-					IO::SimpleFileStream file( this -> fileName.getData(), std::ios::in | std::ios::binary );
-					if ( file.is_open() ) {
-						if ( !onRead( &file ) ) {
+					IO::FileStream fileStream( this -> fileName, IO::OpenMode::Read );
+					if ( fileStream.isOpen() ) {
+						if ( !onRead( &fileStream ) ) {
 							error( StringASCII( "[IO] Error while reading the file : " ) << this -> fileName );
 							return false;
 						}
-						file.close();
 					} else {
 						error( StringASCII( "[IO] Error while opening the file : " ) << this -> fileName );
 						return false;
