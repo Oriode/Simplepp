@@ -6,7 +6,7 @@ namespace IO {
 		setLoaded( true );
 
 		for ( auto it( manager.dataMap.getBegin() ); it!=manager.dataMap.getEnd(); manager.dataMap.iterate( &it ) ) {
-			ObjectContainer newContainer;
+			MemoryObject newContainer;
 			newContainer.object = new DataType( *( manager.dataMap.getValueIt( it ).object ) );
 			newContainer.nbUses = manager.dataMap.getValueIt( it ).nbUses;
 
@@ -18,7 +18,7 @@ namespace IO {
 
 	template<typename DataType>
 	typename IOManagerLoadable<DataType>::ObjectId IOManagerLoadable<DataType>::addObject( const String & filePath ) {
-		ObjectContainer * objectFounded( this->dataMap[ filePath ] );
+		MemoryObject * objectFounded( this->dataMap[ filePath ] );
 		if ( objectFounded ) {
 			( objectFounded->nbUses )++;
 			return objectFounded;
@@ -28,7 +28,7 @@ namespace IO {
 				DataType * newData( new DataType() );
 				if ( IO::read( filePath, newData ) ) {
 
-					ObjectContainer newContainer;
+					MemoryObject newContainer;
 					newContainer.nbUses = 1;
 					newContainer.object = newData;
 
@@ -39,7 +39,7 @@ namespace IO {
 					return NULL;
 				}
 			} else {
-				ObjectContainer newContainer;
+				MemoryObject newContainer;
 				newContainer.nbUses = 1;
 				newContainer.object = NULL;
 
@@ -52,7 +52,7 @@ namespace IO {
 	template<typename DataType>
 	bool IOManagerLoadable<DataType>::onUnload() {
 		for ( auto it( this->dataVector.getBegin() ); it!=this->dataVector.getEnd(); this->dataVector.iterate( &it ) ) {
-			ObjectContainer * objectContainer( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
+			MemoryObject * objectContainer( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
 			delete objectContainer->object;
 			objectContainer->object = NULL;
 		}
@@ -62,11 +62,11 @@ namespace IO {
 	template<typename DataType>
 	bool IOManagerLoadable<DataType>::onLoad() {
 		for ( auto it( this->dataVector.getBegin() ); it!=this->dataVector.getEnd(); this->dataVector.iterate( &it ) ) {
-			ObjectContainer * objectContainer( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
+			MemoryObject * objectContainer( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
 			objectContainer->object = new DataType();
 			if ( !IO::read( *( objectContainer->filePath ), objectContainer->object ) ) {
 				for ( auto it2( this->dataVector.getBegin() ); it2!=this->dataVector.getEnd(); this->dataVector.iterate( &it2 ) ) {
-					ObjectContainer * objectContainer2( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
+					MemoryObject * objectContainer2( _getObjectContainer( this->dataVector.getValueIt( it ) ) );
 					delete objectContainer2->object;
 					objectContainer2->object = NULL;
 				}

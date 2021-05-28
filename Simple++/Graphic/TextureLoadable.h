@@ -11,7 +11,7 @@
 #include "Image.h"
 #include "Texture.h"
 
-
+// DEPRECATED
 namespace Graphic {
 
 	template<typename T = unsigned char>
@@ -135,7 +135,7 @@ namespace Graphic {
 	private:
 		Math::Vec2<Size> size;	//If not loaded we have to keep the size of the mipmap 0
 		typename Format format;
-		OS::Path fileName;
+		OS::Path filePath;
 		LoadingType loadingType;
 	};
 

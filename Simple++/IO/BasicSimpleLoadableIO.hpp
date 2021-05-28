@@ -9,7 +9,7 @@ namespace IO {
 	}
 
 	template<typename T>
-	bool BasicSimpleLoadableIOT<T>::read(SimpleFileStream* fileStream) {
+	bool BasicSimpleLoadableIOT<T>::read(SimpleFileStream * fileStream) {
 		unload();
 		lock();
 		setLoading(true);
@@ -29,7 +29,7 @@ namespace IO {
 	}
 
 	template<typename T>
-	bool BasicSimpleLoadableIOT<T>::write(SimpleFileStream* fileStream) {
+	bool BasicSimpleLoadableIOT<T>::write(SimpleFileStream * fileStream) {
 		lock();
 		_assert(isLoaded());
 		if (!onWrite(fileStream)) {

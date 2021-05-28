@@ -4,6 +4,8 @@
 #include "../Log.h"
 #include "BasicSimpleLoadableIO.h"
 
+
+// DEPRECATED
 namespace IO {
 
 	///@brief BasicLodableIO is the base Class for every Class that can be loaded or unloaded dynamically from a file system file.

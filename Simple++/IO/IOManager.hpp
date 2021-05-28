@@ -20,8 +20,10 @@ namespace IO {
 		for ( auto it( this->dataMap.getBegin() ); it!=this->dataMap.getEnd(); this->dataMap.iterate( &it ) ) {
 			if ( !IO::write( fileStream, &( this->dataMap.getIndexIt( it ) ) ) )
 				return false;
+			/*
 			if ( !IO::write( fileStream, &( this->dataMap.getValueIt( it ).nbUses ) ) )
 				return false;
+			*/
 			if ( !IO::write( fileStream, this->dataMap.getValueIt( it ).object ) )
 				return false;
 		}
@@ -45,19 +47,21 @@ namespace IO {
 				clear();
 				return false;
 			}
-			ObjectContainer newContainer;
-			newContainer.nbUses = 0;
-			if ( !IO::read( fileStream, &newContainer.nbUses ) ) {
+			MemoryObject newMemoryObject;
+			newMemoryObject.nbUses = 0;
+			/*
+			if ( !IO::read( fileStream, &newMemoryObject.nbUses ) ) {
 				clear();
 				return false;
 			}
-			newContainer.object = new DataType();
-			if ( !IO::read( fileStream, newContainer.object ) ) {
-				delete newContainer.object;
+			*/
+			newMemoryObject.object = new DataType();
+			if ( !IO::read( fileStream, newMemoryObject.object ) ) {
+				delete newMemoryObject.object;
 				clear();
 				return false;
 			}
-			if ( !_addObjectContainer( filePath, newContainer ) ) {
+			if ( !_addObjectContainer( filePath, newMemoryObject ) ) {
 				clear();
 				return false;
 			}
@@ -68,7 +72,7 @@ namespace IO {
 
 	template<typename DataType>
 	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const OS::Path & filePath ) {
-		ObjectContainer * objectFounded( this->dataMap[ filePath ] );
+		MemoryObject * objectFounded( this->dataMap[ filePath ] );
 		if ( objectFounded ) {
 			( objectFounded->nbUses )++;
 			return ( objectFounded );
@@ -77,7 +81,7 @@ namespace IO {
 			DataType * newData( new DataType() );
 			if ( IO::read( filePath, newData ) ) {
 
-				ObjectContainer newContainer;
+				MemoryObject newContainer;
 				newContainer.nbUses = 1;
 				newContainer.object = newData;
 
@@ -93,15 +97,28 @@ namespace IO {
 
 	template<typename DataType>
 	void IOManager<DataType>::incrUseCounter( ObjectId objectId ) {
-		( const_cast< ObjectContainer * >( objectId )->nbUses )++;
+		( const_cast< MemoryObject * >( objectId )->nbUses )++;
 	}
 
-
+	template<typename DataType>
+	typename Vector<DataType *>::Size IOManager<DataType>::getNbUses( ObjectId objectId ) const {
+		return const_cast< MemoryObject * >( objectId )->nbUses;
+	}
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const OS::Path & filePath, ObjectContainer & objectContainer ) {
-		RBNode<MapObject<OS::Path, ObjectContainer>> * nodeInserted( this->dataMap.insertNode( filePath, objectContainer ) );
-		ObjectContainer & objectContainerInserted( nodeInserted->getValue().getValue() );
+	typename Vector<DataType *>::Size IOManager<DataType>::getNbUses( const OS::Path & filePath ) const {
+		const MemoryObject * objectFounded( this->dataMap[ filePath ] );
+		if ( objectFounded ) {
+			return objectFounded->nbUses;
+		} else {
+			return Vector<DataType *>::Size( 0 );
+		}
+	}
+
+	template<typename DataType>
+	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const OS::Path & filePath, MemoryObject & objectContainer ) {
+		RBNode<MapObject<OS::Path, MemoryObject>> * nodeInserted( this->dataMap.insertNode( filePath, objectContainer ) );
+		MemoryObject & objectContainerInserted( nodeInserted->getValue().getValue() );
 		if ( !nodeInserted ) {
 			delete objectContainer.object;
 			// Insert has failed
@@ -124,17 +141,22 @@ namespace IO {
 		auto foundedNodeNode( this->dataNodeMap.getNodeI( objectId ) );
 		if ( foundedNodeNode ) {
 			auto foundedNode( foundedNodeNode->getValue().getValue() );
-			ObjectContainer * objectContainer( &( foundedNode->getValue().getValue() ) );
-			this->dataVector.eraseFirst( objectId );
-			// This line handle the memory of the OS::Path and the ObjectContainer.
-			this->dataMap.eraseNode( foundedNode );
-			this->dataNodeMap.eraseNode( foundedNodeNode );
+			MemoryObject * memoryObject( &( foundedNode->getValue().getValue() ) );
+			if ( memoryObject->nbUses<=1 ) {
+				this->dataVector.eraseFirst( objectId );
+				// This line handle the memory of the OS::Path and the MemoryObject.
+				this->dataMap.eraseNode( foundedNode );
+				this->dataNodeMap.eraseNode( foundedNodeNode );
+			} else {
+				memoryObject->nbUses--;
+			}
+			
 
 		} else {
 			// Seems like the object looked for doesn't exists.
 		}
-		// Deletion is not necessary as the ObjectContainer is not a pointer. so it will be deleted whith the dataMap node.
-		// delete const_cast< ObjectContainer * >( objectId )-> object;
+		// Deletion is not necessary as the MemoryObject is not a pointer. so it will be deleted whith the dataMap node.
+		// delete const_cast< MemoryObject * >( objectId )-> object;
 		return true;
 	}
 
@@ -165,8 +187,8 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectContainer * IOManager<DataType>::_getObjectContainer( ObjectId objectId ) {
-		return const_cast< ObjectContainer * >( objectId );
+	typename IOManager<DataType>::MemoryObject * IOManager<DataType>::_getObjectContainer( ObjectId objectId ) {
+		return const_cast< MemoryObject * >( objectId );
 	}
 
 }

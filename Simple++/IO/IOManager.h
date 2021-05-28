@@ -1,5 +1,5 @@
 ///@file ImageManager.h
-///@brief File containing the IOManager Object, an memory manager for loaded object to preserve from duplicate loading in memory
+///@brief File containing the IOManager Object, an memory manager for loaded object to preserve from duplicate loading in memory. When a new resource is needed, call the addObject() method to get an identifier of the loaded resource. (loaded automaticaly if necessary). When the use if finished, call the deleteObject() method to remove the use. (unloaded if not used anymore by anyone).
 ///@author Clement Gerber
 ///@date 19/12/16 (DMY)
 #pragma once
@@ -19,13 +19,13 @@ namespace IO {
 	template<typename DataType>
 	class IOManager : public BasicIO {
 	public:
-		struct ObjectContainer {
+		struct MemoryObject {
 			DataType * object;
 			typename Vector<DataType *>::Size nbUses;
 			const OS::Path * filePath;
 		};
 
-		typedef const ObjectContainer * ObjectId;
+		typedef const MemoryObject * ObjectId;
 
 
 		///@brief Empty Constructor
@@ -50,6 +50,10 @@ namespace IO {
 		///@param object Object to increment uses
 		void incrUseCounter( ObjectId object );
 
+		typename Vector<DataType *>::Size getNbUses( ObjectId objectId ) const;
+		typename Vector<DataType *>::Size getNbUses( const OS::Path & filePath ) const;
+
+
 		///@brief Delete all the datas
 		void clear();
 
@@ -63,13 +67,13 @@ namespace IO {
 		///@return boolean to know if the operation is a success of not.
 		bool write( SimpleFileStream * fileStream ) const;
 	protected:
-		ObjectId _addObjectContainer( const OS::Path & filePath, ObjectContainer & objectContainer );
+		ObjectId _addObjectContainer( const OS::Path & filePath, MemoryObject & objectContainer );
 		bool _load();
 		bool _unload();
-		ObjectContainer * _getObjectContainer( ObjectId objectId );
+		MemoryObject * _getObjectContainer( ObjectId objectId );
 
-		Map< OS::Path, ObjectContainer> dataMap;
-		Map< ObjectId, RBNode< MapObject< OS::Path, ObjectContainer> > * > dataNodeMap;
+		Map< OS::Path, MemoryObject> dataMap;
+		Map< ObjectId, RBNode< MapObject< OS::Path, MemoryObject> > * > dataNodeMap;
 		Vector< ObjectId > dataVector;
 	};
 

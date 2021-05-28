@@ -5,9 +5,10 @@
 #pragma once
 
 #include "BasicLoadableIO.h"
-#include "IOHandler.h"
+#include "IOResource.h"
 #include "IOManagerLoadable.h"
 
+// DEPRECATED
 namespace IO {
 
 

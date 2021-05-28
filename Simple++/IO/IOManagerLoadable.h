@@ -8,6 +8,7 @@
 #include "IOManager.h"
 #include "../Utility.h"
 
+// DEPRECATED
 namespace IO {
 	
 	template<typename DataType>

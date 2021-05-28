@@ -28,7 +28,7 @@ namespace Graphic {
 	template<typename T>
 	TextureLoadable<T>::TextureLoadable( const OS::Path & filePath ) :
 		Texture<T>( ctor::null ),
-		fileName( filePath ),
+		filePath( filePath ),
 		loadingType( LoadingType::FILE ),
 		size( Math::Vec2<Size>::null ) {
 
@@ -39,7 +39,7 @@ namespace Graphic {
 	TextureLoadable<T>::TextureLoadable( const TextureLoadable<T> & image ) :
 		Texture<T>( image ),
 		BasicLoadableIO( image ),
-		fileName( image.fileName ),
+		filePath( image.filePath ),
 		loadingType( image.loadingType ),
 		size( image.size ),
 		format( image.format ) {
@@ -52,7 +52,7 @@ namespace Graphic {
 	TextureLoadable<T>::TextureLoadable( TextureLoadable<T> && image ) :
 		Texture<T>( Utility::toRValue( image ) ),
 		BasicLoadableIO( Utility::toRValue( image ) ),
-		fileName( Utility::toRValue( image.fileName ) ),
+		filePath( Utility::toRValue( image.filePath ) ),
 		loadingType( Utility::toRValue( image.loadingType ) ),
 		size( Utility::toRValue( image.size ) ),
 		format( Utility::toRValue( image.format ) ) {
@@ -72,7 +72,7 @@ namespace Graphic {
 		if ( !Texture<T>::_read( fileStream ) )
 			return false;
 
-		this -> fileName.clear();
+		this -> filePath.clear();
 		this -> size = this -> datas[0] -> getSize();
 		this -> format = this -> datas[0] -> getFormat();
 
@@ -103,14 +103,14 @@ namespace Graphic {
 				}
 			case FILE:
 				{
-					IO::FileStream fileStream( this -> fileName, IO::OpenMode::Read );
+					IO::FileStream fileStream( this -> filePath, IO::OpenMode::Read );
 					if ( fileStream.isOpen() ) {
 						if ( !onRead( &fileStream ) ) {
-							error( StringASCII( "[IO] Error while reading the file : " ) << this -> fileName );
+							error( StringASCII( "[IO] Error while reading the file : " ) << this -> filePath );
 							return false;
 						}
 					} else {
-						error( StringASCII( "[IO] Error while opening the file : " ) << this -> fileName );
+						error( StringASCII( "[IO] Error while opening the file : " ) << this -> filePath );
 						return false;
 					}
 					break;
@@ -128,7 +128,7 @@ namespace Graphic {
 		BasicLoadableIO::operator=( image );
 		Texture<T>::operator=( image );
 
-		this -> fileName = image.fileName;
+		this -> filePath = image.filePath;
 		this -> loadingType = image.loadingType;
 		this -> size = image.size;
 		this -> format = image.format;
@@ -145,7 +145,7 @@ namespace Graphic {
 		BasicLoadableIO::operator=( Utility::toRValue( image ) );
 		Texture<T>::operator=( Utility::toRValue( image ) );
 
-		this -> fileName = Utility::toRValue( image.fileName );
+		this -> filePath = Utility::toRValue( image.filePath );
 		this -> loadingType = Utility::toRValue( image.loadingType );
 		this -> size = Utility::toRValue( image.size );
 		this -> format = Utility::toRValue( image.format );
@@ -158,7 +158,7 @@ namespace Graphic {
 	template<typename T>
 	void TextureLoadable<T>::clear( const Math::Vec2<Size> & size ) {
 		this -> loadingType = LoadingType::EMPTY;
-		this -> fileName.clear();
+		this -> filePath.clear();
 		this -> size = size;
 		reload();
 	}
@@ -167,7 +167,7 @@ namespace Graphic {
 	void TextureLoadable<T>::clear( const Math::Vec2<Size> & size, typename Format format ) {
 		this -> loadingType = LoadingType::EMPTY;
 		this -> format = format;
-		this -> fileName.clear();
+		this -> filePath.clear();
 		this -> size = size;
 		reload();
 	}
@@ -179,7 +179,7 @@ namespace Graphic {
 		lock();
 		setLoading( true );
 		this -> loadingType = LoadingType::EMPTY;
-		this -> fileName.clear();
+		this -> filePath.clear();
 		this -> datas.push( new ImageT<T>( dataBuffer, size, loadingFormat, invertY ) );
 		this -> format = this -> datas[0] -> getFormat();
 		setLoaded( true );
@@ -194,7 +194,7 @@ namespace Graphic {
 		lock();
 		setLoading( true );
 		this -> loadingType = LoadingType::EMPTY;
-		this -> fileName.clear();
+		this -> filePath.clear();
 		this -> datas.push( new ImageT<T>( image ) );
 		this -> format = this -> datas[0] -> getFormat();
 		setLoaded( true );

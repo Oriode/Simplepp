@@ -182,10 +182,14 @@
     <ClInclude Include="IO\BasicSimpleLoadableIO.hpp" />
     <ClInclude Include="IO\FileStream.h" />
     <ClInclude Include="IO\FileStream.hpp" />
-    <ClInclude Include="IO\IOHandler.h" />
-    <ClInclude Include="IO\IOHandler.hpp" />
+    <ClInclude Include="IO\IOLoadable.h" />
+    <ClInclude Include="IO\IOLoadable.hpp" />
+    <ClInclude Include="IO\IOResource.h" />
+    <ClInclude Include="IO\IOResource.hpp" />
     <ClInclude Include="IO\IOHandlerLoadable.h" />
     <ClInclude Include="IO\IOHandlerLoadable.hpp" />
+    <ClInclude Include="IO\IOManagedResource.h" />
+    <ClInclude Include="IO\IOManagedResource.hpp" />
     <ClInclude Include="IO\IOManagerLoadable.h" />
     <ClInclude Include="IO\IOManager.h" />
     <ClInclude Include="IO\IOManager.hpp" />
