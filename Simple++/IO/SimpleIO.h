@@ -2,7 +2,6 @@
 
 #include "../SimpleLog.h"
 #include "BasicSimpleIO.h"
-#include "BasicSimpleLoadableIO.h"
 #include "SimpleFileStream.h"
 
 namespace IO {
@@ -38,19 +37,12 @@ namespace IO {
 	template<typename C>
 	static bool readBuffer(SimpleFileStream * fileStream, C * buffer, size_t size);
 
-
-	template<typename C>
-	static bool _writeObject(SimpleFileStream * fileStream, const C * buffer, const BasicSimpleLoadableIO  * b);
-
 	template<typename C>
 	static bool _writeObject(SimpleFileStream * fileStream, const C * buffer, const BasicSimpleIO * b);
 
 	template<typename C>
 	static bool _writeObject(SimpleFileStream * fileStream, const C * buffer, ...);
 
-
-	template<typename C>
-	static bool _writeBuffer(SimpleFileStream * fileStream, const C * buffer, size_t size, const BasicSimpleLoadableIO * b);
 
 	template<typename C>
 	static bool _writeBuffer(SimpleFileStream * fileStream, const C * buffer, size_t size, const BasicSimpleIO * b);
@@ -63,16 +55,10 @@ namespace IO {
 
 
 	template<typename C>
-	static bool _readObject(SimpleFileStream * fileStream, C * buffer, BasicSimpleLoadableIO * b);
-
-	template<typename C>
 	static bool _readObject(SimpleFileStream * fileStream, C * buffer, BasicSimpleIO * b);
 
 	template<typename C>
 	static bool _readObject(SimpleFileStream * fileStream, C * buffer, ...);
-
-	template<typename C>
-	static bool _readBuffer(SimpleFileStream * fileStream, C * buffer, size_t size, BasicSimpleLoadableIO * b);
 
 	template<typename C>
 	static bool _readBuffer(SimpleFileStream * fileStream, C * buffer, size_t size, BasicSimpleIO * b);

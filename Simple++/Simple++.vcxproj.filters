@@ -219,7 +219,7 @@
     <ClInclude Include="Graphic\Font.h">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic\FontLoadable.h">
+    <ClInclude Include="Graphic\TrueTypeFont.h">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Graphic\FreeImage.h">
@@ -240,9 +240,6 @@
     <ClInclude Include="Graphic\Texture.h">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic\TextureLoadable.h">
-      <Filter>Header Files\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="Graphic\BlendingFunc.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
@@ -256,9 +253,6 @@
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Graphic\Texture.hpp">
-      <Filter>Header Files\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphic\TextureLoadable.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Math\BasicMath.hpp">
@@ -282,7 +276,7 @@
     <ClInclude Include="Graphic\Font.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic\FontLoadable.hpp">
+    <ClInclude Include="Graphic\TrueTypeFont.hpp">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Test.h">
@@ -349,12 +343,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\BasicSimpleIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\BasicLoadableIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\BasicSimpleLoadableIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XML\XMLDocument.h">
@@ -438,19 +426,7 @@
     <ClInclude Include="IO\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IO\IOHandlerLoadable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\IOManagerLoadable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\IOManagerLoadable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IO\Resource.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\IOHandlerLoadable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\BasicDistanceable.h">
@@ -519,13 +495,7 @@
     <ClInclude Include="IO\FileStream.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IO\BasicLoadableIO.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IO\BasicSimpleIO.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\BasicSimpleLoadableIO.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\SimpleFileStream.h">
@@ -535,12 +505,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphic\FreeImage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\IOManagedResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\IOManagedResource.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\Loadable.h">

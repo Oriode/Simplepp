@@ -116,7 +116,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename LoadingFunc>
-	Text<T>::Text( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Format format ) : ImageT<T>( format ) {
+	Text<T>::Text( const FontT<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Format format ) : ImageT<T>( format ) {
 		setText( font, str, centering );
 	}
 
@@ -131,7 +131,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename LoadingFunc>
-	void Text<T>::setText( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering ) {
+	void Text<T>::setText( const FontT<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering ) {
 		this -> str = str;
 		this -> centering = centering;
 
@@ -150,7 +150,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename LoadingFunc, typename Functor>
-	void Text<T>::_setText( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Functor & func ) {
+	void Text<T>::_setText( const FontT<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Functor & func ) {
 
 		Math::Vec2<float> initPoint;
 		UCodePoint codePoint;

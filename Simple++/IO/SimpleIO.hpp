@@ -2,11 +2,6 @@
 namespace IO {
 
 	template<typename C>
-	bool _writeObject( SimpleFileStream * fileStream, const C * buffer, const BasicSimpleLoadableIO * b ) {
-		return buffer->write( fileStream );
-	}
-
-	template<typename C>
 	bool _writeObject( SimpleFileStream * fileStream, const C * buffer, const BasicSimpleIO * b ) {
 		return buffer->write( fileStream );
 	}
@@ -25,11 +20,6 @@ namespace IO {
 		return _writeObject( fileStream, buffer, buffer );
 	}
 
-
-	template<typename C>
-	bool _readObject( SimpleFileStream * fileStream, C * buffer, BasicSimpleLoadableIO * b ) {
-		return buffer->read( fileStream );
-	}
 
 	template<typename C>
 	bool _readObject( SimpleFileStream * fileStream, C * buffer, BasicSimpleIO * b ) {
@@ -66,15 +56,6 @@ namespace IO {
 
 
 
-	template<typename C>
-	bool _writeBuffer( SimpleFileStream * fileStream, const C * buffer, size_t size, const BasicSimpleLoadableIO * b ) {
-		for ( size_t i = 0; i<size; i++ ) {
-			if ( !buffer[ i ].write( fileStream ) )
-				return false;
-		}
-		return true;
-	}
-
 
 
 	template<typename C>
@@ -95,15 +76,6 @@ namespace IO {
 	}
 
 
-
-	template<typename C>
-	bool _readBuffer( SimpleFileStream * fileStream, C * buffer, size_t size, BasicSimpleLoadableIO * b ) {
-		for ( size_t i = 0; i<size; i++ ) {
-			if ( !buffer[ i ].read( fileStream ) )
-				return false;
-		}
-		return true;
-	}
 
 	template<typename C>
 	bool _readBuffer( SimpleFileStream * fileStream, C * buffer, size_t size, BasicSimpleIO * b ) {

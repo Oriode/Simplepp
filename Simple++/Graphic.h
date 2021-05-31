@@ -7,8 +7,8 @@
  */
 #pragma once
 
-#include "Graphic/TextureLoadable.h"
-#include "Graphic/FontLoadable.h"
+#include "Graphic/Texture.h"
+#include "Graphic/TrueTypeFont.h"
 #include "Graphic/FreeImage.h"
 #include "Graphic/GradientInterpolated.h"
 #include "Graphic/Gradient.h"
@@ -37,7 +37,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Gradient::Horizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Gradient::Horizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -60,7 +60,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Gradient::Horizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Gradient::Horizontal<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -83,7 +83,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Gradient::Vertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Gradient::Vertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -106,7 +106,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename C, typename InterFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Gradient::Vertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Gradient::Vertical<C, InterFunc> & gradient, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -127,7 +127,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -148,7 +148,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorR<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 	/**
 	 * @brief	draw the text to the specified point using a ColorRGB
@@ -168,7 +168,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -189,7 +189,7 @@ namespace Graphic {
 	 * 								Graphic::ColorR<T> & colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGB<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -211,7 +211,7 @@ namespace Graphic {
 	 * 								colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -233,7 +233,7 @@ namespace Graphic {
 	 * 								colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const ColorRGBA<T> & color, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -256,7 +256,7 @@ namespace Graphic {
 	 * 								colorMask)const;".
 	 */
 	template<typename T, typename LoadingFunc, typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawTextFunctor( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawTextFunctor( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -275,7 +275,7 @@ namespace Graphic {
 	 * @param [in,out]	blendFunc	(Optional) The blend function.
 	 */
 	template<typename T, typename LoadingFunc, typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawTextFunctor( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawTextFunctor( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, ColorFunc & colorFunc, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 	/**
 	 * @brief	draw the text to the specified point without a blending, the character bitmap will directly be blended to the specified image
@@ -291,7 +291,7 @@ namespace Graphic {
 	 * @param [in,out]	blendFunc	(Optional) The blend function.
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 	/**
@@ -308,7 +308,7 @@ namespace Graphic {
 	 * @param [in,out]	blendFunc	(Optional) The blend function.
 	 */
 	template<typename T, typename LoadingFunc, typename BlendFunc = BlendingFunc::Normal>
-	void drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
+	void drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered = Math::Vec2<bool>( false ), BlendFunc & blendFunc = BlendFunc() );
 
 
 
@@ -334,7 +334,7 @@ namespace Graphic {
 	 * @param [in,out]	blendFunc	The blend function.
 	 */
 	template<typename T, typename LoadingFunc, typename C, typename BlendFunc>
-	void _drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc );
+	void _drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc );
 
 	/**
 	 * @brief	private function do not touch this.
@@ -352,7 +352,7 @@ namespace Graphic {
 	 * @param [in,out]	blendFunc	The blend function.
 	 */
 	template<typename T, typename LoadingFunc, typename C, typename BlendFunc>
-	void _drawText( ImageT<T> * image, const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc );
+	void _drawText( ImageT<T> * image, const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const C & color, const Math::Vec2<bool> & centered, BlendFunc & blendFunc );
 
 	/**
 	 * @brief	private function do not touch this.
@@ -367,7 +367,7 @@ namespace Graphic {
 	 * @param [in,out]	func		The function.
 	 */
 	template<typename T, typename LoadingFunc, typename Func>
-	void _drawText( const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
+	void _drawText( const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
 
 	/**
 	 * @brief	private function do not touch this.
@@ -382,7 +382,7 @@ namespace Graphic {
 	 * @param [in,out]	func		The function.
 	 */
 	template<typename T, typename LoadingFunc, typename Func>
-	void _drawTextWBB( const _Font<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
+	void _drawTextWBB( const FontT<T, LoadingFunc> & font, const Point & point, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
 
 	/**
 	 * @brief	private function do not touch this.
@@ -397,7 +397,7 @@ namespace Graphic {
 	 * @param [in,out]	func	 	The function.
 	 */
 	template<typename T, typename LoadingFunc, typename Func>
-	void _drawText( const _Font<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
+	void _drawText( const FontT<T, LoadingFunc> & font, const Rectangle & rectangle, const UTF8String & text, const Math::Vec2<bool> & centered, Func & func );
 }
 
 

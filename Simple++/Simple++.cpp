@@ -74,8 +74,7 @@
 // #include "UI/Window.h"
 #include <functional>
 #include "IO/Resource.h"
-#include "IO/IOHandlerLoadable.h"
-#include "IO/IOManagerLoadable.h"
+#include "IO/Manager.h"
 #include "IO/Loadable.h"
 #include "Math/BasicDistanceable.h"
 #include "MultiMap.h"
@@ -587,35 +586,38 @@ int main( int argc, char * argv[] ) {
 	log( StringASCII( colorF.HSLtoRGB() ) );
 
 
-	/*
-		Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 40 );
-		font.load();
-		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
-		font.writeToFile( L"consola.cfont" );
+
+	Graphic::TrueTypeFont<unsigned char> font( L"consola.ttf", 40 );
+	font.load();
+	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
+	IO::write( L"consola.cfont", &font );
 
 
-		Graphic::FontLoadable<unsigned char> font2( L"consola.cfont" );
-		font2.load();
+	Graphic::Font<unsigned char> font2;
+	IO::read( L"consola.cfont", &font2 );
 
-		font.writeToFile( L"consola2.cfont" );
+	IO::write( L"consola2.cfont", &font2 );
 
-		Graphic::FreeImage glyphFreeImage;
-		glyphFreeImage.loadFromDatas( ( unsigned char * ) font2['A'] -> getDatas(), font2['A'] -> getSize(), Graphic::FreeImage::Format::R );
-		glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
-	*/
+	Graphic::FreeImage glyphFreeImage;
+	glyphFreeImage.loadFromDatas( ( unsigned char * ) font2[ 'A' ]->getDatas(), font2[ 'A' ]->getSize(), Graphic::FreeImage::Format::R );
+	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
+
 
 	Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB );
 	freeImage.load();
 
-	Graphic::TextureLoadable<unsigned char> texture;
+	Graphic::Texture<unsigned char> texture;
 	texture.setDatas( ( unsigned char * ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR );
 	texture.generateMipmaps();
-	texture.writeToFile( "sanctum.ctexture" );
+	IO::write( "sanctum.ctexture", &texture );
 
 
-	Graphic::TextureLoadable<unsigned char> texture2( WString( "sanctum.ctexture" ) );
-	texture2.load();
-	texture2.writeToFile( "sanctum2.ctexture" );
+	IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable( "sanctum.ctexture" );
+	assert(textureLoadable.load());
+	Graphic::Texture<unsigned char> & textureLoaded( *textureLoadable.getObject() );
+
+
+	IO::write( "sanctum2.ctexture", &textureLoadable );
 
 	/************************************************************************/
 	/* DOING SOME TEST IN imageTest2                                        */
@@ -656,7 +658,7 @@ int main( int argc, char * argv[] ) {
 	gradientRadial.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 	gradientRadial.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
-	Graphic::Image image( texture2[ 0 ] );
+	Graphic::Image image( textureLoaded[ 0 ] );
 
 
 	/*{
@@ -1036,10 +1038,10 @@ int main( int argc, char * argv[] ) {
 			Graphic::ImageT<unsigned char> imageExampleBicubic( freeImageBicubicIn.getDatas(), freeImageBicubicIn.getSize(), Graphic::LoadingFormat::BGR, false );
 
 			//image.drawImage( Graphic::Point( 0, 0 ), imageSmall.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear ) );
-			image.drawImage( Graphic::Point( 0, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Lanczos ) );
-			image.drawImage( Graphic::Point( 200, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Image::ResamplingMode::Lanczos ) );
-			image.drawImage( Graphic::Point( 300, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 50, 50 ), Graphic::Image::ResamplingMode::Lanczos ) );
-			image.drawImage( Graphic::Point( 350, 0 ), texture2[0] -> resample( Math::Vec2<Graphic::Size>( 25, 25 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 0, 0 ), textureLoadable[0] -> resample( Math::Vec2<Graphic::Size>( 100, 500 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 200, 0 ), textureLoadable[0] -> resample( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 300, 0 ), textureLoadable[0] -> resample( Math::Vec2<Graphic::Size>( 50, 50 ), Graphic::Image::ResamplingMode::Lanczos ) );
+			image.drawImage( Graphic::Point( 350, 0 ), textureLoadable[0] -> resample( Math::Vec2<Graphic::Size>( 25, 25 ), Graphic::Image::ResamplingMode::Lanczos ) );
 
 			//image.drawImage( Graphic::Point( 200, 0 ), imageExampleLinear );
 			//image.drawImage( Graphic::Point( 0, 200 ), imageExampleBicubic );
@@ -1060,19 +1062,19 @@ int main( int argc, char * argv[] ) {
 		}*/
 
 
-	texture2[ 0 ] = image;
+	textureLoaded[ 0 ] = image;
 
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Generate Mipmaps									//
-		texture2.generateMipmaps();
+		textureLoaded.generateMipmaps();
 	}
 
 
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Mipmaps										//
-		for ( size_t i = 1; i<texture2.getNbMipmaps(); i++ ) {
+		for ( size_t i = 1; i<textureLoaded.getNbMipmaps(); i++ ) {
 			//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 		}
 	}
@@ -1081,7 +1083,7 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// Saving to file										//
 	Graphic::FreeImage freeImage2;
-	freeImage2.loadFromDatas( ( unsigned char * ) texture2.getDatas( 0 ), texture2.getSize( 0 ), Graphic::FreeImage::Format::RGB );
+	freeImage2.loadFromDatas( ( unsigned char * ) textureLoaded.getDatas( 0 ), textureLoaded.getSize( 0 ), Graphic::FreeImage::Format::RGB );
 	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
 #endif
 
@@ -1359,7 +1361,7 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Text											//
-		Graphic::FontLoadable<unsigned char> font( L"consola.ttf", 15 );
+		Graphic::TrueTypeFont<unsigned char> font( L"consola.ttf", 15 );
 		font.load();
 		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
 

@@ -28,7 +28,7 @@ namespace Graphic {
 		///@param centering How the text has to be centered in the image
 		///@param format Format of the resulting image
 		template<typename LoadingFunc>
-		Text( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering = Math::Vec2<bool>(false), Format format = Format::RGBA );
+		Text( const FontT<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering = Math::Vec2<bool>(false), Format format = Format::RGBA );
 
 		///@brief Copy Constructor
 		///@param text Text to be copied
@@ -53,7 +53,7 @@ namespace Graphic {
 		///@param str StringASCII to be rendered
 		///@param centering How the text has to be centered in the image
 		template<typename LoadingFunc>
-		void setText( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering = Math::Vec2<bool>( false ) );
+		void setText( const FontT<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering = Math::Vec2<bool>( false ) );
 
 		///@brief Get the centering of this Text
 		///@return Vec2<bool> where x is the centering horizontal and y vertical
@@ -78,7 +78,7 @@ namespace Graphic {
 		bool write( IO::SimpleFileStream * fileStream ) const;
 	private:
 		template<typename LoadingFunc, typename Functor>
-		void _setText( const _Font<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Functor & func );
+		void _setText( const FontT<T, LoadingFunc> & font, const UTF8String & str, const Math::Vec2<bool> & centering, Functor & func );
 		void _clear();
 		
 

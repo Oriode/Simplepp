@@ -123,7 +123,7 @@ namespace Graphic {
 
 
 	template<typename T = unsigned char, typename OverlayColorFunc = ColorFunc::SimpleColor<ColorRGBA<T>>, typename StrokeColorFunc = ColorFunc::SimpleColor<ColorRGBA<T>>, typename ShadowColorFunc = ColorFunc::SimpleColor<ColorRGBA<T>>>
-	class FontEffect : public _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>> {
+	class FontEffect : public FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>> {
 	public:
 		///@brief Empty Constructor
 		FontEffect( );

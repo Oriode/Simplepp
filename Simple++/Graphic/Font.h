@@ -16,7 +16,7 @@
 namespace Graphic {
 
 	template<typename T = unsigned char, typename LoadingFunc = FontLoadingFunc::Default>
-	class _Font : public IO::BasicIO {
+	class FontT : public IO::BasicIO {
 	public:
 
 		class Template {
@@ -29,46 +29,46 @@ namespace Graphic {
 		///@brief Empty constructor
 		///@param createImageFunctor Functor to be used to load the glyphs
 		///@see FontLoadingFunc
-		_Font( const LoadingFunc & createImageFunctor = LoadingFunc() );
+		FontT( const LoadingFunc & createImageFunctor = LoadingFunc() );
 
 		///@brief Constructor from a fileStream
 		///@param fileStream Stream to read to create this object
-		_Font( IO::SimpleFileStream * fileStream );
+		FontT( IO::SimpleFileStream * fileStream );
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
 		///@param pixSize Size of the loaded font.
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
-		_Font( const WString & fileName, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
+		FontT( const WString & fileName, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 		///@brief Constructor using a font file dump and his size in bytes
 		///@param fileDump memory copy of a font file.
 		///@param fileSize size in bytes of the data buffer.
 		///@param pixSize Size in pixels of the font
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
-		_Font( const char * fileDump, size_t fileSize, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
+		FontT( const char * fileDump, size_t fileSize, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 		///@brief Copy constructor
 		///@param font Font to be copied
-		_Font( const _Font<T, LoadingFunc> & font );
+		FontT( const FontT<T, LoadingFunc> & font );
 
 		///@brief move constructor
 		///@param font Font to be moved
-		_Font( _Font<T, LoadingFunc> && font );
+		FontT( FontT<T, LoadingFunc> && font );
 
 		///@brief Destructor
-		~_Font();
+		~FontT();
 
 
 		///@brief Copy operator
 		///@param font Font to be copied
 		///@return reference to THIS
-		_Font<T, LoadingFunc> & operator=( const _Font<T, LoadingFunc> & font );
+		FontT<T, LoadingFunc> & operator=( const FontT<T, LoadingFunc> & font );
 
 		///@brief Move operator
 		///@param font Font from were to move
 		///@return reference to THIS
-		_Font<T, LoadingFunc> & operator=( _Font<T, LoadingFunc> && font );
+		FontT<T, LoadingFunc> & operator=( FontT<T, LoadingFunc> && font );
 
 
 
@@ -151,8 +151,8 @@ namespace Graphic {
 		bool _loadFreeType( const char * fileDump, size_t size, float pixSize );
 		void _setPixSize( unsigned int size );
 		void _unload();
-		void _copy( const _Font<T, LoadingFunc> & font );
-		void _move( _Font<T, LoadingFunc> && font );
+		void _copy( const FontT<T, LoadingFunc> & font );
+		void _move( FontT<T, LoadingFunc> && font );
 
 		Map<UCodePoint, FreeTypeChar<T> *> charsMap;
 		FreeTypeChar<T> * asciiMap[256];
@@ -177,7 +177,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	using Font = _Font<T>;
+	using Font = FontT<T>;
 
 }
 

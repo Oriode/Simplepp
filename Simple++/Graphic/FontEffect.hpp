@@ -235,19 +235,19 @@ namespace Graphic {
 
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect() : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>() {
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect() : FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>() {
 
 	}
 
 
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const char * fileDump, size_t fileSize, int pixSize ) : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fileDump, fileSize, pixSize ) {
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const char * fileDump, size_t fileSize, int pixSize ) : FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fileDump, fileSize, pixSize ) {
 
 	}
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const WString & fileName, int pixSize ) : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fileName, pixSize ) {
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const WString & fileName, int pixSize ) : FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fileName, pixSize ) {
 
 	}
 
@@ -334,23 +334,23 @@ namespace Graphic {
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc >
 	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc> & FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::operator=( FontEffect && fontEffect ) {
-		_Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>::operator =( Utility::toRValue( fontEffect ) );
+		FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>::operator =( Utility::toRValue( fontEffect ) );
 		return *this;
 	}
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc >
 	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc> & FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::operator=( const FontEffect & fontEffect ) {
-		_Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>::operator =( fontEffect );
+		FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>::operator =( fontEffect );
 		return *this;
 	}
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc >
-	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const FontEffect & fontEffect ) : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fontEffect ) {
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( const FontEffect & fontEffect ) : FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( fontEffect ) {
 
 	}
 
 	template<typename T, typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc >
-	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( FontEffect && fontEffect ) : _Font<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( Utility::toRValue( fontEffect ) ) {
+	FontEffect<T, OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::FontEffect( FontEffect && fontEffect ) : FontT<T, FontLoadingFunc::Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>>( Utility::toRValue( fontEffect ) ) {
 
 	}
 

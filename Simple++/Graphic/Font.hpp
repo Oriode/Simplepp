@@ -2,21 +2,21 @@
 namespace Graphic {
 
 	template<typename T, typename LoadingFunc>
-	const UTF8String _Font<T, LoadingFunc>::Template::Ascii = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.+/_-*'\"()[]#^%!?";
+	const UTF8String FontT<T, LoadingFunc>::Template::Ascii = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.+/_-*'\"()[]#^%!?";
 
 	template<typename T, typename LoadingFunc>
-	const UTF8String _Font<T, LoadingFunc>::Template::Latin1 = "\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf";
+	const UTF8String FontT<T, LoadingFunc>::Template::Latin1 = "\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf";
 
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( IO::SimpleFileStream * fileStream ) {
+	FontT<T, LoadingFunc>::FontT( IO::SimpleFileStream * fileStream ) {
 		_nullify();
 		if ( !_read( fileStream ) )
 			_clear();
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( const WString & fileName, int pixSize, const LoadingFunc & loadingFunctor ) :
+	FontT<T, LoadingFunc>::FontT( const WString & fileName, int pixSize, const LoadingFunc & loadingFunctor ) :
 		loadingFunctor( loadingFunctor )
 	{
 		static_assert( Utility::isBase<FontLoadingFunc::Template, LoadingFunc>::value, "The Loading Functor has to inherite from FontLoadingFunc::Template" );
@@ -35,7 +35,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( const char * fileDump, size_t fileSize, int pixSize, const LoadingFunc & loadingFunctor ) :
+	FontT<T, LoadingFunc>::FontT( const char * fileDump, size_t fileSize, int pixSize, const LoadingFunc & loadingFunctor ) :
 		loadingFunctor( loadingFunctor ),
 		memorySize( fileSize ) 
 	{
@@ -61,41 +61,41 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( const LoadingFunc & loadingFunctor ) :
+	FontT<T, LoadingFunc>::FontT( const LoadingFunc & loadingFunctor ) :
 		loadingFunctor( loadingFunctor )
 	{
 		_nullify();
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( const _Font<T, LoadingFunc> & font ) {
+	FontT<T, LoadingFunc>::FontT( const FontT<T, LoadingFunc> & font ) {
 		_copy( font );
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::_Font( _Font<T, LoadingFunc> && font ) {
+	FontT<T, LoadingFunc>::FontT( FontT<T, LoadingFunc> && font ) {
 		_move( Utility::toRValue(font) );
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::setLoadingFunctor( const LoadingFunc & loadingFunctor ) {
+	void FontT<T, LoadingFunc>::setLoadingFunctor( const LoadingFunc & loadingFunctor ) {
 		this -> loadingFunctor = loadingFunctor;
 	}
 
 	template<typename T, typename LoadingFunc>
-	const LoadingFunc & _Font<T, LoadingFunc>::getLoadingFunctor() const {
+	const LoadingFunc & FontT<T, LoadingFunc>::getLoadingFunctor() const {
 		return this -> loadingFunctor;
 	}
 
 
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc>::~_Font() {
+	FontT<T, LoadingFunc>::~FontT() {
 		_unload();
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_setPixSize( unsigned int size ) {
+	void FontT<T, LoadingFunc>::_setPixSize( unsigned int size ) {
 		this -> pixSize = float( size );
 		this -> lineHeight = 1.0f * float( this -> pixSize );
 		this -> wordSpace = 0.4f * float( this -> pixSize );
@@ -105,7 +105,7 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_unload() {
+	void FontT<T, LoadingFunc>::_unload() {
 		if ( this -> memoryFontObject ) {
 			if ( this -> ftFace ) FT_Done_Face( this -> ftFace );
 			if ( this -> ftLib ) FT_Done_FreeType( this -> ftLib );
@@ -118,7 +118,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_nullify() {
+	void FontT<T, LoadingFunc>::_nullify() {
 		for ( size_t i = 0; i < 256; i++ )
 			this -> asciiMap[i] = NULL;
 
@@ -129,7 +129,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	FreeTypeChar<T> * _Font<T, LoadingFunc>::operator[]( UCodePoint codePoint ) {
+	FreeTypeChar<T> * FontT<T, LoadingFunc>::operator[]( UCodePoint codePoint ) {
 		if ( codePoint < 256 ) {
 			return this -> asciiMap[codePoint];
 		} else {
@@ -143,7 +143,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	const FreeTypeChar<T> * _Font<T, LoadingFunc>::operator[]( UCodePoint codePoint ) const {
+	const FreeTypeChar<T> * FontT<T, LoadingFunc>::operator[]( UCodePoint codePoint ) const {
 		if ( codePoint < 256 ) {
 			return this -> asciiMap[codePoint];
 		} else {
@@ -157,13 +157,13 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	const Map<UCodePoint, FreeTypeChar<T> *> & _Font<T, LoadingFunc>::getCharMap() const {
+	const Map<UCodePoint, FreeTypeChar<T> *> & FontT<T, LoadingFunc>::getCharMap() const {
 		return this -> charsMap;
 	}
 
 
 	template<typename T, typename LoadingFunc>
-	const FreeTypeChar<T> * _Font<T, LoadingFunc>::loadGlyph( UCodePoint codePoint ) {
+	const FreeTypeChar<T> * FontT<T, LoadingFunc>::loadGlyph( UCodePoint codePoint ) {
 		FreeTypeChar<T> ** c = this -> charsMap.getValueI( codePoint );
 
 		if ( !c ) {
@@ -183,7 +183,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::loadGlyph( const UTF8String & str ) {
+	void FontT<T, LoadingFunc>::loadGlyph( const UTF8String & str ) {
 		UCodePoint codePoint;
 		for ( auto it = str.getBegin(); str.iterate( &it, &codePoint );) {
 			loadGlyph( codePoint );
@@ -191,7 +191,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::reloadGlyphs(  ) {
+	void FontT<T, LoadingFunc>::reloadGlyphs(  ) {
 		for ( size_t i( 0 ); i < 256; i++ ) {
 			if ( this -> asciiMap[i] ) {
 				delete this -> asciiMap[i];
@@ -208,17 +208,17 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	const Math::Vec2<float> & _Font<T, LoadingFunc>::getDrawingBias() const {
+	const Math::Vec2<float> & FontT<T, LoadingFunc>::getDrawingBias() const {
 		return this -> loadingFunctor.getBias();
 	}
 	template<typename T, typename LoadingFunc>
-	const Rectangle & _Font<T, LoadingFunc>::getMargins() const {
+	const Rectangle & FontT<T, LoadingFunc>::getMargins() const {
 		return this -> loadingFunctor.getMargins();
 	}
 
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::write( IO::SimpleFileStream * fileStream ) const {
+	bool FontT<T, LoadingFunc>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this -> memorySize ) )
 			return false;
 		if ( !IO::writeBuffer( fileStream, this -> memoryFontObject, this -> memorySize ) )
@@ -265,7 +265,7 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_clear( ) {
+	void FontT<T, LoadingFunc>::_clear( ) {
 		_unload();
 		_nullify();
 		this -> pixSize = 0.0f;
@@ -274,7 +274,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::read( IO::SimpleFileStream * fileStream ) {
+	bool FontT<T, LoadingFunc>::read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 		_nullify();
 		if ( !_read( fileStream ) ) {
@@ -285,7 +285,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::_read( IO::SimpleFileStream * fileStream ) {
+	bool FontT<T, LoadingFunc>::_read( IO::SimpleFileStream * fileStream ) {
 
 
 		if ( !IO::read( fileStream, &this -> memorySize ) ) 
@@ -337,17 +337,17 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	float _Font<T, LoadingFunc>::getLineHeight() const {
+	float FontT<T, LoadingFunc>::getLineHeight() const {
 		return this -> lineHeight;
 	}
 
 	template<typename T, typename LoadingFunc>
-	float _Font<T, LoadingFunc>::getWordSpace() const {
+	float FontT<T, LoadingFunc>::getWordSpace() const {
 		return this -> wordSpace;
 	}
 
 	template<typename T, typename LoadingFunc>
-	Math::Rectangle<int> _Font<T, LoadingFunc>::computeRectangle( const UTF8String & text ) const {
+	Math::Rectangle<int> FontT<T, LoadingFunc>::computeRectangle( const UTF8String & text ) const {
 
 		UCodePoint codePoint;
 		Math::Rectangle<int> rectangle( 0, this -> getLineHeight(), 0, 0 );
@@ -375,7 +375,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::computeLineWidth( Vector<float> * vector, const UTF8String & text ) const {
+	void FontT<T, LoadingFunc>::computeLineWidth( Vector<float> * vector, const UTF8String & text ) const {
 		float currentPosX( 0 );
 		UCodePoint codePoint;
 
@@ -398,7 +398,7 @@ namespace Graphic {
 	
 
 	template<typename T, typename LoadingFunc>
-	bool _Font<T, LoadingFunc>::_loadFreeType( const char * fileDump, size_t size, float pixSize ) {
+	bool FontT<T, LoadingFunc>::_loadFreeType( const char * fileDump, size_t size, float pixSize ) {
 		if ( fileDump && size ) {
 			//Load the FreeType library
 			if ( FT_Init_FreeType( &this -> ftLib ) ) {
@@ -427,7 +427,7 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_move( _Font<T, LoadingFunc> && font ) {
+	void FontT<T, LoadingFunc>::_move( FontT<T, LoadingFunc> && font ) {
 		this -> charsMap = Utility::toRValue( font.charsMap );
 		for ( int i( 0 ); i < 256; i++ )
 			this -> asciiMap[i] = Utility::toRValue( font.asciiMap[i] );
@@ -443,7 +443,7 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	void _Font<T, LoadingFunc>::_copy( const _Font<T, LoadingFunc> & font ) {
+	void FontT<T, LoadingFunc>::_copy( const FontT<T, LoadingFunc> & font ) {
 		this -> pixSize = font.pixSize;
 		this -> lineHeight = font.lineHeight;
 		this -> wordSpace = font.wordSpace;
@@ -476,14 +476,14 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc> & _Font<T, LoadingFunc>::operator=( _Font<T, LoadingFunc> && font ) {
+	FontT<T, LoadingFunc> & FontT<T, LoadingFunc>::operator=( FontT<T, LoadingFunc> && font ) {
 		_unload();
 		_move( Utility::toRValue( font ) );
 		return *this;
 	}
 
 	template<typename T, typename LoadingFunc>
-	_Font<T, LoadingFunc> & _Font<T, LoadingFunc>::operator=( const _Font<T, LoadingFunc> & font ) {
+	FontT<T, LoadingFunc> & FontT<T, LoadingFunc>::operator=( const FontT<T, LoadingFunc> & font ) {
 		_unload();
 		_copy( font );
 		return *this;
