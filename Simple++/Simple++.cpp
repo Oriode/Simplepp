@@ -36,9 +36,9 @@
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
 //#define DEBUG_JSON
-#define DEBUG_MAP
+//#define DEBUG_MAP
 //#define DEBUG_UI
-#define DEBUG_IO
+//#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_STRING
 //#define DEBUG_DATE
@@ -73,9 +73,10 @@
 // #include "UI/UI.h"
 // #include "UI/Window.h"
 #include <functional>
-#include "IO/IOResource.h"
+#include "IO/Resource.h"
 #include "IO/IOHandlerLoadable.h"
 #include "IO/IOManagerLoadable.h"
+#include "IO/Loadable.h"
 #include "Math/BasicDistanceable.h"
 #include "MultiMap.h"
 #include "OS/Path.h"
@@ -263,39 +264,51 @@ int main( int argc, char * argv[] ) {
 	{
 
 		{
-			IO::IOManager<Graphic::Texture<unsigned char>> textureManager;
-			IO::IOResource<Graphic::Texture<unsigned char>> textureResource( &textureManager );
+			IO::Manager<Graphic::Texture<unsigned char>> textureManager;
+			IO::Resource<Graphic::Texture<unsigned char>> textureResource( &textureManager );
+			OS::Path filePath( "sanctum.ctexture" );
 
 			//assert( IO::write( "TextureManager.cmanager", &textureManager ) );
 			//assert( IO::read( "TextureManager.cmanager", &textureManager ) );
-			log( StringASCII( "Resource counter : (expected : 0) : " )<<textureManager.getNbUses( "sanctum.ctexture" ) );
+			log( StringASCII( "Resource counter : (expected : 0) : " )<<textureManager.getNbUses( filePath ) );
 
-			// Adding one resource with the IOResource
-			assert( textureResource.setObject( "sanctum.ctexture" ) );
-			log( StringASCII( "Resource counter : (expected : 1) : " )<<textureManager.getNbUses( "sanctum.ctexture" ) );
+			// Adding one resource with the Resource
+			assert( textureResource.setObject( filePath ) );
+			log( StringASCII( "Resource counter : (expected : 1) : " )<<textureManager.getNbUses( filePath ) );
 
 			log( StringASCII( "Texture Height : (expected : 500) : " )<<textureResource.getObject()->getHeight() );
 
 			// Adding a texture directly to the manager.
-			assert( textureManager.addObject( "sanctum.ctexture" ) );
-			log( StringASCII( "Resource counter : (expected : 2) : " )<<textureManager.getNbUses( "sanctum.ctexture" ) );
+			assert( textureManager.addObject( filePath ) );
+			log( StringASCII( "Resource counter : (expected : 2) : " )<<textureManager.getNbUses( filePath ) );
 
 			// Changing resource to something external.
 			Graphic::Texture<unsigned char> textureTest;
 			assert( textureResource.setObject( &textureTest ) );
 			// One Resource has been deleted, the counter should be 1.
-			log( StringASCII( "Resource counter : (expected : 1) : " )<<textureManager.getNbUses( "sanctum.ctexture" ) );
+			log( StringASCII( "Resource counter : (expected : 1) : " )<<textureManager.getNbUses( filePath ) );
 
 			// Set back an internaly texture.
-			assert( textureResource.setObject( "sanctum.ctexture" ) );
-			log( StringASCII( "Resource counter : (expected : 2) : " )<<textureManager.getNbUses( "sanctum.ctexture" ) );
+			assert( textureResource.setObject( filePath ) );
+			log( StringASCII( "Resource counter : (expected : 2) : " )<<textureManager.getNbUses( filePath ) );
 			// Now the texture should be managed by the textureManager.
 
 			// Add a texture directly to the manager.
-			assert( textureManager.addObject( "sanctum.ctexture" ) );
-			log( StringASCII( "Resource counter : (expected : 3) : " )<<textureManager.getNbUses( "sanctum.ctexture" ) );
+			assert( textureManager.addObject( filePath ) );
+			log( StringASCII( "Resource counter : (expected : 3) : " )<<textureManager.getNbUses( filePath ) );
 
-			//TODO : Add IOLoadable tests.
+			IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable( filePath );
+
+			assert( textureLoadable.load() );
+			log( StringASCII( "Texture Loaded as a Loadable, Height : (expected : 500) : " )<<textureLoadable.getObject()->getHeight() );
+
+			// Now try to write the loadable as a BasicIO.
+			assert( IO::write( filePath, &textureLoadable ) );
+
+			// And now read it again.
+			assert( IO::read( filePath, &textureLoadable ) );
+			log( StringASCII( "Texture Loaded as a BasicIO, Height : (expected : 500) : " )<<textureLoadable.getObject()->getHeight() );
+
 
 			log( "Every IO Tests passed." );
 		}

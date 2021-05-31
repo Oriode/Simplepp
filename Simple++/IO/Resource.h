@@ -1,19 +1,19 @@
 ///@file ImageHandler.h
-///@brief File containing the IOResource Object, an object containing an object of type DataType, externally loaded or internally. The goal is to manipulate an object multiple times without having to ensure memory deletion.
+///@brief File containing the Resource Object, an object containing an object of type DataType, externally loaded or internally. The goal is to manipulate an object multiple times without having to ensure memory deletion.
 ///@author Clement Gerber
 ///@date 19/12/16 (DMY)
 #pragma once
 
 #include "../BasicLoadable.h"
-#include "IOManager.h"
+#include "Manager.h"
 #include "BasicIO.h"
 #include "../Utility.h"
 
 namespace IO  {
 
-	///@brief Part of the IOManager.
+	///@brief Part of the Manager.
 	template<typename DataType>
-	class IOResource : public BasicIO {
+	class Resource : public BasicIO {
 		public:
 
 			enum class LoadingType : unsigned char {
@@ -24,29 +24,29 @@ namespace IO  {
 			};
 
 			///@brief Empty Constructor
-			///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
-			IOResource( IOManager<DataType> * manager = NULL );
+			///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+			Resource( Manager<DataType> * manager = NULL );
 
 			///@brief Constructor from an external object, no memory management will be done.
 			///@param dataObject Object to use in this handler (object has to be deleted manually)
-			///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
-			IOResource( DataType * dataObject, IOManager<DataType> * manager = NULL );
+			///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+			Resource( DataType * dataObject, Manager<DataType> * manager = NULL );
 
 			///@brief Constructor from a path, the memory management will be using the Manager if any, internally otherwise.
 			///@param filePath path to to the file.
-			///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
-			IOResource( const OS::Path & filePath, IOManager<DataType> * manager = NULL );
+			///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+			Resource( const OS::Path & filePath, Manager<DataType> * manager = NULL );
 
 			///@brief Copy Constructor
 			///@param handler object to be copied
-			IOResource( const IOResource<DataType> & handler );
+			Resource( const Resource<DataType> & handler );
 
 			///@brief Moved Constructor
 			///@param handler object to be moved
-			IOResource( IOResource<DataType> && handler );
+			Resource( Resource<DataType> && handler );
 
 			///@brief Destructor
-			~IOResource();
+			~Resource();
 
 			///@brief Cast operator into the pointer of the type of the object inside.
 			operator DataType * ( );
@@ -55,12 +55,12 @@ namespace IO  {
 			///@brief Copy Operator
 			///@param handler Object to be copied
 			///@return reference to THIS
-			IOResource<DataType> & operator=( const IOResource<DataType> & handler );
+			Resource<DataType> & operator=( const Resource<DataType> & handler );
 
 			///@brief Move operator
 			///@param handler Object to be moved
 			///@return reference to THIS
-			IOResource<DataType> & operator=( IOResource<DataType> && handler );
+			Resource<DataType> & operator=( Resource<DataType> && handler );
 
 			///@brief Get the image inside of this handler (Can be NULL if empty)
 			///@return Pointer to the object stored inside this handler
@@ -90,12 +90,12 @@ namespace IO  {
 		private:
 			bool _setObject( const OS::Path & filePath );
 			bool _deleteObject();
-			IOManager<DataType> * manager;
+			Manager<DataType> * manager;
 			DataType * object;
 			LoadingType loadingType;
-			typename IOManager<DataType>::ObjectId managerObjectId;
+			typename Manager<DataType>::ObjectId managerObjectId;
 	};
 
 }
 
-#include "IOResource.hpp"
+#include "Resource.hpp"

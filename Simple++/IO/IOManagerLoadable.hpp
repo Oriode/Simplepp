@@ -2,7 +2,7 @@
 namespace IO {
 
 	template<typename DataType>
-	IOManagerLoadable<DataType>::IOManagerLoadable( const IOManager<DataType> & manager ) {
+	IOManagerLoadable<DataType>::IOManagerLoadable( const Manager<DataType> & manager ) {
 		setLoaded( true );
 
 		for ( auto it( manager.dataMap.getBegin() ); it!=manager.dataMap.getEnd(); manager.dataMap.iterate( &it ) ) {
@@ -86,12 +86,12 @@ namespace IO {
 
 	template<typename DataType>
 	bool IOManagerLoadable<DataType>::onRead( IO::SimpleFileStream * fileStream ) {
-		return IOManager<DataType>::read( fileStream );
+		return Manager<DataType>::read( fileStream );
 	}
 
 	template<typename DataType>
 	bool IOManagerLoadable<DataType>::onWrite( IO::SimpleFileStream * fileStream ) const {
-		return IOManager<DataType>::write( fileStream );
+		return Manager<DataType>::write( fileStream );
 	}
 
 }

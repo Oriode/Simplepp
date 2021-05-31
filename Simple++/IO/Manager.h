@@ -1,5 +1,5 @@
 ///@file ImageManager.h
-///@brief File containing the IOManager Object, an memory manager for loaded object to preserve from duplicate loading in memory. When a new resource is needed, call the addObject() method to get an identifier of the loaded resource. (loaded automaticaly if necessary). When the use if finished, call the deleteObject() method to remove the use. (unloaded if not used anymore by anyone).
+///@brief File containing the Manager Object, an memory manager for loaded object to preserve from duplicate loading in memory. When a new resource is needed, call the addObject() method to get an identifier of the loaded resource. (loaded automaticaly if necessary). When the use if finished, call the deleteObject() method to remove the use. (unloaded if not used anymore by anyone).
 ///@author Clement Gerber
 ///@date 19/12/16 (DMY)
 #pragma once
@@ -17,7 +17,7 @@ namespace IO {
 	///@tparam DataType Type of the data to be handled inside this structure, (DO NOT USE POINTER)
 	///					  DataType must have an empty constructor, and have the read()/write() method for BasicIO or BasicLoadableIO
 	template<typename DataType>
-	class IOManager : public BasicIO {
+	class Manager : public BasicIO {
 	public:
 		struct MemoryObject {
 			DataType * object;
@@ -29,9 +29,9 @@ namespace IO {
 
 
 		///@brief Empty Constructor
-		IOManager();
+		Manager();
 
-		~IOManager();
+		~Manager();
 
 		///@brief create an object using its filepath
 		///@param filePath Path to the file used to load the object (If the object doesn't exists, it will be created and added) (Memory management is assured)
@@ -79,4 +79,4 @@ namespace IO {
 
 }
 
-#include "IOManager.hpp"
+#include "Manager.hpp"

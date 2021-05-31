@@ -5,7 +5,7 @@
 #pragma once
 
 #include "BasicLoadableIO.h"
-#include "IOResource.h"
+#include "Resource.h"
 #include "IOManagerLoadable.h"
 
 // DEPRECATED
@@ -22,12 +22,12 @@ namespace IO {
 
 		///@brief Constructor from an external object, no memory management will be done.
 		///@param dataObject Object to use in this handler (object has to be deleted manually)
-		///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+		///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
 		IOHandlerLoadable( DataType * dataObject, IOManagerLoadable<DataType> * manager = NULL );
 
 		///@brief Constructor from File Path (object will be loaded and memory managed)
 		///@param filePath Path to the file to be loaded
-		///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+		///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
 		IOHandlerLoadable( const String & filePath, IOManagerLoadable<DataType> * manager = NULL );
 
 		///@brief Copy Constructor

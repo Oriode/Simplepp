@@ -5,22 +5,22 @@
 #pragma once
 
 #include "BasicLoadableIO.h"
-#include "IOManager.h"
+#include "Manager.h"
 #include "../Utility.h"
 
 // DEPRECATED
 namespace IO {
 	
 	template<typename DataType>
-	class IOManagerLoadable : public BasicLoadableIO, public IOManager<DataType> {
+	class IOManagerLoadable : public BasicLoadableIO, public Manager<DataType> {
 	public:
-		using IOManager<DataType>::ObjectId;
+		using Manager<DataType>::ObjectId;
 
 		///@brief Empty Constructor
 		IOManagerLoadable();
 
-		///@brief Constructor from an IOManager 
-		IOManagerLoadable( const IOManager<DataType> & manager );
+		///@brief Constructor from an Manager 
+		IOManagerLoadable( const Manager<DataType> & manager );
 
 		///@brief Destructor
 		~IOManagerLoadable();

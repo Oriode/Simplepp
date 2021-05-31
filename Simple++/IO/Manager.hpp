@@ -1,18 +1,18 @@
 namespace IO {
 
 	template<typename DataType>
-	IOManager<DataType>::IOManager() {
+	Manager<DataType>::Manager() {
 		// DataType has to be a BasicIO
 		//static_assert( Utility::isBase<BasicSimpleIO, DataType>::value, "DataType should inherit from BasicSimpleIO" );
 	}
 
 	template<typename DataType>
-	IOManager<DataType>::~IOManager() {
+	Manager<DataType>::~Manager() {
 		_unload();
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::write( SimpleFileStream * fileStream ) const {
+	bool Manager<DataType>::write( SimpleFileStream * fileStream ) const {
 		Vector<DataType *>::Size nbDatas( this->dataVector.getSize() );
 		if ( !IO::write( fileStream, &nbDatas ) )
 			return false;
@@ -31,7 +31,7 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::read( SimpleFileStream * fileStream ) {
+	bool Manager<DataType>::read( SimpleFileStream * fileStream ) {
 		clear();
 
 		Vector<DataType *>::Size nbDatas;
@@ -71,7 +71,7 @@ namespace IO {
 
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::addObject( const OS::Path & filePath ) {
+	typename Manager<DataType>::ObjectId Manager<DataType>::addObject( const OS::Path & filePath ) {
 		MemoryObject * objectFounded( this->dataMap[ filePath ] );
 		if ( objectFounded ) {
 			( objectFounded->nbUses )++;
@@ -96,17 +96,17 @@ namespace IO {
 
 
 	template<typename DataType>
-	void IOManager<DataType>::incrUseCounter( ObjectId objectId ) {
+	void Manager<DataType>::incrUseCounter( ObjectId objectId ) {
 		( const_cast< MemoryObject * >( objectId )->nbUses )++;
 	}
 
 	template<typename DataType>
-	typename Vector<DataType *>::Size IOManager<DataType>::getNbUses( ObjectId objectId ) const {
+	typename Vector<DataType *>::Size Manager<DataType>::getNbUses( ObjectId objectId ) const {
 		return const_cast< MemoryObject * >( objectId )->nbUses;
 	}
 
 	template<typename DataType>
-	typename Vector<DataType *>::Size IOManager<DataType>::getNbUses( const OS::Path & filePath ) const {
+	typename Vector<DataType *>::Size Manager<DataType>::getNbUses( const OS::Path & filePath ) const {
 		const MemoryObject * objectFounded( this->dataMap[ filePath ] );
 		if ( objectFounded ) {
 			return objectFounded->nbUses;
@@ -116,7 +116,7 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	typename IOManager<DataType>::ObjectId IOManager<DataType>::_addObjectContainer( const OS::Path & filePath, MemoryObject & objectContainer ) {
+	typename Manager<DataType>::ObjectId Manager<DataType>::_addObjectContainer( const OS::Path & filePath, MemoryObject & objectContainer ) {
 		RBNode<MapObject<OS::Path, MemoryObject>> * nodeInserted( this->dataMap.insertNode( filePath, objectContainer ) );
 		MemoryObject & objectContainerInserted( nodeInserted->getValue().getValue() );
 		if ( !nodeInserted ) {
@@ -137,7 +137,7 @@ namespace IO {
 
 
 	template<typename DataType>
-	bool IOManager<DataType>::deleteObject( ObjectId objectId ) {
+	bool Manager<DataType>::deleteObject( ObjectId objectId ) {
 		auto foundedNodeNode( this->dataNodeMap.getNodeI( objectId ) );
 		if ( foundedNodeNode ) {
 			auto foundedNode( foundedNodeNode->getValue().getValue() );
@@ -161,12 +161,12 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	const DataType * IOManager<DataType>::getObject( ObjectId objectId ) const {
+	const DataType * Manager<DataType>::getObject( ObjectId objectId ) const {
 		return objectId->object;
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::_unload() {
+	bool Manager<DataType>::_unload() {
 		for ( auto it( this->dataVector.getBegin() ); it!=this->dataVector.getEnd(); this->dataVector.iterate( &it ) ) {
 			delete this->dataVector.getValueIt( it )->object;
 		}
@@ -174,12 +174,12 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool IOManager<DataType>::_load() {
+	bool Manager<DataType>::_load() {
 		return true;
 	}
 
 	template<typename DataType>
-	void IOManager<DataType>::clear() {
+	void Manager<DataType>::clear() {
 		_unload();
 		this->dataMap.clear();
 		this->dataNodeMap.clear();
@@ -187,7 +187,7 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	typename IOManager<DataType>::MemoryObject * IOManager<DataType>::_getObjectContainer( ObjectId objectId ) {
+	typename Manager<DataType>::MemoryObject * Manager<DataType>::_getObjectContainer( ObjectId objectId ) {
 		return const_cast< MemoryObject * >( objectId );
 	}
 

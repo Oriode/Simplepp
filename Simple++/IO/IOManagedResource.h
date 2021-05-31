@@ -5,18 +5,18 @@
 
 namespace IO {
 
-	///@brief Part of the IOManager.
+	///@brief Part of the Manager.
 	template<typename DataType>
 	class IOManagedResource : public BasicIO {
 	public:
 		///@brief Empty Constructor
-		///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
-		IOManagedResource( IOManager<DataType> * manager = NULL );
+		///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+		IOManagedResource( Manager<DataType> * manager = NULL );
 
 		///@brief Constructor from an external object, no memory management will be done.
 		///@param dataObject Object to use in this handler (object has to be deleted manually)
-		///@param manager Pointer to a IOManager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
-		IOManagedResource( DataType * dataObject, IOManager<DataType> * manager = NULL );
+		///@param manager Pointer to a Manager, to dispatch memory management into it and ensure no duplicate (Cannot be changed)
+		IOManagedResource( DataType * dataObject, Manager<DataType> * manager = NULL );
 
 		///@brief Copy Constructor
 		///@param handler object to be copied
@@ -70,9 +70,9 @@ namespace IO {
 
 	private:
 		void _deleteObject();
-		IOManager<DataType> * manager;
+		Manager<DataType> * manager;
 		DataType * object;
-		typename IOManager<DataType>::ObjectId managerObjectId;
+		typename Manager<DataType>::ObjectId managerObjectId;
 	};
 
 }

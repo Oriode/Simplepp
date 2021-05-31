@@ -12,12 +12,12 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	IOManagedResource<DataType>::IOManagedResource( IOManager<DataType> * manager ) :
+	IOManagedResource<DataType>::IOManagedResource( Manager<DataType> * manager ) :
 		manager( manager ),
 		object( NULL ) {}
 
 	template<typename DataType>
-	IOManagedResource<DataType>::IOManagedResource( DataType * dataObject, IOManager<DataType> * manager ) :
+	IOManagedResource<DataType>::IOManagedResource( DataType * dataObject, Manager<DataType> * manager ) :
 		manager( manager ),
 		object( dataObject ) {}
 

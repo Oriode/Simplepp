@@ -2,52 +2,52 @@
 namespace IO {
 
 	template<typename DataType>
-	IOResource<DataType>::IOResource( IOResource<DataType> && resource ) :
+	Resource<DataType>::Resource( Resource<DataType> && resource ) :
 		manager( Utility::toRValue( resource.manager ) ),
 		managerObjectId( Utility::toRValue( resource.managerObjectId ) ),
 		object( Utility::toRValue( resource.object ) ),
 		loadingType( Utility::toRValue( resource.loadingType ) ) {}
 
 	template<typename DataType>
-	IOResource<DataType>::IOResource( const IOResource<DataType> & resource ) {
+	Resource<DataType>::Resource( const Resource<DataType> & resource ) {
 		( *this ) = resource;
 	}
 
 	template<typename DataType>
-	IOResource<DataType>::IOResource( IOManager<DataType> * manager ) :
+	Resource<DataType>::Resource( Manager<DataType> * manager ) :
 		manager( manager ),
 		managerObjectId( NULL ),
 		object( NULL ),
 		loadingType( LoadingType::None ) {}
 
 	template<typename DataType>
-	IOResource<DataType>::IOResource( DataType * dataObject, IOManager<DataType> * manager ) :
+	Resource<DataType>::Resource( DataType * dataObject, Manager<DataType> * manager ) :
 		manager( manager ),
 		object( dataObject ),
 		loadingType( ( dataObject ) ? LoadingType::Externaly : LoadingType::None ) {}
 
 	template<typename DataType>
-	IOResource<DataType>::IOResource( const OS::Path & filePath, IOManager<DataType> * manager ) :
+	Resource<DataType>::Resource( const OS::Path & filePath, Manager<DataType> * manager ) :
 		manager( manager ) {
 		_setObject( filePath );
 	}
 
 	template<typename DataType>
-	IOResource<DataType>::~IOResource() {
+	Resource<DataType>::~Resource() {
 		_deleteObject();
 	}
 
 	template<typename DataType>
-	IOResource<DataType>::operator DataType * ( ) {
+	Resource<DataType>::operator DataType * ( ) {
 		return this->object;
 	}
 	template<typename DataType>
-	IOResource<DataType>::operator const DataType * ( ) const {
+	Resource<DataType>::operator const DataType * ( ) const {
 		return this->object;
 	}
 
 	template<typename DataType>
-	IOResource<DataType> & IOResource<DataType>::operator=( const IOResource<DataType> & resource ) {
+	Resource<DataType> & Resource<DataType>::operator=( const Resource<DataType> & resource ) {
 		_deleteObject();
 
 		switch ( resource.loadingType ) {
@@ -85,7 +85,7 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	IOResource<DataType> & IOResource<DataType>::operator=( IOResource<DataType> && resource ) {
+	Resource<DataType> & Resource<DataType>::operator=( Resource<DataType> && resource ) {
 		this->manager = Utility::toRValue( resource.manager );
 		this->object = Utility::toRValue( resource.object );
 		this->managerObjectId = Utility::toRValue( resource.managerObjectId );
@@ -93,22 +93,22 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	const DataType * IOResource<DataType>::getObject() const {
+	const DataType * Resource<DataType>::getObject() const {
 		return this->object;
 	}
 	template<typename DataType>
-	DataType * IOResource<DataType>::getObject() {
+	DataType * Resource<DataType>::getObject() {
 		return this->object;
 	}
 
 	template<typename DataType>
-	bool IOResource<DataType>::setObject( const OS::Path & filePath ) {
+	bool Resource<DataType>::setObject( const OS::Path & filePath ) {
 		_deleteObject();
 		return _setObject( filePath );
 	}
 
 	template<typename DataType>
-	bool IOResource<DataType>::setObject( DataType * dataObject ) {
+	bool Resource<DataType>::setObject( DataType * dataObject ) {
 		_deleteObject();
 
 		this->object = dataObject;
@@ -123,21 +123,21 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool IOResource<DataType>::read( FileStream * fileStream ) {
+	bool Resource<DataType>::read( FileStream * fileStream ) {
 		if ( this->object==NULL )
 			return true;
 		return IO::read( fileStream, this->object );
 	}
 
 	template<typename DataType>
-	bool IOResource<DataType>::write( FileStream * fileStream ) const {
+	bool Resource<DataType>::write( FileStream * fileStream ) const {
 		if ( this->object==NULL )
 			return true;
 		return IO::write( fileStream, this->object );
 	}
 
 	template<typename DataType>
-	bool IOResource<DataType>::_setObject( const OS::Path & filePath ) {
+	bool Resource<DataType>::_setObject( const OS::Path & filePath ) {
 		if ( this->manager ) {
 			this->managerObjectId = this->manager->addObject( filePath );
 			if ( this->managerObjectId ) {
@@ -168,7 +168,7 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool IOResource<DataType>::_deleteObject() {
+	bool Resource<DataType>::_deleteObject() {
 		// Start by handling the actual resource.
 		switch ( this->loadingType ) {
 			case LoadingType::Internaly:
