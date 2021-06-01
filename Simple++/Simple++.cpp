@@ -43,6 +43,7 @@
 //#define DEBUG_STRING
 //#define DEBUG_DATE
 //#define DEBUG_PATH
+#define DEBUG_STREAM
 
 
 #ifndef _LIB
@@ -79,6 +80,7 @@
 #include "Math/BasicDistanceable.h"
 #include "MultiMap.h"
 #include "OS/Path.h"
+#include "Stream.h"
 
 namespace AI {
 
@@ -1201,6 +1203,8 @@ int main( int argc, char * argv[] ) {
 	}
 #endif
 #ifdef DEBUG_PATH
+//////////////////////////////////////////////////////////////////////////
+// DEBUG : Path															//
 	{
 		log( "Debuging Pathes..." );
 		OS::Path path( "C:\\testfolder" );
@@ -1212,6 +1216,15 @@ int main( int argc, char * argv[] ) {
 		log( path.toString() );
 
 		log( path.basename() );
+	}
+#endif
+#ifdef DEBUG_STREAM
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Stream														//
+	{
+		Stream streamTest = WString("Hello World !");
+		streamTest << 'H';
+		log( streamTest );
 	}
 #endif
 

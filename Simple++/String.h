@@ -11,7 +11,7 @@
 #include <string>
 #include <cmath>
 #include "SimpleLog.h"
-#include "Vector.h"
+#include "Stream.h"
 #include "Math/BasicComparable.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
@@ -94,6 +94,12 @@ public:
 	 * @param [in,out]	str	The string.
 	 */
 	BasicString( BasicString<T> && str );
+
+	///@brief Constructor using a Stream.
+	///@template C Stream element type.
+	///@param stream Stream to be copied.
+	template<typename C>
+	BasicString( const StreamT<C> & stream );
 
 
 	/**
@@ -2148,7 +2154,7 @@ public:
 
 	/**
 	 * @brief		Write this string into a file as readable (non binary)
-	 * @param [in,out]	fileStream	Stream used to write this string.
+	 * @param [in,out]	fileStream	StreamT used to write this string.
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	bool writeReadable( IO::SimpleFileStream * fileStream ) const;
@@ -2297,6 +2303,17 @@ public:
 	 */
 	template<typename N = char, int nbChars = 1, int base = 10>
 	static N parseNumber( const T ** c );
+
+
+
+	/************************************************************************/
+	/* CONVERSION                                                           */
+	/************************************************************************/
+	template<typename C>
+	operator StreamT<C>();
+
+
+
 
 	/** @brief	The numbers[ 16] */
 	static const T numbers[ 16 ];
@@ -2544,6 +2561,9 @@ protected:
 	 * @returns	A reference to a BasicString.
 	 */
 	BasicString & _concatWOS( const float & f, unsigned int precision = 5, unsigned int base = 10 );
+
+
+
 
 
 

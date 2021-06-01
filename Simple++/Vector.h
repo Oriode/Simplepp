@@ -38,86 +38,60 @@ public:
 	/** @brief	Defines an alias representing the size */
 	typedef unsigned long long Size;
 
+	static constexpr size_t elementSize = sizeof( T );
 
 	/** @brief	Default constructor */
 	Vector( void );
-	/**
-	 * @brief 	Constructor
-	 *
-	 * @param 	size   	The size.
-	 * @param 	maxSize	The maximum size of the.
-	 */
+
+	///@brief Constructor initializing a Vector of a specific size and max size.
+	///@param size Size of the vector.
+	///@param maxSize Max size of the vector.
 	Vector( const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize );
-	/**
-	 * @brief 	Constructor
-	 *
-	 * @param 	maxSize	The maximum size of the.
-	 */
+
+	///@brief Constructor initializing a Vector of a specific max size.
+	///@param maxSize Max size of the vector.
 	Vector( const typename Vector<T>::Size maxSize );
 
-	/**
-	 * @brief 	Copy constructor
-	 *
-	 * @param 	vector	The vector.
-	 */
+	///@brief Copy constructor.
+	///@param stream Vector to be copied.
 	Vector( const Vector & vector );
-	/**
-	 * @brief 	Constructor
-	 *
-	 * @tparam	C	Type of the c.
-	 * @param 	vector	The vector.
-	 */
+	
+	///@brief Copy constructor.
+	///@template C type of the Vector to be copied.
+	///@param stream Vector to be copied.
 	template<typename C>
 	Vector( const Vector<C> & vector );
 
-	/**
-	 * @brief 	Move Constructor
-	 *
-	 * @param [in,out]	v	Vector to be moved.
-	 */
+	///@brief Move constructor.
+	///@param stream Vector to be moved from.
 	Vector( Vector && v );
 
-
-
-	/**
-	 * @brief 	Constructor
-	 *
-	 * @tparam	C	Type of the c.
-	 * @tparam	N	Type of the n.
-	 * @param 	data	The data.
-	 */
+	///@brief Constructor using a static array.
+	///@template C Array element type.
+	///@template N Array size.
+	///@param data Array to be copied.
 	template<typename C, size_t N>
 	Vector( const C( &data )[ N ] );
 
-	/**
-	 * @brief 	Constructor
-	 *
-	 * @tparam	C	Type of the c.
-	 * @param 	data   	The data.
-	 * @param 	maxSize	The maximum size of the.
-	 */
+	///@brief Constructor using an array and it's size.
+	///@template C Array element type.
+	///@param data Array to be copied.
+	///@param size Array size.
 	template<typename C>
-	Vector( const C * data, const typename Vector<T>::Size maxSize );
+	Vector( const C * data, const typename Vector<T>::Size size );
 
-	/**
-	 * @brief 	Constructor
-	 *
-	 * @tparam	C	Type of the c.
-	 * @param 	data   	The data.
-	 * @param 	size   	The size.
-	 * @param 	maxSize	The maximum size of the.
-	 */
+	///@brief Constructor using an array, it's size, and a maxSize for the Vector to be allocated.
+	///@template C Array element type.
+	///@param data Array to be copied.
+	///@param size Array size.
+	///@param maxSize Vector max size.
 	template<typename C>
 	Vector( const C * data, const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize );
 
-
-	/**
-	 * @brief 	Constructor from two iterators, Begin and End
-	 *
-	 * @tparam	C	Type of the c.
-	 * @param 	beginIt	to the first element to copy in this vector.
-	 * @param 	endIt  	next to the last element to copy in this vector.
-	 */
+	///@brief Constructor for an Iterator Begin and an Iterator End. Will compute the size between the two iterators, allocate and copy the data into the Vector.
+	///@template C Element type to be copied.
+	///@param beginIt Iterator begin.
+	///@param endIt Iterator end.
 	template<typename C>
 	Vector( RandomAccessIterator<C> beginIt, typename RandomAccessIterator<C> endIt );
 
@@ -447,14 +421,16 @@ public:
 	 *
 	 * @returns	reference to THIS.
 	 */
-	Vector<T> & operator+=( const Vector<T> & vector );
+	template<typename C>
+	Vector<T> & operator+=( const Vector<C> & vector );
 
 	/**
 	 * @brief 	Concat another vector to this one
 	 *
 	 * @param 	vector	Vector to be concatenated.
 	 */
-	void concat( const Vector<T> & vector );
+	template<typename C>
+	void concat( const Vector<C> & vector );
 
 
 

@@ -87,6 +87,7 @@ Vector<T>::Vector( const C( &data )[N] ) :
 	size( N ),
 	maxSize( N ),
 	dataTable( new T[N] ) {
+	_assert( N );
 	copy( data, N );
 	_updateIterators();
 }
@@ -120,6 +121,7 @@ Vector<T>::Vector( const C * data, const typename Vector<T>::Size size ) :
 	maxSize( size ),
 	size( size ),
 	dataTable( new T[size] ) {
+	_assert( size );
 	copy( data, this -> size );
 	_updateIterators();
 }
@@ -131,6 +133,7 @@ Vector<T>::Vector( const C * data, const typename Vector<T>::Size size, const ty
 	maxSize( maxSize ),
 	size( size ),
 	dataTable( new T[maxSize] ) {
+	_assert( maxSize );
 	_assert( maxSize >= size );
 	copy( data, this -> size );
 	_updateIterators();
@@ -142,6 +145,7 @@ Vector<T>::Vector( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endI
 	size( endIt - beginIt ),
 	maxSize( this -> size ),
 	dataTable( new T[maxSize] ) {
+	_assert( this -> maxSize );
 	copy( data, this -> size );
 	_updateIterators();
 }
@@ -184,9 +188,6 @@ void Vector<T>::copy( const C * datas, const typename Vector<T>::Size index, con
 	copy( this -> dataTable + index, datas, size );
 }
 
-
-
-
 template<typename T>
 template<typename C>
 void Vector<T>::copy( const C * datas, const typename Vector<T>::Size size ) {
@@ -199,24 +200,18 @@ void Vector<T>::assign(const typename Vector<T>::Size index1, const typename Vec
 }
 
 template<typename T>
-Vector<T> & Vector<T>::operator+=( const Vector<T> & vector ) {
+template<typename C>
+Vector<T> & Vector<T>::operator+=( const Vector<C> & vector ) {
 	concat( vector );
 	return *this;
 }
 
-
-
 template<typename T>
-void Vector<T>::concat( const Vector<T> & vector ) {
-	typename Vector<T>::Size oldNumValues( this -> size );
+template<typename C>
+void Vector<T>::concat( const Vector<C> & vector ) {
 	this -> resize( this -> size + vector.size );
-	copy( getData() + oldNumValues, vector.getData(), vector.getSize() );
+	copy( getEnd(), vector.getData(), vector.getSize() );
 }
-
-
-
-
-
 
 template<typename T>
 template<typename C>

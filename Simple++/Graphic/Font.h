@@ -32,7 +32,7 @@ namespace Graphic {
 		FontT( const LoadingFunc & createImageFunctor = LoadingFunc() );
 
 		///@brief Constructor from a fileStream
-		///@param fileStream Stream to read to create this object
+		///@param fileStream StreamT to read to create this object
 		FontT( IO::SimpleFileStream * fileStream );
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)

@@ -259,6 +259,8 @@
     <ClInclude Include="OS\Path.h" />
     <ClInclude Include="OS\Path.hpp" />
     <ClInclude Include="SimpleLog.hpp" />
+    <ClInclude Include="Stream.h" />
+    <ClInclude Include="Stream.hpp" />
     <ClInclude Include="Thread.hpp" />
     <ClInclude Include="UI\BasicUI.h" />
     <ClInclude Include="UI\Event.h" />

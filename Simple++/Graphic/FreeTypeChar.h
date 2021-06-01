@@ -30,7 +30,7 @@ namespace Graphic {
 		FreeTypeChar( const FreeTypeChar & c );
 
 
-		///@brief Constructor from a file Stream
+		///@brief Constructor from a file StreamT
 		///@param fileStream file stream to read
 		FreeTypeChar( IO::SimpleFileStream * fileStream );
 
