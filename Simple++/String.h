@@ -930,6 +930,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned char number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( unsigned char number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -938,6 +939,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned short number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( unsigned short number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -946,6 +948,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( unsigned int  number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -954,6 +957,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( int number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( int number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -962,6 +966,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( unsigned long number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -970,6 +975,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( long long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( long long number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -978,6 +984,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( unsigned long long number, T ** buffer, unsigned int base = 10 );
 	/**
 	 * @brief		Converts this object to a c string
 	 * @param 		  	number	Value to converted to a String.
@@ -986,6 +993,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( long number, T ** buffer, unsigned int base = 10 );
 
 	/**
 	 * @brief		Converts this object to a c string
@@ -996,6 +1004,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 	/**
 	 * @brief		Converts this object to a c string
@@ -1006,6 +1015,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCString( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 	/**
 	 * @brief				Write in the buffer a value representing a bool
@@ -1014,6 +1024,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString( bool b, T * buffer );
+	static typename BasicString<T>::Size toCString( bool b, T ** buffer );
 
 	/**
 	 * @brief			Write in the buffer a value representing a Math::Compare::Value
@@ -1022,6 +1033,7 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCString(const typename Math::Compare::Value& compareValue, T* buffer);
+	static typename BasicString<T>::Size toCString( const typename Math::Compare::Value & compareValue, T ** buffer );
 
 
 	/************************************************************************/
@@ -2943,7 +2955,15 @@ private:
 
 	
 
-	
+	using Vector<T>::copy;
+
+	///@brief Copy a static array.
+	///@template N sourceBuffer size.
+	///@param destinationBuffer Buffer Pointer to the buffer where to copy the data.
+	///@param sourceBuffer Buffer from where to copy.
+	///@return Number of elements copied
+	template<size_t N>
+	static typename Vector<T>::Size copy( T ** destinationBuffer, const T( &sourceBuffer )[ N ] );
 
 	
 };

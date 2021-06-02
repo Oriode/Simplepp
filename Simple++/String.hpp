@@ -1373,6 +1373,7 @@ template<typename Type>
 typename BasicString<T>::Size BasicString<T>::_convertI2String( Type number, T ** bufferP, unsigned int base ) {
 	T * bufferInit( *bufferP );
 	__convertI2StringWOS( number, bufferP, base );
+	( **bufferP ) = T( '\0' );
 
 	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
 }
@@ -1444,6 +1445,7 @@ template<typename Type>
 typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
 	T * bufferInit( *bufferP );
 	__convertFloat2StringWOS( number, bufferP, precision, base );
+	( **bufferP ) = T( '\0' );
 
 	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
 }
@@ -1540,90 +1542,145 @@ typename BasicString<T>::Size BasicString<T>::toCString( float number, T * buffe
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( unsigned char number, T * buffer, unsigned int base ) {
-	return _convertUI2String<unsigned char>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( unsigned short number, T * buffer, unsigned int base ) {
-	return _convertUI2String<unsigned short>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( unsigned int number, T * buffer, unsigned int base ) {
-	return _convertUI2String<unsigned int>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( int number, T * buffer, unsigned int base ) {
-	return _convertI2String<int>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( unsigned long long number, T * buffer, unsigned int base ) {
-	return _convertUI2String<unsigned long long>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( long long number, T * buffer, unsigned int base ) {
-	return _convertI2String<long>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( unsigned long number, T * buffer, unsigned int base ) {
-	return _convertUI2String<unsigned long>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( long number, T * buffer, unsigned int base ) {
-	return _convertI2String<long>( number, buffer, base );
+	return toCString( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( double number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2String<double>( number, buffer, precision, base );
+	return toCString( number, &buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( float number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2String<float>( number, buffer, precision, base );
+	return toCString( number, &buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCString( bool b, T * buffer ) {
-	if ( b ) {
-		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ), T( '\0' ) };
-		Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-		return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) - 1 );
-	} else {
-		static const T staticValues[] = { T( 'F' ), T( 'A' ), T( 'L' ), T( 'S' ), T( 'E' ), T( '\0' ) };
-		Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-		return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) - 1 );
-	}
+	return toCString( b, &buffer );
 }
 
 template<typename T>
 inline typename BasicString<T>::Size BasicString<T>::toCString( const typename Math::Compare::Value & compareValue, T * buffer ) {
+	return toCString( compareValue, &buffer );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( unsigned char number, T ** buffer, unsigned int base ) {
+	return _convertUI2String<unsigned char>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( unsigned short number, T ** buffer, unsigned int base ) {
+	return _convertUI2String<unsigned short>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( unsigned int number, T ** buffer, unsigned int base ) {
+	return _convertUI2String<unsigned int>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( int number, T ** buffer, unsigned int base ) {
+	return _convertI2String<int>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( unsigned long long number, T ** buffer, unsigned int base ) {
+	return _convertUI2String<unsigned long long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( long long number, T ** buffer, unsigned int base ) {
+	return _convertI2String<long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( unsigned long number, T ** buffer, unsigned int base ) {
+	return _convertUI2String<unsigned long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( long number, T ** buffer, unsigned int base ) {
+	return _convertI2String<long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( double number, T ** buffer, unsigned int precision, unsigned int base ) {
+	return _convertFloat2String<double>( number, buffer, precision, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( float number, T ** buffer, unsigned int precision, unsigned int base ) {
+	return _convertFloat2String<float>( number, buffer, precision, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCString( bool b, T ** buffer ) {
+	if ( b ) {
+		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ), T( '\0' ) };
+		return BasicString<T>::copy( buffer, staticValues ) - Vector<T>::Size( 1 );
+	} else {
+		static const T staticValues[] = { T( 'F' ), T( 'A' ), T( 'L' ), T( 'S' ), T( 'E' ), T( '\0' ) };
+		return BasicString<T>::copy( buffer, staticValues ) - Vector<T>::Size( 1 );
+	}
+}
+
+template<typename T>
+inline typename BasicString<T>::Size BasicString<T>::toCString( const typename Math::Compare::Value & compareValue, T ** buffer ) {
 	switch ( compareValue ) {
 		case Math::Compare::Value::Equal:
-		{
-			static const T staticValues[] = { T( 'E' ), T( 'Q' ), T( 'U' ), T( 'A' ), T( 'L' ), T( '\0' ) };
-			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) - 1 );
-		}
+			{
+				static const T staticValues[] = { T( 'E' ), T( 'Q' ), T( 'U' ), T( 'A' ), T( 'L' ), T( '\0' ) };
+				return BasicString<T>::copy( buffer, staticValues ) - Vector<T>::Size( 1 );
+			}
 		case Math::Compare::Value::Greater:
-		{
-			static const T staticValues[] = { T( 'G' ), T( 'R' ), T( 'E' ), T( 'A' ), T( 'T' ), T( 'E' ), T( 'R' ), T( '\0' ) };
-			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) - 1 );
-		}
+			{
+				static const T staticValues[] = { T( 'G' ), T( 'R' ), T( 'E' ), T( 'A' ), T( 'T' ), T( 'E' ), T( 'R' ), T( '\0' ) };
+				return BasicString<T>::copy( buffer, staticValues ) - Vector<T>::Size( 1 );
+			}
 		case Math::Compare::Value::Less:
-		{
-			static const T staticValues[] = { T( 'L' ), T( 'E' ), T( 'S' ), T( 'S' ), T( '\0' ) };
-			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) - 1 );
-		}
+			{
+				static const T staticValues[] = { T( 'L' ), T( 'E' ), T( 'S' ), T( 'S' ), T( '\0' ) };
+				return BasicString<T>::copy( buffer, staticValues ) - Vector<T>::Size( 1 );
+			}
 		default:
-		return typename BasicString<T>::Size( 0 );
+			return BasicString<T>::Size( 0 );
 	}
 }
 
@@ -1717,90 +1774,63 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( float number, T * bu
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned char number, T * buffer, unsigned int base ) {
-	return _convertUI2StringWOS<unsigned char>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned short number, T * buffer, unsigned int base ) {
-	return _convertUI2StringWOS<unsigned short>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned int number, T * buffer, unsigned int base ) {
-	return _convertUI2StringWOS<unsigned int>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( int number, T * buffer, unsigned int base ) {
-	return _convertI2StringWOS<int>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned long long number, T * buffer, unsigned int base ) {
-	return _convertUI2StringWOS<unsigned long long>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( long long number, T * buffer, unsigned int base ) {
-	return _convertI2StringWOS<long>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned long number, T * buffer, unsigned int base ) {
-	return _convertUI2StringWOS<unsigned long>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( long number, T * buffer, unsigned int base ) {
-	return _convertI2StringWOS<long>( number, buffer, base );
+	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( double number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2StringWOS<double>( number, buffer, precision, base );
+	return toCStringWOS( number, &buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( float number, T * buffer, unsigned int precision, unsigned int base ) {
-	return _convertFloat2StringWOS<float>( number, buffer, precision, base );
+	return toCStringWOS( number, &buffer, precision, base );
 }
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( bool b, T * buffer ) {
-	if ( b ) {
-		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ) };
-		Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-		return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) );
-	} else {
-		static const T staticValues[] = { T( 'F' ), T( 'A' ), T( 'L' ), T( 'S' ), T( 'E' ) };
-		Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-		return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) );
-	}
+	return toCStringWOS( b, &buffer );
 }
 
 template<typename T>
 inline typename BasicString<T>::Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value & compareValue, T * buffer ) {
-	switch ( compareValue ) {
-		case Math::Compare::Value::Equal:
-		{
-			static const T staticValues[] = { T( 'E' ), T( 'Q' ), T( 'U' ), T( 'A' ), T( 'L' ) };
-			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) );
-		}
-		case Math::Compare::Value::Greater:
-		{
-			static const T staticValues[] = { T( 'G' ), T( 'R' ), T( 'E' ), T( 'A' ), T( 'T' ), T( 'E' ), T( 'R' ) };
-			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) );
-		}
-		case Math::Compare::Value::Less:
-		{
-			static const T staticValues[] = { T( 'L' ), T( 'E' ), T( 'S' ), T( 'S' ) };
-			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
-			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) );
-		}
-	}
+	return toCStringWOS( compareValue, &buffer );
 }
 
 template<typename T>
@@ -1856,51 +1886,32 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( float number, T ** b
 
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( bool b, T ** bufferP ) {
-	T *& buffer( *bufferP );
-
 	if ( b ) {
 		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ) };
-		constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
-		Vector<T>::copy( buffer, staticValues, nbValues );
-		buffer += nbValues;
-		return nbValues;
+		return BasicString<T>::copy( bufferP, staticValues );
 	} else {
 		static const T staticValues[] = { T( 'F' ), T( 'A' ), T( 'L' ), T( 'S' ), T( 'E' ) };
-		constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
-		Vector<T>::copy( buffer, staticValues, nbValues );
-		buffer += nbValues;
-		return nbValues;
+		return BasicString<T>::copy( bufferP, staticValues );
 	}
 }
 
 template<typename T>
 inline typename BasicString<T>::Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value & compareValue, T ** bufferP ) {
-	T *& buffer( *bufferP );
-
 	switch ( compareValue ) {
 		case Math::Compare::Value::Equal:
 			{
 				static const T staticValues[] = { T( 'E' ), T( 'Q' ), T( 'U' ), T( 'A' ), T( 'L' ) };
-				constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
-				Vector<T>::copy( buffer, staticValues, nbValues );
-				buffer += nbValues;
-				return nbValues;
+				return BasicString<T>::copy( bufferP, staticValues );
 			}
 		case Math::Compare::Value::Greater:
 			{
 				static const T staticValues[] = { T( 'G' ), T( 'R' ), T( 'E' ), T( 'A' ), T( 'T' ), T( 'E' ), T( 'R' ) };
-				constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
-				Vector<T>::copy( buffer, staticValues, nbValues );
-				buffer += nbValues;
-				return nbValues;
+				return BasicString<T>::copy( bufferP, staticValues );
 			}
 		case Math::Compare::Value::Less:
 			{
 				static const T staticValues[] = { T( 'L' ), T( 'E' ), T( 'S' ), T( 'S' ) };
-				constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
-				Vector<T>::copy( buffer, staticValues, nbValues );
-				buffer += nbValues;
-				return nbValues;
+				return BasicString<T>::copy( bufferP, staticValues );
 			}
 	}
 }
@@ -2923,8 +2934,12 @@ BasicString<T> & BasicString<T>::operator=( const float & d ) {
 template<typename T>
 template<typename C, size_t N>
 BasicString<T> & BasicString<T>::operator=( const C( &str )[ N ] ) {
-	//*this = str;
-	//FIXME
+	auto sizePlusOne( N + 1 );
+	if ( getMaxSize() < sizePlusOne )
+		reserve( sizePlusOne );
+	Vector<T>::copy( this -> dataTable, str, sizePlusOne );
+	this -> size = N;
+	_updateIterators();
 	return *this;
 }
 
@@ -3946,6 +3961,14 @@ template<typename T>
 template<typename N, int nbChars, int base>
 N BasicString<T>::parseNumber( const T ** c ) {
 	return __ParseNumber<N, nbChars, base>::compute( c );
+}
+
+template<typename T>
+template<size_t N>
+typename Vector<T>::Size BasicString<T>::copy( T ** destinationBuffer, const T( &sourceBuffer )[ N ] ) {
+	Vector<T>::copy( *destinationBuffer, sourceBuffer, N );
+	destinationBuffer += N;
+	return static_cast< typename Vector<T>::Size >( N );
 }
 
 

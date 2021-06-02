@@ -1222,6 +1222,7 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Stream														//
 	{
+		log( 42 );
 		Stream streamTest = WString("Hello World !");
 		streamTest << 'H';
 		streamTest << 42;
