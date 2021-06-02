@@ -23,13 +23,13 @@ namespace IO {
 		///@param data data to be wrtitten into the file.
 		///@param size number of bytes to be written.
 		///@return True if success, False otherwise.
-		bool write(char* data, size_t size);
+		bool write(char * data, size_t size);
 
 		///@brief read data from the file at the current position.
 		///@param data Buffer to be filled with the read data.
 		///@param size Number of bytes to be read.
 		///@return True if success, False otherwise.
-		bool read(char* data, size_t size);
+		bool read(char * data, size_t size);
 
 		///@brief get the current position.
 		///@return Current position.
@@ -56,7 +56,13 @@ namespace IO {
 		///@return number of char read. (Pointer will be set to NULL if failed, allocated otherwise.)
 		size_t readToBuffer(char** buffer);
 
+		/************************************************************************/
+		/* OPERATOR STREAM                                                      */
+		/************************************************************************/
+
 		///@brief Add a Character to the file.
+		///@param c Byte to be added.
+		///@return Reference to this.
 		SimpleFileStreamT<T> & operator<<(char c);
 
 		///@brief Add multiples characteres to file.

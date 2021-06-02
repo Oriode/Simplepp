@@ -11,7 +11,6 @@
 #include <string>
 #include <cmath>
 #include "SimpleLog.h"
-#include "Stream.h"
 #include "Math/BasicComparable.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
@@ -74,7 +73,7 @@ public:
 	 * @param	endIt  	The end iterator.
 	 */
 	template<typename C>
-	BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt );
+	BasicString( const typename RandomAccessIterator<C> beginIt, const typename RandomAccessIterator<C> endIt );
 
 
 	/**
@@ -94,12 +93,6 @@ public:
 	 * @param [in,out]	str	The string.
 	 */
 	BasicString( BasicString<T> && str );
-
-	///@brief Constructor using a Stream.
-	///@template C Stream element type.
-	///@param stream Stream to be copied.
-	template<typename C>
-	BasicString( const StreamT<C> & stream );
 
 
 	/**
@@ -2309,8 +2302,6 @@ public:
 	/************************************************************************/
 	/* CONVERSION                                                           */
 	/************************************************************************/
-	template<typename C>
-	operator StreamT<C>();
 
 
 

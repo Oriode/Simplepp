@@ -1224,7 +1224,10 @@ int main( int argc, char * argv[] ) {
 	{
 		Stream streamTest = WString("Hello World !");
 		streamTest << 'H';
-		log( streamTest );
+		streamTest << 42;
+		streamTest << L"TEST Wide.";
+		StringASCII str( streamTest.toStringRaw() );
+		log( str );
 	}
 #endif
 

@@ -2,6 +2,7 @@
 
 
 #include "Vector.h"
+#include "String.h"
 
 
 ///@brief Representing a stream of T data (usefull for writing files or sending/receiving network data)
@@ -66,19 +67,15 @@ public:
 	///@param beginIt Iterator begin.
 	///@param endIt Iterator end.
 	template<typename C>
-	StreamT( RandomAccessIterator<C> beginIt, typename RandomAccessIterator<C> endIt );
+	StreamT( const typename RandomAccessIterator<C> beginIt, const typename RandomAccessIterator<C> endIt );
 
-	///@brief Add a new element to the stream ad the current position.
-	///@param data New element to be added.
-	///@return Reference to this.
-	StreamT & operator<<( const T & data );
-
-	///@brief Add an element of an another type to the StreamT at the current position. The element will be added in binary.
-	///@template C Element type to be added.
-	///@param data New element to be added.
-	///@return Reference to this.
+	///@brief Consructor using a String.
+	///@template C Type of a String element.
+	///@param str String to be converted.
 	template<typename C>
-	StreamT & operator<<( const C & data );
+	StreamT( const BasicString<C> & str );
+
+
 
 	///@brief Append a new element to the stream.
 	///@param data New element to be added.
@@ -100,6 +97,10 @@ public:
 	template<typename C>
 	void concat( const StreamT<C> & stream );
 
+	/************************************************************************/
+	/* POSITIONING                                                          */
+	/************************************************************************/
+
 	///@brief Get the current position as an Index.
 	///@return Position index.
 	typename Vector<T>::Size getPosition() const;
@@ -117,9 +118,102 @@ public:
 	///@param pos New position iterator.
 	void setPosition( typename Vector<T>::Iterator pos );
 
+	/************************************************************************/
+	/* READ / WRITE                                                         */
+	/************************************************************************/
+
+	///@brief Add a new element to the stream ad the current position.
+	///@param data New element to be added.
+	///@return Reference to this.
+	bool write( const T & data );
+
+	///@brief Add an element of an another type to the StreamT at the current position. The element will be added in binary.
+	///@template C Element type to be added.
+	///@param data New element to be added.
+	///@return Reference to this.
+	template<typename C>
+	bool write( const C & data );
+
+	///@brief Add multiple new elements to the stream ad the current position.
+	///@template N Number of data to be written.
+	///@param data New elements to be added.
+	///@return Reference to this.
+	template<size_t N>
+	bool write( const T( &data )[ N ] );
+
+	///@brief Add multiple elements of an another type to the StreamT at the current position. The element will be added in binary.
+	///@template C Element type to be added.
+	///@template N Number of data to be written.
+	///@param data New elements to be added.
+	///@return Reference to this.
+	template<typename C, size_t N>
+	bool write( const C( &data )[ N ] );
+
+	///@brief Write data into this Stream at the current position.
+	///@param data data to be wrtitten into the Stream.
+	///@param size number of data to be written.
+	///@return True if success, False otherwise.
+	bool write( const T * data, typename Vector<T>::Size size );
+
+	///@brief Write data of an another type into this Stream at the current position.
+	///@template C Element type to be added.
+	///@param data data to be wrtitten into the Stream.
+	///@param size number of data to be written.
+	///@return True if success, False otherwise.
+	template<typename C>
+	bool write( const C * data, typename Vector<T>::Size size );
+
+	///@brief read data from the Stream at the current position.
+	///@param data Buffer to be filled with the read data.
+	///@param size Number of data to be read.
+	///@return True if success, False otherwise.
+	bool read( T * data, typename Vector<T>::Size size );
+
+	/************************************************************************/
+	/* OPERATOR STREAM                                                      */
+	/************************************************************************/
+
+	///@brief Add a new element to the stream ad the current position.
+	///@param data New element to be added.
+	///@return Reference to this.
+	StreamT & operator<<( const T & data );
+
+	///@brief Add an element of an another type to the StreamT at the current position. The element will be added in binary.
+	///@template C Element type to be added.
+	///@param data New element to be added.
+	///@return Reference to this.
+	template<typename C>
+	StreamT & operator<<( const C & data );
+
+	///@brief Add multiple new elements to the stream ad the current position.
+	///@template N Number of data to be written.
+	///@param data New elements to be added.
+	///@return Reference to this.
+	template<size_t N>
+	StreamT & operator<<( const T( &data )[ N ] );
+
+	///@brief Add multiple elements of an another type to the StreamT at the current position. The element will be added in binary.
+	///@template C Element type to be added.
+	///@template N Number of data to be written.
+	///@param data New elements to be added.
+	///@return Reference to this.
+	template<typename C, size_t N>
+	StreamT & operator<<( const C( &data )[ N ] );
+
+	/************************************************************************/
+	/* CONVERSION                                                           */
+	/************************************************************************/
+
+	///@brief Convert this Stream into a String without any conversion.
+	///@template Output String element type.
+	///@return String.
+	template<typename C = T>
+	BasicString<C> toStringRaw() const;
+
+
 
 protected:
-	/** Current position pointer. */
+	/** Current position. */
 	typename Vector<T>::Size position;
 
 

@@ -78,7 +78,7 @@ BasicString<T>::BasicString( const C * str, typename BasicString<T>::Size size )
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt ) :
+BasicString<T>::BasicString( const typename RandomAccessIterator<C> beginIt, const typename RandomAccessIterator<C> endIt ) :
 	Vector<T>( beginIt, typename BasicString<T>::Size( endIt - beginIt ), typename BasicString<T>::Size( endIt - beginIt + 1 ) ) {
 	this -> dataTable[ this -> size ] = T( '\0' );
 }
@@ -225,26 +225,6 @@ BasicString<T>::BasicString( const BasicString<T> & str ) :
 template<typename T>
 BasicString<T>::BasicString( BasicString<T> && str ) :
 	Vector<T>( Utility::toRValue( str ) ) {}
-
-template<typename T>
-template<typename C>
-BasicString<T>::BasicString( const StreamT<C> & stream ) :
-	Vector( Vector<T>::ctor::null ) {
-	if ( stream.getSize() ) {
-		typename Vector<T>::Size sizeInBytes( stream.getSize() * Vector<C>::elementSize );
-		this->size = sizeInBytes / Vector<T>::elementSize;
-		this->_allocateNoNullDelete( this->size + 1 );
-		this->_updateIterators();
-		Vector<T>::copy( reinterpret_cast< unsigned char * >( this->dataTable ), reinterpret_cast< const unsigned char * >( stream.getData() ), sizeInBytes );
-		this->dataTable[ this->size ] = T( '\0' );
-	} else {
-		this->size = 0;
-		this->_allocateNoNullDelete( 1 );
-		this->_updateIterators();
-		this->dataTable[ 0 ] = T( '\0' );
-	}
-	
-}
 
 template<typename T>
 BasicString<T>::BasicString( ctor ) : Vector<T>( ctor::null ) {
@@ -3070,16 +3050,6 @@ bool BasicString<T>::operator>=( const T & c ) const {
 /************************************************************************/
 /* CONVERSION                                                           */
 /************************************************************************/
-
-template<typename T>
-template<typename C>
-BasicString<T>::operator StreamT<C>() {
-	if ( this->size ) {
-		return StreamT<C>( this->dataTable, this->size );
-	} else {
-		return StreamT<C>();
-	}
-}
 
 
 /************************************************************************/

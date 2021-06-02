@@ -93,7 +93,7 @@ public:
 	///@param beginIt Iterator begin.
 	///@param endIt Iterator end.
 	template<typename C>
-	Vector( RandomAccessIterator<C> beginIt, typename RandomAccessIterator<C> endIt );
+	Vector( const typename RandomAccessIterator<C> beginIt, const typename typename RandomAccessIterator<C> endIt );
 
 	/** @brief	Destructor */
 	~Vector( void );
