@@ -207,8 +207,10 @@ public:
 	///@brief Convert this Stream into a String without any conversion.
 	///@template Output String element type.
 	///@return String.
-	template<typename C = T>
+	template<typename C = char>
 	BasicString<C> toStringRaw() const;
+
+	///@brief Convert an element to a String using it's hexadecimal representation.
 
 
 

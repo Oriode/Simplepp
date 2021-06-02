@@ -12,6 +12,7 @@
 #include <cmath>
 #include "SimpleLog.h"
 #include "Math/BasicComparable.h"
+#include "Vector.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
 #include <Windows.h>
@@ -1162,6 +1163,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1170,6 +1173,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1178,6 +1183,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1186,6 +1193,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( int number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( int number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1194,6 +1203,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1202,6 +1213,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( long long number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1210,6 +1223,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number	Number of.
@@ -1218,6 +1233,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( long number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( long number, T ** buffer, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number   	Number of.
@@ -1227,6 +1244,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	number   	Number of.
@@ -1236,6 +1255,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOS( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+
 	/**
 	 * @brief		Converts this object to a c string whithout \0
 	 * @param 		  	b	  	True to b.
@@ -1243,6 +1264,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS( bool b, T * buffer );
+	static typename BasicString<T>::Size toCStringWOS( bool b, T ** buffer );
+
 
 	/**
 	 * @brief			Write in the buffer a value representing a Math::Compare::Value without \0
@@ -1251,6 +1274,8 @@ public:
 	 * @returns			Number of characters written.
 	 */
 	static typename BasicString<T>::Size toCStringWOS(const typename Math::Compare::Value& compareValue, T* buffer);
+	static typename BasicString<T>::Size toCStringWOS( const typename Math::Compare::Value & compareValue, T ** buffer );
+
 
 	/************************************************************************/
 	/* From StringASCII to number                                                */
@@ -2791,7 +2816,7 @@ private:
 	 * @returns	The i converted 2 string.
 	 */
 	template< typename Type>
-	static typename BasicString<T>::Size _convertI2String( Type number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size _convertI2String( Type number, T ** buffer, unsigned int base = 10 );
 
 	/**
 	 * @brief		Convert user interface 2 string
@@ -2813,7 +2838,7 @@ private:
 	 * @returns	The user converted interface 2 string.
 	 */
 	template<typename Type>
-	static typename BasicString<T>::Size _convertUI2String( Type number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size _convertUI2String( Type number, T ** buffer, unsigned int base = 10 );
 
 	/**
 	 * @brief		Convert float 2 string
@@ -2837,7 +2862,7 @@ private:
 	 * @returns	The float converted 2 string.
 	 */
 	template<typename Type>
-	static typename BasicString<T>::Size _convertFloat2String( Type number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static typename BasicString<T>::Size _convertFloat2String( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 
 
@@ -2862,7 +2887,9 @@ private:
 	 * @returns	The i converted 2 string whithout \0.
 	 */
 	template< typename Type>
-	static typename BasicString<T>::Size _convertI2StringWOS( Type number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size _convertI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
+	template< typename Type>
+	static void __convertI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
 
 	/**
 	 * @brief		Convert user interface 2 string whithout \0
@@ -2884,7 +2911,9 @@ private:
 	 * @returns	The user converted interface 2 string whithout \0.
 	 */
 	template<typename Type>
-	static typename BasicString<T>::Size _convertUI2StringWOS( Type number, T * buffer, unsigned int base = 10 );
+	static typename BasicString<T>::Size _convertUI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
+	template<typename Type>
+	static void __convertUI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
 
 	/**
 	 * @brief		Convert float 2 string whithout \0
@@ -2908,8 +2937,9 @@ private:
 	 * @returns	The float converted 2 string whithout \0.
 	 */
 	template<typename Type>
-	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-
+	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	template<typename Type>
+	static void __convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 	
 

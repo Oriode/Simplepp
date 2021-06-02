@@ -49,7 +49,7 @@ StreamT<T>::StreamT( const BasicString<C> & str ) :
 		this->_updateIterators();
 
 		// Copy bytes directly.
-		Vector<unsigned char>::copy( reinterpret_cast< unsigned char * >( this->dataTable ), reinterpret_cast< const unsigned char * >( data ), sizeBytes );
+		Vector<unsigned char>::copy( reinterpret_cast< unsigned char * >( this->dataTable ), reinterpret_cast< const unsigned char * >( str.getData() ), sizeBytes );
 	} else {
 		this -> size = 0;
 		this -> maxSize = 0;
@@ -154,8 +154,8 @@ bool StreamT<T>::write( const T * data, typename Vector<T>::Size size ) {
 template<typename T>
 template<typename C>
 bool StreamT<T>::write( const C * data, typename Vector<T>::Size size ) {
-	constexpr typename Vector<T>::Size bytesToBeAdded( size * Vector<C>::elementSize );
-	constexpr typename Vector<T>::Size offsetToBeAdded( bytesToBeAdded / Vector<T>::elementSize );
+	typename Vector<T>::Size bytesToBeAdded( size * Vector<C>::elementSize );
+	typename Vector<T>::Size offsetToBeAdded( bytesToBeAdded / Vector<T>::elementSize );
 	typename Vector<T>::Size positionAfter( this->position + offsetToBeAdded );
 	if ( positionAfter > this->maxSize ) {
 		this->reserve( positionAfter * 2 );
@@ -169,7 +169,7 @@ bool StreamT<T>::write( const C * data, typename Vector<T>::Size size ) {
 		this->size = this->position;
 	}
 
-	return *this;
+	return true;
 }
 
 template<typename T>
@@ -209,7 +209,7 @@ void StreamT<T>::concat( const StreamT<C> & stream ) {
 template<typename T>
 StreamT<T> & StreamT<T>::operator<<( const T & data ) {
 	write( data );
-	return &this;
+	return *this;
 }
 
 template<typename T>

@@ -227,7 +227,7 @@ BasicString<T>::BasicString( BasicString<T> && str ) :
 	Vector<T>( Utility::toRValue( str ) ) {}
 
 template<typename T>
-BasicString<T>::BasicString( ctor ) : Vector<T>( ctor::null ) {
+BasicString<T>::BasicString( Vector<T>::ctor ) : Vector<T>( ctor::null ) {
 
 }
 
@@ -1068,8 +1068,8 @@ typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOS( Type number,
 	_assert( Base <= 16 && Base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	auto bufferTmp = buffer;
-	auto tmpP = tmpBuffer;
+	T * bufferInit( buffer );
+	T * tmpP = tmpBuffer;
 	while ( true ) {
 		*tmpP = number % Type( Base );
 		if ( number < Type( Base ) ) break;
@@ -1077,21 +1077,30 @@ typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOS( Type number,
 		tmpP++;
 	}
 
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
+	for ( ; tmpP >= tmpBuffer; tmpP--, buffer++ ) {
+		*buffer = BasicString<T>::numbers[ *tmpP ];
 	}
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	return static_cast<typename BasicString<T>::Size>( buffer - buffer );
 }
 */
 
 template<typename T>
 template<typename Type>
-typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOS( Type number, T * buffer, unsigned int base ) {
+typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	__convertUI2StringWOS( number, bufferP, base );
+
+	return static_cast<typename BasicString<T>::Size>( *bufferP - bufferInit );
+}
+
+template<typename T>
+template<typename Type>
+typename void BasicString<T>::__convertUI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
 	_assert( base <= 16 && base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	auto bufferTmp = buffer;
-	auto tmpP = tmpBuffer;
+	T *& buffer( *bufferP );
+	T * tmpP = tmpBuffer;
 	while ( true ) {
 		*tmpP = number % Type( base );
 		if ( number < Type( base ) ) break;
@@ -1099,10 +1108,9 @@ typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOS( Type number,
 		tmpP++;
 	}
 
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
+	for ( ; tmpP >= tmpBuffer; tmpP--, buffer++ ) {
+		*buffer = BasicString<T>::numbers[ *tmpP ];
 	}
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
 }
 
 /*
@@ -1113,10 +1121,10 @@ typename BasicString<T>::Size BasicString<T>::_convertI2StringWOS( Type number, 
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	auto bufferTmp = buffer;
+	T * bufferInit( buffer );
 	if ( number < Type( 0 ) ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
+		( *buffer ) = T( '-' );
+		buffer++;
 		number = -number;
 	}
 
@@ -1129,24 +1137,33 @@ typename BasicString<T>::Size BasicString<T>::_convertI2StringWOS( Type number, 
 		tmpP++;
 	}
 
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
+	for ( ; tmpP >= tmpBuffer; tmpP--, buffer++ ) {
+		*buffer = BasicString<T>::numbers[ *tmpP ];
 	}
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	return static_cast< typename BasicString<T>::Size >( buffer - buffer );
 }
 */
 
 template<typename T>
 template<typename Type>
-typename BasicString<T>::Size BasicString<T>::_convertI2StringWOS( Type number, T * buffer, unsigned int base ) {
+typename BasicString<T>::Size BasicString<T>::_convertI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	__convertI2StringWOS( number, bufferP, base );
+
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
+}
+
+template<typename T>
+template<typename Type>
+typename void BasicString<T>::__convertI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
 	_assert( base <= 16 && base > 0 );
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	auto bufferTmp = buffer;
+	T *& buffer( *bufferP );
 	if ( number < Type( 0 ) ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
+		( *buffer ) = T( '-' );
+		buffer++;
 		number = -number;
 	}
 
@@ -1159,10 +1176,9 @@ typename BasicString<T>::Size BasicString<T>::_convertI2StringWOS( Type number, 
 		tmpP++;
 	}
 
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
+	for ( ; tmpP >= tmpBuffer; tmpP--, buffer++ ) {
+		*buffer = BasicString<T>::numbers[ *tmpP ];
 	}
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
 }
 
 /*
@@ -1179,18 +1195,18 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type numb
 	}
 
 
-	auto bufferTmp = buffer;
+	T * bufferInit( buffer );
 
 	if ( number == Type( 0 ) ) {
-		( *bufferTmp ) = T( '0' );
-		bufferTmp++;
-		( *bufferTmp ) = T( '\0' );
+		( *buffer ) = T( '0' );
+		buffer++;
+		( *buffer ) = T( '\0' );
 		return 1;
 	}
 
 	if ( number < 0 ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
+		( *buffer ) = T( '-' );
+		buffer++;
 		number = -number;
 	}
 
@@ -1205,46 +1221,55 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type numb
 	}
 	int i;
 	if ( comma < 1 ) {
-		bufferTmp[ 0 ] = T( '0' );
-		bufferTmp++;
+		buffer[ 0 ] = T( '0' );
+		buffer++;
 	} else {
-		for ( i = 0; i < comma; i++, bufferTmp++ ) {
+		for ( i = 0; i < comma; i++, buffer++ ) {
 			unsigned long long castedNumber = ( unsigned long long )number;
-			*bufferTmp = BasicString<T>::numbers[ castedNumber % Base ];
+			*buffer = BasicString<T>::numbers[ castedNumber % Base ];
 			number *= Type( Base );
 		}
 	}
 
 
-	*bufferTmp = T( '.' );
-	bufferTmp++;
+	*buffer = T( '.' );
+	buffer++;
 
-	for ( i = comma; i < ( int ) Precision; i++, bufferTmp++ ) {
+	for ( i = comma; i < ( int ) Precision; i++, buffer++ ) {
 		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[ castedNumber % Base ];
+		*buffer = BasicString<T>::numbers[ castedNumber % Base ];
 		number *= Type( Base );
 	}
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	return static_cast< typename BasicString<T>::Size >( buffer - bufferInit );
 }
 */
 
 template<typename T>
 template<typename Type>
-typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type number, T * buffer, unsigned int precision, unsigned int base ) {
+typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	__convertFloat2StringWOS( number, bufferP, precision, base );
+
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
+}
+
+template<typename T>
+template<typename Type>
+typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
 	_assert( base <= 16 && base > 0 );
 
-	auto bufferTmp = buffer;
+	T *& buffer( *bufferP );
 
 	if ( number == Type( 0 ) ) {
-		( *bufferTmp ) = T( '0' );
-		bufferTmp++;
-		( *bufferTmp ) = T( '\0' );
+		( *buffer ) = T( '0' );
+		buffer++;
+		( *buffer ) = T( '\0' );
 		return 1;
 	}
 
 	if ( number < 0 ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
+		( *buffer ) = T( '-' );
+		buffer++;
 		number = -number;
 	}
 
@@ -1258,22 +1283,21 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2StringWOS( Type numb
 		comma--;
 	}
 	int i;
-	for ( i = 0; i < comma; i++, bufferTmp++ ) {
+	for ( i = 0; i < comma; i++, buffer++ ) {
 		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[ castedNumber % base ];
+		*buffer = BasicString<T>::numbers[ castedNumber % base ];
 		number *= Type( base );
 	}
 
-	*bufferTmp = T( '.' );
-	bufferTmp++;
+	*buffer = T( '.' );
+	buffer++;
 
 	int precisionI = ( int ) precision;
-	for ( i = comma; i < precisionI; i++, bufferTmp++ ) {
+	for ( i = comma; i < precisionI; i++, buffer++ ) {
 		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[ castedNumber % base ];
+		*buffer = BasicString<T>::numbers[ castedNumber % base ];
 		number *= Type( base );
 	}
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
 }
 
 ///WITH SENTINEL
@@ -1285,7 +1309,7 @@ typename BasicString<T>::Size BasicString<T>::_convertUI2String( Type number, T 
 	_assert( Base <= 16 && Base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	auto bufferTmp = buffer;
+	auto bufferInit = buffer;
 	auto tmpP = tmpBuffer;
 	while ( true ) {
 		*tmpP = number % Type( Base );
@@ -1294,34 +1318,22 @@ typename BasicString<T>::Size BasicString<T>::_convertUI2String( Type number, T 
 		tmpP++;
 	}
 
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
+	for ( ; tmpP >= tmpBuffer; tmpP--, bufferInit++ ) {
+		*bufferInit = BasicString<T>::numbers[ *tmpP ];
 	}
-	( *bufferTmp ) = T( '\0' );
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	( *bufferInit ) = T( '\0' );
+	return ( typename BasicString<T>::Size )( bufferInit - buffer );
 }
 */
 
 template<typename T>
 template<typename Type>
-typename BasicString<T>::Size BasicString<T>::_convertUI2String( Type number, T * buffer, unsigned int base ) {
-	_assert( base <= 16 && base > 0 );
-	static Type tmpBuffer[ sizeof( Type ) * 8 ];
+typename BasicString<T>::Size BasicString<T>::_convertUI2String( Type number, T ** bufferP, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	__convertUI2StringWOS( number, bufferP, base );
+	( **bufferP ) = T( '\0' );
 
-	auto bufferTmp = buffer;
-	auto tmpP = tmpBuffer;
-	while ( true ) {
-		*tmpP = number % Type( base );
-		if ( number < Type( base ) ) break;
-		number /= Type( base );
-		tmpP++;
-	}
-
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
-	}
-	( *bufferTmp ) = T( '\0' );
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
 }
 
 /*
@@ -1332,10 +1344,10 @@ typename BasicString<T>::Size BasicString<T>::_convertI2String( Type number, T *
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	auto bufferTmp = buffer;
+	auto bufferInit = buffer;
 	if ( number < Type( 0 ) ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
+		( *bufferInit ) = T( '-' );
+		bufferInit++;
 		number = -number;
 	}
 
@@ -1348,42 +1360,21 @@ typename BasicString<T>::Size BasicString<T>::_convertI2String( Type number, T *
 		tmpP++;
 	}
 
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
+	for ( ; tmpP >= tmpBuffer; tmpP--, bufferInit++ ) {
+		*bufferInit = BasicString<T>::numbers[ *tmpP ];
 	}
-	( *bufferTmp ) = T( '\0' );
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	( *bufferInit ) = T( '\0' );
+	return ( typename BasicString<T>::Size )( bufferInit - buffer );
 }
 */
 
 template<typename T>
 template<typename Type>
-typename BasicString<T>::Size BasicString<T>::_convertI2String( Type number, T * buffer, unsigned int base ) {
-	_assert( base <= 16 && base > 0 );
+typename BasicString<T>::Size BasicString<T>::_convertI2String( Type number, T ** bufferP, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	__convertI2StringWOS( number, bufferP, base );
 
-	static Type tmpBuffer[ sizeof( Type ) * 8 ];
-
-	auto bufferTmp = buffer;
-	if ( number < Type( 0 ) ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
-		number = -number;
-	}
-
-
-	auto tmpP = tmpBuffer;
-	while ( true ) {
-		*tmpP = number % Type( base );
-		if ( number < Type( base ) ) break;
-		number /= Type( base );
-		tmpP++;
-	}
-
-	for ( ; tmpP >= tmpBuffer; tmpP--, bufferTmp++ ) {
-		*bufferTmp = BasicString<T>::numbers[ *tmpP ];
-	}
-	( *bufferTmp ) = T( '\0' );
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
 }
 
 /*
@@ -1400,18 +1391,18 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number,
 	}
 
 
-	auto bufferTmp = buffer;
+	auto bufferInit = buffer;
 
 	if ( number == Type( 0 ) ) {
-		( *bufferTmp ) = T( '0' );
-		bufferTmp++;
-		( *bufferTmp ) = T( '\0' );
+		( *bufferInit ) = T( '0' );
+		bufferInit++;
+		( *bufferInit ) = T( '\0' );
 		return 1;
 	}
 
 	if ( number < 0 ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
+		( *bufferInit ) = T( '-' );
+		bufferInit++;
 		number = -number;
 	}
 
@@ -1426,80 +1417,35 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number,
 	}
 	int i;
 	if ( comma < 1 ) {
-		bufferTmp[ 0 ] = T( '0' );
-		bufferTmp++;
+		bufferInit[ 0 ] = T( '0' );
+		bufferInit++;
 	} else {
-		for ( i = 0; i < comma; i++, bufferTmp++ ) {
+		for ( i = 0; i < comma; i++, bufferInit++ ) {
 			unsigned long long castedNumber = ( unsigned long long )number;
-			*bufferTmp = BasicString<T>::numbers[ castedNumber % Base ];
+			*bufferInit = BasicString<T>::numbers[ castedNumber % Base ];
 			number *= Type( Base );
 		}
 	}
-	*bufferTmp = T( '.' );
-	bufferTmp++;
+	*bufferInit = T( '.' );
+	bufferInit++;
 
-	for ( i = comma; i < ( int ) Precision; i++, bufferTmp++ ) {
+	for ( i = comma; i < ( int ) Precision; i++, bufferInit++ ) {
 		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[ castedNumber % Base ];
+		*bufferInit = BasicString<T>::numbers[ castedNumber % Base ];
 		number *= Type( Base );
 	}
-	( *bufferTmp ) = T( '\0' );
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	( *bufferInit ) = T( '\0' );
+	return ( typename BasicString<T>::Size )( bufferInit - buffer );
 }
 */
 
 template<typename T>
 template<typename Type>
-typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number, T * buffer, unsigned int precision, unsigned int base ) {
-	_assert( base <= 16 && base > 0 );
+typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	__convertFloat2StringWOS( number, bufferP, precision, base );
 
-	auto bufferTmp = buffer;
-
-	if ( number == Type( 0 ) ) {
-		( *bufferTmp ) = T( '0' );
-		bufferTmp++;
-		( *bufferTmp ) = T( '\0' );
-		return 1;
-	}
-
-	if ( number < 0 ) {
-		( *bufferTmp ) = T( '-' );
-		bufferTmp++;
-		number = -number;
-	}
-
-	int comma = 1;
-	while ( number > Type( base ) ) {
-		number /= Type( base );
-		comma++;
-	}
-	while ( number < Type( 1 ) ) {
-		number *= Type( base );
-		comma--;
-	}
-	int i;
-	if ( comma < 1 ) {
-		bufferTmp[ 0 ] = T( '0' );
-		bufferTmp++;
-	} else {
-		for ( i = 0; i < comma; i++, bufferTmp++ ) {
-			unsigned long long castedNumber = ( unsigned long long )number;
-			*bufferTmp = BasicString<T>::numbers[ castedNumber % base ];
-			number *= Type( base );
-		}
-	}
-	
-	*bufferTmp = T( '.' );
-	bufferTmp++;
-
-	int precisionI = ( int ) precision;
-	for ( i = comma; i < precisionI; i++, bufferTmp++ ) {
-		unsigned long long castedNumber = ( unsigned long long )number;
-		*bufferTmp = BasicString<T>::numbers[ castedNumber % base ];
-		number *= Type( base );
-	}
-	( *bufferTmp ) = T( '\0' );
-	return ( typename BasicString<T>::Size )( bufferTmp - buffer );
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
 }
 
 
@@ -1854,6 +1800,108 @@ inline typename BasicString<T>::Size BasicString<T>::toCStringWOS( const typenam
 			Vector<T>::copy( buffer, staticValues, ( sizeof( staticValues ) / sizeof( T ) ) );
 			return typename BasicString<T>::Size( ( sizeof( staticValues ) / sizeof( T ) ) );
 		}
+	}
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned char number, T ** buffer, unsigned int base ) {
+	return _convertUI2StringWOS<unsigned char>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned short number, T ** buffer, unsigned int base ) {
+	return _convertUI2StringWOS<unsigned short>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned int number, T ** buffer, unsigned int base ) {
+	return _convertUI2StringWOS<unsigned int>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( int number, T ** buffer, unsigned int base ) {
+	return _convertI2StringWOS<int>( number, buffer, base );
+
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned long long number, T ** buffer, unsigned int base ) {
+	return _convertUI2StringWOS<unsigned long long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( long long number, T ** buffer, unsigned int base ) {
+	return _convertI2StringWOS<long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned long number, T ** buffer, unsigned int base ) {
+	return _convertUI2StringWOS<unsigned long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( long number, T ** buffer, unsigned int base ) {
+	return _convertI2StringWOS<long>( number, buffer, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( double number, T ** buffer, unsigned int precision, unsigned int base ) {
+	return _convertFloat2StringWOS<double>( number, buffer, precision, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( float number, T ** buffer, unsigned int precision, unsigned int base ) {
+	return _convertFloat2StringWOS<float>( number, buffer, precision, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOS( bool b, T ** bufferP ) {
+	T *& buffer( *bufferP );
+
+	if ( b ) {
+		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ) };
+		constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
+		Vector<T>::copy( buffer, staticValues, nbValues );
+		buffer += nbValues;
+		return nbValues;
+	} else {
+		static const T staticValues[] = { T( 'F' ), T( 'A' ), T( 'L' ), T( 'S' ), T( 'E' ) };
+		constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
+		Vector<T>::copy( buffer, staticValues, nbValues );
+		buffer += nbValues;
+		return nbValues;
+	}
+}
+
+template<typename T>
+inline typename BasicString<T>::Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value & compareValue, T ** bufferP ) {
+	T *& buffer( *bufferP );
+
+	switch ( compareValue ) {
+		case Math::Compare::Value::Equal:
+			{
+				static const T staticValues[] = { T( 'E' ), T( 'Q' ), T( 'U' ), T( 'A' ), T( 'L' ) };
+				constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
+				Vector<T>::copy( buffer, staticValues, nbValues );
+				buffer += nbValues;
+				return nbValues;
+			}
+		case Math::Compare::Value::Greater:
+			{
+				static const T staticValues[] = { T( 'G' ), T( 'R' ), T( 'E' ), T( 'A' ), T( 'T' ), T( 'E' ), T( 'R' ) };
+				constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
+				Vector<T>::copy( buffer, staticValues, nbValues );
+				buffer += nbValues;
+				return nbValues;
+			}
+		case Math::Compare::Value::Less:
+			{
+				static const T staticValues[] = { T( 'L' ), T( 'E' ), T( 'S' ), T( 'S' ) };
+				constexpr typename BasicString<T>::Size nbValues( sizeof( staticValues ) / sizeof( T ) );
+				Vector<T>::copy( buffer, staticValues, nbValues );
+				buffer += nbValues;
+				return nbValues;
+			}
 	}
 }
 
