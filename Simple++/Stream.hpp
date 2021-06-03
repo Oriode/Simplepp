@@ -250,7 +250,10 @@ BasicString<C> StreamT<T>::toStringHexa() const {
 	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
 		const T & v( getValueIt( it ) );
 
-		typename Vector<C>::Size nbCharWritten( BasicString<C>::toCStringWOS( v, &newStringData, 16 ) );
+		typename Vector<C>::Size nbCharWritten( BasicString<C>::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Vector<T>::Size( 2 ), C(' '), 16));
+		if ( nbCharWritten != Vector<T>::elementSize * Vector<T>::Size( 2 ) ) {
+			int i = 42;
+		}
 		assert( nbCharWritten == Vector<T>::elementSize * Vector<T>::Size( 2 ) );
 		*( newStringData++ ) = C( ' ' );
 	}

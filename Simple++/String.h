@@ -747,6 +747,32 @@ public:
 	static typename BasicString<T>::Size toCStringWOS( const typename Math::Compare::Value & compareValue, T ** buffer );
 
 
+
+	///@brief			Converts a Number to a String without adding the sentinel and filling for AT LEAST the fillNb number of characters.
+	///@param 		  	number	Number to be converted.
+	///@param [in,out]	buffer	Buffer to be filled with the converted value.
+	///@param 	fillNb  	Characters number to be concatenated.
+	///@param 	fillChar	(Optional) The fill character.
+	///@param 		  	base  	The base.
+	///@returns			Number of characters written.
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned char number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned char number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned short number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned short number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned int  number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned int  number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( int number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( int number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( long long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( long long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned long long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( unsigned long long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static typename BasicString<T>::Size toCStringWOSFill( long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+
+
 	/************************************************************************/
 	/* From StringASCII to number                                                */
 	///@brief		Converts this object to a character
@@ -1943,6 +1969,19 @@ private:
 	template<typename Type>
 	static void __convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
+
+	///@brief			Converts a Number to a String without adding the sentinel and filling for AT LEAST the fillNb number of characters.
+	///@template		Number Type.
+	///@param 		  	number	Number to be converted.
+	///@param [in,out]	buffer	Buffer to be filled with the converted value.
+	///@param 	fillNb  	Characters number to be concatenated.
+	///@param 	fillChar	(Optional) The fill character.
+	///@param 		  	base  	The base.
+	///@returns			Number of characters written.
+	template<typename Type>
+	static typename BasicString<T>::Size _convertI2StringWOSFill( Type number, T ** bufferP, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	template<typename Type>
+	static typename BasicString<T>::Size _convertUI2StringWOSFill( Type number, T ** bufferP, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	
 
 

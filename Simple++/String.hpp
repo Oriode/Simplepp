@@ -1280,6 +1280,46 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 	}
 }
 
+template<typename T>
+template<typename Type>
+static typename BasicString<T>::Size BasicString<T>::_convertI2StringWOSFill( Type number, T ** bufferP, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	typename Vector<T>::Size nbChar( _getIntegerLength( number, base ) );
+
+	if ( nbChar < fillNb ) {
+		// The output will have less characters than expected, we will have to fill.
+		typename Vector<T>::Size nbCharToAdd( fillNb - nbChar );
+		T *& buffer( *bufferP );
+		T * endIt( buffer + nbCharToAdd );
+		for ( ; buffer != endIt; buffer++ ) {
+			( *buffer ) = fillChar;
+		}
+	}
+
+	__convertI2StringWOS( number, bufferP, base );
+
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
+}
+
+template<typename T>
+template<typename Type>
+static typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOSFill( Type number, T ** bufferP, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	T * bufferInit( *bufferP );
+	typename Vector<T>::Size nbChar( _getIntegerLength( number, base ) );
+
+	if ( nbChar < fillNb ) {
+		// The output will have less characters than expected, we will have to fill.
+		for ( typename Vector<T>::Size i( nbChar ); i < fillNb; i++ ) {
+			( **bufferP ) = fillChar;
+			( *bufferP )++;
+		}
+	}
+
+	__convertUI2StringWOS( number, bufferP, base );
+
+	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
+}
+
 ///WITH SENTINEL
 
 /*
@@ -1429,6 +1469,8 @@ typename BasicString<T>::Size BasicString<T>::_convertFloat2String( Type number,
 
 	return static_cast< typename BasicString<T>::Size >( *bufferP - bufferInit );
 }
+
+
 
 
 /************************************************************************/
@@ -1770,7 +1812,6 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned int number,
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( int number, T * buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
-
 }
 
 template<typename T>
@@ -1831,7 +1872,6 @@ typename BasicString<T>::Size BasicString<T>::toCStringWOS( unsigned int number,
 template<typename T>
 typename BasicString<T>::Size BasicString<T>::toCStringWOS( int number, T ** buffer, unsigned int base ) {
 	return _convertI2StringWOS<int>( number, buffer, base );
-
 }
 
 template<typename T>
@@ -1894,6 +1934,92 @@ inline typename BasicString<T>::Size BasicString<T>::toCStringWOS( const typenam
 				return BasicString<T>::copy( bufferP, staticValues );
 			}
 	}
+}
+
+
+/************************************************************************/
+/* To CStringWOSFill                                                    */
+/************************************************************************/
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned char number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned short number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned int number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( int number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned long long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( long long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned char number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertUI2StringWOSFill<unsigned char>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned short number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertUI2StringWOSFill<unsigned short>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned int number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertUI2StringWOSFill<unsigned int>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( int number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertI2StringWOSFill<int>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned long long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertUI2StringWOSFill<unsigned long long>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( long long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertI2StringWOSFill<long>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( unsigned long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertUI2StringWOSFill<unsigned long>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+typename BasicString<T>::Size BasicString<T>::toCStringWOSFill( long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
+	return _convertI2StringWOSFill<long>( number, buffer, fillNb, fillChar, base );
 }
 
 

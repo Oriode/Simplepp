@@ -1222,6 +1222,7 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Stream														//
 	{
+		log( StringASCII( "Hello World !" ).concatFill( -42, 10, '0'));
 		log( 42 );
 		Stream streamTest = WString("Hello World !");
 		streamTest << 'H';
