@@ -239,3 +239,20 @@ BasicString<C> StreamT<T>::toStringRaw() const {
 	typename Vector<C>::Size stringSize( this->size * Vector<T>::elementSize / Vector<C>::elementSize );
 	return BasicString<C>(reinterpret_cast<C *>(this->dataTable), stringSize);
 }
+
+template<typename T>
+template<typename C>
+BasicString<C> StreamT<T>::toStringHexa() const {
+	typename Vector<T>::Size stringSize( this->size * ( Vector<T>::elementSize * Vector<T>::Size( 2 ) + 1 ) ); // Every byte takes 2 characters in hexadecimal display. We add a third for a space.
+	BasicString<C> newString( stringSize );
+	C * newStringData( newString.getData() );
+
+	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
+		const T & v( getValueIt( it ) );
+
+		typename Vector<C>::Size nbCharWritten( BasicString<C>::toCStringWOS( v, &newStringData, 16 ) );
+		assert( nbCharWritten == Vector<T>::elementSize * Vector<T>::Size( 2 ) );
+		*( newStringData++ ) = C( ' ' );
+	}
+	return newString;
+}

@@ -211,6 +211,10 @@ public:
 	BasicString<C> toStringRaw() const;
 
 	///@brief Convert an element to a String using it's hexadecimal representation.
+	///@template Output String element type.
+	///@return String.
+	template<typename C = char>
+	BasicString<C> toStringHexa() const;
 
 
 

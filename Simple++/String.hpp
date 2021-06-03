@@ -587,32 +587,12 @@ BasicString<T> & BasicString<T>::_concatInteger( const Type & i, unsigned int ba
 template<typename T>
 template<typename Type>
 BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
-	typename BasicString<T>::Size nbCharNumber;
-
-	if ( i != 0 ) {
-		nbCharNumber = 0;
-		if ( i < 0 ) {
-			nbCharNumber++;
-			Type tmpI( -1 );
-			while ( tmpI >= i ) {
-				nbCharNumber++;
-				tmpI *= base;
-			}
-		} else {
-			Type tmpI( 1 );
-			while ( tmpI <= i ) {
-				nbCharNumber++;
-				tmpI *= base;
-			}
-		}
-	} else {
-		nbCharNumber = 1;
-	}
+	typename BasicString<T>::Size nbChar( _getIntegerLength( i, base ) );
 	
 	// Compute the new buffer size.
 	typename BasicString<T>::Size newSize;
-	if ( fillNb > nbCharNumber ) {
-		typename BasicString<T>::Size nbCharToFill( fillNb - nbCharNumber );
+	if ( fillNb > nbChar ) {
+		typename BasicString<T>::Size nbCharToFill( fillNb - nbChar );
 
 		newSize = this -> size + fillNb;
 		if ( newSize > this -> maxSize )
@@ -623,7 +603,7 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 			*this -> iteratorEnd = fillChar;
 		}
 	} else {
-		newSize = this -> size + nbCharNumber;
+		newSize = this -> size + nbChar;
 		if ( newSize > this -> maxSize )
 			_extendBuffer( newSize );
 	}
@@ -1069,7 +1049,7 @@ typename BasicString<T>::Size BasicString<T>::_convertUI2StringWOS( Type number,
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
 	T * bufferInit( buffer );
-	T * tmpP = tmpBuffer;
+	auto tmpP = tmpBuffer;
 	while ( true ) {
 		*tmpP = number % Type( Base );
 		if ( number < Type( Base ) ) break;
@@ -1100,7 +1080,7 @@ typename void BasicString<T>::__convertUI2StringWOS( Type number, T ** bufferP, 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
 	T *& buffer( *bufferP );
-	T * tmpP = tmpBuffer;
+	auto tmpP = tmpBuffer;
 	while ( true ) {
 		*tmpP = number % Type( base );
 		if ( number < Type( base ) ) break;
@@ -3969,6 +3949,33 @@ typename Vector<T>::Size BasicString<T>::copy( T ** destinationBuffer, const T( 
 	Vector<T>::copy( *destinationBuffer, sourceBuffer, N );
 	destinationBuffer += N;
 	return static_cast< typename Vector<T>::Size >( N );
+}
+
+template<typename T>
+template<typename Type>
+static typename Vector<T>::Size BasicString<T>::_getIntegerLength( Type i, unsigned int base ) {
+	typename Vector<T>::Size nbChar;
+
+	if ( i != 0 ) {
+		nbChar = 0;
+		if ( i < 0 ) {
+			nbChar++;
+			Type tmpI( -1 );
+			while ( tmpI >= i ) {
+				nbChar++;
+				tmpI *= base;
+			}
+		} else {
+			Type tmpI( 1 );
+			while ( tmpI <= i ) {
+				nbChar++;
+				tmpI *= base;
+			}
+		}
+	} else {
+		nbChar = 1;
+	}
+	return nbChar;
 }
 
 

@@ -1227,8 +1227,10 @@ int main( int argc, char * argv[] ) {
 		streamTest << 'H';
 		streamTest << 42;
 		streamTest << L"TEST Wide.";
-		StringASCII str( streamTest.toStringRaw() );
-		log( str );
+		StringASCII strRaw( streamTest.toStringRaw() );
+		log( strRaw );
+		StringASCII strHexa( streamTest.toStringHexa() );
+		log( strHexa );
 	}
 #endif
 
