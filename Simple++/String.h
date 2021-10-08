@@ -2002,6 +2002,14 @@ private:
 	template<typename Type>
 	static typename Vector<T>::Size _getIntegerLength(Type i, unsigned int base);
 
+	///@brief Get the size of an positive integer as a number of characters
+	///@template Type Integer type.
+	///@param i Integer to be counted.
+	///@param base The base used for the conversion to String.
+	///@return Number of characters.
+	template<typename Type>
+	static typename Vector<T>::Size _getIntegerPositiveLength( Type i, unsigned int base );
+
 	
 };
 

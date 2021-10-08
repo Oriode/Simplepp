@@ -588,6 +588,40 @@ template<typename T>
 template<typename Type>
 BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base ) {
 	typename BasicString<T>::Size nbChar( _getIntegerLength( i, base ) );
+
+	// Compute the new buffer size.
+	typename BasicString<T>::Size newSize;
+	if ( fillNb > nbChar ) {
+		typename BasicString<T>::Size nbCharToFill( fillNb - nbChar );
+
+		newSize = this -> size + fillNb;
+		if ( newSize > this -> maxSize )
+			_extendBuffer( newSize );
+
+		if ( i < Type( 0 ) ) {
+			*this -> iteratorEnd = T( '-' );
+			this -> iteratorEnd++;
+		}
+
+		T * itEnd( this -> iteratorEnd + nbCharToFill );
+		for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
+			*this -> iteratorEnd = fillChar;
+		}
+		toCString( -i, this -> iteratorEnd, base );
+	} else {
+		newSize = this -> size + nbChar;
+		if ( newSize > this -> maxSize )
+			_extendBuffer( newSize );
+		toCString( i, this -> iteratorEnd, base );
+	}
+	this -> size = newSize;
+	Vector<T>::_updateIterators();
+	return *this;
+
+
+	/*
+	// ------------
+	typename BasicString<T>::Size nbChar( _getIntegerLength( i, base ) );
 	
 	// Compute the new buffer size.
 	typename BasicString<T>::Size newSize;
@@ -611,6 +645,7 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 	this -> size = newSize;
 	Vector<T>::_updateIterators();
 	return *this;
+	*/
 }
 
 
@@ -4082,24 +4117,42 @@ template<typename Type>
 static typename Vector<T>::Size BasicString<T>::_getIntegerLength( Type i, unsigned int base ) {
 	typename Vector<T>::Size nbChar;
 
-	if ( i != 0 ) {
-		nbChar = 0;
-		if ( i < 0 ) {
+	if ( i > Type(0) ) {
+		nbChar = Vector<T>::Size(0);
+		Type tmpI( 1 );
+		while ( tmpI <= i ) {
 			nbChar++;
-			Type tmpI( -1 );
-			while ( tmpI >= i ) {
-				nbChar++;
-				tmpI *= base;
-			}
-		} else {
-			Type tmpI( 1 );
-			while ( tmpI <= i ) {
-				nbChar++;
-				tmpI *= base;
-			}
+			tmpI *= base;
+		}
+	} else if ( i < Type(0) ) {
+		nbChar = Vector<T>::Size(1);
+		Type tmpI( Type(-1) );
+		while ( tmpI >= i ) {
+			nbChar++;
+			tmpI *= base;
 		}
 	} else {
 		nbChar = 1;
+	}
+
+	return nbChar;
+}
+
+template<typename T>
+template<typename Type>
+static typename Vector<T>::Size BasicString<T>::_getIntegerPositiveLength( Type i, unsigned int base ) {
+	typename Vector<T>::Size nbChar;
+
+	if ( i > Type(0) ) {
+		nbChar = Vector<T>::Size(0);
+		Type tmpI( 1 );
+		while ( tmpI <= i ) {
+			nbChar++;
+			tmpI *= base;
+		}
+	} else {
+		// i == 0 as i is positive.
+		nbChar = Vector<T>::Size(1);
 	}
 	return nbChar;
 }
