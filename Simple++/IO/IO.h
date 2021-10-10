@@ -5,6 +5,7 @@
 #include "SimpleIO.h"
 #include "BasicIO.h"
 #include "../OS/Path.h"
+#include "FileStream.h"
 
 namespace IO {
 
