@@ -145,13 +145,23 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const Vector< BasicNodeT<T> * > BasicNodeT<T>::getChild( const T & name ) const {
+	const Vector< BasicNodeT<T> * > BasicNodeT<T>::getChildren( const T & name ) const {
+		return const_cast< BasicNodeT<T> * >( this ) ->getChild( name );
+	}
+
+	template<typename T>
+	Vector< BasicNodeT<T> * > BasicNodeT<T>::getChildren( const T & name ) {
 		return Vector<BasicNodeT<T> *>();
 	}
 
 	template<typename T>
-	Vector< BasicNodeT<T> * > BasicNodeT<T>::getChild( const T & name ) {
-		return Vector<BasicNodeT<T> *>();
+	const BasicNodeT<T> * BasicNodeT<T>::getChild( const T & name ) const {
+		return const_cast< BasicNodeT<T> * >( this ) ->getChildFirst( name );
+	}
+
+	template<typename T>
+	BasicNodeT<T> * BasicNodeT<T>::getChild( const T & name ) {
+		return NULL;
 	}
 
 	template<typename T>
@@ -480,17 +490,32 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChild( const T & name ) const {
+	const Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChildren( const T & name ) const {
+		return const_cast< ObjectNodeT<T> * >( this ) ->getChild( name );
+	}
+
+	template<typename T>
+	Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChildren( const T & name ) {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) return *childP;
 		else return Vector<BasicNodeT<T> *>();
 	}
 
 	template<typename T>
-	Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChild( const T & name ) {
+	const BasicNodeT<T> * ObjectNodeT<T>::getChild( const T & name ) const {
+		return const_cast< ObjectNodeT<T> * >( this ) ->getChildFirst( name );
+	}
+
+	template<typename T>
+	BasicNodeT<T> * ObjectNodeT<T>::getChild( const T & name ) {
 		auto childP = this -> childrenMap[ name ];
-		if ( childP ) return *childP;
-		else return Vector<BasicNodeT<T> *>();
+		if ( childP ) {
+			Vector<BasicNodeT<T> * > childVector( *childP );
+			if ( childVector.getSize() > 0 ) {
+				return childVector[ 0 ];
+			}
+		}
+		return NULL;
 	}
 
 	template<typename T>

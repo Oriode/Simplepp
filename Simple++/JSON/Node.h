@@ -126,8 +126,14 @@ namespace JSON {
 		///@brief Get Vector of children from a name
 		///@param name Name to look for
 		///@return pointer to the Vector of children if one has been founded, NULL instead
-		virtual const Vector<BasicNodeT<T> *> getChild( const T & name ) const;
-		virtual Vector<BasicNodeT<T> *> getChild( const T & name );
+		virtual const Vector<BasicNodeT<T> *> getChildren( const T & name ) const;
+		virtual Vector<BasicNodeT<T> *> getChildren( const T & name );
+
+		///@brief Get the first child founded from a name
+		///@param name Name to look for
+		///@return pointer to the child if one has been founded, NULL instead
+		virtual const BasicNodeT<T> * getChild( const T & name ) const;
+		virtual BasicNodeT<T> * getChild( const T & name );
 
 		///@brief Delete a child from this node (And delete it)
 		///@param child Child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
@@ -220,6 +226,8 @@ namespace JSON {
 		T name;
 	};
 
+	using BasicNode = BasicNodeT<UTF8String>;
+
 
 
 
@@ -289,8 +297,14 @@ namespace JSON {
 		///@brief Get Vector of children from a name
 		///@param name Name to look for
 		///@return pointer to the Vector of children if one has been founded, NULL instead
-		const Vector<BasicNodeT<T> *> getChild( const T & name ) const override;
-		Vector<BasicNodeT<T> *> getChild( const T & name ) override;
+		const Vector<BasicNodeT<T> *> getChildren( const T & name ) const override;
+		Vector<BasicNodeT<T> *> getChildren( const T & name ) override;
+
+		///@brief Get the first child founded from a name
+		///@param name Name to look for
+		///@return pointer to the child if one has been founded, NULL instead
+		virtual const BasicNodeT<T> * getChild( const T & name ) const;
+		virtual BasicNodeT<T> * getChild( const T & name );
 
 		///@brief Delete a child from this node (And delete it)
 		///@param child Child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
