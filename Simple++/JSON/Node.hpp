@@ -146,7 +146,7 @@ namespace JSON {
 
 	template<typename T>
 	const Vector< BasicNodeT<T> * > BasicNodeT<T>::getChildren( const T & name ) const {
-		return const_cast< BasicNodeT<T> * >( this ) ->getChild( name );
+		return const_cast< BasicNodeT<T> * >( this ) ->getChildren( name );
 	}
 
 	template<typename T>
@@ -156,7 +156,7 @@ namespace JSON {
 
 	template<typename T>
 	const BasicNodeT<T> * BasicNodeT<T>::getChild( const T & name ) const {
-		return const_cast< BasicNodeT<T> * >( this ) ->getChildFirst( name );
+		return const_cast< BasicNodeT<T> * >( this ) ->getChild( name );
 	}
 
 	template<typename T>
@@ -491,7 +491,7 @@ namespace JSON {
 
 	template<typename T>
 	const Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChildren( const T & name ) const {
-		return const_cast< ObjectNodeT<T> * >( this ) ->getChild( name );
+		return const_cast< ObjectNodeT<T> * >( this ) ->getChildren( name );
 	}
 
 	template<typename T>
@@ -503,7 +503,7 @@ namespace JSON {
 
 	template<typename T>
 	const BasicNodeT<T> * ObjectNodeT<T>::getChild( const T & name ) const {
-		return const_cast< ObjectNodeT<T> * >( this ) ->getChildFirst( name );
+		return const_cast< ObjectNodeT<T> * >( this ) ->getChild( name );
 	}
 
 	template<typename T>
