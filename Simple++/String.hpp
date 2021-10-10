@@ -4118,15 +4118,15 @@ static typename Vector<T>::Size BasicString<T>::_getIntegerLength( Type i, unsig
 	typename Vector<T>::Size nbChar;
 
 	if ( i > Type(0) ) {
-		nbChar = Vector<T>::Size(0);
-		Type tmpI( 1 );
-		while ( tmpI <= i ) {
+		nbChar = Vector<T>::Size(1);
+		Type tmpI( base );
+		while ( tmpI <= i && tmpI >= Type( base ) ) {
 			nbChar++;
 			tmpI *= base;
 		}
 	} else if ( i < Type(0) ) {
-		nbChar = Vector<T>::Size(1);
-		Type tmpI( Type(-1) );
+		nbChar = Vector<T>::Size(2);
+		Type tmpI( -Type(base) );
 		while ( tmpI >= i ) {
 			nbChar++;
 			tmpI *= base;

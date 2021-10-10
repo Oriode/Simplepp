@@ -108,7 +108,7 @@ bool StreamT<T>::write( const C & data ) {
 		this->reserve( positionAfter * 2 );
 	}
 
-	*reinterpret_cast< C * >( &this->dataTable[ this->position ] ) = data;
+	*reinterpret_cast< C * >( this->dataTable + this->position ) = data;
 
 	// Copy bytes directly.
 	this->position = positionAfter;
@@ -167,6 +167,7 @@ bool StreamT<T>::write( const C * data, typename Vector<T>::Size size ) {
 
 	if ( this->position > this->size ) {
 		this->size = this->position;
+		this -> _updateIterators();
 	}
 
 	return true;
@@ -244,18 +245,22 @@ template<typename T>
 template<typename C>
 BasicString<C> StreamT<T>::toStringHexa() const {
 	typename Vector<T>::Size stringSize( this->size * ( Vector<T>::elementSize * Vector<T>::Size( 2 ) + 1 ) ); // Every byte takes 2 characters in hexadecimal display. We add a third for a space.
-	BasicString<C> newString( stringSize );
+	BasicString<C> newString;
+	newString.resize( stringSize );
 	C * newStringData( newString.getData() );
 
 	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
 		const T & v( getValueIt( it ) );
 
-		typename Vector<C>::Size nbCharWritten( BasicString<C>::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Vector<T>::Size( 2 ), C(' '), 16));
+		typename Vector<C>::Size nbCharWritten( BasicString<C>::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Vector<T>::Size( 2 ), C('0'), 16));
 		if ( nbCharWritten != Vector<T>::elementSize * Vector<T>::Size( 2 ) ) {
 			int i = 42;
 		}
 		assert( nbCharWritten == Vector<T>::elementSize * Vector<T>::Size( 2 ) );
 		*( newStringData++ ) = C( ' ' );
 	}
+
+	assert( stringSize == newStringData - newString.getData() );
+
 	return newString;
 }

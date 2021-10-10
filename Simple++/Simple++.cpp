@@ -1231,7 +1231,7 @@ int main( int argc, char * argv[] ) {
 		StringASCII strRaw( streamTest.toStringRaw() );
 		log( strRaw );
 		StringASCII strHexa( streamTest.toStringHexa() );
-		log( strHexa );
+		log( streamTest.toStringHexa() );
 	}
 #endif
 
