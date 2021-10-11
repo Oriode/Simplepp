@@ -1,5 +1,5 @@
 /**
- * @file		Time\Tick.h.
+ * @file		Time\TickT.h.
  *
  * @brief		Declares the tick class
  * @author	Clément Gerber
@@ -19,31 +19,32 @@ namespace Time {
 
 
 	/** @brief	Representing a CPU tick */
-	class Tick {
+	template<typename T>
+	class TickT {
 	public:
 		/** @brief	Empty constructor, see getClock(); for the actual value */
 		/** @brief	Default constructor */
-		Tick();
+		TickT();
 
 
 		/**
 		 * @brief		Copy constructor
 		 *
-		 * @param		tick	Tick to be copied.
+		 * @param		tick	TickT to be copied.
 		 */
-		Tick( const Tick & tick );
+		TickT( const TickT & tick );
 
 
 		/**
 		 * @brief		Constructor from a ClockT ( from the std lib )
 		 *
-		 * @param		tick	Tick to be copied.
+		 * @param		tick	TickT to be copied.
 		 */
-		Tick( ClockT tick );
+		TickT( ClockT tick );
 
 
 		/** @brief	Destructor */
-		~Tick();
+		~TickT();
 
 		/** @brief	Sets the now */
 		void setNow();
@@ -56,47 +57,47 @@ namespace Time {
 		/**
 		 * @brief		Equality operator
 		 *
-		 * @param		Other Tick to be compared.
+		 * @param		Other TickT to be compared.
 		 *
 		 * @returns	True if the parameters are considered equivalent.
 		 */
-		bool operator==( const Tick & tick ) const;
+		bool operator==( const TickT & tick ) const;
 
 		/**
 		 * @brief		Less-than comparison operator
 		 *
-		 * @param		Other Tick to be compared.
+		 * @param		Other TickT to be compared.
 		 *
 		 * @returns	True if the first parameter is less than the second.
 		 */
-		bool operator<( const Tick & tick ) const;
+		bool operator<( const TickT & tick ) const;
 
 		/**
 		 * @brief		Greater-than comparison operator
 		 *
-		 * @param		Other Tick to be compared.
+		 * @param		Other TickT to be compared.
 		 *
 		 * @returns	True if the first parameter is greater than to the second.
 		 */
-		bool operator>( const Tick & tick ) const;
+		bool operator>( const TickT & tick ) const;
 
 		/**
 		 * @brief		Greater-than-or-equal comparison operator
 		 *
-		 * @param		Other Tick to be compared.
+		 * @param		Other TickT to be compared.
 		 *
 		 * @returns	True if the first parameter is greater than or equal to the second.
 		 */
-		bool operator>=( const Tick & tick ) const;
+		bool operator>=( const TickT & tick ) const;
 
 		/**
 		 * @brief		Less-than-or-equal comparison operator
 		 *
-		 * @param		Other Tick to be compared.
+		 * @param		Other TickT to be compared.
 		 *
 		 * @returns	True if the first parameter is less than or equal to the second.
 		 */
-		bool operator<=( const Tick & tick ) const;
+		bool operator<=( const TickT & tick ) const;
 
 
 
@@ -107,20 +108,20 @@ namespace Time {
 		/**
 		 * @brief		Assignment operator
 		 *
-		 * @param		Other Tick.
+		 * @param		Other TickT.
 		 *
 		 * @returns	A shallow copy of this object.
 		 */
-		Tick & operator=( const Tick & tick );
+		TickT & operator=( const TickT & tick );
 
 		/**
 		 * @brief		Subtraction assignment operator
 		 *
-		 * @param		Other Tick.
+		 * @param		Other TickT.
 		 *
 		 * @returns	The result of the operation.
 		 */
-		Tick & operator-=( const Tick & tick );
+		TickT & operator-=( const TickT & tick );
 
 		/**
 		 * @brief		Gets the value
@@ -140,11 +141,13 @@ namespace Time {
 		 *
 		 * @param	parameter1	The first parameter.
 		 */
-		Tick( ctor );
+		TickT( ctor );
 	private:
 		/** @brief	A ClockT to process */
 		ClockT c;
 	};
+
+	using Tick = TickT<int>;
 
 
 	/**
@@ -155,7 +158,8 @@ namespace Time {
 	 *
 	 * @returns	The result of the operation.
 	 */
-	Tick operator-( const Tick & t1, const Tick & t2 );
+	template<typename T>
+	TickT<T> operator-( const TickT<T> & t1, const TickT<T> & t2 );
 
 
 	/**
@@ -163,9 +167,13 @@ namespace Time {
 	 *
 	 * @returns	The clock.
 	 */
-	Tick getClock();
+	template<typename T>
+	TickT<T> getClock();
 
 
 
 }
 
+
+
+#include "Tick.hpp"

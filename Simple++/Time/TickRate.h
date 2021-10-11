@@ -16,16 +16,17 @@ namespace Time {
 
 
 	/** @brief	A tick rate. */
-	class TickRate {
+	template<typename T>
+	class TickRateT {
 	public:
 		/**
 		 * @brief		Constructor
 		 *
 		 * @param		targetTickRate	(Optional) Target tick rate.
 		 */
-		TickRate( int targetTickRate = 60 );
+		TickRateT( int targetTickRate = 60 );
 		/** @brief	Destructor */
-		~TickRate( void );
+		~TickRateT( void );
 
 
 		/**
@@ -92,4 +93,8 @@ namespace Time {
 
 	};
 
+	using TickRate = TickRateT<int>;
+
 }
+
+#include "TickRate.hpp"

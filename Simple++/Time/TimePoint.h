@@ -14,18 +14,19 @@
 namespace Time {
 
 	/** @brief	Class representing a precise moment in the time ( extension of std time_t ) */
-	class TimePoint {
+	template<typename T>
+	class TimePointT {
 	public:
 
-		/** @brief	create an uninitialized TimePoint. See getTime() of getting the timepoint of the current time. */
-		TimePoint();
+		/** @brief	create an uninitialized TimePointT. See getTime() of getting the timepoint of the current time. */
+		TimePointT();
 
 		/**
-		 * @brief			Create a TimePoint from an old school time_t object
+		 * @brief			Create a TimePointT from an old school time_t object
 		 *
 		 * @param			timeT	The time t.
 		 */
-		TimePoint( const TimeT & timeT );
+		TimePointT( const TimeT & timeT );
 
 		/** @brief	Set this object to store the current moment. */
 		void setNow();
@@ -33,35 +34,35 @@ namespace Time {
 		/************************************************************************/
 		/* OPERATOR LOGICAL                                                     */
 		/************************************************************************/
-		bool operator==( const TimePoint & timePoint ) const;
-		bool operator!=( const TimePoint & timePoint ) const;
-		bool operator>=( const TimePoint & timePoint ) const;
-		bool operator<=( const TimePoint & timePoint ) const;
-		bool operator<( const TimePoint & timePoint ) const;
-		bool operator>( const TimePoint & timePoint ) const;
+		bool operator==( const TimePointT & timePoint ) const;
+		bool operator!=( const TimePointT & timePoint ) const;
+		bool operator>=( const TimePointT & timePoint ) const;
+		bool operator<=( const TimePointT & timePoint ) const;
+		bool operator<( const TimePointT & timePoint ) const;
+		bool operator>( const TimePointT & timePoint ) const;
 
 
 		/************************************************************************/
 		/* OPERATOR EQUAL	                                                      */
 		/************************************************************************/
-		TimePoint & operator=( const TimePoint & timePoint );
-		TimePoint & operator=( const TimeT & timeT );
+		TimePointT & operator=( const TimePointT & timePoint );
+		TimePointT & operator=( const TimeT & timeT );
 
 
 		/************************************************************************/
 		/* OPERATOR ARITHMETIC                                                  */
 		/************************************************************************/
 		template<class ratio>
-		TimePoint & operator+=( const Duration<ratio> & d );
+		TimePointT & operator+=( const Duration<ratio> & d );
 
 		template<class ratio>
-		TimePoint & operator-=( const Duration<ratio> & d );
+		TimePointT & operator-=( const Duration<ratio> & d );
 
-		TimePoint & operator+=( TimeT t );
-		TimePoint & operator-=( TimeT t );
+		TimePointT & operator+=( TimeT t );
+		TimePointT & operator-=( TimeT t );
 
 		/** @brief	Destructor */
-		~TimePoint();
+		~TimePointT();
 
 
 		/**
@@ -79,40 +80,47 @@ namespace Time {
 		 */
 		const TimeT & getTime() const;
 
-		static TimePoint getNow();
+		static TimePointT getNow();
 	private:
 		TimeT t;
 
 	};
 
+	using TimePoint = TimePointT<int>;
+
 	/**
-	 * @brief		Get the TimePoint of Now
+	 * @brief		Get the TimePointT of Now
 	 *
 	 * @returns	The time.
 	 */
-	TimePoint getTime();
+	template<typename T>
+	TimePointT<T> getTime();
 
 
 	/************************************************************************/
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
-	TimePoint operator+( const TimePoint & t1, TimeT t2 );
-	TimePoint operator+( TimeT t1, const TimePoint & t2 );
+	template<typename T>
+	TimePointT<T> operator+( const TimePointT<T> & t1, TimeT t2 );
+	template<typename T>
+	TimePointT<T> operator+( TimeT t1, const TimePointT<T> & t2 );
 
-	template<class ratio>
-	TimePoint operator+( const TimePoint & t1, const Duration<ratio> & d );
+	template<typename T, class ratio>
+	TimePointT<T> operator+( const TimePointT<T> & t1, const Duration<ratio> & d );
 
-	template<class ratio>
-	TimePoint operator+( const Duration<ratio> & d, const TimePoint & t2 );
+	template<typename T, class ratio>
+	TimePointT<T> operator+( const Duration<ratio> & d, const TimePointT<T> & t2 );
 
+	template<typename T>
+	TimePointT<T> operator-( const TimePointT<T> & t1, TimeT t2 );
+	template<typename T>
+	TimePointT<T> operator-( TimeT t1, const TimePointT<T> & t2 );
 
-	TimePoint operator-( const TimePoint & t1, TimeT t2 );
-	TimePoint operator-( TimeT t1, const TimePoint & t2 );
+	template<typename T>
+	Duration<Second> operator-( const TimePointT<T> & t1, const TimePointT<T> & t2 );
 
-	Duration<Second> operator-( const TimePoint & t1, const TimePoint & t2 );
-
-	template<class ratio>
-	TimePoint operator-( const TimePoint & t1, const Duration<ratio> & d );
+	template<typename T, class ratio>
+	TimePointT<T> operator-( const TimePointT<T> & t1, const Duration<ratio> & d );
 
 }
 

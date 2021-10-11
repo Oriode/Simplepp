@@ -1,8 +1,8 @@
-#include "TickRate.h"
 
 namespace Time {
 
-	TickRate::TickRate( int targetTickRate ) :
+	template<typename T>
+	TickRateT<T>::TickRateT( int targetTickRate ) :
 		timePerTick( Math::max( int( 1000 ) / targetTickRate, 1 ) ),
 		timePerTickSeconds( float( this -> timePerTick.getValue() ) / float( 1000.0 ) ),
 		tickNumber( 0 ),
@@ -11,12 +11,11 @@ namespace Time {
 		setTargetTickRate( targetTickRate );
 	}
 
+	template<typename T>
+	TickRateT<T>::~TickRateT( void ) {}
 
-	TickRate::~TickRate( void ) {
-	}
-
-
-	void TickRate::setTargetTickRate( unsigned int tickrate ) {
+	template<typename T>
+	void TickRateT<T>::setTargetTickRate( unsigned int tickrate ) {
 		if ( tickrate == 0 )
 			return;
 		this -> targetTickRate = tickrate;
@@ -24,13 +23,13 @@ namespace Time {
 	}
 
 
-
-	void TickRate::delay() {
+	template<typename T>
+	void TickRateT<T>::delay() {
 		//wait depending of the actual tickrate
 		this -> timePerTick = Time::Duration<Time::MilliSecond>( Time::getClock().getValue() - this -> endTicks.getValue() );
 
 		if ( this -> timePerTick < this -> targetTimePerTick ) {
-			Time::sleep( static_cast<unsigned int>( this -> targetTimePerTick.getValue() - this -> timePerTick.getValue() ) );
+			Time::sleep( static_cast< unsigned int >( this -> targetTimePerTick.getValue() - this -> timePerTick.getValue() ) );
 			this -> timePerTick = this -> targetTimePerTick;
 		}
 
@@ -43,24 +42,28 @@ namespace Time {
 		this -> elapsedTimeMS += this -> timePerTick;
 	}
 
-
-	const Time::Duration<Time::MilliSecond> & TickRate::getTimePerTickMS() const {
+	template<typename T>
+	const Time::Duration<Time::MilliSecond> & TickRateT<T>::getTimePerTickMS() const {
 		return this -> timePerTick;
 	}
 
-	const Time::Duration<Time::MilliSecond> & TickRate::getElapsedTimeMS() const {
+	template<typename T>
+	const Time::Duration<Time::MilliSecond> & TickRateT<T>::getElapsedTimeMS() const {
 		return this -> elapsedTimeMS;
 	}
 
-	float TickRate::getTimePerTickS() const {
+	template<typename T>
+	float TickRateT<T>::getTimePerTickS() const {
 		return this -> timePerTickSeconds;
 	}
 
-	unsigned long long TickRate::getTickNum() const {
+	template<typename T>
+	unsigned long long TickRateT<T>::getTickNum() const {
 		return this -> tickNumber;
 	}
 
-	float TickRate::getElapsedTimeS() const {
+	template<typename T>
+	float TickRateT<T>::getElapsedTimeS() const {
 		return this -> elapsedTimeS;
 	}
 
