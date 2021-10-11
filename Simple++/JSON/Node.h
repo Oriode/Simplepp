@@ -123,11 +123,15 @@ namespace JSON {
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
 		virtual void addChild( BasicNodeT<T> * child );
 
+		///@brief Get the complete children vector of this node.
+		///@return Children Vector.
+		virtual const Vector<BasicNodeT<T> *> & getChildren() const;
+
 		///@brief Get Vector of children from a name
 		///@param name Name to look for
 		///@return pointer to the Vector of children if one has been founded, NULL instead
-		virtual const Vector<BasicNodeT<T> *> getChildren( const T & name ) const;
-		virtual Vector<BasicNodeT<T> *> getChildren( const T & name );
+		virtual const Vector<BasicNodeT<T> *> & getChildren( const T & name ) const;
+		// virtual Vector<BasicNodeT<T> *> getChildren( const T & name );
 
 		///@brief Get the first child founded from a name
 		///@param name Name to look for
@@ -224,6 +228,8 @@ namespace JSON {
 
 		Type type;
 		T name;
+
+		static const Vector< BasicNodeT<T> * > emptyVector;
 	};
 
 	using BasicNode = BasicNodeT<UTF8String>;
@@ -294,17 +300,21 @@ namespace JSON {
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
 		void addChild( BasicNodeT<T> * child ) override;
 
+		///@brief Get the complete children vector of this node.
+		///@return Children Vector.
+		virtual const Vector<BasicNodeT<T> *> & getChildren() const override;
+
 		///@brief Get Vector of children from a name
 		///@param name Name to look for
 		///@return pointer to the Vector of children if one has been founded, NULL instead
-		const Vector<BasicNodeT<T> *> getChildren( const T & name ) const override;
-		Vector<BasicNodeT<T> *> getChildren( const T & name ) override;
+		const Vector<BasicNodeT<T> *> & getChildren( const T & name ) const override;
+		// Vector<BasicNodeT<T> *> getChildren( const T & name ) override;
 
 		///@brief Get the first child founded from a name
 		///@param name Name to look for
 		///@return pointer to the child if one has been founded, NULL instead
-		virtual const BasicNodeT<T> * getChild( const T & name ) const;
-		virtual BasicNodeT<T> * getChild( const T & name );
+		virtual const BasicNodeT<T> * getChild( const T & name ) const override;
+		virtual BasicNodeT<T> * getChild( const T & name ) override;
 
 		///@brief Delete a child from this node (And delete it)
 		///@param child Child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)

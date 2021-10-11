@@ -1,6 +1,10 @@
 namespace JSON {
 
 	template<typename T>
+	const Vector< BasicNodeT<T> * > BasicNodeT<T>::emptyVector = Vector< BasicNodeT<T> * >();
+
+
+	template<typename T>
 	BasicNodeT<T>::BasicNodeT( typename BasicNodeT<T>::Type type ) :
 		type( type ),
 		parent( NULL ) {
@@ -145,14 +149,21 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const Vector< BasicNodeT<T> * > BasicNodeT<T>::getChildren( const T & name ) const {
-		return const_cast< BasicNodeT<T> * >( this ) ->getChildren( name );
+	const Vector<BasicNodeT<T> *> & BasicNodeT<T>::getChildren() const {
+		return BasicNodeT<T>::emptyVector;
 	}
 
+	template<typename T>
+	const Vector< BasicNodeT<T> * > & BasicNodeT<T>::getChildren( const T & name ) const {
+		return BasicNodeT<T>::emptyVector;
+	}
+
+	/*
 	template<typename T>
 	Vector< BasicNodeT<T> * > BasicNodeT<T>::getChildren( const T & name ) {
 		return Vector<BasicNodeT<T> *>();
 	}
+	*/
 
 	template<typename T>
 	const BasicNodeT<T> * BasicNodeT<T>::getChild( const T & name ) const {
@@ -490,16 +501,25 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChildren( const T & name ) const {
-		return const_cast< ObjectNodeT<T> * >( this ) ->getChildren( name );
+	const Vector<BasicNodeT<T> *> & ObjectNodeT<T>::getChildren() const {
+		return this ->childrenVector;
 	}
 
+	template<typename T>
+	const Vector< BasicNodeT<T> * > & ObjectNodeT<T>::getChildren( const T & name ) const {
+		auto childP = this -> childrenMap[ name ];
+		if ( childP ) return *childP;
+		else return BasicNodeT<T>::emptyVector;
+	}
+
+	/*
 	template<typename T>
 	Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChildren( const T & name ) {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) return *childP;
 		else return Vector<BasicNodeT<T> *>();
 	}
+	*/
 
 	template<typename T>
 	const BasicNodeT<T> * ObjectNodeT<T>::getChild( const T & name ) const {
