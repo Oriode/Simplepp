@@ -161,5 +161,15 @@ namespace Time {
 		return TimePointT( t1.getTime() - d.getSeconds() );
 	}
 
+	template<typename T, class ratio>
+	TimePointT<T> operator*( const TimePointT<T> & t, const Duration<ratio> & d ) {
+		return TimePointT( t.getTime() * d.getSeconds() );
+	}
+
+	template<typename T, class ratio>
+	TimePointT<T> operator/( const TimePointT<T> & t, const Duration<ratio> & d ) {
+		return TimePointT( t.getTime() / d.getSeconds() );
+	}
+
 
 }

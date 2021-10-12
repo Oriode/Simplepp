@@ -295,100 +295,35 @@ namespace Time {
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
 
-	/**
-	 * @brief	Addition operator
-	 *
-	 * @param	d1	The first value.
-	 * @param	d2	A value to add to it.
-	 *
-	 * @returns	The result of the operation.
-	 */
 	template<class ratio, class ratio2>
 	Duration<ratio> operator+( const Duration<ratio> & d1, const Duration<ratio2> & d2 );
-	/**
-	 * @brief	Addition operator
-	 *
-	 * @param	d1	The first value.
-	 * @param	d2	A value to add to it.
-	 *
-	 * @returns	The result of the operation.
-	 */
-	template<class ratio>
-	Duration<ratio> operator+( const Duration<ratio> & d1, TimeT d2 );
-	/**
-	 * @brief	Addition operator
-	 *
-	 * @param	d1	The first value.
-	 * @param	d2	A value to add to it.
-	 *
-	 * @returns	The result of the operation.
-	 */
-	template<class ratio>
-	Duration<ratio> operator+( TimeT d1, const Duration<ratio> & d2 );
 
-	/**
-	 * @brief	Subtraction operator
-	 *
-	 * @param	d1	The first value.
-	 * @param	d2	A value to subtract from it.
-	 *
-	 * @returns	The result of the operation.
-	 */
+	template<class ratio, typename T>
+	Duration<ratio> operator+( const Duration<ratio> & d, const T & v );
+
+	template<class ratio, typename T>
+	Duration<ratio> operator+( const T & t, const Duration<ratio> & d );
+
 	template<class ratio, class ratio2>
 	Duration<ratio> operator-( const Duration<ratio> & d1, const Duration<ratio2> & d2 );
-	/**
-	 * @brief	Subtraction operator
-	 *
-	 * @param	d1	The first value.
-	 * @param	d2	A value to subtract from it.
-	 *
-	 * @returns	The result of the operation.
-	 */
-	template<class ratio>
-	Duration<ratio> operator-( const Duration<ratio> & d1, TimeT d2 );
-	/**
-	 * @brief	Subtraction operator
-	 *
-	 * @param	d1	The first value.
-	 * @param	d2	A value to subtract from it.
-	 *
-	 * @returns	The result of the operation.
-	 */
-	template<class ratio>
-	Duration<ratio> operator-( TimeT d1, const Duration<ratio> & d2 );
 
+	template<class ratio, typename T>
+	Duration<ratio> operator-( const Duration<ratio> & d, const T & v );
 
+	template<class ratio, typename T>
+	Duration<ratio> operator-( const T & v, const Duration<ratio> & d );
 
-	/**
-	 * @brief	Multiplication operator
-	 *
-	 * @param	d1	The first value to multiply.
-	 * @param	v 	The second value to multiply.
-	 *
-	 * @returns	The result of the operation.
-	 */
 	template<class ratio, typename T>
 	Duration<ratio> operator*( const Duration<ratio> & d1, const T & v );
-	/**
-	 * @brief	Multiplication operator
-	 *
-	 * @param	v 	The first value to multiply.
-	 * @param	d1	The second value to multiply.
-	 *
-	 * @returns	The result of the operation.
-	 */
+
 	template<typename T, class ratio>
 	Duration<ratio> operator*( const T & v, const Duration<ratio> & d1 );
-	/**
-	 * @brief	Division operator
-	 *
-	 * @param	d1	The numerator.
-	 * @param	v 	The denominator.
-	 *
-	 * @returns	The result of the operation.
-	 */
+
 	template<class ratio, typename T>
-	Duration<ratio> operator/( const Duration<ratio> & d1, const T & v );
+	Duration<ratio> operator/( const Duration<ratio> & d, const T & v );
+
+	template<class ratio, typename T>
+	Duration<ratio> operator/( const T & v, const Duration<ratio> & d );
 
 
 

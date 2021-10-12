@@ -262,6 +262,8 @@
     <ClInclude Include="Stream.h" />
     <ClInclude Include="Stream.hpp" />
     <ClInclude Include="Thread.hpp" />
+    <ClInclude Include="Time\Tick.hpp" />
+    <ClInclude Include="Time\TickRate.hpp" />
     <ClInclude Include="UI\BasicUI.h" />
     <ClInclude Include="UI\Event.h" />
     <ClInclude Include="UI\UI.h" />
@@ -337,9 +339,6 @@
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="Time\Time.cpp" />
-    <ClCompile Include="Time\Tick.cpp" />
-    <ClCompile Include="Time\TickRate.cpp" />
-    <ClCompile Include="Time\TimePoint.cpp" />
     <ClCompile Include="UI\Event.cpp" />
     <ClCompile Include="UI\Window.cpp" />
   </ItemGroup>

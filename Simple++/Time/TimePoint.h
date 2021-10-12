@@ -122,6 +122,12 @@ namespace Time {
 	template<typename T, class ratio>
 	TimePointT<T> operator-( const TimePointT<T> & t1, const Duration<ratio> & d );
 
+	template<typename T, class ratio>
+	TimePointT<T> operator*( const TimePointT<T> & t, const Duration<ratio> & d );
+
+	template<typename T, class ratio>
+	TimePointT<T> operator/( const TimePointT<T> & t, const Duration<ratio> & d );
+
 }
 
 

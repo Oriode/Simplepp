@@ -519,19 +519,16 @@
     <ClInclude Include="Stream.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Time\Tick.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\TickRate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Time\TimePoint.cpp">
-      <Filter>Source Files\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="Time\TickRate.cpp">
-      <Filter>Source Files\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="Time\Tick.cpp">
-      <Filter>Source Files\Time</Filter>
     </ClCompile>
     <ClCompile Include="IO\BasicSimpleIO.cpp">
       <Filter>Source Files</Filter>
