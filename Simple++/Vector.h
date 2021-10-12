@@ -30,6 +30,11 @@ using RandomAccessIterator = T *;
 template<typename T = int>
 class Vector : public IO::BasicSimpleIO {
 public:
+	template<typename C>
+	friend class BasicString;
+
+	template<typename C>
+	friend class UTF8StringT;
 
 	/** @brief	Defines an alias representing the iterator */
 	typedef RandomAccessIterator<T> Iterator;

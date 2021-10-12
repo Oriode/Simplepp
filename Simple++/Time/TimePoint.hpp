@@ -87,12 +87,14 @@ namespace Time {
 	template<class ratio>
 	TimePointT<T> & TimePointT<T>::operator+=( const Duration<ratio> & d ) {
 		this -> t += d.getSeconds();
+		return *this;
 	}
 
 	template<typename T>
 	template<class ratio>
 	TimePointT<T> & TimePointT<T>::operator-=( const Duration<ratio> & d ) {
 		this -> t -= d.getSeconds();
+		return *this;
 	}
 
 
@@ -123,22 +125,22 @@ namespace Time {
 	/************************************************************************/
 	template<typename T>
 	TimePointT<T> operator+( const TimePointT<T> & t1, TimeT t2 ) {
-		return TimePointT( t1.getTime() + t2 );
+		return TimePointT<T>( t1.getTime() + t2 );
 	}
 
 	template<typename T>
 	TimePointT<T> operator+( TimeT t1, const TimePointT<T> & t2 ) {
-		return TimePointT( t1 + t2.getTime() );
+		return TimePointT<T>( t1 + t2.getTime() );
 	}
 
 	template<typename T>
 	TimePointT<T> operator-( const TimePointT<T> & t1, TimeT t2 ) {
-		return TimePointT( t1.getTime() - t2 );
+		return TimePointT<T>( t1.getTime() - t2 );
 	}
 
 	template<typename T>
 	TimePointT<T> operator-( TimeT t1, const TimePointT<T> & t2 ) {
-		return TimePointT( t1 - t2.getTime() );
+		return TimePointT<T>( t1 - t2.getTime() );
 	}
 
 	template<typename T>
@@ -148,27 +150,27 @@ namespace Time {
 
 	template<typename T, class ratio>
 	TimePointT<T> operator+( const TimePointT<T> & t1, const Duration<ratio> & d ) {
-		return TimePointT( t1.getTime() + d.getSeconds() );
+		return TimePointT<T>( t1.getTime() + d.getSeconds() );
 	}
 
 	template<typename T, class ratio>
 	TimePointT<T> operator+( const Duration<ratio> & d, const TimePointT<T> & t2 ) {
-		return TimePointT( t2.getTime() + d.getSeconds() );
+		return TimePointT<T>( t2.getTime() + d.getSeconds() );
 	}
 
 	template<typename T, class ratio>
 	TimePointT<T> operator-( const TimePointT<T> & t1, const Duration<ratio> & d ) {
-		return TimePointT( t1.getTime() - d.getSeconds() );
+		return TimePointT<T>( t1.getTime() - d.getSeconds() );
 	}
 
 	template<typename T, class ratio>
 	TimePointT<T> operator*( const TimePointT<T> & t, const Duration<ratio> & d ) {
-		return TimePointT( t.getTime() * d.getSeconds() );
+		return TimePointT<T>( t.getTime() * d.getSeconds() );
 	}
 
 	template<typename T, class ratio>
 	TimePointT<T> operator/( const TimePointT<T> & t, const Duration<ratio> & d ) {
-		return TimePointT( t.getTime() / d.getSeconds() );
+		return TimePointT<T>( t.getTime() / d.getSeconds() );
 	}
 
 

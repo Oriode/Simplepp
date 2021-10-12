@@ -319,6 +319,9 @@ namespace Time {
 	template<typename T, class ratio>
 	Duration<ratio> operator*( const T & v, const Duration<ratio> & d1 );
 
+	template<class ratio>
+	Duration<ratio> operator/( const Duration<ratio> & d1, const Duration<ratio> & d2 );
+
 	template<class ratio, typename T>
 	Duration<ratio> operator/( const Duration<ratio> & d, const T & v );
 

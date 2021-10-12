@@ -555,7 +555,7 @@ UTF8StringT<T>::operator BasicString<C>() const {
 	if ( Utility::isSame<C, char>::value ) {
 		return BasicString<C>( getData(), getSize() );
 	} else {
-		BasicString<C> r(ctor::null);
+		BasicString<C> r(BasicString<C>::ctor::null);
 		r._allocateNoNullDelete( getSize() );
 		CodePoint codePoint;
 		auto newDatas( r.getData() );

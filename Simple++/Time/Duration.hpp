@@ -254,6 +254,12 @@ namespace Time {
 		return d *= v;
 	}
 
+	template<class ratio>
+	Duration<ratio> operator/( const Duration<ratio> & d1, const Duration<ratio> & d2 ) {
+		Duration<ratio> d( d1.getValue() / d2.getValue() );
+		return d;
+	}
+
 	template<class ratio, typename T>
 	Duration<ratio> operator*( const Duration<ratio> & d, const T & v ) {
 		Duration<ratio> d2( d.getValue() * v );

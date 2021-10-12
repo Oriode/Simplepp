@@ -41,6 +41,12 @@ public:
 	using Vector<T>::Size;
 	using Vector<T>::ElemType;
 
+	template<typename C>
+	friend class BasicString;
+
+	template<typename C>
+	friend class UTF8StringT;
+
 	/** @brief	Default constructor */
 	BasicString();
 

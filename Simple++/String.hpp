@@ -601,13 +601,21 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 		if ( i < Type( 0 ) ) {
 			*this -> iteratorEnd = T( '-' );
 			this -> iteratorEnd++;
-		}
 
-		T * itEnd( this -> iteratorEnd + nbCharToFill );
-		for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
-			*this -> iteratorEnd = fillChar;
+			T * itEnd( this -> iteratorEnd + nbCharToFill );
+			for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
+				*this -> iteratorEnd = fillChar;
+			}
+
+			toCString( -i, this -> iteratorEnd, base );
+		} else {
+			T * itEnd( this -> iteratorEnd + nbCharToFill );
+			for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
+				*this -> iteratorEnd = fillChar;
+			}
+
+			toCString( i, this -> iteratorEnd, base );
 		}
-		toCString( -i, this -> iteratorEnd, base );
 	} else {
 		newSize = this -> size + nbChar;
 		if ( newSize > this -> maxSize )
@@ -1279,7 +1287,7 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		( *buffer ) = T( '0' );
 		buffer++;
 		( *buffer ) = T( '\0' );
-		return 1;
+		return;
 	}
 
 	if ( number < 0 ) {
@@ -3091,7 +3099,7 @@ BasicString<T> & BasicString<T>::operator=( const BasicString<C> & str ) {
 	if ( getMaxSize() < sizePlusOne )
 		reserve( sizePlusOne );
 	Vector<T>::copy( this -> dataTable, str.getData(), sizePlusOne );
-	this -> size = str.size;
+	this -> size = str.getSize();
 	_updateIterators();
 	return *this;
 }

@@ -28,12 +28,14 @@ namespace Time {
 		*this = date;
 	}
 	template<typename T>
-	DateT<T>::DateT( const tm & date ) {
+	DateT<T>::DateT( const tm & date, TimeT utcBias ) :
+		utcBias(utcBias)
+	{
 		*this = date;
 	}
 	template<typename T>
-	DateT<T>::DateT( const TimePoint & timePoint ) {
-		*this = timePoint;
+	DateT<T>::DateT( const TimePoint & timePoint, TimeT utcBias ) {
+		setToTimePoint( timePoint, utcBias );
 	}
 
 
@@ -65,7 +67,6 @@ namespace Time {
 		this -> hours = date.tm_hour;
 		this -> minutes = date.tm_min;
 		this -> seconds = date.tm_sec;
-		this -> utcBias = DateT<T>::getLocalUTCBias();
 
 		return *this;
 	}

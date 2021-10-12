@@ -49,15 +49,17 @@ namespace Time {
 		/**
 		 * @brief	Constructor from a struct tm
 		 * @param 	date	DateT to copy.
+		 * @param	utcBias	Delta in seconds from UTC.
 		 */
-		DateT( const tm & date );
+		DateT( const tm & date, TimeT utcBias );
 
 
 		/**
 		 * @brief	Constructor from a time point
 		 * @param 	timePoint	Time point to use.
+		 * @param	utcBias	Delta in seconds from UTC.
 		 */
-		DateT( const TimePoint & timePoint );
+		DateT( const TimePoint & timePoint, TimeT utcBias );
 
 
 		/************************************************************************/
@@ -448,7 +450,6 @@ namespace Time {
 		template<typename C>
 		void readUTCBias( const C ** buffer );
 	};
-
 
 
 
