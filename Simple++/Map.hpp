@@ -1247,7 +1247,7 @@ void RBTree<I, T, Compare>::setValueI( const I & index, const T & v ) {
 }
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::eraseIndex( const I & index ) {
+bool RBTree<I, T, Compare>::eraseI( const I & index ) {
 	if ( this -> rootNode ) {
 		RBNode< MapObject< I, T > > * node( this -> rootNode );
 		while ( true ) {

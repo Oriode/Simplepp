@@ -833,7 +833,7 @@ public:
 	 *
 	 * @returns	Boolean if a key has been deleted.
 	 */
-	bool eraseIndex( const I & index );
+	bool eraseI( const I & index );
 
 	/**
 	 * @brief 	Delete a node from the map

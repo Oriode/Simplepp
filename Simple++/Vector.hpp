@@ -419,7 +419,7 @@ bool Vector<T>::eraseAll( const T & value ) {
 	bool r( false );
 	for ( typename Vector<T>::Size i( 0 ); i < this -> maxSize; i++ ) {
 		if ( value == this -> dataTable[ i ] ) {
-			eraseIndex( i );
+			eraseI( i );
 			r = true;
 		}
 	}
@@ -525,7 +525,7 @@ template<typename T>
 bool Vector<T>::eraseFirst( const T & v ) {
 	for ( typename Vector<T>::Size i( 0 ); i < this -> maxSize; i++ ) {
 		if ( v == this -> dataTable[ i ] ) {
-			eraseIndex( i );
+			eraseI( i );
 			return true;
 		}
 	}
@@ -533,9 +533,21 @@ bool Vector<T>::eraseFirst( const T & v ) {
 }
 
 template<typename T>
-void Vector<T>::eraseIndex( const typename Vector<T>::Size index ) {
+void Vector<T>::eraseI( const typename Vector<T>::Size index ) {
 	for ( typename Vector<T>::Size i( index ); i < this -> maxSize - 1; i++ ) {
 		this -> dataTable[ i ] = this -> dataTable[ i + 1 ];
+	}
+	this -> size--;
+	_updateIterators();
+}
+
+template<typename T>
+void Vector<T>::eraseIt( const typename Vector<T>::Iterator it ) {
+	typename Vector<T>::Iterator itSrc( it + 1 );
+	typename Vector<T>::Iterator itDst( it );
+
+	for ( ; itSrc < getEnd(); iterate(&itSrc), iterate(&itDst) ) {
+		setValueIt( itDst, getValueIt( itSrc ) );
 	}
 	this -> size--;
 	_updateIterators();

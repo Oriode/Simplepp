@@ -592,7 +592,14 @@ public:
 	 *
 	 * @param 	index	Index to be erased.
 	 */
-	void eraseIndex( const typename Vector<T>::Size index );
+	void eraseI( const typename Vector<T>::Size i );
+
+	/**
+	 * @brief 	Erase the data at the specified iterator and rearrange the data
+	 *
+	 * @param 	index	Iterator to be erased.
+	 */
+	void eraseIt( const typename Vector<T>::Iterator it );
 
 	/** @brief	Quicksort the vector using the operator>() */
 	void sortDesc();

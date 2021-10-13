@@ -547,7 +547,7 @@ int main( int argc, char * argv[] ) {
 			for ( unsigned long i( 0 ); i<100; i++ ) {
 				testMap.insert( i, i );
 			}
-			testMap.eraseIndex( j );
+			testMap.eraseI( j );
 		}
 
 		for ( unsigned long i( 0 ); i<1000; i++ ) {
@@ -556,7 +556,7 @@ int main( int argc, char * argv[] ) {
 
 
 		for ( unsigned long i( 0 ); i<1000; i++ ) {
-			testMap.eraseIndex( Math::random( 0, 1000 ) );
+			testMap.eraseI( Math::random( 0, 1000 ) );
 		}
 		//log( StringASCII( testMap ) );
 

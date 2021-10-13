@@ -592,7 +592,7 @@ namespace JSON {
 			return NULL;
 		} else {
 			BasicNodeT<T> * child( this -> childrenVector[ i ] );
-			this -> childrenVector.eraseIndex( i );
+			this -> childrenVector.eraseI( i );
 			if ( child ) {
 				if ( child -> getName().getSize() )
 					this -> childrenMap.eraseFirst( child -> getName(), child );

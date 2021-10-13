@@ -529,7 +529,7 @@ namespace GLFW {
 
 
 	bool Window::deleteContext() {
-		GLFW::Window::createdWindowMap.eraseIndex( this -> glwfWindow );
+		GLFW::Window::createdWindowMap.eraseI( this -> glwfWindow );
 
 		glfwDestroyWindow( this -> glwfWindow );
 		glfwDestroyCursor( this -> glfwCursor );

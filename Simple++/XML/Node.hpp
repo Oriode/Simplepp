@@ -212,7 +212,7 @@ namespace XML {
 	template<typename T>
 	bool NodeT<T>::deleteParam( ParamT<T> * param ) {
 		if ( this -> paramsVector.eraseFirst( param ) ) {
-			this -> paramsMap.eraseIndex( param -> getName() );
+			this -> paramsMap.eraseI( param -> getName() );
 			delete param;
 			return true;
 		}
@@ -225,8 +225,8 @@ namespace XML {
 			return false;
 		} else {
 			ParamT<T> * param( this -> paramsVector[ i ] );
-			this -> paramsVector.eraseIndex( i );
-			this -> paramsMap.eraseIndex( param -> getName() );
+			this -> paramsVector.eraseI( i );
+			this -> paramsMap.eraseI( param -> getName() );
 			delete param;
 			return true;
 		}
@@ -412,7 +412,7 @@ namespace XML {
 			return NULL;
 		} else {
 			NodeT<T> * child( this -> childrenVector[ i ] );
-			this -> childrenVector.eraseIndex( i );
+			this -> childrenVector.eraseI( i );
 			this -> childrenMap.eraseFirst( child -> getName(), child );
 			if ( child -> getId().getSize() )
 				this -> childrenByIdMap.eraseFirst( child -> getId(), child );
