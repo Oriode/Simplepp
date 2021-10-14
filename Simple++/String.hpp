@@ -1301,10 +1301,6 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		number /= Type( base );
 		comma++;
 	}
-	while ( number < Type( 1 ) ) {
-		number *= Type( base );
-		comma--;
-	}
 	int i;
 	for ( i = 0; i < comma; i++, buffer++ ) {
 		unsigned long long castedNumber = ( unsigned long long )number;
@@ -1316,7 +1312,8 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 	buffer++;
 
 	int precisionI = ( int ) precision;
-	for ( i = comma; i < precisionI; i++, buffer++ ) {
+
+	for ( ; i < precisionI; i++, buffer++ ) {
 		unsigned long long castedNumber = ( unsigned long long )number;
 		*buffer = BasicString<T>::numbers[ castedNumber % base ];
 		number *= Type( base );
@@ -4017,8 +4014,9 @@ template<typename T>
 template<typename C, typename T1, typename... Types>
 void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
-		if ( *it == T( '%' ) && it > referenceStringBegin && *( it - 1 ) == T( '/' ) ) {
+		if ( *it == T( '/' ) && it + 1 < referenceStringEnd && *( it + 1 ) == T( '%' ) ) {
 			newString -> _concatWOS( T( '%' ) );
+			it++;
 		} else if ( *it == T( '%' ) ) {
 			newString -> _concatWOS( arg1 );
 			return __format( it + 1, referenceStringEnd, newString, args... );

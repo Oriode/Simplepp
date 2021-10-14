@@ -1384,28 +1384,28 @@ public:
 	///@returns	A Vector<BasicString<T>>
 	static Vector<BasicString<T>> split( const BasicString<T> & s, const T & delimiter );
 
-	///@brief		Formats
+	///@brief		Format a reference String with values. To place a variable use the character '%'. To place a '%' use the '/''%' characters.
 	///@tparam	T1   	First element type.
 	///@tparam	Types	Others elements.
 	///@param	referenceString	The reference string.
 	///@param	arg1		   	The first argument.
 	///@param	args		   	Variable arguments providing the variables.
-	///@returns	The formatted value.
+	///@returns	The formatted String.
 	template<typename T1, typename... Types>
 	static BasicString<T> format( const BasicString<T> referenceString, const T1 & arg1, Types ... args );
 
-	///@brief		Formats
+	///@brief		Format a reference String with values. To place a variable use the character '%'. To place a '%' use the '/''%' characters.
 	///@tparam	C		Reference string type.
 	///@tparam	T1   	First element type.
 	///@tparam	Types	Others elements.
 	///@param	str		The reference string.
 	///@param	arg1		   	The first argument.
 	///@param	args		   	Variable arguments providing the variables.
-	///@returns	The formatted value.
+	///@returns	The formatted String.
 	template<typename C, typename T1, typename... Types>
 	static BasicString<T> format( C * const & str, const T1 & arg1, Types ... args );
 
-	///@brief		Formats
+	///@brief		Format a reference String with values. To place a variable use the character '%'. To place a '%' use the '/''%' characters.
 	///@tparam	C		Reference string type.
 	///@tparam	N		Refernce string size.
 	///@tparam	T1   	First element type.
@@ -1413,7 +1413,7 @@ public:
 	///@param	str		The reference string.
 	///@param	arg1		   	The first argument.
 	///@param	args		   	Variable arguments providing the variables.
-	///@returns	The formatted value.
+	///@returns	The formatted String.
 	template<typename C, size_t N, typename T1, typename... Types>
 	static BasicString<T> format( const C( &str )[ N ], const T1 & arg1, Types ... args );
 

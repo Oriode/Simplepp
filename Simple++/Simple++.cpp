@@ -40,10 +40,10 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-//#define DEBUG_STRING
+#define DEBUG_STRING
 //#define DEBUG_DATE
 //#define DEBUG_PATH
-#define DEBUG_STREAM
+//#define DEBUG_STREAM
 
 
 #ifndef _LIB
@@ -1162,6 +1162,12 @@ int main( int argc, char * argv[] ) {
 		Log::displayLog( StringASCII( "10 in binary : " )<<StringASCII( 10, 2 ) );
 		Log::displayLog( StringASCII( "test:" ).concatFill( 255, StringASCII::Size( 5 ), '-', 16 ) );
 		Log::displayLog( StringASCII( 0.2f ) );
+		Log::displayLog( StringASCII( 0.02f ) );
+		Log::displayLog( StringASCII( 0.002f ) );
+		Log::displayLog( StringASCII( 0.0002f ) );
+		Log::displayLog( StringASCII( 0.00002f ) );
+
+
 
 		for ( size_t i( 0 ); i<2; i++ ) {
 			testStr += StringASCII( testStr );
