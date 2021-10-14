@@ -39,6 +39,7 @@ namespace Time {
 		/** @brief	Empty constructor, not initialized, use Time::getDate() to get the current date */
 		DateT();
 
+		DateT( int year, unsigned char month, unsigned char day, unsigned char hours, unsigned char minutes, unsigned char seconds, TimeT utcBias );
 
 		/**
 		 * @brief	copy constructor
@@ -59,7 +60,7 @@ namespace Time {
 		 * @param 	timePoint	Time point to use.
 		 * @param	utcBias	Delta in seconds from UTC.
 		 */
-		DateT( const TimePoint & timePoint, TimeT utcBias );
+		DateT( const TimePoint & timePoint, TimeT utcBias = 0 );
 
 
 		/************************************************************************/

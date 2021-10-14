@@ -5,13 +5,13 @@
 namespace Time {
 
 	template<typename T>
-	const unsigned char DateT<T>::MonthTable[  ] = { 0, 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
+	const unsigned char DateT<T>::MonthTable[  ] = { 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
 	template<typename T>
-	const unsigned char DateT<T>::MonthTableLeapYear[  ] = { 0, 6, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
+	const unsigned char DateT<T>::MonthTableLeapYear[  ] = { 6, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5 };
 	template<typename T>
-	const TimeT DateT<T>::numberOfDaysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	const TimeT DateT<T>::numberOfDaysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	template<typename T>
-	const TimeT DateT<T>::numberOfDaysInMonthLeap[] = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	const TimeT DateT<T>::numberOfDaysInMonthLeap[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	template<typename T>
 	const TimeT DateT<T>::localUTCBias = DateT<T>::_retrieveLocalUTCBias();
 
@@ -21,6 +21,18 @@ namespace Time {
 	/************************************************************************/
 	template<typename T>
 	DateT<T>::DateT() {
+
+	}
+	template<typename T>
+	DateT<T>::DateT( int year, unsigned char month, unsigned char day, unsigned char hours, unsigned char minutes, unsigned char seconds, TimeT utcBias ) :
+		year(year),
+		month(month - 1),
+		dayInMonth(day),
+		hours(hours),
+		minutes(minutes),
+		seconds(seconds),
+		utcBias(utcBias)
+	{
 
 	}
 	template<typename T>
@@ -339,16 +351,22 @@ template<typename T>
 			t += numSeconds;
 		}
 
-		//Get the Month Number
-		while ( true ) {
-			unsigned long long numSeconds;
-			if ( isLeapYear )
-				numSeconds = 3600 * 24 * numberOfDaysInMonthLeap[ this -> month ];
-			else
-				numSeconds = 3600 * 24 * numberOfDaysInMonth[ this -> month ];
+		isLeapYear = isYearLeapYear( this -> year );
 
-			t += numSeconds;
+		if ( isLeapYear ) {
+			for ( int month = 0; month < this -> month; month++ ) {
+				unsigned long long numSeconds = 3600 * 24 * numberOfDaysInMonthLeap[ month ];
+
+				t += numSeconds;
+			}
+		} else {
+			for ( int month = 0; month < this -> month; month++ ) {
+				unsigned long long numSeconds = 3600 * 24 * numberOfDaysInMonth[ month ];
+
+				t += numSeconds;
+			}
 		}
+		
 
 
 		t += ( this -> dayInMonth - 1 ) * ( 3600 * 24 );
