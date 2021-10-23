@@ -485,6 +485,24 @@ void Vector<T>::resize( const typename Vector<T>::Size newSize ) {
 	_updateIterators();
 }
 
+template<typename T>
+void Vector<T>::extendLeft( const typename Vector<T>::Size increasedSize ) {
+	// Resize !
+	resize( this -> size + increasedSize );
+
+	// Shift Right
+	typename Vector<T>::Size iSrc( this -> size - increasedSize - 1 );
+	typename Vector<T>::Size iDst( this -> size - 1 );
+	for ( ; iDst >= increasedSize; iSrc--, iDst-- ) {
+		setValueI( iDst, getValueI( iSrc ) );
+	}
+}
+
+template<typename T>
+void Vector<T>::extendRight( const typename Vector<T>::Size increasedSize ) {
+	resize( this -> size + increasedSize );
+}
+
 
 
 template<typename T>

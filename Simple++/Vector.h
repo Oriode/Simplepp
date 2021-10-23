@@ -126,6 +126,20 @@ public:
 	 */
 	void resize( const typename Vector<T>::Size newSize );
 
+	/**
+	 * @brief	Extend the size to the left by shifting the values.
+	 * 
+	 * @param	increasedSize Size to be added to the left.
+	 */
+	void extendLeft( const typename Vector<T>::Size increasedSize );
+
+	/**
+	 * @brief	Extend the size to the right. resize(this -> size + increasedSize)
+	 * 
+	 * @param	increasedSize Size to be added to the right.
+	 */
+	void extendRight( const typename Vector<T>::Size increasedSize );
+
 
 	/************************************************************************/
 	/* Iterations                                                           */
@@ -613,7 +627,7 @@ public:
 	 * @tparam	Func	Type of the function.
 	 * @param [in,out]	functor	(Optional) Functor with operator () overloaded with : bool operator()(const T &, const T &) const;
 	 */
-	template<typename Func = Math::Logical::Less()>
+	template<typename Func = Math::Logical::Less>
 	void sort( Func & functor = Func() );
 
 	/**
