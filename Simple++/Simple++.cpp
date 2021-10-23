@@ -1183,9 +1183,10 @@ int main( int argc, char * argv[] ) {
 			}
 		};
 
-		const char * testParse = "42.0 18";
+		const char * testParse = "42784.27 18";
 		const char ** iterable( &testParse );
-		Log::displayLog( StringASCII::toFloat( iterable, 10, EndFunc() ) );
+		float parsedValue( StringASCII::toFloat( iterable, 10, EndFunc() ) );
+		Log::displayLog( parsedValue );
 		Log::displayLog( StringASCII::toInt( iterable ) );
 
 	}
