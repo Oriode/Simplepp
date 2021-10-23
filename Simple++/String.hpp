@@ -2230,9 +2230,9 @@ static Type BasicString<T>::_toFloat( const T ** itParam, unsigned int base, con
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
-		return 0;
+		return Type( 0 );
 
-	Type result = 0;
+	Type result( 0 );
 	bool negative;
 	if ( *it == T( '-' ) ) {			//Check the sign
 		it++;
@@ -2241,22 +2241,24 @@ static Type BasicString<T>::_toFloat( const T ** itParam, unsigned int base, con
 		negative = false;
 	}
 
-
+	const Type baseType( base );
 	for ( ; !endFunc( it ) && *it != T( '.' ); it++ ) {			//Start the computation
-		result = result * Type( base ) + ( Type ) ( *it - T( '0' ) );
+		result *= baseType;
+		result += Type( *it - T( '0' ) );
 	}
 
 	if ( *it == T( '.' ) )
 		it++;
 
-	Type exp = base;
+	Type oneOnBase( Type( 1.0 ) / baseType );
+	Type exp( oneOnBase );
 	for ( ; !endFunc( it ) ; it++ ) {
-		result += ( Type ) ( *it - T( '0' ) ) / ( exp );
-		exp *= base;
+		result += Type( *it - T( '0' ) ) * ( exp );
+		exp *= oneOnBase;
 	}
 
 	if ( negative )
-		result *= Type( -1 );
+		result = -result;
 
 	return result;
 }
