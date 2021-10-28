@@ -48,12 +48,12 @@
 
 
 #define debug(code); code
-#define error(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, TEXT( __FILE__ ), __LINE__ );
-#define log(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, TEXT( __FILE__ ), __LINE__ );
-#define warn(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, TEXT( __FILE__ ), __LINE__ );
+#define error(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__ );
+#define log(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
+#define warn(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, Log::MessageColor::Yellow, TEXT( __FILE__ ), __LINE__ );
 
-#define assert(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, TEXT( __FILE__ ), __LINE__);
-#define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : "#msg ), Log::MessageSeverity::Error, TEXT( __FILE__ ), __LINE__);
+#define assert(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
+#define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : "#msg ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
 
 #else
 #undef debug
@@ -87,6 +87,12 @@ public:
 		* @param 	text	Text to display.
 		*/
 	static void displayLog( const BasicString<T> & text );
+
+	/**
+	* @brief 	Display a success log message even if we are in debug build or not.
+	* @param 	text	Text to display.
+	*/
+	static void displaySuccess( const BasicString<T> & text );
 
 	/**
 		* @brief 	Display a warning message even if we are in debug build or not.
@@ -123,6 +129,7 @@ public:
 	static void errorHandler(
 		const BasicString<T> &,
 		typename LogT<T>::MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
+		typename LogT<T>::MessageColor color = typename LogT<T>::MessageColor::Red,
 		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0 );
 
@@ -130,6 +137,7 @@ public:
 	static void callErrorHandler(
 		const BasicString<T> & message,
 		typename LogT<T>::MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
+		typename LogT<T>::MessageColor color = typename LogT<T>::MessageColor::Red,
 		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
 	);

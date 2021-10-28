@@ -55,10 +55,10 @@
 #endif
 
 #define debug(code); code
-#define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, TEXT(__FILE__), __LINE__);
-#define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, TEXT(__FILE__), __LINE__);
-#define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, TEXT(__FILE__), __LINE__);
-#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed : "#condition ), SimpleLog::MessageSeverity::Error, TEXT(__FILE__), __LINE__);
+#define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
+#define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
+#define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
+#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
 
 #else
 #undef debug
@@ -93,11 +93,12 @@ public:
 	};
 
 
-	static void errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, const TCHAR * fileName = TEXT( "" ), unsigned int lineNumber = 0 );
+	static void errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red, const TCHAR * fileName = TEXT( "" ), unsigned int lineNumber = 0 );
 
 	static void callErrorHandler(
 		const T * message,
-		MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error,
+		typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error,
+		typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red,
 		const TCHAR * fileName = TEXT( "" ),
 		unsigned int lineNumber = 0
 	);
@@ -109,7 +110,8 @@ public:
 	///@param 
 	static void setErrorHandler( void( *errorHandlerFn ) (
 		const T * msg,
-		MessageSeverity severity,
+		typename SimpleLogT<T>::MessageSeverity severity,
+		typename SimpleLogT<T>::MessageColor color,
 		const TCHAR * file,
 		unsigned int line ) );
 
@@ -140,6 +142,7 @@ protected:
 	static void( *mErrorHandlerFn ) (
 		const T *,
 		MessageSeverity,
+		MessageColor,
 		const TCHAR *,
 		unsigned int );
 

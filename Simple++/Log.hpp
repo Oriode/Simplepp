@@ -12,21 +12,28 @@ LogT<T>::~LogT( void ) {}
 template<typename T>
 void LogT<T>::displayError( const BasicString<T> & message ) {
 #if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
-	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Error );
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Error, typename LogT<T>::MessageColor::Red );
 #endif
 }
 
 template<typename T>
 void LogT<T>::displayWarning( const BasicString<T> & message ) {
 #if LOG_SEVERITY <= 2 || !defined LOG_SEVERITY
-	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Warning );
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Warning, typename LogT<T>::MessageColor::Yellow );
 #endif
 }
 
 template<typename T>
 void LogT<T>::displayLog( const BasicString<T> & message ) {
 #if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
-	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info );
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::White );
+#endif
+}
+
+template<typename T>
+void LogT<T>::displaySuccess( const BasicString<T> & message ) {
+#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::Green );
 #endif
 }
 
@@ -46,13 +53,13 @@ void LogT<T>::displayChrono( const BasicString<T> & text ) {
 }
 
 template<typename T>
-void LogT<T>::errorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber ) {
-	SimpleLogT<T>::errorHandler( message.toCString(), severity, fileName, lineNumber );
+void LogT<T>::errorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity, typename LogT<T>::MessageColor color, const TCHAR * fileName, unsigned int lineNumber ) {
+	SimpleLogT<T>::errorHandler( message.toCString(), severity, color, fileName, lineNumber );
 }
 
 template<typename T>
-void LogT<T>::callErrorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity /*= typename LogT<T>::MessageSeverity::Error*/, const TCHAR * fileName /*= ""*/, unsigned int lineNumber /*= 0 */ ) {
-	LogT<T>::errorHandler( message.toCString(), severity, fileName, lineNumber );
+void LogT<T>::callErrorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity /*= typename LogT<T>::MessageSeverity::Error*/, typename LogT<T>::MessageColor color /*= typename LogT<T>::MessageColor::Red*/, const TCHAR * fileName /*= ""*/, unsigned int lineNumber /*= 0 */) {
+	LogT<T>::errorHandler( message.toCString(), severity, color, fileName, lineNumber );
 }
 
 #if defined WIN32 && defined ENABLE_WIN32

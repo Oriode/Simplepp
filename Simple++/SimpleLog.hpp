@@ -3,6 +3,7 @@ template<typename T>
 void( *SimpleLogT<T>::mErrorHandlerFn )(
 	const T *,
 	MessageSeverity,
+	MessageColor,
 	const TCHAR *,
 	unsigned int ) = &SimpleLogT<T>::errorHandler;
 
@@ -33,30 +34,29 @@ void SimpleLogT<T>::getTimeStr( wchar_t * strBuffer, size_t bufferSize ) {
 }
 
 template<typename T>
-void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber ) {
+void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color, const TCHAR * fileName, unsigned int lineNumber ) {
 	switch ( severity ) {
 		case typename SimpleLogT<T>::MessageSeverity::Error:
 	#if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
-		setConsoleColor( typename SimpleLogT<T>::MessageColor::Red );
 	#else
 		return;
 	#endif
 		break;
 		case typename SimpleLogT<T>::MessageSeverity::Warning:
 	#if LOG_SEVERITY <= 2 || !defined LOG_SEVERITY
-		setConsoleColor( typename SimpleLogT<T>::MessageColor::Yellow );
 	#else
 		return;
 	#endif
 		break;
 		case typename SimpleLogT<T>::MessageSeverity::Info:
 	#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
-		setConsoleColor( typename SimpleLogT<T>::MessageColor::White );
 	#else
 		return;
-		break;
 	#endif
+		break;
 	}
+
+	setConsoleColor( color );
 
 	T timeBuffer[ 50 ];
 	getTimeStr<T>( timeBuffer, sizeof( timeBuffer ) );
@@ -114,8 +114,8 @@ void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * ti
 
 
 template<typename T>
-void SimpleLogT<T>::callErrorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, const TCHAR * fileName, unsigned int lineNumber ) {
-	mErrorHandlerFn( message, severity, fileName, lineNumber );
+void SimpleLogT<T>::callErrorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color, const TCHAR * fileName, unsigned int lineNumber ) {
+	mErrorHandlerFn( message, severity, color, fileName, lineNumber );
 }
 
 template<typename T>
@@ -146,7 +146,7 @@ void SimpleLogT<T>::displayWindowsDebug( const T * message, const TCHAR * fileNa
 	if ( GetLastError() ) {
 		T messageBuffer[ 2048 ];
 		getWindowsLastError( messageBuffer, sizeof( messageBuffer ) );
-		SimpleLogT<T>::callErrorHandler( messageBuffer, SimpleLogT<T>::MessageSeverity::Error, fileName, lineNumber );
+		SimpleLogT<T>::callErrorHandler( messageBuffer, typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor::Red, fileName, lineNumber );
 	}
 }
 
@@ -172,7 +172,7 @@ size_t SimpleLogT<T>::getWindowsLastError( T * messageBuffer, size_t bufferSize 
 #endif
 
 template<typename T>
-void SimpleLogT<T>::setErrorHandler( void( *errorHandlerFn ) ( const T *, typename SimpleLogT<T>::MessageSeverity, const TCHAR *, unsigned int ) ) {
+void SimpleLogT<T>::setErrorHandler( void( *errorHandlerFn ) ( const T *, typename SimpleLogT<T>::MessageSeverity, typename SimpleLogT<T>::MessageColor color, const TCHAR *, unsigned int ) ) {
 	SimpleLogT<T>::mErrorHandlerFn = errorHandlerFn;
 }
 
