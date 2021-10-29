@@ -89,17 +89,18 @@ public:
 		Red = 0xC,
 		Yellow = 0xE,
 		Green = 0xA,
+		LightCyan = 0xB,
 		White = 0xF
 	};
 
 
-	static void errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red, const TCHAR * fileName = TEXT( "" ), unsigned int lineNumber = 0 );
+	static void errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red, unsigned char indent = 0, const TCHAR * fileName = NULL, unsigned int lineNumber = 0 );
 
 	static void callErrorHandler(
 		const T * message,
 		typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error,
 		typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red,
-		const TCHAR * fileName = TEXT( "" ),
+		const TCHAR * fileName = NULL,
 		unsigned int lineNumber = 0
 	);
 
@@ -112,6 +113,7 @@ public:
 		const T * msg,
 		typename SimpleLogT<T>::MessageSeverity severity,
 		typename SimpleLogT<T>::MessageColor color,
+		unsigned char indent,
 		const TCHAR * file,
 		unsigned int line ) );
 
@@ -138,24 +140,35 @@ public:
 	static void printMessage( const char * messageBuffer );
 	static void printMessage( const wchar_t * messageBuffer );
 
+	///@brief Print a char to the Console.
+	///@param c Char to be printed.
+	template<typename C>
+	static void printChar( const C c );
+	static void printChar( const char c );
+	static void printChar( const wchar_t c );
+
+	static void increaseIndent();
+	static void lowerIndent();
+
 protected:
 	static void( *mErrorHandlerFn ) (
 		const T *,
 		MessageSeverity,
 		MessageColor,
+		unsigned char,
 		const TCHAR *,
 		unsigned int );
 
 private:
 	template<typename C>
-	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber, const C * message );
-	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber, const char * message );
-	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber, const wchar_t * message );
+	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber );
+	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber );
+	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber );
 
 	template<typename C>
-	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * message );
-	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * message );
-	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * message );
+	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer );
+	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer );
+	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer );
 
 
 	template<typename O, typename I>
@@ -163,6 +176,8 @@ private:
 
 	template<typename O, typename I>
 	static void convertFileName( O * outputBuffer, const I * inputBuffer, size_t bufferSize );
+
+	static unsigned char indent;
 };
 
 using SimpleLog = SimpleLogT<TCHAR>;

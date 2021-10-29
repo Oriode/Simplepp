@@ -38,12 +38,55 @@ void LogT<T>::displaySuccess( const BasicString<T> & message ) {
 }
 
 template<typename T>
+void LogT<T>::startStep( const BasicString<T> & message ) {
+#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
+	// LogT<T>::displayNewLine();
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::LightCyan );
+	LogT<T>::increaseIndent();
+#endif
+}
+
+template<typename T>
+void LogT<T>::endStep( const BasicString<T> & message ) {
+#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
+	LogT<T>::lowerIndent();
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::LightCyan );
+	// LogT<T>::displayNewLine();
+#endif
+}
+
+template<typename T>
+void LogT<T>::endStepSuccess( const BasicString<T> & message ) {
+#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
+	LogT<T>::lowerIndent();
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::Green );
+	// LogT<T>::displayNewLine();
+#endif
+}
+
+template<typename T>
+void LogT<T>::endStepFailure( const BasicString<T> & message ) {
+#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
+	LogT<T>::lowerIndent();
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::Red );
+	// LogT<T>::displayNewLine();
+#endif
+}
+
+template<typename T>
+void LogT<T>::displayNewLine() {
+	SimpleLogT<T>::callErrorHandler( NULL, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::White, TEXT(""), 0);
+}
+
+template<typename T>
 void LogT<T>::startChrono() {
 	LogT<T>::startTime = std::chrono::high_resolution_clock::now();
+	LogT<T>::increaseIndent();
 }
 
 template<typename T>
 void LogT<T>::stopChrono() {
+	LogT<T>::lowerIndent();
 	LogT<T>::endTime = std::chrono::high_resolution_clock::now();
 }
 
@@ -54,7 +97,7 @@ void LogT<T>::displayChrono( const BasicString<T> & text ) {
 
 template<typename T>
 void LogT<T>::errorHandler( const BasicString<T> & message, typename LogT<T>::MessageSeverity severity, typename LogT<T>::MessageColor color, const TCHAR * fileName, unsigned int lineNumber ) {
-	SimpleLogT<T>::errorHandler( message.toCString(), severity, color, fileName, lineNumber );
+	SimpleLogT<T>::callErrorHandler( message.toCString(), severity, color, fileName, lineNumber );
 }
 
 template<typename T>

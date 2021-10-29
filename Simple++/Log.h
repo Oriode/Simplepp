@@ -106,6 +106,35 @@ public:
 		*/
 	static void displayError( const BasicString<T> & text );
 
+	/**
+	 * @brief Display a special message representing the opening of a new step & increase the indent.
+	 * @param text Text to be displayed
+	 */
+	static void startStep( const BasicString<T> & text );
+
+	/**
+	 * @brief Display a special message representing the ending of a new step & lower the indent.
+	 * @param text Text to be displayed
+	 */
+	static void endStep( const BasicString<T> & text );
+
+	/**
+	 * @brief Display a special message representing the success ending of a new step & lower the indent.
+	 * @param text Text to be displayed
+	 */
+	static void endStepSuccess( const BasicString<T> & text );
+
+	/**
+	 * @brief Display a special message representing the failure ending of a new step & lower the indent.
+	 * @param text Text to be displayed
+	 */
+	static void endStepFailure( const BasicString<T> & text );
+
+	/**
+	 * @brief Display a new line.
+	 */
+	static void displayNewLine();
+
 	/** @brief	Start the chrono, see stopChrono(); */
 	static void startChrono();
 
@@ -130,7 +159,7 @@ public:
 		const BasicString<T> &,
 		typename LogT<T>::MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
 		typename LogT<T>::MessageColor color = typename LogT<T>::MessageColor::Red,
-		const TCHAR * fileName = TEXT( "" ),
+		const TCHAR * fileName = NULL,
 		unsigned int lineNumber = 0 );
 
 
@@ -138,7 +167,7 @@ public:
 		const BasicString<T> & message,
 		typename LogT<T>::MessageSeverity severity = typename LogT<T>::MessageSeverity::Error,
 		typename LogT<T>::MessageColor color = typename LogT<T>::MessageColor::Red,
-		const TCHAR * fileName = TEXT( "" ),
+		const TCHAR * fileName = NULL,
 		unsigned int lineNumber = 0
 	);
 

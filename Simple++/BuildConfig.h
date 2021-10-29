@@ -30,6 +30,9 @@
  /** @brief	Select what to log (0 = ALL, 1 = INFO, 2 = WARNING, 3 = ERROR) */
 #define LOG_SEVERITY 1
 
+/** @brief Display or not the calling file in logs. */
+//#define LOG_DISPLAY_FILEPATH
+
 /** @brief	if the this is a debug build */
 //#define DEBUG											<= Please set it inside the compilations options
 

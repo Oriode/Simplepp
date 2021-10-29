@@ -4,8 +4,12 @@ void( *SimpleLogT<T>::mErrorHandlerFn )(
 	const T *,
 	MessageSeverity,
 	MessageColor,
+	unsigned char,
 	const TCHAR *,
 	unsigned int ) = &SimpleLogT<T>::errorHandler;
+
+template<typename T>
+unsigned char SimpleLogT<T>::indent = 0;
 
 
 template<typename T>
@@ -34,7 +38,7 @@ void SimpleLogT<T>::getTimeStr( wchar_t * strBuffer, size_t bufferSize ) {
 }
 
 template<typename T>
-void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color, const TCHAR * fileName, unsigned int lineNumber ) {
+void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color, unsigned char indent, const TCHAR * fileName, unsigned int lineNumber ) {
 	switch ( severity ) {
 		case typename SimpleLogT<T>::MessageSeverity::Error:
 	#if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
@@ -56,66 +60,99 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 		break;
 	}
 
+	if ( message == NULL ) {
+		printChar( '\n' );
+		return;
+	}
+
 	setConsoleColor( color );
 
 	T timeBuffer[ 50 ];
 	getTimeStr<T>( timeBuffer, sizeof( timeBuffer ) );
 
-	T logBuffer[ 2048 ];
+	T prefixBuffer[ 2048 ];
 
+#if defined LOG_DISPLAY_FILEPATH
 	// If we have a fileName.
-	if ( fileName[ 0 ] != TCHAR( '\0' ) ) {
+	if ( fileName != NULL ) {
 		T fileNameBuffer[ FILENAME_MAX_SIZE ];
 
 		convertFileName<T, TCHAR>( fileNameBuffer, fileName, 50 );
 		//fileNameBuffer[ 10 ] = T( '\0' );
 
 
-		parseMessage( logBuffer, 2048, timeBuffer, fileNameBuffer, lineNumber, message );
+		parseMessage( prefixBuffer, 2048, timeBuffer, fileNameBuffer, lineNumber );
 	} else {
-		parseMessage( logBuffer, 2048, timeBuffer, message );
+		parseMessage( prefixBuffer, 2048, timeBuffer );
+	}
+#else
+	parseMessage( prefixBuffer, 2048, timeBuffer );
+#endif
+
+	printMessage( prefixBuffer );
+
+	for ( unsigned char i( 0 ); i < indent; i++ ) {
+		printChar( '\t' );
 	}
 
-	printMessage( logBuffer );
-	setConsoleColor();
+	printMessage( message );
+	printChar( '\n' );
+
+	// setConsoleColor();
 }
 
 template<typename T>
 template<typename C>
-void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber, const C * message ) {
+void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber ) {
 	// Not Implemented.
 }
 
 template<typename T>
-void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber, const char * message ) {
-	snprintf( buffer, bufferSize, "[%8s][%20s@%5i] : %s\n", timeBuffer, fileName, lineNumber, message );
+void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber) {
+#if defined LOG_DISPLAY_FILEPATH
+	snprintf( buffer, bufferSize, "[%8s][%20s@%5i] : ", timeBuffer, fileName, lineNumber );
+#else
+	snprintf( buffer, bufferSize, "[%8s] : ", timeBuffer );
+#endif
 }
 
 template<typename T>
-void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber, const wchar_t * message ) {
-	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s][%20s@%5i] : %s\n", timeBuffer, fileName, lineNumber, message );
+void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber ) {
+#if defined LOG_DISPLAY_FILEPATH
+	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s][%20s@%5i] : ", timeBuffer, fileName, lineNumber );
+#else
+	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s] : ", timeBuffer );
+#endif
 }
 
 template<typename T>
 template<typename C>
-void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * message ) {
+void SimpleLogT<T>::parseMessage( C * buffer, int bufferSize, C * timeBuffer ) {
 	// Not Implemented.
 }
 
 template<typename T>
-void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * message ) {
-	snprintf( buffer, bufferSize, "[%8s][                          ] : %s\n", timeBuffer, message );
+void SimpleLogT<T>::parseMessage( char * buffer, int bufferSize, char * timeBuffer ) {
+#if defined LOG_DISPLAY_FILEPATH
+	snprintf( buffer, bufferSize, "[%8s][                          ] : ", timeBuffer );
+#else
+	snprintf( buffer, bufferSize, "[%8s] : ", timeBuffer );
+#endif
 }
 
 template<typename T>
-void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * message ) {
-	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s][                          ] : %s\n", timeBuffer, message );
+void SimpleLogT<T>::parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer ) {
+#if defined LOG_DISPLAY_FILEPATH
+	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s][                          ] : ", timeBuffer );
+#else
+	_snwprintf_s( buffer, bufferSize, bufferSize, L"[%8s] : ", timeBuffer );
+#endif
 }
 
 
 template<typename T>
 void SimpleLogT<T>::callErrorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color, const TCHAR * fileName, unsigned int lineNumber ) {
-	mErrorHandlerFn( message, severity, color, fileName, lineNumber );
+	mErrorHandlerFn( message, severity, color, SimpleLogT<T>::indent, fileName, lineNumber );
 }
 
 template<typename T>
@@ -172,7 +209,7 @@ size_t SimpleLogT<T>::getWindowsLastError( T * messageBuffer, size_t bufferSize 
 #endif
 
 template<typename T>
-void SimpleLogT<T>::setErrorHandler( void( *errorHandlerFn ) ( const T *, typename SimpleLogT<T>::MessageSeverity, typename SimpleLogT<T>::MessageColor color, const TCHAR *, unsigned int ) ) {
+void SimpleLogT<T>::setErrorHandler( void( *errorHandlerFn ) ( const T *, typename SimpleLogT<T>::MessageSeverity, typename SimpleLogT<T>::MessageColor color, unsigned char indent, const TCHAR *, unsigned int ) ) {
 	SimpleLogT<T>::mErrorHandlerFn = errorHandlerFn;
 }
 
@@ -213,4 +250,32 @@ void SimpleLogT<T>::printMessage( const char * messageBuffer ) {
 template<typename T>
 void SimpleLogT<T>::printMessage( const wchar_t * messageBuffer ) {
 	std::wcout << messageBuffer;
+}
+
+template<typename T>
+template<typename C>
+void SimpleLogT<T>::printChar( const C c ) {
+	// Not Implemented.
+}
+
+template<typename T>
+void SimpleLogT<T>::printChar( const char c ) {
+	std::cout << c;
+}
+
+template<typename T>
+void SimpleLogT<T>::printChar( const wchar_t c ) {
+	std::wcout << c;
+}
+
+template<typename T>
+void SimpleLogT<T>::increaseIndent() {
+	SimpleLogT<T>::indent++;
+}
+
+template<typename T>
+void SimpleLogT<T>::lowerIndent() {
+	if ( SimpleLogT<T>::indent >= 1 ) {
+		SimpleLogT<T>::indent--;
+	}
 }
