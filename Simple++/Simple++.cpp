@@ -1161,6 +1161,7 @@ int main( int argc, char * argv[] ) {
 		StringASCII strConcat( "Hello World!" );
 		Log::displayLog( StringASCII( "10 in binary : " )<<StringASCII( 10, 2 ) );
 		Log::displayLog( StringASCII( "test:" ).concatFill( 255, StringASCII::Size( 5 ), '-', 16 ) );
+		Log::displayLog( StringASCII( 100.0f ) );
 		Log::displayLog( StringASCII( 0.2f ) );
 		Log::displayLog( StringASCII( 0.02f ) );
 		Log::displayLog( StringASCII( 0.002f ) );

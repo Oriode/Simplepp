@@ -1297,7 +1297,7 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 	}
 
 	int comma = 1;
-	while ( number > Type( base ) ) {
+	while ( number >= Type( base ) ) {
 		number /= Type( base );
 		comma++;
 	}
