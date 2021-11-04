@@ -66,6 +66,22 @@ namespace Time {
 	}
 
 	template<typename T>
+	bool TimePointT<T>::read( IO::SimpleFileStream * fileStream ) {
+		if ( !IO::read( fileStream, &this->t ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	template<typename T>
+	bool TimePointT<T>::write( IO::SimpleFileStream * fileStream ) const {
+		if ( !IO::write( fileStream, &this->t ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	template<typename T>
 	TimePointT<T> TimePointT<T>::getNow() {
 		TimePointT<T> newTime;
 		newTime.setNow();

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../Math/BasicMath.h"
+#include "../IO/IO.h"
 #include "Tick.h"
 
 namespace Time {
@@ -20,7 +21,7 @@ namespace Time {
 	 * @tparam	ratio	fractional number representing the number of seconds of one unit in this object.
 	 */
 	template<class ratio = Math::Ratio<1, 1>>
-	class Duration {
+	class Duration : public IO::BasicIO {
 	public:
 
 		/************************************************************************/
@@ -275,6 +276,15 @@ namespace Time {
 		 */
 		TimeT getValue() const;
 
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read( IO::SimpleFileStream * fileStream );
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 	private:
 		/** @brief	A TimeT to process */

@@ -1026,7 +1026,7 @@ bool Vector<T>::read( IO::SimpleFileStream * fileStream ) {
 		_clear();
 		return false;
 	}
-	allocate( this -> maxSize );
+	allocate( this -> size );
 
 	for ( typename Vector<T>::Size i( 0 ); i < this -> size; i++ ) {
 		if ( !IO::read( fileStream, &( this -> dataTable[ i ] ) ) ) {

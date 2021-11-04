@@ -9,13 +9,14 @@
 
 #include <time.h>
 #include "Duration.h"
+#include "../IO/IO.h"
 
 
 namespace Time {
 
 	/** @brief	Class representing a precise moment in the time ( extension of std time_t ) */
 	template<typename T>
-	class TimePointT {
+	class TimePointT : public IO::BasicIO {
 	public:
 
 		/** @brief	create an uninitialized TimePointT. See getTime() of getting the timepoint of the current time. */
@@ -79,6 +80,16 @@ namespace Time {
 		 * @returns	The time.
 		 */
 		const TimeT & getTime() const;
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read( IO::SimpleFileStream * fileStream );
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write( IO::SimpleFileStream * fileStream ) const;
 
 		static TimePointT getNow();
 	private:
