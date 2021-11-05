@@ -509,8 +509,10 @@ BasicString<T> & BasicString<T>::concat( C * const & str ) {
 template<typename T>
 BasicString<T> & BasicString<T>::concat( const bool & b ) {
 	auto newMaxSize = this -> size + 6;
-	if ( newMaxSize > this -> maxSize )
+	if ( newMaxSize > this -> maxSize ) {
 		_extendBuffer( newMaxSize );
+		_updateIterators();
+	}
 
 	this -> size += toCString( b, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
@@ -520,12 +522,13 @@ BasicString<T> & BasicString<T>::concat( const bool & b ) {
 
 template<typename T>
 BasicString<T> & BasicString<T>::concat( const char & c ) {
-	this -> size++;
-	if ( this -> size >= this -> maxSize ) {
-		_extendBuffer( this -> size );
-		this -> iteratorEnd--;
+	typename Vector<T>::Size newSize( this -> size + 1 );
+	if ( newSize >= this -> maxSize ) {
+		_extendBuffer( newSize );
+		_updateIterators();
 	}
 
+	this -> size = newSize;
 	toCString( c, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
 	return *this;
@@ -533,12 +536,13 @@ BasicString<T> & BasicString<T>::concat( const char & c ) {
 
 template<typename T>
 BasicString<T> & BasicString<T>::concat( const wchar_t & c ) {
-	this -> size++;
-	if ( this -> size >= this -> maxSize ) {
+	typename Vector<T>::Size newSize( this -> size + 1 );
+	if ( newSize >= this -> maxSize ) {
 		_extendBuffer( this -> size );
-		this -> iteratorEnd--;
+		_updateIterators();
 	}
 
+	this -> size = newSize;
 	toCString( c, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
 	return *this;
@@ -551,8 +555,10 @@ template<typename T>
 template<typename Type, unsigned int Base>
 BasicString<T> & BasicString<T>::_concatInteger( const Type & i ) {
 	auto newSize = this -> size + 21;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ){
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCString<Base>( i, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
@@ -563,8 +569,10 @@ template<typename T>
 template<typename Type, unsigned int Precision, unsigned int Base>
 BasicString<T> & BasicString<T>::_concatFloat( const Type & f ) {
 	auto newSize = this -> size + 50;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ){
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCString<Precision, Base>( f, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
@@ -576,8 +584,10 @@ template<typename T>
 template<typename Type>
 BasicString<T> & BasicString<T>::_concatInteger( const Type & i, unsigned int base ) {
 	auto newSize = this -> size + 64;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ) {
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCString( i, this -> iteratorEnd, base );
 	Vector<T>::_updateIterators();
@@ -595,8 +605,10 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 		typename BasicString<T>::Size nbCharToFill( fillNb - nbChar );
 
 		newSize = this -> size + fillNb;
-		if ( newSize > this -> maxSize )
+		if ( newSize > this -> maxSize ) {
 			_extendBuffer( newSize );
+			_updateIterators();
+		}
 
 		if ( i < Type( 0 ) ) {
 			*this -> iteratorEnd = T( '-' );
@@ -618,8 +630,10 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 		}
 	} else {
 		newSize = this -> size + nbChar;
-		if ( newSize > this -> maxSize )
+		if ( newSize > this -> maxSize ) {
 			_extendBuffer( newSize );
+			_updateIterators();
+		}
 		toCString( i, this -> iteratorEnd, base );
 	}
 	this -> size = newSize;
@@ -637,8 +651,10 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 		typename BasicString<T>::Size nbCharToFill( fillNb - nbChar );
 
 		newSize = this -> size + fillNb;
-		if ( newSize > this -> maxSize )
+		if ( newSize > this -> maxSize ){
 			_extendBuffer( newSize );
+			_updateIterators();
+		}
 
 		T * itEnd( this -> iteratorEnd + nbCharToFill );
 		for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
@@ -646,8 +662,10 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const typen
 		}
 	} else {
 		newSize = this -> size + nbChar;
-		if ( newSize > this -> maxSize )
+		if ( newSize > this -> maxSize ){
 			_extendBuffer( newSize );
+			_updateIterators();
+		}
 	}
 	toCString( i, this -> iteratorEnd, base );
 	this -> size = newSize;
@@ -662,8 +680,10 @@ template<typename T>
 template<typename Type>
 BasicString<T> & BasicString<T>::_concatFloat( const Type & f, unsigned int precision, unsigned int base ) {
 	auto newSize = this -> size + 50;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ) {
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCString( f, this -> iteratorEnd, precision, base );
 	Vector<T>::_updateIterators();
@@ -866,8 +886,10 @@ BasicString<T> & BasicString<T>::_concatWOS( C * const & str ) {
 template<typename T>
 BasicString<T> & BasicString<T>::_concatWOS( const bool & b ) {
 	auto newMaxSize = this -> size + 6;
-	if ( newMaxSize > this -> maxSize )
+	if ( newMaxSize > this -> maxSize ) {
 		_extendBuffer( newMaxSize );
+		_updateIterators();
+	}
 
 	this -> size += toCString( b, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
@@ -877,12 +899,13 @@ BasicString<T> & BasicString<T>::_concatWOS( const bool & b ) {
 
 template<typename T>
 BasicString<T> & BasicString<T>::_concatWOS( const char & c ) {
-	this -> size++;
-	if ( this -> size >= this -> maxSize ) {
-		_extendBuffer( this -> size );
-		this -> iteratorEnd--;
+	typename Vector<T>::Size newSize( this -> size + 1 );
+	if ( newSize >= this -> maxSize ) {
+		_extendBuffer( newSize );
+		_updateIterators();
 	}
 
+	this -> size = newSize;
 	toCStringWOS( c, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
 	return *this;
@@ -890,12 +913,13 @@ BasicString<T> & BasicString<T>::_concatWOS( const char & c ) {
 
 template<typename T>
 BasicString<T> & BasicString<T>::_concatWOS( const wchar_t & c ) {
-	this -> size++;
-	if ( this -> size >= this -> maxSize ) {
-		_extendBuffer( this -> size );
-		this -> iteratorEnd--;
+	typename Vector<T>::Size newSize( this -> size + 1 );
+	if ( newSize >= this -> maxSize ) {
+		_extendBuffer( newSize );
+		_updateIterators();
 	}
 
+	this -> size = newSize;
 	toCStringWOS( c, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
 	return *this;
@@ -908,8 +932,10 @@ template<typename T>
 template<typename Type, unsigned int Base>
 BasicString<T> & BasicString<T>::_concatIntegerWOS( const Type & i ) {
 	auto newSize = this -> size + 21;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ){
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCStringWOS<Base>( i, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
@@ -920,8 +946,10 @@ template<typename T>
 template<typename Type, unsigned int Precision, unsigned int Base>
 BasicString<T> & BasicString<T>::_concatFloatWOS( const Type & f ) {
 	auto newSize = this -> size + 50;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ){
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCStringWOS<Precision, Base>( f, this -> iteratorEnd );
 	Vector<T>::_updateIterators();
@@ -933,8 +961,10 @@ template<typename T>
 template<typename Type>
 BasicString<T> & BasicString<T>::_concatIntegerWOS( const Type & i, unsigned int base ) {
 	auto newSize = this -> size + 21;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ) {
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCStringWOS( i, this -> iteratorEnd, base );
 	Vector<T>::_updateIterators();
@@ -945,8 +975,10 @@ template<typename T>
 template<typename Type>
 BasicString<T> & BasicString<T>::_concatFloatWOS( const Type & f, unsigned int precision, unsigned int base ) {
 	auto newSize = this -> size + 50;
-	if ( newSize > this -> maxSize )
+	if ( newSize > this -> maxSize ) {
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	this -> size += toCStringWOS( f, this -> iteratorEnd, precision, base );
 	Vector<T>::_updateIterators();
@@ -1072,8 +1104,10 @@ template<typename C>
 BasicString<T> & BasicString<T>::_concatWOS( C * const & buffer, const typename BasicString<C>::Size & bufferSize ) {
 	typename BasicString<T>::Size newSize = getSize() + bufferSize;
 
-	if ( newSize >= this -> maxSize )
+	if ( newSize >= this -> maxSize ) {
 		_extendBuffer( newSize );
+		_updateIterators();
+	}
 
 	copy( this -> iteratorEnd, buffer, bufferSize );
 	this -> size = newSize;

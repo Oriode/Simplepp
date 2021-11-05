@@ -728,10 +728,12 @@ void Vector<T>::reserve( const typename Vector<T>::Size newMax ) {
 template<typename T>
 T * Vector<T>::push( const T & data ) {
 	if ( this -> maxSize == this -> size ) {
-		this -> size++;
-		_extendBuffer( this -> size );
-		T * valueP( this -> dataTable + ( this -> size - 1 ) );
+		typename Vector<T>::Size newSize( this -> size + 1 );
+		_extendBuffer( newSize );
+		T * valueP( this -> dataTable + ( this -> size ) );
 		( *valueP ) = data;
+		this -> size = newSize;
+		_updateIterators();
 		return valueP;
 	} else {
 		T * valueP( this -> dataTable + ( this -> size ) );
@@ -745,8 +747,10 @@ T * Vector<T>::push( const T & data ) {
 template<typename T>
 void Vector<T>::inserti( const typename Vector<T>::Size i, const T & v ) {
 	if ( this -> maxSize == this -> size ) {
-		this -> size++;
-		_extendBuffer( this -> size );
+		typename Vector<T>::Size newSize( this -> size + 1 );
+		_extendBuffer( newSize );
+		this -> size = newSize;
+		_updateIterators();
 	} else {
 		this -> size++;
 		_updateIterators();
@@ -762,11 +766,10 @@ void Vector<T>::_extendBuffer( const typename Vector<T>::Size newSizeNeeded ) {
 	this -> maxSize = newSizeNeeded * 2;
 	T * newBuffer = new T[ this -> maxSize ];
 	if ( this -> dataTable != NULL ) {
-		copy( newBuffer, this -> dataTable, getSize() );
+		copy( newBuffer, this -> dataTable, this -> size );
 		delete[] this -> dataTable;
 	}
 	this -> dataTable = newBuffer;
-	_updateIterators();
 }
 
 

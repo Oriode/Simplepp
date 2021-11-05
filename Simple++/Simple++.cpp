@@ -40,8 +40,8 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-#define DEBUG_STRING
-//#define DEBUG_DATE
+//#define DEBUG_STRING
+#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
 
