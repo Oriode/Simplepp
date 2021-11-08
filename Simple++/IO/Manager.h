@@ -21,7 +21,7 @@ namespace IO {
 	public:
 		struct MemoryObject {
 			DataType * object;
-			typename Vector<DataType *>::Size nbUses;
+			Size nbUses;
 			const OS::Path * filePath;
 		};
 
@@ -50,8 +50,8 @@ namespace IO {
 		///@param object Object to increment uses
 		void incrUseCounter( ObjectId object );
 
-		typename Vector<DataType *>::Size getNbUses( ObjectId objectId ) const;
-		typename Vector<DataType *>::Size getNbUses( const OS::Path & filePath ) const;
+		Size getNbUses( ObjectId objectId ) const;
+		Size getNbUses( const OS::Path & filePath ) const;
 
 
 		///@brief Delete all the datas

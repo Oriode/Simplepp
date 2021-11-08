@@ -80,7 +80,7 @@ namespace Network {
 		 *
 		 * @returns	Actual number of connections of this server.
 		 */
-		typename Vector<Connection * >::Size getNumConnections() const;
+		Size getNumConnections() const;
 
 		/**
 		 * @brief 	get the maximum number of connections a server can have.

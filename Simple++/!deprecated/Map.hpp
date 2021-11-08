@@ -361,7 +361,7 @@ I & Map<I, T>::getIndexit( typename Map<I,T>::Iterator it ) {
 template<typename I, typename T>
 std::ostream & operator<<( std::ostream & stream, const Map<I, T> & map ) {
 	stream << "{ ";
-	for ( Vector<T>::Size i = 0; i < map.getSize(); i++ ) {
+	for ( Size i = 0; i < map.getSize(); i++ ) {
 		if ( i )
 			stream << ",\n";
 		stream << "[" << map.getIndexi( i ) << "] -> " << map.getValueI( i );

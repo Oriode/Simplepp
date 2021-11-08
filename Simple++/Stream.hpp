@@ -4,16 +4,16 @@ StreamT<T>::StreamT() :
 	position( 0 ) {}
 
 template<typename T>
-StreamT<T>::StreamT( const T * data, const typename Vector<T>::Size size ) :
+StreamT<T>::StreamT( const T * data, const Size size ) :
 	StreamT<T>( data, size, size ) {}
 
 template<typename T>
 template<typename C>
-StreamT<T>::StreamT( const C * data, const typename Vector<T>::Size size ) :
+StreamT<T>::StreamT( const C * data, const Size size ) :
 	Vector<T>( Vector<T>::ctor::null ),
 	position( 0 ) {
 	_assert( size );
-	typename Vector<T>::Size sizeBytes( size * Vector<C>::elementSize );
+	Size sizeBytes( size * Vector<C>::elementSize );
 	this->size = sizeBytes / Vector<T>::elementSize;
 	this->_allocateNoNullDelete( this -> size );
 	this->_updateIterators();
@@ -23,12 +23,12 @@ StreamT<T>::StreamT( const C * data, const typename Vector<T>::Size size ) :
 }
 
 template<typename T>
-StreamT<T>::StreamT( const T * data, const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize ) :
+StreamT<T>::StreamT( const T * data, const Size size, const Size maxSize ) :
 	Vector<T>( Vector<T>::ctor::null ),
 	position( 0 ) {
 	_assert( size );
 	_assert( maxSize >= size );
-	typename Vector<T>::Size sizeBytes( size * Vector<T>::elementSize );
+	Size sizeBytes( size * Vector<T>::elementSize );
 	this->size = size;
 	this->_allocateNoNullDelete( maxSize );
 	this->_updateIterators();
@@ -43,7 +43,7 @@ StreamT<T>::StreamT( const BasicString<C> & str ) :
 	Vector<T>( Vector<T>::ctor::null ),
 	position( 0 ) {
 	if ( str.getSize() ) {
-		typename Vector<T>::Size sizeBytes( str.getSize() * Vector<C>::elementSize );
+		Size sizeBytes( str.getSize() * Vector<C>::elementSize );
 		this->size = sizeBytes / Vector<T>::elementSize;
 		this->_allocateNoNullDelete( this -> size );
 		this->_updateIterators();
@@ -61,7 +61,7 @@ StreamT<T>::StreamT( const BasicString<C> & str ) :
 
 
 template<typename T>
-typename Vector<T>::Size StreamT<T>::getPosition() const {
+Size StreamT<T>::getPosition() const {
 	return this->position;
 }
 
@@ -76,7 +76,7 @@ typename Vector<T>::Iterator StreamT<T>::getPositionIt() {
 }
 
 template<typename T>
-void StreamT<T>::setPosition( typename Vector<T>::Size pos ) {
+void StreamT<T>::setPosition( Size pos ) {
 	_assert( pos >= 0 && pos <= this->size );
 	this->position = pos;
 }
@@ -101,9 +101,9 @@ bool StreamT<T>::write( const T & data ) {
 template<typename T>
 template<typename C>
 bool StreamT<T>::write( const C & data ) {
-	constexpr typename Vector<T>::Size bytesToBeAdded( Vector<C>::elementSize );
-	constexpr typename Vector<T>::Size offsetToBeAdded( bytesToBeAdded / Vector<T>::elementSize );
-	typename Vector<T>::Size positionAfter( this->position + offsetToBeAdded );
+	constexpr Size bytesToBeAdded( Vector<C>::elementSize );
+	constexpr Size offsetToBeAdded( bytesToBeAdded / Vector<T>::elementSize );
+	Size positionAfter( this->position + offsetToBeAdded );
 	if ( positionAfter > this->maxSize ) {
 		this->reserve( positionAfter * 2 );
 	}
@@ -133,9 +133,9 @@ bool StreamT<T>::write( const C( &data )[ N ] ) {
 }
 
 template<typename T>
-bool StreamT<T>::write( const T * data, typename Vector<T>::Size size ) {
-	typename Vector<T>::Size sizeInBytes( size * Vector<T>::elementSize );
-	typename Vector<T>::Size positionAfter( this->position + size );
+bool StreamT<T>::write( const T * data, Size size ) {
+	Size sizeInBytes( size * Vector<T>::elementSize );
+	Size positionAfter( this->position + size );
 	if ( positionAfter >= this->maxSize ) {
 		this->reserve( positionAfter * 2 );
 	}
@@ -153,10 +153,10 @@ bool StreamT<T>::write( const T * data, typename Vector<T>::Size size ) {
 
 template<typename T>
 template<typename C>
-bool StreamT<T>::write( const C * data, typename Vector<T>::Size size ) {
-	typename Vector<T>::Size bytesToBeAdded( size * Vector<C>::elementSize );
-	typename Vector<T>::Size offsetToBeAdded( bytesToBeAdded / Vector<T>::elementSize );
-	typename Vector<T>::Size positionAfter( this->position + offsetToBeAdded );
+bool StreamT<T>::write( const C * data, Size size ) {
+	Size bytesToBeAdded( size * Vector<C>::elementSize );
+	Size offsetToBeAdded( bytesToBeAdded / Vector<T>::elementSize );
+	Size positionAfter( this->position + offsetToBeAdded );
 	if ( positionAfter > this->maxSize ) {
 		this->reserve( positionAfter * 2 );
 	}
@@ -174,9 +174,9 @@ bool StreamT<T>::write( const C * data, typename Vector<T>::Size size ) {
 }
 
 template<typename T>
-bool StreamT<T>::read( T * data, typename Vector<T>::Size size ) {
-	typename Vector<T>::Size sizeInBytes( size * Vector<T>::elementSize );
-	typename Vector<T>::Size positionAfter( this->position + size );
+bool StreamT<T>::read( T * data, Size size ) {
+	Size sizeInBytes( size * Vector<T>::elementSize );
+	Size positionAfter( this->position + size );
 
 	_assert( positionAfter <= this->size );
 
@@ -189,7 +189,7 @@ bool StreamT<T>::read( T * data, typename Vector<T>::Size size ) {
 
 template<typename T>
 void StreamT<T>::concat( const StreamT<T> & stream ) {
-	typename Vector<T>::Size bytesToBeAdded( stream.getSize() * Vector<T>::elementSize );
+	Size bytesToBeAdded( stream.getSize() * Vector<T>::elementSize );
 	this -> resize( getSize() + stream.getSize() );
 
 	// Copy bytes directly.
@@ -200,7 +200,7 @@ void StreamT<T>::concat( const StreamT<T> & stream ) {
 template<typename T>
 template<typename C>
 void StreamT<T>::concat( const StreamT<C> & stream ) {
-	typename Vector<T>::Size bytesToBeAdded( stream.getSize() * Vector<C>::elementSize );
+	Size bytesToBeAdded( stream.getSize() * Vector<C>::elementSize );
 	this -> resize( getSize() + bytesToBeAdded / Vector<T>::elementSize + 1 );
 
 	// Copy bytes directly.
@@ -237,14 +237,14 @@ StreamT<T> & StreamT<T>::operator<<( const C( &data )[ N ] ) {
 template<typename T>
 template<typename C>
 BasicString<C> StreamT<T>::toStringRaw() const {
-	typename Vector<C>::Size stringSize( this->size * Vector<T>::elementSize / Vector<C>::elementSize );
+	Size stringSize( this->size * Vector<T>::elementSize / Vector<C>::elementSize );
 	return BasicString<C>(reinterpret_cast<C *>(this->dataTable), stringSize);
 }
 
 template<typename T>
 template<typename C>
 BasicString<C> StreamT<T>::toStringHexa() const {
-	typename Vector<T>::Size stringSize( this->size * ( Vector<T>::elementSize * Vector<T>::Size( 2 ) + 1 ) ); // Every byte takes 2 characters in hexadecimal display. We add a third for a space.
+	Size stringSize( this->size * ( Vector<T>::elementSize * Size( 2 ) + 1 ) ); // Every byte takes 2 characters in hexadecimal display. We add a third for a space.
 	BasicString<C> newString;
 	newString.resize( stringSize );
 	C * newStringData( newString.getData() );
@@ -252,11 +252,11 @@ BasicString<C> StreamT<T>::toStringHexa() const {
 	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
 		const T & v( getValueIt( it ) );
 
-		typename Vector<C>::Size nbCharWritten( BasicString<C>::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Vector<T>::Size( 2 ), C('0'), 16));
-		if ( nbCharWritten != Vector<T>::elementSize * Vector<T>::Size( 2 ) ) {
+		Size nbCharWritten( BasicString<C>::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Size( 2 ), C('0'), 16));
+		if ( nbCharWritten != Vector<T>::elementSize * Size( 2 ) ) {
 			int i = 42;
 		}
-		assert( nbCharWritten == Vector<T>::elementSize * Vector<T>::Size( 2 ) );
+		assert( nbCharWritten == Vector<T>::elementSize * Size( 2 ) );
 		*( newStringData++ ) = C( ' ' );
 	}
 

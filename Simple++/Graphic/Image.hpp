@@ -5948,7 +5948,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
-	void ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
+	void ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		if ( getDatas() == NULL ) return;
 		switch ( getFormat() ) {
 			case Format::R:
@@ -5966,7 +5966,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		auto clampedRectangle = clampRectangle( rectangle );
 		auto size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
@@ -6016,7 +6016,7 @@ namespace Graphic {
 
 
 			Math::Vec2<Float> vertexLast = absoluteVertices[nbVertices - 1].v;
-			for ( typename Vector<Math::Vec2<Float>>::Size j = 0; j < nbVertices; j++ ) {
+			for ( Size j = 0; j < nbVertices; j++ ) {
 				Vertex & vertex = absoluteVertices[j];
 
 				if ( ( yf < vertex.v.y && yf >= vertexLast.y ) || ( yf < vertexLast.y && yf >= vertex.v.y ) ) {
@@ -6048,7 +6048,7 @@ namespace Graphic {
 			}
 
 
-			for ( typename Vector<Math::Vec2<Float>>::Size j = 1; j < nbIntersections; j += 2 ) {
+			for ( Size j = 1; j < nbIntersections; j += 2 ) {
 
 				Float & intersection0 = intersectionsX[j - 1];
 				Float & intersection1 = intersectionsX[j];

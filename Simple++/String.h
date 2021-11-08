@@ -38,7 +38,6 @@ public:
 	};
 
 
-	using Vector<T>::Size;
 	using Vector<T>::ElemType;
 
 	template<typename C>
@@ -64,7 +63,7 @@ public:
 	///@param	str 	The string.
 	///@param	size	The size.
 	template<typename C>
-	BasicString( const C * str, typename BasicString<T>::Size size );
+	BasicString( const C * str, Size size );
 	///@brief		Constructor
 	///@tparam	C	Type of the c.
 	///@param	beginIt	The begin iterator.
@@ -296,7 +295,7 @@ public:
 	///@param	bufferSize	Size of the buffer.
 	///@returns	A reference to a BasicString.
 	template<typename C>
-	BasicString & concat( const C * buffer, const typename BasicString<C>::Size & bufferSize );
+	BasicString & concat( const C * buffer, const Size & bufferSize );
 
 	///@brief		Concatenates the given buffer
 	///@tparam	C	Type of the c.
@@ -428,14 +427,14 @@ public:
 	///@param 	fillChar	(Optional) The fill character.
 	///@param 	base		(Optional) The base.
 	///@returns	A reference to this.
-	BasicString & concatFill( const unsigned char & uc, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const unsigned short & us, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const int & i, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const unsigned int & ui, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const long & l, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const unsigned long & ul, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const long long & ll, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const unsigned long long & ull, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned char & uc, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned short & us, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const int & i, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned int & ui, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const long & l, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned long & ul, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const long long & ll, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned long long & ull, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 
 	///@brief	Concatenate the number and fill the first characters to have at least the specified number.
 	///@param 	d			Number.
@@ -444,7 +443,7 @@ public:
 	///@param	precision	(Optional) The precision.
 	///@param 	base		(Optional) The base.
 	///@returns	A reference to this.
-	// BasicString & concatFill( const double & d, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
+	// BasicString & concatFill( const double & d, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
 	///@brief	Concatenate the number and fill the first characters to have at least the specified number.
 	///@param 	f			Number.
 	///@param 	fillNb  	Characters number to be concatenated.
@@ -452,7 +451,7 @@ public:
 	///@param	precision	(Optional) The precision.
 	///@param 	base		(Optional) The base.
 	///@returns	A reference to this.
-	// BasicString & concatFill( const float & f, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
+	// BasicString & concatFill( const float & f, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
 
 
 
@@ -464,17 +463,17 @@ public:
 	///@param [in,out]	The buffer to fill with the conversion.
 	///@returns			Number of characters written.
 	template<typename C>
-	static typename BasicString<T>::Size toCString( const C & c, T * buffer );
+	static Size toCString( const C & c, T * buffer );
 	///@brief			Convert a character into a String.
 	///@param 		  	c	  	Character.
 	///@param [in,out]	The buffer to fill with the conversion.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCString( const char & c, T * buffer );
+	static Size toCString( const char & c, T * buffer );
 	///@brief			Convert a character into a String.
 	///@param 		  	c	  	Character.
 	///@param [in,out]	The buffer to fill with the conversion.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCString( const wchar_t & c, T * buffer );
+	static Size toCString( const wchar_t & c, T * buffer );
 
 
 	///@brief		Converts this object to a c string
@@ -483,7 +482,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( unsigned char number, T * buffer );
+	// static Size toCString( unsigned char number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -491,7 +490,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( unsigned short number, T * buffer );
+	// static Size toCString( unsigned short number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -499,7 +498,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer );
+	// static Size toCString( unsigned int  number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -507,7 +506,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( int number, T * buffer );
+	// static Size toCString( int number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -515,7 +514,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( unsigned long number, T * buffer );
+	// static Size toCString( unsigned long number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -523,7 +522,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( long long number, T * buffer );
+	// static Size toCString( long long number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -531,7 +530,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer );
+	// static Size toCString( unsigned long long number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -539,7 +538,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( long number, T * buffer );
+	// static Size toCString( long number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Precision	Type of the precision.
@@ -548,7 +547,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Precision = 10, unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( double number, T * buffer );
+	// static Size toCString( double number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Precision	Type of the precision.
@@ -557,7 +556,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Precision = 5, unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCString( float number, T * buffer );
+	// static Size toCString( float number, T * buffer );
 
 
 	///@brief			Converts a Number to a String.
@@ -565,22 +564,22 @@ public:
 	///@param [in,out]	buffer	Buffer to be filled with the converted value.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCString( unsigned char number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned char number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned short number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned short number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned int  number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned int  number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( int number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( int number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned long number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( long long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( long long number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned long long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( unsigned long long number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( long number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned char number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned char number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned short number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned short number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned int  number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned int  number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( int number, T * buffer, unsigned int base = 10 );
+	static Size toCString( int number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( long long number, T * buffer, unsigned int base = 10 );
+	static Size toCString( long long number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long long number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long long number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( long number, T * buffer, unsigned int base = 10 );
+	static Size toCString( long number, T ** buffer, unsigned int base = 10 );
 
 	///@brief			Converts a Number to a String.
 	///@param 		  	number	Number to be converted.
@@ -588,24 +587,24 @@ public:
 	///@param			precision	The number of decimals.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCString( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCString( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCString( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCString( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCString( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCString( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 	///@brief				Write in the buffer a value representing a bool
 	///@param 		  	b	  	Value to converted to a String.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCString( bool b, T * buffer );
-	static typename BasicString<T>::Size toCString( bool b, T ** buffer );
+	static Size toCString( bool b, T * buffer );
+	static Size toCString( bool b, T ** buffer );
 
 	///@brief			Write in the buffer a value representing a Math::Compare::Value
 	///@param 		  	compareValue	  	Value to converted to a String.
 	///@param [in,out]	buffer				Buffer where to write
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCString(const typename Math::Compare::Value& compareValue, T* buffer);
-	static typename BasicString<T>::Size toCString( const typename Math::Compare::Value & compareValue, T ** buffer );
+	static Size toCString(const typename Math::Compare::Value& compareValue, T* buffer);
+	static Size toCString( const typename Math::Compare::Value & compareValue, T ** buffer );
 
 
 	/************************************************************************/
@@ -616,9 +615,9 @@ public:
 	///@param [in,out]	buffer	Buffer to be filled with the converted value.
 	///@returns			Number of characters written.
 	template<typename C>
-	static typename BasicString<T>::Size toCStringWOS( const C & c, T * buffer );
-	static typename BasicString<T>::Size toCStringWOS( const char & c, T * buffer );
-	static typename BasicString<T>::Size toCStringWOS( const wchar_t & c, T * buffer );
+	static Size toCStringWOS( const C & c, T * buffer );
+	static Size toCStringWOS( const char & c, T * buffer );
+	static Size toCStringWOS( const wchar_t & c, T * buffer );
 
 
 	///@brief		Converts this object to a c string whithout \0
@@ -627,7 +626,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer );
+	// static Size toCStringWOS( unsigned char number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -635,7 +634,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer );
+	// static Size toCStringWOS( unsigned short number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -643,7 +642,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer );
+	// static Size toCStringWOS( unsigned int  number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -651,7 +650,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( int number, T * buffer );
+	// static Size toCStringWOS( int number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -659,7 +658,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer );
+	// static Size toCStringWOS( unsigned long number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -667,7 +666,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer );
+	// static Size toCStringWOS( long long number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -675,7 +674,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer );
+	// static Size toCStringWOS( unsigned long long number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -683,7 +682,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( long number, T * buffer );
+	// static Size toCStringWOS( long number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Precision	Type of the precision.
@@ -692,7 +691,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Precision = 10, unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( double number, T * buffer );
+	// static Size toCStringWOS( double number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Precision	Type of the precision.
@@ -701,7 +700,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Precision = 5, unsigned int Base = 10>
-	// static typename BasicString<T>::Size toCStringWOS( float number, T * buffer );
+	// static Size toCStringWOS( float number, T * buffer );
 
 
 	///@brief			Converts a Number to a String without adding the sentinel.
@@ -709,22 +708,22 @@ public:
 	///@param [in,out]	buffer	Buffer to be filled with the converted value.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned char number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned short number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned int  number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( int number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( int number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned long number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( long long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( long long number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( unsigned long long number, T ** buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( long number, T * buffer, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( long number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned char number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned char number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned short number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned short number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned int  number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned int  number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( int number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( int number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long long number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long long number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long long number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long long number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long number, T ** buffer, unsigned int base = 10 );
 
 	///@brief			Converts a Number to a String without adding the sentinel.
 	///@param 		  	number	Number to be converted.
@@ -732,25 +731,25 @@ public:
 	///@param			precision	The number of decimals.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCStringWOS( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOS( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCStringWOS( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCStringWOS( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCStringWOS( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCStringWOS( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@param 		  	b	  	True to b.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCStringWOS( bool b, T * buffer );
-	static typename BasicString<T>::Size toCStringWOS( bool b, T ** buffer );
+	static Size toCStringWOS( bool b, T * buffer );
+	static Size toCStringWOS( bool b, T ** buffer );
 
 
 	///@brief			Write in the buffer a value representing a Math::Compare::Value without \0
 	///@param 		  	compareValue	  	Value to converted to a String.
 	///@param [in,out]	buffer				Buffer where to write
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCStringWOS(const typename Math::Compare::Value& compareValue, T* buffer);
-	static typename BasicString<T>::Size toCStringWOS( const typename Math::Compare::Value & compareValue, T ** buffer );
+	static Size toCStringWOS(const typename Math::Compare::Value& compareValue, T* buffer);
+	static Size toCStringWOS( const typename Math::Compare::Value & compareValue, T ** buffer );
 
 
 
@@ -761,22 +760,22 @@ public:
 	///@param 	fillChar	(Optional) The fill character.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned char number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned char number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned short number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned short number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned int  number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned int  number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( int number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( int number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( long long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( long long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned long long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( unsigned long long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( long number, T * buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static typename BasicString<T>::Size toCStringWOSFill( long number, T ** buffer, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned char number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned char number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned short number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned short number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned int  number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned int  number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( int number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( int number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 
 
 	/************************************************************************/
@@ -1250,7 +1249,7 @@ public:
 
 	///@brief		Resize the string
 	///@param	newSize	New size of this string.
-	void resize( typename BasicString<T>::Size newSize );
+	void resize( Size newSize );
 
 	/** @brief	. */
 	using Vector<T>::getSize;
@@ -1259,13 +1258,13 @@ public:
 	///@param	str	The string.
 	///@returns	The size.
 	template<typename C>
-	static typename BasicString<T>::Size getSize( C * const & str );
+	static Size getSize( C * const & str );
 
 	///@brief		Gets a size
 	///@param	str	The string.
 	///@returns	The size.
 	template<typename C, size_t N>
-	static typename BasicString<T>::Size getSize( const C (&str)[N] );
+	static Size getSize( const C (&str)[N] );
 
 	///@brief		Converts this object to a c string
 	///@returns	This object as a const T*.
@@ -1295,20 +1294,20 @@ public:
 	///@brief		Get the index of the first occurence of a character. May return BasicString<T>::overflow if nothing founded.
 	///@param	c	The character to look for.
 	///@returns	Index of the first occurence or BasicString<T>::overflow if nothing founded.
-	typename BasicString<T>::Size getFirst( const T & c ) const;
+	Size getFirst( const T & c ) const;
 	///@brief		Get the index of the last occurence of a character. May return BasicString<T>::overflow if nothing founded.
 	///@param	c	The character to look for.
 	///@returns	Index of the last occurence or BasicString<T>::overflow if nothing founded.
-	typename BasicString<T>::Size getLast( const T & c ) const;
+	Size getLast( const T & c ) const;
 
 	///@brief		Get the index of the first occurence of a string. May return BasicString<T>::overflow if nothing founded.
 	///@param	c	The string to look for.
 	///@returns	Index of the first occurence or BasicString<T>::overflow if nothing founded.
-	typename BasicString<T>::Size getFirst( const BasicString<T> & str ) const;
+	Size getFirst( const BasicString<T> & str ) const;
 	///@brief		Get the index of the last occurence of a string. May return BasicString<T>::overflow if nothing founded.
 	///@param	c	The string to look for.
 	///@returns	Index of the last occurence or BasicString<T>::overflow if nothing founded.
-	typename BasicString<T>::Size getLast( const BasicString<T> & str ) const;
+	Size getLast( const BasicString<T> & str ) const;
 
 	///@brief		Replaces
 	///@param	toReplace	to replace.
@@ -1333,12 +1332,12 @@ public:
 	///@param	index	Zero-based index of the.
 	///@param	size 	The size.
 	///@returns	The sub string.
-	BasicString<T> getSubStr( typename BasicString<T>::Size index, typename BasicString<T>::Size size ) const;
+	BasicString<T> getSubStr( Size index, Size size ) const;
 	///@brief		Gets sub string
 	///@param	beginIt	The begin iterator.
 	///@param	size   	The size.
 	///@returns	The sub string.
-	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, typename BasicString<T>::Size size ) const;
+	BasicString<T> getSubStr( typename BasicString<T>::Iterator beginIt, Size size ) const;
 	///@brief		Gets sub string
 	///@param	beginIt	The begin iterator.
 	///@param	endIt  	The end iterator.
@@ -1370,7 +1369,7 @@ public:
 	///@param [in,out]	fileStream	stream used to read load this object.
 	///@param 		  	size	  	Number of characters to read.
 	///@returns	boolean to know if the operation is a success of not.
-	bool read( IO::SimpleFileStream * fileStream, typename BasicString<T>::Size size );
+	bool read( IO::SimpleFileStream * fileStream, Size size );
 
 	/************************************************************************/
 	/* Some static methods                                                  */
@@ -1423,13 +1422,13 @@ public:
 	///@param	bufferSize	Size of the buffer.
 	///@param	c		  	A T to process.
 	///@returns	The first.
-	static typename BasicString<T>::Size getFirst( const T * buffer, typename BasicString<T>::Size bufferSize, const T & c );
+	static Size getFirst( const T * buffer, Size bufferSize, const T & c );
 	///@brief		Gets a last
 	///@param	buffer	  	The buffer.
 	///@param	bufferSize	Size of the buffer.
 	///@param	c		  	A T to process.
 	///@returns	The last.
-	static typename BasicString<T>::Size getLast( const T * buffer, typename BasicString<T>::Size bufferSize, const T & c );
+	static Size getLast( const T * buffer, Size bufferSize, const T & c );
 
 	///@brief		Gets a first
 	///@param	buffer			The buffer.
@@ -1437,36 +1436,36 @@ public:
 	///@param	toSearch		to search.
 	///@param	toSearchSize	Size of to search.
 	///@returns	The first.
-	static typename BasicString<T>::Size getFirst( const T * buffer, typename BasicString<T>::Size bufferSize, const T * toSearch, typename BasicString<T>::Size toSearchSize );
+	static Size getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 	///@brief		Gets a last
 	///@param	buffer			The buffer.
 	///@param	bufferSize  	Size of the buffer.
 	///@param	toSearch		to search.
 	///@param	toSearchSize	Size of to search.
 	///@returns	The last.
-	static typename BasicString<T>::Size getLast( const T * buffer, typename BasicString<T>::Size bufferSize, const T * toSearch, typename BasicString<T>::Size toSearchSize );
+	static Size getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 
 	///@brief		Gets a first
 	///@param	buffer	The buffer.
 	///@param	c	  	A T to process.
 	///@returns	The first.
-	static typename BasicString<T>::Size getFirst( const T * buffer, const T & c );
+	static Size getFirst( const T * buffer, const T & c );
 	///@brief		Gets a last
 	///@param	buffer	The buffer.
 	///@param	c	  	A T to process.
 	///@returns	The last.
-	static typename BasicString<T>::Size getLast( const T * buffer, const T & c );
+	static Size getLast( const T * buffer, const T & c );
 
 	///@brief		Gets a first
 	///@param	buffer  	The buffer.
 	///@param	toSearch	to search.
 	///@returns	The first.
-	static typename BasicString<T>::Size getFirst( const T * buffer, const T * toSearch );
+	static Size getFirst( const T * buffer, const T * toSearch );
 	///@brief		Gets a last
 	///@param	buffer  	The buffer.
 	///@param	toSearch	to search.
 	///@returns	The last.
-	static typename BasicString<T>::Size getLast( const T * buffer, const T * toSearch );
+	static Size getLast( const T * buffer, const T * toSearch );
 
 	///@brief	Convert a character to a number.
 	///@param 	c	The character to be converted.
@@ -1515,7 +1514,7 @@ protected:
 	///@param	bufferSize	Size of the buffer.
 	///@returns	A reference to a BasicString.
 	template<typename C>
-	BasicString & _concatWOS( C * const & buffer, const typename BasicString<C>::Size & bufferSize );
+	BasicString & _concatWOS( C * const & buffer, const Size & bufferSize );
 
 	///@brief		Concatenate whithout \0
 	///@tparam	C	Type of the c.
@@ -1733,7 +1732,7 @@ private:
 	///@param	base	The base.
 	///@returns	A reference to a BasicString.
 	template<typename Type>
-	BasicString & _concatFillInteger( const Type & i, const typename BasicString<T>::Size & fillNb, const T & fillChar, unsigned int base = 10 );
+	BasicString & _concatFillInteger( const Type & i, const Size & fillNb, const T & fillChar, unsigned int base = 10 );
 
 	///@brief		Concatenate float
 	///@tparam	Type	 	Type of the type.
@@ -1861,7 +1860,7 @@ private:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns	The i converted 2 string.
 	// template<typename Type, unsigned int Base>
-	// static typename BasicString<T>::Size _convertI2String( Type number, T * buffer );
+	// static Size _convertI2String( Type number, T * buffer );
 
 	///@brief		Convert i 2 string
 	///@tparam	Type	Type of the type.
@@ -1870,7 +1869,7 @@ private:
 	///@param 		  	base  	The base.
 	///@returns	The i converted 2 string.
 	template< typename Type>
-	static typename BasicString<T>::Size _convertI2String( Type number, T ** buffer, unsigned int base = 10 );
+	static Size _convertI2String( Type number, T ** buffer, unsigned int base = 10 );
 
 	///@brief		Convert user interface 2 string
 	///@tparam	Type	Type of the type.
@@ -1879,7 +1878,7 @@ private:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns	The user converted interface 2 string.
 	// template<typename Type, unsigned int Base>
-	// static typename BasicString<T>::Size _convertUI2String( Type number, T * buffer );
+	// static Size _convertUI2String( Type number, T * buffer );
 
 	///@brief		Convert user interface 2 string
 	///@tparam	Type	Type of the type.
@@ -1888,7 +1887,7 @@ private:
 	///@param 		  	base  	The base.
 	///@returns	The user converted interface 2 string.
 	template<typename Type>
-	static typename BasicString<T>::Size _convertUI2String( Type number, T ** buffer, unsigned int base = 10 );
+	static Size _convertUI2String( Type number, T ** buffer, unsigned int base = 10 );
 
 	///@brief		Convert float 2 string
 	///@tparam	Type	 	Type of the type.
@@ -1898,7 +1897,7 @@ private:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns	The float converted 2 string.
 	// template<typename Type, unsigned int Precision = 10, unsigned int Base>
-	// static typename BasicString<T>::Size _convertFloat2String( Type number, T * buffer );
+	// static Size _convertFloat2String( Type number, T * buffer );
 
 	///@brief		Convert float 2 string
 	///@tparam	Type	Type of the type.
@@ -1908,7 +1907,7 @@ private:
 	///@param 		  	base	 	The base.
 	///@returns	The float converted 2 string.
 	template<typename Type>
-	static typename BasicString<T>::Size _convertFloat2String( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size _convertFloat2String( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
 
 
@@ -1920,7 +1919,7 @@ private:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns	The i converted 2 string whithout \0.
 	// template<typename Type, unsigned int Base>
-	// static typename BasicString<T>::Size _convertI2StringWOS( Type number, T * buffer );
+	// static Size _convertI2StringWOS( Type number, T * buffer );
 
 	///@brief		Convert i 2 string whithout \0
 	///@tparam	Type	Type of the type.
@@ -1929,7 +1928,7 @@ private:
 	///@param 		  	base  	The base.
 	///@returns	The i converted 2 string whithout \0.
 	template< typename Type>
-	static typename BasicString<T>::Size _convertI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
+	static Size _convertI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
 	template< typename Type>
 	static void __convertI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
 
@@ -1940,7 +1939,7 @@ private:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns	The user converted interface 2 string whithout \0.
 	// template<typename Type, unsigned int Base>
-	// static typename BasicString<T>::Size _convertUI2StringWOS( Type number, T * buffer );
+	// static Size _convertUI2StringWOS( Type number, T * buffer );
 
 	///@brief		Convert user interface 2 string whithout \0
 	///@tparam	Type	Type of the type.
@@ -1949,7 +1948,7 @@ private:
 	///@param 		  	base  	The base.
 	///@returns	The user converted interface 2 string whithout \0.
 	template<typename Type>
-	static typename BasicString<T>::Size _convertUI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
+	static Size _convertUI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
 	template<typename Type>
 	static void __convertUI2StringWOS( Type number, T ** buffer, unsigned int base = 10 );
 
@@ -1961,7 +1960,7 @@ private:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns	The float converted 2 string whithout \0.
 	// template<typename Type, unsigned int Precision = 10, unsigned int Base>
-	// static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T * buffer );
+	// static Size _convertFloat2StringWOS( Type number, T * buffer );
 
 	///@brief		Convert float 2 string whithout \0
 	///@tparam	Type	Type of the type.
@@ -1971,7 +1970,7 @@ private:
 	///@param 		  	base	 	The base.
 	///@returns	The float converted 2 string whithout \0.
 	template<typename Type>
-	static typename BasicString<T>::Size _convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size _convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 	template<typename Type>
 	static void __convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
 
@@ -1985,9 +1984,9 @@ private:
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
 	template<typename Type>
-	static typename BasicString<T>::Size _convertI2StringWOSFill( Type number, T ** bufferP, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size _convertI2StringWOSFill( Type number, T ** bufferP, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	template<typename Type>
-	static typename BasicString<T>::Size _convertUI2StringWOSFill( Type number, T ** bufferP, const typename BasicString<T>::Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size _convertUI2StringWOSFill( Type number, T ** bufferP, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	
 
 
@@ -1997,7 +1996,7 @@ private:
 	///@param sourceBuffer Buffer from where to copy.
 	///@return Number of elements copied
 	template<size_t N>
-	static typename Vector<T>::Size copy( T ** destinationBuffer, const T( &sourceBuffer )[ N ] );
+	static Size copy( T ** destinationBuffer, const T( &sourceBuffer )[ N ] );
 
 
 	///@brief Get the size of an integer as a number of characters
@@ -2006,7 +2005,7 @@ private:
 	///@param base The base used for the conversion to String.
 	///@return Number of characters.
 	template<typename Type>
-	static typename Vector<T>::Size _getIntegerLength(Type i, unsigned int base);
+	static Size _getIntegerLength(Type i, unsigned int base);
 
 	///@brief Get the size of an positive integer as a number of characters
 	///@template Type Integer type.
@@ -2014,7 +2013,7 @@ private:
 	///@param base The base used for the conversion to String.
 	///@return Number of characters.
 	template<typename Type>
-	static typename Vector<T>::Size _getIntegerPositiveLength( Type i, unsigned int base );
+	static Size _getIntegerPositiveLength( Type i, unsigned int base );
 
 	
 };

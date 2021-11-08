@@ -247,7 +247,7 @@ public:
 };
 
 
-
+// In case of Size error : (typename )?(Vector|BasicString|UTF8StringT)<([^>]+|<[^>]+>)+>::Size
 
 
 int main( int argc, char * argv[] ) {

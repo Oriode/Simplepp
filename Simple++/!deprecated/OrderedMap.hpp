@@ -301,7 +301,7 @@ OrderedMap<I, T, Compare>::OrderedMap( OrderedMap<I, T, Compare> && map ) : Map<
 template<typename I, typename T, typename Compare>
 std::ostream & operator<<( std::ostream & stream, const OrderedMap<I, T, Compare> & map ) {
 	stream << "{ ";
-	for ( Vector<T>::Size i = 0; i < map.getSize(); i++ ) {
+	for ( Size i = 0; i < map.getSize(); i++ ) {
 		if ( i )
 			stream << ",\n";
 		stream << "[" << map.getIndexi( i ) << "] -> " << map.getValueI( i );

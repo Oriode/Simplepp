@@ -17,8 +17,8 @@ public:
 	///@param str String to be copied.
 	///@param size buffer size (NOT the number of UTF8 characters).
 	template<typename C>
-	UTF8StringT( const C * str, typename UTF8StringT<T>::Size size );
-	UTF8StringT( const char * str, typename UTF8StringT<T>::Size size );
+	UTF8StringT( const C * str, Size size );
+	UTF8StringT( const char * str, Size size );
 
 	template<typename C>
 	UTF8StringT( RandomAccessIterator<C> beginIt, RandomAccessIterator<C> endIt );
@@ -111,8 +111,8 @@ public:
 	void concat( const UTF8StringT<T> & str );
 
 	template<typename C>
-	void concat( const C * buffer, typename const BasicString<C>::Size & bufferSize );
-	void concat( const char * buffer, const typename UTF8StringT<T>::Size & bufferSize );
+	void concat( const C * buffer, typename const Size & bufferSize );
+	void concat( const char * buffer, const Size & bufferSize );
 
 
 	///\brief iterate the buffer by passing a pointer to a buffer. The index has to be initialized to the first value you wanna iterate to.
@@ -136,22 +136,22 @@ public:
 	///@param anotherIt It of the other UTF8 BasicString<T> to be compared
 	///@param size Number of chars to be compared
 	///@return True if the two substring are equals, false instead
-	bool cmp( typename UTF8StringT<T>::Iterator it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator anotherIt, typename UTF8StringT<T>::Size size ) const;
+	bool cmp( typename UTF8StringT<T>::Iterator it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator anotherIt, Size size ) const;
 
 	///brief Same as cmp without using pointer but the iterator will be modified instead of being copied
-	bool cmp( typename UTF8StringT<T>::Iterator * it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator * anotherIt, typename UTF8StringT<T>::Size size ) const;
+	bool cmp( typename UTF8StringT<T>::Iterator * it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator * anotherIt, Size size ) const;
 
 	///@brief same as the one with UTF8StringT<T> but a bit faster for using ASCII strings
-	bool cmp( typename UTF8StringT<T>::Iterator it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator anotherIt, typename UTF8StringT<T>::Size size ) const;
+	bool cmp( typename UTF8StringT<T>::Iterator it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator anotherIt, Size size ) const;
 
 	///brief Same as cmp without using pointer but the iterator will be modified instead of being copied
-	bool cmp( typename UTF8StringT<T>::Iterator * it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator * anotherIt, typename UTF8StringT<T>::Size size ) const;
+	bool cmp( typename UTF8StringT<T>::Iterator * it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator * anotherIt, Size size ) const;
 	
 
 	///@brief Create a sub BasicString<T> of this one
 	///@param beginIt Iterator of the beginning
-	UTF8StringT<T> getSubStr( typename UTF8StringT<T>::Size index, typename UTF8StringT<T>::Size size ) const;
-	UTF8StringT<T> getSubStr( typename UTF8StringT<T>::Iterator beginIt, typename UTF8StringT<T>::Size size ) const;
+	UTF8StringT<T> getSubStr( Size index, Size size ) const;
+	UTF8StringT<T> getSubStr( typename UTF8StringT<T>::Iterator beginIt, Size size ) const;
 	UTF8StringT<T> getSubStr( typename UTF8StringT<T>::Iterator beginIt, typename UTF8StringT<T>::Iterator endIt ) const;
 
 
@@ -168,7 +168,7 @@ public:
 	///@param codePoint Code Point to be converted
 	///@param in out buffer where to write
 	///@return Number of character wrote
-	static typename BasicString<T>::Size codePoint2Chars( const typename UTF8StringT<T>::CodePoint & codePoint, char charBuffer[4] );
+	static Size codePoint2Chars( const typename UTF8StringT<T>::CodePoint & codePoint, char charBuffer[4] );
 
 	///@brief Convert an Unicode Code Point into an UTF8 BasicString<T>
 	///@param codePoint Code Point to be converted
@@ -180,13 +180,13 @@ public:
 	static const UTF8StringT<T> null;
 private:
 	template<typename C>
-	UTF8StringT<T> & _operatorEQUAL( const C * str, const typename UTF8StringT<T>::Size & bufferSize );
+	UTF8StringT<T> & _operatorEQUAL( const C * str, const Size & bufferSize );
 
 	template<typename C>
-	void _contructorEQUAL( const C * str, const typename UTF8StringT<T>::Size & bufferSize );
+	void _contructorEQUAL( const C * str, const Size & bufferSize );
 
 	template<typename C>
-	void _operatorCONCAT( const C * str, const typename UTF8StringT<T>::Size & bufferSize );
+	void _operatorCONCAT( const C * str, const Size & bufferSize );
 
 };
 

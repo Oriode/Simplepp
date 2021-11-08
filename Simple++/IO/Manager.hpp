@@ -13,7 +13,7 @@ namespace IO {
 
 	template<typename DataType>
 	bool Manager<DataType>::write( SimpleFileStream * fileStream ) const {
-		Vector<DataType *>::Size nbDatas( this->dataVector.getSize() );
+		Size nbDatas( this->dataVector.getSize() );
 		if ( !IO::write( fileStream, &nbDatas ) )
 			return false;
 
@@ -34,14 +34,14 @@ namespace IO {
 	bool Manager<DataType>::read( SimpleFileStream * fileStream ) {
 		clear();
 
-		Vector<DataType *>::Size nbDatas;
+		Size nbDatas;
 		if ( !IO::read( fileStream, &nbDatas ) ) {
 			clear();
 			return false;
 		}
 		this->dataVector.reserve( nbDatas );
 
-		for ( Vector<DataType *>::Size i( 0 ); i<nbDatas; i++ ) {
+		for ( Size i( 0 ); i<nbDatas; i++ ) {
 			OS::Path filePath;
 			if ( !IO::read( fileStream, &filePath ) ) {
 				clear();
@@ -101,17 +101,17 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	typename Vector<DataType *>::Size Manager<DataType>::getNbUses( ObjectId objectId ) const {
+	Size Manager<DataType>::getNbUses( ObjectId objectId ) const {
 		return const_cast< MemoryObject * >( objectId )->nbUses;
 	}
 
 	template<typename DataType>
-	typename Vector<DataType *>::Size Manager<DataType>::getNbUses( const OS::Path & filePath ) const {
+	Size Manager<DataType>::getNbUses( const OS::Path & filePath ) const {
 		const MemoryObject * objectFounded( this->dataMap[ filePath ] );
 		if ( objectFounded ) {
 			return objectFounded->nbUses;
 		} else {
-			return Vector<DataType *>::Size( 0 );
+			return Size( 0 );
 		}
 	}
 

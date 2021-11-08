@@ -157,14 +157,14 @@ namespace Network {
 
 	template<typename T>
 	void ServerT<T>::updateFdSet() {
-		this -> mFdSet.fd_count = ( u_int ) Math::min<Vector<Connection * >::Size>( this -> mSocketVector.getSize(), FD_SETSIZE );
+		this -> mFdSet.fd_count = ( u_int ) Math::min<Size>( this -> mSocketVector.getSize(), FD_SETSIZE );
 		for ( unsigned int i = 0; i < this -> mFdSet.fd_count; i++ ) {
 			this -> mFdSet.fd_array[ i ] = this -> mSocketVector[ i ] -> getSocket();
 		}
 	}
 
 	template<typename T>
-	typename Vector<Connection * >::Size ServerT<T>::getNumConnections() const {
+	Size ServerT<T>::getNumConnections() const {
 		return this -> mSocketVector.getSize();
 	}
 

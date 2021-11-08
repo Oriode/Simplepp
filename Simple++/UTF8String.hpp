@@ -17,13 +17,13 @@ UTF8StringT<T>::UTF8StringT(const char* str) :
 
 template<typename T>
 template<typename C>
-UTF8StringT<T>::UTF8StringT(const C* str, typename UTF8StringT<T>::Size size) :
+UTF8StringT<T>::UTF8StringT(const C* str, Size size) :
 	BasicString<T>(ctor::null) {
 	_contructorEQUAL(str, size);
 }
 
 template<typename T>
-UTF8StringT<T>::UTF8StringT(const char* str, typename UTF8StringT<T>::Size size) :
+UTF8StringT<T>::UTF8StringT(const char* str, Size size) :
 	BasicString<T>(str, size) {}
 
 template<typename T>
@@ -188,7 +188,7 @@ template<typename T>
 UTF8StringT<T>::~UTF8StringT() {}
 
 template<typename T>
-UTF8StringT<T> UTF8StringT<T>::getSubStr( typename UTF8StringT<T>::Size index, typename UTF8StringT<T>::Size size ) const {
+UTF8StringT<T> UTF8StringT<T>::getSubStr( Size index, Size size ) const {
 	auto beginIt( getBegin() );
 	for ( ; index && this -> iterate( &beginIt ); index-- );
 
@@ -199,7 +199,7 @@ UTF8StringT<T> UTF8StringT<T>::getSubStr( typename UTF8StringT<T>::Size index, t
 }
 
 template<typename T>
-UTF8StringT<T> UTF8StringT<T>::getSubStr( typename UTF8StringT<T>::Iterator beginIt, typename UTF8StringT<T>::Size size ) const {
+UTF8StringT<T> UTF8StringT<T>::getSubStr( typename UTF8StringT<T>::Iterator beginIt, Size size ) const {
 	if ( beginIt >= getEnd() )
 		return UTF8StringT();
 	if ( beginIt < getBegin() )
@@ -296,12 +296,12 @@ bool UTF8StringT<T>::iterate( typename UTF8StringT<T>::Iterator * i, typename UT
 }
 
 template<typename T>
-bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator anotherIt, typename UTF8StringT<T>::Size size ) const {
+bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator anotherIt, Size size ) const {
 	return cmp( &it, otherStr, &anotherIt, size );
 }
 
 template<typename T>
-bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator * it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator * anotherIt, typename UTF8StringT<T>::Size size ) const {
+bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator * it, const UTF8StringT<T> & otherStr, typename UTF8StringT<T>::Iterator * anotherIt, Size size ) const {
 	UCodePoint codePointThis;
 	UCodePoint codePointOther;
 	while ( size ) {
@@ -317,12 +317,12 @@ bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator * it, const UTF8Stri
 }
 
 template<typename T>
-bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator anotherIt, typename UTF8StringT<T>::Size size ) const {
+bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator anotherIt, Size size ) const {
 	return cmp( &it, otherStr, &anotherIt, size );
 }
 
 template<typename T>
-bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator * it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator * anotherIt, typename UTF8StringT<T>::Size size ) const {
+bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator * it, const BasicString<T> & otherStr, typename BasicString<T>::Iterator * anotherIt, Size size ) const {
 	while ( size ) {
 		if ( ( **it ) == ( **anotherIt ) ) {
 			if ( ( **it ) == char( '\0' ) ) return true;
@@ -337,14 +337,14 @@ bool UTF8StringT<T>::cmp( typename UTF8StringT<T>::Iterator * it, const BasicStr
 }
 
 template<typename T>
-typename UTF8StringT<T>::Size UTF8StringT<T>::getSizeUTF8() const {
+Size UTF8StringT<T>::getSizeUTF8() const {
 	Size numChar = 0;
 	for ( auto it = getBegin(); iterate( &it );) numChar++;
 	return numChar;
 }
 
 template<typename T>
-typename BasicString<T>::Size UTF8StringT<T>::codePoint2Chars( const typename UTF8StringT<T>::CodePoint & codePoint, char charBuffer[ 4 ] ) {
+Size UTF8StringT<T>::codePoint2Chars( const typename UTF8StringT<T>::CodePoint & codePoint, char charBuffer[ 4 ] ) {
 	if ( codePoint > 127 ) {
 		if ( codePoint > 2047 ) {
 			if ( codePoint > 65535 ) {
@@ -352,21 +352,21 @@ typename BasicString<T>::Size UTF8StringT<T>::codePoint2Chars( const typename UT
 				charBuffer[ 1 ] = ( ( codePoint >> 12 ) & 0x3F ) | 0xC0;
 				charBuffer[ 2 ] = ( ( codePoint >> 6 ) & 0x3F ) | 0xC0;
 				charBuffer[ 3 ] = ( codePoint & 0x3F ) | 0x80;
-				return BasicString<T>::Size( 4 );
+				return Size( 4 );
 			} else {	//If the code point is on THREE Bytes ONLY !
 				charBuffer[ 0 ] = ( codePoint >> 12 ) | 0xE0;
 				charBuffer[ 1 ] = ( ( codePoint >> 6 ) & 0x3F ) | 0xC0;
 				charBuffer[ 2 ] = ( codePoint & 0x3F ) | 0x80;
-				return BasicString<T>::Size( 3 );
+				return Size( 3 );
 			}
 		} else {	//If the code point is on TWO Bytes ONLY !
 			charBuffer[ 0 ] = ( codePoint >> 6 ) | 0xC0;
 			charBuffer[ 1 ] = ( codePoint & 0x3F ) | 0x80;
-			return BasicString<T>::Size( 2 );
+			return Size( 2 );
 		}
 	} else {		//If the code point is on ONE Byte ONLY !
 		charBuffer[ 0 ] = codePoint;
-		return BasicString<T>::Size( 1 );
+		return Size( 1 );
 	}
 }
 
@@ -391,7 +391,7 @@ void UTF8StringT<T>::concat( const BasicString<T> & str ) {
 }
 
 template<typename T>
-void UTF8StringT<T>::concat( const char * buffer, const typename UTF8StringT<T>::Size & bufferSize ) {
+void UTF8StringT<T>::concat( const char * buffer, const Size & bufferSize ) {
 	BasicString<T>::concat( buffer, bufferSize );
 }
 
@@ -411,7 +411,7 @@ UTF8StringT<T> & UTF8StringT<T>::operator=( const C & c ) {
 
 template<typename T>
 template<typename C>
-void UTF8StringT<T>::concat( const C * buffer, typename const BasicString<C>::Size & bufferSize ) {
+void UTF8StringT<T>::concat( const C * buffer, typename const Size & bufferSize ) {
 	_operatorCONCAT( buffer, bufferSize );
 }
 
@@ -442,40 +442,40 @@ UTF8StringT<T> & UTF8StringT<T>::operator=( const C * str ) {
 
 template<typename T>
 template<typename C>
-void UTF8StringT<T>::_contructorEQUAL( const C * str, const typename UTF8StringT<T>::Size & bufferSize ) {
+void UTF8StringT<T>::_contructorEQUAL( const C * str, const Size & bufferSize ) {
 	this -> maxSize = ( bufferSize + 1 ) * 4;
 	this -> dataTable = new char[this -> maxSize];
 
 	auto bufferTmp = this -> dataTable;
-	for ( typename UTF8StringT<T>::Size j = 0; j < bufferSize; j++ )
+	for ( Size j = 0; j < bufferSize; j++ )
 		bufferTmp += codePoint2Chars( str[j], bufferTmp );
 
 	*bufferTmp = '\0';
-	this -> size = ( typename UTF8StringT<T>::Size ) ( bufferTmp - this -> dataTable );
+	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
 	_updateIterators();
 }
 
 template<typename T>
 template<typename C>
-UTF8StringT<T> & UTF8StringT<T>::_operatorEQUAL( const C * str, const typename UTF8StringT<T>::Size & bufferSize ) {
+UTF8StringT<T> & UTF8StringT<T>::_operatorEQUAL( const C * str, const Size & bufferSize ) {
 	if ( getMaxSize() < bufferSize + 1 )
 		allocate( ( bufferSize + 1 ) * 4 );
 
 	auto bufferTmp = this -> dataTable;
-	for ( typename UTF8StringT<T>::Size j = 0; j < bufferSize; j++ )
+	for ( Size j = 0; j < bufferSize; j++ )
 		bufferTmp += codePoint2Chars( str[j], bufferTmp );
 
 	*bufferTmp = '\0';
-	this -> size = ( typename UTF8StringT<T>::Size ) ( bufferTmp - this -> dataTable );
+	this -> size = ( Size ) ( bufferTmp - this -> dataTable );
 	_updateIterators();
 	return *this;
 }
 
 template<typename T>
 template<typename C>
-void UTF8StringT<T>::_operatorCONCAT( const C * str, const typename UTF8StringT<T>::Size & bufferSize ) {
-	typename UTF8StringT<T>::Size oldSize = getSize();
-	typename UTF8StringT<T>::Size newSize = oldSize + bufferSize;
+void UTF8StringT<T>::_operatorCONCAT( const C * str, const Size & bufferSize ) {
+	Size oldSize = getSize();
+	Size newSize = oldSize + bufferSize;
 	auto newSizeSentinel( newSize + 1 );
 
 	if ( this -> maxSize < newSizeSentinel ) {
@@ -489,7 +489,7 @@ void UTF8StringT<T>::_operatorCONCAT( const C * str, const typename UTF8StringT<
 
 	Size addedSize = bufferSize + 1;
 	auto bufferTmp = this -> dataTable + addedSize;
-	for ( typename UTF8StringT<T>::Size j = 0; j < addedSize; j++ )
+	for ( Size j = 0; j < addedSize; j++ )
 		bufferTmp += codePoint2Chars( str[j], bufferTmp );
 
 	*bufferTmp = '\0';
@@ -559,7 +559,7 @@ UTF8StringT<T>::operator BasicString<C>() const {
 		r._allocateNoNullDelete( getSize() );
 		CodePoint codePoint;
 		auto newDatas( r.getData() );
-		BasicString<C>::Size i( 0 );
+		Size i( 0 );
 		for ( auto it( getBegin() ); iterate( &it, &codePoint ); i++ ) {
 			newDatas[i] = codePoint;
 		}

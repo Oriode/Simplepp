@@ -17,11 +17,11 @@ public:
 	///@brief Constructor initializing a StreamT of a specific size and max size.
 	///@param size Size of the stream.
 	///@param maxSize Max size of the stream.
-	StreamT( const typename Vector<T>::Size size, const typename Vector<T> maxSize );
+	StreamT( const Size size, const typename Vector<T> maxSize );
 
 	///@brief Constructor initializing a StreamT of a specific max size.
 	///@param maxSize Max size of the stream.
-	StreamT( const typename Vector<T>::Size maxSize );
+	StreamT( const Size maxSize );
 
 	///@brief Copy constructor.
 	///@param stream StreamT to be copied.
@@ -47,20 +47,20 @@ public:
 	///@brief Constructor using an array and it's size.
 	///@param data Array to be copied.
 	///@param size Array size.
-	StreamT( const T * data, const typename Vector<T>::Size size );
+	StreamT( const T * data, const Size size );
 
 	///@brief Constructor using an array and it's size.
 	///@template C Array element type.
 	///@param data Array to be copied.
 	///@param size Array size.
 	template<typename C>
-	StreamT( const C * data, const typename Vector<T>::Size size );
+	StreamT( const C * data, const Size size );
 
 	///@brief Constructor using an array, it's size, and a maxSize for the StreamT to be allocated.
 	///@param data Array to be copied.
 	///@param size Array size.
 	///@param maxSize StreamT max size.
-	StreamT( const T * data, const typename Vector<T>::Size size, const typename Vector<T>::Size maxSize );
+	StreamT( const T * data, const Size size, const Size maxSize );
 
 	///@brief Constructor for an Iterator Begin and an Iterator End. Will compute the size between the two iterators, allocate and copy the data into the StreamT.
 	///@template C Element type to be copied.
@@ -103,7 +103,7 @@ public:
 
 	///@brief Get the current position as an Index.
 	///@return Position index.
-	typename Vector<T>::Size getPosition() const;
+	Size getPosition() const;
 
 	///@brief Get the current position as an Iterator.
 	///@return Position iterator.
@@ -112,7 +112,7 @@ public:
 
 	///@brief Set the current position as an Index.
 	///@param pos New position index.
-	void setPosition( typename Vector<T>::Size pos );
+	void setPosition( Size pos );
 
 	///@brief Set the current position as an Iterator.
 	///@param pos New position iterator.
@@ -153,7 +153,7 @@ public:
 	///@param data data to be wrtitten into the Stream.
 	///@param size number of data to be written.
 	///@return True if success, False otherwise.
-	bool write( const T * data, typename Vector<T>::Size size );
+	bool write( const T * data, Size size );
 
 	///@brief Write data of an another type into this Stream at the current position.
 	///@template C Element type to be added.
@@ -161,13 +161,13 @@ public:
 	///@param size number of data to be written.
 	///@return True if success, False otherwise.
 	template<typename C>
-	bool write( const C * data, typename Vector<T>::Size size );
+	bool write( const C * data, Size size );
 
 	///@brief read data from the Stream at the current position.
 	///@param data Buffer to be filled with the read data.
 	///@param size Number of data to be read.
 	///@return True if success, False otherwise.
-	bool read( T * data, typename Vector<T>::Size size );
+	bool read( T * data, Size size );
 
 	/************************************************************************/
 	/* OPERATOR STREAM                                                      */
@@ -220,7 +220,7 @@ public:
 
 protected:
 	/** Current position. */
-	typename Vector<T>::Size position;
+	Size position;
 
 
 
