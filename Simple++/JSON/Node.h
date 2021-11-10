@@ -111,13 +111,13 @@ namespace JSON {
 
 		///@brief Get the number of children of this node
 		///@return Number of children of this node
-		virtual typename Vector< BasicNodeT<T> * >::Size getNbChildren() const;
+		virtual Size getNbChildren() const;
 
 		///@brief Get a child from his index
 		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
 		///@return Child
-		virtual const BasicNodeT<T> * getChild( typename Vector< BasicNodeT<T> * >::Size i ) const;
-		virtual BasicNodeT<T> * getChild( typename Vector< BasicNodeT<T> * >::Size i );
+		virtual const BasicNodeT<T> * getChild( Size i ) const;
+		virtual BasicNodeT<T> * getChild( Size i );
 
 		///@brief Add a child to this node
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
@@ -147,7 +147,7 @@ namespace JSON {
 		///@brief Delete a child from this node (And delete it)
 		///@param i Index of the child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		virtual bool deleteChild( typename Vector< BasicNodeT<T> * >::Size i );
+		virtual bool deleteChild( Size i );
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param child Child to be removed (The child itself is not deleted and can be set as a child to another node)
@@ -157,7 +157,7 @@ namespace JSON {
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param i Index of the child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		virtual BasicNodeT<T> * removeChild( typename Vector< BasicNodeT<T> * >::Size i );
+		virtual BasicNodeT<T> * removeChild( Size i );
 
 		///@brief Write this object as an JSON file
 		///@param filePath Where to write
@@ -288,13 +288,13 @@ namespace JSON {
 
 		///@brief Get the number of children of this node
 		///@return Number of children of this node
-		typename Vector< BasicNodeT<T> * >::Size getNbChildren() const override;
+		Size getNbChildren() const override;
 
 		///@brief Get a child from his index
 		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
 		///@return Child
-		const BasicNodeT<T> * getChild( typename Vector< BasicNodeT<T> * >::Size i ) const override;
-		BasicNodeT<T> * getChild( typename Vector< BasicNodeT<T> * >::Size i ) override;
+		const BasicNodeT<T> * getChild( Size i ) const override;
+		BasicNodeT<T> * getChild( Size i ) override;
 
 		///@brief Add a child to this node
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
@@ -324,7 +324,7 @@ namespace JSON {
 		///@brief Delete a child from this node (And delete it)
 		///@param i Index of the child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		bool deleteChild( typename Vector< BasicNodeT<T> * >::Size i ) override;
+		bool deleteChild( Size i ) override;
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param child Child to be removed (The child itself is not deleted and can be set as a child to another node)
@@ -334,7 +334,7 @@ namespace JSON {
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param i Index of the child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		BasicNodeT<T> * removeChild( typename Vector< BasicNodeT<T> * >::Size i ) override;
+		BasicNodeT<T> * removeChild( Size i ) override;
 
 		///@brief Read this object using a pointer to a String Iterator.
 		///@param buffer Pointer to a String iterator

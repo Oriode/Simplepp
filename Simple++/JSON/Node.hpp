@@ -139,8 +139,8 @@ namespace JSON {
 	}
 
 	template<typename T>
-	typename Vector< BasicNodeT<T> * >::Size BasicNodeT<T>::getNbChildren() const {
-		return Vector<BasicNodeT<T> *>::Size( 0 );
+	Size BasicNodeT<T>::getNbChildren() const {
+		return Size( 0 );
 	}
 
 	template<typename T>
@@ -176,12 +176,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const BasicNodeT<T> * BasicNodeT<T>::getChild( typename Vector< BasicNodeT<T> * >::Size i ) const {
+	const BasicNodeT<T> * BasicNodeT<T>::getChild( Size i ) const {
 		return const_cast< BasicNodeT<T> * >( this ) -> getChild( i );
 	}
 
 	template<typename T>
-	BasicNodeT<T> * BasicNodeT<T>::getChild( typename Vector< BasicNodeT<T> * >::Size i ) {
+	BasicNodeT<T> * BasicNodeT<T>::getChild( Size i ) {
 		return NULL;
 	}
 
@@ -191,7 +191,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::deleteChild( typename Vector< BasicNodeT<T> * >::Size i ) {
+	bool BasicNodeT<T>::deleteChild( Size i ) {
 		return false;
 	}
 
@@ -201,7 +201,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	BasicNodeT<T> * BasicNodeT<T>::removeChild( typename Vector< BasicNodeT<T> * >::Size i ) {
+	BasicNodeT<T> * BasicNodeT<T>::removeChild( Size i ) {
 		return NULL;
 	}
 
@@ -459,7 +459,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	typename Vector< BasicNodeT<T> * >::Size ObjectNodeT<T>::getNbChildren() const {
+	Size ObjectNodeT<T>::getNbChildren() const {
 		return this -> childrenVector.getSize();
 	}
 
@@ -539,12 +539,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const BasicNodeT<T> * ObjectNodeT<T>::getChild( typename Vector< BasicNodeT<T> * >::Size i ) const {
+	const BasicNodeT<T> * ObjectNodeT<T>::getChild( Size i ) const {
 		return const_cast< ObjectNodeT<T> * >( this ) -> getChild( i );
 	}
 
 	template<typename T>
-	BasicNodeT<T> * ObjectNodeT<T>::getChild( typename Vector< BasicNodeT<T> * >::Size i ) {
+	BasicNodeT<T> * ObjectNodeT<T>::getChild( Size i ) {
 		if ( i < this->childrenVector.getSize() ) {
 			return this->childrenVector.getValueI( i );
 		} else {
@@ -564,7 +564,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::deleteChild( typename Vector< BasicNodeT<T> * >::Size i ) {
+	bool ObjectNodeT<T>::deleteChild( Size i ) {
 		BasicNodeT<T> * childRemoved( removeChild( i ) );
 		if ( childRemoved ) {
 			delete childRemoved;
@@ -587,7 +587,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	BasicNodeT<T> * ObjectNodeT<T>::removeChild( typename Vector< BasicNodeT<T> * >::Size i ) {
+	BasicNodeT<T> * ObjectNodeT<T>::removeChild( Size i ) {
 		if ( i >= this -> childrenVector.getSize() ) {
 			return NULL;
 		} else {
@@ -617,13 +617,13 @@ namespace JSON {
 		
 
 		// Read the children
-		Vector< BasicNodeT<T> * >::Size nbChilds;
+		Size nbChilds;
 		if ( !IO::read( fileStream, &nbChilds ) ) {
 			_clear();
 			return false;
 		}
-		nbChilds = Math::min( nbChilds, Vector< ObjectNodeT<T> * >::Size( 1000 ) );
-		for ( Vector< ObjectNodeT<T> * >::Size i( 0 ); i < nbChilds; i++ ) {
+		nbChilds = Math::min( nbChilds, Size( 1000 ) );
+		for ( Size i( 0 ); i < nbChilds; i++ ) {
 			bool isNull;
 			if ( !IO::read( fileStream, &isNull ) ) {
 				_clear();
@@ -737,7 +737,7 @@ namespace JSON {
 		}
 		
 
-		Vector< ObjectNodeT<T> * >::Size nbChilds( this -> childrenVector.getSize() );
+		Size nbChilds( this -> childrenVector.getSize() );
 
 		if ( !IO::write( fileStream, &nbChilds ) )
 			return false;
@@ -883,7 +883,7 @@ namespace JSON {
 				// If a name was founded.
 				if ( beginIt != it ) {
 					// We founded a name.
-					T nodeName( beginIt, T::Size( it - beginIt ) );
+					T nodeName( beginIt, Size( it - beginIt ) );
 
 
 					if ( !_expectChar( &it, C( '"' ) ) ) return false;
@@ -965,7 +965,7 @@ namespace JSON {
 					it++;
 				}
 
-				T nodeValue( beginIt, T::Size( it - beginIt ) );
+				T nodeValue( beginIt, Size( it - beginIt ) );
 				this -> value = nodeValue;
 				this -> type = Type::Value;
 
@@ -984,7 +984,7 @@ namespace JSON {
 					it++;
 				}
 
-				T nodeValue( beginIt, T::Size( it - beginIt ) );
+				T nodeValue( beginIt, Size( it - beginIt ) );
 
 				if ( nodeValue == nullString ) {
 					this -> type = Type::Null;
@@ -1092,7 +1092,7 @@ namespace JSON {
 				it++;
 			}
 
-			T nodeValue( beginIt, T::Size( it - beginIt ) );
+			T nodeValue( beginIt, Size( it - beginIt ) );
 			this -> value = nodeValue;
 			this -> type = Type::Value;
 
@@ -1111,7 +1111,7 @@ namespace JSON {
 				it++;
 			}
 
-			T nodeValue( beginIt, T::Size( it - beginIt ) );
+			T nodeValue( beginIt, Size( it - beginIt ) );
 
 			if ( nodeValue == nullString ) {
 				this -> type = Type::Null;
