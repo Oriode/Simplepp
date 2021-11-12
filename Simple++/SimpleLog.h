@@ -25,13 +25,29 @@
 
 
 #if defined WIN32
-#ifndef TEXT
+#if defined WIN32_WSTRING
+#if !defined TEXT
 #define __TEXT(str) L##str
 #define TEXT(str) __TEXT(str)
 #endif
+
 #ifndef TCHAR
 #define TCHAR wchar_t
 #endif
+#else
+#if defined TEXT
+#undef TEXT
+#undef __TEXT
+#define __TEXT(str) #str
+#define TEXT(str) __TEXT(str)
+#endif
+
+#ifndef TCHAR
+#define TCHAR char
+#endif
+#endif
+
+
 
 #else
 #ifndef TEXT

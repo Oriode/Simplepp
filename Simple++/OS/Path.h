@@ -53,8 +53,16 @@ namespace OS {
 
 ///@brief Simple overloads for Windows & other systems not handling file names the same way.
 #if defined WIN32
+#ifndef PATH
+#define __PATH(str) L##str
+#define PATH(str) __PATH(str)
+#endif
 	using Path = PathT<WString>;
 #else
+#ifndef PATH
+#define __PATH(str) #str
+#define PATH(str) __PATH(str)
+#endif
 	using Path = PathT<UTF8String>;
 #endif
 }

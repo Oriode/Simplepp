@@ -2311,7 +2311,7 @@ typedef BasicString<wchar_t> WString;
 /** @brief	Defines an alias representing an UTF32 String */
 typedef BasicString<unsigned int> UTF32String;
 
-#ifdef WIN32
+#if defined WIN32 && defined WIN32_WSTRING
 /** @brief	If in Win32, Standard String will be UTF16 */
 typedef WString String;
 #else

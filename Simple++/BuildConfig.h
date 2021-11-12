@@ -21,6 +21,9 @@
  /** @brief	Windows explicit parts on WIN32 system */
 //#define ENABLE_WIN32
 
+/** @brief Use WString instead of String on WIN32 system */
+// #define WIN32_WSTRING
+
 /** @brief	Enable or disable blending branching optimizations */
 #define GRAPHIC_BRANCHING_BLENDING
 
