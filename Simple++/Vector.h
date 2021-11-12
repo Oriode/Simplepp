@@ -20,7 +20,7 @@
  /** @brief	Defines an alias representing the size */
 typedef unsigned long long Size;
 
- /** @brief	The Random Access Iterator */
+/** @brief	The Random Access Iterator */
 template<typename T>
 using RandomAccessIterator = T *;
 
@@ -61,7 +61,7 @@ public:
 	///@brief Copy constructor.
 	///@param stream Vector to be copied.
 	Vector( const Vector & vector );
-	
+
 	///@brief Copy constructor.
 	///@template C type of the Vector to be copied.
 	///@param stream Vector to be copied.
@@ -129,14 +129,14 @@ public:
 
 	/**
 	 * @brief	Extend the size to the left by shifting the values.
-	 * 
+	 *
 	 * @param	increasedSize Size to be added to the left.
 	 */
 	void extendLeft( const Size increasedSize );
 
 	/**
 	 * @brief	Extend the size to the right. resize(this -> size + increasedSize)
-	 * 
+	 *
 	 * @param	increasedSize Size to be added to the right.
 	 */
 	void extendRight( const Size increasedSize );
@@ -303,6 +303,15 @@ public:
 	 * @returns	The first.
 	 */
 	T & getFirst();
+
+	/**
+	 * @brief	Get the index from an Iterator.
+	 *
+	 * @param	it	Iterator to be used.
+	 *
+	 * @return	Index from the Iterator.
+	 */
+	Size getIndex( typename Vector<T>::Iterator it ) const;
 
 
 	/************************************************************************/
@@ -630,6 +639,28 @@ public:
 	 */
 	template<typename Func = Math::Logical::Less>
 	void sort( Func & functor = Func() );
+
+	/**
+	 * @brief	Get the min value of this Vector using the specified functor to compare the items.
+	 *
+	 * @tparam	Func	Type of the Functor used to compare items.
+	 * @param [in,out]	functor Functor used to compare items.
+	 *
+	 * @return	Iterator to the founded item, NULL if none.
+	 */
+	template<typename Func = Math::Logical::Less>
+	typename Vector<T>::Iterator getMin( Func & functor = Func() ) const;
+
+	/**
+	 * @brief	Get the max value of this Vector using the specified functor to compare the items.
+	 *
+	 * @tparam	Func	Type of the Functor used to compare items.
+	 * @param [in,out]	functor Functor used to compare items.
+	 *
+	 * @return	Iterator to the founded item, NULL if none.
+	 */
+	template<typename Func = Math::Logical::Less>
+	typename Vector<T>::Iterator getMax( Func & functor = Func() ) const;
 
 	/**
 	 * @brief 	Copy a part of an another vector into this one

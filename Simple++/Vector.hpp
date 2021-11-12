@@ -73,13 +73,13 @@ Vector<T>::Vector( const Size size, const Size maxSize ) :
 
 template<typename T>
 Vector<T>::Vector( const Size maxSize ) :
-	Vector<T>(maxSize, maxSize){ }
+	Vector<T>( maxSize, maxSize ) {}
 
 
 template<typename T>
 template<typename C, size_t N>
 Vector<T>::Vector( const C( &data )[ N ] ) :
-	Vector<T>(data, N){ }
+	Vector<T>( data, N ) {}
 
 /*
 template<typename T>
@@ -459,6 +459,11 @@ T & Vector<T>::getFirst() {
 	return *dataTable;
 }
 
+template<typename T>
+Size Vector<T>::getIndex( typename Vector<T>::Iterator it ) const {
+	return Size( it - this->dataTable );
+}
+
 
 template<typename T>
 void Vector<T>::sortAsc() {
@@ -474,6 +479,42 @@ template<typename T>
 template<typename Func>
 void Vector<T>::sort( Func & functor ) {
 	if ( this -> size ) quicksort( this -> dataTable, this -> iteratorEnd - 1, functor );
+}
+
+template<typename T>
+template<typename Func>
+typename Vector<T>::Iterator Vector<T>::getMin( Func & functor ) const {
+	if ( this->size == Size( 0 ) ) {
+		return typename Vector<T>::Iterator( NULL );
+	} else {
+		typename Vector<T>::Iterator foundedMinIt( this->dataTable );
+		for ( typename Vector<T>::Iterator it( getBegin() + 1 ); it < getEnd(); iterate( &it ) ) {
+			const T & v( getValueIt( it ) );
+
+			if ( functor( v, getValueIt( foundedMinIt ) ) ) {
+				foundedMinIt = it;
+			}
+		}
+		return foundedMinIt;
+	}
+}
+
+template<typename T>
+template<typename Func>
+typename Vector<T>::Iterator Vector<T>::getMax( Func & functor ) const {
+	if ( this->size == Size( 0 ) ) {
+		return typename Vector<T>::Iterator( NULL );
+	} else {
+		typename Vector<T>::Iterator foundedMaxIt( this->dataTable );
+		for ( typename Vector<T>::Iterator it( getBegin() + 1 ); it < getEnd(); iterate( &it ) ) {
+			const T & v( getValueIt( it ) );
+
+			if ( functor( getValueIt( foundedMaxIt ), v ) ) {
+				foundedMaxIt = it;
+			}
+		}
+		return foundedMaxIt;
+	}
 }
 
 template<typename T>
@@ -564,7 +605,7 @@ void Vector<T>::eraseIt( const typename Vector<T>::Iterator it ) {
 	typename Vector<T>::Iterator itSrc( it + 1 );
 	typename Vector<T>::Iterator itDst( it );
 
-	for ( ; itSrc < getEnd(); iterate(&itSrc), iterate(&itDst) ) {
+	for ( ; itSrc < getEnd(); iterate( &itSrc ), iterate( &itDst ) ) {
 		setValueIt( itDst, getValueIt( itSrc ) );
 	}
 	this -> size--;
