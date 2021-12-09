@@ -106,7 +106,8 @@ public:
 		Yellow = 0xE,
 		Green = 0xA,
 		LightCyan = 0xB,
-		White = 0xF
+		White = 0xF,
+		Gray = 0x8
 	};
 
 

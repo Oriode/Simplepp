@@ -85,8 +85,9 @@ public:
 	/**
 		* @brief 	Display a log message even if we are in debug build or not.
 		* @param 	text	Text to display.
+		* @param	messageColor Color to be used.
 		*/
-	static void displayLog( const BasicString<T> & text );
+	static void displayLog( const BasicString<T> & text, typename LogT<T>::MessageColor messageColor = LogT<T>::MessageColor::White );
 
 	/**
 	* @brief 	Display a success log message even if we are in debug build or not.

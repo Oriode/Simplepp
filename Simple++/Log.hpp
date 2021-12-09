@@ -24,9 +24,9 @@ void LogT<T>::displayWarning( const BasicString<T> & message ) {
 }
 
 template<typename T>
-void LogT<T>::displayLog( const BasicString<T> & message ) {
+void LogT<T>::displayLog( const BasicString<T> & message, typename LogT<T>::MessageColor messageColor ) {
 #if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
-	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::White );
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, messageColor );
 #endif
 }
 
