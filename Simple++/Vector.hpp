@@ -582,7 +582,7 @@ bool Vector<T>::exists( const T & value ) const {
 
 template<typename T>
 bool Vector<T>::eraseFirst( const T & v ) {
-	for ( Size i( 0 ); i < this -> maxSize; i++ ) {
+	for ( Size i( 0 ); i < this -> size; i++ ) {
 		if ( v == this -> dataTable[ i ] ) {
 			eraseI( i );
 			return true;
@@ -593,7 +593,7 @@ bool Vector<T>::eraseFirst( const T & v ) {
 
 template<typename T>
 void Vector<T>::eraseI( const Size index ) {
-	for ( Size i( index ); i < this -> maxSize - 1; i++ ) {
+	for ( Size i( index ); i < this -> size - 1; i++ ) {
 		this -> dataTable[ i ] = this -> dataTable[ i + 1 ];
 	}
 	this -> size--;
