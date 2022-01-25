@@ -525,6 +525,15 @@
     <ClInclude Include="Time\TickRate.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Network\SSL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\SSL.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TLSConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

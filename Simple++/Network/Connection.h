@@ -56,11 +56,11 @@ namespace Network {
 		/**
 		 * @brief 	brief move operator
 		 *
-		 * @param [in,out]	socket	Object to be moved from.
+		 * @param [in,out]	connection	Object to be moved from.
 		 *
 		 * @returns	reference to this.
 		 */
-		ConnectionT<T> & operator =( ConnectionT<T> && socket );
+		ConnectionT<T> & operator =( ConnectionT<T> && connection );
 		//ConnectionT<T> & operator =(const AddrInfo & addrInfo);
 
 		/**
@@ -199,6 +199,16 @@ namespace Network {
 		 */
 		bool send( const char * buffer, int size );
 
+		/**
+		 * @brief 	Send data to an address
+		 *
+		 * @param [in,out]	buffer 	Data buffer to be sent.
+		 * @param 		  	size   	size of the data buffer.
+		 * @param 		  	address	Address to send to.
+		 *
+		 * @returns	true if success else false.
+		 */
+		bool send(char* buffer, int size, const Address& address);
 
 		/**
 		 * @brief 	Wait for data from the connection (usually used for TCP transaction)
@@ -220,18 +230,6 @@ namespace Network {
 		 * @returns	number of bytes read.
 		 */
 		int receive( char * buffer, int maxSize, Address * addressFrom );
-
-
-		/**
-		 * @brief 	Send data to an address
-		 *
-		 * @param [in,out]	buffer 	Data buffer to be sent.
-		 * @param 		  	size   	size of the data buffer.
-		 * @param 		  	address	Address to send to.
-		 *
-		 * @returns	true if success else false.
-		 */
-		bool send( char * buffer, int size, const Address & address );
 
 
 		/** @brief	close the connection */
@@ -286,7 +284,10 @@ namespace Network {
 		/** @brief	The address information add flag */
 		using AddrInfo::addFlag;
 
-	private:
+		bool _connect();
+
+		bool _connect(const Address& address);
+
 		/**
 		 * @brief 	Connects
 		 *
@@ -297,8 +298,12 @@ namespace Network {
 		 *
 		 * @returns	True if it succeeds, false if it fails.
 		 */
-		bool _connect( const char * ip, const char * service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
+		bool _connect(const StringASCII & ip, const StringASCII& service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
 
+		///@brief Should be called before every connect/listen. Ensure networking is enabled and the socket initialy closed.
+		///@return True if succeed, False otherwise.
+		bool _init();
+	private:
 		/**
 		 * @brief 	Listens
 		 *

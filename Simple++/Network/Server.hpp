@@ -29,7 +29,7 @@ namespace Network {
 
 	template<typename T>
 	bool ServerT<T>::listen( const Address & address, int maxClients /*= 100*/ ) {
-		if ( !Network::init() ) return false;
+		if ( !NetworkObject::init() ) return false;
 
 		AddrInfo thisAddrInfo( *( ( AddrInfo * ) &address ) );
 		if ( ( ( int ) _tryListen( &thisAddrInfo, maxClients ) ) == SOCKET_ERROR ) {
@@ -44,7 +44,7 @@ namespace Network {
 
 	template<typename T>
 	bool ServerT<T>::_listen( const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/ ) {
-		if ( !Network::init() ) return false;
+		if ( !NetworkObject::init() ) return false;
 
 		AddrInfo hints( sockType, ipFamily );
 		hints.addFlag( Flags::Passive );

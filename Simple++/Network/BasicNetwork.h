@@ -64,7 +64,7 @@ namespace Network {
 	};
 
 	template<typename T>
-	class NetworkT {
+	class NetworkObjectT {
 	public:
 
 		static bool init();
@@ -75,7 +75,7 @@ namespace Network {
 
 	};
 
-	using Network = NetworkT<int>;
+	using NetworkObject = NetworkObjectT<int>;
 
 }
 

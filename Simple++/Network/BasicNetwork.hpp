@@ -1,12 +1,12 @@
 namespace Network {
 
 	template<typename T>
-	bool NetworkT<T>::mIsInit = false;
+	bool NetworkObjectT<T>::mIsInit = false;
 
 	template<typename T>
-	bool NetworkT<T>::init() {
+	bool NetworkObjectT<T>::init() {
 
-		if ( NetworkT<T>::mIsInit ) return true;
+		if ( NetworkObjectT<T>::mIsInit ) return true;
 	#if defined WIN32
 		WSADATA wsaData;
 
@@ -17,18 +17,18 @@ namespace Network {
 		}
 	#endif
 		return true;
-		NetworkT<T>::mIsInit = true;
+		NetworkObjectT<T>::mIsInit = true;
 
 	}
 
 	template<typename T>
-	void NetworkT<T>::close() {
+	void NetworkObjectT<T>::close() {
 
-		if ( !NetworkT<T>::mIsInit ) return;
+		if ( !NetworkObjectT<T>::mIsInit ) return;
 	#if defined WIN32
 		WSACleanup();
 	#endif
-		NetworkT<T>::mIsInit = false;
+		NetworkObjectT<T>::mIsInit = false;
 
 	}
 

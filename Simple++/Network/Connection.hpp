@@ -1,3 +1,4 @@
+#include "Connection.h"
 namespace Network {
 
 	template<typename T>
@@ -32,6 +33,26 @@ namespace Network {
 	template<typename T>
 	ConnectionT<T>::ConnectionT( ctor ) : Address( ctor::null ) {
 
+	}
+
+	template<typename T>
+	inline bool ConnectionT<T>::_connect() {
+
+		if ( !_tryConnect(this) ) {
+			error(StringASCII("Unable to connect to host ") << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS());
+			return false;
+		}
+
+		log(StringASCII("Socket ") << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS());
+
+		this -> mIsCreated = true;
+		return true;
+	}
+
+	template<typename T>
+	inline bool ConnectionT<T>::_connect(const Address& address) {
+		setAddess(address);
+		return _connect();
 	}
 
 
@@ -76,11 +97,8 @@ namespace Network {
 
 	template<typename T>
 	bool ConnectionT<T>::listen( int maxClients ) {
-		if ( !Network::init() ) return false;
-
-		if ( this -> mIsCreated ) {
-			close();
-			warn( "The connection was already open. Closing the old one." );
+		if ( !_init() ) {
+			return false;
 		}
 
 		if ( !_tryListen( this, maxClients ) ) {
@@ -142,11 +160,8 @@ namespace Network {
 
 	template<typename T>
 	bool ConnectionT<T>::_listen( const char * ip, const char * service, SockType sockType, IpFamily ipFamily, int maxClients /*= 100*/ ) {
-		if ( !Network::init() ) return false;
-
-		if ( this -> mIsCreated ) {
-			close();
-			warn( "The connection was already open. Closing the old one." );
+		if ( !_init() ) {
+			return false;
 		}
 
 		setSockType( sockType );
@@ -173,31 +188,26 @@ namespace Network {
 
 	template<typename T>
 	bool ConnectionT<T>::connect() {
-		if ( !Network::init() ) return false;
-
-		if ( this -> mIsCreated ) {
-			close();
-		}
-
-		if ( !_tryConnect( this ) ) {
-			error( StringASCII( "Unable to connect to host " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS() );
+		if ( !_init() ) {
 			return false;
 		}
-
-		log( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
-
-		this -> mIsCreated = true;
-		return true;
+		return _connect();
 	}
 
 	template<typename T>
 	bool ConnectionT<T>::connect( const StringASCII & ip, const StringASCII & service, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
-		return _connect( ip.toCString(), service.toCString(), sockType, ipFamily );
+		if ( !_init() ) {
+			return false;
+		}
+		return _connect( ip.toCString(), service, sockType, ipFamily );
 	}
 
 	template<typename T>
 	bool ConnectionT<T>::connect( const StringASCII & ip, unsigned short port, SockType sockType /*= SockType::TCP*/, IpFamily ipFamily /*= IpFamily::Undefined*/ ) {
-		return _connect( ip.toCString(), StringASCII( port ).toCString(), sockType, ipFamily );
+		if ( !_init() ) {
+			return false;
+		}
+		return _connect( ip.toCString(), StringASCII::toString(port), sockType, ipFamily);
 	}
 
 	template<typename T>
@@ -223,26 +233,22 @@ namespace Network {
 
 	template<typename T>
 	bool ConnectionT<T>::connect( const Address & address ) {
-		setAddess( address );
-		return connect();
+		if ( !_init() ) {
+			return false;
+		}
+		return _connect(address);
 	}
 
 
 
 	template<typename T>
-	bool ConnectionT<T>::_connect( const char * ip, const char * service, SockType sockType, IpFamily ipFamily ) {
-		if ( !Network::init() ) return false;
-
-		if ( this -> mIsCreated ) {
-			close();
-			warn( "The connection was already open. Closing the old one." );
-		}
+	bool ConnectionT<T>::_connect(const StringASCII& ip, const StringASCII& service, SockType sockType, IpFamily ipFamily ) {
 
 		setSockType( sockType );
 		setIpFamily( ipFamily );
 
 		addrinfo * addrResults;
-		if ( ::getaddrinfo( ip, service, getAddrInfoStruct(), &addrResults ) ) {
+		if ( ::getaddrinfo( ip.toCString(), service.toCString(), getAddrInfoStruct(), &addrResults) ) {
 			error( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 			return false;
 		}
@@ -259,6 +265,18 @@ namespace Network {
 		log( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 
 		this -> mIsCreated = true;
+		return true;
+	}
+
+	template<typename T>
+	inline bool ConnectionT<T>::_init() {
+		if ( !NetworkObject::init() ) return false;
+
+		if ( this -> mIsCreated ) {
+			close();
+			warn("The connection was already open. Closing the old one.");
+		}
+
 		return true;
 	}
 

@@ -40,8 +40,9 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
+#define DEBUG_SSL
 //#define DEBUG_STRING
-#define DEBUG_DATE
+//#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
 
@@ -1149,6 +1150,28 @@ int main( int argc, char * argv[] ) {
 			}
 		}
 	}
+#endif
+#ifdef DEBUG_SSL
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : SSL									//
+
+	/////GOOGLE TEST
+	Network::TLSConnection myTCPConnection;
+
+	if ( myTCPConnection.connect("google.com", 443, Network::SockType::TCP) ) {
+		Log::displayLog(StringASCII("Connected to Google ! IP:") << myTCPConnection.getIp());
+
+		char query[] = "GET https://about.google HTTP/1.1\r\nAccept: */*\r\nConnection: close\r\n\r\n";
+		if ( !myTCPConnection.send(query, sizeof(query)) ) {
+			Log::displayError("Unable to send the query.");
+		}
+
+		char receiveBuffer[ 1000000 ];
+		int receivedLength(myTCPConnection.receive(receiveBuffer, sizeof(receiveBuffer)));
+
+		Log::displayLog(StringASCII(receiveBuffer, receivedLength));
+	}
+
 #endif
 #ifdef DEBUG_STRING
 	//////////////////////////////////////////////////////////////////////////
