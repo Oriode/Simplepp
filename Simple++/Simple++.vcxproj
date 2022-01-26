@@ -259,6 +259,8 @@
     <ClInclude Include="Network\SSL.h" />
     <ClInclude Include="Network\SSL.hpp" />
     <ClInclude Include="Network\TLSConnection.h" />
+    <ClInclude Include="Network\HTTPClient.h" />
+    <ClInclude Include="Network\HTTPClient.hpp" />
     <ClInclude Include="OS\Path.h" />
     <ClInclude Include="OS\Path.hpp" />
     <ClInclude Include="SimpleLog.hpp" />

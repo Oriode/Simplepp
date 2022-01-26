@@ -534,6 +534,12 @@
     <ClInclude Include="Network\TLSConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Network\HTTPClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\HTTPClient.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
