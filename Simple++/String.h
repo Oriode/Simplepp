@@ -1009,61 +1009,10 @@ public:
 	// static double toDouble( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
 
-	///@brief		Converts a String from a buffer into a Number.
-	///@tparam	EndFunc	Functor type to detect end.
-	///@param [in,out]	buffer	Buffer to be read.
-	///@param 		  	base  	The base.
-	///@param	endFunc	Functor to detect end.
-	///@returns	Number.
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static char toChar( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static char toString(const T* it, const EndFunc& endFunc = IS_END_SENTINEL);
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static char toChar( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static int toInt( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static int toInt( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static short toShort( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static short toShort( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long toLong( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long toLong( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long long toLongLong( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long long toLongLong( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned char toUChar( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned char toUChar( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned int toUInt( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned int toUInt( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned short toUShort( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned short toUShort( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long toULong( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long toULong( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long long toULongLong( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
-	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long long toULongLong( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static char toString(const T** it, const EndFunc& endFunc = IS_END_SENTINEL);
 
 	///@brief		Converts a String from a buffer into a Number.
 	///@tparam	EndFunc	Functor type to detect end.
@@ -1072,14 +1021,70 @@ public:
 	///@param	endFunc	Functor to detect end.
 	///@returns	Number.
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static float toFloat( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static char toChar( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static float toFloat( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static char toChar( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static int toInt( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static int toInt( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static double toDouble( const T * buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static short toShort( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static double toDouble( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static short toShort( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static long toLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static long toLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static long long toLongLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static long long toLongLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned char toUChar( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned char toUChar( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned int toUInt( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned int toUInt( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned short toUShort( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned short toUShort( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned long toULong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned long toULong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned long long toULongLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned long long toULongLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+
+	///@brief		Converts a String from a buffer into a Number.
+	///@tparam	EndFunc	Functor type to detect end.
+	///@param [in,out]	buffer	Buffer to be read.
+	///@param 		  	base  	The base.
+	///@param	endFunc	Functor to detect end.
+	///@returns	Number.
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static float toFloat( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static float toFloat( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static double toDouble( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static double toDouble( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 
 
 	/************************************************************************/
@@ -1820,6 +1825,14 @@ private:
 	// template<typename Type, unsigned int Base, typename EndFunc = BasicString<T>::IsEndSentinel>
 	// static Type _toUnsignedInteger( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
+	///@brief		Converts this object to a String
+	///@tparam	EndFunc	Functor type to detect end.
+	///@param [in,out]	buffer	If non-null, the buffer.
+	///@param 		  	base  	The base.
+	///@param	endFunc	Functor to detect end.
+	///@returns	The given data converted to a Type.
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static BasicString<T> _toString(const T** itP, const EndFunc& endFunc = IS_END_SENTINEL);
 
 	///@brief		Converts this object to a float
 	///@tparam	EndFunc	Functor type to detect end.
@@ -1829,7 +1842,7 @@ private:
 	///@param	endFunc	Functor to detect end.
 	///@returns	The given data converted to a Type.
 	template<typename Type, typename EndFunc = BasicString<T>::IsEndSentinel>
-	static Type _toFloat( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static Type _toFloat( const T ** itP, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 
 	///@brief		Converts this object to a signed integer
 	///@tparam	EndFunc	Functor type to detect end.
@@ -1839,7 +1852,7 @@ private:
 	///@param	endFunc	Functor to detect end.
 	///@returns	The given data converted to a Type.
 	template<typename Type, typename EndFunc = BasicString<T>::IsEndSentinel>
-	static Type _toSignedInteger( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static Type _toSignedInteger( const T ** itP, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 
 	///@brief		Converts this object to an unsigned integer
 	///@tparam	EndFunc	Functor type to detect end.
@@ -1849,7 +1862,7 @@ private:
 	///@param	endFunc	Functor to detect end.
 	///@returns	The given data converted to a Type.
 	template<typename Type, typename EndFunc = BasicString<T>::IsEndSentinel>
-	static Type _toUnsignedInteger( const T ** buffer, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static Type _toUnsignedInteger( const T ** itP, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 
 
 
