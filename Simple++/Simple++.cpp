@@ -40,7 +40,8 @@
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
-#define DEBUG_SSL
+//#define DEBUG_SSL
+#define DEBUG_HTTP
 //#define DEBUG_STRING
 //#define DEBUG_DATE
 //#define DEBUG_PATH
@@ -58,6 +59,7 @@
 #include <sys/stat.h>
 
 #include "Network/Network.h"
+#include "Network/HTTPClient.h"
 #include "Math/Math.h"
 #include "String.h"
 #include "Log.h"
@@ -1170,6 +1172,22 @@ int main( int argc, char * argv[] ) {
 		int receivedLength(myTCPConnection.receive(receiveBuffer, sizeof(receiveBuffer)));
 
 		Log::displayLog(StringASCII(receiveBuffer, receivedLength));
+	}
+
+#endif
+#ifdef DEBUG_HTTP
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : HTTP									//
+
+	Network::HTTPClient client;
+
+	Vector<Network::HTTPParam> paramVector;
+	Network::HTTPResponse * response(client.query(Network::HTTPEndPoint::Type::HTTPS, StringASCII("about.google"), StringASCII("/"), paramVector));
+
+	if ( response ) {
+		Log::displayLog(response->getContent());
+	} else {
+		Log::displayError("Query failed.");
 	}
 
 #endif

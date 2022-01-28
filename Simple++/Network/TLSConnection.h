@@ -225,7 +225,7 @@ namespace Network {
 	template<typename T>
 	inline int TLSConnectionT<T>::receive(char* buffer, int maxSize) {
 		int length(SSL_read(this->ssl, buffer, maxSize));
-		if ( length <= 0 ) {
+		if ( length < 0 ) {
 			logSSL();
 		}
 		return length;
@@ -267,7 +267,7 @@ namespace Network {
 			logSSL();
 			return false;
 		}
-		if ( !SSL_set_fd(this->ssl, getSocket()) ) {
+		if ( !SSL_set_fd(this->ssl, int(getSocket())) ) {
 			logSSL();
 			return false;
 		}

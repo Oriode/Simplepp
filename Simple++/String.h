@@ -453,7 +453,8 @@ public:
 	///@returns	A reference to this.
 	// BasicString & concatFill( const float & f, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
 
-
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	void copy(const BasicString<T>::Iterator* itP, const EndFunc& endFunc = BasicString<T>::IS_END_SENTINEL);
 
 	/************************************************************************/
 	/* toCString()                                                          */
@@ -1010,9 +1011,9 @@ public:
 
 
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static char toString(const T* it, const EndFunc& endFunc = IS_END_SENTINEL);
+	static BasicString<T> toString(const T* it, const EndFunc& endFunc = IS_END_SENTINEL);
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static char toString(const T** it, const EndFunc& endFunc = IS_END_SENTINEL);
+	static BasicString<T> toString(const T** it, const EndFunc& endFunc = IS_END_SENTINEL);
 
 	///@brief		Converts a String from a buffer into a Number.
 	///@tparam	EndFunc	Functor type to detect end.

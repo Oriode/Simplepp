@@ -445,9 +445,10 @@ namespace Network {
 	template<typename T>
 	int ConnectionT<T>::receive( char * buffer, int maxSize ) {
 		int amountRead = ::recv( this -> mSocket, buffer, maxSize, 0 );
-		if ( amountRead <= 0 ) {
+		if ( amountRead < 0 ) {
 			if ( amountRead == SOCKET_ERROR ) {
 				error( "Error while receiving !" );
+				return amountRead;
 			}
 			return 0;
 		}

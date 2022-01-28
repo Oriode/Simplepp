@@ -1553,6 +1553,25 @@ Size BasicString<T>::_convertFloat2String( Type number, T ** bufferP, unsigned i
 
 
 template<typename T>
+template<typename EndFunc>
+inline void BasicString<T>::copy(const BasicString<T>::Iterator* itP, const EndFunc& endFunc) {
+	const BasicString<T>::Iterator & it(*itP);
+
+	const typename BasicString<T>::Iterator beginIt(it);
+	for ( ; !endFunc(it); it++ );
+	const typename BasicString<T>::Iterator endIt(it);
+
+	Size copySize(endIt - beginIt);
+	Size bufferSize(copySize + Size(1));
+
+	resize(bufferSize);
+
+	Vector<T>::copy(beginIt, copySize);
+
+	this->dataTable[ copySize ] = BasicString<T>::ElemType('\0');
+}
+
+template<typename T>
 template<typename C>
 Size BasicString<T>::toCString( const C & c, T * buffer ) {
 	buffer[ 0 ] = c;
@@ -2263,7 +2282,7 @@ inline BasicString<T> BasicString<T>::_toString(const T** itP, const EndFunc& en
 	const T*& it(*itP);
 
 	const typename BasicString<T>::Iterator beginIt(it);
-	for ( ; endFunc(it); it++ );
+	for ( ; !endFunc(it); it++ );
 	const typename BasicString<T>::Iterator endIt(it);
 
 	return BasicString<T>(beginIt, Size(endIt - beginIt));
@@ -2396,7 +2415,7 @@ double BasicString<T>::toDouble( const T * buffer, const EndFunc & endFunc ) {
 
 template<typename T>
 template<typename EndFunc>
-inline char BasicString<T>::toString(const T* it, const EndFunc& endFunc) {
+inline BasicString<T> BasicString<T>::toString(const T* it, const EndFunc& endFunc) {
 	const T** itP(&it);
 	return _toString<EndFunc>(itP, endFunc);
 }
@@ -2575,7 +2594,7 @@ double BasicString<T>::toDouble( const T ** it, const EndFunc & endFunc ) {
 
 template<typename T>
 template<typename EndFunc>
-inline char BasicString<T>::toString(const T** it, const EndFunc& endFunc) {
+inline BasicString<T> BasicString<T>::toString(const T** it, const EndFunc& endFunc) {
 	return _toString<EndFunc>(it, endFunc);
 }
 
