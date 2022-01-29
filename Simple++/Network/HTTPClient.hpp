@@ -322,11 +322,18 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPRequestT<T>::HTTPRequestT() {}
+	inline HTTPRequestT<T>::HTTPRequestT() {
+		HTTPParam* hostParam(new HTTPParam(StringASCII("Host")));
+		addParam(hostParam);
+
+		this->hostParam = hostParam;
+	}
 
 	template<typename T>
 	template<typename EndFunc>
-	inline HTTPRequestT<T>::HTTPRequestT(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
+	inline HTTPRequestT<T>::HTTPRequestT(const StringASCII::ElemType** itP, const EndFunc& endFunc) :
+		hostParam(NULL)
+	{
 		parseQuery(itP, endFunc);
 	}
 
@@ -446,6 +453,8 @@ namespace Network {
 	template<typename T>
 	inline void HTTPRequestT<T>::setEndPoint(const UrlT<T>& url) {
 		this->url = url;
+
+		updateHostParamValue();
 	}
 
 	template<typename T>
@@ -454,11 +463,19 @@ namespace Network {
 		this->url.setHostname(hostname);
 		this->url.setEndPoint(endPointStr);
 		this->url.setParams(paramVector);
+
+		updateHostParamValue();
 	}
 
 	template<typename T>
 	inline bool HTTPRequestT<T>::setEndPoint(const StringASCII& url) {
-		return this->url.parse(url);
+		if ( !this->url.parse(url) ) {
+			return false;
+		}
+
+		updateHostParamValue();
+
+		return true;
 	}
 
 	template<typename T>
@@ -483,6 +500,15 @@ namespace Network {
 		str << this->protocolStr;
 		str << StringASCII::ElemType('\r');
 		str << StringASCII::ElemType('\n');
+	}
+
+	template<typename T>
+	inline void HTTPRequestT<T>::updateHostParamValue() {
+		if ( this->hostParam ) {
+			this->hostParam->setValue(this->url.getHostname());
+		} else {
+			this->hostParam = setHeaderParam(StringASCII("Host"), this->url.getHostname());
+		}
 	}
 
 	template<typename T>

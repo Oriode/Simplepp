@@ -110,8 +110,12 @@ namespace Network {
 
 		void formatQueryTitle(StringASCII* outputStr) const;
 
+		void updateHostParamValue();
+
 		StringASCII methodStr;
 		UrlT<T> url;
+
+		HTTPParam* hostParam;
 	};
 
 	using HTTPRequest = HTTPRequestT<int>;
