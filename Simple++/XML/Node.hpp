@@ -200,12 +200,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	ParamT<T> & NodeT<T>::getParam( typename Vector< ParamT<T> * >::Size i ) {
+	ParamT<T> & NodeT<T>::getParam( Size i ) {
 		return *( this -> paramsVector.getValueI( i ) );
 	}
 
 	template<typename T>
-	const ParamT<T> & NodeT<T>::getParam( typename Vector< ParamT<T> * >::Size i ) const {
+	const ParamT<T> & NodeT<T>::getParam( Size i ) const {
 		return *( this -> paramsVector.getValueI( i ) );
 	}
 
@@ -220,7 +220,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::deleteParam( typename Vector< ParamT<T> * >::Size i ) {
+	bool NodeT<T>::deleteParam( Size i ) {
 		if ( i >= this -> paramsVector.getSize() ) {
 			return false;
 		} else {
@@ -271,12 +271,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	typename Vector< NodeT<T> * >::Size NodeT<T>::getNbChildren() const {
+	Size NodeT<T>::getNbChildren() const {
 		return this -> childrenVector.getSize();
 	}
 
 	template<typename T>
-	typename Vector< ParamT<T> * >::Size NodeT<T>::getNbParams() const {
+	Size NodeT<T>::getNbParams() const {
 		return this -> paramsVector.getSize();
 	}
 
@@ -358,12 +358,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	const NodeT<T> * NodeT<T>::getChild( typename Vector< NodeT<T> * >::Size i ) const {
+	const NodeT<T> * NodeT<T>::getChild( Size i ) const {
 		return const_cast< NodeT<T> * >( this ) -> getChild( i );
 	}
 
 	template<typename T>
-	NodeT<T> * NodeT<T>::getChild( typename Vector< NodeT<T> * >::Size i ) {
+	NodeT<T> * NodeT<T>::getChild( Size i ) {
 		if ( i < this->childrenVector.getSize() ) {
 			return this->childrenVector.getValueI( i );
 		} else {
@@ -383,7 +383,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::deleteChild( typename Vector< NodeT<T> * >::Size i ) {
+	bool NodeT<T>::deleteChild( Size i ) {
 		NodeT<T> * childRemoved( removeChild( i ) );
 		if ( childRemoved ) {
 			delete childRemoved;
@@ -407,7 +407,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	NodeT<T> * NodeT<T>::removeChild( typename Vector< NodeT<T> * >::Size i ) {
+	NodeT<T> * NodeT<T>::removeChild( Size i ) {
 		if ( i >= this -> childrenVector.getSize() ) {
 			return NULL;
 		} else {
@@ -474,7 +474,7 @@ namespace XML {
 				it++;
 			}
 			// Call the constructor (pointer, size).
-			T nodeName( beginIt, T::Size( it - beginIt ) );
+			T nodeName( beginIt, Size( it - beginIt ) );
 
 			this -> setName( nodeName );
 
@@ -514,7 +514,7 @@ namespace XML {
 			}
 
 			// Call the constructor (pointer, size).
-			T nodeName( beginIt, T::Size( it - beginIt ) );
+			T nodeName( beginIt, Size( it - beginIt ) );
 
 			while ( functorSpace( *it ) ) it++;
 
@@ -556,7 +556,7 @@ namespace XML {
 				if ( endIt != beginIt ) {
 					// We have content, so we gonna create a text node and add the content
 					// Call the constructor (pointer, size).
-					T textContent( beginIt, T::Size( endIt - beginIt ) );
+					T textContent( beginIt, Size( endIt - beginIt ) );
 					NodeTextT<T> * nodeText( new NodeTextT<T>( textContent ) );
 
 					this -> addChild( nodeText );
@@ -638,7 +638,7 @@ namespace XML {
 		if ( iteratorBegin != it ) {
 			ParamT<T> * newParam( new ParamT<T>() );
 
-			newParam -> setName( T( iteratorBegin, T::Size( it - iteratorBegin ) ) );
+			newParam -> setName( T( iteratorBegin, Size( it - iteratorBegin ) ) );
 
 			if ( ( *it ) == C( '=' ) ) {
 				( it )++; // Just to skip the equal sign
@@ -656,7 +656,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					newParam -> setValue( T( iteratorBegin, T::Size( it - iteratorBegin ) ) );
+					newParam -> setValue( T( iteratorBegin, Size( it - iteratorBegin ) ) );
 
 					if ( ( *it ) == C( '"' ) ) ( it )++; // Skip the quotes again
 				} else {
@@ -670,7 +670,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					newParam -> setValue( T( iteratorBegin, T::Size( it - iteratorBegin ) ) );
+					newParam -> setValue( T( iteratorBegin, Size( it - iteratorBegin ) ) );
 				}
 
 			}
@@ -718,13 +718,13 @@ namespace XML {
 		}
 
 		// Read the Params
-		Vector< ParamT<T> * >::Size nbParams;
+		Size nbParams;
 		if ( !IO::read( fileStream, &nbParams ) ) {
 			_clear();
 			return false;
 		}
-		nbParams = Math::min( nbParams, Vector< ParamT<T> * >::Size( 1000 ) );
-		for ( Vector< ParamT<T> * >::Size i( 0 ); i < nbParams; i++ ) {
+		nbParams = Math::min( nbParams, Size( 1000 ) );
+		for ( Size i( 0 ); i < nbParams; i++ ) {
 			ParamT<T> * newParam( new ParamT<T>() );
 			if ( !IO::read( fileStream, newParam ) ) {
 				delete newParam;
@@ -735,13 +735,13 @@ namespace XML {
 		}
 
 		// Read the children
-		Vector< NodeT<T> * >::Size nbChilds;
+		Size nbChilds;
 		if ( !IO::read( fileStream, &nbChilds ) ) {
 			_clear();
 			return false;
 		}
-		nbChilds = Math::min( nbChilds, Vector< NodeT<T> * >::Size( 1000 ) );
-		for ( Vector< NodeT<T> * >::Size i( 0 ); i < nbChilds; i++ ) {
+		nbChilds = Math::min( nbChilds, Size( 1000 ) );
+		for ( Size i( 0 ); i < nbChilds; i++ ) {
 			Type newNodeType;
 			if ( !IO::read( fileStream, &newNodeType ) ) {
 				_clear();
@@ -839,8 +839,8 @@ namespace XML {
 		if ( !IO::write( fileStream, &this -> id ) )
 			return false;
 
-		Vector< ParamT<T> * >::Size nbParams( this -> paramsVector.getSize() );
-		Vector< NodeT<T> * >::Size nbChilds( this -> childrenVector.getSize() );
+		Size nbParams( this -> paramsVector.getSize() );
+		Size nbChilds( this -> childrenVector.getSize() );
 
 		if ( !IO::write( fileStream, &nbParams ) )
 			return false;

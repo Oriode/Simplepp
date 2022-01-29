@@ -62,7 +62,7 @@ namespace Graphic {
 
 		C * interpolatedArray;
 		Math::Rectangle<Size> clampedRectangle;
-		int size;
+		::Size size;
 	};
 
 	

@@ -105,7 +105,7 @@ namespace XML {
 			T & name( *nameP );
 			T & value( *valueP );
 
-			name = T( iteratorBegin, T::Size( it - iteratorBegin ) );
+			name = T( iteratorBegin, Size( it - iteratorBegin ) );
 
 			if ( (*it) == C( '=' ) ) {
 				( it )++; // Just to skip the equal sign
@@ -123,7 +123,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					value = T( iteratorBegin, T::Size( it - iteratorBegin ) );
+					value = T( iteratorBegin, Size( it - iteratorBegin ) );
 
 					if ( ( *it ) == C( '"' ) ) ( it )++; // Skip the quotes again
 				} else {
@@ -137,7 +137,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					value = T( iteratorBegin, T::Size( it - iteratorBegin ) );
+					value = T( iteratorBegin, Size( it - iteratorBegin ) );
 				}
 
 			}
@@ -440,7 +440,7 @@ namespace XML {
 		o << Elem( '?' );
 		o << Elem( '>' );
 
-		for ( typename Vector< NodeT<T> *>::Size i( 0 ); i < this -> rootNode -> getNbChildren(); i++ ) {
+		for ( Size i( 0 ); i < this -> rootNode -> getNbChildren(); i++ ) {
 			o << Elem( '\n' ) ;
 			this -> rootNode -> getChild( i ) -> _writeXML<C, Elem>( o );
 		}

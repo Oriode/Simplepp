@@ -110,13 +110,13 @@ namespace XML {
 
 		///@brief Get the number of params of this node
 		///@return Number of params of this node
-		typename Vector< ParamT<T> * >::Size getNbParams() const;
+		Size getNbParams() const;
 		
 		///@brief Get a param from his index
 		///@param i Index of the param to retrieve (between [0 ; getNbParams() - 1])
 		///@return ParamT<T>
-		const ParamT<T> & getParam( typename Vector< ParamT<T> * >::Size i ) const;
-		ParamT<T> & getParam( typename Vector< ParamT<T> * >::Size i );
+		const ParamT<T> & getParam( Size i ) const;
+		ParamT<T> & getParam( Size i );
 
 		///@brief Delete a param from this node
 		///@param param ParamT<T> to be removed (The param itself is deleted during this operation, NEVER call delete directly from a param)
@@ -126,7 +126,7 @@ namespace XML {
 		///@brief Remove a child from this node
 		///@param i Index of the param to be removed (The child itself is deleted during this operation, NEVER call delete directly from a param)
 		///@return True if something has been removed, False otherwise
-		bool deleteParam( typename Vector< ParamT<T> * >::Size i );
+		bool deleteParam( Size i );
 
 		///@brief Set the id of this node
 		///@param id StringASCII representing the identifier if this node
@@ -148,13 +148,13 @@ namespace XML {
 
 		///@brief Get the number of children of this node
 		///@return Number of children of this node
-		typename Vector< NodeT<T> * >::Size getNbChildren() const;
+		Size getNbChildren() const;
 
 		///@brief Get a child from his index
 		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
 		///@return Child
-		const NodeT<T> * getChild( typename Vector< NodeT<T> * >::Size i ) const;
-		NodeT<T> * getChild( typename Vector< NodeT<T> * >::Size i );
+		const NodeT<T> * getChild( Size i ) const;
+		NodeT<T> * getChild( Size i );
 
 		///@brief Add a child to this node
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
@@ -174,7 +174,7 @@ namespace XML {
 		///@brief Delete a child from this node (And delete it)
 		///@param i Index of the child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		bool deleteChild( typename Vector< NodeT<T> * >::Size i );
+		bool deleteChild( Size i );
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param child Child to be removed (The child itself is not deleted and can be set as a child to another node)
@@ -184,7 +184,7 @@ namespace XML {
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param i Index of the child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		NodeT<T> * removeChild( typename Vector< NodeT<T> * >::Size i );
+		NodeT<T> * removeChild( Size i );
 
 		///@brief Write this object in the XML syntax into the fileStream
 		///@param fileStream stream used to write this object

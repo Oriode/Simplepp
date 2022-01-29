@@ -187,7 +187,7 @@ template<typename T>
 template<typename C>
 void Vector<T>::concat( const Vector<C> & vector ) {
 	this -> resize( this -> size + vector.size );
-	copy( getEnd(), vector.getData(), vector.getSize() );
+	copy( getEnd() - Size(1), vector.getData(), vector.getSize());
 }
 
 template<typename T>

@@ -81,16 +81,16 @@ namespace Graphic {
 
 			///@brief get the number of points of this gradient.
 			///@return Number of points of this gradient.
-			typename Vector<Point<C> *>::Size getNumPoints() const;
+			::Size getNumPoints() const;
 
 
 			///@brief Operator [] to direct access points inside this gradient.
 			///@param i index of the points (in the order added first is 0)
-			Point<C> & operator[]( typename Vector<Point<C> *>::Size i );
+			Point<C> & operator[]( ::Size i );
 
 			///@brief Operator [] to direct access points inside this gradient.
 			///@param i index of the points (in the order added first is 0)
-			const Point<C> & operator[]( typename Vector<Point<C> *>::Size i ) const;
+			const Point<C> & operator[]( ::Size i ) const;
 
 
 			///@brief Compute the interpolation of every color of this gradient in an 1D array

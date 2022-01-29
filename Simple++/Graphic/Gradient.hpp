@@ -90,19 +90,19 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		typename Vector<Point<C> *>::Size Template<C, InterFunc>::getNumPoints() const {
+		::Size Template<C, InterFunc>::getNumPoints() const {
 			return this -> pointsVector.getSize();
 		}
 
 		template<typename C, typename InterFunc>
-		Point<C> & Template<C, InterFunc>::operator[]( typename Vector<Point<C> *>::Size i ) {
+		Point<C> & Template<C, InterFunc>::operator[]( ::Size i ) {
 			this -> isOrdered = false;
 			return this -> pointsVector[i];
 		}
 
 
 		template<typename C, typename InterFunc>
-		const Point<C> & Template<C, InterFunc>::operator[]( typename Vector<Point<C> *>::Size i ) const {
+		const Point<C> & Template<C, InterFunc>::operator[]( ::Size i ) const {
 			return this -> pointsVector[i];
 		}
 
@@ -148,7 +148,7 @@ namespace Graphic {
 				}
 
 
-				for ( typename Vector<Point<C> * >::Size i = 1; i < this -> pointsVectorOrdered.getSize(); i++ ) {
+				for ( Size i = 1; i < this -> pointsVectorOrdered.getSize(); i++ ) {
 					const Point<C> & p1 = *this -> pointsVectorOrdered[i - 1];
 					const Point<C> & p2 = *this -> pointsVectorOrdered[i];
 
@@ -206,16 +206,16 @@ namespace Graphic {
 		bool Template<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
 			_unload();
 
-			Vector<Point<C> * >::Size nbPoints;
+			Size nbPoints;
 			if ( !IO::read( fileStream, &nbPoints ) ) {
 				_clear();
 				return false;
 			}
 
 			//	Clamp in case of file corruption	
-			nbPoints = Math::min( nbPoints, Vector<Point<C> * >::Size(1000) );
+			nbPoints = Math::min( nbPoints, Size(1000) );
 
-			for ( Vector<Point<C> * >::Size i( 0 ); i < nbPoints; i++ ) {
+			for ( Size i( 0 ); i < nbPoints; i++ ) {
 				Point<C> * gradientPoint = new Point<C>();
 				if ( !IO::read( fileStream, gradientPoint ) ) {
 					delete gradientPoint;
@@ -238,7 +238,7 @@ namespace Graphic {
 		template<typename C, typename InterFunc>
 		bool Template<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
 
-			Vector<Point<C> * >::Size nbPoints( this -> pointsVector.getSize() );
+			Size nbPoints( this -> pointsVector.getSize() );
 			if ( !IO::write( fileStream, &nbPoints ) )
 				return false;
 

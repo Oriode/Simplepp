@@ -1,7 +1,9 @@
 namespace XML {
 
 	template<typename T>
-	ParamT<T>::ParamT( const T & name, const T & value ) : name( name ), value( value ) {
+	ParamT<T>::ParamT( const T & name, const T & value ) : 
+		::ParamT<T, T>(name, value)
+	{
 
 	}
 
@@ -12,15 +14,15 @@ namespace XML {
 
 	template<typename T>
 	ParamT<T>::ParamT( const ParamT<T> & param ) :
-		name( param.name ),
-		value( param.value ) {
+		::ParamT<T, T>(param)
+	{
 
 	}
 
 	template<typename T>
 	ParamT<T>::ParamT( ParamT<T> && param ) :
-		name( Utility::toRValue( param.name ) ),
-		value( Utility::toRValue( param.value ) ) {
+		::ParamT<T, T>(Utility::toRValue(param))
+	{
 
 	}
 
@@ -31,36 +33,14 @@ namespace XML {
 
 	template<typename T>
 	ParamT<T> & ParamT<T>::operator=( const ParamT<T> & param ) {
-		this -> name = param.name;
-		this -> value = param.value;
+		::ParamT<T, T>::operator=(param);
 		return *this;
 	}
 
 	template<typename T>
 	ParamT<T> & ParamT<T>::operator=( ParamT<T> && param ) {
-		this -> name = Utility::toRValue( param.name );
-		this -> value = Utility::toRValue( param.value );
+		::ParamT<T, T>::operator=(Utility::toRValue(param));
 		return *this;
-	}
-
-	template<typename T>
-	const T & ParamT<T>::getName() const {
-		return this -> name;
-	}
-
-	template<typename T>
-	void ParamT<T>::setName( const T & name ) {
-		this -> name = name;
-	}
-
-	template<typename T>
-	const T & ParamT<T>::getValue() const {
-		return this -> value;
-	}
-
-	template<typename T>
-	void ParamT<T>::setValue( const T & value ) {
-		this -> value = value;
 	}
 
 	template<typename T>
@@ -68,28 +48,6 @@ namespace XML {
 		IO::SimpleFileStream & fileStream( *fileStreamP );
 		_writeXML<IO::SimpleFileStream, char>( fileStream );
 		return !( fileStreamP -> bad() );
-	}
-
-	template<typename T>
-	bool ParamT<T>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, &this -> name ) ) {
-			_clear();
-			return false;
-		}
-		if ( !IO::read( fileStream, &this -> value ) ) {
-			_clear();
-			return false;
-		}
-		return true;
-	}
-
-	template<typename T>
-	bool ParamT<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this -> name ) )
-			return false;
-		if ( !IO::write( fileStream, &this -> value ) )
-			return false;
-		return true;
 	}
 
 	template<typename T>

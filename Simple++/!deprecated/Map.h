@@ -74,8 +74,6 @@ public:
 	template<typename C = char>
 	operator BasicString<C>() const;
 
-	using Vector<MapObject<I, T> *>::Size;
-
 	using Vector<MapObject<I, T> *>::reserve;
 	using Vector<MapObject<I, T> *>::allocate;
 	using Vector<MapObject<I, T> *>::resize;

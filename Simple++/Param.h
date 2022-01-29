@@ -40,6 +40,10 @@ public:
 	///@return True if this is less then param, False otherwise.
 	bool operator<(const ParamT<I, V>& param) const;
 
+	///@brief Set the name of this param
+	///@param name Name of this param
+	void setName(const I& name);
+
 	///@brief Set the value of this param
 	///@param value Value of this param
 	void setValue(const V& value);

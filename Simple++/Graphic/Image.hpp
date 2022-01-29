@@ -5948,7 +5948,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
-	void ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
+	void ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		if ( getDatas() == NULL ) return;
 		switch ( getFormat() ) {
 			case Format::R:
@@ -5966,7 +5966,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		auto clampedRectangle = clampRectangle( rectangle );
 		auto size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 

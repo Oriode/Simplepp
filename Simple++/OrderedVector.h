@@ -71,7 +71,7 @@ public:
 	/** @brief	. */
 	using Vector<T>::getSize;
 	/** @brief	. */
-	using Vector<T>::size;
+	using Size;
 	/** @brief	. */
 	using Vector<T>::swap;
 	/** @brief	. */

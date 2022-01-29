@@ -53,12 +53,12 @@ namespace Graphic {
 
 
 	template<typename T>
-	void Graphic::Texture<T>::setPixel( typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y, const T * p ) {
+	void Graphic::Texture<T>::setPixel( ::Size i, unsigned int x, unsigned int y, const T * p ) {
 		this -> datas[i] ->  getDatas()[this -> size.x * y + x] = p;
 	}
 
 	template<typename T>
-	const T * Texture<T>::getPixel( typename Vector<ImageT<T>>::Size i, unsigned int x, unsigned int y ) const {
+	const T * Texture<T>::getPixel( ::Size i, unsigned int x, unsigned int y ) const {
 		return this -> datas[i] ->  getDatas()[this -> size.x * y + x];
 	}
 
@@ -74,7 +74,7 @@ namespace Graphic {
 			this -> datas.resize( 1 );
 		}
 
-		Vector<ImageT<T>>::Size i = 0;
+		::Size i = 0;
 		auto newMipmap = this -> datas[i] -> createMipmap();
 		while ( newMipmap ) {
 			this -> datas.push( newMipmap );
@@ -86,7 +86,7 @@ namespace Graphic {
 
 	template<typename T>
 	bool Texture<T>::write( IO::SimpleFileStream * fileStream ) const {
-		Vector<ImageT<T> *>::Size nbMipmaps = this -> datas.getSize();
+		::Size nbMipmaps = this -> datas.getSize();
 		if ( !IO::write( fileStream, &nbMipmaps ) )
 			return false;
 
@@ -114,14 +114,14 @@ namespace Graphic {
 
 	template<typename T>
 	bool Texture<T>::_read( IO::SimpleFileStream * fileStream ) {
-		Vector<ImageT<T> *>::Size nbDatas;
+		::Size nbDatas;
 		if ( !IO::read( fileStream, &nbDatas ) )
 			return false;
 
 		// Clamp the number of datas with a big number just in case of file corruption.
-		nbDatas = Math::min<Vector<ImageT<T> *>::Size>( nbDatas, 100 );
+		nbDatas = Math::min<::Size>( nbDatas, 100 );
 
-		for ( Vector<ImageT<T> * >::Size i = 0; i < nbDatas; i++ ) {
+		for ( ::Size i = 0; i < nbDatas; i++ ) {
 			ImageT<T> * newImage = new ImageT<T>();
 			if ( newImage -> read( fileStream ) ) {
 				this -> datas.push( newImage );
@@ -175,12 +175,12 @@ namespace Graphic {
 
 
 	template<typename T>
-	T * Texture<T>::getDatas( typename Vector<ImageT<T>>::Size i ) {
+	T * Texture<T>::getDatas( ::Size i ) {
 		return this -> datas[i] -> getDatas();
 	}
 
 	template<typename T>
-	const T * Texture<T>::getDatas( typename Vector<ImageT<T>>::Size i ) const {
+	const T * Texture<T>::getDatas( ::Size i ) const {
 		return this -> datas[i] -> getDatas();
 	}
 
@@ -190,17 +190,17 @@ namespace Graphic {
 
 
 	template<typename T>
-	unsigned int Texture<T>::getHeight( typename Vector<ImageT<T>>::Size i ) const {
+	unsigned int Texture<T>::getHeight( ::Size i ) const {
 		return this -> datas[i] -> getSize().y;
 	}
 
 	template<typename T>
-	unsigned int Texture<T>::getWidth( typename Vector<ImageT<T>>::Size i ) const {
+	unsigned int Texture<T>::getWidth( ::Size i ) const {
 		return this -> datas[i] -> getSize().x;
 	}
 
 	template<typename T>
-	const Math::Vec2<Size> & Texture<T>::getSize( typename Vector<ImageT<T>>::Size i ) const {
+	const Math::Vec2<Size> & Texture<T>::getSize( ::Size i ) const {
 		return this -> datas[i] -> getSize();
 	}
 
@@ -226,27 +226,27 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	ImageT<T> & Texture<T>::getMipmap( typename Vector<ImageT<T>>::Size i ) {
+	ImageT<T> & Texture<T>::getMipmap( ::Size i ) {
 		return *this -> datas[i];
 	}
 
 	template<typename T>
-	const ImageT<T> & Texture<T>::getMipmap( typename Vector<ImageT<T>>::Size i ) const {
+	const ImageT<T> & Texture<T>::getMipmap( ::Size i ) const {
 		return *this -> datas[i];
 	}
 
 	template<typename T>
-	ImageT<T> & Graphic::Texture<T>::operator[]( typename Vector<ImageT<T>>::Size i ) {
+	ImageT<T> & Graphic::Texture<T>::operator[]( ::Size i ) {
 		return *this -> datas[i];
 	}
 
 	template<typename T>
-	const ImageT<T> & Graphic::Texture<T>::operator[]( typename Vector<ImageT<T>>::Size i ) const {
+	const ImageT<T> & Graphic::Texture<T>::operator[]( ::Size i ) const {
 		return *this -> datas[i];
 	}
 
 	template<typename T>
-	typename Vector<ImageT<T> * >::Size Texture<T>::getNbMipmaps() const {
+	::Size Texture<T>::getNbMipmaps() const {
 		return this -> datas.getSize();
 	}
 

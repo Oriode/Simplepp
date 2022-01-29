@@ -1515,7 +1515,7 @@ namespace Graphic {
 		 * @sa	Graphic::ColorFunc::Template for making your own color functor
 		 */
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
+		void drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
 
 
 
@@ -1819,7 +1819,7 @@ namespace Graphic {
 		 * @param [in,out]	blendFunc 	(Optional) The blend function.
 		 */
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, typename Vector<Math::Vec2<float>>::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
+		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
 
 		/**
 		 * @brief	Resamples

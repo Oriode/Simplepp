@@ -46,6 +46,11 @@ inline bool ParamT<I, V>::operator<(const ParamT<I, V>& param) const {
 }
 
 template<typename I, typename V>
+void ParamT<I, V>::setName(const I& name) {
+	this->name = name;
+}
+
+template<typename I, typename V>
 inline void ParamT<I, V>::setValue(const V& value) {
 	this->value = value;
 }
