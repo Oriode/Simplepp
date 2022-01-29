@@ -1,32 +1,124 @@
 #pragma once
 
 #include "../Vector.h"
+#include "../Map.h"
+#include "../IO/IO.h"
 #include "TLSConnection.h"
 
 namespace Network {
 
-	template<typename T>
-	class HTTPParamT {
+	template<typename I, typename V>
+	class ParamT : public IO::BasicIO {
 	public:
-		HTTPParamT(const StringASCII & name);
-		HTTPParamT(const StringASCII& name, const StringASCII& value);
+		///@brief Empty constructor
+		ParamT();
 
-		HTTPParamT(const HTTPParamT<T>& param);
+		///@brief Constructor from a name only.
+		///@param name Name of this param.
+		ParamT(const I & name);
 
-		void setValue(const StringASCII& value);
+		///brief Constructor from a name and a value
+		///@param name Name of this param
+		///@param value Value of this param
+		ParamT(const I& name, const V& value);
 
-		const StringASCII& getName() const;
-		const StringASCII& getValue() const;
+		///@brief Copy Constructor
+		///@param param Object to copy
+		ParamT(const ParamT<I, V>& param);
 
-	private:
-		StringASCII name;
-		StringASCII value;
+		///@brief Move Constructor
+		///@param param Object to move
+		ParamT(const ParamT<I, V>&& param);
+
+		///@brief Move operator
+		///@param param Object to be copied
+		///@return reference to THIS
+		ParamT<I, V>& operator=(const ParamT<I, V>& param);
+
+		///@brief Move operator
+		///@param param Object to be copied
+		///@return reference to THIS
+		ParamT<I, V>& operator=(const ParamT<I, V>&& param);
+
+		///@brief Less compare operator.
+		///@param param Param to be compare.
+		///@return True if this is less then param, False otherwise.
+		bool operator<(const ParamT<I, V>& param) const;
+
+		///@brief Set the value of this param
+		///@param value Value of this param
+		void setValue(const V& value);
+
+		///@brief get the name of this param
+		///@return Name of the param
+		const I& getName() const;
+
+		///@brief get the value of this param
+		///@return value of the param
+		const V& getValue() const;
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read(IO::SimpleFileStream* fileStream);
+
+		///@brief write this object as binary into a file stream (@see writeXML for writing non binary)
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write(IO::SimpleFileStream* fileStream) const;
+
+	protected:
+		I name;
+		V value;
 	};
 
-	using HTTPParam = HTTPParamT<int>;
+	using Param = ParamT<StringASCII, StringASCII>;
+
+	template<typename I, typename V>
+	class ParamContainerT : public IO::BasicIO {
+	public:
+		ParamContainerT();
+		ParamContainerT(const ParamContainerT<I, V>& paramContainer);
+		ParamContainerT(const ParamContainerT<I, V>&& paramContainer);
+
+		~ParamContainerT();
+
+		ParamContainerT<I, V>& operator=(const ParamContainerT<I, V>& paramContainer);
+		ParamContainerT<I, V>& operator=(const ParamContainerT<I, V>&& paramContainer);
+
+		ParamT<I, V>* setParam(const I& paramName, const V& paramValue);
+		void setParams(const Vector<ParamT<I, V>>& paramVector);
+
+		const ParamT<I, V>* getParam(const I& paramName) const;
+		ParamT<I, V>* getParam(const I& paramName);
+
+		const Vector<ParamT<I, V>*>& getParamVector() const;
+		const Map<I, ParamT<I, V>*>& getParamMap() const;
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		bool read(IO::SimpleFileStream* fileStream);
+
+		///@brief write this object as binary into a file stream (@see writeXML for writing non binary)
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		bool write(IO::SimpleFileStream* fileStream) const;
+
+	protected:
+		void copyParamVector(const Vector<ParamT<I, V>*>& paramVector);
+		void addParam(ParamT<I, V>* newParam);
+
+		Vector<ParamT<I, V>*> paramVector;
+		Map<I, ParamT<I, V>*> paramMap;
+	};
+
+	using ParamContainer = ParamContainerT<StringASCII, StringASCII>;
+
+	using HTTPParam = ParamT<StringASCII, StringASCII>;
 
 	template<typename T>
-	class HTTPEndPointT {
+	class HTTPEndPointT : public ParamContainerT<StringASCII, StringASCII> {
 	public:
 		enum class Type : unsigned char {
 			HTTP,
@@ -35,7 +127,7 @@ namespace Network {
 		};
 
 		HTTPEndPointT();
-		HTTPEndPointT(typename HTTPEndPointT<T>::Type type, const StringASCII & hostname, const StringASCII& endPointStr, const Vector<HTTPParamT<T>>& paramVector);
+		HTTPEndPointT(typename HTTPEndPointT<T>::Type type, const StringASCII & hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		HTTPEndPointT(const StringASCII::ElemType ** itP, const EndFunc & endFunc = StringASCII::IS_END_SENTINEL);
@@ -53,14 +145,10 @@ namespace Network {
 		StringASCII format() const;
 		void format(StringASCII* outputStr) const;
 
-		HTTPParamT<T>* setParam(const StringASCII& paramName, const StringASCII& paramValue);
-		void setParams(const Vector<HTTPParamT<T>>& paramVector);
 		void setType(const typename HTTPEndPointT<T>::Type type);
 		void setHostname(const StringASCII& hostname);
 		void setEndPoint(const StringASCII& endPoint);
 
-		const HTTPParamT<T>* getParam(const StringASCII& paramName) const;
-		HTTPParamT<T>* getParam(const StringASCII& paramName);
 		typename HTTPEndPointT<T>::Type getType() const;
 		const StringASCII& getHostname() const;
 		const StringASCII& getEndPoint() const;
@@ -69,9 +157,6 @@ namespace Network {
 		static typename HTTPEndPointT<T>::Type getType(const StringASCII& typeStr);
 
 	private:
-		void copyParamVector(const Vector<HTTPParamT<T>*>& paramVector);
-
-		Vector<HTTPParamT<T>*> paramVector;
 		Type type;
 		StringASCII hostname;
 		StringASCII endPointStr;
@@ -81,16 +166,16 @@ namespace Network {
 	using HTTPEndPoint = HTTPEndPointT<int>;
 
 	template<typename T>
-	class HTTPQueryT {
+	class HTTPQueryT : protected ParamContainerT<StringASCII, StringASCII> {
 	public:
 		HTTPQueryT();
 
 		~HTTPQueryT();
 
-		HTTPParamT<T>* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
+		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
-		const HTTPParamT<T>* getHeaderParam(const StringASCII& paramName) const;
-		HTTPParamT<T>* getHeaderParam(const StringASCII& paramName);
+		const HTTPParam* getHeaderParam(const StringASCII& paramName) const;
+		HTTPParam* getHeaderParam(const StringASCII& paramName);
 
 		void setProtocol(const StringASCII& protocol);
 		void setContent(const StringASCII& content);
@@ -113,8 +198,6 @@ namespace Network {
 		///@brief Parse the query String and update the header params Vector.
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		bool parseQueryHeader(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
-
-		Vector<HTTPParamT<T>*> headerParamVector;
 
 		bool bHeaderNeedFormat;
 
@@ -172,7 +255,7 @@ namespace Network {
 
 		void setMethod(const StringASCII& method);
 		void setEndPoint(const HTTPEndPointT<T>& endPoint);
-		void setEndPoint(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParamT<T>>& paramVector);
+		void setEndPoint(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
 		bool setEndPoint(const StringASCII& endPoint);
 
 		const StringASCII& getMethod() const;
@@ -193,9 +276,9 @@ namespace Network {
 	public:
 		HTTPClientT();
 
-		HTTPParamT<T>* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
+		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
-		HTTPResponseT<T> * query(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams);
+		HTTPResponseT<T> * query(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<Param>& urlParams);
 
 	private:
 		HTTPRequestT<T> request;
@@ -204,36 +287,90 @@ namespace Network {
 
 	using HTTPClient = HTTPClientT<int>;
 
-	template<typename T>
-	inline HTTPParamT<T>::HTTPParamT(const StringASCII& name) :
+	template<typename I, typename V>
+	ParamT<I, V>::ParamT() {
+
+	}
+
+	template<typename I, typename V>
+	inline ParamT<I, V>::ParamT(const I& name) :
 		name(name)
 	{}
 
-	template<typename T>
-	inline HTTPParamT<T>::HTTPParamT(const StringASCII & name, const StringASCII & value) :
+	template<typename I, typename V>
+	inline ParamT<I, V>::ParamT(const I & name, const V & value) :
 		name(name),
 		value(value)
 	{}
 
-	template<typename T>
-	inline HTTPParamT<T>::HTTPParamT(const HTTPParamT<T>&param) :
+	template<typename I, typename V>
+	inline ParamT<I, V>::ParamT(const ParamT<I, V>&param) :
 		name(param.name),
 		value(param.value)
 	{}
 
-	template<typename T>
-	inline void HTTPParamT<T>::setValue(const StringASCII & value) {
+	template<typename I, typename V>
+	ParamT<I, V>::ParamT(const ParamT<I, V>&& param) :
+		name(Utility::toRValue(param.name)),
+		value(Utility::toRValue(param.value))
+	{
+
+	}
+
+	template<typename I, typename V>
+	ParamT<I, V>& ParamT<I, V>::operator=(const ParamT<I, V>& param) {
+		this->name = param.name;
+		this->value = param.value;
+
+		return *this;
+	}
+
+	template<typename I, typename V>
+	ParamT<I, V>& ParamT<I, V>::operator=(const ParamT<I, V>&& param) {
+		this->name = Utility::toRValue(param.name);
+		this->value = Utility::toRValue(param.value);
+
+		return *this;
+	}
+
+	template<typename I, typename V>
+	inline bool ParamT<I, V>::operator<(const ParamT<I, V>&param) const {
+		return this->name < param.name;
+	}
+
+	template<typename I, typename V>
+	inline void ParamT<I, V>::setValue(const V & value) {
 		this->value = value;
 	}
 
-	template<typename T>
-	inline const StringASCII& HTTPParamT<T>::getName() const {
+	template<typename I, typename V>
+	inline const I& ParamT<I, V>::getName() const {
 		return this->name;
 	}
 
-	template<typename T>
-	inline const StringASCII& HTTPParamT<T>::getValue() const {
+	template<typename I, typename V>
+	inline const V& ParamT<I, V>::getValue() const {
 		return this->value;
+	}
+
+	template<typename I, typename V>
+	bool ParamT<I, V>::read(IO::SimpleFileStream* fileStream) {
+		if ( !IO::read(fileStream, &this -> name) ) {
+			return false;
+		}
+		if ( !IO::read(fileStream, &this -> value) ) {
+			return false;
+		}
+		return true;
+	}
+
+	template<typename I, typename V>
+	bool ParamT<I, V>::write(IO::SimpleFileStream* fileStream) const {
+		if ( !IO::write(fileStream, &this -> name) )
+			return false;
+		if ( !IO::write(fileStream, &this -> value) )
+			return false;
+		return true;
 	}
 
 	template<typename T>
@@ -243,39 +380,23 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPQueryT<T>::~HTTPQueryT() {
-		for ( typename Vector<HTTPParamT<T>*>::Iterator it(this->headerParamVector.getBegin()); it != this->headerParamVector.getEnd(); this->headerParamVector.iterate(&it) ) {
-			delete this->headerParamVector.getValueIt(it);
-		}
+		
 	}
 
 	template<typename T>
-	inline HTTPParamT<T>* HTTPQueryT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
-		HTTPParamT<T>* param(getHeaderParam(paramName));
-		if ( param ) {
-			param->setValue(paramValue);
-		} else {
-			param = new HTTPParamT<T>(paramName, paramValue);
-			this->headerParamVector.push(param);
-		}
+	inline HTTPParam* HTTPQueryT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
 		this->bHeaderNeedFormat = true;
-		return param;
+		return ParamContainerT<StringASCII, StringASCII>::setParam(paramName, paramValue);
 	}
 
 	template<typename T>
-	inline const HTTPParamT<T>* HTTPQueryT<T>::getHeaderParam(const StringASCII& paramName) const {
-		return const_cast< HTTPQueryT<T> * >( this )->getHeaderParam(paramName);
+	inline const HTTPParam* HTTPQueryT<T>::getHeaderParam(const StringASCII& paramName) const {
+		return ParamContainerT<StringASCII, StringASCII>::getParam(paramName);
 	}
 
 	template<typename T>
-	inline HTTPParamT<T>* HTTPQueryT<T>::getHeaderParam(const StringASCII& paramName) {
-		for ( typename Vector<HTTPParamT<T>*>::Iterator it(this->headerParamVector.getBegin()); it != this->headerParamVector.getEnd(); this->headerParamVector.iterate(&it) ) {
-			HTTPParamT<T>* param(this->headerParamVector.getValueIt(it));
-
-			if ( param->getName() == paramName ) {
-				return param;
-			}
-		}
-		return NULL;
+	inline HTTPParam* HTTPQueryT<T>::getHeaderParam(const StringASCII& paramName) {
+		return ParamContainerT<StringASCII, StringASCII>::getParam(paramName);
 	}
 
 	template<typename T>
@@ -333,8 +454,8 @@ namespace Network {
 
 			this->headerStr.clear();
 
-			for ( typename Vector<HTTPParamT<T>*>::Iterator it(this->headerParamVector.getBegin()); it != this->headerParamVector.getEnd(); this->headerParamVector.iterate(&it) ) {
-				const HTTPParamT<T>* param(this->headerParamVector.getValueIt(it));
+			for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
+				const HTTPParam* param(this->paramVector.getValueIt(it));
 
 				this->headerStr << param->getName();
 				this->headerStr << StringASCII::ElemType(':');
@@ -405,9 +526,9 @@ namespace Network {
 			StringASCII newParamName(paramNameBeginIt, Size(paramNameEndIt - paramNameBeginIt));
 			StringASCII newParamValue(paramValueBeginIt, Size(paramValueEndIt - paramValueBeginIt));
 
-			HTTPParamT<T>* newParam(new HTTPParamT<T>(newParamName, newParamValue));
+			HTTPParam* newParam(new HTTPParam(newParamName, newParamValue));
 
-			this->headerParamVector.push(newParam);
+			this->paramVector.push(newParam);
 
 			// End condition.
 			if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
@@ -702,7 +823,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParamT<T>>& paramVector) {
+	inline void HTTPRequestT<T>::setEndPoint(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) {
 		this->endPoint.setType(type);
 		this->endPoint.setHostname(hostname);
 		this->endPoint.setEndPoint(endPointStr);
@@ -745,7 +866,7 @@ namespace Network {
 	inline HTTPEndPointT<T>::HTTPEndPointT() {}
 
 	template<typename T>
-	inline HTTPEndPointT<T>::HTTPEndPointT(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParamT<T>>& paramVector) :
+	inline HTTPEndPointT<T>::HTTPEndPointT(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) :
 		type(type),
 		hostname(hostname),
 		endPointStr(endPointStr)
@@ -763,25 +884,23 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPEndPointT<T>::~HTTPEndPointT() {
-		for ( typename Vector<HTTPParamT<T>*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
-			delete this->paramVector.getValueIt(it);
-		}
+		
 	}
 
 	template<typename T>
 	inline HTTPEndPointT<T>& HTTPEndPointT<T>::operator=(const HTTPEndPointT<T>& endPoint) {
+		ParamContainerT<StringASCII, StringASCII>::operator=(endPoint);
 		this->type = endPoint.type;
 		this->endPointStr = endPoint.endPointStr;
-		copyParamVector(endPoint.paramVector);
 
 		return *this;
 	}
 
 	template<typename T>
 	inline HTTPEndPointT<T>& HTTPEndPointT<T>::operator=(const HTTPEndPointT<T>&& endPoint) {
+		ParamContainerT<StringASCII, StringASCII>::operator=(Utility::toRValue(endPoint));
 		this->type = Utility::toRValue(endPoint.type);
 		this->endPointStr = Utility::toRValue(endPoint.endPointStr);
-		this->paramVector = Utility::toRValue(endPoint.paramVector);
 
 		return *this;
 	}
@@ -807,8 +926,8 @@ namespace Network {
 
 		if ( this->paramVector.getSize() > Size(0) ) {
 			str << StringASCII::ElemType('?');
-			for ( typename Vector<HTTPParamT<T>*>::Iterator it(this->paramVector.getBegin()); it < this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
-				const HTTPParamT<T>* param(this->paramVector.getValueIt(it));
+			for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it < this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
+				const HTTPParam* param(this->paramVector.getValueIt(it));
 
 				if ( it != this->paramVector.getBegin() ) {
 					str << StringASCII::ElemType('&');
@@ -820,30 +939,6 @@ namespace Network {
 					str << param->getValue();
 				}
 			}
-		}
-	}
-
-	template<typename T>
-	inline HTTPParamT<T>* HTTPEndPointT<T>::setParam(const StringASCII& paramName, const StringASCII& paramValue) {
-		HTTPParamT<T>* param(getParam(paramName));
-
-		if ( param ) {
-			param->setValue(paramValue);
-		} else {
-			param = new HTTPParamT<T>(paramName, paramValue);
-			this->paramVector.push(param);
-		}
-
-		return param;
-	}
-
-	template<typename T>
-	inline void HTTPEndPointT<T>::setParams(const Vector<HTTPParamT<T>>& paramVector) {
-		this->paramVector.clear();
-		for ( typename Vector<HTTPParamT<T>>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
-			const HTTPParamT<T>& param(paramVector.getValueIt(it));
-
-			this->paramVector.push(new HTTPParamT<T>(param));
 		}
 	}
 
@@ -860,22 +955,6 @@ namespace Network {
 	template<typename T>
 	inline void HTTPEndPointT<T>::setEndPoint(const StringASCII& endPoint) {
 		this->endPointStr = endPoint;
-	}
-
-	template<typename T>
-	inline const HTTPParamT<T>* HTTPEndPointT<T>::getParam(const StringASCII& paramName) const {
-		return const_cast< HTTPEndPointT<T> * >( this )->getParam(paramName);
-	}
-
-	template<typename T>
-	inline HTTPParamT<T>* HTTPEndPointT<T>::getParam(const StringASCII& paramName) {
-		for ( typename Vector<HTTPParamT<T>*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
-			HTTPParamT<T>* param(this->paramVector.getValueIt(it));
-			if ( param->getName() == paramName ) {
-				return param;
-			}
-		}
-		return NULL;
 	}
 
 	template<typename T>
@@ -917,15 +996,6 @@ namespace Network {
 				{
 					return Type::Unknown;
 				}
-		}
-	}
-
-	template<typename T>
-	inline void HTTPEndPointT<T>::copyParamVector(const Vector<HTTPParamT<T>*>& paramVector) {
-		for ( typename Vector<HTTPParamT<T>>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
-			const HTTPParamT<T>* param(paramVector.getValueIt(it));
-
-			this->paramVector.push(new HTTPParamT<T>(*param));
 		}
 	}
 
@@ -1030,6 +1100,7 @@ namespace Network {
 		this->hostname = hostnameStr;
 		this->endPointStr = endPointStr;
 		this->paramVector.clear();
+		this->paramMap.clear();
 
 		if ( endFunc(it) ) {
 			return true;
@@ -1053,8 +1124,7 @@ namespace Network {
 
 			if ( functorParamValue(it) ) {
 
-				HTTPParamT<T>* newParam(new HTTPParamT<T>(paramNameStr));
-				this->paramVector.push(newParam);
+				addParam(new HTTPParam(paramNameStr));
 
 				if ( endFunc(it) ) {
 					break;
@@ -1076,8 +1146,7 @@ namespace Network {
 
 			StringASCII paramValueStr(paramValueBeginIt, Size(paramValueEndIt - paramValueBeginIt));
 
-			HTTPParamT<T>* newParam(new HTTPParamT<T>(paramNameStr, paramValueStr));
-			this->paramVector.push(newParam);
+			addParam(new HTTPParam(paramNameStr, paramValueStr));
 
 			if ( !endFunc(it) ) {
 				break;
@@ -1097,12 +1166,12 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPParamT<T>* HTTPClientT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
+	inline HTTPParam* HTTPClientT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
 		return this->request.setHeaderParam(paramName, paramValue);
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T> * HTTPClientT<T>::query(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams) {
+	inline HTTPResponseT<T> * HTTPClientT<T>::query(typename HTTPEndPointT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<Param>& urlParams) {
 		this->request.setEndPoint(type, hostname, endPointStr, urlParams);
 
 		static StringASCII sendBuffer;
@@ -1141,6 +1210,146 @@ namespace Network {
 		}
 
 		return NULL;
+	}
+
+	template<typename I, typename V>
+	inline ParamContainerT<I, V>::ParamContainerT() {}
+
+	template<typename I, typename V>
+	inline ParamContainerT<I, V>::ParamContainerT(const ParamContainerT<I, V>& paramContainer) {
+		copyParamVector(paramContainer.paramVector);
+	}
+
+	template<typename I, typename V>
+	inline ParamContainerT<I, V>::ParamContainerT(const ParamContainerT<I, V>&& paramContainer) :
+		paramVector(Utility::toRValue(paramContainer.paramVector)),
+		paramMap(Utility::toRValue(paramContainer.paramMap))
+	{
+		
+	}
+
+	template<typename I, typename V>
+	inline ParamContainerT<I, V>::~ParamContainerT() {
+		for ( typename Vector<ParamT<I, V>*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
+			delete this->paramVector.getValueIt(it);
+		}
+	}
+
+	template<typename I, typename V>
+	inline ParamContainerT<I, V>& ParamContainerT<I, V>::operator=(const ParamContainerT<I, V>& paramContainer) {
+		copyParamVector(paramContainer.paramVector);
+
+		return *this;
+	}
+
+	template<typename I, typename V>
+	inline ParamContainerT<I, V>& ParamContainerT<I, V>::operator=(const ParamContainerT<I, V>&& paramContainer) {
+		this->paramVector = Utility::toRValue(endPoint.paramVector);
+		this->paramMap = Utility::toRValue(endPoint.paramMap);
+
+		return *this;
+	}
+
+	template<typename I, typename V>
+	inline ParamT<I, V>* ParamContainerT<I, V>::setParam(const I& paramName, const V& paramValue) {
+		ParamT<I, V>* param(getParam(paramName));
+
+		if ( param ) {
+			param->setValue(paramValue);
+		} else {
+			param = new ParamT<I, V>(paramName, paramValue);
+			addParam(param);
+		}
+
+		return param;
+	}
+
+	template<typename I, typename V>
+	inline void ParamContainerT<I, V>::setParams(const Vector<ParamT<I, V>>& paramVector) {
+		this->paramVector.clear();
+		this->paramMap.clear();
+		for ( typename Vector<ParamT<I, V>>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
+			const ParamT<I, V>& param(paramVector.getValueIt(it));
+
+			addParam(new ParamT<I, V>(param));
+		}
+	}
+
+	template<typename I, typename V>
+	inline const ParamT<I, V>* ParamContainerT<I, V>::getParam(const I& paramName) const {
+		return const_cast< ParamContainerT<I, V> * >( this )->getParam(paramName);
+	}
+
+	template<typename I, typename V>
+	inline ParamT<I, V>* ParamContainerT<I, V>::getParam(const I& paramName) {
+		ParamT<I, V>** paramP(this->paramMap.getValueI(paramName));
+		if ( paramP ) {
+			return *paramP;
+		}
+		return NULL;
+	}
+
+	template<typename I, typename V>
+	inline const Vector<ParamT<I, V>*>& ParamContainerT<I, V>::getParamVector() const {
+		return this->paramVector;
+	}
+
+	template<typename I, typename V>
+	inline const Map<I, ParamT<I, V>*>& ParamContainerT<I, V>::getParamMap() const {
+		return this->paramMap;
+	}
+
+	template<typename I, typename V>
+	inline bool ParamContainerT<I, V>::read(IO::SimpleFileStream* fileStream) {
+		Size nbParams;
+
+		if ( !IO::read(fileStream, &nbParams) ) {
+			return false;
+		}
+		for ( Size i(0); i < nbParams; i++ ) {
+			ParamT<I, V>* newParam(new ParamT<I, V>());
+
+			if ( !IO::read(fileStream, newParam) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename I, typename V>
+	inline bool ParamContainerT<I, V>::write(IO::SimpleFileStream* fileStream) const {
+		const Size nbParams(this->paramVector.getSize());
+
+		if ( !IO::write(fileStream, &nbParams) ) {
+			return false;
+		}
+		for ( typename Vector<ParamT<I, V>*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
+			const ParamT<I, V>* param(this->paramVector.getValueIt(it));
+
+			if ( !IO::write(fileStream, param) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename I, typename V>
+	inline void ParamContainerT<I, V>::copyParamVector(const Vector<ParamT<I, V>*>& paramVector) {
+		this->paramVector.clear();
+		this->paramMap.clear();
+		for ( typename Vector<ParamT<I, V>>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
+			const ParamT<I, V>* param(paramVector.getValueIt(it));
+
+			addParam(new ParamT<I, V>(*param));
+		}
+	}
+
+	template<typename I, typename V>
+	inline void ParamContainerT<I, V>::addParam(ParamT<I, V>* newParam) {
+		this->paramVector.push(newParam);
+		this->paramMap.insert(newParam->getName(), newParam);
 	}
 
 }

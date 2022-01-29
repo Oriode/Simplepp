@@ -1181,7 +1181,7 @@ int main( int argc, char * argv[] ) {
 
 	Network::HTTPClient client;
 
-	Vector<Network::HTTPParam> paramVector;
+	Vector<Network::Param> paramVector;
 	Network::HTTPResponse * response(client.query(Network::HTTPEndPoint::Type::HTTPS, StringASCII("about.google"), StringASCII("/"), paramVector));
 
 	if ( response ) {

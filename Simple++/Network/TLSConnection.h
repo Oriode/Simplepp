@@ -210,6 +210,7 @@ namespace Network {
 		if ( !_initSSL() ) {
 			return false;
 		}
+		return true;
 	}
 
 	template<typename T>
