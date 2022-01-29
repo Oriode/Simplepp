@@ -540,6 +540,24 @@
     <ClInclude Include="Network\HTTPClient.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Param.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Param.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParamContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParamContainer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Url.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Url.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

@@ -261,8 +261,14 @@
     <ClInclude Include="Network\TLSConnection.h" />
     <ClInclude Include="Network\HTTPClient.h" />
     <ClInclude Include="Network\HTTPClient.hpp" />
+    <ClInclude Include="Network\Url.h" />
+    <ClInclude Include="Network\Url.hpp" />
     <ClInclude Include="OS\Path.h" />
     <ClInclude Include="OS\Path.hpp" />
+    <ClInclude Include="Param.h" />
+    <ClInclude Include="Param.hpp" />
+    <ClInclude Include="ParamContainer.h" />
+    <ClInclude Include="ParamContainer.hpp" />
     <ClInclude Include="SimpleLog.hpp" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="Stream.hpp" />

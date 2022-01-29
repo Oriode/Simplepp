@@ -1181,8 +1181,8 @@ int main( int argc, char * argv[] ) {
 
 	Network::HTTPClient client;
 
-	Vector<Network::Param> paramVector;
-	Network::HTTPResponse * response(client.query(Network::HTTPEndPoint::Type::HTTPS, StringASCII("about.google"), StringASCII("/"), paramVector));
+	Vector<Network::HTTPParam> paramVector;
+	Network::HTTPResponse * response(client.query(Network::HTTPRequest::Type::HTTPS, StringASCII("about.google"), StringASCII("/"), paramVector));
 
 	if ( response ) {
 		Log::displayLog(response->getContent());
