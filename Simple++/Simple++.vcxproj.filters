@@ -525,10 +525,10 @@
     <ClInclude Include="Time\TickRate.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Network\SSL.h">
+    <ClInclude Include="Crypto\SSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Network\SSL.hpp">
+    <ClInclude Include="Crypto\SSL.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Network\TLSConnection.h">
@@ -556,6 +556,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Network\Url.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\Crypto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\Crypto.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

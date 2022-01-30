@@ -171,6 +171,8 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="BasicLoadable.hpp" />
+    <ClInclude Include="Crypto\Crypto.h" />
+    <ClInclude Include="Crypto\Crypto.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="GL\BasicGL.h" />
     <ClInclude Include="GL\BasicGlLoadable.h" />
@@ -256,8 +258,8 @@
     <ClInclude Include="Network\BasicNetwork.hpp" />
     <ClInclude Include="Network\Connection.hpp" />
     <ClInclude Include="Network\Server.hpp" />
-    <ClInclude Include="Network\SSL.h" />
-    <ClInclude Include="Network\SSL.hpp" />
+    <ClInclude Include="Crypto\SSL.h" />
+    <ClInclude Include="Crypto\SSL.hpp" />
     <ClInclude Include="Network\TLSConnection.h" />
     <ClInclude Include="Network\HTTPClient.h" />
     <ClInclude Include="Network\HTTPClient.hpp" />

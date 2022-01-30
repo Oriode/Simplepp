@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SSL.h"
+#include "../Crypto/SSL.h"
 #include "Connection.h"
 
 namespace Network {
@@ -246,7 +246,7 @@ namespace Network {
 	template<typename T>
 	inline bool TLSConnectionT<T>::_init() {
 		if ( !NetworkObject::init() ) return false;
-		if ( !SSLObject::init() ) return false;
+		if ( !Crypto::SSLObject::init() ) return false;
 
 		if ( isConnected() ) {
 			close();

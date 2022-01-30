@@ -1485,7 +1485,10 @@ public:
 	/* CONVERSION                                                           */
 	/************************************************************************/
 
+	static bool encodeBase64(const Vector<unsigned char>& dataVector, T** itP);
+	static BasicString<T> encodeBase64(const Vector<unsigned char>& dataVector);
 
+	static bool decodeBase64(const BasicString<T>& inputStr, unsigned char** itP);
 
 
 	/** @brief	The numbers[ 16] */

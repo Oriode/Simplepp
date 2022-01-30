@@ -30,7 +30,8 @@
  //#define SPEEDTEST_MAP
  //#define SPEEDTEST_CAST
  //#define SPEEDTEST_ARITHMETIC
-#define SPEEDTEST_PATH
+ //#define SPEEDTEST_PATH
+#define SPEEDTEST_BASE64
 
 
 //#define DEBUG_GRAPHIC
@@ -41,7 +42,9 @@
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-#define DEBUG_HTTP
+//#define DEBUG_HTTP
+//#define DEBUG_CRYPTO
+#define DEBUG_BASE64
 //#define DEBUG_STRING
 //#define DEBUG_DATE
 //#define DEBUG_PATH
@@ -84,6 +87,7 @@
 #include "MultiMap.h"
 #include "OS/Path.h"
 #include "Stream.h"
+#include "Crypto/Crypto.h"
 
 namespace AI {
 
@@ -253,12 +257,12 @@ public:
 // In case of Size error : (typename )?(Size
 
 
-int main( int argc, char * argv[] ) {
+int main(int argc, char* argv[]) {
 #ifdef DEBUG 
 	/************************************************************************/
 	/* DEBUG PART														*/
 	/************************************************************************/
-	Application<char> app( argc, argv );
+	Application<char> app(argc, argv);
 
 
 	/************************************************************************/
@@ -269,52 +273,52 @@ int main( int argc, char * argv[] ) {
 
 		{
 			IO::Manager<Graphic::Texture<unsigned char>> textureManager;
-			IO::Resource<Graphic::Texture<unsigned char>> textureResource( &textureManager );
-			OS::Path filePath( "sanctum.ctexture" );
+			IO::Resource<Graphic::Texture<unsigned char>> textureResource(&textureManager);
+			OS::Path filePath("sanctum.ctexture");
 
 			//assert( IO::write( "TextureManager.cmanager", &textureManager ) );
 			//assert( IO::read( "TextureManager.cmanager", &textureManager ) );
-			log( StringASCII( "Resource counter : (expected : 0) : " )<<textureManager.getNbUses( filePath ) );
+			log(StringASCII("Resource counter : (expected : 0) : ") << textureManager.getNbUses(filePath));
 
 			// Adding one resource with the Resource
-			assert( textureResource.setObject( filePath ) );
-			log( StringASCII( "Resource counter : (expected : 1) : " )<<textureManager.getNbUses( filePath ) );
+			assert(textureResource.setObject(filePath));
+			log(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
 
-			log( StringASCII( "Texture Height : (expected : 500) : " )<<textureResource.getObject()->getHeight() );
+			log(StringASCII("Texture Height : (expected : 500) : ") << textureResource.getObject()->getHeight());
 
 			// Adding a texture directly to the manager.
-			assert( textureManager.addObject( filePath ) );
-			log( StringASCII( "Resource counter : (expected : 2) : " )<<textureManager.getNbUses( filePath ) );
+			assert(textureManager.addObject(filePath));
+			log(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
 
 			// Changing resource to something external.
 			Graphic::Texture<unsigned char> textureTest;
-			assert( textureResource.setObject( &textureTest ) );
+			assert(textureResource.setObject(&textureTest));
 			// One Resource has been deleted, the counter should be 1.
-			log( StringASCII( "Resource counter : (expected : 1) : " )<<textureManager.getNbUses( filePath ) );
+			log(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
 
 			// Set back an internaly texture.
-			assert( textureResource.setObject( filePath ) );
-			log( StringASCII( "Resource counter : (expected : 2) : " )<<textureManager.getNbUses( filePath ) );
+			assert(textureResource.setObject(filePath));
+			log(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
 			// Now the texture should be managed by the textureManager.
 
 			// Add a texture directly to the manager.
-			assert( textureManager.addObject( filePath ) );
-			log( StringASCII( "Resource counter : (expected : 3) : " )<<textureManager.getNbUses( filePath ) );
+			assert(textureManager.addObject(filePath));
+			log(StringASCII("Resource counter : (expected : 3) : ") << textureManager.getNbUses(filePath));
 
-			IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable( filePath );
+			IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable(filePath);
 
-			assert( textureLoadable.load() );
-			log( StringASCII( "Texture Loaded as a Loadable, Height : (expected : 500) : " )<<textureLoadable.getObject()->getHeight() );
+			assert(textureLoadable.load());
+			log(StringASCII("Texture Loaded as a Loadable, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
 
 			// Now try to write the loadable as a BasicIO.
-			assert( IO::write( filePath, &textureLoadable ) );
+			assert(IO::write(filePath, &textureLoadable));
 
 			// And now read it again.
-			assert( IO::read( filePath, &textureLoadable ) );
-			log( StringASCII( "Texture Loaded as a BasicIO, Height : (expected : 500) : " )<<textureLoadable.getObject()->getHeight() );
+			assert(IO::read(filePath, &textureLoadable));
+			log(StringASCII("Texture Loaded as a BasicIO, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
 
 
-			log( "Every IO Tests passed." );
+			log("Every IO Tests passed.");
 		}
 		/*
 		{
@@ -359,14 +363,14 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 #ifdef DEBUG_UI
 	{
-		Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB, true );
+		Graphic::FreeImage freeImage("sanctum.png", Graphic::FreeImage::Format::RGB, true);
 		freeImage.load();
 
-		Graphic::Image imageTmp( ( unsigned char * ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR );
+		Graphic::Image imageTmp(( unsigned char* ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR);
 
 		Graphic::TextureLoadable<unsigned char> texture;
 
-		texture.setDatas( imageTmp.toFormat( Graphic::Format::RGBA ) );
+		texture.setDatas(imageTmp.toFormat(Graphic::Format::RGBA));
 		texture.generateMipmaps();
 
 
@@ -377,7 +381,7 @@ int main( int argc, char * argv[] ) {
 
 
 		UI::Window window;
-		window.setCursorMode( GLFW::Window::CursorMode::Disabled );
+		window.setCursorMode(GLFW::Window::CursorMode::Disabled);
 
 		//window.setCursor( &( texture[0] ) );
 
@@ -385,7 +389,7 @@ int main( int argc, char * argv[] ) {
 
 
 
-		window.setIcon( &texture );
+		window.setIcon(&texture);
 
 
 		//window.setFullscreen(NULL, Math::Vec2<unsigned int>(800,600), 60);
@@ -403,31 +407,31 @@ int main( int argc, char * argv[] ) {
 	/************************************************************************/
 #ifdef DEBUG_XML
 	{
-		UTF8String testStr( "Hello world" );
-		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
-		XML::Document testDocument( OS::Path( "test.xml" ) );
+		UTF8String testStr("Hello world");
+		UTF8String testDocumentStr("<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>");
+		XML::Document testDocument(OS::Path("test.xml"));
 
-		auto nodeTest( testDocument.getElementsById( "test" ) );
+		auto nodeTest(testDocument.getElementsById("test"));
 
 		UTF8String TEST = UTF8String::null;
 
 		if ( nodeTest.getSize() ) {
-			nodeTest[ 0 ]->appendXML( WString( "<span id=\"new\"><child>New Value 1 !</child><child>New Value 2 !</child></span>" ) );
+			nodeTest[ 0 ]->appendXML(WString("<span id=\"new\"><child>New Value 1 !</child><child>New Value 2 !</child></span>"));
 
-			nodeTest[ 0 ]->getChild( 0 )->addChild( new XML::NodeText( " Hello World!" ) );
-			UTF8String value( nodeTest[ 0 ]->getValue() );
-			log( value );
+			nodeTest[ 0 ]->getChild(0)->addChild(new XML::NodeText(" Hello World!"));
+			UTF8String value(nodeTest[ 0 ]->getValue());
+			log(value);
 		}
 
-		assert( IO::write( WString( "testXML.cxml" ), &testDocument ) );
-		assert( IO::read( WString( "testXML.cxml" ), &testDocument ) );
+		assert(IO::write(WString("testXML.cxml"), &testDocument));
+		assert(IO::read(WString("testXML.cxml"), &testDocument));
 
 
 
 
 
-		Log::displayLog( testDocument.toString<WString>() );
-		testDocument.writeFileXML( OS::Path( "testOut.xml" ) );
+		Log::displayLog(testDocument.toString<WString>());
+		testDocument.writeFileXML(OS::Path("testOut.xml"));
 
 
 
@@ -446,131 +450,131 @@ int main( int argc, char * argv[] ) {
 	{
 		{
 			JSON::Node rootNode;
-			JSON::Node * childNode = new JSON::Node( "childNode" );
-			JSON::Node * arrayNode = new JSON::NodeArray( "arrayNode" );
+			JSON::Node* childNode = new JSON::Node("childNode");
+			JSON::Node* arrayNode = new JSON::NodeArray("arrayNode");
 
-			arrayNode->addChild( new JSON::NodeValue( 1 ) );
-			arrayNode->addChild( new JSON::NodeValue( 2 ) );
-			arrayNode->addChild( new JSON::NodeValue( 3 ) );
-			arrayNode->addChild( new JSON::NodeValue( 4 ) );
+			arrayNode->addChild(new JSON::NodeValue(1));
+			arrayNode->addChild(new JSON::NodeValue(2));
+			arrayNode->addChild(new JSON::NodeValue(3));
+			arrayNode->addChild(new JSON::NodeValue(4));
 
-			rootNode.addChild( childNode );
-			rootNode.addChild( arrayNode );
+			rootNode.addChild(childNode);
+			rootNode.addChild(arrayNode);
 
-			childNode->addChild( new JSON::NodeValue( "test", 43 ) );
-			childNode->addChild( NULL );
+			childNode->addChild(new JSON::NodeValue("test", 43));
+			childNode->addChild(NULL);
 
-			Log::displayLog( rootNode.toString() );
+			Log::displayLog(rootNode.toString());
 		}
 		{
 			JSON::Node rootNode;
-			rootNode.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }" );
+			rootNode.readJSON("{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }");
 
-			Vector<JSON::Node *> searchNode = rootNode.getElementsByName( "test2" );
+			Vector<JSON::Node*> searchNode = rootNode.getElementsByName("test2");
 
 			if ( searchNode.getSize() ) {
 				// Should display "Hello World !"
-				Log::displayLog( searchNode[ 0 ]->getValue() );
+				Log::displayLog(searchNode[ 0 ]->getValue());
 			}
 
-			Log::displayLog( rootNode.getName() );
-			Log::displayLog( rootNode.toString() );
+			Log::displayLog(rootNode.getName());
+			Log::displayLog(rootNode.toString());
 		}
 		{
 			JSON::Node rootNode;
-			rootNode.readFileJSON( "test.json" );
+			rootNode.readFileJSON("test.json");
 
-			Log::displayLog( rootNode.toString() );
+			Log::displayLog(rootNode.toString());
 
 
-			assert( IO::write( WString( "testJSON.cjson" ), &rootNode ) );
-			assert( IO::read( WString( "testJSON.cjson" ), &rootNode ) );
+			assert(IO::write(WString("testJSON.cjson"), &rootNode));
+			assert(IO::read(WString("testJSON.cjson"), &rootNode));
 
-			Log::displayLog( rootNode.toString() );
+			Log::displayLog(rootNode.toString());
 		}
 	}
 #endif
 
 #ifdef DEBUG_MAP
 	{
-		log( "Debuging Maps..." );
+		log("Debuging Maps...");
 
 		// Test if the compare is working fine.
-		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
+		auto r = Math::Compare::compare(UTF8String("Hello"), UTF8String("World"));
 
 		// Test if the convertion to String is working.
-		log( String( r ) );
+		log(String(r));
 
 		Map<unsigned long, unsigned long> testMap;
 
-		testMap.insert( 0, 0 );
-		testMap.insert( 1, 1 );
-		testMap.insert( 2, 2 );
-		testMap.insert( 3, 3 );
-		testMap.insert( 4, 4 );
-		testMap.insert( 5, 5 );
-		testMap.insert( 6, 6 );
-		testMap.insert( 7, 7 );
-		testMap.insert( 8, 8 );
-		testMap.insert( 9, 9 );
+		testMap.insert(0, 0);
+		testMap.insert(1, 1);
+		testMap.insert(2, 2);
+		testMap.insert(3, 3);
+		testMap.insert(4, 4);
+		testMap.insert(5, 5);
+		testMap.insert(6, 6);
+		testMap.insert(7, 7);
+		testMap.insert(8, 8);
+		testMap.insert(9, 9);
 
-		log( "Map : " );
-		for ( auto it( testMap.getBegin() ); it!=testMap.getEnd(); testMap.iterate( &it ) ) {
-			log( testMap.getValueIt( it ) );
+		log("Map : ");
+		for ( auto it(testMap.getBegin()); it != testMap.getEnd(); testMap.iterate(&it) ) {
+			log(testMap.getValueIt(it));
 		}
 
-		log( "Map Ascending : " );
-		for ( auto it( testMap.getSmallest() ); it!=testMap.getEnd(); testMap.iterateAscending( &it ) ) {
-			log( testMap.getValueIt( it ) );
+		log("Map Ascending : ");
+		for ( auto it(testMap.getSmallest()); it != testMap.getEnd(); testMap.iterateAscending(&it) ) {
+			log(testMap.getValueIt(it));
 		}
 
-		log( StringASCII( testMap ) );
+		log(StringASCII(testMap));
 
 
 		{
 			// Testing IN/OUT
-			assert( IO::write( WString( "myMap.font" ), &testMap ) );
+			assert(IO::write(WString("myMap.font"), &testMap));
 
 			Map<unsigned long, unsigned long> mapLoaded;
-			assert( IO::read( WString( "myMap.font" ), &mapLoaded ) );
+			assert(IO::read(WString("myMap.font"), &mapLoaded));
 
-			log( StringASCII( mapLoaded ) );
+			log(StringASCII(mapLoaded));
 		}
 
 		{
 			// Testing Copy
 			Map<unsigned long, unsigned long> mapCopied = testMap;
 
-			log( StringASCII( mapCopied ) );
+			log(StringASCII(mapCopied));
 
 		}
 
-		for ( unsigned long j( 0 ); j<100; j++ ) {
+		for ( unsigned long j(0); j < 100; j++ ) {
 			Map<unsigned long, unsigned long> testMap;
-			for ( unsigned long i( 0 ); i<100; i++ ) {
-				testMap.insert( i, i );
+			for ( unsigned long i(0); i < 100; i++ ) {
+				testMap.insert(i, i);
 			}
-			testMap.eraseI( j );
+			testMap.eraseI(j);
 		}
 
-		for ( unsigned long i( 0 ); i<1000; i++ ) {
-			testMap.insert( Math::random( 0, 1000 ), i );
+		for ( unsigned long i(0); i < 1000; i++ ) {
+			testMap.insert(Math::random(0, 1000), i);
 		}
 
 
-		for ( unsigned long i( 0 ); i<1000; i++ ) {
-			testMap.eraseI( Math::random( 0, 1000 ) );
+		for ( unsigned long i(0); i < 1000; i++ ) {
+			testMap.eraseI(Math::random(0, 1000));
 		}
 		//log( StringASCII( testMap ) );
 
 		Map<int, String> mapTest;
-		mapTest.insert( 42, "Hello World !" );
+		mapTest.insert(42, "Hello World !");
 
-		String * nodeResult( mapTest[ 42 ] );
+		String* nodeResult(mapTest[ 42 ]);
 		if ( nodeResult ) {
-			log( StringASCII( "Node 42 (expected : Hello World !) : " )<<*nodeResult );
+			log(StringASCII("Node 42 (expected : Hello World !) : ") << *nodeResult);
 		} else {
-			error( "Index 42 not founded." );
+			error("Index 42 not founded.");
 		}
 
 	}
@@ -585,85 +589,85 @@ int main( int argc, char * argv[] ) {
 	/* GRAPHIC PART									                        */
 	/************************************************************************/
 
-	Graphic::ColorRGB<unsigned char> colorUC( 6, 0, 8 );
-	Graphic::ColorRGB<float> colorF( 0.33, 0.86, 0.96 );
+	Graphic::ColorRGB<unsigned char> colorUC(6, 0, 8);
+	Graphic::ColorRGB<float> colorF(0.33, 0.86, 0.96);
 
-	log( StringASCII( colorF.HSLtoRGB() ) );
+	log(StringASCII(colorF.HSLtoRGB()));
 
 
 
-	Graphic::TrueTypeFont<unsigned char> font( L"consola.ttf", 40 );
+	Graphic::TrueTypeFont<unsigned char> font(L"consola.ttf", 40);
 	font.load();
-	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
-	IO::write( L"consola.cfont", &font );
+	font.loadGlyph(Graphic::Font<unsigned char>::Template::Ascii);
+	IO::write(L"consola.cfont", &font);
 
 
 	Graphic::Font<unsigned char> font2;
-	IO::read( L"consola.cfont", &font2 );
+	IO::read(L"consola.cfont", &font2);
 
-	IO::write( L"consola2.cfont", &font2 );
+	IO::write(L"consola2.cfont", &font2);
 
 	Graphic::FreeImage glyphFreeImage;
-	glyphFreeImage.loadFromDatas( ( unsigned char * ) font2[ 'A' ]->getDatas(), font2[ 'A' ]->getSize(), Graphic::FreeImage::Format::R );
-	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
+	glyphFreeImage.loadFromDatas(( unsigned char* ) font2[ 'A' ]->getDatas(), font2[ 'A' ]->getSize(), Graphic::FreeImage::Format::R);
+	glyphFreeImage.saveToFile("glyph_A.png", Graphic::FreeImage::SavingFormat::PNG);
 
 
-	Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB );
+	Graphic::FreeImage freeImage("sanctum.png", Graphic::FreeImage::Format::RGB);
 	freeImage.load();
 
 	Graphic::Texture<unsigned char> texture;
-	texture.setDatas( ( unsigned char * ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR );
+	texture.setDatas(( unsigned char* ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR);
 	texture.generateMipmaps();
-	IO::write( "sanctum.ctexture", &texture );
+	IO::write("sanctum.ctexture", &texture);
 
 
-	IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable( "sanctum.ctexture" );
+	IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable("sanctum.ctexture");
 	assert(textureLoadable.load());
-	Graphic::Texture<unsigned char> & textureLoaded( *textureLoadable.getObject() );
+	Graphic::Texture<unsigned char>& textureLoaded(*textureLoadable.getObject());
 
 
-	IO::write( "sanctum2.ctexture", &textureLoadable );
+	IO::write("sanctum2.ctexture", &textureLoadable);
 
 	/************************************************************************/
 	/* DOING SOME TEST IN imageTest2                                        */
 	/************************************************************************/
 
-	Graphic::ColorRGBA<unsigned char> colorWhite( 255, 255, 255, 100 );
-	Graphic::ColorRGBA<unsigned char> colorRed( 255, 0, 0, 255 );
-	Graphic::ColorRGB<unsigned char> colorMagenta( 255, 0, 150 );
-	Graphic::ColorRGBA<unsigned char> colorBlack( 0, 0, 0, 150 );
-	Graphic::ColorRGBA<unsigned char> colorTransluscient( 0, 0, 0, 0 );
+	Graphic::ColorRGBA<unsigned char> colorWhite(255, 255, 255, 100);
+	Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 255);
+	Graphic::ColorRGB<unsigned char> colorMagenta(255, 0, 150);
+	Graphic::ColorRGBA<unsigned char> colorBlack(0, 0, 0, 150);
+	Graphic::ColorRGBA<unsigned char> colorTransluscient(0, 0, 0, 0);
 
 
 	Graphic::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientVertical;
-	gradientVertical.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
-	gradientVertical.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 100, 100, 100, 255 ) );
+	gradientVertical.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
+	gradientVertical.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(100, 100, 100, 255));
 
 
 
 	Graphic::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientHorizontal;
-	gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
-	gradientHorizontal.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
+	gradientHorizontal.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientHorizontal.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
 
 
-	Graphic::Gradient::Linear<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientLinear( 45 );
-	gradientLinear.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
-	gradientLinear.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
-	gradientLinear.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
-	gradientLinear.addPoint( 0.6f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
-	gradientLinear.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
-	gradientLinear.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
+	Graphic::Gradient::Linear<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientLinear(45);
+	gradientLinear.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientLinear.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
+	gradientLinear.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
+	gradientLinear.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	gradientLinear.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	gradientLinear.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
 
-	Graphic::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientRadial( Math::Vec2<float>( 0.5, 0.5 ), Math::Vec2<float>( 0.5, 0.5 ) );
-	gradientRadial.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
-	gradientRadial.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
-	gradientRadial.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
-	gradientRadial.addPoint( 0.6f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
-	gradientRadial.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
-	gradientRadial.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
+	Graphic::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientRadial(Math::Vec2<float>(0.5, 0.5), Math::Vec2<float>(0.5, 0.5));
+	gradientRadial.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+	gradientRadial.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
+	gradientRadial.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
+	gradientRadial.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+	gradientRadial.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
 
-	Graphic::Image image( textureLoaded[ 0 ] );
+	Graphic::Image image(textureLoaded[ 0 ]);
 
 
 	/*{
@@ -875,32 +879,32 @@ int main( int argc, char * argv[] ) {
 
 
 		//image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
-		UTF8String testStr( "Hello World\nThis Lib is Awesome !" );
+		UTF8String testStr("Hello World\nThis Lib is Awesome !");
 
 		typedef Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>> FontType;
-		FontType myFont( L"consola.ttf", 30 );
+		FontType myFont(L"consola.ttf", 30);
 
-		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) ) );
-		myFont.setShadowActivated( false );
-		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 250 ) ) );
-		myFont.setShadowRadius( 2 );
-		myFont.setShadowBias( Math::Vec2<float>( 1, -1 ) );
+		myFont.setOverlayColorFunc(Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255)));
+		myFont.setShadowActivated(false);
+		myFont.setShadowColorFunc(Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 0, 0, 250)));
+		myFont.setShadowRadius(2);
+		myFont.setShadowBias(Math::Vec2<float>(1, -1));
 
 
-		myFont.setStrokeActivated( true );
-		myFont.setStrokeSize( 1.9f );
-		myFont.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
+		myFont.setStrokeActivated(true);
+		myFont.setStrokeSize(1.9f);
+		myFont.setStrokeColorFunc(Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 0, 0, 150)));
 
 		FontType myFontCOPY = myFont;
-		myFontCOPY.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
+		myFontCOPY.loadGlyph(Graphic::FontEffect<unsigned char>::Template::Ascii);
 
-		assert( IO::write( WString( "myFontCustomdeOUF.font" ), &myFontCOPY ) );
+		assert(IO::write(WString("myFontCustomdeOUF.font"), &myFontCOPY));
 
 
 		FontType myFontCp;
 
 
-		assert( IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCp ) );
+		assert(IO::read(WString("myFontCustomdeOUF.font"), &myFontCp));
 
 
 
@@ -908,16 +912,16 @@ int main( int argc, char * argv[] ) {
 		//image.drawImage(Graphic::Point(300, 300), *maskTest);
 
 		Graphic::Text<unsigned char> myText;
-		myText.setText( myFontCp, testStr, Math::Vec2<bool>( true, true ) );
+		myText.setText(myFontCp, testStr, Math::Vec2<bool>(true, true));
 
 		//Graphic::drawText( &image, myFontCp, Graphic::Point(250,250), testStr,  Math::Vec2<bool>( true, true ) );
 
-		assert( IO::write( WString( "myText.cimg" ), &myText ) );
+		assert(IO::write(WString("myText.cimg"), &myText));
 		Graphic::Text<unsigned char> myTextCp;
-		assert( IO::read( WString( "myText.cimg" ), &myTextCp ) );
+		assert(IO::read(WString("myText.cimg"), &myTextCp));
 
-		auto mipmap = myTextCp.resample( Math::Vec2<Graphic::Size>( myTextCp.getSize()/2 ), Graphic::Image::ResamplingMode::Lanczos );
-		image.drawImage( Graphic::Point( myTextCp.getBias()/2.0f )+Graphic::Point( 250, 250 ), mipmap );
+		auto mipmap = myTextCp.resample(Math::Vec2<Graphic::Size>(myTextCp.getSize() / 2), Graphic::Image::ResamplingMode::Lanczos);
+		image.drawImage(Graphic::Point(myTextCp.getBias() / 2.0f) + Graphic::Point(250, 250), mipmap);
 
 	}
 
@@ -1079,7 +1083,7 @@ int main( int argc, char * argv[] ) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Draw Mipmaps										//
-		for ( size_t i = 1; i<textureLoaded.getNbMipmaps(); i++ ) {
+		for ( size_t i = 1; i < textureLoaded.getNbMipmaps(); i++ ) {
 			//imageTest2[0] -> drawImage(Graphic::Point(0, 0), *imageTest2[i]);
 		}
 	}
@@ -1088,8 +1092,8 @@ int main( int argc, char * argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// Saving to file										//
 	Graphic::FreeImage freeImage2;
-	freeImage2.loadFromDatas( ( unsigned char * ) textureLoaded.getDatas( 0 ), textureLoaded.getSize( 0 ), Graphic::FreeImage::Format::RGB );
-	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
+	freeImage2.loadFromDatas(( unsigned char* ) textureLoaded.getDatas(0), textureLoaded.getSize(0), Graphic::FreeImage::Format::RGB);
+	freeImage2.saveToFile("sanctum3.png", Graphic::FreeImage::SavingFormat::PNG);
 #endif
 
 #ifdef DEBUG_NETWORK
@@ -1097,41 +1101,41 @@ int main( int argc, char * argv[] ) {
 	// DEBUG : Network									//
 	{
 		int result;
-		std::cout<<"0 : Client, 1 : Server, Google Test : 2"<<std::endl;
-		scanf_s( "%d", &result );
+		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
+		scanf_s("%d", &result);
 
 		char messageToSend[] = "Hello World !\xE2\x9C\xAD";
 		char buffer[ 50 ] = "";
 
-		if ( result==0 ) {
+		if ( result == 0 ) {
 			/////CLIENT
 			Network::Server myUDPServer;
-			myUDPServer.listen( 5001, Network::SockType::UDP, Network::IpFamily::Undefined );
+			myUDPServer.listen(5001, Network::SockType::UDP, Network::IpFamily::Undefined);
 
 			Network::Connection myTCPConnection;
-			myTCPConnection.connect( "::1", 5001, Network::SockType::TCP );
-			myTCPConnection.receive( buffer, sizeof( buffer ) );
-			Log::displayLog( StringASCII()<<"We are connected to the server and received the message : "<<buffer );
+			myTCPConnection.connect("::1", 5001, Network::SockType::TCP);
+			myTCPConnection.receive(buffer, sizeof(buffer));
+			Log::displayLog(StringASCII() << "We are connected to the server and received the message : " << buffer);
 
 			Network::Address addressFrom;
-			if ( myUDPServer.receive( buffer, sizeof( buffer ), &addressFrom ) )
-				Log::displayLog( StringASCII()<<"We got an UDP message from the server "<<buffer );
+			if ( myUDPServer.receive(buffer, sizeof(buffer), &addressFrom) )
+				Log::displayLog(StringASCII() << "We got an UDP message from the server " << buffer);
 
-		} else if ( result==1 ) {
+		} else if ( result == 1 ) {
 			//SERVER
 			Network::Server myTCPServer;
-			myTCPServer.listen( 5001, Network::SockType::TCP, Network::IpFamily::Undefined );
+			myTCPServer.listen(5001, Network::SockType::TCP, Network::IpFamily::Undefined);
 			// myTCPServer.listen( 5002, Network::SockType::TCP, Network::IpFamily::Undefined );
 
 			Network::Connection clientConnection;
-			while ( myTCPServer.accept( &clientConnection ) ) {
+			while ( myTCPServer.accept(&clientConnection) ) {
 
 
 				while ( true ) {
-					if ( !clientConnection.receive( buffer, sizeof( buffer ) ) ) {
+					if ( !clientConnection.receive(buffer, sizeof(buffer)) ) {
 						break;
 					}
-					Log::displayLog( StringASCII::format( "Received String \"%\" from client.", buffer ) );
+					Log::displayLog(StringASCII::format("Received String \"%\" from client.", buffer));
 				}
 
 				/*
@@ -1147,8 +1151,8 @@ int main( int argc, char * argv[] ) {
 			/////GOOGLE TEST
 			Network::Connection myTCPConnection;
 
-			if ( myTCPConnection.connect( "www.google.fr", 80, Network::SockType::TCP ) ) {
-				Log::displayLog( StringASCII( "Connected to Google ! IP:" )<<myTCPConnection.getIp() );
+			if ( myTCPConnection.connect("www.google.fr", 80, Network::SockType::TCP) ) {
+				Log::displayLog(StringASCII("Connected to Google ! IP:") << myTCPConnection.getIp());
 			}
 		}
 	}
@@ -1158,38 +1162,74 @@ int main( int argc, char * argv[] ) {
 	// DEBUG : SSL									//
 
 	/////GOOGLE TEST
-	Network::TLSConnection myTCPConnection;
+	{
+		Network::TLSConnection myTCPConnection;
 
-	if ( myTCPConnection.connect("google.com", 443, Network::SockType::TCP) ) {
-		Log::displayLog(StringASCII("Connected to Google ! IP:") << myTCPConnection.getIp());
+		if ( myTCPConnection.connect("google.com", 443, Network::SockType::TCP) ) {
+			Log::displayLog(StringASCII("Connected to Google ! IP:") << myTCPConnection.getIp());
 
-		char query[] = "GET https://about.google HTTP/1.1\r\nAccept: */*\r\nConnection: close\r\n\r\n";
-		if ( !myTCPConnection.send(query, sizeof(query)) ) {
-			Log::displayError("Unable to send the query.");
+			char query[] = "GET https://about.google HTTP/1.1\r\nAccept: */*\r\nConnection: close\r\n\r\n";
+			if ( !myTCPConnection.send(query, sizeof(query)) ) {
+				Log::displayError("Unable to send the query.");
+			}
+
+			char receiveBuffer[ 1000000 ];
+			int receivedLength(myTCPConnection.receive(receiveBuffer, sizeof(receiveBuffer)));
+
+			Log::displayLog(StringASCII(receiveBuffer, receivedLength));
 		}
-
-		char receiveBuffer[ 1000000 ];
-		int receivedLength(myTCPConnection.receive(receiveBuffer, sizeof(receiveBuffer)));
-
-		Log::displayLog(StringASCII(receiveBuffer, receivedLength));
 	}
-
 #endif
 #ifdef DEBUG_HTTP
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : HTTP									//
+	{
+		Network::HTTPClient client;
+		client.setHeaderParam(StringASCII("X-MBX-APIKEY"), StringASCII("q4Uuz9yQUUrj5zA3PGRROFeq03Binump7hkytN19qCBlitr8NCWICT2Wvqybn8Y8"));
+		StringASCII secretKey("qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW");
+		// client.setHeaderParam(StringASCII("User-Agent"), StringASCII("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Mobile Safari/537.36"));
+		// client.setHeaderParam(StringASCII("Host"), StringASCII("api.binance.com"));
 
-	Network::HTTPClient client;
+		Vector<Network::HTTPParam> paramVector;
+		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
+		paramVector.push(Param(StringASCII("timestamp"), StringASCII(Time::TimePoint::getNow().getTime() * Time::TimeT(1000))));
+		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(1000)));
+		Network::HTTPResponse* response(client.query(Network::HTTPRequest::Type::HTTPS, StringASCII("api.binance.com"), StringASCII("/api/v3/account"), paramVector));
 
-	Vector<Network::HTTPParam> paramVector;
-	Network::HTTPResponse * response(client.query(Network::HTTPRequest::Type::HTTPS, StringASCII("about.google"), StringASCII("/"), paramVector));
-
-	if ( response ) {
-		Log::displayLog(response->getContent());
-	} else {
-		Log::displayError("Query failed.");
+		if ( response ) {
+			Log::displayLog(response->getContent());
+		} else {
+			Log::displayError("Query failed.");
+		}
 	}
+#endif
+#ifdef DEBUG_CRYPTO
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : CRYPTO									//
+	{
+		StringASCII secretKey("qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW");
+		StringASCII messageStr("Hello world !");
+		char outputBuffer[ 1000 ];
+		Size outputLength;
 
+		Crypto::HMACSha256(secretKey, messageStr, outputBuffer, &outputLength);
+
+		StringASCII hashStr(outputBuffer, outputLength);
+
+		log(hashStr);
+	}
+#endif
+#ifdef DEBUG_BASE64
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : BASE64									//
+	{
+		Vector<unsigned int> dataVector;
+		dataVector.resize(12);
+
+		StringASCII outputStr(StringASCII::encodeBase64(dataVector));
+
+		log(outputStr);
+	}
 #endif
 #ifdef DEBUG_STRING
 	//////////////////////////////////////////////////////////////////////////
@@ -2120,7 +2160,17 @@ int main( int argc, char * argv[] ) {
 		Log::displayChrono( String::format( "Std Path.exists(WString) : %", tmp ) );
 	}
 #endif
+#ifdef SPEEDTEST_BASE64
+	{
+		Vector<unsigned int> dataVector;
+		dataVector.resize(32000000);
 
+		Log::startChrono();
+		StringASCII outputStr(StringASCII::encodeBase64(dataVector));
+		Log::stopChrono();
+		Log::displayChrono(String::format("Base64 encoding : %", outputStr.getSubStr(Size(0), Size(10))));
+	}
+#endif
 
 
 
