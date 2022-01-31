@@ -1,14 +1,24 @@
+#include "Crypto.h"
 namespace Crypto {
 
 	template<typename T>
-	BasicString<T> HMACSha256(const BasicString<T>& keyStr, const BasicString<T>& messageStr) {
-
+	Vector<unsigned char> HMACSha256(const Vector<unsigned char>& keyBinary, const Vector<unsigned char>& dataBinary) {
+		Vector<unsigned char> binaryOutput;
+		binaryOutput.reserve(EVP_MAX_MD_SIZE);
 		
+		unsigned char* it(binaryOutput.getData());
+		if ( !HMACSha256<T>(keyBinary, dataBinary, &it) ) {
+			return binaryOutput;
+		}
 
+		Size outputSize(it - binaryOutput.getBegin());
+		binaryOutput.resize(outputSize);
+
+		return binaryOutput;
 	}
 
 	template<typename T>
-	bool HMACSha256(const BasicString<T>& keyStr, const BasicString<T>& messageStr, typename BasicString<T>::ElemType* outputIt, Size* outputLength) {
+	bool HMACSha256(const Vector<unsigned char>& keyBinary, const Vector<unsigned char>& dataBinary, unsigned char** itP) {
 		
 		// EVP_MAX_MD_SIZE
 
@@ -18,17 +28,59 @@ namespace Crypto {
 			return false;
 		}*/
 
+		unsigned char*& it(*itP);
+
 		const EVP_MD* cypher(EVP_sha256());
 
 		unsigned int length;
-		if ( !HMAC(cypher, reinterpret_cast<const void *>(keyStr.toCString()), int(keyStr.getSize()), reinterpret_cast< const unsigned char* >( messageStr.toCString() ), messageStr.getSize(), reinterpret_cast< unsigned char* >( outputIt ), &length) ) {
-			error(String::format("Error while SHA256 hashing the data \"%\".", messageStr));
+		bool bResult(HMAC(cypher, reinterpret_cast< const void* >( keyBinary.getData() ), int(keyBinary.getSize()),
+					 dataBinary.getData(), dataBinary.getSize(),
+					 it, &length));
+
+		if ( !bResult ) {
 			logSSL();
 			return false;
 		}
-		*outputLength = length;
+
+		it += length;
 
 		// HMAC_CTX_free(context);
+
+		return true;
+	}
+
+	template<typename T>
+	Vector<unsigned char> digestSha256(const Vector<unsigned char>& dataBinary) {
+		Vector<unsigned char> binaryOutput;
+		binaryOutput.reserve(EVP_MAX_MD_SIZE);
+
+		unsigned char* it(binaryOutput.getData());
+		if ( !digestSha256<T>(dataBinary, &it) ) {
+			return binaryOutput;
+		}
+
+		Size outputSize(it - binaryOutput.getBegin());
+		binaryOutput.resize(outputSize);
+
+		return binaryOutput;
+	}
+
+	template<typename T>
+	bool digestSha256(const Vector<unsigned char>& dataBinary, unsigned char** itP) {
+		unsigned char*& it(*itP);
+
+		const EVP_MD* cypher(EVP_sha256());
+
+		unsigned int length;
+		bool bResult(EVP_Digest(reinterpret_cast< const void* >( dataBinary.getData() ), dataBinary.getSize(),
+					 it, &length, cypher, NULL));
+
+		if ( !bResult ) {
+			logSSL();
+			return false;
+		}
+
+		it += length;
 
 		return true;
 	}

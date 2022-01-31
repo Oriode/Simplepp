@@ -9,10 +9,16 @@
 namespace Crypto {
 
 	template<typename T>
-	BasicString<T> HMACSha256(const BasicString<T>& keyStr, const BasicString<T>& messageStr);
+	Vector<unsigned char> HMACSha256(const Vector<unsigned char>& keyBinary, const Vector<unsigned char>& dataBinary);
 
 	template<typename T>
-	bool HMACSha256(const BasicString<T>& keyStr, const BasicString<T>& messageStr, typename BasicString<T>::ElemType * outputIt, Size* outputLength);
+	bool HMACSha256(const Vector<unsigned char> & keyBinary, const Vector<unsigned char> & dataBinary, unsigned char ** itP);
+
+	template<typename T>
+	Vector<unsigned char> digestSha256(const Vector<unsigned char>& dataBinary);
+
+	template<typename T>
+	bool digestSha256(const Vector<unsigned char>& dataBinary, unsigned char** itP);
 
 }
 

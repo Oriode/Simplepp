@@ -42,9 +42,10 @@
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-//#define DEBUG_HTTP
+#define DEBUG_HTTP
 //#define DEBUG_CRYPTO
-#define DEBUG_BASE64
+//#define DEBUG_BASE64
+//#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
 //#define DEBUG_DATE
 //#define DEBUG_PATH
@@ -1187,14 +1188,22 @@ int main(int argc, char* argv[]) {
 		Network::HTTPClient client;
 		client.setHeaderParam(StringASCII("X-MBX-APIKEY"), StringASCII("q4Uuz9yQUUrj5zA3PGRROFeq03Binump7hkytN19qCBlitr8NCWICT2Wvqybn8Y8"));
 		StringASCII secretKey("qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW");
-		// client.setHeaderParam(StringASCII("User-Agent"), StringASCII("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Mobile Safari/537.36"));
-		// client.setHeaderParam(StringASCII("Host"), StringASCII("api.binance.com"));
 
 		Vector<Network::HTTPParam> paramVector;
 		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
-		paramVector.push(Param(StringASCII("timestamp"), StringASCII(Time::TimePoint::getNow().getTime() * Time::TimeT(1000))));
-		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(1000)));
-		Network::HTTPResponse* response(client.query(Network::HTTPRequest::Type::HTTPS, StringASCII("api.binance.com"), StringASCII("/api/v3/account"), paramVector));
+		Time::TimeT timestamp(Time::TimePoint::getNow().getTime()* Time::TimeT(1000));
+		paramVector.push(Param(StringASCII("timestamp"), StringASCII(timestamp)));
+		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(2000)));
+
+		Network::Url url(Network::HTTPRequest::Type::HTTPS, StringASCII("api.binance.com"), StringASCII("/api/v3/account"), paramVector);
+		StringASCII paramsStr(url.formatParams());
+
+		Vector<unsigned char> hashBinary(Crypto::HMACSha256<char>(secretKey, paramsStr));
+		StringASCII signatureStr(StringASCII::encodeHexadecimal(hashBinary));
+
+		url.setParam(StringASCII("signature"), signatureStr);
+
+		Network::HTTPResponse* response(client.query(url));
 
 		if ( response ) {
 			Log::displayLog(response->getContent());
@@ -1207,14 +1216,17 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : CRYPTO									//
 	{
-		StringASCII secretKey("qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW");
-		StringASCII messageStr("Hello world !");
-		char outputBuffer[ 1000 ];
-		Size outputLength;
+		StringASCII keyStr("NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j");
+		StringASCII dataStr("symbol=LTCBTC&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.1&recvWindow=5000&timestamp=1499827319559");
 
-		Crypto::HMACSha256(secretKey, messageStr, outputBuffer, &outputLength);
+		Vector<unsigned char> keyBinary(keyStr);
+		Vector<unsigned char> dataBinary(dataStr);
 
-		StringASCII hashStr(outputBuffer, outputLength);
+		Vector<unsigned char> digestBinary(Crypto::digestSha256<char>(dataBinary));
+
+		Vector<unsigned char> hashBinary(Crypto::HMACSha256<char>(keyBinary, dataBinary));
+
+		StringASCII hashStr(StringASCII::encodeHexadecimal(hashBinary));
 
 		log(hashStr);
 	}
@@ -1253,6 +1265,51 @@ int main(int argc, char* argv[]) {
 
 			StringASCII outputStr(StringASCII::encodeBase64(dataVector));
 			Vector<unsigned char> outputVector(StringASCII::decodeBase64(outputStr));
+
+			log(outputStr);
+
+			if ( dataVector != outputVector ) {
+				error("Error.");
+				break;
+			}
+		}
+
+		log("Success !");
+	}
+#endif
+#ifdef DEBUG_HEXADECIMAL
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : HEXADECIMAL									//
+	{
+		struct GenerateVectorFunctor {
+			GenerateVectorFunctor(Size sizeMin, Size sizeMax) :
+				sizeMin(sizeMin),
+				sizeMax(sizeMax) {}
+
+			Vector<unsigned char> operator()() const {
+				Vector<unsigned char> outputVector;
+				Size newSize(Math::random(this->sizeMin, this->sizeMax));
+				outputVector.resize(newSize);
+
+				for ( Size i(0); i < outputVector.getSize(); i++ ) {
+					outputVector.setValueI(i, unsigned char(Math::random(unsigned char(0), unsigned char(255))));
+				}
+
+				return outputVector;
+			}
+
+			Size sizeMin;
+			Size sizeMax;
+		};
+
+		GenerateVectorFunctor generateVectorFunctor(Size(128), Size(256));
+		Size nbTests(10000);
+
+		for ( Size i(0); i < nbTests; i++ ) {
+			Vector<unsigned char> dataVector(generateVectorFunctor());
+
+			StringASCII outputStr(StringASCII::encodeHexadecimal(dataVector));
+			Vector<unsigned char> outputVector(StringASCII::decodeHexadecimal(outputStr));
 
 			log(outputStr);
 
