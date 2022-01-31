@@ -61,6 +61,17 @@ inline void ParamContainerT<I, V>::setParams(const Vector<ParamT<I, V>>& paramVe
 }
 
 template<typename I, typename V>
+inline void ParamContainerT<I, V>::setParams(const Vector<ParamT<I, V> *>& paramVector) {
+	this->paramVector.clear();
+	this->paramMap.clear();
+	for ( typename Vector<ParamT<I, V> *>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
+		const ParamT<I, V>* param(paramVector.getValueIt(it));
+
+		addParam(new ParamT<I, V>(*param));
+	}
+}
+
+template<typename I, typename V>
 inline const ParamT<I, V>* ParamContainerT<I, V>::getParam(const I& paramName) const {
 	return const_cast< ParamContainerT<I, V> * >( this )->getParam(paramName);
 }

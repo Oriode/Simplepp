@@ -1,3 +1,4 @@
+#include "Url.h"
 namespace Network {
 
 	template<typename T>
@@ -61,9 +62,11 @@ namespace Network {
 	template<typename T>
 	inline StringASCII UrlT<T>::format() const {
 		StringASCII outputStr;
-		outputStr.reserve(10000);
+		outputStr.reserve(1024);
 
 		format(&outputStr);
+
+		return outputStr;
 	}
 
 	template<typename T>
@@ -79,18 +82,35 @@ namespace Network {
 
 		if ( this->paramVector.getSize() > Size(0) ) {
 			str << StringASCII::ElemType('?');
-			for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it < this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
-				const HTTPParam* param(this->paramVector.getValueIt(it));
+			formatParams(&str);
+		}
+	}
 
-				if ( it != this->paramVector.getBegin() ) {
-					str << StringASCII::ElemType('&');
-				}
+	template<typename T>
+	inline StringASCII UrlT<T>::formatParams() const {
+		StringASCII outputStr;
+		outputStr.reserve(256);
 
-				str << param->getName();
-				if ( param->getValue().getSize() > Size(0) ) {
-					str << StringASCII::ElemType('=');
-					str << param->getValue();
-				}
+		formatParams(&outputStr);
+
+		return outputStr;
+	}
+
+	template<typename T>
+	inline void UrlT<T>::formatParams(StringASCII* outputStr) const {
+		StringASCII& str(*outputStr);
+
+		for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it < this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
+			const HTTPParam* param(this->paramVector.getValueIt(it));
+
+			if ( it != this->paramVector.getBegin() ) {
+				str << StringASCII::ElemType('&');
+			}
+
+			str << param->getName();
+			if ( param->getValue().getSize() > Size(0) ) {
+				str << StringASCII::ElemType('=');
+				str << param->getValue();
 			}
 		}
 	}

@@ -98,7 +98,7 @@ namespace Network {
 
 		void setMethod(const StringASCII& method);
 		void setEndPoint(const UrlT<T>& url);
-		void setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
+		void setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& paramVector);
 		bool setEndPoint(const StringASCII& url);
 
 		const StringASCII& getMethod() const;
@@ -127,7 +127,8 @@ namespace Network {
 
 		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
-		HTTPResponseT<T> * query(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<Param>& urlParams);
+		HTTPResponseT<T> * query(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams);
+		HTTPResponseT<T> * query(const UrlT<T> & url);
 
 	private:
 		HTTPRequestT<T> request;

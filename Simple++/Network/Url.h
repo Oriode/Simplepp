@@ -35,6 +35,9 @@ namespace Network {
 		StringASCII format() const;
 		void format(StringASCII* outputStr) const;
 
+		StringASCII formatParams() const;
+		void formatParams(StringASCII* outputStr) const;
+
 		void setType(const typename UrlT<T>::Type type);
 		void setHostname(const StringASCII& hostname);
 		void setEndPoint(const StringASCII& endPoint);

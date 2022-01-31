@@ -1,3 +1,4 @@
+#include "HTTPClient.h"
 namespace Network {
 
 	template<typename T>
@@ -458,7 +459,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) {
+	inline void HTTPRequestT<T>::setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& paramVector) {
 		this->url.setType(type);
 		this->url.setHostname(hostname);
 		this->url.setEndPoint(endPointStr);
@@ -526,7 +527,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<Param>& urlParams) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams) {
 		this->request.setEndPoint(type, hostname, endPointStr, urlParams);
 
 		static StringASCII sendBuffer;
@@ -568,6 +569,11 @@ namespace Network {
 		}
 
 		return NULL;
+	}
+
+	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(const UrlT<T>& url) {
+		return query(url.getType(), url.getHostname(), url.getEndPoint(), url.getParamVector());
 	}
 
 }

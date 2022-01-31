@@ -18,6 +18,7 @@ public:
 
 	ParamT<I, V>* setParam(const I& paramName, const V& paramValue);
 	void setParams(const Vector<ParamT<I, V>>& paramVector);
+	void setParams(const Vector<ParamT<I, V> *>& paramVector);
 
 	const ParamT<I, V>* getParam(const I& paramName) const;
 	ParamT<I, V>* getParam(const I& paramName);
