@@ -2,107 +2,147 @@
 
 namespace Math {
 
+	template<typename FakeType>
+	std::random_device BasicMathT<FakeType>::_randomDevice;
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T e() {
+	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::e() {
 		return T( 2.7182818 );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T pi() {
+	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::pi() {
 		return T( 3.14159265359 );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T random( const T & min, const T & max ) {
-		static std::random_device _randomDevice;
-		static T randomMax( _randomDevice.max() );
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::modulus(const T& x, const T& d) {
+		return x % d;
+	}
+
+	template<typename FakeType>
+	MATH_FUNC_QUALIFIER float BasicMathT<FakeType>::modulus(const float& x, const float& d) {
+		float r(x);
+		if ( r > d ) {
+			do { r -= d; } while ( r > d );
+		} else if ( r < float(0) ) {
+			while ( r < float(0) ) r += d;
+		}
+		return r;
+	}
+
+	template<typename FakeType>
+	MATH_FUNC_QUALIFIER double BasicMathT<FakeType>::modulus(const double& x, const double& d) {
+		double r(x);
+		if ( x > d ) {
+			do { r -= d; } while ( r > d );
+		} else if ( r < double(0) ) {
+			while ( r < double(0) ) r += d;
+		}
+		return r;
+	}
+
+	template<typename FakeType>
+	template<typename T>
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::random( const T & min, const T & max ) {
+		static T randomMax(BasicMathT<FakeType>::_randomDevice.max() );
 		T range( max - min );
-		T rng( _randomDevice() );
+		T rng(BasicMathT<FakeType>::_randomDevice() );
 
 		return rng * range / randomMax + min;
 	}
 
-	MATH_FUNC_QUALIFIER int random( int min, int max ) {
-		static std::random_device _randomDevice;
-		static unsigned long long randomMax( _randomDevice.max() );
+	template<typename FakeType>
+	MATH_FUNC_QUALIFIER int BasicMathT<FakeType>::random( int min, int max ) {
+		static unsigned long long randomMax(BasicMathT<FakeType>::_randomDevice.max() );
 		unsigned long long range( static_cast< unsigned long long >( max ) - static_cast< unsigned long long >( min ) );
-		unsigned long long rng( _randomDevice() );
+		unsigned long long rng(BasicMathT<FakeType>::_randomDevice() );
 		return int( rng * range / randomMax ) + min;
 	}
 
-	MATH_FUNC_QUALIFIER unsigned int random( unsigned int min, unsigned int max ) {
-		static std::random_device _randomDevice;
-		static unsigned long long randomMax( _randomDevice.max() );
+	template<typename FakeType>
+	MATH_FUNC_QUALIFIER unsigned long long BasicMathT<FakeType>::random(unsigned long long min, unsigned long long max ) {
+		static unsigned long long randomMax(BasicMathT<FakeType>::_randomDevice.max() );
 		unsigned long long range( max - min );
-		unsigned long long rng( _randomDevice() );
-		return unsigned int( rng * range / randomMax ) + min;
+		unsigned long long rng(BasicMathT<FakeType>::_randomDevice() );
+		return unsigned long long( rng * range / randomMax ) + min;
 	}
 
-
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T random() {
-		static std::random_device _randomDevice;
-		return T( _randomDevice() );
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::random() {
+		return T(BasicMathT<FakeType>::_randomDevice() );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T randomF() {
-		static std::random_device _randomDevice;
-		return T( _randomDevice() ) / T( _randomDevice.max() );
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::randomF() {
+		return T(BasicMathT<FakeType>::_randomDevice() ) / T(BasicMathT<FakeType>::_randomDevice.max() );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T randomMax() {
-		static std::random_device _randomDevice;
-		return T( _randomDevice.max() );
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::randomMax() {
+		return T(BasicMathT<FakeType>::_randomDevice.max() );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T min( const T & x, const T & y ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::min( const T & x, const T & y ) {
 		return ( y < x ) ? y : x;
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T max( const T & x, const T & y ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::max( const T & x, const T & y ) {
 		return ( y > x ) ? y : x;
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T pow( const T & v, double e ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::pow( const T & v, double e ) {
 		return std::pow( v, e );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T abs( const T & v ) {
+	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::abs( const T & v ) {
 		return ( v < T( 0 ) ) ? -v : v;
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T pow( const T & v, int e ) {
+	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::pow( const T & v, int e ) {
 		return ( e == int( 0 ) ) ? T( 1 ) : v * pow( v, e - int( 1 ) );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T gcd( const T & M, const T & N ) {
+	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::gcd( const T & M, const T & N ) {
 		return ( N == 0 ) ? M : gcd( N, M % N );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr int sign( const T & i ) {
+	MATH_FUNC_QUALIFIER constexpr int BasicMathT<FakeType>::sign( const T & i ) {
 		return i < T( 0 ) ? -1 : 1;
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T clamp( const T & v, const T & min, const T & max ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::clamp( const T & v, const T & min, const T & max ) {
 		_assert( min <= max );
 		if ( v > max ) return max;
 		else if ( v < min ) return min;
 		else return v;
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T fpart( const T & x ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::fpart( const T & x ) {
 		if ( x < T( 0 ) ) return -( Math::trunc( x ) - x );
 		else return x - Math::trunc( x );
 	}
@@ -110,86 +150,50 @@ namespace Math {
 
 
 
-
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T trunc( const T & x ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::trunc( const T & x ) {
 		return x;
 	}
 
-	template<>
-	MATH_FUNC_QUALIFIER float trunc( const float & x ) {
+	template<typename FakeType>
+	MATH_FUNC_QUALIFIER float BasicMathT<FakeType>::trunc( const float & x ) {
 		return float( int( x ) );
 	}
 
-	template<>
-	MATH_FUNC_QUALIFIER double trunc( const double & x ) {
+	template<typename FakeType>
+	MATH_FUNC_QUALIFIER double BasicMathT<FakeType>::trunc( const double & x ) {
 		return double( long( x ) );
 	}
 
-
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T radians( const T & degres ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::radians( const T & degres ) {
 		return degres * T( 0.0174532925 );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T degree( const T & radians ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::degree( const T & radians ) {
 		return radians * T( 57.2957795786 );
 	}
 
-
-	template<intmax_t Numerator, intmax_t Denumerator = 1>
-	struct Ratio {
-		static_assert( Denumerator != 0, "Denominator cannot be zero." );
-		static_assert( -INTMAX_MAX <= Numerator, "Numerator too negative." );
-		static_assert( -INTMAX_MAX <= Numerator, "Denominator too negative." );
-
-		static constexpr intmax_t g = gcd( Numerator, Denumerator );
-
-		static constexpr intmax_t num = ( g == 0 ) ? 0 : ( sign( Numerator ) * sign( Denumerator ) * abs( Numerator ) / g );
-		static constexpr intmax_t den = ( g == 0 ) ? 0 : ( abs( Denumerator ) / g );
-
-		typedef Ratio<num, den> type;
-	};
-
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T sincn( const T & x ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::sincn( const T & x ) {
 		if ( x == T( 0 ) )
 			return T( 1 );
 		else
 			return ( sin( pi() * x ) ) / ( pi() * x );
 	}
 
+	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T sinc( const T & x ) {
+	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::sinc( const T & x ) {
 		if ( x == T( 0 ) )
 			return T( 1 );
 		else
 			return sin( x ) / x;
-	}
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER T modulus( const T & x, const T & d ) {
-		return x % d;
-	}
-	MATH_FUNC_QUALIFIER float modulus( const float & x, const float & d ) {
-		float r( x );
-		if ( r > d ) {
-			do { r -= d; } while ( r > d );
-		} else if ( r < float( 0 ) ) {
-			while ( r < float( 0 ) ) r += d;
-		}
-		return r;
-	}
-	MATH_FUNC_QUALIFIER double modulus( const double & x, const double & d ) {
-		double r( x );
-		if ( x > d ) {
-			do { r -= d; } while ( r > d );
-		} else if ( r < double( 0 ) ) {
-			while ( r < double( 0 ) ) r += d;
-		}
-		return r;
 	}
 
 
