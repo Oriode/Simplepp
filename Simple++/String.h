@@ -1485,11 +1485,40 @@ public:
 	/* CONVERSION                                                           */
 	/************************************************************************/
 
+	///@brief Base 64 encode a binary data Vector to a BasicString<T>
+	///@param dataVector Binary data Vector to be encoded.
+	///@param itP Pointer to a BasicString<T> Iterator to be filled.
+	///@return True if success, False otherwise.
 	static bool encodeBase64(const Vector<unsigned char>& dataVector, T** itP);
+
+	///@brief Base 64 encode a binary data Vector to a BasicString<T>
+	///@param dataVector Binary data Vector to be encoded.
+	///@return BasicString<T> generated.
 	static BasicString<T> encodeBase64(const Vector<unsigned char>& dataVector);
 
+	///@brief Base 64 decode a BasicString<T> to a binary data Vector.
+	///@param inputStr BasicString<T> to be decoded.
+	///@param itP Pointer to a binary data Vector Iterator.
+	///@return True if success, False otherwise.
 	static bool decodeBase64(const BasicString<T>& inputStr, unsigned char** itP);
+
+	///@brief Base 64 decode a BasicString<T> to a binary data Vector.
+	///@param inputStr BasicString<T> to be decoded.
+	///@return Binary data Vector generated.
 	static Vector<unsigned char> decodeBase64(const BasicString<T>& inputStr);
+
+	///@brief Get the BasicString<T> Size of the base 64 encoding of the data Vector.
+	///@param dataVector Binary data Vector to be used to compute the Size.
+	///@return BasicString<T> Size.
+	static Size getBase64EncodeSize(const Vector<unsigned char>& dataVector);
+
+	///@brief Get the binary data Vector reserve Size of the base 64 decoding of the BasicString<T>. Final Size may be lower.
+	///@param inputStr BasicString<T> to be used to compute the reserve Size.
+	///@return Binary data Vector reserve Size.
+	static Size getBase64DecodeReserveSize(const BasicString<T>& inputStr);
+
+	///@brief Table of characters used in base 64 encoding.
+	static const T base64CharTable[ 64 ];
 
 	/** @brief	The numbers[ 16] */
 	static const T numbers[ 16 ];

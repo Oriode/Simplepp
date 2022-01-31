@@ -10,8 +10,8 @@
 
 
 
-
-
+template<typename T>
+const T BasicString<T>::base64CharTable[ 64 ] = { T('A'), T('B'), T('C'), T('D'), T('E'), T('F'), T('G'), T('H'), T('I'), T('J'), T('K'), T('L'), T('M'), T('N'), T('O'), T('P'), T('Q'), T('R'), T('S'), T('T'), T('U'), T('V'), T('W'), T('X'), T('Y'), T('Z'), T('a'), T('b'), T('c'), T('d'), T('e'), T('f'), T('g'), T('h'), T('i'), T('j'), T('k'), T('l'), T('m'), T('n'), T('o'), T('p'), T('q'), T('r'), T('s'), T('t'), T('u'), T('v'), T('w'), T('x'), T('y'), T('z'), T('0'), T('1'), T('2'), T('3'), T('4'), T('5'), T('6'), T('7'), T('8'), T('9'), T('+'), T('/') };
 
 template<typename T>
 const T BasicString<T>::numbers[ 16 ] = { T( '0' ), T( '1' ), T( '2' ), T( '3' ), T( '4' ), T( '5' ), T( '6' ), T( '7' ), T( '8' ), T( '9' ), T( 'A' ), T( 'B' ), T( 'C' ), T( 'D' ), T( 'E' ), T( 'F' ) };
@@ -3504,7 +3504,6 @@ Size BasicString<T>::getLast( const T * buffer, const T * toSearch ) {
 
 template<typename T>
 inline bool BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector, T** itP) {
-	static const T encodingTable[] = { T('A'), T('B'), T('C'), T('D'), T('E'), T('F'), T('G'), T('H'), T('I'), T('J'), T('K'), T('L'), T('M'), T('N'), T('O'), T('P'), T('Q'), T('R'), T('S'), T('T'), T('U'), T('V'), T('W'), T('X'), T('Y'), T('Z'), T('a'), T('b'), T('c'), T('d'), T('e'), T('f'), T('g'), T('h'), T('i'), T('j'), T('k'), T('l'), T('m'), T('n'), T('o'), T('p'), T('q'), T('r'), T('s'), T('t'), T('u'), T('v'), T('w'), T('x'), T('y'), T('z'), T('0'), T('1'), T('2'), T('3'), T('4'), T('5'), T('6'), T('7'), T('8'), T('9'), T('+'), T('/') };
 
 	struct EncodeFunctor {
 		EncodeFunctor(const T* encodingTable) : encodingTable(encodingTable) {}
@@ -3545,7 +3544,7 @@ inline bool BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector
 		const T* encodingTable;
 	};
 
-	static EncodeFunctor encodeFunctor(encodingTable);
+	static EncodeFunctor encodeFunctor(BasicString<T>::base64CharTable);
 
 	T*& it(*itP);
 
@@ -3579,7 +3578,7 @@ inline bool BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector
 template<typename T>
 inline BasicString<T> BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector) {
 	BasicString<T> outputStr;
-	Size newSize(( dataVector.getSize() + Size(2) ) / Size(3) * Size(4));
+	Size newSize(BasicString<T>::getBase64EncodeSize(dataVector));
 	outputStr.resize(newSize);
 
 	T* it(outputStr.dataTable);
@@ -3591,15 +3590,13 @@ inline BasicString<T> BasicString<T>::encodeBase64(const Vector<unsigned char>& 
 template<typename T>
 inline bool BasicString<T>::decodeBase64(const BasicString<T>& inputStr, unsigned char** itP) {
 	struct DecodeFunctor {
-		DecodeFunctor(){
-			const T encodingTable[] = { T('A'), T('B'), T('C'), T('D'), T('E'), T('F'), T('G'), T('H'), T('I'), T('J'), T('K'), T('L'), T('M'), T('N'), T('O'), T('P'), T('Q'), T('R'), T('S'), T('T'), T('U'), T('V'), T('W'), T('X'), T('Y'), T('Z'), T('a'), T('b'), T('c'), T('d'), T('e'), T('f'), T('g'), T('h'), T('i'), T('j'), T('k'), T('l'), T('m'), T('n'), T('o'), T('p'), T('q'), T('r'), T('s'), T('t'), T('u'), T('v'), T('w'), T('x'), T('y'), T('z'), T('0'), T('1'), T('2'), T('3'), T('4'), T('5'), T('6'), T('7'), T('8'), T('9'), T('+'), T('/') };
-
-			for ( Size i(0); i < sizeof(this->decodingTable); i++ ) {
+		DecodeFunctor(const T * encodingTable){
+			for ( Size i(0); i < Size(64); i++ ) {
 				// Use the value 0 as an error.
 				this->decodingTable[ i ] = unsigned char(0);
 			}
 
-			for ( unsigned char i(0); i < sizeof(encodingTable); i++ ) {
+			for ( unsigned char i(0); i < Size(64); i++ ) {
 				this->decodingTable[ unsigned char(encodingTable[ i ]) ] = i;
 			}
 			this->decodingTable[ unsigned char(T('=')) ] = unsigned char(0);
@@ -3644,7 +3641,7 @@ inline bool BasicString<T>::decodeBase64(const BasicString<T>& inputStr, unsigne
 		unsigned char decodingTable[256];
 	};
 
-	static DecodeFunctor decodeFunctor;
+	static DecodeFunctor decodeFunctor(BasicString<T>::base64CharTable);
 
 	unsigned char*& it(*itP);
 
@@ -3687,7 +3684,7 @@ inline bool BasicString<T>::decodeBase64(const BasicString<T>& inputStr, unsigne
 template<typename T>
 inline Vector<unsigned char> BasicString<T>::decodeBase64(const BasicString<T>& inputStr) {
 	Vector<unsigned char> outputVector;
-	Size reserveSize(( inputStr.getSize() * Size(3) + Size(3) ) / Size(4));
+	Size reserveSize(BasicString<T>::getBase64DecodeReserveSize(inputStr));
 	outputVector.reserve(reserveSize);
 
 	unsigned char* it(outputVector.dataTable);
@@ -3700,6 +3697,16 @@ inline Vector<unsigned char> BasicString<T>::decodeBase64(const BasicString<T>& 
 	outputVector.resize(newSize);
 
 	return outputVector;
+}
+
+template<typename T>
+inline Size BasicString<T>::getBase64EncodeSize(const Vector<unsigned char>& dataVector) {
+	return ( dataVector.getSize() + Size(2) ) / Size(3) * Size(4);
+}
+
+template<typename T>
+inline Size BasicString<T>::getBase64DecodeReserveSize(const BasicString<T>& inputStr) {
+	return ( inputStr.getSize() * Size(3) + Size(3) ) / Size(4);
 }
 
 template<typename T>

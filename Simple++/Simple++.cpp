@@ -1258,6 +1258,7 @@ int main(int argc, char* argv[]) {
 
 			if ( dataVector != outputVector ) {
 				error("Error.");
+				break;
 			}
 		}
 
