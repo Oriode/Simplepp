@@ -778,6 +778,8 @@ public:
 	static Size toCStringWOSFill( long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	static Size toCStringWOSFill( long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 
+	///@brief Write the hexadecimal 0 filled representation of a number into the buffer.
+	static void toCStringHexadecimal(unsigned char uc, T ** itP);
 
 	/************************************************************************/
 	/* From StringASCII to number                                                */
@@ -1504,7 +1506,7 @@ public:
 
 	///@brief Base 64 decode a BasicString<T> to a binary data Vector.
 	///@param inputStr BasicString<T> to be decoded.
-	///@return Binary data Vector generated.
+	///@return Binary data Vector generated. 0 sized if error.
 	static Vector<unsigned char> decodeBase64(const BasicString<T>& inputStr);
 
 	///@brief Get the BasicString<T> Size of the base 64 encoding of the data Vector.
@@ -1516,6 +1518,34 @@ public:
 	///@param inputStr BasicString<T> to be used to compute the reserve Size.
 	///@return Binary data Vector reserve Size.
 	static Size getBase64DecodeReserveSize(const BasicString<T>& inputStr);
+
+
+
+
+	///@brief Hexadecimal encode a binary data Vector to a BasicString<T>
+	///@param dataVector Binary data Vector to be encoded.
+	///@param itP Pointer to a BasicString<T> Iterator to be filled.
+	///@return True if success, False otherwise.
+	static bool encodeHexadecimal(const Vector<unsigned char>& dataVector, T** itP);
+
+	///@brief Hexadecimal encode a binary data Vector to a BasicString<T>
+	///@param dataVector Binary data Vector to be encoded.
+	///@return BasicString<T> generated.
+	static BasicString<T> encodeHexadecimal(const Vector<unsigned char>& dataVector);
+
+	///@brief Hexadecimal decode a BasicString<T> to a binary data Vector.
+	///@param inputStr BasicString<T> to be decoded.
+	///@param itP Pointer to a binary data Vector Iterator.
+	///@return True if success, False otherwise.
+	static bool decodeHexadecimal(const BasicString<T>& inputStr, unsigned char** itP);
+
+	///@brief Hexadecimal decode a BasicString<T> to a binary data Vector.
+	///@param inputStr BasicString<T> to be decoded.
+	///@return Binary data Vector generated. 0 sized if error.
+	static Vector<unsigned char> decodeHexadecimal(const BasicString<T>& inputStr);
+
+
+
 
 	///@brief Table of characters used in base 64 encoding.
 	static const T base64CharTable[ 64 ];

@@ -14,7 +14,7 @@ template<typename T>
 const T BasicString<T>::base64CharTable[ 64 ] = { T('A'), T('B'), T('C'), T('D'), T('E'), T('F'), T('G'), T('H'), T('I'), T('J'), T('K'), T('L'), T('M'), T('N'), T('O'), T('P'), T('Q'), T('R'), T('S'), T('T'), T('U'), T('V'), T('W'), T('X'), T('Y'), T('Z'), T('a'), T('b'), T('c'), T('d'), T('e'), T('f'), T('g'), T('h'), T('i'), T('j'), T('k'), T('l'), T('m'), T('n'), T('o'), T('p'), T('q'), T('r'), T('s'), T('t'), T('u'), T('v'), T('w'), T('x'), T('y'), T('z'), T('0'), T('1'), T('2'), T('3'), T('4'), T('5'), T('6'), T('7'), T('8'), T('9'), T('+'), T('/') };
 
 template<typename T>
-const T BasicString<T>::numbers[ 16 ] = { T( '0' ), T( '1' ), T( '2' ), T( '3' ), T( '4' ), T( '5' ), T( '6' ), T( '7' ), T( '8' ), T( '9' ), T( 'A' ), T( 'B' ), T( 'C' ), T( 'D' ), T( 'E' ), T( 'F' ) };
+const T BasicString<T>::numbers[ 16 ] = { T( '0' ), T( '1' ), T( '2' ), T( '3' ), T( '4' ), T( '5' ), T( '6' ), T( '7' ), T( '8' ), T( '9' ), T( 'a' ), T( 'b' ), T( 'c' ), T( 'd' ), T( 'e' ), T( 'f' ) };
 
 template<typename T>
 const BasicString<T> BasicString<T>::null = BasicString<T>( "" );
@@ -1742,7 +1742,7 @@ Size BasicString<T>::toCString( unsigned long long number, T ** buffer, unsigned
 
 template<typename T>
 Size BasicString<T>::toCString( long long number, T ** buffer, unsigned int base ) {
-	return _convertI2String<long>( number, buffer, base );
+	return _convertI2String<long long>( number, buffer, base );
 }
 
 template<typename T>
@@ -2113,6 +2113,19 @@ Size BasicString<T>::toCStringWOSFill( unsigned long number, T ** buffer, const 
 template<typename T>
 Size BasicString<T>::toCStringWOSFill( long number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
 	return _convertI2StringWOSFill<long>( number, buffer, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline void BasicString<T>::toCStringHexadecimal(unsigned char uc, T** itP) {
+	T*& it(*itP);
+
+	unsigned char c0(uc >> 4);
+	unsigned char c1(uc & 0xF);
+
+	it[ 0 ] = BasicString<T>::numbers[ c0 ];
+	it[ 1 ] = BasicString<T>::numbers[ c1 ];
+
+	it += 2;
 }
 
 
@@ -3591,7 +3604,7 @@ template<typename T>
 inline bool BasicString<T>::decodeBase64(const BasicString<T>& inputStr, unsigned char** itP) {
 	struct DecodeFunctor {
 		DecodeFunctor(const T * encodingTable){
-			for ( Size i(0); i < Size(64); i++ ) {
+			for ( Size i(0); i < Size(256); i++ ) {
 				// Use the value 0 as an error.
 				this->decodingTable[ i ] = unsigned char(0);
 			}
@@ -3707,6 +3720,87 @@ inline Size BasicString<T>::getBase64EncodeSize(const Vector<unsigned char>& dat
 template<typename T>
 inline Size BasicString<T>::getBase64DecodeReserveSize(const BasicString<T>& inputStr) {
 	return ( inputStr.getSize() * Size(3) + Size(3) ) / Size(4);
+}
+
+template<typename T>
+inline bool BasicString<T>::encodeHexadecimal(const Vector<unsigned char>& dataVector, T** itP) {
+	
+	T*& it(*itP);
+
+	unsigned char* inputIt(dataVector.getBegin());
+	const unsigned char* inputEndIt(dataVector.getEnd());
+
+	for ( ; inputIt < inputEndIt; inputIt++ ) {
+		BasicString<T>::toCStringHexadecimal(dataVector.getValueIt(inputIt), &it);
+	}
+
+	return true;
+}
+
+template<typename T>
+inline BasicString<T> BasicString<T>::encodeHexadecimal(const Vector<unsigned char>& dataVector) {
+	BasicString<T> outputStr;
+	outputStr.resize(dataVector.getSize() << 1);
+
+	T* it(outputStr.dataTable);
+	if ( !encodeHexadecimal(dataVector, &it) ) {
+		outputStr.clear();
+	}
+
+	return outputStr;
+}
+
+template<typename T>
+inline bool BasicString<T>::decodeHexadecimal(const BasicString<T>& inputStr, unsigned char** itP) {
+	struct DecodeFunctor {
+		DecodeFunctor(const T* encodingTable) {
+			for ( Size i(0); i < Size(256); i++ ) {
+				// Use the value 0 as an error.
+				this->decodingTable[ i ] = unsigned char(0);
+			}
+
+			for ( unsigned char i(0); i < Size(16); i++ ) {
+				this->decodingTable[ unsigned char(encodingTable[ i ]) ] = i;
+			}
+		}
+
+		void decode(unsigned char* outputIt, const T* inputIt) {
+			unsigned char c0(this->decodingTable[ inputIt[ 0 ] ]);
+			unsigned char c1(this->decodingTable[ inputIt[ 1 ] ]);
+
+			unsigned char b0(c0 << 4 | c1);
+
+			outputIt[ 0 ] = b0;
+		}
+
+		unsigned char decodingTable[ 256 ];
+	};
+
+	static DecodeFunctor decodeFunctor(BasicString<T>::numbers);
+
+	unsigned char*& it(*itP);
+
+	const unsigned char* endIt(it + (inputStr.getSize() >> 1));
+	const T* inputIt(inputStr.getBegin());
+
+	for ( ; it < endIt; inputIt += 2, it++ ) {
+		decodeFunctor.decode(it, inputIt);
+	}
+
+	return true;
+}
+
+template<typename T>
+inline Vector<unsigned char> BasicString<T>::decodeHexadecimal(const BasicString<T>& inputStr) {
+	Vector<unsigned char> outputVector;
+	outputVector.resize(inputStr.getSize() >> 1);
+
+	unsigned char* it(outputVector.dataTable);
+	if ( !BasicString<T>::decodeHexadecimal(inputStr, &it) ) {
+		outputVector.clear();
+	}
+
+	return outputVector;
 }
 
 template<typename T>
