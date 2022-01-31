@@ -1223,12 +1223,45 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : BASE64									//
 	{
-		Vector<unsigned int> dataVector;
-		dataVector.resize(12);
+		struct GenerateVectorFunctor {
+			GenerateVectorFunctor(Size sizeMin, Size sizeMax) :
+				sizeMin(sizeMin),
+				sizeMax(sizeMax)
+			{}
 
-		StringASCII outputStr(StringASCII::encodeBase64(dataVector));
+			Vector<unsigned char> operator()() const {
+				Vector<unsigned char> outputVector;
+				Size newSize(Math::random(this->sizeMin, this->sizeMax));
+				outputVector.resize(newSize);
 
-		log(outputStr);
+				for ( Size i(0); i < outputVector.getSize(); i++ ) {
+					outputVector.setValueI(i, unsigned char(Math::random(unsigned char(0), unsigned char(255))));
+				}
+
+				return outputVector;
+			}
+
+			Size sizeMin;
+			Size sizeMax;
+		};
+		
+		GenerateVectorFunctor generateVectorFunctor(Size(128), Size(256));
+		Size nbTests(10000);
+
+		for ( Size i(0); i < nbTests; i++ ) {
+			Vector<unsigned char> dataVector(generateVectorFunctor());
+
+			StringASCII outputStr(StringASCII::encodeBase64(dataVector));
+			Vector<unsigned char> outputVector(StringASCII::decodeBase64(outputStr));
+
+			log(outputStr);
+
+			if ( dataVector != outputVector ) {
+				error("Error.");
+			}
+		}
+
+		log("Success !");
 	}
 #endif
 #ifdef DEBUG_STRING

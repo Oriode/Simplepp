@@ -1489,7 +1489,7 @@ public:
 	static BasicString<T> encodeBase64(const Vector<unsigned char>& dataVector);
 
 	static bool decodeBase64(const BasicString<T>& inputStr, unsigned char** itP);
-
+	static Vector<unsigned char> decodeBase64(const BasicString<T>& inputStr);
 
 	/** @brief	The numbers[ 16] */
 	static const T numbers[ 16 ];
