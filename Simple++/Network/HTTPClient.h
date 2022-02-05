@@ -86,6 +86,13 @@ namespace Network {
 	public:
 		typedef typename UrlT<T>::Type Type;
 
+		enum class Method : unsigned char {
+			GET,
+			POST,
+			DEL,
+			Unknown
+		};
+
 		HTTPRequestT();
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		HTTPRequestT(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
@@ -96,13 +103,16 @@ namespace Network {
 		StringASCII formatQuery() const;
 		void formatQuery(StringASCII* outputStr) const;
 
-		void setMethod(const StringASCII& method);
+		void setMethod(typename HTTPRequestT<T>::Method method);
 		void setEndPoint(const UrlT<T>& url);
 		void setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& paramVector);
 		bool setEndPoint(const StringASCII& url);
 
-		const StringASCII& getMethod() const;
+		typename HTTPRequestT<T>::Method getMethod() const;
 		const UrlT<T> & getEndPoint() const;
+
+		static const StringASCII& getMethodString(typename HTTPRequestT<T>::Method method);
+		static typename HTTPRequestT<T>::Method getMethod(const StringASCII& methodStr);
 
 	protected:
 		template<typename EndFunc = StringASCII::IsEndIterator>
@@ -112,7 +122,7 @@ namespace Network {
 
 		void updateHostParamValue();
 
-		StringASCII methodStr;
+		Method method;
 		UrlT<T> url;
 
 		HTTPParam* hostParam;
@@ -127,8 +137,8 @@ namespace Network {
 
 		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
-		HTTPResponseT<T> * query(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams);
-		HTTPResponseT<T> * query(const UrlT<T> & url);
+		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams);
+		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, const UrlT<T> & url);
 
 	private:
 		HTTPRequestT<T> request;

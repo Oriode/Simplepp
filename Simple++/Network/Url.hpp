@@ -60,6 +60,14 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline bool UrlT<T>::parseParams(const StringASCII& str) {
+		StringASCII::IsEndIterator endFunc(endPoint.getEnd());
+		String::Iterator it(endPoint.getBegin());
+
+		return parseParams(&it, endFunc);
+	}
+
+	template<typename T>
 	inline StringASCII UrlT<T>::format() const {
 		StringASCII outputStr;
 		outputStr.reserve(1024);
@@ -73,12 +81,7 @@ namespace Network {
 	inline void UrlT<T>::format(StringASCII* outputStr) const {
 		StringASCII& str(*outputStr);
 
-		str << getTypeString(this->type);
-		str << StringASCII::ElemType(':');
-		str << StringASCII::ElemType('/');
-		str << StringASCII::ElemType('/');
-		str << this->hostname;
-		str << this->endPointStr;
+		formatWOParams(&str);
 
 		if ( this->paramVector.getSize() > Size(0) ) {
 			str << StringASCII::ElemType('?');
@@ -87,9 +90,31 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline StringASCII UrlT<T>::formatWOParams() const {
+		StringASCII outputStr;
+		outputStr.reserve(512);
+
+		formatWOParams(&outputStr);
+
+		return outputStr;
+	}
+
+	template<typename T>
+	inline void UrlT<T>::formatWOParams(StringASCII* outputStr) const {
+		StringASCII& str(*outputStr);
+
+		str << getTypeString(this->type);
+		str << StringASCII::ElemType(':');
+		str << StringASCII::ElemType('/');
+		str << StringASCII::ElemType('/');
+		str << this->hostname;
+		str << this->endPointStr;
+	}
+
+	template<typename T>
 	inline StringASCII UrlT<T>::formatParams() const {
 		StringASCII outputStr;
-		outputStr.reserve(256);
+		outputStr.reserve(512);
 
 		formatParams(&outputStr);
 
@@ -159,11 +184,11 @@ namespace Network {
 	template<typename T>
 	inline typename UrlT<T>::Type UrlT<T>::getType(const StringASCII& typeStr) {
 		switch ( typeStr ) {
-			case getTypeString(Type::HTTP):
+			case UrlT<T>::getTypeString(Type::HTTP):
 				{
 					return Type::HTTP;
 				}
-			case getTypeString(Type::HTTPS):
+			case UrlT<T>::getTypeString(Type::HTTPS):
 				{
 					return Type::HTTPS;
 				}
@@ -221,46 +246,30 @@ namespace Network {
 	template<typename EndFunc>
 	inline bool UrlT<T>::parse(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
 		struct FunctorProtocol {
-			FunctorNewLine(const EndFunc& endFunc) :
+			FunctorProtocol(const EndFunc& endFunc) :
 				endFunc(endFunc) {}
 			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType(':') || endFunc(it); }
 
 			const EndFunc& endFunc;
 		};
 		struct FunctorHostname {
-			FunctorNewLine(const EndFunc& endFunc) :
+			FunctorHostname(const EndFunc& endFunc) :
 				endFunc(endFunc) {}
 			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('/') || *it == StringASCII::ElemType('?') || endFunc(it); }
 
 			const EndFunc& endFunc;
 		};
 		struct FunctorEndPoint {
-			FunctorNewLine(const EndFunc& endFunc) :
+			FunctorEndPoint(const EndFunc& endFunc) :
 				endFunc(endFunc) {}
 			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('?') || endFunc(it); }
 
 			const EndFunc& endFunc;
 		};
-		struct FunctorParamName {
-			FunctorNewLine(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('=') || *it == StringASCII::ElemType('&') || endFunc(it); }
 
-			const EndFunc& endFunc;
-		};
-		struct FunctorParamValue {
-			FunctorNewLine(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('&') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-
-		FunctorProtocol functorProtocol(endFunc);
-		FunctorHostname functorHostname(endFunc);
-		FunctorEndPoint functorEndPoint(endFunc);
-		FunctorParamName functorParamName(endFunc);
-		FunctorParamValue functorParamValue(endFunc);
+		static FunctorProtocol functorProtocol(endFunc);
+		static FunctorHostname functorHostname(endFunc);
+		static FunctorEndPoint functorEndPoint(endFunc);
 
 		const StringASCII::ElemType*& it(*itP);
 
@@ -273,11 +282,12 @@ namespace Network {
 			return false;
 		}
 
+		typename UrlT<T>::Type type;
 		if ( !endFunc(it) ) {
 			StringASCII protocolStr(protocolStrBeginIt, Size(protocolStrEndIt - protocolStrBeginIt));
-			this->type = getType(protocolStr.toLower());
+			type = getType(protocolStr.toLower());
 
-			if ( this->type == Type::Unknown ) {
+			if ( type == Type::Unknown ) {
 				error("EndPoint syntax error : unknown protocol.");
 				return false;
 			}
@@ -288,7 +298,7 @@ namespace Network {
 			// Skip /
 			for ( ; *it == StringASCII::ElemType('/') && !endFunc(it); it++ );
 		} else {
-			this->type = Type::Unknown;
+			type = Type::Unknown;
 			// No protocol founded, start over without searching any.
 			it = *itP;
 		}
@@ -309,6 +319,7 @@ namespace Network {
 		StringASCII hostnameStr(hostnameStrBeginIt, Size(hostnameStrEndIt - hostnameStrBeginIt));
 		StringASCII endPointStr(endPointStrBeginIt, Size(endPointStrEndIt - endPointStrBeginIt));
 
+		this->type = type;
 		this->hostname = hostnameStr;
 		this->endPointStr = endPointStr;
 		this->paramVector.clear();
@@ -322,7 +333,40 @@ namespace Network {
 		it++;
 
 		// Parse the params
+		if ( !parseParams(&it, endFunc) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	template<typename EndFunc>
+	inline bool UrlT<T>::parseParams(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
+		struct FunctorParamName {
+			FunctorParamName(const EndFunc& endFunc) :
+				endFunc(endFunc) {}
+			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('=') || *it == StringASCII::ElemType('&') || endFunc(it); }
+
+			const EndFunc& endFunc;
+		};
+		struct FunctorParamValue {
+			FunctorParamValue(const EndFunc& endFunc) :
+				endFunc(endFunc) {}
+			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('&') || endFunc(it); }
+
+			const EndFunc& endFunc;
+		};
+
+		static FunctorParamName functorParamName(endFunc);
+		static FunctorParamValue functorParamValue(endFunc);
+
 		while ( true ) {
+
+			if ( endFunc(it) ) {
+				break;
+			}
+
 			const StringASCII::ElemType* paramNameBeginIt(it);
 			for ( ; !functorParamName(it); it++ );
 			const StringASCII::ElemType* paramNameEndIt(it);
@@ -359,10 +403,6 @@ namespace Network {
 			StringASCII paramValueStr(paramValueBeginIt, Size(paramValueEndIt - paramValueBeginIt));
 
 			addParam(new HTTPParam(paramNameStr, paramValueStr));
-
-			if ( !endFunc(it) ) {
-				break;
-			}
 		}
 
 		return true;

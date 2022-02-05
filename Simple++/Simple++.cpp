@@ -1195,7 +1195,7 @@ int main(int argc, char* argv[]) {
 		paramVector.push(Param(StringASCII("timestamp"), StringASCII(timestamp)));
 		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(2000)));
 
-		Network::Url url(Network::HTTPRequest::Type::HTTPS, StringASCII("api.binance.com"), StringASCII("/api/v3/account"), paramVector);
+		Network::Url url(Network::HTTPRequest::Type::HTTPS, StringASCII("fapi.binance.com"), StringASCII("/fapi/v2/account"), paramVector);
 		StringASCII paramsStr(url.formatParams());
 
 		Vector<unsigned char> hashBinary(Crypto::HMACSha256<char>(secretKey, paramsStr));
@@ -1203,7 +1203,7 @@ int main(int argc, char* argv[]) {
 
 		url.setParam(StringASCII("signature"), signatureStr);
 
-		Network::HTTPResponse* response(client.query(url));
+		Network::HTTPResponse* response(client.query(Network::HTTPRequest::Method::GET, url));
 
 		if ( response ) {
 			Log::displayLog(response->getContent());

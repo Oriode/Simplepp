@@ -323,7 +323,9 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPRequestT<T>::HTTPRequestT() {
+	inline HTTPRequestT<T>::HTTPRequestT() :
+		method(Method::Unknown)
+	{
 		HTTPParam* hostParam(new HTTPParam(StringASCII("Host")));
 		addParam(hostParam);
 
@@ -345,6 +347,9 @@ namespace Network {
 			return false;
 		}
 		if ( !HTTPQueryT<T>::parseQuery(itP, endFunc) ) {
+			return false;
+		}
+		if ( !this->url.parseParams(itP, endFunc) ) {
 			return false;
 		}
 		return true;
@@ -393,6 +398,14 @@ namespace Network {
 			return false;
 		}
 
+		StringASCII methodStr(methodStrBeginIt, Size(methodStrEndIt - methodStrBeginIt));
+		typename HTTPRequestT<T>::Method method(HTTPRequestT<T>::getMethod(methodStr));
+
+		if ( method == Method::Unknown ) {
+			error("HTTP request syntax error : Unkown method.");
+			return false;
+		}
+
 		// Skip spaces.
 		for ( ; !functorSpace(it); it++ );
 
@@ -423,10 +436,9 @@ namespace Network {
 			}
 		}
 
-		StringASCII methodStr(methodStrBeginIt, Size(methodStrEndIt - methodStrBeginIt));
 		StringASCII protocolStr(protocolStrBeginIt, Size(protocolStrEndIt - protocolStrBeginIt));
 
-		this->methodStr = methodStr;
+		this->method = method;
 		this->protocolStr = protocolStr;
 
 		return true;
@@ -444,11 +456,15 @@ namespace Network {
 	inline void HTTPRequestT<T>::formatQuery(StringASCII* outputStr) const {
 		formatQueryTitle(outputStr);
 		HTTPQueryT<T>::formatQuery(outputStr);
+
+		if ( this->method == Method::POST ) {
+			this->url.formatParams(outputStr);
+		}
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setMethod(const StringASCII& method) {
-		this->methodStr = method;
+	inline void HTTPRequestT<T>::setMethod(typename HTTPRequestT<T>::Method method) {
+		this->method = method;
 	}
 
 	template<typename T>
@@ -480,8 +496,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline const StringASCII& HTTPRequestT<T>::getMethod() const {
-		return this->methodStr;
+	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod() const {
+		return this->method;
 	}
 
 	template<typename T>
@@ -490,13 +506,49 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline const StringASCII& HTTPRequestT<T>::getMethodString(typename HTTPRequestT<T>::Method method) {
+		static const StringASCII methodStrTable[] = { StringASCII("GET"), StringASCII("POST"), StringASCII("DELETE") };
+		unsigned char methodIndex(static_cast< unsigned char >( method ));
+		if ( methodIndex < sizeof(methodStrTable) ) {
+			return methodStrTable[ methodIndex ];
+		} else {
+			return StringASCII::null;
+		}
+	}
+
+	template<typename T>
+	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod(const StringASCII& methodStr) {
+		switch ( methodStr ) {
+			case HTTPRequestT<T>::getMethodString(Method::GET):
+				{
+					return Method::GET;
+				}
+			case HTTPRequestT<T>::getMethodString(Method::POST):
+				{
+					return Method::POST;
+				}
+			case HTTPRequestT<T>::getMethodString(Method::DEL):
+				{
+					return Method::DEL;
+				}
+			default:
+				{
+					return Method::Unknown;
+				}
+		}
+	}
+
+	template<typename T>
 	inline void HTTPRequestT<T>::formatQueryTitle(StringASCII* outputStr) const {
 		StringASCII& str(*outputStr);
 
-		str << this->methodStr;
+		str << HTTPRequestT<T>::getMethodString(this->method);
 		str << StringASCII::ElemType(' ');
-		this->url.format(&str);
-		// str << this->endPoint.getEndPoint();
+		if ( this->method == Method::POST ) {
+			this->url.formatWOParams(&str);
+		} else {
+			this->url.format(&str);
+		}
 		str << StringASCII::ElemType(' ');
 		str << this->protocolStr;
 		str << StringASCII::ElemType('\r');
@@ -514,7 +566,7 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPClientT<T>::HTTPClientT() {
-		this->request.setMethod(StringASCII("GET"));
+		this->request.setMethod(HTTPRequestT<T>::Method::GET);
 		this->request.setProtocol(StringASCII("HTTP/1.1"));
 
 		this->request.setHeaderParam(StringASCII("Accept"), StringASCII("*/*"));
@@ -527,7 +579,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>::Method method, typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams) {
+		this->request.setMethod(method);
 		this->request.setEndPoint(type, hostname, endPointStr, urlParams);
 
 		static StringASCII sendBuffer;
@@ -572,8 +625,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(const UrlT<T>& url) {
-		return query(url.getType(), url.getHostname(), url.getEndPoint(), url.getParamVector());
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>::Method method, const UrlT<T>& url) {
+		return query(method, url.getType(), url.getHostname(), url.getEndPoint(), url.getParamVector());
 	}
 
 }

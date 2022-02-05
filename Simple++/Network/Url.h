@@ -32,8 +32,15 @@ namespace Network {
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		bool parse(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
 
+		bool parseParams(const StringASCII& str);
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseParams(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
 		StringASCII format() const;
 		void format(StringASCII* outputStr) const;
+
+		StringASCII formatWOParams() const;
+		void formatWOParams(StringASCII* outputStr) const;
 
 		StringASCII formatParams() const;
 		void formatParams(StringASCII* outputStr) const;
