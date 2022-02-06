@@ -275,6 +275,8 @@
     <ClInclude Include="Stream.h" />
     <ClInclude Include="Stream.hpp" />
     <ClInclude Include="Thread.hpp" />
+    <ClInclude Include="Time\BasicTime.h" />
+    <ClInclude Include="Time\BasicTime.hpp" />
     <ClInclude Include="Time\Tick.hpp" />
     <ClInclude Include="Time\TickRate.hpp" />
     <ClInclude Include="UI\BasicUI.h" />

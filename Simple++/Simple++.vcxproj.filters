@@ -564,6 +564,12 @@
     <ClInclude Include="Crypto\Crypto.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Time\BasicTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\BasicTime.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

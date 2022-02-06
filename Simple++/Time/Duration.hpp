@@ -7,52 +7,52 @@ namespace Time {
 	/************************************************************************/
 
 
-	template<class ratio>
-	Duration<ratio>::Duration( TimeT d ) {
+	template<class Ratio>
+	Duration<Ratio>::Duration( TimeT d ) {
 		this -> d = d;
 	}
 
-	template<class ratio>
-	Duration<ratio>::Duration( const Tick & ticks ) {
-		this -> d = ticks.getValue() * ratio::den / Time::TicksPerSec / ratio::num;
+	template<class Ratio>
+	Duration<Ratio>::Duration( const Tick & ticks ) {
+		this -> d = ticks.getValue() * Ratio::den / Time::TicksPerSec / Ratio::num;
 	}
 
 
-	template<class ratio>
-	Duration<ratio>::Duration() {
+	template<class Ratio>
+	Duration<Ratio>::Duration() {
 
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	Duration<ratio>::Duration( const Duration<ratio2> & d ) {
-		this -> d = ( d.getValue() * ratio::den * ratio2::num ) / ratio2::den / ratio::num;
+	template<class Ratio>
+	template<class Ratio2>
+	Duration<Ratio>::Duration( const Duration<Ratio2> & d ) {
+		this -> d = d.toValue<Ratio>();
 	}
 
 
-	template<class ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<ratio>::getSeconds() const {
-		return this -> d * ratio::num / ratio::den;
+	template<class Ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<Ratio>::getSeconds() const {
+		return this -> d * Ratio::num / Ratio::den;
 	}
 
-	template<class ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<ratio>::getMilliSeconds() const {
-		return Duration<MilliSecond>( *this ).getValue();
+	template<class Ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<Ratio>::getMilliSeconds() const {
+		return toValue<MilliSecond>();
 	}
 
-	template<class ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<ratio>::getMinutes() const {
-		return Duration<Minute>( *this ).getValue();
+	template<class Ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<Ratio>::getMinutes() const {
+		return toValue<Minute>();
 	}
 
-	template<class ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<ratio>::getHours() const {
-		return Duration<Hour>( *this ).getValue();
+	template<class Ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<Ratio>::getHours() const {
+		return toValue<Hour>();
 	}
 
-	template<class ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<ratio>::getDays() const {
-		return Duration<Day>( *this ).getValue();
+	template<class Ratio /*= Math::Ratio<1, 1>*/>
+	unsigned long long Duration<Ratio>::getDays() const {
+		return toValue<Day>();
 	}
 
 	/************************************************************************/
@@ -64,71 +64,71 @@ namespace Time {
 
 
 
-	template<class ratio>
-	template<class ratio2>
-	bool Duration<ratio>::operator>( const Duration<ratio2> & d ) const {
-		return this -> d  * ratio::num * ratio2::den > d.getValue() * ratio2::num * ratio::den;
+	template<class Ratio>
+	template<class Ratio2>
+	bool Duration<Ratio>::operator>( const Duration<Ratio2> & d ) const {
+		return this -> d  * d.toValue<Ratio>();
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	bool Duration<ratio>::operator<( const Duration<ratio2> & d ) const {
-		return this -> d  * ratio::num * ratio2::den < d.getValue() * ratio2::num * ratio::den;
+	template<class Ratio>
+	template<class Ratio2>
+	bool Duration<Ratio>::operator<( const Duration<Ratio2> & d ) const {
+		return this -> d  * d.toValue<Ratio>();
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	bool Duration<ratio>::operator<=( const Duration<ratio2> & d ) const {
-		return this -> d  * ratio::num * ratio2::den <= d.getValue() * ratio2::num * ratio::den;
+	template<class Ratio>
+	template<class Ratio2>
+	bool Duration<Ratio>::operator<=( const Duration<Ratio2> & d ) const {
+		return this -> d  * d.toValue<Ratio>();
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	bool Duration<ratio>::operator>=( const Duration<ratio2> & d ) const {
-		return this -> d  * ratio::num * ratio2::den >= d.getValue() * ratio2::num * ratio::den;
+	template<class Ratio>
+	template<class Ratio2>
+	bool Duration<Ratio>::operator>=( const Duration<Ratio2> & d ) const {
+		return this -> d  * d.toValue<Ratio>();
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	bool Duration<ratio>::operator!=( const Duration<ratio2> & d ) const {
-		return this -> d  * ratio::num * ratio2::den != d.getValue() * ratio2::num * ratio::den;
+	template<class Ratio>
+	template<class Ratio2>
+	bool Duration<Ratio>::operator!=( const Duration<Ratio2> & d ) const {
+		return this -> d  * d.toValue<Ratio>();
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	bool Duration<ratio>::operator==( const Duration<ratio2> & d ) const {
-		return this -> d  * ratio::num * ratio2::den == d.getValue() * ratio2::num * ratio::den;
+	template<class Ratio>
+	template<class Ratio2>
+	bool Duration<Ratio>::operator==( const Duration<Ratio2> & d ) const {
+		return this -> d  * d.toValue<Ratio>();
 	}
 
 
 
-	template<class ratio>
-	bool Duration<ratio>::operator>( TimeT d ) const {
+	template<class Ratio>
+	bool Duration<Ratio>::operator>( TimeT d ) const {
 		return this -> d > d;
 	}
 
-	template<class ratio>
-	bool Duration<ratio>::operator<( TimeT d ) const {
+	template<class Ratio>
+	bool Duration<Ratio>::operator<( TimeT d ) const {
 		return this -> d < d;
 	}
 
-	template<class ratio>
-	bool Duration<ratio>::operator<=( TimeT d ) const {
+	template<class Ratio>
+	bool Duration<Ratio>::operator<=( TimeT d ) const {
 		return this -> d > d;
 	}
 
-	template<class ratio>
-	bool Duration<ratio>::operator>=( TimeT d ) const {
+	template<class Ratio>
+	bool Duration<Ratio>::operator>=( TimeT d ) const {
 		return this -> d >= d;
 	}
 
-	template<class ratio>
-	bool Duration<ratio>::operator!=( TimeT d ) const {
+	template<class Ratio>
+	bool Duration<Ratio>::operator!=( TimeT d ) const {
 		return this -> d != d;
 	}
 
-	template<class ratio>
-	bool Duration<ratio>::operator==( TimeT d ) const {
+	template<class Ratio>
+	bool Duration<Ratio>::operator==( TimeT d ) const {
 		return this -> d == d;
 	}
 
@@ -137,60 +137,66 @@ namespace Time {
 	/************************************************************************/
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
-	template<class ratio>
-	template<class ratio2>
-	Duration<ratio> & Time::Duration<ratio>::operator-=( const Duration<ratio2> & d ) {
-		this -> d = ( d.getValue() *ratio::den * ratio2::num ) / ratio2::den / ratio::num;
+	template<class Ratio>
+	template<class Ratio2>
+	Duration<Ratio> & Time::Duration<Ratio>::operator-=( const Duration<Ratio2> & d ) {
+		this -> d = d.toValue<Ratio>();
 		return *this;
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	Duration<ratio> & Time::Duration<ratio>::operator=( const Duration<ratio2> & d ) {
-		this -> d = ( d.getValue() * ratio::den * ratio2::num ) / ratio2::den / ratio::num;
+	template<class Ratio>
+	template<class Ratio2>
+	Duration<Ratio> & Time::Duration<Ratio>::operator=( const Duration<Ratio2> & d ) {
+		this -> d = d.toValue<Ratio>();
 		return *this;
 	}
 
-	template<class ratio>
-	template<class ratio2>
-	Duration<ratio> & Time::Duration<ratio>::operator+=( const Duration<ratio2> & d ) {
-		this -> d += ( d.getValue() * ratio::den * ratio2::num ) / ratio2::den / ratio::num;
+	template<class Ratio>
+	template<class Ratio2>
+	Duration<Ratio> & Time::Duration<Ratio>::operator+=( const Duration<Ratio2> & d ) {
+		this -> d += d.toValue<Ratio>();
 		return *this;
 	}
 
 
 
 
-	template<class ratio>
-	Duration<ratio> & Time::Duration<ratio>::operator-=( TimeT d ) {
+	template<class Ratio>
+	Duration<Ratio> & Time::Duration<Ratio>::operator-=( TimeT d ) {
 		this -> d -= d;
 		return *this;
 	}
 
-	template<class ratio>
-	Duration<ratio> & Time::Duration<ratio>::operator=( TimeT d ) {
+	template<class Ratio>
+	Duration<Ratio> & Time::Duration<Ratio>::operator=( TimeT d ) {
 		this -> d = d;
 		return *this;
 	}
 
-	template<class ratio>
-	Duration<ratio> & Time::Duration<ratio>::operator+=( TimeT d ) {
+	template<class Ratio>
+	Duration<Ratio> & Time::Duration<Ratio>::operator+=( TimeT d ) {
 		this -> d += d;
 		return *this;
 	}
 
-	template<class ratio>
+	template<class Ratio>
 	template<typename T>
-	Duration<ratio> & Time::Duration<ratio>::operator*=( const T & t ) {
+	Duration<Ratio> & Time::Duration<Ratio>::operator*=( const T & t ) {
 		this -> d *= t;
 		return *this;
 	}
 
-	template<class ratio>
+	template<class Ratio>
 	template<typename T>
-	Duration<ratio> & Time::Duration<ratio>::operator/=( const T & t ) {
+	Duration<Ratio> & Time::Duration<Ratio>::operator/=( const T & t ) {
 		this -> d /= t;
 		return *this;
+	}
+
+	template<class Ratio>
+	template<typename Ratio2>
+	inline TimeT Duration<Ratio>::toValue() const {
+		return convertTime<Ratio2, Ratio>(this->d);
 	}
 
 
@@ -200,86 +206,86 @@ namespace Time {
 	/************************************************************************/
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
-	template<class ratio, class ratio2>
-	Duration<ratio> operator+( const Duration<ratio> & d1, const Duration<ratio2> & d2 ) {
-		Duration<ratio> result( d1.getValue() );
+	template<class Ratio, class Ratio2>
+	Duration<Ratio> operator+( const Duration<Ratio> & d1, const Duration<Ratio2> & d2 ) {
+		Duration<Ratio> result( d1.getValue() );
 		return result += d2;
 	}
 
-	template<class ratio, typename T>
-	Duration<ratio> operator+( const Duration<ratio> & d, const T & v ) {
-		Duration<ratio> result( d.getValue() + v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator+( const Duration<Ratio> & d, const T & v ) {
+		Duration<Ratio> result( d.getValue() + v );
 		return result;
 	}
 
-	template<class ratio, typename T>
-	Duration<ratio> operator+( const T & v, const Duration<ratio> & d ) {
-		Duration<ratio> result( v + d.getValue() );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator+( const T & v, const Duration<Ratio> & d ) {
+		Duration<Ratio> result( v + d.getValue() );
 		return result;
 	}
 
-	template<class ratio, class ratio2>
-	Duration<ratio> operator-( const Duration<ratio> & d1, const Duration<ratio2> & d2 ) {
-		Duration<ratio> result( d1.getValue() );
+	template<class Ratio, class Ratio2>
+	Duration<Ratio> operator-( const Duration<Ratio> & d1, const Duration<Ratio2> & d2 ) {
+		Duration<Ratio> result( d1.getValue() );
 		return result -= d2;
 	}
 
-	template<class ratio, typename T>
-	Duration<ratio> operator-( const Duration<ratio> & d, const T & v ) {
-		Duration<ratio> result( d.getValue() - v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator-( const Duration<Ratio> & d, const T & v ) {
+		Duration<Ratio> result( d.getValue() - v );
 		return result;
 	}
 
-	template<class ratio, typename T>
-	Duration<ratio> operator-( const T & v, const Duration<ratio> & d ) {
-		Duration<ratio> result( v - d.getValue() );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator-( const T & v, const Duration<Ratio> & d ) {
+		Duration<Ratio> result( v - d.getValue() );
 		return result;
 	}
 
-	template<class ratio, typename T>
-	Duration<ratio> operator/( const Duration<ratio> & d, const T & v ) {
-		Duration<ratio> result( d.getValue() / v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator/( const Duration<Ratio> & d, const T & v ) {
+		Duration<Ratio> result( d.getValue() / v );
 		return result;
 	}
 
-	template<class ratio, typename T>
-	T operator/( const T & v, const Duration<ratio> & d ) {
-		Duration<ratio> result( v / d.getValue() );
+	template<class Ratio, typename T>
+	T operator/( const T & v, const Duration<Ratio> & d ) {
+		Duration<Ratio> result( v / d.getValue() );
 		return result;
 	}
 
-	template<class ratio, typename T>
-	Duration<ratio> operator*( const Duration<ratio> & d, const T & v ) {
-		Duration<ratio> result( d.getValue() * v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator*( const Duration<Ratio> & d, const T & v ) {
+		Duration<Ratio> result( d.getValue() * v );
 		return result;
 	}
 
-	template<typename T, class ratio>
-	Duration<ratio> operator*( const T & v, const Duration<ratio> & d ) {
-		Duration<ratio> result( v * d.getValue() );
+	template<typename T, class Ratio>
+	Duration<Ratio> operator*( const T & v, const Duration<Ratio> & d ) {
+		Duration<Ratio> result( v * d.getValue() );
 		return result;
 	}
 
-	template<class ratio>
-	Duration<ratio> operator/( const Duration<ratio> & d1, const Duration<ratio> & d2 ) {
-		Duration<ratio> result( d1.getValue() / d2.getValue() );
+	template<class Ratio>
+	Duration<Ratio> operator/( const Duration<Ratio> & d1, const Duration<Ratio> & d2 ) {
+		Duration<Ratio> result( d1.getValue() / d2.getValue() );
 		return result;
 	}
 
-	template<class ratio> TimeT Time::Duration<ratio>::getValue() const {
+	template<class Ratio> const TimeT & Time::Duration<Ratio>::getValue() const {
 		return this -> d;
 	}
 
-	template<class ratio>
-	bool Time::Duration<ratio>::read( IO::SimpleFileStream * fileStream ) {
+	template<class Ratio>
+	bool Time::Duration<Ratio>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, &this->d ) ) {
 			return false;
 		}
 		return true;
 	}
 
-	template<class ratio>
-	bool Time::Duration<ratio>::write( IO::SimpleFileStream * fileStream ) const {
+	template<class Ratio>
+	bool Time::Duration<Ratio>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this->d ) ) {
 			return false;
 		}

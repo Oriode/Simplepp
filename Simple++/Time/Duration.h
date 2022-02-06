@@ -7,20 +7,18 @@
  */
 #pragma once
 
-#include "../Math/BasicMath.h"
 #include "../IO/IO.h"
+#include "BasicTime.h"
 #include "Tick.h"
 
 namespace Time {
-	/** @brief	typename for not using this ugly underscore name */
-	typedef time_t TimeT;
 
 	/**
 	 * @brief				Class representing a time duration,
 	 *
-	 * @tparam	ratio	fractional number representing the number of seconds of one unit in this object.
+	 * @tparam	Ratio	fractional number representing the number of seconds of one unit in this object.
 	 */
-	template<class ratio = Math::Ratio<1, 1>>
+	template<class Ratio = Math::Ratio<1, 1>>
 	class Duration : public IO::BasicIO {
 	public:
 
@@ -34,11 +32,11 @@ namespace Time {
 		/**
 		 * @brief	Constructor
 		 *
-		 * @tparam	ratio2	Type of the ratio 2.
-		 * @param	d	A Duration<ratio2> to process.
+		 * @tparam	Ratio2	Type of the Ratio 2.
+		 * @param	d	A Duration<Ratio2> to process.
 		 */
-		template<class ratio2>
-		Duration( const Duration<ratio2> & d );
+		template<class Ratio2>
+		Duration( const Duration<Ratio2> & d );
 		/**
 		 * @brief	Constructor
 		 *
@@ -61,52 +59,52 @@ namespace Time {
 		/**
 		 * @brief	Equality operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	True if the parameters are considered equivalent.
 		 */
-		template<class ratio2>
-		bool operator==( const Duration<ratio2> & d ) const;
+		template<class Ratio2>
+		bool operator==( const Duration<Ratio2> & d ) const;
 		/**
 		 * @brief		Inequality operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	True if the parameters are not considered equivalent.
 		 */
-		template<class ratio2>
-		bool operator!=( const Duration<ratio2> & d ) const;
+		template<class Ratio2>
+		bool operator!=( const Duration<Ratio2> & d ) const;
 		/**
 		 * @brief		Greater-than-or-equal comparison operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	True if the first parameter is greater than or equal to the second.
 		 */
-		template<class ratio2>
-		bool operator>=( const Duration<ratio2> & d ) const;
+		template<class Ratio2>
+		bool operator>=( const Duration<Ratio2> & d ) const;
 
 
-		template<class ratio2>
-		bool operator<=( const Duration<ratio2> & d ) const;
+		template<class Ratio2>
+		bool operator<=( const Duration<Ratio2> & d ) const;
 		/**
 		 * @brief		Less-than comparison operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	True if the first parameter is less than the second.
 		 */
-		template<class ratio2>
-		bool operator<( const Duration<ratio2> & d ) const;
+		template<class Ratio2>
+		bool operator<( const Duration<Ratio2> & d ) const;
 		/**
 		 * @brief	Greater-than comparison operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	True if the first parameter is greater than to the second.
 		 */
-		template<class ratio2>
-		bool operator>( const Duration<ratio2> & d ) const;
+		template<class Ratio2>
+		bool operator>( const Duration<Ratio2> & d ) const;
 
 
 		/**
@@ -159,30 +157,30 @@ namespace Time {
 		/**
 		 * @brief	Assignment operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	A shallow copy of this object.
 		 */
-		template<class ratio2>
-		Duration<ratio> & operator=( const Duration<ratio2> & d );
+		template<class Ratio2>
+		Duration<Ratio> & operator=( const Duration<Ratio2> & d );
 		/**
 		 * @brief	Addition assignment operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	The result of the operation.
 		 */
-		template<class ratio2>
-		Duration<ratio> & operator+=( const Duration<ratio2> & d );
+		template<class Ratio2>
+		Duration<Ratio> & operator+=( const Duration<Ratio2> & d );
 		/**
 		 * @brief	Subtraction assignment operator
 		 *
-		 * @param	d	A Duration<ratio2> to process.
+		 * @param	d	A Duration<Ratio2> to process.
 		 *
 		 * @returns	The result of the operation.
 		 */
-		template<class ratio2>
-		Duration<ratio> & operator-=( const Duration<ratio2> & d );
+		template<class Ratio2>
+		Duration<Ratio> & operator-=( const Duration<Ratio2> & d );
 
 
 		/**
@@ -192,7 +190,7 @@ namespace Time {
 		 *
 		 * @returns	A shallow copy of this object.
 		 */
-		Duration<ratio> & operator=( TimeT d );
+		Duration<Ratio> & operator=( TimeT d );
 		/**
 		 * @brief	Addition assignment operator
 		 *
@@ -200,7 +198,7 @@ namespace Time {
 		 *
 		 * @returns	The result of the operation.
 		 */
-		Duration<ratio> & operator+=( TimeT d );
+		Duration<Ratio> & operator+=( TimeT d );
 		/**
 		 * @brief	Subtraction assignment operator
 		 *
@@ -208,7 +206,7 @@ namespace Time {
 		 *
 		 * @returns	The result of the operation.
 		 */
-		Duration<ratio> & operator-=( TimeT d );
+		Duration<Ratio> & operator-=( TimeT d );
 
 
 		/**
@@ -219,7 +217,7 @@ namespace Time {
 		 * @returns	The result of the operation.
 		 */
 		template<typename T>
-		Duration<ratio> & operator*=( const T & d );
+		Duration<Ratio> & operator*=( const T & d );
 		/**
 		 * @brief	Division assignment operator
 		 *
@@ -228,7 +226,7 @@ namespace Time {
 		 * @returns	The result of the operation.
 		 */
 		template<typename T>
-		Duration<ratio> & operator/=( const T & d );
+		Duration<Ratio> & operator/=( const T & d );
 
 		/**
 		 * @brief	get the number of milliseconds of this duration
@@ -274,7 +272,13 @@ namespace Time {
 		 *
 		 * @returns	number of unit of time of this duration.
 		 */
-		TimeT getValue() const;
+		const TimeT & getValue() const;
+
+		///@brief Get the value by converting it to the specified Ratio.
+		///@template Ratio2 Ratio to be used for the conversion.
+		///@return value converted from Ratio to Ratio2.
+		template<typename Ratio2>
+		TimeT toValue() const;
 
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
@@ -305,38 +309,38 @@ namespace Time {
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
 
-	template<class ratio, class ratio2>
-	Duration<ratio> operator+( const Duration<ratio> & d1, const Duration<ratio2> & d2 );
+	template<class Ratio, class Ratio2>
+	Duration<Ratio> operator+( const Duration<Ratio> & d1, const Duration<Ratio2> & d2 );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator+( const Duration<ratio> & d, const T & v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator+( const Duration<Ratio> & d, const T & v );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator+( const T & t, const Duration<ratio> & d );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator+( const T & t, const Duration<Ratio> & d );
 
-	template<class ratio, class ratio2>
-	Duration<ratio> operator-( const Duration<ratio> & d1, const Duration<ratio2> & d2 );
+	template<class Ratio, class Ratio2>
+	Duration<Ratio> operator-( const Duration<Ratio> & d1, const Duration<Ratio2> & d2 );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator-( const Duration<ratio> & d, const T & v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator-( const Duration<Ratio> & d, const T & v );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator-( const T & v, const Duration<ratio> & d );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator-( const T & v, const Duration<Ratio> & d );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator*( const Duration<ratio> & d1, const T & v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator*( const Duration<Ratio> & d1, const T & v );
 
-	template<typename T, class ratio>
-	Duration<ratio> operator*( const T & v, const Duration<ratio> & d1 );
+	template<typename T, class Ratio>
+	Duration<Ratio> operator*( const T & v, const Duration<Ratio> & d1 );
 
-	template<class ratio>
-	Duration<ratio> operator/( const Duration<ratio> & d1, const Duration<ratio> & d2 );
+	template<class Ratio>
+	Duration<Ratio> operator/( const Duration<Ratio> & d1, const Duration<Ratio> & d2 );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator/( const Duration<ratio> & d, const T & v );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator/( const Duration<Ratio> & d, const T & v );
 
-	template<class ratio, typename T>
-	Duration<ratio> operator/( const T & v, const Duration<ratio> & d );
+	template<class Ratio, typename T>
+	Duration<Ratio> operator/( const T & v, const Duration<Ratio> & d );
 
 
 

@@ -42,11 +42,12 @@
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-#define DEBUG_HTTP
+//#define DEBUG_HTTP
 //#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
+#define DEBUG_TIME
 //#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
@@ -1191,7 +1192,7 @@ int main(int argc, char* argv[]) {
 
 		Vector<Network::HTTPParam> paramVector;
 		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
-		Time::TimeT timestamp(Time::TimePoint::getNow().getTime()* Time::TimeT(1000));
+		Time::TimeT timestamp(Time::TimePoint::getNow().getValue()* Time::TimeT(1000));
 		paramVector.push(Param(StringASCII("timestamp"), StringASCII(timestamp)));
 		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(2000)));
 
@@ -1362,6 +1363,19 @@ int main(int argc, char* argv[]) {
 		Log::displayLog( parsedValue );
 		Log::displayLog( StringASCII::toInt( iterable ) );
 
+	}
+#endif
+#ifdef DEBUG_TIME
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : TIME															//
+	{
+		Time::TimePointMS tpS(Time::getValue<Time::Second>());
+		Time::TimePointMS tpMS(Time::getValue<Time::MilliSecond>());
+		Time::TimePointT<Time::Day> tpD(Time::getValue<Time::Day>());
+		Time::Duration<Time::MilliSecond> d(tpMS - tpS);
+		log(d.getValue());
+		log(tpD.getValue());
+		log(Time::Duration<Time::Second>(12).toValue<Time::MilliSecond>());
 	}
 #endif
 #ifdef DEBUG_DATE
@@ -1870,7 +1884,7 @@ int main(int argc, char* argv[]) {
 		Time::Date date;
 		Log::startChrono();
 		for ( unsigned long i = 0; i<M10; i++ ) {
-			date = Time::Date( Time::getTime() );
+			date = Time::Date( Time::getValue() );
 		}
 		Log::stopChrono();
 		Log::displayChrono( StringASCII()<<"Date" );

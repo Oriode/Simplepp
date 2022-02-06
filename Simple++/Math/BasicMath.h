@@ -43,6 +43,11 @@ namespace Math {
 		static constexpr intmax_t num = ( g == 0 ) ? 0 : ( sign(Numerator) * sign(Denumerator) * abs(Numerator) / g );
 		static constexpr intmax_t den = ( g == 0 ) ? 0 : ( abs(Denumerator) / g );
 
+		template<intmax_t Numerator2, intmax_t Denumerator2>
+		inline bool operator==(const Ratio< Numerator2, Denumerator2>& r) const {
+			return Numerator == Numerator2 && Denumerator == Denumerator2;
+		}
+
 		typedef Ratio<num, den> type;
 	};
 

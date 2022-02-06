@@ -99,7 +99,7 @@ namespace Time {
 		this -> year = 1970;
 		this -> month = 0;
 
-		TimeT unixTime = timePoint.getTime() + this -> utcBias;
+		TimeT unixTime = timePoint.getValue() + this -> utcBias;
 		bool isLeapYear = true;
 
 		//Get the Year Number
