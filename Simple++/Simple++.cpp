@@ -36,7 +36,7 @@
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-//#define DEBUG_JSON
+#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
@@ -47,7 +47,7 @@
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
-#define DEBUG_TIME
+//#define DEBUG_TIME
 //#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
@@ -493,6 +493,12 @@ int main(int argc, char* argv[]) {
 			assert(IO::read(WString("testJSON.cjson"), &rootNode));
 
 			Log::displayLog(rootNode.toString());
+		}
+		{
+			StringASCII jsonStr("{\"futuresType\":\"\",\"rateLimits\":[{\"rateLimitType\":\"\",\"interval\":\"\",\"intervalNum\":1,\"limit\":2400}],\"exchangeFilters\":[],\"assets\":\"\"}");
+
+			JSON::Node rootNode;
+			rootNode.readJSON(jsonStr);
 		}
 	}
 #endif
@@ -1192,7 +1198,7 @@ int main(int argc, char* argv[]) {
 
 		Vector<Network::HTTPParam> paramVector;
 		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
-		Time::TimeT timestamp(Time::TimePoint::getNow().getValue()* Time::TimeT(1000));
+		Time::TimeT timestamp(Time::getTime<Time::MilliSecond>().getValue());
 		paramVector.push(Param(StringASCII("timestamp"), StringASCII(timestamp)));
 		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(2000)));
 
@@ -1369,9 +1375,9 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : TIME															//
 	{
-		Time::TimePointMS tpS(Time::getValue<Time::Second>());
-		Time::TimePointMS tpMS(Time::getValue<Time::MilliSecond>());
-		Time::TimePointT<Time::Day> tpD(Time::getValue<Time::Day>());
+		Time::TimePointMS tpS(Time::getTime<Time::Second>());
+		Time::TimePointMS tpMS(Time::getTime<Time::MilliSecond>());
+		Time::TimePoint<Time::Day> tpD(Time::getTime<Time::Day>());
 		Time::Duration<Time::MilliSecond> d(tpMS - tpS);
 		log(d.getValue());
 		log(tpD.getValue());
