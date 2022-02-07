@@ -1,3 +1,4 @@
+#include "ParamContainer.h"
 template<typename I, typename V>
 inline ParamContainerT<I, V>::ParamContainerT() {}
 
@@ -51,8 +52,7 @@ inline ParamT<I, V>* ParamContainerT<I, V>::setParam(const I& paramName, const V
 
 template<typename I, typename V>
 inline void ParamContainerT<I, V>::setParams(const Vector<ParamT<I, V>>& paramVector) {
-	this->paramVector.clear();
-	this->paramMap.clear();
+	clearParams();
 	for ( typename Vector<ParamT<I, V>>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
 		const ParamT<I, V>& param(paramVector.getValueIt(it));
 
@@ -62,13 +62,38 @@ inline void ParamContainerT<I, V>::setParams(const Vector<ParamT<I, V>>& paramVe
 
 template<typename I, typename V>
 inline void ParamContainerT<I, V>::setParams(const Vector<ParamT<I, V> *>& paramVector) {
-	this->paramVector.clear();
-	this->paramMap.clear();
+	clearParams();
 	for ( typename Vector<ParamT<I, V> *>::Iterator it(paramVector.getBegin()); it != paramVector.getEnd(); paramVector.iterate(&it) ) {
 		const ParamT<I, V>* param(paramVector.getValueIt(it));
 
 		addParam(new ParamT<I, V>(*param));
 	}
+}
+
+template<typename I, typename V>
+inline bool ParamContainerT<I, V>::removeParam(const I& paramName) {
+	RBNode<MapObject<I, ParamT<I, V> *>* paramNode(this->paramMap.getNodeI(paramName));
+	if ( paramNode ) {
+		ParamT<I, V>* param(paramNode.getValue().getValue());
+		this->paramVector.eraseFirst(param);
+		this->paramMap.eraseNode(paramNode);
+
+		delete param;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+template<typename I, typename V>
+inline void ParamContainerT<I, V>::clearParams() {
+	for ( typename Vector<ParamT<I, V>*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
+		delete this->paramVector.getValueIt(it);
+	}
+
+	this->paramVector.clear();
+	this->paramMap.clear();
 }
 
 template<typename I, typename V>

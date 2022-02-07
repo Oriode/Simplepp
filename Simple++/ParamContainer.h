@@ -20,6 +20,10 @@ public:
 	void setParams(const Vector<ParamT<I, V>>& paramVector);
 	void setParams(const Vector<ParamT<I, V> *>& paramVector);
 
+	bool removeParam(const I& paramName);
+
+	void clearParams();
+
 	const ParamT<I, V>* getParam(const I& paramName) const;
 	ParamT<I, V>* getParam(const I& paramName);
 

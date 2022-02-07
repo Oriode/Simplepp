@@ -5,6 +5,12 @@ namespace Network {
 	inline UrlT<T>::UrlT() {}
 
 	template<typename T>
+	inline UrlT<T>::UrlT(typename UrlT<T>::Type type, const StringASCII& hostname) :
+		type(type),
+		hostname(hostname)
+	{}
+
+	template<typename T>
 	inline UrlT<T>::UrlT(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) :
 		type(type),
 		hostname(hostname),

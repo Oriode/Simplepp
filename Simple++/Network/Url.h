@@ -15,6 +15,7 @@ namespace Network {
 		};
 
 		UrlT();
+		UrlT(typename UrlT<T>::Type type, const StringASCII& hostname);
 		UrlT(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
