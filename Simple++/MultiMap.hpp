@@ -62,7 +62,7 @@ T * MultiMap<I, T, Compare>::_insert( const I & index, const T & value ) {
 					T * valueP( newNode -> getValue().getValue().push( value ) );
 
 					#ifdef DEBUG
-					Map<I, Vector<T>, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
+					RBTree<I, Vector<T>, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
 					#endif
 					return valueP;
 				}
@@ -76,7 +76,7 @@ T * MultiMap<I, T, Compare>::_insert( const I & index, const T & value ) {
 					T * valueP( newNode -> getValue().getValue().push( value ) );
 
 					#ifdef DEBUG
-					Map<I, Vector<T>, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
+					RBTree<I, Vector<T>, Compare>::_checkTree( this -> rootNode, this -> compareFunc );
 					#endif
 					return valueP;
 				}

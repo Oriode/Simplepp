@@ -252,9 +252,9 @@ namespace Math {
 	template<typename T = double>
 	MATH_FUNC_QUALIFIER constexpr T pi() { return BasicMath::pi<T>(); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T modulus(const T& x, const T& d) { return BasicMath::modulus<T>(x, d); }
+	MATH_FUNC_QUALIFIER T modulus(const T& x, const T& d) { return BasicMath::modulus(x, d); }
 	template<typename T = float>
-	MATH_FUNC_QUALIFIER T random(const T& min, const T& max) { return BasicMath::random<T>(min, max); }
+	MATH_FUNC_QUALIFIER T random(const T& min, const T& max) { return BasicMath::random(min, max); }
 	template<typename T = float>
 	MATH_FUNC_QUALIFIER T randomF() { return BasicMath::randomF<T>(); }
 	template<typename T = unsigned int>
@@ -262,33 +262,33 @@ namespace Math {
 	template<typename T = unsigned int>
 	MATH_FUNC_QUALIFIER T randomMax() { return BasicMath::randomMax<T>(); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T pow(const T& v, double e) { return BasicMath::pow<T>(v, e); }
+	MATH_FUNC_QUALIFIER T pow(const T& v, double e) { return BasicMath::pow(v, e); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T pow(const T& v, int e) { return BasicMath::pow<T>(v, e); }
+	MATH_FUNC_QUALIFIER constexpr T pow(const T& v, int e) { return BasicMath::pow(v, e); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T clamp(const T& v, const T& min, const T& max) { return BasicMath::clamp<T>(v, min, max); }
+	MATH_FUNC_QUALIFIER T clamp(const T& v, const T& min, const T& max) { return BasicMath::clamp(v, min, max); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T fpart(const T& x) { return BasicMath::fpart<T>(x); }
+	MATH_FUNC_QUALIFIER T fpart(const T& x) { return BasicMath::fpart(x); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T trunc(const T& x) { return BasicMath::trunc<T>(x); }
+	MATH_FUNC_QUALIFIER T trunc(const T& x) { return BasicMath::trunc(x); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T min(const T& x, const T& y) { return BasicMath::min<T>(x, y); }
+	MATH_FUNC_QUALIFIER T min(const T& x, const T& y) { return BasicMath::min(x, y); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T max(const T& x, const T& y) { return BasicMath::max<T>(x, y); }
+	MATH_FUNC_QUALIFIER T max(const T& x, const T& y) { return BasicMath::max(x, y); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T abs(const T& v) { return BasicMath::abs<T>(v); }
+	MATH_FUNC_QUALIFIER constexpr T abs(const T& v) { return BasicMath::abs(v); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T gcd(const T& M, const T& N) { return BasicMath::gcd<T>(M, N); }
+	MATH_FUNC_QUALIFIER constexpr T gcd(const T& M, const T& N) { return BasicMath::gcd(M, N); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T sign(const T& i) { return BasicMath::sign<T>(i); }
+	MATH_FUNC_QUALIFIER constexpr T sign(const T& i) { return BasicMath::sign(i); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T radians(const T& degree) { return BasicMath::radians<T>(degree); }
+	MATH_FUNC_QUALIFIER T radians(const T& degree) { return BasicMath::radians(degree); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T degree(const T& radians) { return BasicMath::degree<T>(radians); }
+	MATH_FUNC_QUALIFIER T degree(const T& radians) { return BasicMath::degree(radians); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T sincn(const T& x) { return BasicMath::sincn<T>(x); }
+	MATH_FUNC_QUALIFIER T sincn(const T& x) { return BasicMath::sincn(x); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T sinc(const T& x) { return BasicMath::sinc<T>(x); }
+	MATH_FUNC_QUALIFIER T sinc(const T& x) { return BasicMath::sinc(x); }
 
 	/************************************************************************/
 	/* STD OVERRIDE                                                         */

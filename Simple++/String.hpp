@@ -4464,7 +4464,13 @@ Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const Ba
 		else if ( t1 > t2 ) return Math::Compare::Value::Greater;
 		else return Math::Compare::Value::Less;
 	}
-	return Math::Compare::Value::Equal;
+	if ( x.getSize() < y.getSize() ) {
+		return Math::Compare::Value::Less;
+	} else if ( x.getSize() > y.getSize() ) {
+		return Math::Compare::Value::Greater;
+	} else {
+		return Math::Compare::Value::Equal;
+	}
 }
 
 
