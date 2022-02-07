@@ -2,89 +2,89 @@
 namespace Time {
 
 	template<typename Ratio>
-	TimePointT<Ratio>::TimePointT() {}
+	TimePoint<Ratio>::TimePoint() {}
 
 	template<typename Ratio>
-	TimePointT<Ratio>::TimePointT( const TimeT & timeT ) {
+	TimePoint<Ratio>::TimePoint( const TimeT & timeT ) {
 		this -> t = timeT;
 	}
 
 	template<typename Ratio>
-	inline TimePointT<Ratio>::TimePointT(const TimePointT<Ratio>& tp) :
+	inline TimePoint<Ratio>::TimePoint(const TimePoint<Ratio>& tp) :
 		t(tp.t)
 	{}
 
 	template<typename Ratio>
 	template<typename Ratio2>
-	inline TimePointT<Ratio>::TimePointT(const TimePointT<Ratio2>& tp) :
+	inline TimePoint<Ratio>::TimePoint(const TimePoint<Ratio2>& tp) :
 		t(tp.toValue<Ratio>()) {}
 
 	template<typename Ratio>
-	void TimePointT<Ratio>::setNow() {
-		TimePointT<Ratio>::_setNow(reinterpret_cast<Ratio *>(NULL));
+	void TimePoint<Ratio>::setNow() {
+		TimePoint<Ratio>::_setNow(reinterpret_cast<Ratio *>(NULL));
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::operator==( const TimePointT<Ratio> & timePoint ) const {
+	bool TimePoint<Ratio>::operator==( const TimePoint<Ratio> & timePoint ) const {
 		return this -> t == timePoint.t;
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::operator!=( const TimePointT<Ratio> & timePoint ) const {
+	bool TimePoint<Ratio>::operator!=( const TimePoint<Ratio> & timePoint ) const {
 		return this -> t != timePoint.t;
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::operator<=( const TimePointT<Ratio> & timePoint ) const {
+	bool TimePoint<Ratio>::operator<=( const TimePoint<Ratio> & timePoint ) const {
 		return this -> t <= timePoint.t;
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::operator>=( const TimePointT<Ratio> & timePoint ) const {
+	bool TimePoint<Ratio>::operator>=( const TimePoint<Ratio> & timePoint ) const {
 		return this -> t >= timePoint.t;
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::operator>( const TimePointT<Ratio> & timePoint ) const {
+	bool TimePoint<Ratio>::operator>( const TimePoint<Ratio> & timePoint ) const {
 		return this -> t > timePoint.t;
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::operator<( const TimePointT<Ratio> & timePoint ) const {
+	bool TimePoint<Ratio>::operator<( const TimePoint<Ratio> & timePoint ) const {
 		return this -> t < timePoint.t;
 	}
 
 	template<typename Ratio>
-	TimePointT<Ratio> & TimePointT<Ratio>::operator=( const TimePointT<Ratio> & timePoint ) {
+	TimePoint<Ratio> & TimePoint<Ratio>::operator=( const TimePoint<Ratio> & timePoint ) {
 		this -> t = timePoint.t;
 		return *this;
 	}
 
 	template<typename Ratio>
 	template<typename Ratio2>
-	TimePointT<Ratio>& TimePointT<Ratio>::operator=(const TimePointT<Ratio2>& timePoint) {
+	TimePoint<Ratio>& TimePoint<Ratio>::operator=(const TimePoint<Ratio2>& timePoint) {
 		this -> t = timePoint.toValue<Ratio>();
 		return *this;
 	}
 
 	template<typename Ratio>
-	TimePointT<Ratio> & TimePointT<Ratio>::operator=( const TimeT & timeT ) {
+	TimePoint<Ratio> & TimePoint<Ratio>::operator=( const TimeT & timeT ) {
 		this -> t = timeT;
 		return *this;
 	}
 
 	template<typename Ratio>
-	void TimePointT<Ratio>::setValue( const TimeT & t ) {
+	void TimePoint<Ratio>::setValue( const TimeT & t ) {
 		this -> t = t;
 	}
 
 	template<typename Ratio>
-	const TimeT & TimePointT<Ratio>::getValue() const {
+	const TimeT & TimePoint<Ratio>::getValue() const {
 		return this -> t;
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::read( IO::SimpleFileStream * fileStream ) {
+	bool TimePoint<Ratio>::read( IO::SimpleFileStream * fileStream ) {
 		if ( !IO::read( fileStream, &this->t ) ) {
 			return false;
 		}
@@ -92,7 +92,7 @@ namespace Time {
 	}
 
 	template<typename Ratio>
-	bool TimePointT<Ratio>::write( IO::SimpleFileStream * fileStream ) const {
+	bool TimePoint<Ratio>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !IO::write( fileStream, &this->t ) ) {
 			return false;
 		}
@@ -100,7 +100,7 @@ namespace Time {
 	}
 
 	template<typename Ratio>
-	inline void TimePointT<Ratio>::_setNow(Second * r) {
+	inline void TimePoint<Ratio>::_setNow(Second * r) {
 		static struct timeval tv;
 		gettimeofday(&tv, NULL);
 
@@ -109,7 +109,7 @@ namespace Time {
 
 	template<typename Ratio>
 	template<typename Ratio2>
-	inline void TimePointT<Ratio>::_setNow(Ratio2 * r) {
+	inline void TimePoint<Ratio>::_setNow(Ratio2 * r) {
 		static struct timeval tv;
 		gettimeofday(&tv, NULL);
 
@@ -118,7 +118,7 @@ namespace Time {
 
 #ifdef WIN32
 	template<typename Ratio>
-	inline int TimePointT<Ratio>::gettimeofday(timeval* tv, timezone* tzp) {
+	inline int TimePoint<Ratio>::gettimeofday(timeval* tv, timezone* tzp) {
 		///@see https://stackoverflow.com/questions/10905892/equivalent-of-gettimeday-for-windows
 		// Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
 		// This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
@@ -141,43 +141,43 @@ namespace Time {
 #endif
 
 	template<typename Ratio>
-	TimePointT<Ratio> & TimePointT<Ratio>::operator+=( TimeT t ) {
+	TimePoint<Ratio> & TimePoint<Ratio>::operator+=( TimeT t ) {
 		this -> t += t;
 		return *this;
 	}
 	template<typename Ratio>
-	TimePointT<Ratio> & TimePointT<Ratio>::operator-=( TimeT t ) {
+	TimePoint<Ratio> & TimePoint<Ratio>::operator-=( TimeT t ) {
 		this -> t -= t;
 		return *this;
 	}
 
 	template<typename Ratio>
 	template<class Ratio2>
-	TimePointT<Ratio> & TimePointT<Ratio>::operator+=( const Duration<Ratio2> & d ) {
+	TimePoint<Ratio> & TimePoint<Ratio>::operator+=( const Duration<Ratio2> & d ) {
 		this -> t += d.toValue<Ratio>();
 		return *this;
 	}
 
 	template<typename Ratio>
 	template<class Ratio2>
-	TimePointT<Ratio> & TimePointT<Ratio>::operator-=( const Duration<Ratio2> & d ) {
+	TimePoint<Ratio> & TimePoint<Ratio>::operator-=( const Duration<Ratio2> & d ) {
 		this -> t -= d.toValue<Ratio>();
 		return *this;
 	}
 
 	template<typename Ratio>
 	template<typename Ratio2>
-	inline TimeT TimePointT<Ratio>::toValue() const {
+	inline TimeT TimePoint<Ratio>::toValue() const {
 		return convertTime<Ratio2, Ratio>(this->t);
 	}
 
 
 	template<typename Ratio>
-	TimePointT<Ratio>::~TimePointT() {}
+	TimePoint<Ratio>::~TimePoint() {}
 
 	template<typename Ratio>
-	TimePointT<Ratio> getValue() {
-		TimePointT<Ratio> newTime;
+	TimePoint<Ratio> getTime() {
+		TimePoint<Ratio> newTime;
 		newTime.setNow();
 		return newTime;
 	}
@@ -200,53 +200,53 @@ namespace Time {
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
 	template<typename Ratio>
-	TimePointT<Ratio> operator+( const TimePointT<Ratio> & t1, TimeT t2 ) {
-		return TimePointT<Ratio>( t1.getValue() + t2 );
+	TimePoint<Ratio> operator+( const TimePoint<Ratio> & t1, TimeT t2 ) {
+		return TimePoint<Ratio>( t1.getValue() + t2 );
 	}
 
 	template<typename Ratio>
-	TimePointT<Ratio> operator+( TimeT t1, const TimePointT<Ratio> & t2 ) {
-		return TimePointT<Ratio>( t1 + t2.getValue() );
+	TimePoint<Ratio> operator+( TimeT t1, const TimePoint<Ratio> & t2 ) {
+		return TimePoint<Ratio>( t1 + t2.getValue() );
 	}
 
 	template<typename Ratio>
-	TimePointT<Ratio> operator-( const TimePointT<Ratio> & t1, TimeT t2 ) {
-		return TimePointT<Ratio>( t1.getValue() - t2 );
+	TimePoint<Ratio> operator-( const TimePoint<Ratio> & t1, TimeT t2 ) {
+		return TimePoint<Ratio>( t1.getValue() - t2 );
 	}
 
 	template<typename Ratio>
-	TimePointT<Ratio> operator-( TimeT t1, const TimePointT<Ratio> & t2 ) {
-		return TimePointT<Ratio>( t1 - t2.getValue() );
+	TimePoint<Ratio> operator-( TimeT t1, const TimePoint<Ratio> & t2 ) {
+		return TimePoint<Ratio>( t1 - t2.getValue() );
 	}
 
 	template<typename Ratio>
-	Duration<Ratio> operator-( const TimePointT<Ratio> & t1, const TimePointT<Ratio> & t2 ) {
+	Duration<Ratio> operator-( const TimePoint<Ratio> & t1, const TimePoint<Ratio> & t2 ) {
 		return Duration<Ratio>( t1.getValue() - t2.getValue() );
 	}
 
 	template<typename Ratio, class Ratio2>
-	TimePointT<Ratio> operator+( const TimePointT<Ratio> & t1, const Duration<Ratio2> & d ) {
-		return TimePointT<Ratio>( t1.getValue() + d.toValue<Ratio>() );
+	TimePoint<Ratio> operator+( const TimePoint<Ratio> & t1, const Duration<Ratio2> & d ) {
+		return TimePoint<Ratio>( t1.getValue() + d.toValue<Ratio>() );
 	}
 
 	template<typename Ratio, class Ratio2>
-	TimePointT<Ratio> operator+( const Duration<Ratio2> & d, const TimePointT<Ratio> & t2 ) {
-		return TimePointT<Ratio>( t2.getValue() + d.toValue<Ratio>() );
+	TimePoint<Ratio> operator+( const Duration<Ratio2> & d, const TimePoint<Ratio> & t2 ) {
+		return TimePoint<Ratio>( t2.getValue() + d.toValue<Ratio>() );
 	}
 
 	template<typename Ratio, class Ratio2>
-	TimePointT<Ratio> operator-( const TimePointT<Ratio> & t1, const Duration<Ratio2> & d ) {
-		return TimePointT<Ratio>( t1.getValue() - d.toValue<Ratio>() );
+	TimePoint<Ratio> operator-( const TimePoint<Ratio> & t1, const Duration<Ratio2> & d ) {
+		return TimePoint<Ratio>( t1.getValue() - d.toValue<Ratio>() );
 	}
 
 	template<typename Ratio, class Ratio2>
-	TimePointT<Ratio> operator*( const TimePointT<Ratio> & t, const Duration<Ratio2> & d ) {
-		return TimePointT<Ratio>( t.getValue() * d.toValue<Ratio>());
+	TimePoint<Ratio> operator*( const TimePoint<Ratio> & t, const Duration<Ratio2> & d ) {
+		return TimePoint<Ratio>( t.getValue() * d.toValue<Ratio>());
 	}
 
 	template<typename Ratio, class Ratio2>
-	TimePointT<Ratio> operator/( const TimePointT<Ratio> & t, const Duration<Ratio2> & d ) {
-		return TimePointT<Ratio>( t.getValue() / d.toValue<Ratio>());
+	TimePoint<Ratio> operator/( const TimePoint<Ratio> & t, const Duration<Ratio2> & d ) {
+		return TimePoint<Ratio>( t.getValue() / d.toValue<Ratio>());
 	}
 
 

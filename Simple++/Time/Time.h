@@ -11,7 +11,9 @@
 
 #if defined WIN32
 #if defined ENABLE_WIN32
-#include <windows.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <Windows.h>
 #endif
 #else
 #include <unistd.h>

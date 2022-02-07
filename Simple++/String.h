@@ -13,6 +13,8 @@
 #include "Vector.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
+#include <WinSock2.h>
+#include <WS2tcpip.h>
 #include <Windows.h>
 #endif
 

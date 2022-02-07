@@ -44,7 +44,7 @@ namespace Time {
 		*this = date;
 	}
 	template<typename T>
-	DateT<T>::DateT( const TimePoint & timePoint, TimeT utcBias ) {
+	DateT<T>::DateT( const TimePoint<Second> & timePoint, TimeT utcBias ) {
 		setToTimePoint( timePoint, utcBias );
 	}
 
@@ -83,18 +83,18 @@ namespace Time {
 
 
 	template<typename T>
-	DateT<T> & DateT<T>::operator=( const TimePoint & timePoint ) {
+	DateT<T> & DateT<T>::operator=( const TimePoint<Second> & timePoint ) {
 		setToTimePoint( timePoint );
 		return *this;
 	}
 
 	template<typename T>
 	void DateT<T>::setNow( TimeT utcBias ) {
-		setToTimePoint( TimePoint::getNow(), utcBias );
+		setToTimePoint( TimePoint<Second>::getNow(), utcBias );
 	}
 
 	template<typename T>
-	void DateT<T>::setToTimePoint( const TimePoint & timePoint, TimeT utcBias ) {
+	void DateT<T>::setToTimePoint( const TimePoint<Second> & timePoint, TimeT utcBias ) {
 		this -> utcBias = utcBias;
 		this -> year = 1970;
 		this -> month = 0;
@@ -330,7 +330,7 @@ namespace Time {
 
 
 	template<typename T>
-	TimePoint DateT<T>::toTimePoint() const {
+	TimePoint<Second> DateT<T>::toTimePoint() const {
 
 		TimeT t( 0 );
 

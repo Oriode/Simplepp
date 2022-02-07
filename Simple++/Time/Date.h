@@ -60,7 +60,7 @@ namespace Time {
 		 * @param 	timePoint	Time point to use.
 		 * @param	utcBias	Delta in seconds from UTC.
 		 */
-		DateT( const TimePoint & timePoint, TimeT utcBias = 0 );
+		DateT( const TimePoint<Second> & timePoint, TimeT utcBias = 0 );
 
 
 		/************************************************************************/
@@ -155,7 +155,7 @@ namespace Time {
 		 * @param 	timePoint	The time point.
 		 * @returns	A shallow copy of this object.
 		 */
-		DateT & operator=( const TimePoint & timePoint );
+		DateT & operator=( const TimePoint<Second> & timePoint );
 
 
 		/**
@@ -215,7 +215,7 @@ namespace Time {
 		 * @param 	timePoint	The time point.
 		 * @param 	utcBias  	(Optional) The UTC bias.
 		 */
-		void setToTimePoint( const TimePoint & timePoint, TimeT utcBias = getLocalUTCBias() );
+		void setToTimePoint( const TimePoint<Second> & timePoint, TimeT utcBias = getLocalUTCBias() );
 
 		/**
 		 * @brief	set the seconds of this date
@@ -319,10 +319,10 @@ namespace Time {
 		void concatISO( BasicString<C> & str, DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
 
 		/**
-		 * @brief	convert this date to a TimePoint
-		 * @returns	This object as a TimePoint.
+		 * @brief	convert this date to a TimePoint<Second>
+		 * @returns	This object as a TimePoint<Second>.
 		 */
-		TimePoint toTimePoint() const;
+		TimePoint<Second> toTimePoint() const;
 
 		/**
 		 * @brief	get the day number of the week (Monday is the first one)

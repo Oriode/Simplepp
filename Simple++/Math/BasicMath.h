@@ -11,7 +11,9 @@
 
  //If we are on windows, include it to avoid problems
 #if defined WIN32 && defined ENABLE_WIN32
-#include <windows.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <Windows.h>
 #endif
 
 #if defined min
