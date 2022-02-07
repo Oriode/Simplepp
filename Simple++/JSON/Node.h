@@ -104,6 +104,11 @@ namespace JSON {
 		///@return name of this node
 		virtual const T & getName() const;
 
+		///@brief Get the first pointer to the node corresponding to the name searched in this sub tree.
+		///@param name Name to look for
+		///@return BasicNodeT<T> pointer with the searched name or NULL if none.
+		virtual BasicNodeT<T>* getElementByName(const T& name) const;
+
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
 		///@return Vector of BasicNodeT<T>'s pointers with the searched name
@@ -281,24 +286,29 @@ namespace JSON {
 		///@return reference to THIS
 		ObjectNodeT<T> & operator=( ObjectNodeT<T> && node );
 
+		///@brief Get the first pointer to the node corresponding to the name searched in this sub tree.
+		///@param name Name to look for
+		///@return BasicNodeT<T> pointer with the searched name or NULL if none.
+		virtual BasicNodeT<T>* getElementByName(const T& name) const override;
+
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
 		///@return Vector of ObjectNodeT<T>'s pointers with the searched name
-		Vector< BasicNodeT<T> * > getElementsByName( const T & name ) const override;
+		virtual Vector< BasicNodeT<T> * > getElementsByName( const T & name ) const override;
 
 		///@brief Get the number of children of this node
 		///@return Number of children of this node
-		Size getNbChildren() const override;
+		virtual Size getNbChildren() const override;
 
 		///@brief Get a child from his index
 		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
 		///@return Child
-		const BasicNodeT<T> * getChild( Size i ) const override;
-		BasicNodeT<T> * getChild( Size i ) override;
+		virtual const BasicNodeT<T> * getChild( Size i ) const override;
+		virtual BasicNodeT<T> * getChild( Size i ) override;
 
 		///@brief Add a child to this node
 		///@param child Pointer to the child to add (Has to be allocated but NOT deallocated)
-		void addChild( BasicNodeT<T> * child ) override;
+		virtual void addChild( BasicNodeT<T> * child ) override;
 
 		///@brief Get the complete children vector of this node.
 		///@return Children Vector.
@@ -307,7 +317,7 @@ namespace JSON {
 		///@brief Get Vector of children from a name
 		///@param name Name to look for
 		///@return pointer to the Vector of children if one has been founded, NULL instead
-		const Vector<BasicNodeT<T> *> & getChildren( const T & name ) const override;
+		virtual const Vector<BasicNodeT<T> *> & getChildren( const T & name ) const override;
 		// Vector<BasicNodeT<T> *> getChildren( const T & name ) override;
 
 		///@brief Get the first child founded from a name
@@ -319,22 +329,22 @@ namespace JSON {
 		///@brief Delete a child from this node (And delete it)
 		///@param child Child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		bool deleteChild( BasicNodeT<T> * child ) override;
+		virtual bool deleteChild( BasicNodeT<T> * child ) override;
 
 		///@brief Delete a child from this node (And delete it)
 		///@param i Index of the child to be deleted (The child itself is deleted during this operation, NEVER call delete directly from a node)
 		///@return True if something has been deleted, False otherwise
-		bool deleteChild( Size i ) override;
+		virtual bool deleteChild( Size i ) override;
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param child Child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		BasicNodeT<T> * removeChild( BasicNodeT<T> * child ) override;
+		virtual BasicNodeT<T> * removeChild( BasicNodeT<T> * child ) override;
 
 		///@brief Remove a child from this node (And do NOT delete it)
 		///@param i Index of the child to be removed (The child itself is not deleted and can be set as a child to another node)
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
-		BasicNodeT<T> * removeChild( Size i ) override;
+		virtual BasicNodeT<T> * removeChild( Size i ) override;
 
 		///@brief Read this object using a pointer to a String Iterator.
 		///@param buffer Pointer to a String iterator
@@ -353,12 +363,12 @@ namespace JSON {
 		///@brief read from a file stream
 		///@param fileStream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream ) override;
+		virtual bool read( IO::SimpleFileStream * fileStream ) override;
 
 		///@brief write this object as binary into a file stream
 		///@param fileStream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const override;
+		virtual bool write( IO::SimpleFileStream * fileStream ) const override;
 
 		///@brief Write this node to an Object that support opperator '<<'.
 		///@param o Object to write to.
@@ -371,6 +381,7 @@ namespace JSON {
 		void _clear();
 		void _unload();
 		void _getElementsByName( Vector < BasicNodeT<T> * > * nodeVector, const T & name ) const;
+		BasicNodeT<T>* _getElementByName(const T& name) const;
 
 		
 	protected:

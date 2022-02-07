@@ -134,6 +134,11 @@ namespace JSON {
 	}
 
 	template<typename T>
+	inline BasicNodeT<T>* BasicNodeT<T>::getElementByName(const T& name) const {
+		return NULL;
+	}
+
+	template<typename T>
 	Vector< BasicNodeT<T> * > BasicNodeT<T>::getElementsByName( const T & name ) const {
 		return Vector<BasicNodeT<T> *>();
 	}
@@ -447,12 +452,20 @@ namespace JSON {
 	}
 
 	template<typename T>
+	inline BasicNodeT<T>* ObjectNodeT<T>::getElementByName(const T& name) const {
+		if ( name == this -> name )
+			return const_cast< ObjectNodeT<T> * >( this );
+		else
+			return _getElementByName(name);
+	}
+
+	template<typename T>
 	Vector< BasicNodeT<T> * > ObjectNodeT<T>::getElementsByName( const T & name ) const {
 		Vector< BasicNodeT<T> * > nodeVector;
 		nodeVector.reserve( 20 );
 
 		if ( name == this -> name )
-			nodeVector.push( const_cast< BasicNodeT<T> * >( static_cast<const BasicNodeT<T> *>(this) ) );
+			nodeVector.push( const_cast< ObjectNodeT<T> * >( this ) );
 
 		_getElementsByName( &nodeVector, name );
 		return nodeVector;
@@ -726,6 +739,22 @@ namespace JSON {
 			BasicNodeT<T> * child( this -> childrenVector.getValueIt( it ) );
 			if ( child -> getType() == Type::Object ) {
 				child -> toObject() -> _getElementsByName( nodeVector, name );
+			}
+		}
+	}
+
+	template<typename T>
+	inline BasicNodeT<T>* ObjectNodeT<T>::_getElementByName(const T& name) const {
+		const Vector < BasicNodeT<T>* >* vectorFounded(this -> childrenMap[ name ]);
+		if ( vectorFounded ) {
+			return vectorFounded->getFirst();
+		}
+
+		// Recursively call every child too
+		for ( auto it(this -> childrenVector.getBegin()); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate(&it) ) {
+			BasicNodeT<T>* child(this -> childrenVector.getValueIt(it));
+			if ( child -> getType() == Type::Object ) {
+				child -> toObject() -> _getElementByName(name);
 			}
 		}
 	}
