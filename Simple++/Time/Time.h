@@ -35,7 +35,8 @@ namespace Time {
 	 *
 	 * @param	ms	The milliseconds.
 	 */
-	void sleep( unsigned long ms );
+	template<typename T>
+	void sleep( const T & ms );
 
 	/**
 	 * @brief		Sleeps the given duration.
@@ -43,10 +44,12 @@ namespace Time {
 	 * @tparam	ratio	Type of the ratio.
 	 * @param	d	A Duration<ratio> The duration to sleep.
 	 */
-	template<class ratio>
-	void sleep( const Duration<ratio> & d );
+	template<class Ratio>
+	void sleep( const Duration<Ratio> & d );
 
 	/** @brief	Time of the beginning of the software. */
 	static const TimePoint startingTime;
-};
+}
+
+#include "Time.hpp"
 

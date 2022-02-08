@@ -570,6 +570,9 @@
     <ClInclude Include="Time\BasicTime.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Time\Time.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
@@ -577,9 +580,6 @@
     </ClCompile>
     <ClCompile Include="IO\BasicSimpleIO.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Time\Time.cpp">
-      <Filter>Source Files\Time</Filter>
     </ClCompile>
     <ClCompile Include="Math\BasicComparable.cpp">
       <Filter>Source Files</Filter>
