@@ -754,9 +754,13 @@ namespace JSON {
 		for ( auto it(this -> childrenVector.getBegin()); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate(&it) ) {
 			BasicNodeT<T>* child(this -> childrenVector.getValueIt(it));
 			if ( child -> getType() == Type::Object ) {
-				child -> toObject() -> _getElementByName(name);
+				BasicNodeT<T>* foundedElement(child -> toObject() -> _getElementByName(name));
+				if ( foundedElement ) {
+					return foundedElement;
+				}
 			}
 		}
+		return NULL;
 	}
 
 	template<typename T>
