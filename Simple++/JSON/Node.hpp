@@ -322,7 +322,7 @@ namespace JSON {
 			it++;
 			return true;
 		} else {
-			error( String::format( TEXT( "[XML ERROR] : Expected '%'." ), c ) );
+			error( String::format( TEXT( "[JSON ERROR] : Expected '%'." ), c ) );
 			return false;
 		}
 	}

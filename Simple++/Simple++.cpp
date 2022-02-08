@@ -36,14 +36,14 @@
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-//#define DEBUG_JSON
+#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
 //#define DEBUG_HTTP
-#define DEBUG_CRYPTO
+//#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
@@ -494,8 +494,14 @@ int main(int argc, char* argv[]) {
 
 		//	Log::displayLog(rootNode.toString());
 		//}
-		{
+		/*{
 			StringASCII jsonStr("{\"futuresType\":\"\",\"rateLimits\":[{\"rateLimitType\":\"\",\"interval\":\"\",\"intervalNum\":1,\"limit\":2400}],\"exchangeFilters\":[],\"assets\":\"\"}");
+
+			JSON::Node rootNode;
+			rootNode.readJSON(jsonStr);
+		}*/
+		{
+			StringASCII jsonStr("{{{}}}");
 
 			JSON::Node rootNode;
 			rootNode.readJSON(jsonStr);
