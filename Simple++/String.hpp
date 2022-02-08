@@ -1974,7 +1974,7 @@ Size BasicString<T>::toCStringWOS( unsigned long long number, T ** buffer, unsig
 
 template<typename T>
 Size BasicString<T>::toCStringWOS( long long number, T ** buffer, unsigned int base ) {
-	return _convertI2StringWOS<long>( number, buffer, base );
+	return _convertI2StringWOS<long long>( number, buffer, base );
 }
 
 template<typename T>
