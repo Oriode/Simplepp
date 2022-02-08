@@ -4417,7 +4417,7 @@ BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, con
 template<typename T>
 template<typename C, typename T1, typename... Types>
 BasicString<T> BasicString<T>::_format( const C * referenceStringBegin, const C * referenceStringEnd, const T1 & arg1, Types ... args ) {
-	BasicString<T> newString( BasicString<T>::null );
+	BasicString<T> newString(Vector<T>::ctor::null);
 
 	Size referenceStringSize( referenceStringEnd - referenceStringBegin );
 
