@@ -36,6 +36,8 @@
 /** @brief Display or not the calling file in logs. */
 //#define LOG_DISPLAY_FILEPATH
 
+#define LOG_DATE "%F %H:%M:%S"
+
 /** @brief	if the this is a debug build */
 //#define DEBUG											<= Please set it inside the compilations options
 

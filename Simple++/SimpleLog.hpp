@@ -26,7 +26,7 @@ void SimpleLogT<T>::getTimeStr( char * strBuffer, size_t bufferSize ) {
 	auto now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm timeinfo;
 	localtime_s( &timeinfo, &now );
-	std::strftime( strBuffer, bufferSize, "%H:%M:%S", &timeinfo );
+	std::strftime( strBuffer, bufferSize, LOG_DATE, &timeinfo );
 }
 
 template<typename T>
@@ -34,7 +34,7 @@ void SimpleLogT<T>::getTimeStr( wchar_t * strBuffer, size_t bufferSize ) {
 	auto now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm timeinfo;
 	localtime_s( &timeinfo, &now );
-	std::wcsftime( strBuffer, bufferSize, L"%H:%M:%S", &timeinfo );
+	std::wcsftime( strBuffer, bufferSize, L"" LOG_DATE, &timeinfo );
 }
 
 template<typename T>
