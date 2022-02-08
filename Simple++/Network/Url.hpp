@@ -118,6 +118,45 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline StringASCII UrlT<T>::formatEndPointWOParams() const {
+		StringASCII outputStr;
+		outputStr.reserve(512);
+
+		formatEndPointWOParams(&outputStr);
+
+		return outputStr;
+	}
+
+	template<typename T>
+	inline void UrlT<T>::formatEndPointWOParams(StringASCII* outputStr) const {
+		StringASCII& str(*outputStr);
+
+		str << this->endPointStr;
+	}
+
+	template<typename T>
+	inline StringASCII UrlT<T>::formatEndPoint() const {
+		StringASCII outputStr;
+		outputStr.reserve(512);
+
+		formatEndPoint(&outputStr);
+
+		return outputStr;
+	}
+
+	template<typename T>
+	inline void UrlT<T>::formatEndPoint(StringASCII* outputStr) const {
+		StringASCII& str(*outputStr);
+
+		formatEndPointWOParams(&str);
+
+		if ( this->paramVector.getSize() > Size(0) ) {
+			str << StringASCII::ElemType('?');
+			formatParams(&str);
+		}
+	}
+
+	template<typename T>
 	inline StringASCII UrlT<T>::formatParams() const {
 		StringASCII outputStr;
 		outputStr.reserve(512);

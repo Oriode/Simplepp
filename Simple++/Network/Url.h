@@ -43,6 +43,12 @@ namespace Network {
 		StringASCII formatWOParams() const;
 		void formatWOParams(StringASCII* outputStr) const;
 
+		StringASCII formatEndPointWOParams() const;
+		void formatEndPointWOParams(StringASCII* outputStr) const;
+
+		StringASCII formatEndPoint() const;
+		void formatEndPoint(StringASCII* outputStr) const;
+
 		StringASCII formatParams() const;
 		void formatParams(StringASCII* outputStr) const;
 
