@@ -545,9 +545,9 @@ namespace Network {
 		str << HTTPRequestT<T>::getMethodString(this->method);
 		str << StringASCII::ElemType(' ');
 		if ( this->method == Method::POST ) {
-			this->url.formatWOParams(&str);
+			this->url.formatEndPointWOParams(&str);
 		} else {
-			this->url.format(&str);
+			this->url.formatEndPoint(&str);
 		}
 		str << StringASCII::ElemType(' ');
 		str << this->protocolStr;
@@ -569,7 +569,7 @@ namespace Network {
 		this->request.setMethod(HTTPRequestT<T>::Method::GET);
 		this->request.setProtocol(StringASCII("HTTP/1.1"));
 
-		this->request.setHeaderParam(StringASCII("Accept"), StringASCII("*/*"));
+		// this->request.setHeaderParam(StringASCII("Accept"), StringASCII("*/*"));
 		this->request.setHeaderParam(StringASCII("Connection"), StringASCII("close"));
 	}
 
@@ -591,6 +591,7 @@ namespace Network {
 		if ( type == UrlT<T>::Type::HTTPS ) {
 			if ( connection.connect(hostname, unsigned short(443), Network::SockType::TCP) ) {
 
+				sendBuffer.clear();
 				this->request.formatQuery(&sendBuffer);
 
 				if ( !connection.send(sendBuffer.toCString(), int(sendBuffer.getSize())) ) {
