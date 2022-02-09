@@ -1768,10 +1768,10 @@ Size BasicString<T>::toCString( float number, T ** buffer, unsigned int precisio
 template<typename T>
 Size BasicString<T>::toCString( bool b, T ** buffer ) {
 	if ( b ) {
-		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ), T( '\0' ) };
+		static const T staticValues[] = { T( 't' ), T( 'r' ), T( 'u' ), T( 'e' ), T( '\0' ) };
 		return BasicString<T>::copy( buffer, staticValues ) - Size( 1 );
 	} else {
-		static const T staticValues[] = { T( 'F' ), T( 'A' ), T( 'L' ), T( 'S' ), T( 'E' ), T( '\0' ) };
+		static const T staticValues[] = { T( 'f' ), T( 'a' ), T( 'l' ), T( 's' ), T( 'e' ), T( '\0' ) };
 		return BasicString<T>::copy( buffer, staticValues ) - Size( 1 );
 	}
 }
@@ -2843,6 +2843,17 @@ template<typename T>
 double BasicString<T>::toDouble( unsigned int base ) const {
 	const T * tmpBuffer( this -> dataTable );
 	return _toFloat<double>( &tmpBuffer, base );
+}
+
+template<typename T>
+inline bool BasicString<T>::toBool() const {
+	const T* it(this -> dataTable);
+
+	if ( *it == T('t') || *it == T('1') ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 

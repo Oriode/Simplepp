@@ -878,6 +878,8 @@ public:
 	float toFloat( unsigned int base = 10 ) const;
 	double toDouble( unsigned int base = 10 ) const;
 
+	bool toBool() const;
+
 
 	/************************************************************************/
 	/* FromCString()                                                        */
