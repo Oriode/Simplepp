@@ -353,6 +353,9 @@ namespace Network {
 	}
 
 	template<typename T>
+	const StringASCII HTTPRequestT<T>::methodStrTable[] = { StringASCII("GET"), StringASCII("POST"), StringASCII("DELETE") };
+
+	template<typename T>
 	inline HTTPRequestT<T>::HTTPRequestT() :
 		method(Method::Unknown)
 	{
@@ -540,10 +543,9 @@ namespace Network {
 
 	template<typename T>
 	inline const StringASCII& HTTPRequestT<T>::getMethodString(typename HTTPRequestT<T>::Method method) {
-		static const StringASCII methodStrTable[] = { StringASCII("GET"), StringASCII("POST"), StringASCII("DELETE") };
 		unsigned char methodIndex(static_cast< unsigned char >( method ));
-		if ( methodIndex < sizeof(methodStrTable) ) {
-			return methodStrTable[ methodIndex ];
+		if ( methodIndex < sizeof(HTTPRequestT<T>::methodStrTable) ) {
+			return HTTPRequestT<T>::methodStrTable[ methodIndex ];
 		} else {
 			return StringASCII::null;
 		}
@@ -551,24 +553,13 @@ namespace Network {
 
 	template<typename T>
 	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod(const StringASCII& methodStr) {
-		switch ( methodStr ) {
-			case HTTPRequestT<T>::getMethodString(Method::GET):
-				{
-					return Method::GET;
-				}
-			case HTTPRequestT<T>::getMethodString(Method::POST):
-				{
-					return Method::POST;
-				}
-			case HTTPRequestT<T>::getMethodString(Method::DEL):
-				{
-					return Method::DEL;
-				}
-			default:
-				{
-					return Method::Unknown;
-				}
+		constexpr Size enumSize(sizeof(HTTPRequestT<T>::methodStrTable));
+		for ( Size i(0); i < enumSize; i++ ) {
+			if ( methodStr == HTTPRequestT<T>::methodStrTable[ i ] ) {
+				return static_cast< typename HTTPRequestT<T>::Method >( i );
+			}
 		}
+		return HTTPRequestT<T>::Method::Unknown;
 	}
 
 	template<typename T>

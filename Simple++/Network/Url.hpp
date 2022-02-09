@@ -2,6 +2,9 @@
 namespace Network {
 
 	template<typename T>
+	const StringASCII UrlT<T>::typeStrTable[] = { StringASCII("http"), StringASCII("https") };
+
+	template<typename T>
 	inline UrlT<T>::UrlT() {}
 
 	template<typename T>
@@ -217,10 +220,9 @@ namespace Network {
 
 	template<typename T>
 	inline const StringASCII& UrlT<T>::getTypeString(typename UrlT<T>::Type type) {
-		static const StringASCII typeStrTable[] = { StringASCII("http"), StringASCII("https") };
 		unsigned char typeIndex(static_cast< unsigned char >( type ));
-		if ( typeIndex < sizeof(typeStrTable) ) {
-			return typeStrTable[ typeIndex ];
+		if ( typeIndex < sizeof(UrlT<T>::typeStrTable) ) {
+			return UrlT<T>::typeStrTable[ typeIndex ];
 		} else {
 			return StringASCII::null;
 		}
@@ -228,20 +230,13 @@ namespace Network {
 
 	template<typename T>
 	inline typename UrlT<T>::Type UrlT<T>::getType(const StringASCII& typeStr) {
-		switch ( typeStr ) {
-			case UrlT<T>::getTypeString(Type::HTTP):
-				{
-					return Type::HTTP;
-				}
-			case UrlT<T>::getTypeString(Type::HTTPS):
-				{
-					return Type::HTTPS;
-				}
-			default:
-				{
-					return Type::Unknown;
-				}
+		constexpr Size enumSize(sizeof(UrlT<T>::typeStrTable));
+		for ( Size i(0); i < enumSize; i++ ) {
+			if ( typeStr == UrlT<T>::typeStrTable[ i ] ) {
+				return static_cast< typename UrlT<T>::Type >( i );
+			}
 		}
+		return UrlT<T>::Type::Unknown;
 	}
 
 	template<typename T>

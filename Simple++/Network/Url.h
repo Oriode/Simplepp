@@ -73,6 +73,8 @@ namespace Network {
 		///@return boolean to know if the operation is a success of not.
 		bool write(IO::SimpleFileStream* fileStream) const;
 
+		static const StringASCII typeStrTable[];
+
 	private:
 		Type type;
 		StringASCII hostname;

@@ -116,6 +116,8 @@ namespace Network {
 		static const StringASCII& getMethodString(typename HTTPRequestT<T>::Method method);
 		static typename HTTPRequestT<T>::Method getMethod(const StringASCII& methodStr);
 
+		static const StringASCII methodStrTable[];
+
 	protected:
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		bool parseQueryTitle(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
