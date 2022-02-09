@@ -33,7 +33,22 @@ namespace Network {
 
 	template<typename T>
 	inline void HTTPQueryT<T>::setContent(const StringASCII& content) {
+		if ( content.getSize() != this->contentStr.getSize() ) {
+			// Header need to be recomputed as the Content-Size has changed.
+			this->bHeaderNeedFormat = true;
+		}
+
 		this->contentStr = content;
+	}
+
+	template<typename T>
+	inline void HTTPQueryT<T>::clearContent() {
+		if ( this->contentStr.getSize() ) {
+			this->contentStr.clear();
+
+			// Header need to be recomputed as the Content-Size has changed.
+			this->bHeaderNeedFormat = true;
+		}
 	}
 
 	template<typename T>
@@ -76,6 +91,18 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline void HTTPQueryT<T>::formatHeaderParam(StringASCII* outputStr, const ParamT<StringASCII, StringASCII>& param) const {
+		StringASCII& str(*outputStr);
+
+		str << param.getName();
+		str << StringASCII::ElemType(':');
+		str << StringASCII::ElemType(' ');
+		str << param.getValue();
+		str << StringASCII::ElemType('\r');
+		str << StringASCII::ElemType('\n');
+	}
+
+	template<typename T>
 	inline void HTTPQueryT<T>::formatQueryHeader() {
 		if ( this->bHeaderNeedFormat ) {
 
@@ -84,12 +111,15 @@ namespace Network {
 			for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
 				const HTTPParam* param(this->paramVector.getValueIt(it));
 
-				this->headerStr << param->getName();
-				this->headerStr << StringASCII::ElemType(':');
-				this->headerStr << StringASCII::ElemType(' ');
-				this->headerStr << param->getValue();
-				this->headerStr << StringASCII::ElemType('\r');
-				this->headerStr << StringASCII::ElemType('\n');
+				formatHeaderParam(&this->headerStr, *param);
+			}
+
+			if ( this->contentStr.getSize() ) {
+				static const ParamT<StringASCII, StringASCII> contentTypeParam(StringASCII("Content-Type"), StringASCII("application/x-www-form-urlencoded"));
+				static const StringASCII contentLengthParamName("Content-Length");
+
+				formatHeaderParam(&this->headerStr, contentTypeParam);
+				formatHeaderParam(&this->headerStr, ParamT<StringASCII, StringASCII>(contentLengthParamName, StringASCII::toString(this->contentStr.getSize())));
 			}
 
 			this->bHeaderNeedFormat = false;
@@ -455,11 +485,14 @@ namespace Network {
 	template<typename T>
 	inline void HTTPRequestT<T>::formatQuery(StringASCII* outputStr) const {
 		formatQueryTitle(outputStr);
-		HTTPQueryT<T>::formatQuery(outputStr);
 
 		if ( this->method == Method::POST ) {
-			this->url.formatParams(outputStr);
+			StringASCII paramStr;
+			this->url.formatParams(&paramStr);
+			const_cast<HTTPRequestT<T> *>(this)->setContent(paramStr);
 		}
+
+		HTTPQueryT<T>::formatQuery(outputStr);
 	}
 
 	template<typename T>

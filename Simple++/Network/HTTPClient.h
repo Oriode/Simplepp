@@ -20,6 +20,7 @@ namespace Network {
 
 		void setProtocol(const StringASCII& protocol);
 		void setContent(const StringASCII& content);
+		void clearContent();
 
 		const StringASCII& getProtocol() const;
 		const StringASCII& getContent() const;
@@ -29,6 +30,7 @@ namespace Network {
 		bool parseQuery(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
 
 		void formatQuery(StringASCII* outputStr) const;
+		void formatHeaderParam(StringASCII* outputStr, const ParamT<StringASCII, StringASCII>& param) const;
 
 		StringASCII protocolStr;
 
@@ -121,6 +123,9 @@ namespace Network {
 		void formatQueryTitle(StringASCII* outputStr) const;
 
 		void updateHostParamValue();
+
+		using HTTPQueryT<T>::setContent;
+		using HTTPQueryT<T>::getContent;
 
 		Method method;
 		UrlT<T> url;
