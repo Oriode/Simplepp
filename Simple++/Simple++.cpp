@@ -450,61 +450,75 @@ int main(int argc, char* argv[]) {
 	/************************************************************************/
 #ifdef DEBUG_JSON
 	{
-		//{
-		//	JSON::Node rootNode;
-		//	JSON::Node* childNode = new JSON::Node("childNode");
-		//	JSON::Node* arrayNode = new JSON::NodeArray("arrayNode");
+		{
+			JSON::Document jsonDocument;
+			JSON::NodeMap* rootNode(new JSON::NodeMap());
+			JSON::NodeMap* childNode(new JSON::NodeMap("childNode"));
+			JSON::NodeMap* arrayNode(new JSON::NodeArray("arrayNode"));
 
-		//	arrayNode->addChild(new JSON::NodeValue(1));
-		//	arrayNode->addChild(new JSON::NodeValue(2));
-		//	arrayNode->addChild(new JSON::NodeValue(3));
-		//	arrayNode->addChild(new JSON::NodeValue(4));
+			arrayNode->addChild(new JSON::NodeValue(1));
+			arrayNode->addChild(new JSON::NodeValue(2));
+			arrayNode->addChild(new JSON::NodeValue(3));
+			arrayNode->addChild(new JSON::NodeValue(4));
 
-		//	rootNode.addChild(childNode);
-		//	rootNode.addChild(arrayNode);
+			rootNode->addChild(childNode);
+			rootNode->addChild(arrayNode);
 
-		//	childNode->addChild(new JSON::NodeValue("test", 43));
-		//	childNode->addChild(NULL);
+			childNode->addChild(new JSON::NodeValue("test", 43));
+			childNode->addChild(NULL);
 
-		//	Log::displayLog(rootNode.toString());
-		//}
-		//{
-		//	JSON::Node rootNode;
-		//	rootNode.readJSON("{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }");
+			Log::displayLog(rootNode->toString());
+		}
+		{
+			JSON::Document jsonDocument;
+			jsonDocument.readJSON("{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }");
 
-		//	Vector<JSON::Node*> searchNode = rootNode.getElementsByName("test2");
+			Vector<JSON::NodeMap*> searchNode = jsonDocument.getElementsByName("test2");
 
-		//	if ( searchNode.getSize() ) {
-		//		// Should display "Hello World !"
-		//		Log::displayLog(searchNode[ 0 ]->getValue());
-		//	}
+			if ( searchNode.getSize() ) {
+				// Should display "Hello World !"
+				Log::displayLog(searchNode[ 0 ]->getValue());
+			}
 
-		//	Log::displayLog(rootNode.getName());
-		//	Log::displayLog(rootNode.toString());
-		//}
-		//{
-		//	JSON::Node rootNode;
-		//	rootNode.readFileJSON("test.json");
+			Log::displayLog(jsonDocument.getRoot()->getName());
+			Log::displayLog(jsonDocument.toString());
+		}
+		{
+			JSON::Document jsonDocument;
+			jsonDocument.readFileJSON("test.json");
 
-		//	Log::displayLog(rootNode.toString());
+			Log::displayLog(jsonDocument.toString());
 
 
-		//	assert(IO::write(WString("testJSON.cjson"), &rootNode));
-		//	assert(IO::read(WString("testJSON.cjson"), &rootNode));
+			assert(IO::write(WString("testJSON.cjson"), &jsonDocument));
+			assert(IO::read(WString("testJSON.cjson"), &jsonDocument));
 
-		//	Log::displayLog(rootNode.toString());
-		//}
-		/*{
+			Log::displayLog(jsonDocument.toString());
+		}
+		{
 			StringASCII jsonStr("{\"futuresType\":\"\",\"rateLimits\":[{\"rateLimitType\":\"\",\"interval\":\"\",\"intervalNum\":1,\"limit\":2400}],\"exchangeFilters\":[],\"assets\":\"\"}");
 
-			JSON::Node rootNode;
-			rootNode.readJSON(jsonStr);
-		}*/
+			JSON::Document jsonDocument;
+			jsonDocument.readJSON(jsonStr);
+			Log::displayLog(jsonDocument.toString());
+		}
 		{
-			StringASCII jsonStr("{{{}}}");
+			StringASCII jsonStr("[1,2,3,4,5,6,7,8,9]");
 
-			JSON::Node rootNode;
-			rootNode.readJSON(jsonStr);
+			JSON::Document jsonDocument;
+			jsonDocument.readJSON(jsonStr);
+
+			assert(IO::write(WString("testJSONArray.cjson"), &jsonDocument));
+			assert(IO::read(WString("testJSONArray.cjson"), &jsonDocument));
+
+			Log::displayLog(jsonDocument.toString());
+		}
+		{
+			StringASCII jsonStr("");
+
+			JSON::Document jsonDocument;
+			jsonDocument.readJSON(jsonStr);
+			Log::displayLog(jsonDocument.toString());
 		}
 	}
 #endif

@@ -1,5 +1,5 @@
-///@file Node.h
-///@brief Representing an JSON Node.
+///@file NodeMap.h
+///@brief Representing an JSON NodeMap.
 ///@author Clément Gerber.
 ///@date (DMY) 23-05-2020
 #pragma once
@@ -21,27 +21,27 @@ namespace JSON {
 	class NodeArrayT;
 
 	template<typename T>
-	class ObjectNodeT;
+	class NodeMapT;
 
-	///@brief Represent a node in the JSON Tree, Only 3 Types available ( Object, Array and Value )
+	///@brief Represent a node in the JSON Tree, Only 3 Types available ( Map, Array and Value )
 	template<typename T>
 	class BasicNodeT : public IO::BasicIO {
 	public:
 		enum class Type : unsigned int {
-			Object,
+			Map,
 			Array,
 			Value,
 			Null
 		};
 
-		///@brief Anonymous Object Node Constructor.
-		///@param type Node type.
-		BasicNodeT( typename BasicNodeT<T>::Type type = BasicNodeT<T>::Type::Object );
+		///@brief Anonymous Map NodeMap Constructor.
+		///@param type NodeMap type.
+		BasicNodeT( typename BasicNodeT<T>::Type type = BasicNodeT<T>::Type::Map );
 
-		///@brief Named Object Node Constructor.
+		///@brief Named Map NodeMap Constructor.
 		///@param name Name of the node
-		///@param type Node type.
-		BasicNodeT( const T & name, typename BasicNodeT<T>::Type type = BasicNodeT<T>::Type::Object );
+		///@param type NodeMap type.
+		BasicNodeT( const T & name, typename BasicNodeT<T>::Type type = BasicNodeT<T>::Type::Map );
 
 		///@brief Copy Constructor
 		///@param node BasicNodeT<T> to be copied
@@ -68,10 +68,10 @@ namespace JSON {
 		///@return Type of this node
 		BasicNodeT<T>::Type getType() const;
 
-		///@brief Cast this node into an object one, ONLY appliable if getType() return BasicNodeT<T>::Type::Object
+		///@brief Cast this node into an object one, ONLY appliable if getType() return BasicNodeT<T>::Type::Map
 		///@return Pointer to a NodeValueT
-		const ObjectNodeT<T> * toObject() const;
-		ObjectNodeT<T> * toObject();
+		const NodeMapT<T> * toObject() const;
+		NodeMapT<T> * toObject();
 
 		///@brief Cast this node into a value one, ONLY appliable if getType() return BasicNodeT<T>::Type::Value
 		///@return Pointer to a NodeValueT
@@ -85,8 +85,8 @@ namespace JSON {
 
 		///@brief Get the parent of this node
 		///@return Pointer to the parent if there is one (NULL otherwise)
-		const ObjectNodeT<T> * getParent() const;
-		ObjectNodeT<T> * getParent();
+		const NodeMapT<T> * getParent() const;
+		NodeMapT<T> * getParent();
 
 		///@brief Get the Value of this node (Only appliable if getType() == Value).
 		///@return Value of this node
@@ -213,13 +213,13 @@ namespace JSON {
 		template<typename C = T>
 		C toString( unsigned int indent = 0 ) const;
 
-		///@brief Write this node to an Object that support opperator '<<'.
-		///@param o Object to write to.
+		///@brief Write this node to an Map that support opperator '<<'.
+		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
 		void _writeJSON( C & o, unsigned int indent = 0 ) const;
 
-		ObjectNodeT<T> * parent;
+		NodeMapT<T> * parent;
 	protected:
 		///@brief Check if the buffer at the current position is the expected character. Increment the buffer it True.
 		///@param buffer Buffer to check.
@@ -237,54 +237,51 @@ namespace JSON {
 		static const Vector< BasicNodeT<T> * > emptyVector;
 	};
 
-	using BasicNode = BasicNodeT<UTF8String>;
 
 
 
 
 
-
-
-	///@brief Represent a node in the JSON Tree, Only 3 Types available ( Object, Array and Value )
+	///@brief Represent a node in the JSON Tree, Only 3 Types available ( Map, Array and Value )
 	template<typename T>
-	class ObjectNodeT : public BasicNodeT<T> {
+	class NodeMapT : public BasicNodeT<T> {
 	public:
 		using BasicNodeT<T>::Type;
 
-		///@brief Anonymous Object Node Constructor.
-		///@param type Node type.
-		ObjectNodeT( );
+		///@brief Anonymous Map NodeMap Constructor.
+		///@param type NodeMap type.
+		NodeMapT( );
 
-		///@brief Named Object Node Constructor.
+		///@brief Named Map NodeMap Constructor.
 		///@param name Name of the node
-		///@param type Node type.
-		ObjectNodeT( const T & name );
+		///@param type NodeMap type.
+		NodeMapT( const T & name );
 
-		///@brief Value Node Constructor.
+		///@brief Value NodeMap Constructor.
 		///@param name Name.
 		///@param value Value.
-		ObjectNodeT( const T & name, const T & value );
+		NodeMapT( const T & name, const T & value );
 
 		///@brief Copy Constructor
-		///@param node ObjectNodeT<T> to be copied
-		ObjectNodeT( const ObjectNodeT<T> & node );
+		///@param node NodeMapT<T> to be copied
+		NodeMapT( const NodeMapT<T> & node );
 
 		///@brief Move Constructor
-		///@param node ObjectNodeT<T> to be moved
-		ObjectNodeT( ObjectNodeT<T> && node );
+		///@param node NodeMapT<T> to be moved
+		NodeMapT( NodeMapT<T> && node );
 
 		///@brief Destructor
-		~ObjectNodeT();
+		~NodeMapT();
 
 		///@brief Copy operator
-		///@param node ObjectNodeT<T> to be copied
+		///@param node NodeMapT<T> to be copied
 		///@return reference to THIS
-		ObjectNodeT<T> & operator=( const ObjectNodeT<T> & node );
+		NodeMapT<T> & operator=( const NodeMapT<T> & node );
 
 		///@brief Move operator
-		///@param node ObjectNodeT<T> to be moved
+		///@param node NodeMapT<T> to be moved
 		///@return reference to THIS
-		ObjectNodeT<T> & operator=( ObjectNodeT<T> && node );
+		NodeMapT<T> & operator=( NodeMapT<T> && node );
 
 		///@brief Get the first pointer to the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
@@ -293,7 +290,7 @@ namespace JSON {
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
-		///@return Vector of ObjectNodeT<T>'s pointers with the searched name
+		///@return Vector of NodeMapT<T>'s pointers with the searched name
 		virtual Vector< BasicNodeT<T> * > getElementsByName( const T & name ) const override;
 
 		///@brief Get the number of children of this node
@@ -370,8 +367,8 @@ namespace JSON {
 		///@return boolean to know if the operation is a success of not.
 		virtual bool write( IO::SimpleFileStream * fileStream ) const override;
 
-		///@brief Write this node to an Object that support opperator '<<'.
-		///@param o Object to write to.
+		///@brief Write this node to an Map that support opperator '<<'.
+		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
 		void _writeJSON( C & o, unsigned int indent = 0 ) const;
@@ -402,8 +399,8 @@ namespace JSON {
 		NodeValueT( const T & value );
 
 		///@brief Constructor using a name and a value.
-		///@param name Node name.
-		///@param value Node value.
+		///@param name NodeMap name.
+		///@param value NodeMap value.
 		NodeValueT( const T & name, const T & value );
 
 		///@brief Copy Constructor
@@ -446,8 +443,8 @@ namespace JSON {
 		///@return boolean to know if the operation is a success of not.
 		bool write( IO::SimpleFileStream * fileStream ) const override;
 
-		///@brief Write this node to an Object that support opperator '<<'.
-		///@param o Object to write to.
+		///@brief Write this node to an Map that support opperator '<<'.
+		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
 		void _writeJSON( C & o, unsigned int indent = 0 ) const;
@@ -456,18 +453,18 @@ namespace JSON {
 	};
 
 	template<typename T>
-	class NodeArrayT : public ObjectNodeT<T> {
+	class NodeArrayT : public NodeMapT<T> {
 	public:
 		///@brief Empty constructor
 		NodeArrayT();
 
-		///@brief Named Object Node Constructor.
+		///@brief Named Map NodeMap Constructor.
 		///@param name Name of the node
 		NodeArrayT( const T & name );
 
 		///@brief Constructor using a name and a value.
-		///@param name Node name.
-		///@param value Node value.
+		///@param name NodeMap name.
+		///@param value NodeMap value.
 		NodeArrayT( const T & name, const Vector<BasicNodeT<T> *> & v );
 
 		///@brief Copy Constructor
@@ -493,8 +490,8 @@ namespace JSON {
 		///@return bool True if success, False otherwise.
 		bool readJSON( const T & str );
 
-		///@brief Write this node to an Object that support opperator '<<'.
-		///@param o Object to write to.
+		///@brief Write this node to an Map that support opperator '<<'.
+		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
 		void _writeJSON( C & o, unsigned int indent = 0 ) const;
@@ -502,9 +499,94 @@ namespace JSON {
 	private:
 	};
 
-	using Node = ObjectNodeT<UTF8String>;
+	template<typename T>
+	class DocumentT : public IO::BasicIO {
+	public:
+		///@brief Create a new empty JSON DocumentT.
+		DocumentT();
+
+		///@brief Create a new JSON document using a string to be parsed.
+		///@param str String to be parsed.
+		DocumentT(const T& str);
+
+		///@brief Destructor.
+		~DocumentT();
+
+		///@brief Get the root Node of this DocumentT. Can be NULL.
+		///@return Pointer to the root Node of this DocumentT. Can be NULL;
+		const BasicNodeT<T>* getRoot() const;
+		BasicNodeT<T>* getRoot();
+
+		///@brief Get the first pointer to the node corresponding to the name searched in this sub tree.
+		///@param name Name to look for
+		///@return BasicNodeT<T> pointer with the searched name or NULL if none.
+		virtual BasicNodeT<T>* getElementByName(const T& name) const;
+
+		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
+		///@param name Name to look for
+		///@return Vector of BasicNodeT<T>'s pointers with the searched name
+		virtual Vector< BasicNodeT<T>* > getElementsByName(const T& name) const;
+
+		///@brief Write this object as an JSON file
+		///@param filePath Where to write
+		///@return True if success, False otherwise
+		virtual bool writeFileJSON(const OS::Path& filePath) const;
+
+		///@brief Read this object as an JSON file
+		///@param filePath Where to write
+		///@return True if success, False otherwise
+		bool readFileJSON(const OS::Path& filePath);
+
+		///@brief Read this object using a pointer to a String Iterator.
+		///@param buffer Pointer to a String iterator
+		///@param endFunc Functor to check the buffer end.
+		///@return bool True if success, False otherwise.
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		bool readJSON(const C** buffer, const EndFunc& endFunc = BasicString<C>::IS_END_SENTINEL);
+		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+		bool readJSON(const C* buffer, const EndFunc& endFunc = BasicString<C>::IS_END_SENTINEL);
+
+		///@brief read this object using a type T.
+		///@param str String to read from.
+		///@return bool True if success, False otherwise.
+		bool readJSON(const T& str);
+
+		///@brief Write this object in the JSON syntax into the fileStream
+		///@param fileStream stream used to write this object
+		///@param indent Indentation.
+		///@return True if success, False otherwise
+		bool writeJSON(IO::SimpleFileStream* fileStream, unsigned int indent = 0) const;
+
+		template<typename C = T>
+		bool writeJSON(C& str, unsigned int indent = 0) const;
+
+		///@brief read from a file stream
+		///@param fileStream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		virtual bool read(IO::SimpleFileStream* fileStream);
+
+		///@brief write this object as binary into a file stream
+		///@param fileStream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		virtual bool write(IO::SimpleFileStream* fileStream) const;
+
+		///@brief Print an human-readable String of this BasicNodeT<T> and it's children.
+		///@param indent Identation.
+		///@return Human-redable String.
+		template<typename C = T>
+		C toString(unsigned int indent = 0) const;
+
+	private:
+		void _unload();
+
+		BasicNodeT<T>* rootNode;
+	};
+
+	using Node = BasicNodeT<UTF8String>;
+	using NodeMap = NodeMapT<UTF8String>;
 	using NodeValue = NodeValueT<UTF8String>;
 	using NodeArray = NodeArrayT<UTF8String>;
+	using Document = DocumentT<UTF8String>;
 
 
 	///@brief Read this object using a pointer to a String Iterator.

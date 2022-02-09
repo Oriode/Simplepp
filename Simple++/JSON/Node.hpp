@@ -64,15 +64,15 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const ObjectNodeT<T> * BasicNodeT<T>::toObject() const {
-		assert( this -> getType() == Type::Object );
-		return ( static_cast< const ObjectNodeT<T> * >( this ) );
+	const NodeMapT<T> * BasicNodeT<T>::toObject() const {
+		assert( this -> getType() == Type::Map );
+		return ( static_cast< const NodeMapT<T> * >( this ) );
 	}
 
 	template<typename T>
-	ObjectNodeT<T> * BasicNodeT<T>::toObject() {
-		assert( this -> getType() == Type::Object );
-		return ( static_cast< ObjectNodeT<T> * >( this ) );
+	NodeMapT<T> * BasicNodeT<T>::toObject() {
+		assert( this -> getType() == Type::Map );
+		return ( static_cast< NodeMapT<T> * >( this ) );
 	}
 
 	template<typename T>
@@ -100,12 +100,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const ObjectNodeT<T> * BasicNodeT<T>::getParent() const {
+	const NodeMapT<T> * BasicNodeT<T>::getParent() const {
 		return this -> parent;
 	}
 
 	template<typename T>
-	ObjectNodeT<T> * BasicNodeT<T>::getParent() {
+	NodeMapT<T> * BasicNodeT<T>::getParent() {
 		return this -> parent;
 	}
 
@@ -150,7 +150,7 @@ namespace JSON {
 
 	template<typename T>
 	void BasicNodeT<T>::addChild( BasicNodeT<T> * child ) {
-		error( TEXT( "Trying to add a child on a non Object/Array Node." ) );
+		error( TEXT( "Trying to add a child on a non Map/Array NodeMap." ) );
 	}
 
 	template<typename T>
@@ -239,7 +239,7 @@ namespace JSON {
 	template<typename T>
 	template<typename C, typename Elem>
 	void BasicNodeT<T>::_writeJSON( C & o, unsigned int indent ) const {
-		if ( getType() == Type::Object ) {
+		if ( getType() == Type::Map ) {
 			this -> toObject() -> _writeJSON<C, Elem>( o, indent );
 		} else if ( getType() == Type::Array ) {
 			this -> toArray() -> _writeJSON<C, Elem>( o, indent );
@@ -267,7 +267,7 @@ namespace JSON {
 	template<typename T>
 	template<typename C, typename EndFunc>
 	bool BasicNodeT<T>::readJSON( const C ** buffer, const EndFunc & endFunc ) {
-		if ( getType() == Type::Object ) {
+		if ( getType() == Type::Map ) {
 			return this -> toObject() -> readJSON<C, EndFunc>( buffer, endFunc );
 		} else if ( getType() == Type::Array ) {
 			return this -> toArray() -> readJSON<C, EndFunc>( buffer, endFunc );
@@ -281,10 +281,10 @@ namespace JSON {
 	template<typename T>
 	bool BasicNodeT<T>::writeFileJSON( const OS::Path & filePath ) const {
 		IO::FileStream fileStream( filePath, IO::OpenMode::Write );
-		if ( fileStream.isOpen() ) {
-			return writeJSON(&fileStream);
+		if ( !fileStream.isOpen() ) {
+			return false;
 		}
-		return false;
+		return writeJSON(&fileStream);
 	}
 
 	template<typename T>
@@ -389,25 +389,25 @@ namespace JSON {
 
 
 	template<typename T>
-	ObjectNodeT<T>::ObjectNodeT( ) :
-		BasicNodeT<T>( Type::Object ) {
+	NodeMapT<T>::NodeMapT( ) :
+		BasicNodeT<T>( Type::Map ) {
 
 	}
 
 	template<typename T>
-	ObjectNodeT<T>::ObjectNodeT( const T & name ) :
-		BasicNodeT<T>( name, Type::Object ) {
+	NodeMapT<T>::NodeMapT( const T & name ) :
+		BasicNodeT<T>( name, Type::Map ) {
 
 	}
 
 	template<typename T>
-	ObjectNodeT<T>::ObjectNodeT( const T & name, const T & value ) :
-		BasicNodeT<T>( name, Type::Object ) {
+	NodeMapT<T>::NodeMapT( const T & name, const T & value ) :
+		BasicNodeT<T>( name, Type::Map ) {
 
 	}
 
 	template<typename T>
-	ObjectNodeT<T>::ObjectNodeT( const ObjectNodeT<T> & node ) :
+	NodeMapT<T>::NodeMapT( const NodeMapT<T> & node ) :
 		BasicNodeT<T>( node ) {
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
 			BasicNodeT<T> * newNode( new BasicNodeT<T>( *( node.childrenVector.getValueIt( it ) ) ) );
@@ -416,7 +416,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	ObjectNodeT<T>::ObjectNodeT( ObjectNodeT<T> && node ) :
+	NodeMapT<T>::NodeMapT( NodeMapT<T> && node ) :
 		BasicNodeT<T>( Utility::toRValue( node ) ),
 		childrenMap( Utility::toRValue( node.childrenMap ) ),
 		childrenVector( Utility::toRValue( node.childrenVector ) ) {
@@ -424,12 +424,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	ObjectNodeT<T>::~ObjectNodeT() {
+	NodeMapT<T>::~NodeMapT() {
 		_unload();
 	}
 
 	template<typename T>
-	ObjectNodeT<T> & ObjectNodeT<T>::operator=( const ObjectNodeT<T> & node ) {
+	NodeMapT<T> & NodeMapT<T>::operator=( const NodeMapT<T> & node ) {
 		BasicNodeT<T>::operator=( node );
 
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
@@ -440,7 +440,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	ObjectNodeT<T> & ObjectNodeT<T>::operator=( ObjectNodeT<T> && node ) {
+	NodeMapT<T> & NodeMapT<T>::operator=( NodeMapT<T> && node ) {
 		BasicNodeT<T>::operator=( Utility::toRValue( node ) );
 
 		this -> childrenVector = Utility::toRValue( node.childrenVector );
@@ -452,32 +452,32 @@ namespace JSON {
 	}
 
 	template<typename T>
-	inline BasicNodeT<T>* ObjectNodeT<T>::getElementByName(const T& name) const {
+	inline BasicNodeT<T>* NodeMapT<T>::getElementByName(const T& name) const {
 		if ( name == this -> name )
-			return const_cast< ObjectNodeT<T> * >( this );
+			return const_cast< NodeMapT<T> * >( this );
 		else
 			return _getElementByName(name);
 	}
 
 	template<typename T>
-	Vector< BasicNodeT<T> * > ObjectNodeT<T>::getElementsByName( const T & name ) const {
+	Vector< BasicNodeT<T> * > NodeMapT<T>::getElementsByName( const T & name ) const {
 		Vector< BasicNodeT<T> * > nodeVector;
 		nodeVector.reserve( 20 );
 
 		if ( name == this -> name )
-			nodeVector.push( const_cast< ObjectNodeT<T> * >( this ) );
+			nodeVector.push( const_cast< NodeMapT<T> * >( this ) );
 
 		_getElementsByName( &nodeVector, name );
 		return nodeVector;
 	}
 
 	template<typename T>
-	Size ObjectNodeT<T>::getNbChildren() const {
+	Size NodeMapT<T>::getNbChildren() const {
 		return this -> childrenVector.getSize();
 	}
 
 	template<typename T>
-	void ObjectNodeT<T>::addChild( BasicNodeT<T> * child ) {
+	void NodeMapT<T>::addChild( BasicNodeT<T> * child ) {
 		if ( child != NULL ) {
 			if ( child -> getParent() )
 				child -> getParent() -> removeChild( child );
@@ -495,7 +495,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	void ObjectNodeT<T>::_clear() {
+	void NodeMapT<T>::_clear() {
 		_unload();
 
 		this -> name.clear();
@@ -505,7 +505,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	void ObjectNodeT<T>::_unload() {
+	void NodeMapT<T>::_unload() {
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			BasicNodeT<T> * node( this -> childrenVector.getValueIt( it ) );
 
@@ -514,12 +514,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const Vector<BasicNodeT<T> *> & ObjectNodeT<T>::getChildren() const {
+	const Vector<BasicNodeT<T> *> & NodeMapT<T>::getChildren() const {
 		return this ->childrenVector;
 	}
 
 	template<typename T>
-	const Vector< BasicNodeT<T> * > & ObjectNodeT<T>::getChildren( const T & name ) const {
+	const Vector< BasicNodeT<T> * > & NodeMapT<T>::getChildren( const T & name ) const {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) return *childP;
 		else return BasicNodeT<T>::emptyVector;
@@ -527,7 +527,7 @@ namespace JSON {
 
 	/*
 	template<typename T>
-	Vector< BasicNodeT<T> * > ObjectNodeT<T>::getChildren( const T & name ) {
+	Vector< BasicNodeT<T> * > NodeMapT<T>::getChildren( const T & name ) {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) return *childP;
 		else return Vector<BasicNodeT<T> *>();
@@ -535,12 +535,12 @@ namespace JSON {
 	*/
 
 	template<typename T>
-	const BasicNodeT<T> * ObjectNodeT<T>::getChild( const T & name ) const {
-		return const_cast< ObjectNodeT<T> * >( this ) ->getChild( name );
+	const BasicNodeT<T> * NodeMapT<T>::getChild( const T & name ) const {
+		return const_cast< NodeMapT<T> * >( this ) ->getChild( name );
 	}
 
 	template<typename T>
-	BasicNodeT<T> * ObjectNodeT<T>::getChild( const T & name ) {
+	BasicNodeT<T> * NodeMapT<T>::getChild( const T & name ) {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) {
 			Vector<BasicNodeT<T> * > childVector( *childP );
@@ -552,12 +552,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const BasicNodeT<T> * ObjectNodeT<T>::getChild( Size i ) const {
-		return const_cast< ObjectNodeT<T> * >( this ) -> getChild( i );
+	const BasicNodeT<T> * NodeMapT<T>::getChild( Size i ) const {
+		return const_cast< NodeMapT<T> * >( this ) -> getChild( i );
 	}
 
 	template<typename T>
-	BasicNodeT<T> * ObjectNodeT<T>::getChild( Size i ) {
+	BasicNodeT<T> * NodeMapT<T>::getChild( Size i ) {
 		if ( i < this->childrenVector.getSize() ) {
 			return this->childrenVector.getValueI( i );
 		} else {
@@ -566,7 +566,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::deleteChild( BasicNodeT<T> * child ) {
+	bool NodeMapT<T>::deleteChild( BasicNodeT<T> * child ) {
 		BasicNodeT<T> * childRemoved( removeChild( child ) );
 		if ( childRemoved ) {
 			delete childRemoved;
@@ -577,7 +577,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::deleteChild( Size i ) {
+	bool NodeMapT<T>::deleteChild( Size i ) {
 		BasicNodeT<T> * childRemoved( removeChild( i ) );
 		if ( childRemoved ) {
 			delete childRemoved;
@@ -588,7 +588,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	BasicNodeT<T> * ObjectNodeT<T>::removeChild( BasicNodeT<T> * child ) {
+	BasicNodeT<T> * NodeMapT<T>::removeChild( BasicNodeT<T> * child ) {
 		if ( this -> childrenVector.eraseFirst( child ) ) {
 			if ( child -> getName().getSize() )
 				this -> childrenMap.eraseFirst( child -> getName(), child );
@@ -600,7 +600,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	BasicNodeT<T> * ObjectNodeT<T>::removeChild( Size i ) {
+	BasicNodeT<T> * NodeMapT<T>::removeChild( Size i ) {
 		if ( i >= this -> childrenVector.getSize() ) {
 			return NULL;
 		} else {
@@ -617,7 +617,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::read( IO::SimpleFileStream * fileStream ) {
+	bool NodeMapT<T>::read( IO::SimpleFileStream * fileStream ) {
 		_unload();
 
 		this -> childrenMap.clear();
@@ -653,9 +653,9 @@ namespace JSON {
 
 
 				switch ( newNodeType ) {
-					case Type::Object:
+					case Type::Map:
 					{
-						ObjectNodeT<T> * newNode( new ObjectNodeT<T>( ) );
+						NodeMapT<T> * newNode( new NodeMapT<T>( ) );
 						newNode -> parent = this;
 						if ( !IO::read( fileStream, newNode ) ) {
 							delete newNode;
@@ -716,7 +716,7 @@ namespace JSON {
 
 
 	template<typename T>
-	bool ObjectNodeT<T>::_setChildName( BasicNodeT<T> * child, const T & oldName, const T & newName ) {
+	bool NodeMapT<T>::_setChildName( BasicNodeT<T> * child, const T & oldName, const T & newName ) {
 		if ( oldName.getSize() ) {
 			if ( !this -> childrenMap.eraseFirst( oldName, child ) ) {
 				return false;
@@ -728,7 +728,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	void ObjectNodeT<T>::_getElementsByName( Vector < BasicNodeT<T> * > * nodeVector, const T & name ) const {
+	void NodeMapT<T>::_getElementsByName( Vector < BasicNodeT<T> * > * nodeVector, const T & name ) const {
 		const Vector < BasicNodeT<T> * > * vectorFounded( this -> childrenMap[ name ] );
 		if ( vectorFounded ) {
 			// Concat the new one with what we already have
@@ -737,14 +737,14 @@ namespace JSON {
 		// Recursively call every child too
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			BasicNodeT<T> * child( this -> childrenVector.getValueIt( it ) );
-			if ( child -> getType() == Type::Object ) {
+			if ( child -> getType() == Type::Map ) {
 				child -> toObject() -> _getElementsByName( nodeVector, name );
 			}
 		}
 	}
 
 	template<typename T>
-	inline BasicNodeT<T>* ObjectNodeT<T>::_getElementByName(const T& name) const {
+	inline BasicNodeT<T>* NodeMapT<T>::_getElementByName(const T& name) const {
 		const Vector < BasicNodeT<T>* >* vectorFounded(this -> childrenMap[ name ]);
 		if ( vectorFounded ) {
 			return vectorFounded->getFirst();
@@ -753,7 +753,7 @@ namespace JSON {
 		// Recursively call every child too
 		for ( auto it(this -> childrenVector.getBegin()); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate(&it) ) {
 			BasicNodeT<T>* child(this -> childrenVector.getValueIt(it));
-			if ( child -> getType() == Type::Object ) {
+			if ( child -> getType() == Type::Map ) {
 				BasicNodeT<T>* foundedElement(child -> toObject() -> _getElementByName(name));
 				if ( foundedElement ) {
 					return foundedElement;
@@ -764,7 +764,7 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::write( IO::SimpleFileStream * fileStream ) const {
+	bool NodeMapT<T>::write( IO::SimpleFileStream * fileStream ) const {
 		if ( !BasicNodeT<T>::write( fileStream ) ) {
 			return false;
 		}
@@ -792,7 +792,7 @@ namespace JSON {
 
 	template<typename T>
 	template<typename C, typename Elem>
-	void ObjectNodeT<T>::_writeJSON( C & o, unsigned int indent ) const {
+	void NodeMapT<T>::_writeJSON( C & o, unsigned int indent ) const {
 
 		if ( this -> getName().getSize() ) {
 			o << Elem( '"' );
@@ -820,7 +820,7 @@ namespace JSON {
 					o << Elem( ' ' );
 				}
 
-				ObjectNodeT<T> * child( this -> childrenVector.getValueIt( it ) );
+				NodeMapT<T> * child( this -> childrenVector.getValueIt( it ) );
 				child -> _writeJSON( o, indent );
 			}
 			o << Elem( ']' );
@@ -861,7 +861,7 @@ namespace JSON {
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	bool ObjectNodeT<T>::readJSON( const C ** buffer, const EndFunc & endFunc ) {
+	bool NodeMapT<T>::readJSON( const C ** buffer, const EndFunc & endFunc ) {
 		struct FunctorNodeName {
 			bool operator()( const C & c ) { return c != C( '"' ) && c != C( '\t' ) && c != C( '\n' ); }
 		};
@@ -892,7 +892,7 @@ namespace JSON {
 		if ( !_expectChar( &it, C( '{' ) ) ) return false;
 
 		// if ( ( *it ) == C( '{' ) ) {
-		// Object Node.
+		// Map NodeMap.
 		// it++;
 
 		while ( true ) {
@@ -964,7 +964,7 @@ namespace JSON {
 					break;
 				}
 
-				ObjectNodeT<T> * newNode( new ObjectNodeT<T>() );
+				NodeMapT<T> * newNode( new NodeMapT<T>() );
 				this -> addChild( newNode );
 
 				if ( !newNode -> readJSON( &it, endFunc ) ) {
@@ -1033,12 +1033,12 @@ namespace JSON {
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	bool ObjectNodeT<T>::readJSON( const C * buffer, const EndFunc & endFunc ) {
+	bool NodeMapT<T>::readJSON( const C * buffer, const EndFunc & endFunc ) {
 		return BasicNodeT<T>::readJSON<C, EndFunc>( buffer, endFunc );
 	}
 
 	template<typename T>
-	bool ObjectNodeT<T>::readJSON( const T & str ) {
+	bool NodeMapT<T>::readJSON( const T & str ) {
 		return BasicNodeT<T>::readJSON( str );
 	}
 
@@ -1213,12 +1213,12 @@ namespace JSON {
 	/************************************************************************/
 
 	template<typename T>
-	NodeArrayT<T>::NodeArrayT() : ObjectNodeT<T>( ) {
+	NodeArrayT<T>::NodeArrayT() : NodeMapT<T>( ) {
 		this -> type = Type::Array;
 	}
 
 	template<typename T>
-	NodeArrayT<T>::NodeArrayT( const T & name ) : ObjectNodeT<T>( name ) {
+	NodeArrayT<T>::NodeArrayT( const T & name ) : NodeMapT<T>( name ) {
 		this -> type = Type::Array;
 	}
 
@@ -1329,6 +1329,257 @@ namespace JSON {
 
 
 
+	template<typename T>
+	inline DocumentT<T>::DocumentT() :
+		rootNode(NULL) {}
+
+	template<typename T>
+	inline DocumentT<T>::DocumentT(const T& str) :
+		rootNode(NULL) {
+		readJSON(str);
+	}
+
+	template<typename T>
+	inline DocumentT<T>::~DocumentT() {
+		if ( this->rootNode ) {
+			delete this->rootNode;
+		}
+	}
+
+	template<typename T>
+	inline const BasicNodeT<T>* DocumentT<T>::getRoot() const {
+		return this->rootNode;
+	}
+
+	template<typename T>
+	inline BasicNodeT<T>* DocumentT<T>::getRoot() {
+		return this->rootNode;
+	}
+
+	template<typename T>
+	inline BasicNodeT<T>* DocumentT<T>::getElementByName(const T& name) const {
+		if ( this->rootNode ) {
+			return this->rootNode->getElementByName(name);
+		}
+		return NULL;
+	}
+
+	template<typename T>
+	inline Vector<BasicNodeT<T>*> DocumentT<T>::getElementsByName(const T& name) const {
+		if ( this->rootNode ) {
+			return this->rootNode->getElementsByName(name);
+		}
+		return Vector<BasicNodeT<T>*>();
+	}
+
+	template<typename T>
+	inline bool DocumentT<T>::writeFileJSON(const OS::Path& filePath) const {
+		IO::FileStream fileStream(filePath, IO::OpenMode::Write);
+		if ( !fileStream.isOpen() ) {
+			return false;
+		}
+		if ( this->rootNode ) {
+			return this->rootNode->writeJSON(&fileStream);
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool DocumentT<T>::readFileJSON(const OS::Path& filePath) {
+		_unload();
+
+		T strOut;
+		if ( IO::readToString(filePath, &strOut) != size_t(-1) ) {
+			return readJSON(strOut);
+		} else {
+			_unload();
+			return false;
+		}
+	}
+
+	template<typename T>
+	inline bool DocumentT<T>::readJSON(const T& str) {
+		const typename T::ElemType* buffer(str.toCString());
+		return readJSON<T::ElemType>(&buffer);
+	}
+
+	template<typename T>
+	inline bool DocumentT<T>::writeJSON(IO::SimpleFileStream* fileStream, unsigned int indent) const {
+		if ( this->rootNode ) {
+			return this->rootNode->writeJSON(fileStream, indent);
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool DocumentT<T>::read(IO::SimpleFileStream* fileStream) {
+		_unload();
+
+		bool bIsRootNode;
+		if ( !IO::read(fileStream, &bIsRootNode) ) {
+			return false;
+		}
+		if ( bIsRootNode ) {
+			unsigned char rootNodeTypeUC;
+			if ( !IO::read(fileStream, &rootNodeTypeUC) ) {
+				return false;
+			}
+			BasicNodeT<T>::Type rootNodeType(static_cast< BasicNodeT<T>::Type >( rootNodeTypeUC ));
+			switch ( rootNodeType ) {
+				case BasicNodeT<T>::Type::Map:
+					{
+						NodeMapT<T>* newRootNode(new NodeMapT<T>());
+						if ( !IO::read(fileStream, newRootNode) ) {
+							delete newRootNode;
+							return false;
+						}
+						this->rootNode = newRootNode;
+						break;
+					}
+				case BasicNodeT<T>::Type::Value:
+					{
+						NodeValueT<T>* newRootNode(new NodeValueT<T>());
+						if ( !IO::read(fileStream, newRootNode) ) {
+							delete newRootNode;
+							return false;
+						}
+						this->rootNode = newRootNode;
+						break;
+					}
+				case BasicNodeT<T>::Type::Array:
+					{
+						NodeArrayT<T>* newRootNode(new NodeArrayT<T>());
+						if ( !IO::read(fileStream, newRootNode) ) {
+							delete newRootNode;
+							return false;
+						}
+						this->rootNode = newRootNode;
+						break;
+					}
+				default:
+					{
+						return false;
+					}
+			}
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool DocumentT<T>::write(IO::SimpleFileStream* fileStream) const {
+		bool bIsRootNode(this->rootNode);
+		if ( !IO::write(fileStream, &bIsRootNode) ) {
+			return false;
+		}
+		if ( this->rootNode ) {
+			BasicNodeT<T>::Type rootNodeType(this->rootNode->getType());
+			unsigned char rootNodeTypeUC(static_cast< unsigned char >( rootNodeType ));
+			if ( !IO::write(fileStream, &rootNodeTypeUC) ) {
+				return false;
+			}
+			switch ( rootNodeType ) {
+				case BasicNodeT<T>::Type::Map:
+					{
+						NodeMapT<T>* rootNode(this->rootNode->toObject());
+						if ( !IO::write(fileStream, rootNode) ) {
+							return false;
+						}
+						break;
+					}
+				case BasicNodeT<T>::Type::Value:
+					{
+						NodeValueT<T>* rootNode(this->rootNode->toValue());
+						if ( !IO::write(fileStream, rootNode) ) {
+							return false;
+						}
+						break;
+					}
+				case BasicNodeT<T>::Type::Array:
+					{
+						NodeArrayT<T>* rootNode(this->rootNode->toArray());
+						if ( !IO::write(fileStream, rootNode) ) {
+							return false;
+						}
+						break;
+					}
+				default:
+					{
+						return false;
+					}
+			}
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	inline void DocumentT<T>::_unload() {
+		if ( this->rootNode ) {
+			delete this->rootNode;
+			this->rootNode = NULL;
+		}
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	inline bool DocumentT<T>::readJSON(const C** buffer, const EndFunc& endFunc) {
+		const C*& it(*buffer);
+
+		// Can be empty.
+		if ( endFunc(it) ) {
+			return true;
+		}
+
+		BasicNodeT<T>* newNode(parseT<T, C, EndFunc>(&it, endFunc));
+
+		if ( newNode ) {
+			_unload();
+			this->rootNode = newNode;
+			return true;
+		}
+
+		return false;
+	}
+
+	template<typename T>
+	template<typename C, typename EndFunc>
+	inline bool DocumentT<T>::readJSON(const C* buffer, const EndFunc& endFunc) {
+		return readJSON(&buffer, endFunc);
+	}
+
+	template<typename T>
+	template<typename C>
+	inline bool DocumentT<T>::writeJSON(C& str, unsigned int indent) const {
+		if ( this->rootNode ) {
+			return this->rootNode->writeJSON(str, indent);
+		}
+		return true;
+	}
+
+	template<typename T>
+	template<typename C>
+	inline C DocumentT<T>::toString(unsigned int indent) const {
+		if ( this->rootNode ) {
+			return this->rootNode->toString(indent);
+		} else {
+			return C::null;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1346,7 +1597,7 @@ namespace JSON {
 		while ( functorSpace( *it ) ) it++;
 
 		if ( ( *it ) == C( '{' ) ) {
-			ObjectNodeT<T> * newNode( new ObjectNodeT<T>( ) );
+			NodeMapT<T> * newNode( new NodeMapT<T>( ) );
 
 			if ( !newNode -> readJSON( &it, endFunc ) ) {
 				return NULL;

@@ -160,3 +160,4 @@ $RECYCLE.BIN/
 .vs
 TODO.txt
 *.sh
+/run/testJSONArray.cjson
