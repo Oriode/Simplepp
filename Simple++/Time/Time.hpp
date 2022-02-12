@@ -2,7 +2,7 @@ namespace Time {
 
 	template<class Ratio>
 	void sleep( const Duration<Ratio> & d ) {
-		sleep( d.getMilliSecond() );
+		sleep( d.getMilliSeconds() );
 	}
 
 	template<typename T>

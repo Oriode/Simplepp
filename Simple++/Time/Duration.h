@@ -233,28 +233,28 @@ namespace Time {
 		 *
 		 * @returns	duration in milliseconds.
 		 */
-		unsigned long long int getMilliSeconds() const;
+		TimeT getMilliSeconds() const;
 
 		/**
 		 * @brief	get the number of seconds of this duration
 		 *
 		 * @returns	seconds.
 		 */
-		unsigned long long int getSeconds() const;
+		TimeT getSeconds() const;
 
 		/**
 		 * @brief	get the number of Minutes of this duration
 		 *
 		 * @returns	minutes.
 		 */
-		unsigned long long int getMinutes() const;
+		TimeT getMinutes() const;
 
 		/**
 		 * @brief	get the number of Hours of this duration
 		 *
 		 * @returns	hours.
 		 */
-		unsigned long long int getHours() const;
+		TimeT getHours() const;
 
 
 		/**
@@ -262,10 +262,11 @@ namespace Time {
 		 *
 		 * @returns	duration in days.
 		 */
-		unsigned long long int getDays() const;
+		TimeT getDays() const;
 
-
-
+		///@brief Set directly the value of this duration.
+		///@param d Duration to be set.
+		void setValue(const TimeT& d);
 
 		/**
 		 * @brief	Get the value of this duration without any conversion
