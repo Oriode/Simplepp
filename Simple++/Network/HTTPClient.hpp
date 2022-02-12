@@ -310,7 +310,7 @@ namespace Network {
 		for ( ; !functorSpace(it); it++ );
 
 		const StringASCII::ElemType* statusMessageBeginIt(it);
-		for ( ; !functorWord(it); it++ );
+		for ( ; !functorNewLine(it); it++ );
 		const StringASCII::ElemType* statusMessageEndIt(it);
 
 		// Skip up to end line.
