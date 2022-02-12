@@ -233,28 +233,28 @@ namespace Time {
 		 *
 		 * @returns	duration in milliseconds.
 		 */
-		unsigned long long getMilliSeconds() const;
+		unsigned long long int getMilliSeconds() const;
 
 		/**
 		 * @brief	get the number of seconds of this duration
 		 *
 		 * @returns	seconds.
 		 */
-		unsigned long long getSeconds() const;
+		unsigned long long int getSeconds() const;
 
 		/**
 		 * @brief	get the number of Minutes of this duration
 		 *
 		 * @returns	minutes.
 		 */
-		unsigned long long getMinutes() const;
+		unsigned long long int getMinutes() const;
 
 		/**
 		 * @brief	get the number of Hours of this duration
 		 *
 		 * @returns	hours.
 		 */
-		unsigned long long getHours() const;
+		unsigned long long int getHours() const;
 
 
 		/**
@@ -262,7 +262,7 @@ namespace Time {
 		 *
 		 * @returns	duration in days.
 		 */
-		unsigned long long getDays() const;
+		unsigned long long int getDays() const;
 
 
 

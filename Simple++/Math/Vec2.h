@@ -210,8 +210,8 @@ namespace Math {
 	typedef Vec2<unsigned char> vec2uc;
 	typedef Vec2<int> vec2i;
 	typedef Vec2<unsigned int> vec2ui;
-	typedef Vec2<long> vec2l;
-	typedef Vec2<unsigned long> vec2ul;
+	typedef Vec2<long int> vec2l;
+	typedef Vec2<unsigned long int> vec2ul;
 
 
 }

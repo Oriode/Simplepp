@@ -238,8 +238,8 @@ namespace Math {
 	typedef Vec4<unsigned char> vec4uc;
 	typedef Vec4<int> vec4i;
 	typedef Vec4<unsigned int> vec4ui;
-	typedef Vec4<long> vec4l;
-	typedef Vec4<unsigned long> vec4ul;
+	typedef Vec4<long int> vec4l;
+	typedef Vec4<unsigned long int> vec4ul;
 
 }
 

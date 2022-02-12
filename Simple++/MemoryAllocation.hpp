@@ -2,7 +2,7 @@
 MemoryAllocation::MemoryAllocation( void ) {
 }
 
-MemoryAllocation::MemoryAllocation( unsigned long memoryAddress, unsigned long memorySize, const StringASCII & allocationFileName, unsigned int lineNumber ) {
+MemoryAllocation::MemoryAllocation( unsigned long int memoryAddress, unsigned long int memorySize, const StringASCII & allocationFileName, unsigned int lineNumber ) {
 	this -> memoryAddress = memoryAddress;
 	this -> memorySize = memorySize;
 	this -> allocationFileName = allocationFileName;
@@ -30,11 +30,11 @@ void MemoryAllocation::setDeleteLineNumber( int lineNumber ) {
 	this -> deleteLineNumber = lineNumber;
 }
 
-void MemoryAllocation::setMemoryAddress( unsigned long long address ) {
+void MemoryAllocation::setMemoryAddress( unsigned long long int address ) {
 	this -> memoryAddress = address;
 }
 
-void MemoryAllocation::setMemorySize( unsigned long long size ) {
+void MemoryAllocation::setMemorySize( unsigned long long int size ) {
 	this -> memorySize = size;
 }
 
@@ -54,11 +54,11 @@ int MemoryAllocation::getDeleteLineNumber() const {
 	return this -> deleteLineNumber;
 }
 
-unsigned long long MemoryAllocation::getMemoryAddress() const {
+unsigned long long int MemoryAllocation::getMemoryAddress() const {
 	return this -> memoryAddress;
 }
 
-unsigned long long MemoryAllocation::getMemorySize() const {
+unsigned long long int MemoryAllocation::getMemorySize() const {
 	return this -> memorySize;
 }
 

@@ -227,8 +227,8 @@ namespace Math {
 	typedef Vec3<unsigned char> vec3uc;
 	typedef Vec3<int> vec3i;
 	typedef Vec3<unsigned int> vec3ui;
-	typedef Vec3<long> vec3l;
-	typedef Vec3<unsigned long> vec3ul;
+	typedef Vec3<long int> vec3l;
+	typedef Vec3<unsigned long int> vec3ul;
 }
 
 

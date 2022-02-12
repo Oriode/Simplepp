@@ -18,14 +18,14 @@
 #include "IO/SimpleIO.h"
 
  /** @brief	Defines an alias representing the size */
-typedef unsigned long long Size;
+typedef unsigned long long int Size;
 
 /** @brief	The Random Access Iterator */
 template<typename T>
 using RandomAccessIterator = T *;
 
 /**
- * @brief		DataStructure used to store a "list" of elements represented by an index of type "Size" ( unsigned long long ) and a value of type T. The elements will be stored contiguously in memory.
+ * @brief		DataStructure used to store a "list" of elements represented by an index of type "Size" ( unsigned long long int ) and a value of type T. The elements will be stored contiguously in memory.
  *			/!\ Elements can be accessed directly using Iterator ( A pointer of it ). But if the Vector is resized ( or the elements reorganized ), the Iterator will be deprecated and result in a segmentation fault.
  *
  * @tparam	T	Type of the Values to store.
@@ -803,7 +803,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( long * destinationBuffer, const long * sourceBuffer, const Size size );
+	static void copy( long int * destinationBuffer, const long int * sourceBuffer, const Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -811,7 +811,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned long * destinationBuffer, const unsigned long * sourceBuffer, const Size size );
+	static void copy( unsigned long int * destinationBuffer, const unsigned long int * sourceBuffer, const Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -819,7 +819,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( long long * destinationBuffer, const long long * sourceBuffer, const Size size );
+	static void copy( long long int * destinationBuffer, const long long int * sourceBuffer, const Size size );
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -827,7 +827,7 @@ public:
 	 * @param 		  	sourceBuffer	 	Buffer for source data.
 	 * @param 		  	size			 	The size.
 	 */
-	static void copy( unsigned long long * destinationBuffer, const unsigned long long * sourceBuffer, const Size size );
+	static void copy( unsigned long long int * destinationBuffer, const unsigned long long int * sourceBuffer, const Size size );
 	/**
 	 * @brief 	Copies this object
 	 *

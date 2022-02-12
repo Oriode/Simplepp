@@ -32,14 +32,14 @@ namespace Graphic {
 		explicit ColorRGB( const unsigned char & l );
 		explicit ColorRGB( const unsigned short & l );
 		explicit ColorRGB( const unsigned int & l );
-		explicit ColorRGB( const unsigned long & l );
-		explicit ColorRGB( const unsigned long long & l );
+		explicit ColorRGB( const unsigned long int & l );
+		explicit ColorRGB( const unsigned long long int & l );
 
 		explicit ColorRGB( const char & l );
 		explicit ColorRGB( const short & l );
 		explicit ColorRGB( const int & l );
-		explicit ColorRGB( const long & l );
-		explicit ColorRGB( const long long & l );
+		explicit ColorRGB( const long int & l );
+		explicit ColorRGB( const long long int & l );
 
 		explicit ColorRGB( const float & l );
 		explicit ColorRGB( const double & l );

@@ -57,18 +57,18 @@ namespace Math {
 
 	template<typename FakeType>
 	MATH_FUNC_QUALIFIER int BasicMathT<FakeType>::random( int min, int max ) {
-		static unsigned long long randomMax(BasicMathT<FakeType>::_randomDevice.max() );
-		unsigned long long range( static_cast< unsigned long long >( max ) - static_cast< unsigned long long >( min ) );
-		unsigned long long rng(BasicMathT<FakeType>::_randomDevice() );
+		static unsigned long long int randomMax(BasicMathT<FakeType>::_randomDevice.max() );
+		unsigned long long int range( static_cast< unsigned long long int >( max ) - static_cast< unsigned long long int >( min ) );
+		unsigned long long int rng(BasicMathT<FakeType>::_randomDevice() );
 		return int( rng * range / randomMax ) + min;
 	}
 
 	template<typename FakeType>
-	MATH_FUNC_QUALIFIER unsigned long long BasicMathT<FakeType>::random(unsigned long long min, unsigned long long max ) {
-		static unsigned long long randomMax(BasicMathT<FakeType>::_randomDevice.max() );
-		unsigned long long range( max - min );
-		unsigned long long rng(BasicMathT<FakeType>::_randomDevice() );
-		return unsigned long long( rng * range / randomMax ) + min;
+	MATH_FUNC_QUALIFIER unsigned long long int BasicMathT<FakeType>::random(unsigned long long int min, unsigned long long int max ) {
+		static unsigned long long int randomMax(BasicMathT<FakeType>::_randomDevice.max() );
+		unsigned long long int range( max - min );
+		unsigned long long int rng(BasicMathT<FakeType>::_randomDevice() );
+		return unsigned long long int( rng * range / randomMax ) + min;
 	}
 
 	template<typename FakeType>
@@ -163,7 +163,7 @@ namespace Math {
 
 	template<typename FakeType>
 	MATH_FUNC_QUALIFIER double BasicMathT<FakeType>::trunc( const double & x ) {
-		return double( long( x ) );
+		return double( long int( x ) );
 	}
 
 	template<typename FakeType>

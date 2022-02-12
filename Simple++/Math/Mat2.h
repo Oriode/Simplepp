@@ -202,8 +202,8 @@ namespace Math {
 	typedef Mat2<unsigned char> mat2uc;
 	typedef Mat2<int> mat2i;
 	typedef Mat2<unsigned int> mat2ui;
-	typedef Mat2<long> mat2l;
-	typedef Mat2<unsigned long> mat2ul;
+	typedef Mat2<long int> mat2l;
+	typedef Mat2<unsigned long int> mat2ul;
 }
 
 

@@ -444,7 +444,7 @@ namespace Time {
 
 		/**
 		 * @brief	Retrieves local UTC bias
-		 * @returns	A const long.
+		 * @returns	A const long int.
 		 */
 		static TimeT _retrieveLocalUTCBias();
 

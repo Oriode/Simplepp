@@ -533,7 +533,7 @@ int main(int argc, char* argv[]) {
 		// Test if the convertion to String is working.
 		log(String(r));
 
-		Map<unsigned long, unsigned long> testMap;
+		Map<unsigned long int, unsigned long int> testMap;
 
 		testMap.insert(0, 0);
 		testMap.insert(1, 1);
@@ -563,7 +563,7 @@ int main(int argc, char* argv[]) {
 			// Testing IN/OUT
 			assert(IO::write(WString("myMap.font"), &testMap));
 
-			Map<unsigned long, unsigned long> mapLoaded;
+			Map<unsigned long int, unsigned long int> mapLoaded;
 			assert(IO::read(WString("myMap.font"), &mapLoaded));
 
 			log(StringASCII(mapLoaded));
@@ -571,26 +571,26 @@ int main(int argc, char* argv[]) {
 
 		{
 			// Testing Copy
-			Map<unsigned long, unsigned long> mapCopied = testMap;
+			Map<unsigned long int, unsigned long int> mapCopied = testMap;
 
 			log(StringASCII(mapCopied));
 
 		}
 
-		for ( unsigned long j(0); j < 100; j++ ) {
-			Map<unsigned long, unsigned long> testMap;
-			for ( unsigned long i(0); i < 100; i++ ) {
+		for ( unsigned long int j(0); j < 100; j++ ) {
+			Map<unsigned long int, unsigned long int> testMap;
+			for ( unsigned long int i(0); i < 100; i++ ) {
 				testMap.insert(i, i);
 			}
 			testMap.eraseI(j);
 		}
 
-		for ( unsigned long i(0); i < 1000; i++ ) {
+		for ( unsigned long int i(0); i < 1000; i++ ) {
 			testMap.insert(Math::random(0, 1000), i);
 		}
 
 
-		for ( unsigned long i(0); i < 1000; i++ ) {
+		for ( unsigned long int i(0); i < 1000; i++ ) {
 			testMap.eraseI(Math::random(0, 1000));
 		}
 		//log( StringASCII( testMap ) );
@@ -1456,14 +1456,14 @@ int main(int argc, char* argv[]) {
 #endif
 
 #else		//DEBUG
-	constexpr unsigned long long G10( 10000000000 );
-	constexpr unsigned long long G1( 1000000000 );
-	constexpr unsigned long long M100( 100000000 );
-	constexpr unsigned long long M10( 10000000 );
-	constexpr unsigned long long M1( 1000000 );
-	constexpr unsigned long long K100( 100000 );
-	constexpr unsigned long long K10( 10000 );
-	constexpr unsigned long long K1( 1000 );
+	constexpr unsigned long long int G10( 10000000000 );
+	constexpr unsigned long long int G1( 1000000000 );
+	constexpr unsigned long long int M100( 100000000 );
+	constexpr unsigned long long int M10( 10000000 );
+	constexpr unsigned long long int M1( 1000000 );
+	constexpr unsigned long long int K100( 100000 );
+	constexpr unsigned long long int K10( 10000 );
+	constexpr unsigned long long int K1( 1000 );
 
 #ifdef SPEEDTEST_DRAWLINE
 	{
@@ -1909,14 +1909,14 @@ int main(int argc, char* argv[]) {
 		struct tm timeinfo;
 		Time::Date date;
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M10; i++ ) {
+		for ( unsigned long int i = 0; i<M10; i++ ) {
 			date = Time::Date( Time::getValue() );
 		}
 		Log::stopChrono();
 		Log::displayChrono( StringASCII()<<"Date" );
 
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M10; i++ ) {
+		for ( unsigned long int i = 0; i<M10; i++ ) {
 			time_t now = time( NULL );
 			localtime_s( &timeinfo, &now );
 		}
@@ -1937,7 +1937,7 @@ int main(int argc, char* argv[]) {
 		int tmpVar = 0;
 
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M10; i++ ) {
+		for ( unsigned long int i = 0; i<M10; i++ ) {
 			tmpVar += Time::Date::parse( dateStr ).getMinutes();
 		}
 		Log::stopChrono();
@@ -2031,7 +2031,7 @@ int main(int argc, char* argv[]) {
 	{
 		float sum = 0.0f;
 		Log::startChrono();
-		for ( unsigned long i = 0; i<10000000; i++ ) {
+		for ( unsigned long int i = 0; i<10000000; i++ ) {
 			sum += atof( "42.054217" );
 		}
 		Log::stopChrono();
@@ -2039,7 +2039,7 @@ int main(int argc, char* argv[]) {
 
 		sum = 0.0f;
 		Log::startChrono();
-		for ( unsigned long i = 0; i<10000000; i++ ) {
+		for ( unsigned long int i = 0; i<10000000; i++ ) {
 			sum += StringASCII::toFloat( "42.054217" );
 		}
 		Log::stopChrono();
@@ -2065,7 +2065,7 @@ int main(int argc, char* argv[]) {
 		std::string txt_regex( "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" );
 		std::regex stdRegex( txt_regex, std::regex_constants::optimize );
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M1; i++ ) {
+		for ( unsigned long int i = 0; i<M1; i++ ) {
 			stdResult &= std::regex_search( stdString, stdRegex );
 		}
 		Log::stopChrono();
@@ -2077,7 +2077,7 @@ int main(int argc, char* argv[]) {
 		StringASCII mineString = "________255";
 
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M1; i++ ) {
+		for ( unsigned long int i = 0; i<M1; i++ ) {
 			mineResult &= Regex::match( mineString, mineRegex );
 		}
 		Log::stopChrono();
@@ -2089,18 +2089,18 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Vectors									//
 	{
-		Vector<unsigned long> vectorMine;
-		std::vector<unsigned long> vectorSTD;
+		Vector<unsigned long int> vectorMine;
+		std::vector<unsigned long int> vectorSTD;
 
 		Log::startChrono();
-		for ( unsigned long i = 0; i<10000000; i++ ) {
+		for ( unsigned long int i = 0; i<10000000; i++ ) {
 			vectorMine.push( i );
 		}
 		Log::stopChrono();
 		Log::displayChrono( "Vector .push_back(); Mine" );
 
 		Log::startChrono();
-		for ( unsigned long i = 0; i<10000000; i++ ) {
+		for ( unsigned long int i = 0; i<10000000; i++ ) {
 			vectorSTD.push_back( i );
 		}
 		Log::stopChrono();
@@ -2113,35 +2113,35 @@ int main(int argc, char* argv[]) {
 	// SPEED TEST : Maps									//
 	{
 		{
-			Map<unsigned long, unsigned long> mapRedBlackTree;
-			std::map<unsigned long, unsigned long> mapSTD;
+			Map<unsigned long int, unsigned long int> mapRedBlackTree;
+			std::map<unsigned long int, unsigned long int> mapSTD;
 
 			Log::startChrono();
-			for ( unsigned long i = 0; i<M1; i++ ) {
-				mapSTD.insert( std::pair<unsigned long, unsigned long>( Math::random( 0, 1000000 ), i ) );
+			for ( unsigned long int i = 0; i<M1; i++ ) {
+				mapSTD.insert( std::pair<unsigned long int, unsigned long int>( Math::random( 0, 1000000 ), i ) );
 			}
 			Log::stopChrono();
 			Log::displayChrono( "Map .insert(); STD" );
 
 
 			Log::startChrono();
-			for ( unsigned long i = 0; i<M1; i++ ) {
+			for ( unsigned long int i = 0; i<M1; i++ ) {
 				mapRedBlackTree.insert( Math::random( 0, 1000000 ), i );
 			}
 			Log::stopChrono();
 			Log::displayChrono( StringASCII( "Map Red Black Tree .insert(); Mine " ) );
 		}
 		{
-			Map<unsigned long, unsigned long> mapRedBlackTree;
-			std::map<unsigned long, unsigned long> mapSTD;
+			Map<unsigned long int, unsigned long int> mapRedBlackTree;
+			std::map<unsigned long int, unsigned long int> mapSTD;
 
-			for ( unsigned long i = 0; i<M1; i++ ) {
-				mapSTD.insert( std::pair<unsigned long, unsigned long>( i, i ) );
+			for ( unsigned long int i = 0; i<M1; i++ ) {
+				mapSTD.insert( std::pair<unsigned long int, unsigned long int>( i, i ) );
 				mapRedBlackTree.insert( i, i );
 			}
-			volatile unsigned long tmp( 0 );
+			volatile unsigned long int tmp( 0 );
 			Log::startChrono();
-			for ( unsigned long i = 0; i<M1; i++ ) {
+			for ( unsigned long int i = 0; i<M1; i++ ) {
 				tmp += mapSTD[ i ];
 			}
 			Log::stopChrono();
@@ -2149,7 +2149,7 @@ int main(int argc, char* argv[]) {
 
 
 			Log::startChrono();
-			for ( unsigned long i = 0; i<M1; i++ ) {
+			for ( unsigned long int i = 0; i<M1; i++ ) {
 				tmp += *( mapRedBlackTree[ i ] );
 			}
 			Log::stopChrono();
@@ -2167,7 +2167,7 @@ int main(int argc, char* argv[]) {
 
 		volatile float f0( 1 );
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i<M100; i++ ) {
 			f0 += f0;
 		}
 		Log::stopChrono();
@@ -2175,7 +2175,7 @@ int main(int argc, char* argv[]) {
 
 		volatile float f1( 1 );
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i<M100; i++ ) {
 			f1 *= f1;
 		}
 		Log::stopChrono();
@@ -2183,7 +2183,7 @@ int main(int argc, char* argv[]) {
 
 		volatile int i0( 1 );
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i<M100; i++ ) {
 			i0 += i0;
 		}
 		Log::stopChrono();
@@ -2191,7 +2191,7 @@ int main(int argc, char* argv[]) {
 
 		volatile int i1( 1 );
 		Log::startChrono();
-		for ( unsigned long i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i<M100; i++ ) {
 			i1 *= i1;
 		}
 		Log::stopChrono();
@@ -2215,7 +2215,7 @@ int main(int argc, char* argv[]) {
 			testExplicitCast<unsigned char> c1, c2, c3;
 
 			Log::startChrono();
-			for ( unsigned long i = 0; i<G1; i++ ) {
+			for ( unsigned long int i = 0; i<G1; i++ ) {
 				i1 += ( c1 );
 				i2 += ( c2 );
 				i3 += ( c3 );
@@ -2233,7 +2233,7 @@ int main(int argc, char* argv[]) {
 			testImplicitCast<unsigned char> c1, c2, c3;
 
 			Log::startChrono();
-			for ( unsigned long i = 0; i<G1; i++ ) {
+			for ( unsigned long int i = 0; i<G1; i++ ) {
 				i1 += ( c1 );
 				i2 += ( c2 );
 				i3 += ( c3 );
@@ -2262,7 +2262,7 @@ int main(int argc, char* argv[]) {
 		struct _stat64 s;
 
 		Log::startChrono();
-		for ( unsigned long i( 0 ); i<K100; i++ ) {
+		for ( unsigned long int i( 0 ); i<K100; i++ ) {
 			// tmp += ( int ) OS::Path::exists( pathStrASCII );
 			tmp += ( int ) ( _wstat64( pathStringW.toCString(), &s )==0 );
 		}
@@ -2270,14 +2270,14 @@ int main(int argc, char* argv[]) {
 		Log::displayChrono( String::format( "My Path.exists() : %", tmp ) );
 
 		Log::startChrono();
-		for ( unsigned long i( 0 ); i<K100; i++ ) {
+		for ( unsigned long int i( 0 ); i<K100; i++ ) {
 			tmp += ( int ) std::filesystem::exists( pathStrStdASCII.c_str(), ec );
 		}
 		Log::stopChrono();
 		Log::displayChrono( String::format( "Std Path.exists(ASCII) : %", tmp ) );
 
 		Log::startChrono();
-		for ( unsigned long i( 0 ); i<K100; i++ ) {
+		for ( unsigned long int i( 0 ); i<K100; i++ ) {
 			tmp += ( int ) std::filesystem::exists( pathStrStdW.c_str() );
 			/*
 			__std_fs_stats _Stats;

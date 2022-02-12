@@ -18,7 +18,7 @@
 template<typename T>
 class ThreadT {
 public:
-	typedef unsigned long Id;
+	typedef unsigned long int Id;
 
 
 	ThreadT();

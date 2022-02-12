@@ -89,19 +89,19 @@ UTF8StringT<T>::UTF8StringT( const unsigned int & ui ) :
 	BasicString<T>( ui ) {}
 
 template<typename T>
-UTF8StringT<T>::UTF8StringT( const long & l ) :
+UTF8StringT<T>::UTF8StringT( const long int & l ) :
 	BasicString<T>( l ) {}
 
 template<typename T>
-UTF8StringT<T>::UTF8StringT( const unsigned long & ul ) :
+UTF8StringT<T>::UTF8StringT( const unsigned long int & ul ) :
 	BasicString<T>( ul ) {}
 
 template<typename T>
-UTF8StringT<T>::UTF8StringT( const long long & ll ) :
+UTF8StringT<T>::UTF8StringT( const long long int & ll ) :
 	BasicString<T>( ll ) {}
 
 template<typename T>
-UTF8StringT<T>::UTF8StringT( const unsigned long long & ull ) :
+UTF8StringT<T>::UTF8StringT( const unsigned long long int & ull ) :
 	BasicString<T>( ull ) {}
 
 template<typename T>

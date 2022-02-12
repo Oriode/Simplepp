@@ -38,14 +38,14 @@ namespace Graphic {
 		explicit ColorR( const unsigned char & r );
 		explicit ColorR( const unsigned short & r );
 		explicit ColorR( const unsigned int & r );
-		explicit ColorR( const unsigned long & r );
-		explicit ColorR( const unsigned long long & r );
+		explicit ColorR( const unsigned long int & r );
+		explicit ColorR( const unsigned long long int & r );
 
 		explicit ColorR( const char & r );
 		explicit ColorR( const short & r );
 		explicit ColorR( const int & r );
-		explicit ColorR( const long & r );
-		explicit ColorR( const long long & r );
+		explicit ColorR( const long int & r );
+		explicit ColorR( const long long int & r );
 
 		explicit ColorR( const float & r );
 		explicit ColorR( const double & r );

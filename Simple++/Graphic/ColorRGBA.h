@@ -32,14 +32,14 @@ namespace Graphic {
 		explicit ColorRGBA( const unsigned char & l );
 		explicit ColorRGBA( const unsigned short & l );
 		explicit ColorRGBA( const unsigned int & l );
-		explicit ColorRGBA( const unsigned long & l );
-		explicit ColorRGBA( const unsigned long long & l );
+		explicit ColorRGBA( const unsigned long int & l );
+		explicit ColorRGBA( const unsigned long long int & l );
 
 		explicit ColorRGBA( const char & l );
 		explicit ColorRGBA( const short & l );
 		explicit ColorRGBA( const int & l );
-		explicit ColorRGBA( const long & l );
-		explicit ColorRGBA( const long long & l );
+		explicit ColorRGBA( const long int & l );
+		explicit ColorRGBA( const long long int & l );
 
 		explicit ColorRGBA( const float & l );
 		explicit ColorRGBA( const double & l );

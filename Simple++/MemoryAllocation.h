@@ -6,7 +6,7 @@
 class MemoryAllocation {
 public:
 	MemoryAllocation( void );
-	MemoryAllocation( unsigned long memoryAddress, unsigned long memorySize, const StringASCII & allocationFileName, unsigned int lineNumber );
+	MemoryAllocation( unsigned long int memoryAddress, unsigned long int memorySize, const StringASCII & allocationFileName, unsigned int lineNumber );
 	~MemoryAllocation( void );
 
 	void setAllocationFileName( const StringASCII & fileName );
@@ -15,8 +15,8 @@ public:
 	void setDeleteFileName( const StringASCII & fileName );
 	void setDeleteLineNumber( int lineNumber );
 
-	void setMemoryAddress( unsigned long long address );
-	void setMemorySize( unsigned long long size );
+	void setMemoryAddress( unsigned long long int address );
+	void setMemorySize( unsigned long long int size );
 
 	const StringASCII & getAllocationFileName() const;
 	int getAllocationLineNumber() const;
@@ -24,8 +24,8 @@ public:
 	const StringASCII & getDeleteFileName() const;
 	int getDeleteLineNumber() const;
 
-	unsigned long long getMemoryAddress() const;
-	unsigned long long getMemorySize() const;
+	unsigned long long int getMemoryAddress() const;
+	unsigned long long int getMemorySize() const;
 
 	void setAllocated( bool value );
 
@@ -41,8 +41,8 @@ private:
 	StringASCII deleteFileName;
 	int deleteLineNumber;
 
-	unsigned long long memoryAddress;
-	unsigned long long memorySize;
+	unsigned long long int memoryAddress;
+	unsigned long long int memorySize;
 };
 
 

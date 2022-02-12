@@ -31,27 +31,27 @@ namespace Time {
 
 
 	template<class Ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<Ratio>::getSeconds() const {
+	unsigned long long int Duration<Ratio>::getSeconds() const {
 		return this -> d * Ratio::num / Ratio::den;
 	}
 
 	template<class Ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<Ratio>::getMilliSeconds() const {
+	unsigned long long int Duration<Ratio>::getMilliSeconds() const {
 		return toValue<MilliSecond>();
 	}
 
 	template<class Ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<Ratio>::getMinutes() const {
+	unsigned long long int Duration<Ratio>::getMinutes() const {
 		return toValue<Minute>();
 	}
 
 	template<class Ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<Ratio>::getHours() const {
+	unsigned long long int Duration<Ratio>::getHours() const {
 		return toValue<Hour>();
 	}
 
 	template<class Ratio /*= Math::Ratio<1, 1>*/>
-	unsigned long long Duration<Ratio>::getDays() const {
+	unsigned long long int Duration<Ratio>::getDays() const {
 		return toValue<Day>();
 	}
 

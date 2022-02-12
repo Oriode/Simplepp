@@ -58,7 +58,7 @@ namespace Time {
 		 *
 		 * @returns	Number of the last tick.
 		 */
-		unsigned long long getTickNum() const;
+		unsigned long long int getTickNum() const;
 
 		/**
 		 * @brief		Get the time elapsed from the beginning
@@ -86,7 +86,7 @@ namespace Time {
 		/** @brief	The end ticks */
 		Time::Tick endTicks;
 		/** @brief	The tick number */
-		unsigned long long tickNumber;
+		unsigned long long int tickNumber;
 		/** @brief	The elapsed time s */
 		float elapsedTimeS;
 		Time::Duration<Time::MilliSecond> elapsedTimeMS;					//Duration of a tick

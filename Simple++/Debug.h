@@ -6,8 +6,8 @@
 
 
 #ifdef DEBUG
-#define debugNew(address, size); Debug::_debugNew((unsigned long long)address, size);
-#define debugDelete(address); Debug::_debugDelete((unsigned long long)address);
+#define debugNew(address, size); Debug::_debugNew((unsigned long long int)address, size);
+#define debugDelete(address); Debug::_debugDelete((unsigned long long int)address);
 #else
 #define debugNew(address, size);
 #define debugDelete(address);
@@ -37,7 +37,7 @@ private:
 
 };
 
-using Debug = DebugT<unsigned long long>;
+using Debug = DebugT<unsigned long long int>;
 
 #include "Debug.hpp"
 

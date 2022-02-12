@@ -25,10 +25,10 @@ namespace Graphic {
 	ColorR<T>::ColorR( const unsigned int & r ) : r( r ) {
 	}
 	template<typename T>
-	ColorR<T>::ColorR( const unsigned long & r ) : r( r ) {
+	ColorR<T>::ColorR( const unsigned long int & r ) : r( r ) {
 	}
 	template<typename T>
-	ColorR<T>::ColorR( const unsigned long long & r ) : r( r ) {
+	ColorR<T>::ColorR( const unsigned long long int & r ) : r( r ) {
 	}
 	template<typename T>
 	ColorR<T>::ColorR( const char & r ) : r( r ) {
@@ -40,10 +40,10 @@ namespace Graphic {
 	ColorR<T>::ColorR( const int & r ) : r( r ) {
 	}
 	template<typename T>
-	ColorR<T>::ColorR( const long & r ) : r( r ) {
+	ColorR<T>::ColorR( const long int & r ) : r( r ) {
 	}
 	template<typename T>
-	ColorR<T>::ColorR( const long long & r ) : r( r ) {
+	ColorR<T>::ColorR( const long long int & r ) : r( r ) {
 	}
 	template<typename T>
 	ColorR<T>::ColorR( const float & r ) : r( r ) {

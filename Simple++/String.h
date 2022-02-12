@@ -100,10 +100,10 @@ public:
 	BasicString( const unsigned short & ui, unsigned int base = 10 );
 	BasicString( const int & i, unsigned int base = 10 );
 	BasicString( const unsigned int & ui, unsigned int base = 10 );
-	BasicString( const long & l, unsigned int base = 10 );
-	BasicString( const unsigned long & ul, unsigned int base = 10 );
-	BasicString( const long long & ll, unsigned int base = 10 );
-	BasicString( const unsigned long long & ull, unsigned int base = 10 );
+	BasicString( const long int & l, unsigned int base = 10 );
+	BasicString( const unsigned long int & ul, unsigned int base = 10 );
+	BasicString( const long long int & ll, unsigned int base = 10 );
+	BasicString( const unsigned long long int & ull, unsigned int base = 10 );
 
 	///@brief		Constructor using a Float.
 	///@param	f/d	A Float to process.
@@ -165,10 +165,10 @@ public:
 	BasicString & operator=( const unsigned short & i );
 	BasicString & operator=( const int & i );
 	BasicString & operator=( const unsigned int & i );
-	BasicString & operator=( const long & i );
-	BasicString & operator=( const unsigned long & i );
-	BasicString & operator=( const long long & i );
-	BasicString & operator=( const unsigned long long & i );
+	BasicString & operator=( const long int & i );
+	BasicString & operator=( const unsigned long int & i );
+	BasicString & operator=( const long long int & i );
+	BasicString & operator=( const unsigned long long int & i );
 
 	///@brief		Assignment operator using a Float.
 	///@param	i	Float to be assigned.
@@ -208,10 +208,10 @@ public:
 	BasicString & operator<<( const unsigned short & us );
 	BasicString & operator<<( const int & i );
 	BasicString & operator<<( const unsigned int & ui );
-	BasicString & operator<<( const long & l );
-	BasicString & operator<<( const unsigned long & ul );
-	BasicString & operator<<( const long long & ll );
-	BasicString & operator<<( const unsigned long long & ull );
+	BasicString & operator<<( const long int & l );
+	BasicString & operator<<( const unsigned long int & ul );
+	BasicString & operator<<( const long long int & ll );
+	BasicString & operator<<( const unsigned long long int & ull );
 	BasicString & operator<<( const double & d );
 	BasicString & operator<<( const float & f );
 	BasicString & operator<<( const bool & b );
@@ -248,10 +248,10 @@ public:
 	BasicString & operator+=( const unsigned short & us );
 	BasicString & operator+=( const int & i );
 	BasicString & operator+=( const unsigned int & ui );
-	BasicString & operator+=( const long & l );
-	BasicString & operator+=( const unsigned long & ul );
-	BasicString & operator+=( const long long & ll );
-	BasicString & operator+=( const unsigned long long & ull );
+	BasicString & operator+=( const long int & l );
+	BasicString & operator+=( const unsigned long int & ul );
+	BasicString & operator+=( const long long int & ll );
+	BasicString & operator+=( const unsigned long long int & ull );
 	BasicString & operator+=( const double & d );
 
 	///@brief		Concat operator with a Float.
@@ -358,31 +358,31 @@ public:
 
 	///@brief		Concatenates the given l
 	///@tparam	Base	Type of the base.
-	///@param	l	A long to process.
+	///@param	l	A long int to process.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & concat( const long & l );
+	// BasicString & concat( const long int & l );
 
 	///@brief		Concatenates the given ul
 	///@tparam	Base	Type of the base.
 	///@param	ul	The ul.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned long & ul );
+	// BasicString & concat( const unsigned long int & ul );
 
 	///@brief		Concatenates the given ll
 	///@tparam	Base	Type of the base.
 	///@param	ll	The ll.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & concat( const long long & ll );
+	// BasicString & concat( const long long int & ll );
 
 	///@brief		Concatenates the given ull
 	///@tparam	Base	Type of the base.
 	///@param	ull	The ull.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned long long & ull );
+	// BasicString & concat( const unsigned long long int & ull );
 
 	///@brief		Concatenates the given d
 	///@tparam	Precision	Type of the precision.
@@ -409,10 +409,10 @@ public:
 	BasicString & concat( const unsigned short & us, unsigned int base = 10 );
 	BasicString & concat( const int & i, unsigned int base = 10 );
 	BasicString & concat( const unsigned int & ui, unsigned int base = 10 );
-	BasicString & concat( const long & l, unsigned int base = 10 );
-	BasicString & concat( const unsigned long & ul, unsigned int base = 10 );
-	BasicString & concat( const long long & ll, unsigned int base = 10 );
-	BasicString & concat( const unsigned long long & ull, unsigned int base = 10 );
+	BasicString & concat( const long int & l, unsigned int base = 10 );
+	BasicString & concat( const unsigned long int & ul, unsigned int base = 10 );
+	BasicString & concat( const long long int & ll, unsigned int base = 10 );
+	BasicString & concat( const unsigned long long int & ull, unsigned int base = 10 );
 
 	///@brief				Concat a Float to this String.
 	///@param	d		 	The Float.
@@ -433,10 +433,10 @@ public:
 	BasicString & concatFill( const unsigned short & us, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	BasicString & concatFill( const int & i, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	BasicString & concatFill( const unsigned int & ui, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const long & l, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const unsigned long & ul, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const long long & ll, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	BasicString & concatFill( const unsigned long long & ull, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const long int & l, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned long int & ul, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const long long int & ll, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString & concatFill( const unsigned long long int & ull, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 
 	///@brief	Concatenate the number and fill the first characters to have at least the specified number.
 	///@param 	d			Number.
@@ -517,7 +517,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCString( unsigned long number, T * buffer );
+	// static Size toCString( unsigned long int number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -525,7 +525,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCString( long long number, T * buffer );
+	// static Size toCString( long long int number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -533,7 +533,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCString( unsigned long long number, T * buffer );
+	// static Size toCString( unsigned long long int number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Base	Type of the base.
@@ -541,7 +541,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCString( long number, T * buffer );
+	// static Size toCString( long int number, T * buffer );
 
 	///@brief		Converts this object to a c string
 	///@tparam	Precision	Type of the precision.
@@ -575,14 +575,14 @@ public:
 	static Size toCString( unsigned int  number, T ** buffer, unsigned int base = 10 );
 	static Size toCString( int number, T * buffer, unsigned int base = 10 );
 	static Size toCString( int number, T ** buffer, unsigned int base = 10 );
-	static Size toCString( unsigned long number, T * buffer, unsigned int base = 10 );
-	static Size toCString( unsigned long number, T ** buffer, unsigned int base = 10 );
-	static Size toCString( long long number, T * buffer, unsigned int base = 10 );
-	static Size toCString( long long number, T ** buffer, unsigned int base = 10 );
-	static Size toCString( unsigned long long number, T * buffer, unsigned int base = 10 );
-	static Size toCString( unsigned long long number, T ** buffer, unsigned int base = 10 );
-	static Size toCString( long number, T * buffer, unsigned int base = 10 );
-	static Size toCString( long number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long int number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long int number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( long long int number, T * buffer, unsigned int base = 10 );
+	static Size toCString( long long int number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long long int number, T * buffer, unsigned int base = 10 );
+	static Size toCString( unsigned long long int number, T ** buffer, unsigned int base = 10 );
+	static Size toCString( long int number, T * buffer, unsigned int base = 10 );
+	static Size toCString( long int number, T ** buffer, unsigned int base = 10 );
 
 	///@brief			Converts a Number to a String.
 	///@param 		  	number	Number to be converted.
@@ -661,7 +661,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCStringWOS( unsigned long number, T * buffer );
+	// static Size toCStringWOS( unsigned long int number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -669,7 +669,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCStringWOS( long long number, T * buffer );
+	// static Size toCStringWOS( long long int number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -677,7 +677,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCStringWOS( unsigned long long number, T * buffer );
+	// static Size toCStringWOS( unsigned long long int number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Base	Type of the base.
@@ -685,7 +685,7 @@ public:
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
 	// template<unsigned int Base = 10>
-	// static Size toCStringWOS( long number, T * buffer );
+	// static Size toCStringWOS( long int number, T * buffer );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@tparam	Precision	Type of the precision.
@@ -719,14 +719,14 @@ public:
 	static Size toCStringWOS( unsigned int  number, T ** buffer, unsigned int base = 10 );
 	static Size toCStringWOS( int number, T * buffer, unsigned int base = 10 );
 	static Size toCStringWOS( int number, T ** buffer, unsigned int base = 10 );
-	static Size toCStringWOS( unsigned long number, T * buffer, unsigned int base = 10 );
-	static Size toCStringWOS( unsigned long number, T ** buffer, unsigned int base = 10 );
-	static Size toCStringWOS( long long number, T * buffer, unsigned int base = 10 );
-	static Size toCStringWOS( long long number, T ** buffer, unsigned int base = 10 );
-	static Size toCStringWOS( unsigned long long number, T * buffer, unsigned int base = 10 );
-	static Size toCStringWOS( unsigned long long number, T ** buffer, unsigned int base = 10 );
-	static Size toCStringWOS( long number, T * buffer, unsigned int base = 10 );
-	static Size toCStringWOS( long number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long int number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long int number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long long int number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long long int number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long long int number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( unsigned long long int number, T ** buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long int number, T * buffer, unsigned int base = 10 );
+	static Size toCStringWOS( long int number, T ** buffer, unsigned int base = 10 );
 
 	///@brief			Converts a Number to a String without adding the sentinel.
 	///@param 		  	number	Number to be converted.
@@ -771,14 +771,14 @@ public:
 	static Size toCStringWOSFill( unsigned int  number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	static Size toCStringWOSFill( int number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 	static Size toCStringWOSFill( int number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( unsigned long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( unsigned long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( long long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( long long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( unsigned long long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( unsigned long long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( long number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
-	static Size toCStringWOSFill( long number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long int number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long int number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long long int number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long long int number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long long int number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( unsigned long long int number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long int number, T * buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
+	static Size toCStringWOSFill( long int number, T ** buffer, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int base = 10 );
 
 	///@brief Write the hexadecimal 0 filled representation of a number into the buffer.
 	static void toCStringHexadecimal(unsigned char uc, T ** itP);
@@ -803,17 +803,17 @@ public:
 	// template<unsigned int Base = 10>
 	// short toShort() const;
 
-	///@brief		Converts this object to a long
+	///@brief		Converts this object to a long int
 	///@tparam	Base	Type of the base.
-	///@returns	This object as a long.
+	///@returns	This object as a long int.
 	// template<unsigned int Base = 10>
-	// long toLong() const;
+	// long int toLong() const;
 
-	///@brief		Converts this object to a long
+	///@brief		Converts this object to a long int
 	///@tparam	Base	Type of the base.
-	///@returns	This object as a long.
+	///@returns	This object as a long int.
 	// template<unsigned int Base = 10>
-	// long long toLongLong() const;
+	// long long int toLongLong() const;
 
 	///@brief		Converts this object to an u character
 	///@tparam	Base	Type of the base.
@@ -833,17 +833,17 @@ public:
 	// template<unsigned int Base = 10>
 	// unsigned short toUShort() const;
 
-	///@brief		Converts this object to an u long
+	///@brief		Converts this object to an u long int
 	///@tparam	Base	Type of the base.
-	///@returns	This object as a long.
+	///@returns	This object as a long int.
 	// template<unsigned int Base = 10>
-	// unsigned long toULong() const;
+	// unsigned long int toULong() const;
 
-	///@brief		Converts this object to an u long
+	///@brief		Converts this object to an u long int
 	///@tparam	Base	Type of the base.
-	///@returns	This object as a long.
+	///@returns	This object as a long int.
 	// template<unsigned int Base = 10>
-	// unsigned long long toULongLong() const;
+	// unsigned long long int toULongLong() const;
 
 	///@brief		Converts this object to a float
 	///@tparam	Base	Type of the base.
@@ -864,13 +864,13 @@ public:
 	char toChar( unsigned int base = 10 ) const;
 	int toInt( unsigned int base = 10 ) const;
 	short toShort( unsigned int base = 10 ) const;
-	long toLong( unsigned int base = 10 ) const;
-	long long toLongLong( unsigned int base = 10 ) const;
+	long int toLong( unsigned int base = 10 ) const;
+	long long int toLongLong( unsigned int base = 10 ) const;
 	unsigned char toUChar( unsigned int base = 10 ) const;
 	unsigned int toUInt( unsigned int base = 10 ) const;
 	unsigned short toUShort( unsigned int base = 10 ) const;
-	unsigned long toULong( unsigned int base = 10 ) const;
-	unsigned long long toULongLong( unsigned int base = 10 ) const;
+	unsigned long int toULong( unsigned int base = 10 ) const;
+	unsigned long long int toULongLong( unsigned int base = 10 ) const;
 
 	///@brief		Converts this String into a Number.
 	///@param	base	The base.
@@ -916,27 +916,27 @@ public:
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
 	// static short toShort( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
-	///@brief		Converts a buffer to a long
+	///@brief		Converts a buffer to a long int
 	///@tparam	EndFunc	Functor type to detect end.
 	///@tparam	Base	Type of the base.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@param	endFunc	Functor to detect end.
-	///@returns	Buffer as a long.
+	///@returns	Buffer as a long int.
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static long toLong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static long int toLong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static long toLong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static long int toLong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
-	///@brief		Converts a buffer to a long
+	///@brief		Converts a buffer to a long int
 	///@tparam	EndFunc	Functor type to detect end.
 	///@tparam	Base	Type of the base.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@param	endFunc	Functor to detect end.
-	///@returns	Buffer as a long.
+	///@returns	Buffer as a long int.
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static long long toLongLong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static long long int toLongLong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static long long toLongLong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static long long int toLongLong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
 	///@brief		Converts a buffer to an u character
 	///@tparam	EndFunc	Functor type to detect end.
@@ -971,27 +971,27 @@ public:
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
 	// static unsigned short toUShort( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
-	///@brief		Converts a buffer to an u long
+	///@brief		Converts a buffer to an u long int
 	///@tparam	EndFunc	Functor type to detect end.
 	///@tparam	Base	Type of the base.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@param	endFunc	Functor to detect end.
-	///@returns	Buffer as a long.
+	///@returns	Buffer as a long int.
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static unsigned long toULong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static unsigned long int toULong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static unsigned long toULong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static unsigned long int toULong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
-	///@brief		Converts a buffer to an u long
+	///@brief		Converts a buffer to an u long int
 	///@tparam	EndFunc	Functor type to detect end.
 	///@tparam	Base	Type of the base.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@param	endFunc	Functor to detect end.
-	///@returns	Buffer as a long.
+	///@returns	Buffer as a long int.
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static unsigned long long toULongLong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static unsigned long long int toULongLong( const T * buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 	// template<unsigned int Base = 10, typename EndFunc = BasicString<T>::IsEndSentinel>
-	// static unsigned long long toULongLong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
+	// static unsigned long long int toULongLong( const T ** buffer, const EndFunc & endFunc = IS_END_SENTINEL );
 
 	///@brief		Converts a buffer to a float
 	///@tparam	EndFunc	Functor type to detect end.
@@ -1043,14 +1043,14 @@ public:
 	static short toShort( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long toLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static long int toLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long toLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static long int toLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long long toLongLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static long long int toLongLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static long long toLongLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static long long int toLongLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
 	static unsigned char toUChar( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
@@ -1068,14 +1068,14 @@ public:
 	static unsigned short toUShort( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long toULong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static unsigned long int toULong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long toULong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static unsigned long int toULong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long long toULongLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static unsigned long long int toULongLong( const T * it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
-	static unsigned long long toULongLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+	static unsigned long long int toULongLong( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 
 	///@brief		Converts a String from a buffer into a Number.
 	///@tparam	EndFunc	Functor type to detect end.
@@ -1183,28 +1183,28 @@ public:
 	///@param	number	Number of.
 	///@returns	Number as a BasicString<T>
 	// template<unsigned int Base = 10>
-	// static BasicString<T> toString( unsigned long number );
+	// static BasicString<T> toString( unsigned long int number );
 
 	///@brief		Convert this object into a string representation
 	///@tparam	Base	Type of the base.
 	///@param	number	Number of.
 	///@returns	Number as a BasicString<T>
 	// template<unsigned int Base = 10>
-	// static BasicString<T> toString( long long number );
+	// static BasicString<T> toString( long long int number );
 
 	///@brief		Convert this object into a string representation
 	///@tparam	Base	Type of the base.
 	///@param	number	Number of.
 	///@returns	Number as a BasicString<T>
 	// template<unsigned int Base = 10>
-	// static BasicString<T> toString( unsigned long long number );
+	// static BasicString<T> toString( unsigned long long int number );
 
 	///@brief		Convert this object into a string representation
 	///@tparam	Base	Type of the base.
 	///@param	number	Number of.
 	///@returns	Number as a BasicString<T>
 	// template<unsigned int Base = 10>
-	// static BasicString<T> toString( long number );
+	// static BasicString<T> toString( long int number );
 
 	///@brief		Convert this object into a string representation
 	///@tparam	Precision	Type of the precision.
@@ -1232,10 +1232,10 @@ public:
 	static BasicString<T> toString( unsigned short number, unsigned int base = 10 );
 	static BasicString<T> toString( unsigned int number, unsigned int base = 10 );
 	static BasicString<T> toString( int number, unsigned int base = 10 );
-	static BasicString<T> toString( unsigned long number, unsigned int base = 10 );
-	static BasicString<T> toString( long long number, unsigned int base = 10 );
-	static BasicString<T> toString( unsigned long long number, unsigned int base = 10 );
-	static BasicString<T> toString( long number, unsigned int base = 10 );
+	static BasicString<T> toString( unsigned long int number, unsigned int base = 10 );
+	static BasicString<T> toString( long long int number, unsigned int base = 10 );
+	static BasicString<T> toString( unsigned long long int number, unsigned int base = 10 );
+	static BasicString<T> toString( long int number, unsigned int base = 10 );
 	///@brief		Convert a Number into a String.
 	///@param	number	Number to be converted.
 	///@param	precision	Number of decimals.
@@ -1647,31 +1647,31 @@ protected:
 
 	///@brief		Concatenate whithout \0
 	///@tparam	Base	Type of the base.
-	///@param	l	A long to process.
+	///@param	l	A long int to process.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const long & l );
+	// BasicString & _concatWOS( const long int & l );
 
 	///@brief		Concatenate whithout \0
 	///@tparam	Base	Type of the base.
 	///@param	ul	The ul.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned long & ul );
+	// BasicString & _concatWOS( const unsigned long int & ul );
 
 	///@brief		Concatenate whithout \0
 	///@tparam	Base	Type of the base.
 	///@param	ll	The ll.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const long long & ll );
+	// BasicString & _concatWOS( const long long int & ll );
 
 	///@brief		Concatenate whithout \0
 	///@tparam	Base	Type of the base.
 	///@param	ull	The ull.
 	///@returns	A reference to a BasicString.
 	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned long long & ull );
+	// BasicString & _concatWOS( const unsigned long long int & ull );
 
 	///@brief		Concatenate whithout \0
 	///@tparam	Precision	Type of the precision.
@@ -1711,25 +1711,25 @@ protected:
 	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const unsigned int & ui, unsigned int base = 10 );
 	///@brief		Concatenate whithout \0
-	///@param	l   	A long to process.
+	///@param	l   	A long int to process.
 	///@param	base	The base.
 	///@returns	A reference to a BasicString.
-	BasicString & _concatWOS( const long & l, unsigned int base = 10 );
+	BasicString & _concatWOS( const long int & l, unsigned int base = 10 );
 	///@brief		Concatenate whithout \0
 	///@param	ul  	The ul.
 	///@param	base	The base.
 	///@returns	A reference to a BasicString.
-	BasicString & _concatWOS( const unsigned long & ul, unsigned int base = 10 );
+	BasicString & _concatWOS( const unsigned long int & ul, unsigned int base = 10 );
 	///@brief		Concatenate whithout \0
 	///@param	ll  	The ll.
 	///@param	base	The base.
 	///@returns	A reference to a BasicString.
-	BasicString & _concatWOS( const long long & ll, unsigned int base = 10 );
+	BasicString & _concatWOS( const long long int & ll, unsigned int base = 10 );
 	///@brief		Concatenate whithout \0
 	///@param	ull 	The ull.
 	///@param	base	The base.
 	///@returns	A reference to a BasicString.
-	BasicString & _concatWOS( const unsigned long long & ull, unsigned int base = 10 );
+	BasicString & _concatWOS( const unsigned long long int & ull, unsigned int base = 10 );
 	///@brief		Concatenate whithout \0
 	///@param	d		 	A double to process.
 	///@param	precision	The precision.
@@ -2137,16 +2137,16 @@ template<typename T>
 BasicString<T> & operator<<(BasicString<T> basicString, const unsigned int & i);
 
 template<typename T>
-BasicString<T> & operator<<(BasicString<T> basicString, const long & i);
+BasicString<T> & operator<<(BasicString<T> basicString, const long int & i);
 
 template<typename T>
-BasicString<T> & operator<<(BasicString<T> basicString, const unsigned long & i);
+BasicString<T> & operator<<(BasicString<T> basicString, const unsigned long int & i);
 
 template<typename T>
-BasicString<T> & operator<<(BasicString<T> basicString, const long long & i);
+BasicString<T> & operator<<(BasicString<T> basicString, const long long int & i);
 
 template<typename T>
-BasicString<T> & operator<<(BasicString<T> basicString, const unsigned long long & i);
+BasicString<T> & operator<<(BasicString<T> basicString, const unsigned long long int & i);
 
 template<typename T>
 BasicString<T> & operator<<(BasicString<T> basicString, const double & i);
@@ -2241,56 +2241,56 @@ BasicString<T> operator+( const unsigned int & ui, const BasicString<T> & str );
 ///@param	l  	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const long & l );
+BasicString<T> operator+( const BasicString<T> & str, const long int & l );
 
 ///@brief		Addition operator
 ///@param	l  	The first value.
 ///@param	str	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const long & l, const BasicString<T> & str );
+BasicString<T> operator+( const long int & l, const BasicString<T> & str );
 
 ///@brief		Addition operator
 ///@param	str	The first value.
 ///@param	ul 	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned long & ul );
+BasicString<T> operator+( const BasicString<T> & str, const unsigned long int & ul );
 
 ///@brief		Addition operator
 ///@param	ul 	The first value.
 ///@param	str	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const unsigned long & ul, const BasicString<T> & str );
+BasicString<T> operator+( const unsigned long int & ul, const BasicString<T> & str );
 
 ///@brief		Addition operator
 ///@param	str	The first value.
 ///@param	ll 	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const long long & ll );
+BasicString<T> operator+( const BasicString<T> & str, const long long int & ll );
 
 ///@brief		Addition operator
 ///@param	ll 	The first value.
 ///@param	str	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const long long & ll, const BasicString<T> & str );
+BasicString<T> operator+( const long long int & ll, const BasicString<T> & str );
 
 ///@brief		Addition operator
 ///@param	str	The first value.
 ///@param	ull	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned long long & ull );
+BasicString<T> operator+( const BasicString<T> & str, const unsigned long long int & ull );
 
 ///@brief		Addition operator
 ///@param	ull	The first value.
 ///@param	str	A value to add to it.
 ///@returns	The result of the operation.
 template<typename T>
-BasicString<T> operator+( const unsigned long long & ull, const BasicString<T> & str );
+BasicString<T> operator+( const unsigned long long int & ull, const BasicString<T> & str );
 
 ///@brief		Addition operator
 ///@param	str	The first value.

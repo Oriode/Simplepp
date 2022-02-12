@@ -351,13 +351,13 @@ namespace Time {
 
 		if ( isLeapYear ) {
 			for ( int month = 0; month < this -> month; month++ ) {
-				unsigned long long numSeconds = 3600 * 24 * numberOfDaysInMonthLeap[ month ];
+				unsigned long long int numSeconds = 3600 * 24 * numberOfDaysInMonthLeap[ month ];
 
 				t += numSeconds;
 			}
 		} else {
 			for ( int month = 0; month < this -> month; month++ ) {
-				unsigned long long numSeconds = 3600 * 24 * numberOfDaysInMonth[ month ];
+				unsigned long long int numSeconds = 3600 * 24 * numberOfDaysInMonth[ month ];
 
 				t += numSeconds;
 			}
@@ -420,7 +420,7 @@ namespace Time {
 		localtime_s( &tmLocal, &timeTNow );
 		gmtime_s( &tmUtc, &timeTNow );
 
-		long long utcBias( 0 );
+		long long int utcBias( 0 );
 		utcBias = tmLocal.tm_sec - tmUtc.tm_sec;
 		utcBias += ( tmLocal.tm_min - tmUtc.tm_min ) * 60;
 		utcBias += ( tmLocal.tm_hour - tmUtc.tm_hour ) * 3600;

@@ -87,7 +87,7 @@ namespace Math {
 		 */
 		template<typename T = float>
 		MATH_FUNC_QUALIFIER static T random(const T& min, const T& max);
-		MATH_FUNC_QUALIFIER static unsigned long long random(unsigned long long min, unsigned long long max);
+		MATH_FUNC_QUALIFIER static unsigned long long int random(unsigned long long int min, unsigned long long int max);
 		MATH_FUNC_QUALIFIER static int random(int min, int max);
 
 

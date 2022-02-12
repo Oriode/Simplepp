@@ -254,7 +254,7 @@ namespace Utility {
 	struct TypesInfos<int> {
 		typedef int T;
 		typedef short Smaller;
-		typedef long Bigger;
+		typedef long int Bigger;
 		typedef int Signed;
 		typedef unsigned int Unsigned;
 
@@ -280,7 +280,7 @@ namespace Utility {
 	struct TypesInfos<unsigned int> {
 		typedef unsigned int T;
 		typedef unsigned short Smaller;
-		typedef unsigned long Bigger;
+		typedef unsigned long int Bigger;
 		typedef int Signed;
 		typedef unsigned int Unsigned;
 
@@ -304,12 +304,12 @@ namespace Utility {
 
 
 	template<>
-	struct TypesInfos<long> {
-		typedef long T;
+	struct TypesInfos<long int> {
+		typedef long int T;
 		typedef int Smaller;
-		typedef long long Bigger;
-		typedef long Signed;
-		typedef unsigned long Unsigned;
+		typedef long long int Bigger;
+		typedef long int Signed;
+		typedef unsigned long int Unsigned;
 
 		constexpr static bool isInteger() {
 			return true;
@@ -330,12 +330,12 @@ namespace Utility {
 	};
 
 	template<>
-	struct TypesInfos<unsigned long> {
-		typedef unsigned long T;
+	struct TypesInfos<unsigned long int> {
+		typedef unsigned long int T;
 		typedef unsigned int Smaller;
-		typedef unsigned long long Bigger;
-		typedef long Signed;
-		typedef unsigned long Unsigned;
+		typedef unsigned long long int Bigger;
+		typedef long int Signed;
+		typedef unsigned long int Unsigned;
 
 		constexpr static bool isInteger() {
 			return true;
@@ -357,12 +357,12 @@ namespace Utility {
 
 
 	template<>
-	struct TypesInfos<long long> {
-		typedef long long T;
-		typedef long Smaller;
-		typedef long long Bigger;
-		typedef long long Signed;
-		typedef unsigned long long Unsigned;
+	struct TypesInfos<long long int> {
+		typedef long long int T;
+		typedef long int Smaller;
+		typedef long long int Bigger;
+		typedef long long int Signed;
+		typedef unsigned long long int Unsigned;
 
 		constexpr static bool isInteger() {
 			return true;
@@ -383,12 +383,12 @@ namespace Utility {
 	};
 
 	template<>
-	struct TypesInfos<unsigned long long> {
-		typedef unsigned long long T;
-		typedef unsigned long Smaller;
-		typedef unsigned long long Bigger;
-		typedef long long Signed;
-		typedef unsigned long long Unsigned;
+	struct TypesInfos<unsigned long long int> {
+		typedef unsigned long long int T;
+		typedef unsigned long int Smaller;
+		typedef unsigned long long int Bigger;
+		typedef long long int Signed;
+		typedef unsigned long long int Unsigned;
 
 		constexpr static bool isInteger() {
 			return true;

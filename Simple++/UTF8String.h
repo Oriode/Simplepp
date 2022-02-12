@@ -46,10 +46,10 @@ public:
 
 	UTF8StringT( const int & i );
 	UTF8StringT( const unsigned int & ui );
-	UTF8StringT( const long & l );
-	UTF8StringT( const unsigned long & ul );
-	UTF8StringT( const long long & ll );
-	UTF8StringT( const unsigned long long & ull );
+	UTF8StringT( const long int & l );
+	UTF8StringT( const unsigned long int & ul );
+	UTF8StringT( const long long int & ll );
+	UTF8StringT( const unsigned long long int & ull );
 	UTF8StringT( const double & d );
 	UTF8StringT( const float & f );
 	UTF8StringT( const bool & b );

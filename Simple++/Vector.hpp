@@ -1007,20 +1007,20 @@ void Vector<T>::copy( unsigned int * destinationBuffer, const unsigned int * sou
 	memcpy( destinationBuffer, sourceBuffer, size * sizeof( int ) );
 }
 template<typename T>
-void Vector<T>::copy( long * destinationBuffer, const long * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long ) );
+void Vector<T>::copy( long int * destinationBuffer, const long int * sourceBuffer, const Size size ) {
+	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long int ) );
 }
 template<typename T>
-void Vector<T>::copy( unsigned long * destinationBuffer, const unsigned long * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long ) );
+void Vector<T>::copy( unsigned long int * destinationBuffer, const unsigned long int * sourceBuffer, const Size size ) {
+	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long int ) );
 }
 template<typename T>
-void Vector<T>::copy( long long * destinationBuffer, const long long * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long ) );
+void Vector<T>::copy( long long int * destinationBuffer, const long long int * sourceBuffer, const Size size ) {
+	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long int ) );
 }
 template<typename T>
-void Vector<T>::copy( unsigned long long * destinationBuffer, const unsigned long long * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long ) );
+void Vector<T>::copy( unsigned long long int * destinationBuffer, const unsigned long long int * sourceBuffer, const Size size ) {
+	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long int ) );
 }
 template<typename T>
 void Vector<T>::copy( float * destinationBuffer, const float * sourceBuffer, const Size size ) {

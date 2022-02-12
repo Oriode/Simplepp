@@ -134,8 +134,8 @@ namespace Time {
 		time = ( uint64_t(file_time.dwLowDateTime) );
 		time += ( uint64_t(file_time.dwHighDateTime) ) << 32;
 
-		tv->tv_sec = long( ( time - EPOCH ) / 10000000L );
-		tv->tv_usec = long( system_time.wMilliseconds * 1000 );
+		tv->tv_sec = long int( ( time - EPOCH ) / 10000000L );
+		tv->tv_usec = long int( system_time.wMilliseconds * 1000 );
 		return 0;
 	}
 #endif

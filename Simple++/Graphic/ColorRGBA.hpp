@@ -54,12 +54,12 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	ColorRGBA<T>::ColorRGBA( const unsigned long & l ) {
+	ColorRGBA<T>::ColorRGBA( const unsigned long int & l ) {
 		_castFromR( l );
 	}
 
 	template<typename T>
-	ColorRGBA<T>::ColorRGBA( const unsigned long long & l ) {
+	ColorRGBA<T>::ColorRGBA( const unsigned long long int & l ) {
 		_castFromR( l );
 	}
 
@@ -79,12 +79,12 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	ColorRGBA<T>::ColorRGBA( const long & l ) {
+	ColorRGBA<T>::ColorRGBA( const long int & l ) {
 		_castFromR( l );
 	}
 
 	template<typename T>
-	ColorRGBA<T>::ColorRGBA( const long long & l ) {
+	ColorRGBA<T>::ColorRGBA( const long long int & l ) {
 		_castFromR( l );
 	}
 

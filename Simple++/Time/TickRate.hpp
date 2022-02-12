@@ -58,7 +58,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	unsigned long long TickRateT<T>::getTickNum() const {
+	unsigned long long int TickRateT<T>::getTickNum() const {
 		return this -> tickNumber;
 	}
 

@@ -198,8 +198,8 @@ namespace Math {
 	typedef Mat3<unsigned char> mat3uc;
 	typedef Mat3<int> mat3i;
 	typedef Mat3<unsigned int> mat3ui;
-	typedef Mat3<long> mat3l;
-	typedef Mat3<unsigned long> mat3ul;
+	typedef Mat3<long int> mat3l;
+	typedef Mat3<unsigned long int> mat3ul;
 }
 
 
