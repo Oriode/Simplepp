@@ -151,9 +151,9 @@ namespace Network {
 			const EndFunc& endFunc;
 		};
 
-		static FunctorNewLine functorNewLine(endFunc);
-		static FunctorParamName functorParamName(endFunc);
-		static FunctorSpace functorSpace(endFunc);
+		FunctorNewLine functorNewLine(endFunc);
+		FunctorParamName functorParamName(endFunc);
+		FunctorSpace functorSpace(endFunc);
 
 		const StringASCII::ElemType*& it(*itP);
 		while ( true ) {
@@ -289,9 +289,9 @@ namespace Network {
 			const EndFunc& endFunc;
 		};
 
-		static FunctorNewLine functorNewLine(endFunc);
-		static FunctorWord functorWord(endFunc);
-		static FunctorSpace functorSpace(endFunc);
+		FunctorNewLine functorNewLine(endFunc);
+		FunctorWord functorWord(endFunc);
+		FunctorSpace functorSpace(endFunc);
 
 		const StringASCII::ElemType*& it(*itP);
 		// Skip spaces.
@@ -413,9 +413,9 @@ namespace Network {
 			const EndFunc& endFunc;
 		};
 
-		static FunctorNewLine functorNewLine(endFunc);
-		static FunctorWord functorWord(endFunc);
-		static FunctorSpace functorSpace(endFunc);
+		FunctorNewLine functorNewLine(endFunc);
+		FunctorWord functorWord(endFunc);
+		FunctorSpace functorSpace(endFunc);
 
 		const StringASCII::ElemType*& it(*itP);
 

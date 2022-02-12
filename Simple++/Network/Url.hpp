@@ -307,9 +307,9 @@ namespace Network {
 			const EndFunc& endFunc;
 		};
 
-		static FunctorProtocol functorProtocol(endFunc);
-		static FunctorHostname functorHostname(endFunc);
-		static FunctorEndPoint functorEndPoint(endFunc);
+		FunctorProtocol functorProtocol(endFunc);
+		FunctorHostname functorHostname(endFunc);
+		FunctorEndPoint functorEndPoint(endFunc);
 
 		const StringASCII::ElemType*& it(*itP);
 
@@ -398,8 +398,8 @@ namespace Network {
 			const EndFunc& endFunc;
 		};
 
-		static FunctorParamName functorParamName(endFunc);
-		static FunctorParamValue functorParamValue(endFunc);
+		FunctorParamName functorParamName(endFunc);
+		FunctorParamValue functorParamValue(endFunc);
 
 		while ( true ) {
 
