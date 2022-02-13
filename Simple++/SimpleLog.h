@@ -100,7 +100,8 @@ public:
 	enum class MessageSeverity : unsigned char {
 		Error,
 		Warning,
-		Info
+		Info,
+		Verbose
 	};
 
 	enum class MessageColor : unsigned char {

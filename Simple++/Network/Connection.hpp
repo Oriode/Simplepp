@@ -43,7 +43,7 @@ namespace Network {
 			return false;
 		}
 
-		log(StringASCII("Socket ") << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS());
+		verbose(StringASCII("Socket ") << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS());
 
 		this -> mIsCreated = true;
 		return true;
@@ -106,7 +106,7 @@ namespace Network {
 			return false;
 		}
 
-		log( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
+		verbose( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
 
 		this -> mIsListening = ( getSockType() == SockType::TCP );
 		this -> mIsCreated = true;
@@ -179,7 +179,7 @@ namespace Network {
 			return false;
 		}
 		freeaddrinfo( addrResults );
-		log( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
+		verbose( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
 
 		this -> mIsListening = ( getSockType() == SockType::TCP );
 		this -> mIsCreated = true;
@@ -262,7 +262,7 @@ namespace Network {
 		//freeing the automatically allocated AddrInfos
 		freeaddrinfo( addrResults );
 
-		log( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
+		verbose( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 
 		this -> mIsCreated = true;
 		return true;
@@ -431,7 +431,7 @@ namespace Network {
 		clientSocket -> setPort( getSockAddr() );
 		clientSocket -> _update();
 
-		log( StringASCII( "Socket " ) << this -> mSocket << " has accepted a new client " << clientSocket -> getIpFamilyS() << " : " << clientSocket -> getIp() );
+		verbose( StringASCII( "Socket " ) << this -> mSocket << " has accepted a new client " << clientSocket -> getIpFamilyS() << " : " << clientSocket -> getIp() );
 
 
 		return true;

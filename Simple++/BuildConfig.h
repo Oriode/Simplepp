@@ -30,8 +30,8 @@
 /** @brief	Enable logging or not */
 //#define LOG											<= Please set it inside the compilations options
 
- /** @brief	Select what to log (0 = ALL, 1 = INFO, 2 = WARNING, 3 = ERROR) */
-#define LOG_SEVERITY 1
+ /** @brief	Select what to log (0 = VERBOSE, 1 = INFO, 2 = WARNING, 3 = ERROR) */
+#define LOG_SEVERITY 0
 
 /** @brief Display or not the calling file in logs. */
 //#define LOG_DISPLAY_FILEPATH

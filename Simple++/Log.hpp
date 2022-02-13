@@ -1,3 +1,4 @@
+#include "Log.h"
 template<typename T>
 std::chrono::high_resolution_clock::time_point LogT<T>::startTime;
 template<typename T>
@@ -8,6 +9,13 @@ LogT<T>::LogT( void ) {}
 
 template<typename T>
 LogT<T>::~LogT( void ) {}
+
+template<typename T>
+inline void LogT<T>::displayVerbose(const BasicString<T>& text, typename LogT<T>::MessageColor messageColor) {
+#if LOG_SEVERITY <= 0 || !defined LOG_SEVERITY
+	LogT<T>::callErrorHandler(message, typename LogT<T>::MessageSeverity::Verbose, messageColor);
+#endif
+}
 
 template<typename T>
 void LogT<T>::displayError( const BasicString<T> & message ) {

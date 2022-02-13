@@ -278,7 +278,7 @@ namespace Network {
 			return false;
 		}
 
-		log(StringASCII::format("Success creating the SSL cypher %.", StringASCII(SSL_get_cipher(this->ssl))));
+		verbose(StringASCII::format("Success creating the SSL cypher %.", StringASCII(SSL_get_cipher(this->ssl))));
 
 		return true;
 	}

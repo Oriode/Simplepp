@@ -51,8 +51,9 @@
 
 #define debug(code); code
 #define error(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__ );
-#define log(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
 #define warn(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, Log::MessageColor::Yellow, TEXT( __FILE__ ), __LINE__ );
+#define log(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
+#define verbose(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Verbose, Log::MessageColor::Gray, TEXT( __FILE__ ), __LINE__ );
 
 #define assert(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
 #define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : "#msg ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
@@ -83,6 +84,13 @@ public:
 
 	/** @brief	Destructor */
 	~LogT( void );
+
+	/**
+		* @brief 	Display a log message even if we are in debug build or not.
+		* @param 	text	Text to display.
+		* @param	messageColor Color to be used.
+		*/
+	static void displayVerbose(const BasicString<T>& text, typename LogT<T>::MessageColor messageColor = LogT<T>::MessageColor::Gray);
 
 	/**
 		* @brief 	Display a log message even if we are in debug build or not.
