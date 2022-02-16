@@ -62,6 +62,7 @@
 #undef debug
 #define debug( ... );
 #define log( ... );
+#define verbose( ... );
 #define warn( ... );
 #define error( ... );
 #define windowsDebug( ... );
