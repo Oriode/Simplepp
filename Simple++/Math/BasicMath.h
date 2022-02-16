@@ -128,7 +128,7 @@ namespace Math {
 		 * @returns	result.
 		 */
 		template<typename T>
-		MATH_FUNC_QUALIFIER static constexpr T pow(const T& v, int e);
+		MATH_FUNC_QUALIFIER static constexpr T pow(const T& v, unsigned int e);
 
 		/**
 		 * @brief 	Clamp a number between to others (assert(min <= max))
@@ -264,7 +264,7 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T pow(const T& v, double e) { return BasicMath::pow(v, e); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER constexpr T pow(const T& v, int e) { return BasicMath::pow(v, e); }
+	MATH_FUNC_QUALIFIER constexpr T pow(const T& v, unsigned int e) { return BasicMath::pow(v, e); }
 	template<typename T>
 	MATH_FUNC_QUALIFIER T clamp(const T& v, const T& min, const T& max) { return BasicMath::clamp(v, min, max); }
 	template<typename T>
