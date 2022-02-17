@@ -535,7 +535,7 @@ void Vector<T>::extendLeft( const Size increasedSize ) {
 	Size iSrc( this -> size - increasedSize - 1 );
 	Size iDst( this -> size - 1 );
 	for ( ; iDst >= increasedSize; iSrc--, iDst-- ) {
-		setValueI( iDst, getValueI( iSrc ) );
+		this->dataTable[ iDst ] = this->dataTable[ iSrc ];
 	}
 }
 
@@ -843,13 +843,13 @@ void Vector<T>::_allocateNoNull( const Size newMax ) {
 
 
 template<typename T>
-T & Vector<T>::operator[]( const Size index ) {
-	return *( this -> dataTable + index );
+T & Vector<T>::operator[]( const Size i ) {
+	return getValueI(i);
 }
 
 template<typename T>
-const T & Vector<T>::operator[]( const Size index ) const {
-	return *( this -> dataTable + index );
+const T & Vector<T>::operator[]( const Size i ) const {
+	return getValueI(i);
 }
 
 
@@ -910,12 +910,22 @@ const T & Vector<T>::operator[]( typename Vector<T>::RandomAccessIterator i ) co
 
 template<typename T>
 void Vector<T>::setValueI( const Size i, const T & data ) {
+#ifdef DEBUG
+	if ( i >= this->maxSize ) {
+		_error("Vector::setValueI Out of bounds.");
+	}
+#endif
 	this -> dataTable[ i ] = data;
 }
 
 
 template<typename T>
 void Vector<T>::setValueIt( typename Vector<T>::Iterator i, const T & data ) {
+#ifdef DEBUG
+	if ( i < this->dataTable || i >= this->iteratorEnd ) {
+		_error("Vector::setValueIt Out of bounds.");
+	}
+#endif
 	*i = data;
 }
 
@@ -923,38 +933,63 @@ void Vector<T>::setValueIt( typename Vector<T>::Iterator i, const T & data ) {
 
 template<typename T>
 const T & Vector<T>::getValueI( const Size i ) const {
+#ifdef DEBUG
+	if ( i >= this->maxSize ) {
+		_error("Vector::getValueI Out of bounds.");
+	}
+#endif
 	return this -> dataTable[ i ];
 }
 
 
 template<typename T>
 T & Vector<T>::getValueI( const Size i ) {
+#ifdef DEBUG
+	if ( i >= this->maxSize ) {
+		_error("Vector::getValueI Out of bounds.");
+	}
+#endif
 	return this -> dataTable[ i ];
 }
 
 
 template<typename T>
-const T & Vector<T>::getValueIt( typename Vector<T>::Iterator i ) const {
-	return *i;
+const T & Vector<T>::getValueIt( typename Vector<T>::Iterator it ) const {
+#ifdef DEBUG
+	if ( it < this->dataTable || it >= this->iteratorEnd ) {
+		_error("Vector::getValueIt Out of bounds.");
+	}
+#endif
+	return *it;
 }
 
 template<typename T>
-T & Vector<T>::getValueIt( typename Vector<T>::Iterator i ) {
-	return *i;
+T & Vector<T>::getValueIt( typename Vector<T>::Iterator it ) {
+#ifdef DEBUG
+	if ( it < this->dataTable || it >= this->iteratorEnd ) {
+		_error("Vector::getValueIt Out of bounds.");
+	}
+#endif
+	return *it;
 }
 
 
 template<typename T>
-void Vector<T>::_erasei( const Size index ) {
-	_eraseit( getData() + index );
+void Vector<T>::_erasei( const Size i ) {
+	_eraseit( getData() + i );
 }
 
 
 template<typename T>
-void Vector<T>::_eraseit( typename Vector<T>::Iterator index ) {
+void Vector<T>::_eraseit( typename Vector<T>::Iterator it ) {
+#ifdef DEBUG
+	if ( it < this->dataTable || it >= this->iteratorEnd ) {
+		_error("Vector::_eraseit Out of bounds.");
+	}
+#endif
 	this -> size--;
 	_updateIterators();
-	for ( typename Vector<T>::Iterator it( index ); it != getEnd(); iterate( &it ) ) {
+	for ( typename Vector<T>::Iterator it( it ); it != getEnd(); iterate( &it ) ) {
 		*it = *( it + 1 );
 	}
 }
