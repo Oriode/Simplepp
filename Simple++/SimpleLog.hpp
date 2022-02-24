@@ -1,3 +1,4 @@
+#include "SimpleLog.h"
 
 template<typename T>
 void( *SimpleLogT<T>::mErrorHandlerFn )(
@@ -61,7 +62,7 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 	}
 
 	if ( message == NULL ) {
-		printChar( '\n' );
+		endLine(reinterpret_cast< T* >( NULL ));
 		return;
 	}
 
@@ -92,11 +93,11 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 	printMessage( prefixBuffer );
 
 	for ( unsigned char i( 0 ); i < indent; i++ ) {
-		printChar( '\t' );
+		printChar( T('\t') );
 	}
 
 	printMessage( message );
-	printChar( '\n' );
+	endLine(reinterpret_cast< T* >( NULL ));
 
 	// setConsoleColor();
 }
@@ -259,6 +260,12 @@ void SimpleLogT<T>::printChar( const C c ) {
 }
 
 template<typename T>
+template<typename C>
+inline void SimpleLogT<T>::endLine(const C* c) {
+	// Not Implemented.
+}
+
+template<typename T>
 void SimpleLogT<T>::printChar( const char c ) {
 	std::cout << c;
 }
@@ -266,6 +273,16 @@ void SimpleLogT<T>::printChar( const char c ) {
 template<typename T>
 void SimpleLogT<T>::printChar( const wchar_t c ) {
 	std::wcout << c;
+}
+
+template<typename T>
+inline void SimpleLogT<T>::endLine(const char* c) {
+	std::cout << std::endl;
+}
+
+template<typename T>
+inline void SimpleLogT<T>::endLine(const wchar_t* c) {
+	std::wcout << std::endl;
 }
 
 template<typename T>

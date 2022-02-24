@@ -167,6 +167,11 @@ public:
 	static void printChar( const char c );
 	static void printChar( const wchar_t c );
 
+	template<typename C>
+	static void endLine(const C* c);
+	static void endLine(const char* c);
+	static void endLine(const wchar_t* c);
+
 	static void increaseIndent();
 	static void lowerIndent();
 
