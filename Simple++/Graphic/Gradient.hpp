@@ -203,11 +203,12 @@ namespace Graphic {
 
 
 		template<typename C, typename InterFunc>
-		bool Template<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
+		template<typename Stream>
+		bool Template<C, InterFunc>::read(Stream* stream ) {
 			_unload();
 
 			Size nbPoints;
-			if ( !IO::read( fileStream, &nbPoints ) ) {
+			if ( !IO::read( stream, &nbPoints ) ) {
 				_clear();
 				return false;
 			}
@@ -217,7 +218,7 @@ namespace Graphic {
 
 			for ( Size i( 0 ); i < nbPoints; i++ ) {
 				Point<C> * gradientPoint = new Point<C>();
-				if ( !IO::read( fileStream, gradientPoint ) ) {
+				if ( !IO::read( stream, gradientPoint ) ) {
 					delete gradientPoint;
 					_clear();
 					return false;
@@ -225,7 +226,7 @@ namespace Graphic {
 					this -> pointsVector.push( gradientPoint );
 			}
 
-			if ( !IO::read( fileStream, &this -> functor ) ) {
+			if ( !IO::read( stream, &this -> functor ) ) {
 				_clear();
 				return false;
 			}
@@ -236,18 +237,19 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Template<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
+		template<typename Stream>
+		bool Template<C, InterFunc>::write(Stream* stream ) const {
 
 			Size nbPoints( this -> pointsVector.getSize() );
-			if ( !IO::write( fileStream, &nbPoints ) )
+			if ( !IO::write( stream, &nbPoints ) )
 				return false;
 
 			for ( auto it( this -> pointsVector.getBegin() ); it != this -> pointsVector.getEnd(); this->pointsVector.iterate( &it ) ) {
-				if ( !IO::write( fileStream, *it ) )
+				if ( !IO::write( stream, *it ) )
 					return false;
 			}
 
-			if ( !IO::write( fileStream, &this -> functor ) )
+			if ( !IO::write( stream, &this -> functor ) )
 				return false;
 
 			return true;
@@ -508,14 +510,15 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Linear<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
-			if ( !Template<C, InterFunc>::read( fileStream ) )
+		template<typename Stream>
+		bool Linear<C, InterFunc>::read(Stream* stream ) {
+			if ( !Template<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( fileStream, &this -> length ) )
+			if ( !IO::read( stream, &this -> length ) )
 				return false;
-			if ( !IO::read( fileStream, &this -> p ) )
+			if ( !IO::read( stream, &this -> p ) )
 				return false;
-			if ( !IO::read( fileStream, &this -> angle ) )
+			if ( !IO::read( stream, &this -> angle ) )
 				return false;
 			this -> angleRad = Math::radians( this -> angle );
 			this -> v.x = Math::cos( this -> angleRad );
@@ -525,14 +528,15 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		bool Linear<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
-			if ( !Template<C, InterFunc>::write( fileStream ) )
+		template<typename Stream>
+		bool Linear<C, InterFunc>::write(Stream* stream ) const {
+			if ( !Template<C, InterFunc>::write( stream ) )
 				return false;
-			if ( !IO::write( fileStream, &this -> length ) )
+			if ( !IO::write( stream, &this -> length ) )
 				return false;
-			if ( !IO::write( fileStream, &this -> p ) )
+			if ( !IO::write( stream, &this -> p ) )
 				return false;
-			if ( !IO::write( fileStream, &this -> angle ) )
+			if ( !IO::write( stream, &this -> angle ) )
 				return false;
 
 
@@ -613,24 +617,26 @@ namespace Graphic {
 
 
 		template<typename C, typename InterFunc>
-		bool Radial<C, InterFunc>::read( IO::SimpleFileStream * fileStream ) {
-			if ( !Template<C, InterFunc>::read( fileStream ) )
+		template<typename Stream>
+		bool Radial<C, InterFunc>::read(Stream* stream ) {
+			if ( !Template<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( fileStream, &this -> center ) )
+			if ( !IO::read( stream, &this -> center ) )
 				return false;
-			if ( !IO::read( fileStream, &this -> radius ) )
+			if ( !IO::read( stream, &this -> radius ) )
 				return false;
 
 			return true;
 		}
 
 		template<typename C, typename InterFunc>
-		bool Radial<C, InterFunc>::write( IO::SimpleFileStream * fileStream ) const {
-			if ( !Template<C, InterFunc>::write( fileStream ) )
+		template<typename Stream>
+		bool Radial<C, InterFunc>::write(Stream* stream ) const {
+			if ( !Template<C, InterFunc>::write( stream ) )
 				return false;
-			if ( !IO::write( fileStream, &this -> center ) )
+			if ( !IO::write( stream, &this -> center ) )
 				return false;
-			if ( !IO::write( fileStream, &this -> radius ) )
+			if ( !IO::write( stream, &this -> radius ) )
 				return false;
 
 			return true;

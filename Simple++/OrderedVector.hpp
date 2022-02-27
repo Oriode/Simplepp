@@ -209,25 +209,27 @@ OrderedVector<T, Compare>::~OrderedVector( void ) {
 }
 
 template<typename T, typename Compare>
-bool OrderedVector<T, Compare>::write( IO::SimpleFileStream * fileStream ) const {
+template<typename Stream>
+bool OrderedVector<T, Compare>::write(Stream* stream ) const {
 	if ( !this -> isOrdered )
 		_sort();
-	if ( !Vector<T>::write( fileStream ) )
+	if ( !Vector<T>::write( stream ) )
 		return false;
-	if ( !IO::write( fileStream, &this -> sortFunction ) )
+	if ( !IO::write( stream, &this -> sortFunction ) )
 		return false;
 	return true;
 }
 
 template<typename T, typename Compare>
-bool OrderedVector<T, Compare>::read( IO::SimpleFileStream * fileStream ) {
+template<typename Stream>
+bool OrderedVector<T, Compare>::read(Stream* stream ) {
 	this -> isOrdered = true;
 
 	// In this case already clear
-	if ( !Vector<T>::read( fileStream ) ) 
+	if ( !Vector<T>::read( stream ) ) 
 		return false;
 	
-	if ( !IO::read( fileStream, &this -> sortFunction ) ) {
+	if ( !IO::read( stream, &this -> sortFunction ) ) {
 		_clear();
 		return false;
 	}

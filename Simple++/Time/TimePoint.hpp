@@ -84,16 +84,18 @@ namespace Time {
 	}
 
 	template<typename Ratio>
-	bool TimePoint<Ratio>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, &this->t ) ) {
+	template<typename Stream>
+	bool TimePoint<Ratio>::read( Stream * stream ) {
+		if ( !IO::read( stream, &this->t ) ) {
 			return false;
 		}
 		return true;
 	}
 
 	template<typename Ratio>
-	bool TimePoint<Ratio>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this->t ) ) {
+	template<typename Stream>
+	bool TimePoint<Ratio>::write( Stream * stream ) const {
+		if ( !IO::write( stream, &this->t ) ) {
 			return false;
 		}
 		return true;

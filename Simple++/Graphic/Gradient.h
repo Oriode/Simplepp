@@ -119,14 +119,16 @@ namespace Graphic {
 
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 
 		protected:
 			///@brief Create a new gradient.
@@ -318,14 +320,16 @@ namespace Graphic {
 			static int computeIndex( const Math::Vec2<float> & p, int maxIndex, const Math::Vec2<float> & radius );
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 
 		private:
 			Math::Vec2<float> center;
@@ -413,14 +417,16 @@ namespace Graphic {
 
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 		private:
 			unsigned int length;
 			Math::Vec2<float> p;

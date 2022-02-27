@@ -441,13 +441,14 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool ImageT<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this -> size ) )
+	template<typename Stream>
+	bool ImageT<T>::write( Stream * stream ) const {
+		if ( !IO::write( stream, &this -> size ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> format ) )
+		if ( !IO::write( stream, &this -> format ) )
 			return false;
 		size_t nbComponents = this -> nbPixels * getNbComponents();
-		if ( !IO::writeBuffer( fileStream, this -> buffer, nbComponents ) )
+		if ( !IO::writeBuffer( stream, this -> buffer, nbComponents ) )
 			return false;
 
 		return true;
@@ -472,15 +473,16 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool ImageT<T>::_read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, &this -> size ) ) {
+	template<typename Stream>
+	bool ImageT<T>::_read(Stream* stream ) {
+		if ( !IO::read( stream, &this -> size ) ) {
 			this -> size.x = 0;
 			this -> size.y = 0;
 			this -> nbPixels = 0;
 			this -> buffer = NULL;
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> format ) ) {
+		if ( !IO::read( stream, &this -> format ) ) {
 			this -> size.x = 0;
 			this -> size.y = 0;
 			this -> nbPixels = 0;
@@ -492,7 +494,7 @@ namespace Graphic {
 		if ( this -> nbPixels ) this -> buffer = new T[nbComponents];
 		else this -> buffer = NULL;
 
-		if ( !IO::readBuffer( fileStream, this -> buffer, nbComponents ) ) {
+		if ( !IO::readBuffer( stream, this -> buffer, nbComponents ) ) {
 			delete[] this -> buffer;
 			this -> size.x = 0;
 			this -> size.y = 0;
@@ -505,9 +507,10 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool ImageT<T>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool ImageT<T>::read( Stream * stream ) {
 		delete[] this -> buffer;
-		return _read( fileStream );
+		return _read( stream );
 	}
 
 	template<typename T>

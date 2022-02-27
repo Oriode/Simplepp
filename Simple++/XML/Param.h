@@ -55,10 +55,11 @@ namespace XML {
 		///@param value Value of this param
 		using ::ParamT<T, T>::setValue;
 
-		///@brief Write this object in the XML syntax into the fileStream
-		///@param fileStream stream used to write this object
+		///@brief Write this object in the XML syntax into the stream
+		///@param stream stream used to write this object
 		///@return True if success, False otherwise
-		bool writeXML( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool writeXML( Stream * stream ) const;
 
 		///@brief Create an human-readable string of this param.
 		///@return Human-readable string of this param.

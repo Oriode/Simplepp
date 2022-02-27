@@ -1,3 +1,4 @@
+#include "Node.h"
 namespace JSON {
 
 	template<typename T>
@@ -64,39 +65,39 @@ namespace JSON {
 	}
 
 	template<typename T>
-	const NodeMapT<T> * BasicNodeT<T>::toObject() const {
-		assert( this -> getType() == Type::Map );
-		return ( static_cast< const NodeMapT<T> * >( this ) );
-	}
-
-	template<typename T>
-	NodeMapT<T> * BasicNodeT<T>::toObject() {
-		assert( this -> getType() == Type::Map );
-		return ( static_cast< NodeMapT<T> * >( this ) );
-	}
-
-	template<typename T>
 	const NodeValueT<T> * BasicNodeT<T>::toValue() const {
 		assert( this -> getType() == Type::Value );
-		return ( static_cast< const NodeValueT<T> * >( this ) );
+		return reinterpret_cast< const NodeValueT<T> * >( this );
 	}
 
 	template<typename T>
 	NodeValueT<T> * BasicNodeT<T>::toValue() {
 		assert( this -> getType() == Type::Value );
-		return ( static_cast< NodeValueT<T> * >( this ) );
+		return reinterpret_cast< NodeValueT<T> * >( this );
 	}
 
 	template<typename T>
 	const NodeArrayT<T> * BasicNodeT<T>::toArray() const {
 		assert( this -> getType() == Type::Array );
-		return ( static_cast< const NodeArrayT<T> * >( this ) );
+		return reinterpret_cast< const NodeArrayT<T> * >( this );
 	}
 
 	template<typename T>
 	NodeArrayT<T> * BasicNodeT<T>::toArray() {
 		assert( this -> getType() == Type::Array );
-		return ( static_cast< NodeArrayT<T> * >( this ) );
+		return reinterpret_cast< NodeArrayT<T> * >( this );
+	}
+
+	template<typename T>
+	inline const NodeMapT<T>* BasicNodeT<T>::toMap() const {
+		assert(this -> getType() == Type::Map);
+		return reinterpret_cast< const NodeMapT<T> * >( this );
+	}
+
+	template<typename T>
+	inline NodeMapT<T>* BasicNodeT<T>::toMap() {
+		assert(this -> getType() == Type::Map);
+		return reinterpret_cast< NodeMapT<T> * >( this );
 	}
 
 	template<typename T>
@@ -211,11 +212,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::writeJSON( IO::SimpleFileStream * fileStreamP, unsigned int indent ) const {
-		IO::SimpleFileStream & fileStream( *fileStreamP );
+	template<typename Stream>
+	bool BasicNodeT<T>::writeJSON(Stream* fileStreamP, unsigned int indent ) const {
+		Stream & stream( *fileStreamP );
 
 		// Call the virtual protected method.
-		_writeJSON<IO::SimpleFileStream, char>( fileStream, indent );
+		_writeJSON<Stream, char>( stream, indent );
 
 		return !( fileStreamP -> hasFailed() );
 	}
@@ -240,7 +242,7 @@ namespace JSON {
 	template<typename C, typename Elem>
 	void BasicNodeT<T>::_writeJSON( C & o, unsigned int indent ) const {
 		if ( getType() == Type::Map ) {
-			this -> toObject() -> _writeJSON<C, Elem>( o, indent );
+			this -> toMap() -> _writeJSON<C, Elem>( o, indent );
 		} else if ( getType() == Type::Array ) {
 			this -> toArray() -> _writeJSON<C, Elem>( o, indent );
 		} else if ( getType() == Type::Value ) {
@@ -249,42 +251,57 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, &this -> name ) ) {
-			_clear();
-			return false;
+	template<typename Stream>
+	bool BasicNodeT<T>::read( Stream * stream ) {
+		switch ( this->type ) {
+			case Type::Array:
+				return this->toArray()->read(stream);
+			case Type::Map:
+				return this->toMap()->read(stream);
+			case Type::Value:
+				return this->toValue()->read(stream);
+			default:
+				return false;
 		}
-		return true;
 	}
 
 	template<typename T>
-	bool BasicNodeT<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this -> name ) )
-			return false;
-		return true;
+	template<typename Stream>
+	bool BasicNodeT<T>::write( Stream * stream ) const {
+		switch ( this->type ) {
+			case Type::Array:
+				return this->toArray()->write(stream);
+			case Type::Map:
+				return this->toMap()->write(stream);
+			case Type::Value:
+				return this->toValue()->write(stream);
+			default:
+				return false;
+		}
 	}
 
 	template<typename T>
 	template<typename C, typename EndFunc>
 	bool BasicNodeT<T>::readJSON( const C ** buffer, const EndFunc & endFunc ) {
-		if ( getType() == Type::Map ) {
-			return this -> toObject() -> readJSON<C, EndFunc>( buffer, endFunc );
-		} else if ( getType() == Type::Array ) {
-			return this -> toArray() -> readJSON<C, EndFunc>( buffer, endFunc );
-		} else if ( getType() == Type::Value ) {
-			return this -> toValue() -> readJSON<C, EndFunc>( buffer, endFunc );
-		} else {
-			return true;
+		switch ( this->type ) {
+			case Type::Array:
+				return this->toArray()->readJSON<C, EndFunc>(buffer, endFunc);
+			case Type::Map:
+				return this->toMap()->readJSON<C, EndFunc>(buffer, endFunc);
+			case Type::Value:
+				return this->toValue()->readJSON<C, EndFunc>(buffer, endFunc);
+			default:
+				return false;
 		}
 	}
 
 	template<typename T>
 	bool BasicNodeT<T>::writeFileJSON( const OS::Path & filePath ) const {
-		IO::FileStream fileStream( filePath, IO::OpenMode::Write );
-		if ( !fileStream.isOpen() ) {
+		IO::FileStream stream( filePath, IO::OpenMode::Write );
+		if ( !stream.isOpen() ) {
 			return false;
 		}
-		return writeJSON(&fileStream);
+		return writeJSON(&stream);
 	}
 
 	template<typename T>
@@ -325,6 +342,24 @@ namespace JSON {
 			error( String::format( TEXT( "[JSON ERROR] : Expected '%'." ), c ) );
 			return false;
 		}
+	}
+
+	template<typename T>
+	template<typename Stream>
+	inline bool BasicNodeT<T>::_write(Stream* stream) const {
+		if ( !IO::write(stream, &this -> name) )
+			return false;
+		return true;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	inline bool BasicNodeT<T>::_read(Stream* stream) {
+		if ( !IO::read(stream, &this -> name) ) {
+			_clear();
+			return false;
+		}
+		return true;
 	}
 
 	template<typename T>
@@ -617,13 +652,14 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool NodeMapT<T>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool NodeMapT<T>::read( Stream * stream ) {
 		_unload();
 
 		this -> childrenMap.clear();
 		this -> childrenVector.clear();
 
-		if ( !BasicNodeT<T>::read( fileStream ) ) {
+		if ( !BasicNodeT<T>::_read( stream ) ) {
 			_clear();
 			return false;
 		}
@@ -631,14 +667,14 @@ namespace JSON {
 
 		// Read the children
 		Size nbChilds;
-		if ( !IO::read( fileStream, &nbChilds ) ) {
+		if ( !IO::read( stream, &nbChilds ) ) {
 			_clear();
 			return false;
 		}
 		nbChilds = Math::min( nbChilds, Size( 1000 ) );
 		for ( Size i( 0 ); i < nbChilds; i++ ) {
 			bool isNull;
-			if ( !IO::read( fileStream, &isNull ) ) {
+			if ( !IO::read( stream, &isNull ) ) {
 				_clear();
 				return false;
 			}
@@ -646,7 +682,7 @@ namespace JSON {
 				this -> childrenVector.push( NULL );
 			} else {
 				Type newNodeType;
-				if ( !IO::read( fileStream, &newNodeType ) ) {
+				if ( !IO::read( stream, &newNodeType ) ) {
 					_clear();
 					return false;
 				}
@@ -657,7 +693,7 @@ namespace JSON {
 					{
 						NodeMapT<T> * newNode( new NodeMapT<T>( ) );
 						newNode -> parent = this;
-						if ( !IO::read( fileStream, newNode ) ) {
+						if ( !IO::read( stream, newNode ) ) {
 							delete newNode;
 							_clear();
 							return false;
@@ -671,7 +707,7 @@ namespace JSON {
 					{
 						NodeValueT<T> * newNode( new NodeValueT<T>( ) );
 						newNode -> parent = this;
-						if ( !IO::read( fileStream, newNode ) ) {
+						if ( !IO::read( stream, newNode ) ) {
 							delete newNode;
 							_clear();
 							return false;
@@ -685,7 +721,7 @@ namespace JSON {
 					{
 						NodeArrayT<T> * newNode( new NodeArrayT<T>( ) );
 						newNode -> parent = this;
-						if ( !IO::read( fileStream, newNode ) ) {
+						if ( !IO::read( stream, newNode ) ) {
 							delete newNode;
 							_clear();
 							return false;
@@ -699,7 +735,7 @@ namespace JSON {
 					{
 						BasicNodeT<T> * newNode( new BasicNodeT<T>( newNodeType ) );
 						newNode -> parent = this;
-						if ( !IO::read( fileStream, newNode ) ) {
+						if ( !IO::read( stream, newNode ) ) {
 							delete newNode;
 							_clear();
 							return false;
@@ -738,7 +774,7 @@ namespace JSON {
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			BasicNodeT<T> * child( this -> childrenVector.getValueIt( it ) );
 			if ( child -> getType() == Type::Map ) {
-				child -> toObject() -> _getElementsByName( nodeVector, name );
+				child -> toMap() -> _getElementsByName( nodeVector, name );
 			}
 		}
 	}
@@ -754,7 +790,7 @@ namespace JSON {
 		for ( auto it(this -> childrenVector.getBegin()); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate(&it) ) {
 			BasicNodeT<T>* child(this -> childrenVector.getValueIt(it));
 			if ( child -> getType() == Type::Map ) {
-				BasicNodeT<T>* foundedElement(child -> toObject() -> _getElementByName(name));
+				BasicNodeT<T>* foundedElement(child -> toMap() -> _getElementByName(name));
 				if ( foundedElement ) {
 					return foundedElement;
 				}
@@ -764,25 +800,26 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool NodeMapT<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !BasicNodeT<T>::write( fileStream ) ) {
+	template<typename Stream>
+bool NodeMapT<T>::write( Stream * stream ) const {
+		if ( !BasicNodeT<T>::_write( stream ) ) {
 			return false;
 		}
 		
 
 		Size nbChilds( this -> childrenVector.getSize() );
 
-		if ( !IO::write( fileStream, &nbChilds ) )
+		if ( !IO::write( stream, &nbChilds ) )
 			return false;
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			bool isNull( *it == NULL );
-			if ( !IO::write( fileStream, &isNull ) )
+			if ( !IO::write( stream, &isNull ) )
 				return false;
 			if ( !isNull ) {
 				Type type( this -> childrenVector.getValueIt( it ) -> getType() );
-				if ( !IO::write( fileStream, &type ) )
+				if ( !IO::write( stream, &type ) )
 					return false;
-				if ( !IO::write( fileStream, this -> childrenVector.getValueIt( it ) ) )
+				if ( !IO::write( stream, this -> childrenVector.getValueIt( it ) ) )
 					return false;
 			}
 		}
@@ -1185,12 +1222,13 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool NodeValueT<T>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !BasicNodeT<T>::read( fileStream ) ) {
+	template<typename Stream>
+	bool NodeValueT<T>::read( Stream * stream ) {
+		if ( !BasicNodeT<T>::_read( stream ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> value ) ) {
+		if ( !IO::read( stream, &this -> value ) ) {
 			_clear();
 			return false;
 		}
@@ -1198,11 +1236,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	bool NodeValueT<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !BasicNodeT<T>::write( fileStream ) ) {
+	template<typename Stream>
+	bool NodeValueT<T>::write( Stream * stream ) const {
+		if ( !BasicNodeT<T>::_write( stream ) ) {
 			return false;
 		}
-		if ( !IO::write( fileStream, &this -> value ) )
+		if ( !IO::write( stream, &this -> value ) )
 			return false;
 		return true;
 	}
@@ -1374,12 +1413,12 @@ namespace JSON {
 
 	template<typename T>
 	inline bool DocumentT<T>::writeFileJSON(const OS::Path& filePath) const {
-		IO::FileStream fileStream(filePath, IO::OpenMode::Write);
-		if ( !fileStream.isOpen() ) {
+		IO::FileStream stream(filePath, IO::OpenMode::Write);
+		if ( !stream.isOpen() ) {
 			return false;
 		}
 		if ( this->rootNode ) {
-			return this->rootNode->writeJSON(&fileStream);
+			return this->rootNode->writeJSON(&stream);
 		}
 		return true;
 	}
@@ -1404,24 +1443,26 @@ namespace JSON {
 	}
 
 	template<typename T>
-	inline bool DocumentT<T>::writeJSON(IO::SimpleFileStream* fileStream, unsigned int indent) const {
+	template<typename Stream>
+	inline bool DocumentT<T>::writeJSON(Stream* stream, unsigned int indent) const {
 		if ( this->rootNode ) {
-			return this->rootNode->writeJSON(fileStream, indent);
+			return this->rootNode->writeJSON(stream, indent);
 		}
 		return true;
 	}
 
 	template<typename T>
-	inline bool DocumentT<T>::read(IO::SimpleFileStream* fileStream) {
+	template<typename Stream>
+	bool DocumentT<T>::read( Stream * stream ) {
 		_unload();
 
 		bool bIsRootNode;
-		if ( !IO::read(fileStream, &bIsRootNode) ) {
+		if ( !IO::read(stream, &bIsRootNode) ) {
 			return false;
 		}
 		if ( bIsRootNode ) {
 			unsigned char rootNodeTypeUC;
-			if ( !IO::read(fileStream, &rootNodeTypeUC) ) {
+			if ( !IO::read(stream, &rootNodeTypeUC) ) {
 				return false;
 			}
 			BasicNodeT<T>::Type rootNodeType(static_cast< BasicNodeT<T>::Type >( rootNodeTypeUC ));
@@ -1429,7 +1470,7 @@ namespace JSON {
 				case BasicNodeT<T>::Type::Map:
 					{
 						NodeMapT<T>* newRootNode(new NodeMapT<T>());
-						if ( !IO::read(fileStream, newRootNode) ) {
+						if ( !IO::read(stream, newRootNode) ) {
 							delete newRootNode;
 							return false;
 						}
@@ -1439,7 +1480,7 @@ namespace JSON {
 				case BasicNodeT<T>::Type::Value:
 					{
 						NodeValueT<T>* newRootNode(new NodeValueT<T>());
-						if ( !IO::read(fileStream, newRootNode) ) {
+						if ( !IO::read(stream, newRootNode) ) {
 							delete newRootNode;
 							return false;
 						}
@@ -1449,7 +1490,7 @@ namespace JSON {
 				case BasicNodeT<T>::Type::Array:
 					{
 						NodeArrayT<T>* newRootNode(new NodeArrayT<T>());
-						if ( !IO::read(fileStream, newRootNode) ) {
+						if ( !IO::read(stream, newRootNode) ) {
 							delete newRootNode;
 							return false;
 						}
@@ -1466,22 +1507,23 @@ namespace JSON {
 	}
 
 	template<typename T>
-	inline bool DocumentT<T>::write(IO::SimpleFileStream* fileStream) const {
+	template<typename Stream>
+	bool DocumentT<T>::write( Stream * stream ) const {
 		bool bIsRootNode(this->rootNode);
-		if ( !IO::write(fileStream, &bIsRootNode) ) {
+		if ( !IO::write(stream, &bIsRootNode) ) {
 			return false;
 		}
 		if ( this->rootNode ) {
 			BasicNodeT<T>::Type rootNodeType(this->rootNode->getType());
 			unsigned char rootNodeTypeUC(static_cast< unsigned char >( rootNodeType ));
-			if ( !IO::write(fileStream, &rootNodeTypeUC) ) {
+			if ( !IO::write(stream, &rootNodeTypeUC) ) {
 				return false;
 			}
 			switch ( rootNodeType ) {
 				case BasicNodeT<T>::Type::Map:
 					{
-						NodeMapT<T>* rootNode(this->rootNode->toObject());
-						if ( !IO::write(fileStream, rootNode) ) {
+						NodeMapT<T>* rootNode(this->rootNode->toMap());
+						if ( !IO::write(stream, rootNode) ) {
 							return false;
 						}
 						break;
@@ -1489,7 +1531,7 @@ namespace JSON {
 				case BasicNodeT<T>::Type::Value:
 					{
 						NodeValueT<T>* rootNode(this->rootNode->toValue());
-						if ( !IO::write(fileStream, rootNode) ) {
+						if ( !IO::write(stream, rootNode) ) {
 							return false;
 						}
 						break;
@@ -1497,7 +1539,7 @@ namespace JSON {
 				case BasicNodeT<T>::Type::Array:
 					{
 						NodeArrayT<T>* rootNode(this->rootNode->toArray());
-						if ( !IO::write(fileStream, rootNode) ) {
+						if ( !IO::write(stream, rootNode) ) {
 							return false;
 						}
 						break;

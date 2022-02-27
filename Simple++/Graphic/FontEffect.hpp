@@ -148,41 +148,42 @@ namespace Graphic {
 		}
 
 		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read( IO::SimpleFileStream * fileStream ) {
-			if ( !IO::read( fileStream, (Template *) this ) ) {
+		template<typename Stream>
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read(Stream* stream ) {
+			if ( !IO::read( stream, (Template *) this ) ) {
 				clear();
 				return false;
 			}
 
-			if ( !IO::read( fileStream, &this -> bShadowActivated ) ) {
+			if ( !IO::read( stream, &this -> bShadowActivated ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> shadowRadius ) ) {
+			if ( !IO::read( stream, &this -> shadowRadius ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> shadowBias ) ) {
+			if ( !IO::read( stream, &this -> shadowBias ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> bStrokeActivated ) ) {
+			if ( !IO::read( stream, &this -> bStrokeActivated ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> strokeSize ) ) {
+			if ( !IO::read( stream, &this -> strokeSize ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> shadowColorFunc ) ) {
+			if ( !IO::read( stream, &this -> shadowColorFunc ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> strokeColorFunc ) ) {
+			if ( !IO::read( stream, &this -> strokeColorFunc ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( fileStream, &this -> overlayColorFunc ) ) {
+			if ( !IO::read( stream, &this -> overlayColorFunc ) ) {
 				clear();
 				return false;
 			}
@@ -197,32 +198,33 @@ namespace Graphic {
 		}
 
 		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
-		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::write( IO::SimpleFileStream * fileStream ) const {
-			if ( !IO::write( fileStream, ( Template * ) this ) )
+		template<typename Stream>
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::write(Stream* stream ) const {
+			if ( !IO::write( stream, ( Template * ) this ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> bShadowActivated ) )
+			if ( !IO::write( stream, &this -> bShadowActivated ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> shadowRadius ) )
+			if ( !IO::write( stream, &this -> shadowRadius ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> shadowBias ) )
+			if ( !IO::write( stream, &this -> shadowBias ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> bStrokeActivated ) )
+			if ( !IO::write( stream, &this -> bStrokeActivated ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> strokeSize ) )
+			if ( !IO::write( stream, &this -> strokeSize ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> shadowColorFunc ) )
+			if ( !IO::write( stream, &this -> shadowColorFunc ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> strokeColorFunc ) )
+			if ( !IO::write( stream, &this -> strokeColorFunc ) )
 				return false;
 
-			if ( !IO::write( fileStream, &this -> overlayColorFunc ) )
+			if ( !IO::write( stream, &this -> overlayColorFunc ) )
 				return false;
 
 

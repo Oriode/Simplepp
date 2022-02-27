@@ -50,14 +50,16 @@ namespace Graphic {
 
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 	protected:
 
 		C * interpolatedArray;
@@ -100,14 +102,16 @@ namespace Graphic {
 			GradientHorizontal<C, InterFunc> & operator=( GradientHorizontal<C, InterFunc> && gradient );
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 		private:
 			Graphic::Gradient::Horizontal<C, InterFunc> gradient;
 		};
@@ -145,14 +149,16 @@ namespace Graphic {
 			GradientVertical<C, InterFunc> & operator=( GradientVertical<C, InterFunc> && gradient );
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 		private:
 			Graphic::Gradient::Vertical<C, InterFunc> gradient;
 		};
@@ -187,14 +193,16 @@ namespace Graphic {
 			GradientLinear<C, InterFunc> & operator=( GradientLinear<C, InterFunc> && gradient );
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 		private:
 			Graphic::Gradient::Linear<C, InterFunc> gradient;
 			int sizeMinusOne;
@@ -230,14 +238,16 @@ namespace Graphic {
 			GradientRadial<C, InterFunc> & operator=( GradientRadial<C, InterFunc> && gradient );
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( IO::SimpleFileStream * fileStream );
+			template<typename Stream>
+			bool read( Stream * stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( IO::SimpleFileStream * fileStream ) const;
+			template<typename Stream>
+			bool write( Stream * stream ) const;
 		private:
 			Graphic::Gradient::Radial<C, InterFunc> gradient;
 			int sizeMinusOne;

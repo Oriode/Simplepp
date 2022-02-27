@@ -121,16 +121,17 @@ inline const Map<I, ParamT<I, V>*>& ParamContainerT<I, V>::getParamMap() const {
 }
 
 template<typename I, typename V>
-inline bool ParamContainerT<I, V>::read(IO::SimpleFileStream* fileStream) {
+template<typename Stream>
+inline bool ParamContainerT<I, V>::read(Stream* stream) {
 	Size nbParams;
 
-	if ( !IO::read(fileStream, &nbParams) ) {
+	if ( !IO::read(stream, &nbParams) ) {
 		return false;
 	}
 	for ( Size i(0); i < nbParams; i++ ) {
 		ParamT<I, V>* newParam(new ParamT<I, V>());
 
-		if ( !IO::read(fileStream, newParam) ) {
+		if ( !IO::read(stream, newParam) ) {
 			return false;
 		}
 	}
@@ -139,16 +140,17 @@ inline bool ParamContainerT<I, V>::read(IO::SimpleFileStream* fileStream) {
 }
 
 template<typename I, typename V>
-inline bool ParamContainerT<I, V>::write(IO::SimpleFileStream* fileStream) const {
+template<typename Stream>
+inline bool ParamContainerT<I, V>::write(Stream* stream) const {
 	const Size nbParams(this->paramVector.getSize());
 
-	if ( !IO::write(fileStream, &nbParams) ) {
+	if ( !IO::write(stream, &nbParams) ) {
 		return false;
 	}
 	for ( typename Vector<ParamT<I, V>*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
 		const ParamT<I, V>* param(this->paramVector.getValueIt(it));
 
-		if ( !IO::write(fileStream, param) ) {
+		if ( !IO::write(stream, param) ) {
 			return false;
 		}
 	}

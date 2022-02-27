@@ -17,9 +17,6 @@
 #include "IO/BasicSimpleIO.h"
 #include "IO/SimpleIO.h"
 
- /** @brief	Defines an alias representing the size */
-typedef unsigned long long int Size;
-
 /** @brief	The Random Access Iterator */
 template<typename T>
 using RandomAccessIterator = T *;
@@ -698,20 +695,22 @@ public:
 	/**
 	 * @brief 	read from a file stream
 	 *
-	 * @param [in,out]	fileStream	stream used to read load this object.
+	 * @param [in,out]	stream	stream used to read load this object.
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool read( IO::SimpleFileStream * fileStream );
+	template<typename Stream>
+	bool read( Stream * stream );
 
 	/**
 	 * @brief 	write this object as binary into a file stream
 	 *
-	 * @param [in,out]	fileStream	stream used to write this object.
+	 * @param [in,out]	stream	stream used to write this object.
 	 *
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
-	bool write( IO::SimpleFileStream * fileStream ) const;
+	template<typename Stream>
+	bool write( Stream * stream ) const;
 
 	/**
 	 * @brief 	Search a data and retrieve the index

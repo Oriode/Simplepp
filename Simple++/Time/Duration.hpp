@@ -282,16 +282,18 @@ namespace Time {
 	}
 
 	template<class Ratio>
-	bool Time::Duration<Ratio>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, &this->d ) ) {
+	template<typename Stream>
+	bool Time::Duration<Ratio>::read( Stream * stream ) {
+		if ( !IO::read( stream, &this->d ) ) {
 			return false;
 		}
 		return true;
 	}
 
 	template<class Ratio>
-	bool Time::Duration<Ratio>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this->d ) ) {
+	template<typename Stream>
+	bool Time::Duration<Ratio>::write( Stream * stream ) const {
+		if ( !IO::write( stream, &this->d ) ) {
 			return false;
 		}
 		return true;

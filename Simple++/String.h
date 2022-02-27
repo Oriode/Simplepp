@@ -1368,20 +1368,23 @@ public:
 
 
 	///@brief		Write this string into a file as readable (non binary)
-	///@param [in,out]	fileStream	StreamT used to write this string.
+	///@param [in,out]	stream	StreamT used to write this string.
 	///@returns	boolean to know if the operation is a success of not.
-	bool writeReadable( IO::SimpleFileStream * fileStream ) const;
+	template<typename Stream>
+	bool writeReadable(Stream* stream ) const;
 
 	///@brief		read from a file stream
-	///@param [in,out]	fileStream	stream used to read load this object.
+	///@param [in,out]	stream	stream used to read load this object.
 	///@returns	boolean to know if the operation is a success of not.
-	bool read( IO::SimpleFileStream * fileStream );
+	template<typename Stream>
+	bool read( Stream * stream );
 
 	///@brief		read from a file stream
-	///@param [in,out]	fileStream	stream used to read load this object.
+	///@param [in,out]	stream	stream used to read load this object.
 	///@param 		  	size	  	Number of characters to read.
 	///@returns	boolean to know if the operation is a success of not.
-	bool read( IO::SimpleFileStream * fileStream, Size size );
+	template<typename Stream>
+	bool read(Stream* stream, Size size );
 
 	/************************************************************************/
 	/* Some static methods                                                  */
@@ -2381,8 +2384,8 @@ BasicString<T> operator+( const BasicString<T> & str1, const C (&str2)[N] );
 template<typename T>
 std::ostream & operator<<( std::ostream & stream, const BasicString<T> & str );
 
-template<typename T>
-IO::SimpleFileStream& operator<<(IO::SimpleFileStream& stream, const BasicString<T>& str);
+template<typename Stream, typename T>
+Stream& operator<<(Stream& stream, const BasicString<T>& str);
 
 /** @brief	Defines an alias representing an ASCII String */
 typedef BasicString<char> StringASCII;

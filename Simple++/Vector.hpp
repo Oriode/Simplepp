@@ -1086,12 +1086,13 @@ void Vector<T>::copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer,
 
 
 template<typename T>
-bool Vector<T>::write( IO::SimpleFileStream * fileStream ) const {
-	if ( !IO::write( fileStream, &this -> size ) )
+template<typename Stream>
+bool Vector<T>::write( Stream * stream ) const {
+	if ( !IO::write( stream, &this -> size ) )
 		return false;
 
 	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( !IO::write( fileStream, &( this -> dataTable[ i ] ) ) )
+		if ( !IO::write( stream, &( this -> dataTable[ i ] ) ) )
 			return false;
 	}
 
@@ -1099,16 +1100,17 @@ bool Vector<T>::write( IO::SimpleFileStream * fileStream ) const {
 }
 
 template<typename T>
-bool Vector<T>::read( IO::SimpleFileStream * fileStream ) {
+template<typename Stream>
+bool Vector<T>::read( Stream * stream ) {
 
-	if ( !IO::read( fileStream, &this -> size ) ) {
+	if ( !IO::read( stream, &this -> size ) ) {
 		_clear();
 		return false;
 	}
 	allocate( this -> size );
 
 	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( !IO::read( fileStream, &( this -> dataTable[ i ] ) ) ) {
+		if ( !IO::read( stream, &( this -> dataTable[ i ] ) ) ) {
 			_clear();
 			return false;
 		}

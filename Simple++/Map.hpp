@@ -232,7 +232,8 @@ void RBNode<T>::_clear() {
 
 
 template<typename T>
-bool RBNode<T>::write( IO::SimpleFileStream * fileStream ) const {
+template<typename Stream>
+bool RBNode<T>::write( Stream * stream ) const {
 	// Using an explicit stack for high performances and be sure to never crash with a stack overflow exception
 	Vector<const RBNode<T> *> stack;
 	stack.reserve( 10 );
@@ -241,16 +242,16 @@ bool RBNode<T>::write( IO::SimpleFileStream * fileStream ) const {
 	while ( stack.getSize() ) {
 		const RBNode<T> * node( stack.pop() );
 
-		if ( !IO::write( fileStream, &node -> value ) )
+		if ( !IO::write( stream, &node -> value ) )
 			return false;
-		if ( !IO::write( fileStream, &node -> color ) )
+		if ( !IO::write( stream, &node -> color ) )
 			return false;
 		bool isLeft( node -> left != NULL ), isRight( node -> right != NULL );
-		if ( !IO::write( fileStream, &isRight ) )
+		if ( !IO::write( stream, &isRight ) )
 			return false;
 		if ( isRight )
 			stack.push( node -> right );
-		if ( !IO::write( fileStream, &isLeft ) )
+		if ( !IO::write( stream, &isLeft ) )
 			return false;
 		if ( isLeft )
 			stack.push( node -> left );
@@ -259,26 +260,27 @@ bool RBNode<T>::write( IO::SimpleFileStream * fileStream ) const {
 
 
 
-	/*if ( !IO::write( fileStream, &this -> value ) )
+	/*if ( !IO::write( stream, &this -> value ) )
 		return false;
 	bool isLeft( this -> left ), isRight( this -> right );
-	if ( !IO::write( fileStream, &isLeft ) )
+	if ( !IO::write( stream, &isLeft ) )
 		return false;
 	if ( isLeft ) {
-		if ( !IO::write( fileStream, this -> left ) )
+		if ( !IO::write( stream, this -> left ) )
 			return false;
 	}
-	if ( !IO::write( fileStream, &isRight ) )
+	if ( !IO::write( stream, &isRight ) )
 		return false;
 	if ( isRight ) {
-		if ( !IO::write( fileStream, this -> right ) )
+		if ( !IO::write( stream, this -> right ) )
 			return false;
 	}*/
 	return true;
 }
 
 template<typename T>
-bool RBNode<T>::read( IO::SimpleFileStream * fileStream ) {
+template<typename Stream>
+bool RBNode<T>::read( Stream * stream ) {
 	// Using an explicit stack for high performances and be sure to never crash with a stack overflow exception
 	Vector<RBNode<T> *> stack;
 	stack.reserve( 10 );
@@ -289,18 +291,18 @@ bool RBNode<T>::read( IO::SimpleFileStream * fileStream ) {
 	while ( stack.getSize() ) {
 		RBNode<T> * node( stack.pop() );
 
-		if ( !IO::read( fileStream, &node -> value ) ) {
+		if ( !IO::read( stream, &node -> value ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &node -> color ) ) {
+		if ( !IO::read( stream, &node -> color ) ) {
 			_clear();
 			return false;
 		}
 
 		bool isLeft, isRight;
 
-		if ( !IO::read( fileStream, &isRight ) ) {
+		if ( !IO::read( stream, &isRight ) ) {
 			_clear();
 			return false;
 		}
@@ -312,7 +314,7 @@ bool RBNode<T>::read( IO::SimpleFileStream * fileStream ) {
 			node -> right = NULL;
 		}
 
-		if ( !IO::read( fileStream, &isLeft ) ) {
+		if ( !IO::read( stream, &isLeft ) ) {
 			_clear();
 			return false;
 		}
@@ -1312,23 +1314,24 @@ void RBTree<I, T, Compare>::_checkTreeSorted( RBNode< MapObject<I, T> > * node, 
 
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::read( IO::SimpleFileStream * fileStream ) {
+template<typename Stream>
+bool RBTree<I, T, Compare>::read(Stream* stream ) {
 	_clear();
 
-	if ( !IO::read( fileStream, &this -> compareFunc ) ) {
+	if ( !IO::read( stream, &this -> compareFunc ) ) {
 		_clear();
 		return false;
 	}
 
 	bool isRootNode;
-	if ( !IO::read( fileStream, &isRootNode ) ) {
+	if ( !IO::read( stream, &isRootNode ) ) {
 		_clear();
 		return false;
 	}
 	if ( isRootNode ) {
 		this -> rootNode = new RBNode<MapObject<I, T>>();
 
-		if ( !IO::read( fileStream, this -> rootNode ) ) {
+		if ( !IO::read( stream, this -> rootNode ) ) {
 			_clear();
 			return false;
 		}
@@ -1342,16 +1345,17 @@ bool RBTree<I, T, Compare>::read( IO::SimpleFileStream * fileStream ) {
 
 
 template<typename I, typename T, typename Compare>
-bool RBTree<I, T, Compare>::write( IO::SimpleFileStream * fileStream ) const {
-	if ( !IO::write( fileStream, &this -> compareFunc ) )
+template<typename Stream>
+bool RBTree<I, T, Compare>::write(Stream* stream ) const {
+	if ( !IO::write( stream, &this -> compareFunc ) )
 		return false;
 
 	bool isRootNode( this -> rootNode != NULL );
-	if ( !IO::write( fileStream, &isRootNode ) )
+	if ( !IO::write( stream, &isRootNode ) )
 		return false;
 
 	if ( this -> rootNode ) {
-		if ( !IO::write( fileStream, this -> rootNode ) )
+		if ( !IO::write( stream, this -> rootNode ) )
 			return false;
 	}
 
@@ -1615,8 +1619,8 @@ Map<I, T, Compare> & Map<I, T, Compare>::operator=( Map && tree ) {
 }
 
 template<typename I, typename T, typename Compare>
-bool Map<I, T, Compare>::write( IO::SimpleFileStream * fileStream ) const {
-	if ( !RBTree<I, T, Compare>::write( fileStream ) )
+bool Map<I, T, Compare>::write( IO::SimpleFileStream * stream ) const {
+	if ( !RBTree<I, T, Compare>::write( stream ) )
 		return false;
 	return true;
 }
@@ -1638,8 +1642,8 @@ T * Map<I, T, Compare>::insert( const I & index, const T & value ) {
 }
 
 template<typename I, typename T, typename Compare>
-bool Map<I, T, Compare>::read( IO::SimpleFileStream * fileStream ) {
-	if ( !RBTree<I, T, Compare>::read( fileStream ) ) {
+bool Map<I, T, Compare>::read( IO::SimpleFileStream * stream ) {
+	if ( !RBTree<I, T, Compare>::read( stream ) ) {
 		_clear();
 		return false;
 	}

@@ -66,21 +66,23 @@ inline const V& ParamT<I, V>::getValue() const {
 }
 
 template<typename I, typename V>
-bool ParamT<I, V>::read(IO::SimpleFileStream* fileStream) {
-	if ( !IO::read(fileStream, &this -> name) ) {
+template<typename Stream>
+bool ParamT<I, V>::read(Stream* stream) {
+	if ( !IO::read(stream, &this -> name) ) {
 		return false;
 	}
-	if ( !IO::read(fileStream, &this -> value) ) {
+	if ( !IO::read(stream, &this -> value) ) {
 		return false;
 	}
 	return true;
 }
 
 template<typename I, typename V>
-bool ParamT<I, V>::write(IO::SimpleFileStream* fileStream) const {
-	if ( !IO::write(fileStream, &this -> name) )
+template<typename Stream>
+bool ParamT<I, V>::write(Stream* stream) const {
+	if ( !IO::write(stream, &this -> name) )
 		return false;
-	if ( !IO::write(fileStream, &this -> value) )
+	if ( !IO::write(stream, &this -> value) )
 		return false;
 	return true;
 }

@@ -31,8 +31,9 @@ namespace Graphic {
 
 
 		///@brief Constructor from a file StreamT
-		///@param fileStream file stream to read
-		FreeTypeChar( IO::SimpleFileStream * fileStream );
+		///@param stream file stream to read
+		template<typename Stream>
+		FreeTypeChar( Stream * stream );
 
 
 		///@brief move Constructor
@@ -93,14 +94,16 @@ namespace Graphic {
 
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 	private:
 		UCodePoint uCodePoint;

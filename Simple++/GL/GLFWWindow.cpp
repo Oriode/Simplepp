@@ -550,144 +550,145 @@ namespace GLFW {
 
 
 
-	bool Window::read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, &this -> size ) ) {
+	template<typename Stream>
+	bool Window::read( Stream * stream ) {
+		if ( !IO::read( stream, &this -> size ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> title ) ) {
+		if ( !IO::read( stream, &this -> title ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> resizable ) ) {
+		if ( !IO::read( stream, &this -> resizable ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> visible ) ) {
+		if ( !IO::read( stream, &this -> visible ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> decorated ) ) {
+		if ( !IO::read( stream, &this -> decorated ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> focused ) ) {
+		if ( !IO::read( stream, &this -> focused ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> autoIconify ) ) {
+		if ( !IO::read( stream, &this -> autoIconify ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> alwaysOnTop ) ) {
+		if ( !IO::read( stream, &this -> alwaysOnTop ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> maximized ) ) {
+		if ( !IO::read( stream, &this -> maximized ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> redBits ) ) {
+		if ( !IO::read( stream, &this -> redBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> greenBits ) ) {
+		if ( !IO::read( stream, &this -> greenBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> blueBits ) ) {
+		if ( !IO::read( stream, &this -> blueBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> alphaBits ) ) {
+		if ( !IO::read( stream, &this -> alphaBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> depthBits ) ) {
+		if ( !IO::read( stream, &this -> depthBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> stencilBits ) ) {
+		if ( !IO::read( stream, &this -> stencilBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> accumulationRedBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationRedBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> accumulationGreenBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationGreenBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> accumulationBlueBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationBlueBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> accumulationAlphaBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationAlphaBits ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> nbAuxiliaryBuffers ) ) {
+		if ( !IO::read( stream, &this -> nbAuxiliaryBuffers ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> nbSamples ) ) {
+		if ( !IO::read( stream, &this -> nbSamples ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> refreshRate ) ) {
+		if ( !IO::read( stream, &this -> refreshRate ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> stereo ) ) {
+		if ( !IO::read( stream, &this -> stereo ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> SRGBCapable ) ) {
+		if ( !IO::read( stream, &this -> SRGBCapable ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> doubleBuffer ) ) {
+		if ( !IO::read( stream, &this -> doubleBuffer ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> clientAPI ) ) {
+		if ( !IO::read( stream, &this -> clientAPI ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> contextAPI ) ) {
+		if ( !IO::read( stream, &this -> contextAPI ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> contextMajorVersion ) ) {
+		if ( !IO::read( stream, &this -> contextMajorVersion ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> contextMinorVersion ) ) {
+		if ( !IO::read( stream, &this -> contextMinorVersion ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> robustness ) ) {
+		if ( !IO::read( stream, &this -> robustness ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> contextReleaseBehavior ) ) {
+		if ( !IO::read( stream, &this -> contextReleaseBehavior ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> openGLFowardCompatible ) ) {
+		if ( !IO::read( stream, &this -> openGLFowardCompatible ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> openGLDebug ) ) {
+		if ( !IO::read( stream, &this -> openGLDebug ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> openGLProfile ) ) {
+		if ( !IO::read( stream, &this -> openGLProfile ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> cursorMode ) ) {
+		if ( !IO::read( stream, &this -> cursorMode ) ) {
 			reset();
 			return false;
 		}
@@ -695,76 +696,77 @@ namespace GLFW {
 	}
 
 
-	bool Window::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this -> size ) ) 
+	template<typename Stream>
+	bool Window::write( Stream * stream ) const {
+		if ( !IO::write( stream, &this -> size ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> title ) ) 
+		if ( !IO::write( stream, &this -> title ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> resizable ) ) 
+		if ( !IO::write( stream, &this -> resizable ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> visible ) ) 
+		if ( !IO::write( stream, &this -> visible ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> decorated ) ) 
+		if ( !IO::write( stream, &this -> decorated ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> focused ) ) 
+		if ( !IO::write( stream, &this -> focused ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> autoIconify ) ) 	
+		if ( !IO::write( stream, &this -> autoIconify ) ) 	
 			return false;
-		if ( !IO::write( fileStream, &this -> alwaysOnTop ) ) 	
+		if ( !IO::write( stream, &this -> alwaysOnTop ) ) 	
 			return false;
-		if ( !IO::write( fileStream, &this -> maximized ) ) 
+		if ( !IO::write( stream, &this -> maximized ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> redBits ) ) 
+		if ( !IO::write( stream, &this -> redBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> greenBits ) ) 
+		if ( !IO::write( stream, &this -> greenBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> blueBits ) ) 	
+		if ( !IO::write( stream, &this -> blueBits ) ) 	
 			return false;
-		if ( !IO::write( fileStream, &this -> alphaBits ) ) 
+		if ( !IO::write( stream, &this -> alphaBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> depthBits ) ) 
+		if ( !IO::write( stream, &this -> depthBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> stencilBits ) ) 
+		if ( !IO::write( stream, &this -> stencilBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> accumulationRedBits ) ) 
+		if ( !IO::write( stream, &this -> accumulationRedBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> accumulationGreenBits ) ) 
+		if ( !IO::write( stream, &this -> accumulationGreenBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> accumulationBlueBits ) ) 
+		if ( !IO::write( stream, &this -> accumulationBlueBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> accumulationAlphaBits ) ) 
+		if ( !IO::write( stream, &this -> accumulationAlphaBits ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> nbAuxiliaryBuffers ) ) 
+		if ( !IO::write( stream, &this -> nbAuxiliaryBuffers ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> nbSamples ) ) 
+		if ( !IO::write( stream, &this -> nbSamples ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> refreshRate ) ) 
+		if ( !IO::write( stream, &this -> refreshRate ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> stereo ) ) 
+		if ( !IO::write( stream, &this -> stereo ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> SRGBCapable ) ) 
+		if ( !IO::write( stream, &this -> SRGBCapable ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> doubleBuffer ) ) 
+		if ( !IO::write( stream, &this -> doubleBuffer ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> clientAPI ) ) 
+		if ( !IO::write( stream, &this -> clientAPI ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> contextAPI ) ) 
+		if ( !IO::write( stream, &this -> contextAPI ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> contextMajorVersion ) ) 
+		if ( !IO::write( stream, &this -> contextMajorVersion ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> contextMinorVersion ) ) 
+		if ( !IO::write( stream, &this -> contextMinorVersion ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> robustness ) ) 
+		if ( !IO::write( stream, &this -> robustness ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> contextReleaseBehavior ) ) 
+		if ( !IO::write( stream, &this -> contextReleaseBehavior ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> openGLFowardCompatible ) ) 
+		if ( !IO::write( stream, &this -> openGLFowardCompatible ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> openGLDebug ) ) 
+		if ( !IO::write( stream, &this -> openGLDebug ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> openGLProfile ) ) 
+		if ( !IO::write( stream, &this -> openGLProfile ) ) 
 			return false;
-		if ( !IO::write( fileStream, &this -> cursorMode ) )
+		if ( !IO::write( stream, &this -> cursorMode ) )
 			return false;
 		return true;
 	}

@@ -13,7 +13,8 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool Loadable<DataType>::read( SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool Loadable<DataType>::read(Stream* stream ) {
 		unload();
 		lock();
 		setLoading( true );
@@ -21,7 +22,7 @@ namespace IO {
 		_assert( !this->object );
 		this->object = new DataType();
 
-		if ( IO::read( fileStream, this->object ) ) {
+		if ( IO::read( stream, this->object ) ) {
 			setLoading( false );
 			setLoaded( true );
 			unlock();
@@ -35,13 +36,14 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool Loadable<DataType>::write( SimpleFileStream * fileStream ) const {
+	template<typename Stream>
+	bool Loadable<DataType>::write(Stream* stream ) const {
 		const_cast< Loadable<DataType> * >( this )->lock();
 		if ( !isLoaded() ) {
 			const_cast< Loadable<DataType> * >( this )->unlock();
 			return false;
 		}
-		if ( !IO::write( fileStream, this->object ) ) {
+		if ( !IO::write( stream, this->object ) ) {
 			const_cast< Loadable<DataType> * >( this )->unlock();
 			return false;
 		}

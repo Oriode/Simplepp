@@ -78,19 +78,19 @@ bool MapObject<I, T>::operator<( const MapObject & o ) const {
 
 
 template<typename I, typename T>
-bool MapObject<I, T>::write( IO::SimpleFileStream * fileStream ) const {
-	if ( !IO::write( fileStream, &this -> index ) )
+bool MapObject<I, T>::write( IO::SimpleFileStream * stream ) const {
+	if ( !IO::write( stream, &this -> index ) )
 		return false;
-	if ( !IO::write( fileStream, &this -> value ) )
+	if ( !IO::write( stream, &this -> value ) )
 		return false;
 	return true;
 }
 
 template<typename I, typename T>
-bool MapObject<I, T>::read( IO::SimpleFileStream * fileStream ) {
-	if ( !IO::read( fileStream, &this -> index ) )
+bool MapObject<I, T>::read( IO::SimpleFileStream * stream ) {
+	if ( !IO::read( stream, &this -> index ) )
 		return false;
-	if ( !IO::read( fileStream, &this -> value ) )
+	if ( !IO::read( stream, &this -> value ) )
 		return false;
 	return true;
 }
@@ -453,8 +453,8 @@ void Map<I, T>::_clear() {
 
 
 template<typename I, typename T>
-bool Map<I, T>::read( IO::SimpleFileStream * fileStream ) {
-	if ( !IO::read( fileStream, &this -> size ) ) {
+bool Map<I, T>::read( IO::SimpleFileStream * stream ) {
+	if ( !IO::read( stream, &this -> size ) ) {
 		_clear();
 		return false;
 	}
@@ -465,7 +465,7 @@ bool Map<I, T>::read( IO::SimpleFileStream * fileStream ) {
 		setValueIt( it, new MapObject<I, T>() );
 	}
 	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
-		if ( !IO::read( fileStream, getValueIt( it ) ) ) {
+		if ( !IO::read( stream, getValueIt( it ) ) ) {
 			_clear();
 			return false;
 		}
@@ -474,12 +474,12 @@ bool Map<I, T>::read( IO::SimpleFileStream * fileStream ) {
 }
 
 template<typename I, typename T>
-bool Map<I, T>::write( IO::SimpleFileStream * fileStream ) const {
-	if ( !IO::write( fileStream, &this -> size ) )
+bool Map<I, T>::write( IO::SimpleFileStream * stream ) const {
+	if ( !IO::write( stream, &this -> size ) )
 		return false;
 
 	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
-		if ( !IO::write( fileStream, getValueIt( it ) ) )
+		if ( !IO::write( stream, getValueIt( it ) ) )
 			return false;
 	}
 	return true;

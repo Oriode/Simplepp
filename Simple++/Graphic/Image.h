@@ -373,20 +373,22 @@ namespace Graphic {
 		/**
 		 * @brief	read from a file stream
 		 *
-		 * @param [in,out]	fileStream	stream used to read load this object.
+		 * @param [in,out]	stream	stream used to read load this object.
 		 *
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		/**
 		 * @brief	write this object as binary into a file stream
 		 *
-		 * @param [in,out]	fileStream	stream used to write this object.
+		 * @param [in,out]	stream	stream used to write this object.
 		 *
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		/**
 		 * @brief	get the format of this image
@@ -2446,11 +2448,12 @@ namespace Graphic {
 		/**
 		 * @brief	Reads the given file
 		 *
-		 * @param [in,out]	fileStream	If non-null, the file stream.
+		 * @param [in,out]	stream	If non-null, the file stream.
 		 *
 		 * @returns	True if it succeeds, false if it fails.
 		 */
-		bool _read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool _read(Stream* stream );
 
 
 

@@ -422,10 +422,11 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::writeXML( IO::SimpleFileStream * fileStreamP, unsigned int tabs ) const {
-		IO::SimpleFileStream & fileStream( *fileStreamP );
+	template<typename Stream>
+	bool NodeT<T>::writeXML( Stream * fileStreamP, unsigned int tabs ) const {
+		Stream & stream( *fileStreamP );
 		
-		_writeXML<IO::SimpleFileStream, char>( fileStream, tabs );
+		_writeXML<Stream, char>( stream, tabs );
 
 		return !( fileStreamP -> bad() );
 	}
@@ -691,15 +692,17 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool NodeT<T>::read( Stream * stream ) {
 		if ( getType() == Type::Text )
-			return this -> toText() -> read( fileStream );
+			return this -> toText() -> read( stream );
 		else
-			return _read( fileStream );
+			return _read( stream );
 	}
 
 	template<typename T>
-	bool NodeT<T>::_read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool NodeT<T>::_read( Stream * stream ) {
 		_unload();
 		this -> paramsMap.clear();
 		this -> paramsVector.clear();
@@ -707,26 +710,26 @@ namespace XML {
 		this -> childrenMap.clear();
 		this -> childrenVector.clear();
 
-		if ( !IO::read( fileStream, &this -> name ) ) {
+		if ( !IO::read( stream, &this -> name ) ) {
 			_clear();
 			return false;
 		}
 
-		if ( !IO::read( fileStream, &this -> id ) ) {
+		if ( !IO::read( stream, &this -> id ) ) {
 			_clear();
 			return false;
 		}
 
 		// Read the Params
 		Size nbParams;
-		if ( !IO::read( fileStream, &nbParams ) ) {
+		if ( !IO::read( stream, &nbParams ) ) {
 			_clear();
 			return false;
 		}
 		nbParams = Math::min( nbParams, Size( 1000 ) );
 		for ( Size i( 0 ); i < nbParams; i++ ) {
 			ParamT<T> * newParam( new ParamT<T>() );
-			if ( !IO::read( fileStream, newParam ) ) {
+			if ( !IO::read( stream, newParam ) ) {
 				delete newParam;
 				_clear();
 				return false;
@@ -736,21 +739,21 @@ namespace XML {
 
 		// Read the children
 		Size nbChilds;
-		if ( !IO::read( fileStream, &nbChilds ) ) {
+		if ( !IO::read( stream, &nbChilds ) ) {
 			_clear();
 			return false;
 		}
 		nbChilds = Math::min( nbChilds, Size( 1000 ) );
 		for ( Size i( 0 ); i < nbChilds; i++ ) {
 			Type newNodeType;
-			if ( !IO::read( fileStream, &newNodeType ) ) {
+			if ( !IO::read( stream, &newNodeType ) ) {
 				_clear();
 				return false;
 			}
 			if ( newNodeType == Type::Text ) {
 				NodeTextT<T> * newNode( new NodeTextT<T>() );
 				newNode -> parent = this;
-				if ( !IO::read( fileStream, newNode ) ) {
+				if ( !IO::read( stream, newNode ) ) {
 					delete newNode;
 					_clear();
 					return false;
@@ -760,7 +763,7 @@ namespace XML {
 			} else {
 				NodeT<T> * newNode( new NodeT() );
 				newNode -> parent = this;
-				if ( !IO::read( fileStream, newNode ) ) {
+				if ( !IO::read( stream, newNode ) ) {
 					delete newNode;
 					_clear();
 					return false;
@@ -823,39 +826,41 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeT<T>::write( IO::SimpleFileStream * fileStream ) const {
+	template<typename Stream>
+	bool NodeT<T>::write( Stream * stream ) const {
 		if ( getType() == Type::Text )
-			return this -> toText() -> write( fileStream );
+			return this -> toText() -> write( stream );
 		else
-			return _write( fileStream );
+			return _write( stream );
 	}
 
 	template<typename T>
-	bool NodeT<T>::_write( IO::SimpleFileStream * fileStream ) const {
+	template<typename Stream>
+	bool NodeT<T>::_write( Stream * stream ) const {
 
 
-		if ( !IO::write( fileStream, &this -> name ) )
+		if ( !IO::write( stream, &this -> name ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> id ) )
+		if ( !IO::write( stream, &this -> id ) )
 			return false;
 
 		Size nbParams( this -> paramsVector.getSize() );
 		Size nbChilds( this -> childrenVector.getSize() );
 
-		if ( !IO::write( fileStream, &nbParams ) )
+		if ( !IO::write( stream, &nbParams ) )
 			return false;
 		for ( auto it( this -> paramsVector.getBegin() ); it != this -> paramsVector.getEnd(); this -> paramsVector.iterate( &it ) ) {
-			if ( !IO::write( fileStream, this -> paramsVector.getValueIt( it ) ) )
+			if ( !IO::write( stream, this -> paramsVector.getValueIt( it ) ) )
 				return false;
 		}
 
-		if ( !IO::write( fileStream, &nbChilds ) )
+		if ( !IO::write( stream, &nbChilds ) )
 			return false;
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			Type type( this -> childrenVector.getValueIt( it ) -> getType() );
-			if ( !IO::write( fileStream, &type ) )
+			if ( !IO::write( stream, &type ) )
 				return false;
-			if ( !IO::write( fileStream, this -> childrenVector.getValueIt( it ) ) )
+			if ( !IO::write( stream, this -> childrenVector.getValueIt( it ) ) )
 				return false;
 		}
 
@@ -982,24 +987,26 @@ namespace XML {
 	/************************************************************************/
 
 	template<typename T>
-	bool NodeTextT<T>::writeXML( IO::SimpleFileStream * fileStreamP ) const {
-		IO::SimpleFileStream & fileStream( *fileStreamP );
+	template<typename Stream>
+	bool NodeTextT<T>::writeXML( Stream * fileStreamP ) const {
+		Stream & stream( *fileStreamP );
 
-		_writeXML<IO::SimpleFileStream, char>( fileStream, 0 );
+		_writeXML<Stream, char>( stream, 0 );
 
 		return !( fileStreamP -> bad() );
 	}
 
 	template<typename T>
-	bool NodeTextT<T>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool NodeTextT<T>::read( Stream * stream ) {
 		this -> value.clear();
 
 		/*
-		if ( !NodeT<T>::_read( fileStream ) ) {
+		if ( !NodeT<T>::_read( stream ) ) {
 			return false;
 		}
 		*/
-		if ( !IO::read( fileStream, &this -> value ) ) {
+		if ( !IO::read( stream, &this -> value ) ) {
 			_clear();
 			return false;
 		}
@@ -1007,12 +1014,13 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool NodeTextT<T>::write( IO::SimpleFileStream * fileStream ) const {
+	template<typename Stream>
+bool NodeTextT<T>::write( Stream * stream ) const {
 		/*
-		if ( !NodeT<T>::_write( fileStream ) )
+		if ( !NodeT<T>::_write( stream ) )
 			return false;
 		*/
-		if ( !IO::write( fileStream, &this -> value ) )
+		if ( !IO::write( stream, &this -> value ) )
 			return false;
 		return true;
 	}

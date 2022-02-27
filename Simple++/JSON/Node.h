@@ -68,11 +68,6 @@ namespace JSON {
 		///@return Type of this node
 		BasicNodeT<T>::Type getType() const;
 
-		///@brief Cast this node into an object one, ONLY appliable if getType() return BasicNodeT<T>::Type::Map
-		///@return Pointer to a NodeValueT
-		const NodeMapT<T> * toObject() const;
-		NodeMapT<T> * toObject();
-
 		///@brief Cast this node into a value one, ONLY appliable if getType() return BasicNodeT<T>::Type::Value
 		///@return Pointer to a NodeValueT
 		const NodeValueT<T> * toValue() const;
@@ -82,6 +77,11 @@ namespace JSON {
 		///@return Pointer to a NodeArrayT
 		const NodeArrayT<T> * toArray() const;
 		NodeArrayT<T> * toArray();
+
+		///@brief Cast this node into an Map one, ONLY appliable if getType() return BasicNodeT<T>::Type::Map
+		///@return Pointer to a NodeMapT
+		const NodeMapT<T>* toMap() const;
+		NodeMapT<T>* toMap();
 
 		///@brief Get the parent of this node
 		///@return Pointer to the parent if there is one (NULL otherwise)
@@ -188,24 +188,27 @@ namespace JSON {
 		///@return bool True if success, False otherwise.
 		bool readJSON( const T & str );
 
-		///@brief Write this object in the JSON syntax into the fileStream
-		///@param fileStream stream used to write this object
+		///@brief Write this object in the JSON syntax into the stream
+		///@param stream stream used to write this object
 		///@param indent Indentation.
 		///@return True if success, False otherwise
-		bool writeJSON( IO::SimpleFileStream * fileStream, unsigned int indent = 0 ) const;
+		template<typename Stream>
+		bool writeJSON(Stream* stream, unsigned int indent = 0 ) const;
 
 		template<typename C = T>
 		bool writeJSON( C & str, unsigned int indent = 0 ) const;
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		///@brief Print an human-readable String of this BasicNodeT<T> and it's children.
 		///@param indent Identation.
@@ -230,6 +233,11 @@ namespace JSON {
 
 		virtual void _clear();
 		virtual void _unload();
+
+		template<typename Stream>
+		bool _write(Stream* stream) const;
+		template<typename Stream>
+		bool _read(Stream* stream);
 
 		Type type;
 		T name;
@@ -358,14 +366,16 @@ namespace JSON {
 		bool readJSON( const T & str );
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool read( IO::SimpleFileStream * fileStream ) override;
+		template<typename Stream>
+		bool read(Stream* stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool write( IO::SimpleFileStream * fileStream ) const override;
+		template<typename Stream>
+		bool write(Stream* stream ) const;
 
 		///@brief Write this node to an Map that support opperator '<<'.
 		///@param o Map to write to.
@@ -379,9 +389,7 @@ namespace JSON {
 		void _unload();
 		void _getElementsByName( Vector < BasicNodeT<T> * > * nodeVector, const T & name ) const;
 		BasicNodeT<T>* _getElementByName(const T& name) const;
-
 		
-	protected:
 		MultiMap< T, BasicNodeT<T> * > childrenMap;
 		Vector< BasicNodeT<T> * > childrenVector;
 	};
@@ -434,14 +442,16 @@ namespace JSON {
 		bool readJSON( const T & str );
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream ) override;
+		template<typename Stream>
+		bool read(Stream* stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const override;
+		template<typename Stream>
+		bool write(Stream* stream ) const;
 
 		///@brief Write this node to an Map that support opperator '<<'.
 		///@param o Map to write to.
@@ -551,24 +561,27 @@ namespace JSON {
 		///@return bool True if success, False otherwise.
 		bool readJSON(const T& str);
 
-		///@brief Write this object in the JSON syntax into the fileStream
-		///@param fileStream stream used to write this object
+		///@brief Write this object in the JSON syntax into the stream
+		///@param stream stream used to write this object
 		///@param indent Indentation.
 		///@return True if success, False otherwise
-		bool writeJSON(IO::SimpleFileStream* fileStream, unsigned int indent = 0) const;
+		template<typename Stream>
+		bool writeJSON(Stream* stream, unsigned int indent = 0) const;
 
 		template<typename C = T>
 		bool writeJSON(C& str, unsigned int indent = 0) const;
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool read(IO::SimpleFileStream* fileStream);
+		template<typename Stream>
+		bool read(Stream* stream);
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		virtual bool write(IO::SimpleFileStream* fileStream) const;
+		template<typename Stream>
+		bool write(Stream* stream) const;
 
 		///@brief Print an human-readable String of this BasicNodeT<T> and it's children.
 		///@param indent Identation.

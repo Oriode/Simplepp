@@ -240,37 +240,39 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline bool UrlT<T>::read(IO::SimpleFileStream* fileStream) {
-		if ( !ParamContainerT<StringASCII, StringASCII>::read(fileStream) ) {
+	template<typename Stream>
+	bool UrlT<T>::read( Stream * stream ) {
+		if ( !ParamContainerT<StringASCII, StringASCII>::read(stream) ) {
 			return false;
 		}
 		unsigned char typeChar;
-		if ( !IO::read(fileStream, &typeChar) ) {
+		if ( !IO::read(stream, &typeChar) ) {
 			return false;
 		}
 		this->type = static_cast< UrlT<T>::Type >( typeChar );
-		if ( !IO::read(fileStream, &this->hostname) ) {
+		if ( !IO::read(stream, &this->hostname) ) {
 			return false;
 		}
-		if ( !IO::read(fileStream, &this->endPointStr) ) {
+		if ( !IO::read(stream, &this->endPointStr) ) {
 			return false;
 		}
 		return true;
 	}
 
 	template<typename T>
-	inline bool UrlT<T>::write(IO::SimpleFileStream* fileStream) const {
-		if ( !ParamContainerT<StringASCII, StringASCII>::write(fileStream) ) {
+	template<typename Stream>
+	bool UrlT<T>::write( Stream * stream ) const {
+		if ( !ParamContainerT<StringASCII, StringASCII>::write(stream) ) {
 			return false;
 		}
 		unsigned char typeChar(static_cast< unsigned char >( this->type ));
-		if ( !IO::write(fileStream, &typeChar) ) {
+		if ( !IO::write(stream, &typeChar) ) {
 			return false;
 		}
-		if ( !IO::write(fileStream, &this->hostname) ) {
+		if ( !IO::write(stream, &this->hostname) ) {
 			return false;
 		}
-		if ( !IO::write(fileStream, &this->endPointStr) ) {
+		if ( !IO::write(stream, &this->endPointStr) ) {
 			return false;
 		}
 		return true;

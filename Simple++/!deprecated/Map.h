@@ -47,7 +47,7 @@ public:
 	///@brief read from a file stream
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
-	bool read( IO::SimpleFileStream * fileStream );
+	template<typename Stream>__NL__bool read( Stream * stream );
 
 	///@brief write this object as binary into a file stream
 	///@param fileStream stream used to write this object
@@ -188,7 +188,7 @@ public:
 	///@brief read from a file stream
 	///@param fileStream stream used to read load this object
 	///@return boolean to know if the operation is a success of not.
-	bool read( IO::SimpleFileStream * fileStream );
+	template<typename Stream>__NL__bool read( Stream * stream );
 
 	///@brief write this object as binary into a file stream
 	///@param fileStream stream used to write this object

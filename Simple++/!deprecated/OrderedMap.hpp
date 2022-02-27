@@ -313,12 +313,12 @@ std::ostream & operator<<( std::ostream & stream, const OrderedMap<I, T, Compare
 
 
 template<typename I, typename T, typename Compare>
-bool OrderedMap<I, T, Compare>::write( IO::SimpleFileStream * fileStream ) const {
+bool OrderedMap<I, T, Compare>::write( IO::SimpleFileStream * stream ) const {
 	if ( !this -> isOrdered )
 		_sort();
-	if ( !Map::write( fileStream ) )
+	if ( !Map::write( stream ) )
 		return false;
-	if ( !IO::write( fileStream, &this -> sortFunction ) ) {
+	if ( !IO::write( stream, &this -> sortFunction ) ) {
 		_clear();
 		return false;
 	}
@@ -326,11 +326,11 @@ bool OrderedMap<I, T, Compare>::write( IO::SimpleFileStream * fileStream ) const
 }
 
 template<typename I, typename T, typename Compare>
-bool OrderedMap<I, T, Compare>::read( IO::SimpleFileStream * fileStream ) {
+bool OrderedMap<I, T, Compare>::read( IO::SimpleFileStream * stream ) {
 	this -> isOrdered = true;
-	if ( !Map::read( fileStream ) )
+	if ( !Map::read( stream ) )
 		return false;
-	if ( !IO::read( fileStream, &this -> sortFunction ) )
+	if ( !IO::read( stream, &this -> sortFunction ) )
 		return false;
 	return true;
 }

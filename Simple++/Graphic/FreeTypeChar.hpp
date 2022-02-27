@@ -71,13 +71,14 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	FreeTypeChar<T>::FreeTypeChar( IO::SimpleFileStream * fileStream ) :
-		ImageT<T>( fileStream ) {
-		IO::read( fileStream, &this -> uCodePoint );
-		IO::read( fileStream, &this -> size );
-		IO::read( fileStream, &this -> horiBearing );
-		IO::read( fileStream, &this -> horiOffsetY );
-		IO::read( fileStream, &this -> horiAdvance );
+	template<typename Stream>
+	FreeTypeChar<T>::FreeTypeChar( Stream * stream ) :
+		ImageT<T>( stream ) {
+		IO::read( stream, &this -> uCodePoint );
+		IO::read( stream, &this -> size );
+		IO::read( stream, &this -> horiBearing );
+		IO::read( stream, &this -> horiOffsetY );
+		IO::read( stream, &this -> horiAdvance );
 	}
 
 
@@ -156,28 +157,29 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool FreeTypeChar<T>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !Image::read( fileStream ) ) {
+	template<typename Stream>
+	bool FreeTypeChar<T>::read( Stream * stream ) {
+		if ( !Image::read( stream ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> uCodePoint ) ) {
+		if ( !IO::read( stream, &this -> uCodePoint ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> size ) ) {
+		if ( !IO::read( stream, &this -> size ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> horiBearing ) ) {
+		if ( !IO::read( stream, &this -> horiBearing ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> horiOffsetY ) ) {
+		if ( !IO::read( stream, &this -> horiOffsetY ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> horiAdvance ) ) {
+		if ( !IO::read( stream, &this -> horiAdvance ) ) {
 			_clear();
 			return false;
 		}
@@ -186,19 +188,20 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool FreeTypeChar<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !Image::write( fileStream ) )
+	template<typename Stream>
+	bool FreeTypeChar<T>::write( Stream * stream ) const {
+		if ( !Image::write( stream ) )
 			return false;
 
-		if ( !IO::write( fileStream, &this -> uCodePoint ) )
+		if ( !IO::write( stream, &this -> uCodePoint ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> size ) )
+		if ( !IO::write( stream, &this -> size ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> horiBearing ) )
+		if ( !IO::write( stream, &this -> horiBearing ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> horiOffsetY ) )
+		if ( !IO::write( stream, &this -> horiOffsetY ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> horiAdvance ) )
+		if ( !IO::write( stream, &this -> horiAdvance ) )
 			return false;
 
 		return true;

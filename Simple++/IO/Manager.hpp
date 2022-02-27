@@ -12,30 +12,32 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool Manager<DataType>::write( SimpleFileStream * fileStream ) const {
+	template<typename Stream>
+	bool Manager<DataType>::write(Stream* stream ) const {
 		Size nbDatas( this->dataVector.getSize() );
-		if ( !IO::write( fileStream, &nbDatas ) )
+		if ( !IO::write( stream, &nbDatas ) )
 			return false;
 
 		for ( auto it( this->dataMap.getBegin() ); it!=this->dataMap.getEnd(); this->dataMap.iterate( &it ) ) {
-			if ( !IO::write( fileStream, &( this->dataMap.getIndexIt( it ) ) ) )
+			if ( !IO::write( stream, &( this->dataMap.getIndexIt( it ) ) ) )
 				return false;
 			/*
-			if ( !IO::write( fileStream, &( this->dataMap.getValueIt( it ).nbUses ) ) )
+			if ( !IO::write( stream, &( this->dataMap.getValueIt( it ).nbUses ) ) )
 				return false;
 			*/
-			if ( !IO::write( fileStream, this->dataMap.getValueIt( it ).object ) )
+			if ( !IO::write( stream, this->dataMap.getValueIt( it ).object ) )
 				return false;
 		}
 		return true;
 	}
 
 	template<typename DataType>
-	bool Manager<DataType>::read( SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool Manager<DataType>::read(Stream* stream ) {
 		clear();
 
 		Size nbDatas;
-		if ( !IO::read( fileStream, &nbDatas ) ) {
+		if ( !IO::read( stream, &nbDatas ) ) {
 			clear();
 			return false;
 		}
@@ -43,20 +45,20 @@ namespace IO {
 
 		for ( Size i( 0 ); i<nbDatas; i++ ) {
 			OS::Path filePath;
-			if ( !IO::read( fileStream, &filePath ) ) {
+			if ( !IO::read( stream, &filePath ) ) {
 				clear();
 				return false;
 			}
 			MemoryObject newMemoryObject;
 			newMemoryObject.nbUses = 0;
 			/*
-			if ( !IO::read( fileStream, &newMemoryObject.nbUses ) ) {
+			if ( !IO::read( stream, &newMemoryObject.nbUses ) ) {
 				clear();
 				return false;
 			}
 			*/
 			newMemoryObject.object = new DataType();
-			if ( !IO::read( fileStream, newMemoryObject.object ) ) {
+			if ( !IO::read( stream, newMemoryObject.object ) ) {
 				delete newMemoryObject.object;
 				clear();
 				return false;

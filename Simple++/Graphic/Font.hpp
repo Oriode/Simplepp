@@ -9,9 +9,10 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	FontT<T, LoadingFunc>::FontT( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	FontT<T, LoadingFunc>::FontT( Stream * stream ) {
 		_nullify();
-		if ( !_read( fileStream ) )
+		if ( !_read( stream ) )
 			_clear();
 	}
 
@@ -218,19 +219,20 @@ namespace Graphic {
 
 
 	template<typename T, typename LoadingFunc>
-	bool FontT<T, LoadingFunc>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this -> memorySize ) )
+	template<typename Stream>
+	bool FontT<T, LoadingFunc>::write(Stream* stream ) const {
+		if ( !IO::write( stream, &this -> memorySize ) )
 			return false;
-		if ( !IO::writeBuffer( fileStream, this -> memoryFontObject, this -> memorySize ) )
+		if ( !IO::writeBuffer( stream, this -> memoryFontObject, this -> memorySize ) )
 			return false;
 
-		if ( !IO::write( fileStream, &this -> pixSize ) )
+		if ( !IO::write( stream, &this -> pixSize ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> lineHeight ) )
+		if ( !IO::write( stream, &this -> lineHeight ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> wordSpace ) )
+		if ( !IO::write( stream, &this -> wordSpace ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> loadingFunctor ) )
+		if ( !IO::write( stream, &this -> loadingFunctor ) )
 			return false;
 
 		size_t nbCharsLoaded( 0 );
@@ -243,17 +245,17 @@ namespace Graphic {
 		}
 		
 
-		if ( !IO::write( fileStream, &nbCharsLoaded ) )
+		if ( !IO::write( stream, &nbCharsLoaded ) )
 			return false;
 
 		for ( auto it = this -> charsMap.getBegin(); it != this -> charsMap.getEnd(); this -> charsMap.iterate( &it ) ) {
-			if ( !IO::write( fileStream, this -> charsMap.getValueIt(it) ) )
+			if ( !IO::write( stream, this -> charsMap.getValueIt(it) ) )
 				return false;
 		}
 
 		for ( size_t i( 0 ); i < 256; i++ ) {
 			if ( this -> asciiMap[i] ) {
-				if ( !IO::write( fileStream, this -> asciiMap[i] ) )
+				if ( !IO::write( stream, this -> asciiMap[i] ) )
 					return false;
 			}
 		}
@@ -274,10 +276,11 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool FontT<T, LoadingFunc>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool FontT<T, LoadingFunc>::read(Stream* stream ) {
 		_unload();
 		_nullify();
-		if ( !_read( fileStream ) ) {
+		if ( !_read( stream ) ) {
 			_clear();
 			return false;
 		}
@@ -285,10 +288,11 @@ namespace Graphic {
 	}
 
 	template<typename T, typename LoadingFunc>
-	bool FontT<T, LoadingFunc>::_read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool FontT<T, LoadingFunc>::_read( Stream * stream ) {
 
 
-		if ( !IO::read( fileStream, &this -> memorySize ) ) 
+		if ( !IO::read( stream, &this -> memorySize ) ) 
 			return false;
 		
 
@@ -298,22 +302,22 @@ namespace Graphic {
 		if ( this -> memorySize ) this -> memoryFontObject = new char[this -> memorySize];
 		else this -> memoryFontObject = NULL;
 
-		if ( !IO::readBuffer( fileStream, this -> memoryFontObject, this -> memorySize ) )
+		if ( !IO::readBuffer( stream, this -> memoryFontObject, this -> memorySize ) )
 			return false;
 		
-		if ( !IO::read( fileStream, &this -> pixSize ) ) 
+		if ( !IO::read( stream, &this -> pixSize ) ) 
 			return false;
-		if ( !IO::read( fileStream, &this -> lineHeight ) ) 
+		if ( !IO::read( stream, &this -> lineHeight ) ) 
 			return false;
-		if ( !IO::read( fileStream, &this -> wordSpace ) ) 
+		if ( !IO::read( stream, &this -> wordSpace ) ) 
 			return false;
-		if ( !IO::read( fileStream, &this -> loadingFunctor ) ) 
+		if ( !IO::read( stream, &this -> loadingFunctor ) ) 
 			return false;
 		
 		_loadFreeType( this -> memoryFontObject, this -> memorySize, this -> pixSize );
 
 		size_t nbCharsLoaded;
-		if ( !IO::read( fileStream, &nbCharsLoaded ) )
+		if ( !IO::read( stream, &nbCharsLoaded ) )
 			return false;
 
 		nbCharsLoaded = Math::min( nbCharsLoaded, size_t( 100000 ) );
@@ -321,7 +325,7 @@ namespace Graphic {
 		for ( size_t i( 0 ); i < nbCharsLoaded; i++ ) {
 			FreeTypeChar<T> * newChar = new FreeTypeChar<T>( );
 
-			if ( newChar -> read( fileStream ) ) {
+			if ( newChar -> read( stream ) ) {
 				if ( newChar -> getCodePoint() < 256 )
 					this -> asciiMap[newChar -> getCodePoint()] = newChar;
 				else

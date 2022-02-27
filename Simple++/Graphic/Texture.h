@@ -138,14 +138,16 @@ namespace Graphic {
 
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		///@brief get the format of this image
 		///@return format of this image (its castable in unsigned char to retrieve the number of components)
@@ -160,7 +162,8 @@ namespace Graphic {
 		enum ctor { null };
 		Texture( ctor );
 
-		bool _read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool _read( Stream * stream );
 		void _unload();
 
 		Vector<ImageT<T> * > datas;

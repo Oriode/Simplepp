@@ -31,9 +31,10 @@ namespace Graphic {
 		///@see FontLoadingFunc
 		FontT( const LoadingFunc & createImageFunctor = LoadingFunc() );
 
-		///@brief Constructor from a fileStream
-		///@param fileStream StreamT to read to create this object
-		FontT( IO::SimpleFileStream * fileStream );
+		///@brief Constructor from a stream
+		///@param stream StreamT to read to create this object
+		template<typename Stream>
+		FontT( Stream * stream );
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
@@ -97,14 +98,16 @@ namespace Graphic {
 		void reloadGlyphs(  );
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		///@brief get the line height of this font.
 		///@return line height
@@ -144,8 +147,8 @@ namespace Graphic {
 	protected:
 		enum ctor { null };
 		
-
-		bool _read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool _read( Stream * stream );
 		void _clear();
 		void _nullify();
 		bool _loadFreeType( const char * fileDump, size_t size, float pixSize );

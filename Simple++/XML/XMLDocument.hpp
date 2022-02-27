@@ -183,17 +183,18 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::writeXML( IO::SimpleFileStream * fileStreamP ) const {
-		IO::SimpleFileStream & fileStream( *fileStreamP );
-		_writeXML<IO::SimpleFileStream, char>( fileStream );
+	template<typename Stream>
+	bool DocumentT<T>::writeXML( Stream * fileStreamP ) const {
+		Stream & stream( *fileStreamP );
+		_writeXML<Stream, char>( stream );
 		return !( fileStreamP -> hasFailed() );
 	}
 
 	template<typename T>
 	bool DocumentT<T>::writeFileXML( const OS::Path & filePath ) const {
-		IO::FileStream fileStream( filePath, IO::OpenMode::Write );
-		if ( fileStream.isOpen() ) {
-			return writeXML(&fileStream);
+		IO::FileStream stream( filePath, IO::OpenMode::Write );
+		if ( stream.isOpen() ) {
+			return writeXML(&stream);
 		}
 		return false;
 	}
@@ -278,20 +279,21 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool DocumentT<T>::read( Stream * stream ) {
 		_unload();
 		this -> rootNode = NULL;
 
-		if ( !IO::read( fileStream, &this -> version ) ) {
+		if ( !IO::read( stream, &this -> version ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> encoding ) ) {
+		if ( !IO::read( stream, &this -> encoding ) ) {
 			_clear();
 			return false;
 		}
 		this -> rootNode = new NodeT<T>( T( "#document" ), NodeT<T>::Type::Document );
-		if ( !IO::read( fileStream, this -> rootNode ) ) {
+		if ( !IO::read( stream, this -> rootNode ) ) {
 			_clear();
 			return false;
 		}
@@ -301,12 +303,13 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool DocumentT<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, &this -> version ) )
+	template<typename Stream>
+	bool DocumentT<T>::write( Stream * stream ) const {
+		if ( !IO::write( stream, &this -> version ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> encoding ) )
+		if ( !IO::write( stream, &this -> encoding ) )
 			return false;
-		if ( !IO::write( fileStream, this -> rootNode ) )
+		if ( !IO::write( stream, this -> rootNode ) )
 			return false;
 
 		return true;

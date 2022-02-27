@@ -12,40 +12,42 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool Text<T>::write( IO::SimpleFileStream * fileStream ) const {
-		if ( !IO::write( fileStream, (ImageT<T> *) this ) )
+	template<typename Stream>
+	bool Text<T>::write( Stream * stream ) const {
+		if ( !IO::write( stream, (ImageT<T> *) this ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> centering ) )
+		if ( !IO::write( stream, &this -> centering ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> margins ) )
+		if ( !IO::write( stream, &this -> margins ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> bias ) )
+		if ( !IO::write( stream, &this -> bias ) )
 			return false;
-		if ( !IO::write( fileStream, &this -> str ) )
+		if ( !IO::write( stream, &this -> str ) )
 			return false;
 
 		return true;
 	}
 
 	template<typename T>
-	bool Text<T>::read( IO::SimpleFileStream * fileStream ) {
-		if ( !IO::read( fileStream, ( ImageT<T> * ) this ) ) {
+	template<typename Stream>
+	bool Text<T>::read( Stream * stream ) {
+		if ( !IO::read( stream, ( ImageT<T> * ) this ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> centering ) ) {
+		if ( !IO::read( stream, &this -> centering ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> margins ) ) {
+		if ( !IO::read( stream, &this -> margins ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> bias ) ) {
+		if ( !IO::read( stream, &this -> bias ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( fileStream, &this -> str ) ) {
+		if ( !IO::read( stream, &this -> str ) ) {
 			_clear();
 			return false;
 		}

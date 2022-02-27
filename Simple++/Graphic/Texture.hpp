@@ -85,13 +85,14 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool Texture<T>::write( IO::SimpleFileStream * fileStream ) const {
+	template<typename Stream>
+	bool Texture<T>::write( Stream * stream ) const {
 		::Size nbMipmaps = this -> datas.getSize();
-		if ( !IO::write( fileStream, &nbMipmaps ) )
+		if ( !IO::write( stream, &nbMipmaps ) )
 			return false;
 
 		for ( auto it = this -> datas.getBegin(); it != this -> datas.getEnd(); it++ ) {
-			if ( !IO::write( fileStream, *it ) )
+			if ( !IO::write( stream, *it ) )
 				return false;
 		}
 
@@ -99,9 +100,10 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	bool Texture<T>::read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool Texture<T>::read( Stream * stream ) {
 		_unload();
-		return _read( fileStream );
+		return _read( stream );
 	}
 
 
@@ -113,9 +115,10 @@ namespace Graphic {
 
 
 	template<typename T>
-	bool Texture<T>::_read( IO::SimpleFileStream * fileStream ) {
+	template<typename Stream>
+	bool Texture<T>::_read( Stream * stream ) {
 		::Size nbDatas;
-		if ( !IO::read( fileStream, &nbDatas ) )
+		if ( !IO::read( stream, &nbDatas ) )
 			return false;
 
 		// Clamp the number of datas with a big number just in case of file corruption.
@@ -123,7 +126,7 @@ namespace Graphic {
 
 		for ( ::Size i = 0; i < nbDatas; i++ ) {
 			ImageT<T> * newImage = new ImageT<T>();
-			if ( newImage -> read( fileStream ) ) {
+			if ( newImage -> read( stream ) ) {
 				this -> datas.push( newImage );
 			} else {
 				delete newImage;

@@ -186,11 +186,12 @@ namespace XML {
 		///@return Pointer to the child removed from his parent (or NULL if nothing has been founded)
 		NodeT<T> * removeChild( Size i );
 
-		///@brief Write this object in the XML syntax into the fileStream
-		///@param fileStream stream used to write this object
+		///@brief Write this object in the XML syntax into the stream
+		///@param stream stream used to write this object
 		///@param tabs Indentation.
 		///@return True if success, False otherwise
-		bool writeXML( IO::SimpleFileStream * fileStream, unsigned int tabs = 0 ) const;
+		template<typename Stream>
+		bool writeXML( Stream * stream, unsigned int tabs = 0 ) const;
 
 		///@brief Write this Node to an Object that support operator '<<'.
 		///@param str Object to write to.
@@ -214,14 +215,16 @@ namespace XML {
 		bool appendXML( const T & str );
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.
@@ -257,8 +260,10 @@ namespace XML {
 	protected:
 		void _clear();
 		void _unload();
-		bool _write( IO::SimpleFileStream * fileStream ) const;
-		bool _read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool _write( Stream * stream ) const;
+		template<typename Stream>
+		bool _read( Stream * stream );
 		bool _setChildName( NodeT<T> * child, const T & name );
 		bool _setChildId( NodeT<T> * child, const T & id );
 		void _getElementsById( Vector < NodeT<T> * > * nodeVector, const T & id ) const;
@@ -324,20 +329,23 @@ namespace XML {
 		///@param value Value to be set
 		void setValue( const T & value );
 
-		///@brief Write this object in the XML syntax into the fileStream
-		///@param fileStream stream used to write this object
+		///@brief Write this object in the XML syntax into the stream
+		///@param stream stream used to write this object
 		///@return True if success, False otherwise
-		bool writeXML( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool writeXML( Stream * stream ) const;
 
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.

@@ -123,17 +123,19 @@ namespace IO {
 	}
 
 	template<typename DataType>
-	bool Resource<DataType>::read( FileStream * fileStream ) {
+	template<typename Stream>
+	bool Resource<DataType>::read(Stream* stream ) {
 		if ( this->object==NULL )
 			return true;
-		return IO::read( fileStream, this->object );
+		return IO::read( stream, this->object );
 	}
 
 	template<typename DataType>
-	bool Resource<DataType>::write( FileStream * fileStream ) const {
+	template<typename Stream>
+	bool Resource<DataType>::write(Stream* stream ) const {
 		if ( this->object==NULL )
 			return true;
-		return IO::write( fileStream, this->object );
+		return IO::write( stream, this->object );
 	}
 
 	template<typename DataType>

@@ -22,14 +22,16 @@ namespace IO {
 		DataType * getObject();
 
 		///@brief load this object from a file stream. This method as calling load(), will lock/unlock and set the object as loaded if success.
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read(Stream* stream );
 
 		///@brief write this object as binary into a file stream. This method is const but will lock/unlock the object anyway.
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write(Stream* stream ) const;
 
 		///@brief Get the filePath of this Loadable.
 		///@return File path.

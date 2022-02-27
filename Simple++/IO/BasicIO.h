@@ -3,8 +3,6 @@
 
 
 #include "BasicSimpleIO.h"
-#include "../Log.h"
-#include "../String.h"
 
 namespace IO {
 

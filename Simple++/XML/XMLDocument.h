@@ -83,9 +83,10 @@ namespace XML {
 		bool writeFileXML( const OS::Path & filePath ) const;
 
 		///@brief Write this object as an XML file
-		///@param fileStream Where to write
+		///@param stream Where to write
 		///@return True if success, False otherwise
-		bool writeXML( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool writeXML( Stream * stream ) const;
 
 		///@brief Read this object as an XML file
 		///@param filePath Where to write
@@ -107,14 +108,16 @@ namespace XML {
 		bool readXML( const T & str );
 
 		///@brief read from a file stream ( Data has to be wrote by write() )
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read( IO::SimpleFileStream * fileStream );
+		template<typename Stream>
+		bool read( Stream * stream );
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write( IO::SimpleFileStream * fileStream ) const;
+		template<typename Stream>
+		bool write( Stream * stream ) const;
 
 		///@brief Create an human-readable string of this param.
 		///@return Human-readable string of this param.

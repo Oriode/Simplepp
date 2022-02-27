@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../SimpleLog.h"
-#include "SimpleFileStream.h"
 
 namespace IO {
 
@@ -10,14 +9,16 @@ namespace IO {
 	class BasicSimpleIOT {
 	public:
 		///@brief read from a file stream
-		///@param fileStream stream used to read load this object
+		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
-		bool read(SimpleFileStream* fileStream);
+		template<typename Stream>
+		bool read(Stream* stream);
 
 		///@brief write this object as binary into a file stream
-		///@param fileStream stream used to write this object
+		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
-		bool write(SimpleFileStream* fileStream) const;
+		template<typename Stream>
+		bool write(Stream* stream) const;
 	};
 
 	using BasicSimpleIO = BasicSimpleIOT<int>;

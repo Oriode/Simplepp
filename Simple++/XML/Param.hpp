@@ -44,9 +44,10 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool ParamT<T>::writeXML( IO::SimpleFileStream * fileStreamP ) const {
-		IO::SimpleFileStream & fileStream( *fileStreamP );
-		_writeXML<IO::SimpleFileStream, char>( fileStream );
+	template<typename Stream>
+	bool ParamT<T>::writeXML( Stream * fileStreamP ) const {
+		Stream & stream( *fileStreamP );
+		_writeXML<Stream, char>( stream );
 		return !( fileStreamP -> bad() );
 	}
 

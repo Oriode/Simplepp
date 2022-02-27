@@ -39,10 +39,10 @@
 //#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
-//#define DEBUG_IO
+#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-#define DEBUG_HTTP
+//#define DEBUG_HTTP
 //#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL

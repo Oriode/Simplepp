@@ -10,6 +10,9 @@
 #include <cfloat>
 #include <limits>
 
+ /** @brief	Defines an alias representing the size */
+typedef unsigned long long int Size;
+
 namespace Utility {
 
 	/**

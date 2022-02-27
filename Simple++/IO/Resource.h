@@ -78,14 +78,16 @@ namespace IO  {
 			bool setObject( DataType * dataObject );
 
 			///@brief read from a file stream
-			///@param fileStream stream used to read load this object
+			///@param stream stream used to read load this object
 			///@return boolean to know if the operation is a success of not.
-			bool read( FileStream * fileStream );
+			template<typename Stream>
+			bool read(Stream* stream );
 
 			///@brief write this object as binary into a file stream
-			///@param fileStream stream used to write this object
+			///@param stream stream used to write this object
 			///@return boolean to know if the operation is a success of not.
-			bool write( FileStream * fileStream ) const;
+			template<typename Stream>
+			bool write(Stream* stream ) const;
 
 		private:
 			bool _setObject( const OS::Path & filePath );
