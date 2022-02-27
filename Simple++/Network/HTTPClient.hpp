@@ -11,6 +11,13 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline void HTTPQueryT<T>::formatQueryContent(StringASCII* outputStr) const {
+		StringASCII& str(*outputStr);
+
+		str << this->contentStr;
+	}
+
+	template<typename T>
 	inline HTTPParam* HTTPQueryT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
 		this->bHeaderNeedFormat = true;
 		return ParamContainerT<StringASCII, StringASCII>::setParam(paramName, paramValue);
@@ -67,13 +74,9 @@ namespace Network {
 		if ( !parseQueryHeader(itP, endFunc) ) {
 			return false;
 		}
-
-		const StringASCII::ElemType*& it(*itP);
-		for ( ; ( *it == StringASCII::ElemType('\n') || *it == StringASCII::ElemType('\r') ) && !endFunc(it); it++ );
-
-		const StringASCII::ElemType* contentStrBeginIt(it);
-		for ( ; !endFunc(it); it++ );
-		this->contentStr = StringASCII(contentStrBeginIt, Size(it - contentStrBeginIt));
+		if ( !parseQueryContent(itP, endFunc) ) {
+			return false;
+		}
 
 		return true;
 	}
@@ -85,9 +88,7 @@ namespace Network {
 		const_cast< HTTPQueryT<T>* >( this )->formatQueryHeader();
 
 		str << this->headerStr;
-		str << StringASCII::ElemType('\r');
-		str << StringASCII::ElemType('\n');
-		str << this->contentStr;
+		formatQueryContent(outputStr);
 	}
 
 	template<typename T>
@@ -121,6 +122,9 @@ namespace Network {
 				formatHeaderParam(&this->headerStr, contentTypeParam);
 				formatHeaderParam(&this->headerStr, ParamT<StringASCII, StringASCII>(contentLengthParamName, StringASCII::toString(this->contentStr.getSize())));
 			}
+
+			this->headerStr << StringASCII::ElemType('\r');
+			this->headerStr << StringASCII::ElemType('\n');
 
 			this->bHeaderNeedFormat = false;
 		}
@@ -205,6 +209,19 @@ namespace Network {
 
 			break;
 		}
+
+		return true;
+	}
+
+	template<typename T>
+	template<typename EndFunc>
+	inline bool HTTPQueryT<T>::parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
+		const StringASCII::ElemType*& it(*itP);
+		for ( ; ( *it == StringASCII::ElemType('\n') || *it == StringASCII::ElemType('\r') ) && !endFunc(it); it++ );
+
+		const StringASCII::ElemType* contentStrBeginIt(it);
+		for ( ; !endFunc(it); it++ );
+		this->contentStr = StringASCII(contentStrBeginIt, Size(it - contentStrBeginIt));
 
 		return true;
 	}
@@ -379,10 +396,10 @@ namespace Network {
 		if ( !parseQueryTitle(itP, endFunc) ) {
 			return false;
 		}
-		if ( !HTTPQueryT<T>::parseQuery(itP, endFunc) ) {
+		if ( !parseQueryHeader(itP, endFunc) ) {
 			return false;
 		}
-		if ( !this->url.parseParams(itP, endFunc) ) {
+		if ( !parseQueryContent(itP, endFunc) ) {
 			return false;
 		}
 		return true;
@@ -474,6 +491,15 @@ namespace Network {
 		this->method = method;
 		this->protocolStr = protocolStr;
 
+		return true;
+	}
+
+	template<typename T>
+	template<typename EndFunc>
+	inline bool HTTPRequestT<T>::parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
+		if ( !this->url.parseParams(itP, endFunc) ) {
+			return false;
+		}
 		return true;
 	}
 

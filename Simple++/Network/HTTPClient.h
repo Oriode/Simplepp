@@ -13,6 +13,21 @@ namespace Network {
 
 		~HTTPQueryT();
 
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseQuery(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
+		void formatQuery(StringASCII* outputStr) const;
+		void formatHeaderParam(StringASCII* outputStr, const ParamT<StringASCII, StringASCII>& param) const;
+
+		///@brief Parse the query String and update the header params Vector.
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseQueryHeader(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
+		void formatQueryContent(StringASCII* outputStr) const;
+
 		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
 		const HTTPParam* getHeaderParam(const StringASCII& paramName) const;
@@ -26,21 +41,11 @@ namespace Network {
 		const StringASCII& getContent() const;
 
 	protected:
-		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQuery(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
-
-		void formatQuery(StringASCII* outputStr) const;
-		void formatHeaderParam(StringASCII* outputStr, const ParamT<StringASCII, StringASCII>& param) const;
-
 		StringASCII protocolStr;
 
 	private:
 		///@brief Format the query header using the specified params.
 		void formatQueryHeader();
-
-		///@brief Parse the query String and update the header params Vector.
-		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQueryHeader(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
 
 		bool bHeaderNeedFormat;
 
@@ -63,6 +68,11 @@ namespace Network {
 		StringASCII formatQuery() const;
 		void formatQuery(StringASCII* outputStr) const;
 
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseQueryTitle(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
+		void formatQueryTitle(StringASCII* outputStr) const;
+
 		void setStatusCode(Size statusCode);
 		void setStatusMessage(const StringASCII& statusMessage);
 
@@ -70,11 +80,6 @@ namespace Network {
 		const StringASCII& getStatusMessage() const;
 
 	protected:
-		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQueryTitle(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
-
-		void formatQueryTitle(StringASCII* outputStr) const;
-
 		Size statusCode;
 		StringASCII statusMessage;
 
@@ -105,6 +110,14 @@ namespace Network {
 		StringASCII formatQuery() const;
 		void formatQuery(StringASCII* outputStr) const;
 
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseQueryTitle(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
+		void formatQueryTitle(StringASCII* outputStr) const;
+
+		template<typename EndFunc = StringASCII::IsEndIterator>
+		bool parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+
 		void setMethod(typename HTTPRequestT<T>::Method method);
 		void setEndPoint(const UrlT<T>& url);
 		void setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& paramVector);
@@ -119,11 +132,6 @@ namespace Network {
 		static const StringASCII methodStrTable[];
 
 	protected:
-		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQueryTitle(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
-
-		void formatQueryTitle(StringASCII* outputStr) const;
-
 		void updateHostParamValue();
 
 		using HTTPQueryT<T>::setContent;
