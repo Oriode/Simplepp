@@ -4,12 +4,6 @@
 
 namespace IO {
 
-	///@brief Mode to open a FileStream.
-	enum class OpenMode : unsigned char {
-		Write = std::ios::out,
-		Read = std::ios::in
-	};
-
 	template<typename T>
 	class SimpleFileStreamT {
 	public:

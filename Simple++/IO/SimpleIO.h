@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../SimpleLog.h"
-#include "BasicSimpleIO.h"
+#include "BasicIO.h"
 
 namespace IO {
 
@@ -36,15 +36,25 @@ namespace IO {
 	template<typename Stream, typename C>
 	static bool readBuffer(Stream * stream, C * buffer, Size size);
 
+
+
+
+
+
+
+
+
+
+
 	template<typename Stream, typename C>
-	static bool _writeObject(Stream * stream, const C * buffer, const BasicSimpleIO * b);
+	static bool _writeObject(Stream * stream, const C * buffer, const BasicIO * b);
 
 	template<typename Stream, typename C>
 	static bool _writeObject(Stream * stream, const C * buffer, ...);
 
 
 	template<typename Stream, typename C>
-	static bool _writeBuffer(Stream * stream, const C * buffer, Size size, const BasicSimpleIO * b);
+	static bool _writeBuffer(Stream * stream, const C * buffer, Size size, const BasicIO * b);
 
 	template<typename Stream, typename C>
 	static bool _writeBuffer(Stream * stream, const C * buffer, Size size, ...);
@@ -54,13 +64,13 @@ namespace IO {
 
 
 	template<typename Stream, typename C>
-	static bool _readObject(Stream * stream, C * buffer, BasicSimpleIO * b);
+	static bool _readObject(Stream * stream, C * buffer, BasicIO * b);
 
 	template<typename Stream, typename C>
 	static bool _readObject(Stream * stream, C * buffer, ...);
 
 	template<typename Stream, typename C>
-	static bool _readBuffer(Stream * stream, C * buffer, Size size, BasicSimpleIO * b);
+	static bool _readBuffer(Stream * stream, C * buffer, Size size, BasicIO * b);
 
 	template<typename Stream, typename C>
 	static bool _readBuffer(Stream * stream, C * buffer, Size size, ...);

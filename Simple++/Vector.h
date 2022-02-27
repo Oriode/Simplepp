@@ -14,7 +14,7 @@
 #include "Math/Logical.h"
 #include "Utility.h"
 #include "SimpleLog.h"
-#include "IO/BasicSimpleIO.h"
+#include "IO/BasicIO.h"
 #include "IO/SimpleIO.h"
 
 /** @brief	The Random Access Iterator */
@@ -28,7 +28,7 @@ using RandomAccessIterator = T *;
  * @tparam	T	Type of the Values to store.
  */
 template<typename T = int>
-class Vector : public IO::BasicSimpleIO {
+class Vector : public IO::BasicIO {
 public:
 	template<typename C>
 	friend class BasicString;

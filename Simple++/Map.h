@@ -20,7 +20,7 @@
    * @tparam	T	Generic type parameter.
    */
 template<typename I, typename T>
-class MapObject : public IO::BasicSimpleIO {
+class MapObject : public IO::BasicIO {
 public:
 	/** @brief	Default constructor */
 	MapObject();

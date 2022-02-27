@@ -8,7 +8,7 @@
 namespace IO {
 
 	template<typename DataType>
-	class Loadable : public virtual BasicSimpleIO, public virtual BasicLoadable {
+	class Loadable : public virtual BasicIO, public virtual BasicLoadable {
 	public:
 		Loadable(const OS::Path & filePath);
 		~Loadable();
