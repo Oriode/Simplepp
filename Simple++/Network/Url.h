@@ -50,7 +50,11 @@ namespace Network {
 		void formatEndPoint(StringASCII* outputStr) const;
 
 		StringASCII formatParams() const;
+		static StringASCII formatParams(const Vector<HTTPParam *>& paramVector);
+		static StringASCII formatParams(const Vector<HTTPParam>& paramVector);
 		void formatParams(StringASCII* outputStr) const;
+		static void formatParams(StringASCII* outputStr, const Vector<HTTPParam *>& paramVector);
+		static void formatParams(StringASCII* outputStr, const Vector<HTTPParam>& paramVector);
 
 		void setType(const typename UrlT<T>::Type type);
 		void setHostname(const StringASCII& hostname);

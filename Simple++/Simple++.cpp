@@ -39,10 +39,10 @@
 //#define DEBUG_JSON
 //#define DEBUG_MAP
 //#define DEBUG_UI
-#define DEBUG_IO
+//#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-//#define DEBUG_HTTP
+#define DEBUG_HTTP
 //#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
@@ -1212,7 +1212,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : HTTP									//
 	{
-		Network::HTTPClient client;
+		Network::HTTPClient client(Network::HTTPRequest::Type::HTTPS, StringASCII("fapi.binance.com"));
 		client.setHeaderParam(StringASCII("X-MBX-APIKEY"), StringASCII("q4Uuz9yQUUrj5zA3PGRROFeq03Binump7hkytN19qCBlitr8NCWICT2Wvqybn8Y8"));
 		StringASCII secretKey("qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW");
 
@@ -1220,23 +1220,39 @@ int main(int argc, char* argv[]) {
 		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
 		Time::TimeT timestamp(Time::getTime<Time::MilliSecond>().getValue());
 		paramVector.push(Param(StringASCII("timestamp"), StringASCII(timestamp)));
-		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(2000)));
+		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(20000)));
 
-		Network::Url url(Network::HTTPRequest::Type::HTTPS, StringASCII("fapi.binance.com"), StringASCII("/fapi/v2/account"), paramVector);
-		StringASCII paramsStr(url.formatParams());
+		StringASCII paramsStr(Network::Url::formatParams(paramVector));
 
 		Vector<unsigned char> hashBinary(Crypto::HMACSha256<char>(secretKey, paramsStr));
 		StringASCII signatureStr(StringASCII::encodeHexadecimal(hashBinary));
 
-		url.setParam(StringASCII("signature"), signatureStr);
+		paramVector.push(Param(StringASCII("signature"), signatureStr));
 
-		Network::HTTPResponse* response(client.query(Network::HTTPRequest::Method::GET, url));
+		Network::HTTPResponse* response1(client.query(Network::HTTPRequest::Method::GET, StringASCII("/fapi/v2/account"), paramVector));
 
-		if ( response ) {
-			Log::displayLog(response->getContent());
+		Time::sleep(10000);
+
+		Network::HTTPResponse* response2(client.query(Network::HTTPRequest::Method::GET, StringASCII("/fapi/v2/account"), paramVector));
+
+		if ( response1 && response2 ) {
+			Log::displayLog(response2->getContent());
 		} else {
 			Log::displayError("Query failed.");
 		}
+
+		paramVector.clear();
+		paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
+
+		for ( Size i(0); i < Size(10); i++ ) {
+			if ( !client.query(Network::HTTPRequest::Method::GET, StringASCII("/fapi/v1/premiumIndex"), paramVector) ) {
+				Log::displayError("Query failed.");
+				break;
+			}
+			Log::displayLog(response1->getContent());
+		}
+
+		Log::displaySuccess("Success.");
 	}
 #endif
 #ifdef DEBUG_CRYPTO

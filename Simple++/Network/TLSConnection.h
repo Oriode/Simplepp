@@ -38,6 +38,7 @@ namespace Network {
 		TLSConnectionT<T>& operator =(TLSConnectionT<T>&& connection);
 
 		using ConnectionT<T>::getIp;
+		using ConnectionT<T>::isConnected;
 
 		/**
 		 * @brief 	set the Address of this connection (this will close the connection)

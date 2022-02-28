@@ -101,6 +101,7 @@ namespace Network {
 		};
 
 		HTTPRequestT();
+		HTTPRequestT(typename UrlT<T>::Type type, const StringASCII& hostname);
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		HTTPRequestT(const StringASCII::ElemType ** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
 
@@ -120,7 +121,8 @@ namespace Network {
 
 		void setMethod(typename HTTPRequestT<T>::Method method);
 		void setEndPoint(const UrlT<T>& url);
-		void setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& paramVector);
+		void setEndPoint(const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
+		void setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
 		bool setEndPoint(const StringASCII& url);
 
 		typename HTTPRequestT<T>::Method getMethod() const;
@@ -148,16 +150,17 @@ namespace Network {
 	template<typename T>
 	class HTTPClientT {
 	public:
-		HTTPClientT();
+		HTTPClientT(typename UrlT<T>::Type type, const StringASCII& hostname);
 
 		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
-		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams);
-		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, const UrlT<T> & url);
+		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams);
 
 	private:
 		HTTPRequestT<T> request;
 		HTTPResponseT<T> response;
+
+		TLSConnectionT<T> connection;
 	};
 
 	using HTTPClient = HTTPClientT<int>;

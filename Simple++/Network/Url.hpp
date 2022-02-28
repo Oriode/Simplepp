@@ -161,22 +161,42 @@ namespace Network {
 
 	template<typename T>
 	inline StringASCII UrlT<T>::formatParams() const {
+		return formatParams(this->paramVector);
+	}
+
+	template<typename T>
+	inline StringASCII UrlT<T>::formatParams(const Vector<HTTPParam *>& paramVector) {
 		StringASCII outputStr;
 		outputStr.reserve(512);
 
-		formatParams(&outputStr);
+		formatParams(&outputStr, paramVector);
+
+		return outputStr;
+	}
+
+	template<typename T>
+	inline StringASCII UrlT<T>::formatParams(const Vector<HTTPParam>& paramVector) {
+		StringASCII outputStr;
+		outputStr.reserve(512);
+
+		formatParams(&outputStr, paramVector);
 
 		return outputStr;
 	}
 
 	template<typename T>
 	inline void UrlT<T>::formatParams(StringASCII* outputStr) const {
+		formatParams(outputStr, this->paramVector);
+	}
+
+	template<typename T>
+	inline void UrlT<T>::formatParams(StringASCII* outputStr, const Vector<HTTPParam *>& paramVector) {
 		StringASCII& str(*outputStr);
 
-		for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it < this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
-			const HTTPParam* param(this->paramVector.getValueIt(it));
+		for ( typename Vector<HTTPParam*>::Iterator it(paramVector.getBegin()); it < paramVector.getEnd(); paramVector.iterate(&it) ) {
+			const HTTPParam* param(paramVector.getValueIt(it));
 
-			if ( it != this->paramVector.getBegin() ) {
+			if ( it != paramVector.getBegin() ) {
 				str << StringASCII::ElemType('&');
 			}
 
@@ -184,6 +204,25 @@ namespace Network {
 			if ( param->getValue().getSize() > Size(0) ) {
 				str << StringASCII::ElemType('=');
 				str << param->getValue();
+			}
+		}
+	}
+
+	template<typename T>
+	inline void UrlT<T>::formatParams(StringASCII* outputStr, const Vector<HTTPParam>& paramVector) {
+		StringASCII& str(*outputStr);
+
+		for ( typename Vector<HTTPParam>::Iterator it(paramVector.getBegin()); it < paramVector.getEnd(); paramVector.iterate(&it) ) {
+			const HTTPParam& param(paramVector.getValueIt(it));
+
+			if ( it != paramVector.getBegin() ) {
+				str << StringASCII::ElemType('&');
+			}
+
+			str << param.getName();
+			if ( param.getValue().getSize() > Size(0) ) {
+				str << StringASCII::ElemType('=');
+				str << param.getValue();
 			}
 		}
 	}

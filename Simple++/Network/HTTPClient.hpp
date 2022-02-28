@@ -159,6 +159,8 @@ namespace Network {
 		FunctorParamName functorParamName(endFunc);
 		FunctorSpace functorSpace(endFunc);
 
+		clearParams();
+
 		const StringASCII::ElemType*& it(*itP);
 		while ( true ) {
 			// Skip spaces.
@@ -189,7 +191,7 @@ namespace Network {
 
 			HTTPParam* newParam(new HTTPParam(newParamName, newParamValue));
 
-			this->paramVector.push(newParam);
+			addParam(newParam);
 
 			// End condition.
 			if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
@@ -383,6 +385,16 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline HTTPRequestT<T>::HTTPRequestT(typename UrlT<T>::Type type, const StringASCII& hostname) :
+		url(type, hostname)
+	{
+		HTTPParam* hostParam(new HTTPParam(StringASCII("Host"), hostname));
+		addParam(hostParam);
+
+		this->hostParam = hostParam;
+	}
+
+	template<typename T>
 	template<typename EndFunc>
 	inline HTTPRequestT<T>::HTTPRequestT(const StringASCII::ElemType** itP, const EndFunc& endFunc) :
 		hostParam(NULL)
@@ -537,7 +549,13 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& paramVector) {
+	inline void HTTPRequestT<T>::setEndPoint(const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) {
+		this->url.setEndPoint(endPointStr);
+		this->url.setParams(paramVector);
+	}
+
+	template<typename T>
+	inline void HTTPRequestT<T>::setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) {
 		this->url.setType(type);
 		this->url.setHostname(hostname);
 		this->url.setEndPoint(endPointStr);
@@ -615,12 +633,13 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPClientT<T>::HTTPClientT() {
-		this->request.setMethod(HTTPRequestT<T>::Method::GET);
+	inline HTTPClientT<T>::HTTPClientT(typename UrlT<T>::Type type, const StringASCII& hostname) :
+		request(type, hostname)
+	{
 		this->request.setProtocol(StringASCII("HTTP/1.1"));
 
 		// this->request.setHeaderParam(StringASCII("Accept"), StringASCII("*/*"));
-		this->request.setHeaderParam(StringASCII("Connection"), StringASCII("close"));
+		this->request.setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
 	}
 
 	template<typename T>
@@ -629,55 +648,77 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>::Method method, typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam *>& urlParams) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams) {
 		this->request.setMethod(method);
-		this->request.setEndPoint(type, hostname, endPointStr, urlParams);
+		this->request.setEndPoint(endPointStr, urlParams);
 
 		static StringASCII sendBuffer;
 		static char receiveBuffer[ 1000000 ];
 
-		TLSConnectionT<T> connection;
+		if ( this->request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
 
-		if ( type == UrlT<T>::Type::HTTPS ) {
-			if ( connection.connect(hostname, unsigned short(443), Network::SockType::TCP) ) {
+			sendBuffer.clear();
+			this->request.formatQuery(&sendBuffer);
 
-				sendBuffer.clear();
-				this->request.formatQuery(&sendBuffer);
-
+			// Try sending directly as we are in keep alive.
+			if ( !this->connection.isConnected() || !connection.send(sendBuffer.toCString(), int(sendBuffer.getSize())) ) {
+				if ( !connection.connect(this->request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
+					return NULL;
+				}
 				if ( !connection.send(sendBuffer.toCString(), int(sendBuffer.getSize())) ) {
 					return NULL;
 				}
+			}
 
-				int totalReceivedLength(0);
-				while ( true ) {
-					int receivedLength(connection.receive(receiveBuffer + totalReceivedLength, sizeof(receiveBuffer) - totalReceivedLength));
+			int maxSizeReceive(sizeof(receiveBuffer));
+			const StringASCII::ElemType* parseIt(receiveBuffer);
+			int totalReceivedLength(connection.receive(receiveBuffer, maxSizeReceive));
 
-					if ( receivedLength <= int(0) ) {
-						break;
-					}
+			if ( totalReceivedLength <= int(0) ) {
+				return NULL;
+			}
 
-					totalReceivedLength += receivedLength;
-				}
+			// We receive something, let's try parse the title and the header.
+			if ( !this->response.parseQueryTitle(&parseIt, StringASCII::IsEndIterator(receiveBuffer + totalReceivedLength)) ) {
+				return NULL;
+			}
+			if ( !this->response.parseQueryHeader(&parseIt, StringASCII::IsEndIterator(receiveBuffer + totalReceivedLength)) ) {
+				return NULL;
+			}
 
-				const StringASCII::ElemType* parseIt(receiveBuffer);
-				StringASCII::IsEndIterator endFunc(receiveBuffer + totalReceivedLength);
-				if ( !this->response.parseQuery(&parseIt, endFunc) ) {
+			// Now we have the title and the header. Let's check for the Content-Length.
+			HTTPParam* contentSizeParam(this->response.getHeaderParam(StringASCII("Content-Length")));
+
+			int contentLength;
+			if ( contentSizeParam ) {
+				contentLength = contentSizeParam->getValue().toULongLong();
+			} else {
+				contentLength = Size(0);
+			}
+
+			maxSizeReceive = contentLength + ( parseIt - receiveBuffer );
+
+			while ( totalReceivedLength < maxSizeReceive ) {
+				int receivedLength(connection.receive(receiveBuffer + totalReceivedLength, maxSizeReceive - totalReceivedLength));
+
+				if ( receivedLength <= int(0) ) {
 					return NULL;
 				}
 
-				return &this->response;
+				totalReceivedLength += receivedLength;
 			}
+
+			if ( !this->response.parseQueryContent(&parseIt, StringASCII::IsEndIterator(receiveBuffer + totalReceivedLength)) ) {
+				return NULL;
+			}
+
+			return &this->response;
 		} else {
-			error(String::format("Unsuported query type %.", UrlT<T>::getTypeString(type)));
+			error(String::format("Unsuported query type %.", UrlT<T>::getTypeString(this->request.getEndPoint().getType())));
 			return NULL;
 		}
 
 		return NULL;
-	}
-
-	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>::Method method, const UrlT<T>& url) {
-		return query(method, url.getType(), url.getHostname(), url.getEndPoint(), url.getParamVector());
 	}
 
 }
