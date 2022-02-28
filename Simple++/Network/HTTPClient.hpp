@@ -531,6 +531,8 @@ namespace Network {
 			StringASCII paramStr;
 			this->url.formatParams(&paramStr);
 			const_cast<HTTPRequestT<T> *>(this)->setContent(paramStr);
+		} else {
+			const_cast< HTTPRequestT<T>* >( this )->clearContent();
 		}
 
 		HTTPQueryT<T>::formatQuery(outputStr);
@@ -652,37 +654,34 @@ namespace Network {
 		this->request.setMethod(method);
 		this->request.setEndPoint(endPointStr, urlParams);
 
-		static StringASCII sendBuffer;
-		static char receiveBuffer[ 1000000 ];
-
 		if ( this->request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
 
-			sendBuffer.clear();
-			this->request.formatQuery(&sendBuffer);
+			this->sendBuffer.clear();
+			this->request.formatQuery(&this->sendBuffer);
 
 			// Try sending directly as we are in keep alive.
-			if ( !this->connection.isConnected() || !connection.send(sendBuffer.toCString(), int(sendBuffer.getSize())) ) {
+			if ( !this->connection.isConnected() || !connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
 				if ( !connection.connect(this->request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
 					return NULL;
 				}
-				if ( !connection.send(sendBuffer.toCString(), int(sendBuffer.getSize())) ) {
+				if ( !connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
 					return NULL;
 				}
 			}
 
-			int maxSizeReceive(sizeof(receiveBuffer));
-			const StringASCII::ElemType* parseIt(receiveBuffer);
-			int totalReceivedLength(connection.receive(receiveBuffer, maxSizeReceive));
+			int maxSizeReceive(sizeof(this->receiveBuffer));
+			const StringASCII::ElemType* parseIt(this->receiveBuffer);
+			int totalReceivedLength(connection.receive(this->receiveBuffer, maxSizeReceive));
 
 			if ( totalReceivedLength <= int(0) ) {
 				return NULL;
 			}
 
 			// We receive something, let's try parse the title and the header.
-			if ( !this->response.parseQueryTitle(&parseIt, StringASCII::IsEndIterator(receiveBuffer + totalReceivedLength)) ) {
+			if ( !this->response.parseQueryTitle(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
 				return NULL;
 			}
-			if ( !this->response.parseQueryHeader(&parseIt, StringASCII::IsEndIterator(receiveBuffer + totalReceivedLength)) ) {
+			if ( !this->response.parseQueryHeader(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
 				return NULL;
 			}
 
@@ -696,10 +695,10 @@ namespace Network {
 				contentLength = Size(0);
 			}
 
-			maxSizeReceive = contentLength + ( parseIt - receiveBuffer );
+			maxSizeReceive = contentLength + ( parseIt - this->receiveBuffer );
 
 			while ( totalReceivedLength < maxSizeReceive ) {
-				int receivedLength(connection.receive(receiveBuffer + totalReceivedLength, maxSizeReceive - totalReceivedLength));
+				int receivedLength(connection.receive(this->receiveBuffer + totalReceivedLength, maxSizeReceive - totalReceivedLength));
 
 				if ( receivedLength <= int(0) ) {
 					return NULL;
@@ -708,7 +707,9 @@ namespace Network {
 				totalReceivedLength += receivedLength;
 			}
 
-			if ( !this->response.parseQueryContent(&parseIt, StringASCII::IsEndIterator(receiveBuffer + totalReceivedLength)) ) {
+			debug(*( this->receiveBuffer + totalReceivedLength ) = StringASCII::ElemType('\n'));
+
+			if ( !this->response.parseQueryContent(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
 				return NULL;
 			}
 

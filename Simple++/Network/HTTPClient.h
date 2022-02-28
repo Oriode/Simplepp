@@ -161,6 +161,9 @@ namespace Network {
 		HTTPResponseT<T> response;
 
 		TLSConnectionT<T> connection;
+
+		StringASCII sendBuffer;
+		char receiveBuffer[ 1000000 ];
 	};
 
 	using HTTPClient = HTTPClientT<int>;
