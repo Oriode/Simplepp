@@ -42,9 +42,9 @@ void ThreadT<T>::join() {
 	if ( !isRunning() )
 		return;
 
-	this -> mutex.lock();
-
 	this -> thread -> join();
+
+	this -> mutex.lock();
 	delete this -> thread;
 	this -> thread = NULL;
 	this -> bIsRunning = false;
@@ -80,7 +80,7 @@ void ThreadT<T>::unlock() {
 }
 
 template<typename T>
-ThreadT<T>::Id ThreadT<T>::getCurrentThreadId() {
+typename ThreadT<T>::Id ThreadT<T>::getCurrentThreadId() {
 #if defined WIN32
 	return GetCurrentThreadId();
 #else

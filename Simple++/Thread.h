@@ -58,7 +58,7 @@ public:
 	void unlock();
 
 
-	static ThreadT::Id getCurrentThreadId();
+	static typename ThreadT::Id getCurrentThreadId();
 
 
 	void _run();
