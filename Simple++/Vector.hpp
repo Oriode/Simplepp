@@ -686,7 +686,9 @@ bool Vector<T>::iterate( typename Vector<T>::Iterator * it, ElemType ** e, TestF
 /************************************************************************/
 template<typename T>
 Vector<T> & Vector<T>::operator=( Vector && v ) {
-	delete[] this -> dataTable;
+	if ( this->dataTable ) {
+		delete[] this -> dataTable;
+	}
 	this -> dataTable = Utility::toRValue( v.dataTable );
 	this -> size = Utility::toRValue( v.size );
 	this -> maxSize = Utility::toRValue( v.maxSize );
@@ -702,7 +704,9 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 	this -> maxSize = vector.getMaxSize();
 	this -> size = vector.getSize();
 
-	delete[] this -> dataTable;
+	if ( this->dataTable ) {
+		delete[] this -> dataTable;
+	}
 	this -> dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
 	copy( this -> dataTable, vector.dataTable, this -> size );
 	_updateIterators();
