@@ -186,8 +186,11 @@ Vector<T> & Vector<T>::operator+=( const Vector<C> & vector ) {
 template<typename T>
 template<typename C>
 void Vector<T>::concat( const Vector<C> & vector ) {
-	this -> resize( this -> size + vector.size );
-	copy( getEnd() - Size(1), vector.getData(), vector.getSize());
+	if ( vector.size > Size(0) ) {
+		const Size oldSize(this->size);
+		this -> resize(this -> size + vector.size);
+		copy(this->dataTable + oldSize, vector.dataTable, vector.size);
+	}
 }
 
 template<typename T>
