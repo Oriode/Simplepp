@@ -49,7 +49,7 @@ template<typename T>
 void LogT<T>::startStep( const BasicString<T> & message ) {
 #if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
 	// LogT<T>::displayNewLine();
-	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::LightCyan );
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::Cyan);
 	LogT<T>::increaseIndent();
 #endif
 }
@@ -58,7 +58,7 @@ template<typename T>
 void LogT<T>::endStep( const BasicString<T> & message ) {
 #if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
 	LogT<T>::lowerIndent();
-	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::LightCyan );
+	LogT<T>::callErrorHandler( message, typename LogT<T>::MessageSeverity::Info, typename LogT<T>::MessageColor::Cyan);
 	// LogT<T>::displayNewLine();
 #endif
 }
