@@ -37,12 +37,13 @@
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
 //#define DEBUG_JSON
+#define DEBUG_LIST
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-#define DEBUG_HTTP
+// #define DEBUG_HTTP
 //#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
@@ -69,6 +70,7 @@
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
+#include "List.h"
 #include "Map.h"
 #include "Application.h"
 #include "FreeImage.h"
@@ -522,7 +524,34 @@ int main(int argc, char* argv[]) {
 		}
 	}
 #endif
+#ifdef DEBUG_LIST
+	{
+		log("Debugging Lists...");
 
+		List<float> floatList;
+		floatList.push(42.0f);
+		floatList.push(1.0f);
+		floatList.push(2.0f);
+		floatList.push(3.0f);
+		typename List<float>::Iterator it4(floatList.push(4.0f));
+		typename List<float>::Iterator it5(floatList.push(5.0f));
+		floatList.push(6.0f);
+
+		floatList.insert(7.0f, it4);
+		floatList.eraseIt(it5);
+		floatList.popBegin();
+		floatList.pop();
+		floatList.pushBegin(42.0f);
+		floatList.pushBegin(42.0f);
+		floatList.eraseAll(42.0f);
+		floatList.replaceFirst(1.0f, 42.0f);
+
+		IO::write(OS::Path("floatList.cl"), &floatList);
+		IO::read(OS::Path("floatList.cl"), &floatList);
+
+		log(floatList.toString());
+	}
+#endif // DEBUG_LIST
 #ifdef DEBUG_MAP
 	{
 		log("Debuging Maps...");

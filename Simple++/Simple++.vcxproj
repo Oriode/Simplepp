@@ -192,6 +192,8 @@
     <ClInclude Include="IO\SimpleFileStream.hpp" />
     <ClInclude Include="JSON\Node.h" />
     <ClInclude Include="JSON\Node.hpp" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="List.hpp" />
     <ClInclude Include="Log.hpp" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map.hpp" />
