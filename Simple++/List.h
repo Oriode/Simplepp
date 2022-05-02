@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "String.h"
 #include "IO/IO.h"
+#include "Log.h"
 
 template<typename T>
 class ListNode : public IO::BasicIO {
@@ -158,6 +159,8 @@ public:
 
 	void eraseIt(const typename List<T>::Iterator it);
 	typename List<T>::Iterator eraseItNoDelete(const typename List<T>::Iterator it);
+
+	bool checkIntegrity() const;
 
 	template<typename C = String>
 	C toString() const;

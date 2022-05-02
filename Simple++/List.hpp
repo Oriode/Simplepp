@@ -206,7 +206,7 @@ inline typename List<T>::Iterator List<T>::push(const T& data) {
 template<typename T>
 inline T& List<T>::pop() {
 	ListNode<T>* node(this->lastNode);
-	T data(node->getData());
+	T & data(node->getData());
 	if ( node->getPrevious() ) {
 		node->getPrevious()->setNext(NULL);
 		this->lastNode = node->getPrevious();
@@ -256,6 +256,10 @@ inline typename List<T>::Iterator List<T>::pushNode(ListNode<T>* newNode) {
 
 	this->size++;
 
+#ifdef DEBUG
+	checkIntegrity();
+#endif
+
 	return newNode;
 }
 
@@ -281,7 +285,7 @@ inline typename List<T>::Iterator List<T>::pushBegin(const T& data) {
 template<typename T>
 inline T& List<T>::popBegin() {
 	ListNode<T>* node(this->firstNode);
-	T data(node->getData());
+	T & data(node->getData());
 	if ( node->getNext() ) {
 		node->getNext()->setPrevious(NULL);
 		this->firstNode = node->getNext();
@@ -410,6 +414,29 @@ inline typename List<T>::Iterator List<T>::eraseItNoDelete(const typename List<T
 	this->size--;
 
 	return node;
+}
+
+template<typename T>
+inline bool List<T>::checkIntegrity() const {
+	const ListNode<T>* expectedLastNode(NULL);
+	Size expectedSize(0);
+	for ( typename List<T>::Iterator it(getBegin()); it != getEnd(); iterate(&it) ) {
+		const ListNode<T>* node(getNodeIt(it));
+
+		expectedLastNode = node;
+		expectedSize++;
+	}
+
+	if ( expectedLastNode != this->lastNode ) {
+		Log::displayError("List integrity failed : last node is not the expected one.");
+		return false;
+	}
+	if ( expectedSize != this->size ) {
+		Log::displayError("List integrity failed : size is not the expected one.");
+		return false;
+	}
+
+	return true;
 }
 
 template<typename T>
