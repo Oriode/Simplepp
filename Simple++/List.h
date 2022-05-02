@@ -46,7 +46,7 @@ public:
 	template<typename Stream>
 	bool write(Stream* stream) const;
 
-	ListNode<T>* copy();
+	ListNode<T>* copy() const;
 
 private:
 	ListNode<T>* previousNode;
@@ -157,6 +157,7 @@ public:
 	bool eraseAll(const T& value);
 
 	void eraseIt(const typename List<T>::Iterator it);
+	typename List<T>::Iterator eraseItNoDelete(const typename List<T>::Iterator it);
 
 	template<typename C = String>
 	C toString() const;

@@ -1,3 +1,4 @@
+#include "List.h"
 template<typename T>
 ListNode<T>::ListNode() {
 
@@ -63,7 +64,7 @@ inline void ListNode<T>::setData(const T& data) {
 }
 
 template<typename T>
-inline ListNode<T>* ListNode<T>::copy() {
+inline ListNode<T>* ListNode<T>::copy() const {
 	return new ListNode<T>(this->previousNode, this->nextNode, this->data);
 }
 
@@ -79,7 +80,7 @@ inline List<T>::List(const List<T>& l) :
 	lastNode(NULL),
 	size(0) {
 	for ( typename List<T>::Iterator it(l.getBegin()); it != l.getEnd(); l.iterate(&it) ) {
-		ListNode* newNode(l.getNodeIt(it)->copy());
+		ListNode<T>* newNode(new ListNode<T>(l.getNodeIt(it)->getData()));
 		pushNode(newNode);
 	}
 }
@@ -101,7 +102,7 @@ template<typename T>
 inline List<T>& List<T>::operator=(const List<T>& l) {
 	clear();
 	for ( typename List<T>::Iterator it(l.getBegin()); it != l.getEnd(); l.iterate(&it) ) {
-		ListNode* newNode(l.getNodeIt(it)->copy());
+		ListNode<T> * newNode(new ListNode<T>(l.getNodeIt(it)->getData()));
 		pushNode(newNode);
 	}
 }
@@ -142,7 +143,7 @@ inline bool List<T>::iterate(typename List<T>::Iterator* it) const {
 
 template<typename T>
 inline bool List<T>::iterate(typename List<T>::Iterator* it, T** v) const {
-	typename ListNode<T>* node(*it);
+	typename ListNode<T>*& node(*it);
 	node = node->getNext();
 	if ( node != NULL ) {
 		( *v ) = &node->getData();
@@ -389,6 +390,11 @@ inline bool List<T>::eraseAll(const T& value) {
 
 template<typename T>
 inline void List<T>::eraseIt(const typename List<T>::Iterator it) {
+	delete eraseItNoDelete(it);
+}
+
+template<typename T>
+inline typename List<T>::Iterator List<T>::eraseItNoDelete(const typename List<T>::Iterator it) {
 	ListNode<T>* node(getNodeIt(it));
 	if ( node->getPrevious() ) {
 		node->getPrevious()->setNext(node->getNext());
@@ -403,7 +409,7 @@ inline void List<T>::eraseIt(const typename List<T>::Iterator it) {
 
 	this->size--;
 
-	delete node;
+	return node;
 }
 
 template<typename T>
@@ -419,7 +425,7 @@ template<typename T>
 template<typename TestFunctor>
 inline bool List<T>::iterate(typename List<T>::Iterator* it, T** v, TestFunctor& testFunctor) const {
 	if ( testFunctor() ) {
-		typename ListNode<T>* node(*it);
+		typename ListNode<T>*& node(*it);
 		node = node->getNext();
 		if ( node != NULL ) {
 			( *v ) = &node->getData();

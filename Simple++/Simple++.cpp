@@ -546,10 +546,12 @@ int main(int argc, char* argv[]) {
 		floatList.eraseAll(42.0f);
 		floatList.replaceFirst(1.0f, 42.0f);
 
-		IO::write(OS::Path("floatList.cl"), &floatList);
-		IO::read(OS::Path("floatList.cl"), &floatList);
+		List<float> floatListCopy = floatList;
 
-		log(floatList.toString());
+		IO::write(OS::Path("floatList.cl"), &floatListCopy);
+		IO::read(OS::Path("floatList.cl"), &floatListCopy);
+
+		log(floatListCopy.toString());
 	}
 #endif // DEBUG_LIST
 #ifdef DEBUG_MAP
