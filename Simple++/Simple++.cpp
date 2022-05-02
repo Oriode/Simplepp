@@ -37,7 +37,7 @@
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
 //#define DEBUG_JSON
-#define DEBUG_LIST
+//#define DEBUG_LIST
 //#define DEBUG_MAP
 //#define DEBUG_UI
 //#define DEBUG_IO
@@ -49,7 +49,7 @@
 //#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
 //#define DEBUG_TIME
-//#define DEBUG_DATE
+#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
 
@@ -1456,7 +1456,7 @@ int main(int argc, char* argv[]) {
 	// DEBUG : Date															//
 	{
 		log( "Debuging Date..." );
-		Time::Date nowDate = Time::getDate( -3660 );
+		Time::Date nowDate = Time::getDate();
 		log( nowDate.toString( StringASCII( "HHH" ) ) );
 		log( nowDate.toString() );
 		log( nowDate.toStringISO( Time::Date::ISOFormat::DateOnly ) );

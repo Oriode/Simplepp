@@ -90,7 +90,7 @@ namespace Time {
 
 	template<typename T>
 	void DateT<T>::setNow( TimeT utcBias ) {
-		setToTimePoint( TimePoint<Second>::getNow(), utcBias );
+		setToTimePoint( getTime<Second>(), utcBias );
 	}
 
 	template<typename T>
