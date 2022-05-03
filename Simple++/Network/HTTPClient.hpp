@@ -723,7 +723,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() {
+	inline const HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() const {
 		return &this->response;
 	}
 
