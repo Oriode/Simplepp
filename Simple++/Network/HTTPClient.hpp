@@ -722,4 +722,9 @@ namespace Network {
 		return NULL;
 	}
 
+	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() {
+		return &this->response;
+	}
+
 }

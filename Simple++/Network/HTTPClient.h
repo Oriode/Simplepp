@@ -156,6 +156,8 @@ namespace Network {
 
 		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams);
 
+		HTTPResponseT<T>* getLastResponse();
+
 	private:
 		HTTPRequestT<T> request;
 		HTTPResponseT<T> response;
