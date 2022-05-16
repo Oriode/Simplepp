@@ -165,7 +165,7 @@ namespace Math {
 		 * @returns	minimal between x and y.
 		 */
 		template<typename T>
-		MATH_FUNC_QUALIFIER static T min(const T& x, const T& y);
+		MATH_FUNC_QUALIFIER static const T & min(const T& x, const T& y);
 
 		/**
 		 * @brief 	Get the minimal between two elements
@@ -174,7 +174,7 @@ namespace Math {
 		 * @returns	minimal between x and y.
 		 */
 		template<typename T>
-		MATH_FUNC_QUALIFIER static T max(const T& x, const T& y);
+		MATH_FUNC_QUALIFIER static const T & max(const T& x, const T& y);
 
 		/**
 		 * @brief 	Get the absolute value of a number
@@ -272,9 +272,9 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T trunc(const T& x) { return BasicMath::trunc(x); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T min(const T& x, const T& y) { return BasicMath::min(x, y); }
+	MATH_FUNC_QUALIFIER const T & min(const T& x, const T& y) { return BasicMath::min(x, y); }
 	template<typename T>
-	MATH_FUNC_QUALIFIER T max(const T& x, const T& y) { return BasicMath::max(x, y); }
+	MATH_FUNC_QUALIFIER const T & max(const T& x, const T& y) { return BasicMath::max(x, y); }
 	template<typename T>
 	MATH_FUNC_QUALIFIER constexpr T abs(const T& v) { return BasicMath::abs(v); }
 	template<typename T>

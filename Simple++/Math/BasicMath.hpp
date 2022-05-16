@@ -91,13 +91,13 @@ namespace Math {
 
 	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::min( const T & x, const T & y ) {
+	MATH_FUNC_QUALIFIER const T & BasicMathT<FakeType>::min( const T & x, const T & y ) {
 		return ( y < x ) ? y : x;
 	}
 
 	template<typename FakeType>
 	template<typename T>
-	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::max( const T & x, const T & y ) {
+	MATH_FUNC_QUALIFIER const T & BasicMathT<FakeType>::max( const T & x, const T & y ) {
 		return ( y > x ) ? y : x;
 	}
 
