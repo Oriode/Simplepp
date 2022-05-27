@@ -163,6 +163,7 @@ namespace Network {
 		HTTPResponseT<T> response;
 
 		TLSConnectionT<T> connection;
+		bool bWasConnected;
 
 		StringASCII sendBuffer;
 		char receiveBuffer[ 1000000 ];

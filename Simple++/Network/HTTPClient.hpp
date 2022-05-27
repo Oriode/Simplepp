@@ -636,7 +636,8 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPClientT<T>::HTTPClientT(typename UrlT<T>::Type type, const StringASCII& hostname) :
-		request(type, hostname)
+		request(type, hostname),
+		bWasConnected(false)
 	{
 		this->request.setProtocol(StringASCII("HTTP/1.1"));
 
@@ -660,11 +661,18 @@ namespace Network {
 			this->request.formatQuery(&this->sendBuffer);
 
 			// Try sending directly as we are in keep alive.
-			if ( !this->connection.isConnected() || !connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
-				if ( !connection.connect(this->request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
+			if ( !this->bWasConnected ) {
+				if ( !this->connection.connect(this->request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
 					return NULL;
 				}
-				if ( !connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
+				this->bWasConnected = true;
+			}
+
+			if ( !this->connection.isConnected() || !this->connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
+				if ( !this->connection.reconnect() ) {
+					return NULL;
+				}
+				if ( !this->connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
 					return NULL;
 				}
 			}
@@ -686,7 +694,8 @@ namespace Network {
 			}
 
 			// Now we have the title and the header. Let's check for the Content-Length.
-			HTTPParam* contentSizeParam(this->response.getHeaderParam(StringASCII("Content-Length")));
+			static StringASCII contentLengthParamName("Content-Length");
+			HTTPParam* contentSizeParam(this->response.getHeaderParam(contentLengthParamName));
 
 			int contentLength;
 			if ( contentSizeParam ) {

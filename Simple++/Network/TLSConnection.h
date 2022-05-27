@@ -90,6 +90,8 @@ namespace Network {
 		 */
 		bool connect(const StringASCII& address, unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
 
+		bool reconnect();
+
 		/**
 		 * @brief 	Send data to the connection (after a connect)
 		 *
@@ -163,6 +165,9 @@ namespace Network {
 		if ( !_init() ) {
 			return false;
 		}
+		if ( isConnected() ) {
+			close();
+		}
 		if ( !ConnectionT<T>::_connect() ) {
 			return false;
 		}
@@ -176,6 +181,9 @@ namespace Network {
 	inline bool TLSConnectionT<T>::connect(const Address& address) {
 		if ( !_init() ) {
 			return false;
+		}
+		if ( isConnected() ) {
+			close();
 		}
 		if ( !ConnectionT<T>::_connect(address) ) {
 			return false;
@@ -191,6 +199,9 @@ namespace Network {
 		if ( !_init() ) {
 			return false;
 		}
+		if ( isConnected() ) {
+			close();
+		}
 		if ( !ConnectionT<T>::_connect(address, service, sockType, ipFamily) ) {
 			return false;
 		}
@@ -205,12 +216,33 @@ namespace Network {
 		if ( !_init() ) {
 			return false;
 		}
+		if ( isConnected() ) {
+			close();
+		}
 		if ( !ConnectionT<T>::_connect(address, StringASCII::toString(port), sockType, ipFamily) ) {
 			return false;
 		}
 		if ( !_initSSL() ) {
 			return false;
 		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool TLSConnectionT<T>::reconnect() {
+
+		if ( isConnected() ) {
+			close();
+		}
+
+		if ( !ConnectionT<T>::_reconnect() ) {
+			return false;
+		}
+
+		if ( !_initSSL() ) {
+			return false;
+		}
+
 		return true;
 	}
 

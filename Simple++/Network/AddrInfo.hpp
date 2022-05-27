@@ -1,3 +1,4 @@
+#include "AddrInfo.h"
 namespace Network {
 
 	template<typename T>
@@ -147,12 +148,21 @@ namespace Network {
 	}
 
 	template<typename T>
-	IpFamily AddrInfoT<T>::getIpFamily( const std::string & ip ) {
-		for ( auto i = ip.begin(); i != ip.end(); i++ ) {
-			if ( *i == ':' ) return IpFamily::IPv6;
-			if ( *i == '.' ) return IpFamily::IPv4;
+	IpFamily AddrInfoT<T>::getIpFamily( const StringASCII& ip ) {
+		for ( typename StringASCII::Iterator it(ip.getBegin()); it != ip.getEnd(); ip.iterate(&it)) {
+			if ( ip.getValueIt(it) == StringASCII::ElemType(':') ) return IpFamily::IPv6;
+			if ( ip.getValueIt(it) == StringASCII::ElemType('.') ) return IpFamily::IPv4;
 		}
 		return IpFamily::Undefined;
+	}
+
+	template<typename T>
+	inline StringASCII AddrInfoT<T>::getIp() const {
+		const sockaddr* sockAddr = getSockAddr();
+		if ( sockAddr ) {
+			return getNameInfo(*sockAddr, getSockAddrLen());
+		}
+		return StringASCII::null;
 	}
 
 	template<typename T>

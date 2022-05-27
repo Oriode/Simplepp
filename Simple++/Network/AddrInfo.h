@@ -178,7 +178,9 @@ namespace Network {
 		 *
 		 * @returns	IP family.
 		 */
-		IpFamily getIpFamily( const std::string & ip );
+		IpFamily getIpFamily( const StringASCII & ip );
+
+		StringASCII getIp() const;
 
 
 		/**

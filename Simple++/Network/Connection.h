@@ -178,6 +178,7 @@ namespace Network {
 		 */
 		bool connect( const StringASCII & address, unsigned short port, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined );
 
+		bool reconnect();
 
 		/**
 		 * @brief 	Accept a new client (only when listening on TCP). This is a blocking method.
@@ -300,6 +301,8 @@ namespace Network {
 		 */
 		bool _connect(const StringASCII & ip, const StringASCII& service, SockType sockType = SockType::TCP, IpFamily ipFamily = IpFamily::Undefined);
 
+		bool _reconnect();
+
 		///@brief Should be called before every connect/listen. Ensure networking is enabled and the socket initialy closed.
 		///@return True if succeed, False otherwise.
 		bool _init();
@@ -357,8 +360,6 @@ namespace Network {
 
 		/** @brief	The socket */
 		SOCKET mSocket;
-		/** @brief	True if is created, false if not */
-		bool mIsCreated;
 		/** @brief	True if actually listenning, False otherwise. */
 		bool mIsListening;
 	};
