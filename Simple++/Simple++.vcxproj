@@ -247,6 +247,8 @@
     <ClInclude Include="Math\Compare.h" />
     <ClInclude Include="Math\Compare.hpp" />
     <ClInclude Include="Math\InterpolationFunc.hpp" />
+    <ClInclude Include="Math\Interval.h" />
+    <ClInclude Include="Math\Interval.hpp" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="Math\BasicMath.hpp" />

@@ -18,7 +18,7 @@ namespace Math {
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec2( const Vec2<U> & v );
 		template<typename U>
-		MATH_FUNC_QUALIFIER Vec2( const U( &v )[2] ); 
+		MATH_FUNC_QUALIFIER Vec2( const U( &v )[2] );
 
 
 		template<typename U = char>
@@ -77,6 +77,7 @@ namespace Math {
 			struct { T r, g; };
 			struct { T x, y; };
 			struct { T values[2]; };
+			struct { T begin, end; };
 		};
 
 		static const Vec2<T> null;
