@@ -1,6 +1,6 @@
 template<typename T, typename Compare>
 typename OrderedSize OrderedVector<T, Compare>::getNumEntries( const T & value ) {
-	Size thisIndex = search( value );
+	Size thisIndex = searchI( value );
 
 	if ( thisIndex == -1 )
 		return 0;
@@ -110,7 +110,7 @@ OrderedVector<T, Compare>::OrderedVector( OrderedVector<T, Compare> && v ) :
 
 
 template<typename T, typename Compare>
-typename OrderedSize OrderedVector<T, Compare>::search( const T & data ) {
+typename OrderedSize OrderedVector<T, Compare>::searchI( const T & data ) {
 	if ( !this -> isOrdered )
 		_sort();
 

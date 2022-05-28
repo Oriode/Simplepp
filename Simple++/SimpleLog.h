@@ -76,7 +76,7 @@
 #define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
 #define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
 #define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
-#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
+#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed "TEXT(__FILE__)"@"__LINE__" : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
 
 #else
 #undef debug

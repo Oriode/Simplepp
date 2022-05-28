@@ -1,3 +1,4 @@
+#include "Vec3.h"
 namespace Math {
 
 	template<typename T>
@@ -59,6 +60,16 @@ namespace Math {
 		this -> x = T( 1 ) / x;
 		this -> y = T( 1 ) / y;
 		this -> z = T( 1 ) / z;
+	}
+
+	template<typename T>
+	inline constexpr Size Vec3<T>::getSize() const {
+		return Size(3);
+	}
+
+	template<typename T>
+	inline const T* Vec3<T>::getData() const {
+		return this->values;
 	}
 
 

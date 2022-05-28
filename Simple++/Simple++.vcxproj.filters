@@ -585,6 +585,15 @@
     <ClInclude Include="Math\Interval.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\Vec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

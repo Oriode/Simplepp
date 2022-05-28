@@ -1,3 +1,4 @@
+#include "Vec4.h"
 namespace Math {
 
 	template<typename T>
@@ -58,6 +59,16 @@ namespace Math {
 		this -> y = T( 1 ) / y;
 		this -> z = T( 1 ) / z;
 		this -> w = T( 1 ) / w;
+	}
+
+	template<typename T>
+	inline constexpr Size Vec4<T>::getSize() const {
+		return Size(4);
+	}
+
+	template<typename T>
+	inline const T* Vec4<T>::getData() const {
+		return this->values;
 	}
 
 	template<typename T>

@@ -72,6 +72,10 @@ namespace Math {
 		template<typename U = char>
 		MATH_FUNC_QUALIFIER BasicString<U> toString() const;
 
+		constexpr Size getSize() const;
+
+		const T* getData() const;
+
 
 		union {
 			struct { T r, g; };

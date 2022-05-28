@@ -171,6 +171,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="BasicLoadable.hpp" />
+    <ClInclude Include="BasicVector.h" />
     <ClInclude Include="Crypto\Crypto.h" />
     <ClInclude Include="Crypto\Crypto.hpp" />
     <ClInclude Include="Debug.hpp" />
@@ -254,6 +255,8 @@
     <ClInclude Include="Math\BasicMath.hpp" />
     <ClInclude Include="Math\Transformations.h" />
     <ClInclude Include="Math\Transformations.hpp" />
+    <ClInclude Include="Math\Vec.h" />
+    <ClInclude Include="Math\Vec.hpp" />
     <ClInclude Include="MultiMap.h" />
     <ClInclude Include="MultiMap.hpp" />
     <ClInclude Include="Mutex.hpp" />

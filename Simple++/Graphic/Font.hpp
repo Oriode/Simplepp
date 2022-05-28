@@ -456,7 +456,7 @@ namespace Graphic {
 		if ( font.memoryFontObject ) {
 			this -> memoryFontObject = new char[font.memorySize];
 			this -> memorySize = font.memorySize;
-			Vector<T>::copy( this -> memoryFontObject, font.memoryFontObject, font.memorySize );
+			Utility::copy( this -> memoryFontObject, font.memoryFontObject, font.memorySize );
 			_loadFreeType( this -> memoryFontObject, this -> memorySize, this -> pixSize );
 		} else {
 			this -> memoryFontObject = NULL;

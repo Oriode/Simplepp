@@ -122,7 +122,7 @@ public:
 	/**
 	 * @brief 	Replace the first occurrence of the data
 	 *
-	 * @param 	search	Data to be searched.
+	 * @param 	searchI	Data to be searched.
 	 * @param 	data  	Data to be set instead.
 	 *
 	 * @returns	True if something has been replaced, False otherwise.
@@ -132,7 +132,7 @@ public:
 	/**
 	 * @brief 	Replace ALL occurrences of the data searched
 	 *
-	 * @param 	search	Data to be searched.
+	 * @param 	searchI	Data to be searched.
 	 * @param 	data  	Data to be set instead.
 	 *
 	 * @returns	True if something has been replaced, False otherwise.

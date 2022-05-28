@@ -27,7 +27,7 @@ namespace Graphic {
 		if ( this -> nbPixels ) {
 			size_t nbComponents = this -> nbPixels * getNbComponents();
 			this -> buffer = new T[nbComponents];
-			Vector<T>::copy( this -> buffer, image.buffer, nbComponents );
+			Utility::copy( this -> buffer, image.buffer, nbComponents );
 		} else {
 			this -> buffer = NULL;
 		}
@@ -360,7 +360,7 @@ namespace Graphic {
 							auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							auto thisIt = getDatas();
 							for ( Size y = 0; y < size.y; y++ ) {
-								Vector<T>::copy( thisIt, otherIt, nbComponentsPerRow );
+								Utility::copy( thisIt, otherIt, nbComponentsPerRow );
 								thisIt += nbComponentsPerRow;
 								otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
 							}
@@ -370,12 +370,12 @@ namespace Graphic {
 								auto otherIt = data;
 								auto thisIt = getDatas();
 								for ( Size y = 0; y < size.y; y++ ) {
-									Vector<T>::copy( thisIt, otherIt, nbComponentsPerRow );
+									Utility::copy( thisIt, otherIt, nbComponentsPerRow );
 									thisIt += nbComponentsPerRow;
 									otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) + strideBytes );
 								}
 							} else {
-								Vector<T>::copy( this -> buffer, data, nbComponentsTotal );
+								Utility::copy( this -> buffer, data, nbComponentsTotal );
 							}
 						}
 					}
@@ -537,7 +537,7 @@ namespace Graphic {
 		if ( this -> nbPixels ) {
 			size_t nbComponents = this -> nbPixels * this -> getNbComponents();
 			this -> buffer = new T[nbComponents];
-			Vector<T>::copy( this -> buffer, image.buffer, nbComponents );
+			Utility::copy( this -> buffer, image.buffer, nbComponents );
 		} else {
 			this -> buffer = NULL;
 		}
@@ -1136,7 +1136,7 @@ namespace Graphic {
 		if ( N1 == N2 ) {
 			Point i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
-				Vector<T>::copy( thisIt, otherIt, size.x );
+				Utility::copy( thisIt, otherIt, size.x );
 				thisIt += thisImageOffset;
 				otherIt += otherImageOffset;
 			}
@@ -1269,7 +1269,7 @@ namespace Graphic {
 			if ( N1 != 4 && N1 == N2 ) {
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy( thisIt, ( C1 * ) otherIt, size.x );
+					Utility::copy( thisIt, ( C1 * ) otherIt, size.x );
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
@@ -1327,7 +1327,7 @@ namespace Graphic {
 			if ( N1 != 4 && N1 == N2 ) {
 				Point i;
 				for ( i.y = 0; i.y < size.y; i.y++ ) {
-					Vector<T>::copy( thisIt, ( C1 * ) otherIt, size.x );
+					Utility::copy( thisIt, ( C1 * ) otherIt, size.x );
 					thisIt += thisImageOffset;
 					otherIt += otherImageOffset;
 				}
@@ -2101,7 +2101,7 @@ namespace Graphic {
 			auto thisIt = this -> getDatas<C1>();
 			auto imageBorderIt = imageBorder.getDatas<C2>( borderSize.x, borderSize.y );
 			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
 				imageBorderIt += nbComponentsPerRowWithBorder;
@@ -2221,7 +2221,7 @@ namespace Graphic {
 			auto thisIt = this -> getDatas<C1>();
 			auto imageBorderIt = imageBorder.getDatas<C2>( borderSize.x, borderSize.y );
 			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
 				imageBorderIt += nbComponentsPerRowWithBorder;
@@ -2355,7 +2355,7 @@ namespace Graphic {
 			auto thisIt = this -> getDatas<C1>();
 			C2 * imageBorderIt = imageBorder.getDatas<C2>( borderSize, borderSize );
 			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
 				imageBorderIt += nbComponentsPerRowWithBorder;
@@ -2552,7 +2552,7 @@ namespace Graphic {
 			auto thisIt = this -> getDatas<C1>();
 			auto imageBorderIt = imageBorder.getDatas<C2>( borderSize, borderSize );
 			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
-				Vector<T>::copy( imageBorderIt, thisIt, nbComponentsPerRow );
+				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
 				imageBorderIt += nbComponentsPerRowWithBorder;
@@ -2925,7 +2925,7 @@ namespace Graphic {
 		Math::Vec2<Size> i;
 		if ( ( N1 != 4 ) && ( N1 == N2 ) ) {
 			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
-				Vector<T>::copy( ( C2* ) thisIt, gradientArray, size );
+				Utility::copy( ( C2* ) thisIt, gradientArray, size );
 				thisIt += thisImageOffset;
 			}
 		} else {
@@ -2962,7 +2962,7 @@ namespace Graphic {
 		Math::Vec2<Size> i;
 		if ( ( N1 == N2 ) ) {
 			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
-				Vector<T>::copy( ( C2* ) thisIt, gradientArray, size );
+				Utility::copy( ( C2* ) thisIt, gradientArray, size );
 				thisIt += thisImageOffset;
 			}
 		} else {

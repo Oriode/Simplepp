@@ -11,15 +11,12 @@
 #include <algorithm>
 #include <ostream>
 
+#include "BasicVector.h"
 #include "Math/Logical.h"
 #include "Utility.h"
 #include "SimpleLog.h"
 #include "IO/BasicIO.h"
 #include "IO/SimpleIO.h"
-
-/** @brief	The Random Access Iterator */
-template<typename T>
-using RandomAccessIterator = T *;
 
 /**
  * @brief		DataStructure used to store a "list" of elements represented by an index of type "Size" ( unsigned long long int ) and a value of type T. The elements will be stored contiguously in memory.
@@ -28,21 +25,14 @@ using RandomAccessIterator = T *;
  * @tparam	T	Type of the Values to store.
  */
 template<typename T = int>
-class Vector : public IO::BasicIO {
+class Vector : public BasicVector<T> {
 public:
 	template<typename C>
 	friend class BasicString;
 
 	template<typename C>
 	friend class UTF8StringT;
-
-	/** @brief	Defines an alias representing the iterator */
-	typedef RandomAccessIterator<T> Iterator;
-	/** @brief	Defines an alias representing type of the element */
-	typedef T ElemType;
-
-	static constexpr size_t elementSize = sizeof( T );
-
+	
 	/** @brief	Default constructor */
 	Vector( void );
 
@@ -56,24 +46,26 @@ public:
 	Vector( const Size maxSize );
 
 	///@brief Copy constructor.
-	///@param stream Vector to be copied.
-	Vector( const Vector & vector );
-
-	///@brief Copy constructor.
 	///@template C type of the Vector to be copied.
 	///@param stream Vector to be copied.
 	template<typename C>
 	Vector( const Vector<C> & vector );
 
+	///@brief Copy constructor.
+	///@template C type of the Vector to be copied.
+	///@param stream Vector to be copied.
+	template<typename C>
+	Vector(const BasicVector<C>& vector);
+
 	///@brief Move constructor.
 	///@param stream Vector to be moved from.
-	Vector( Vector && v );
+	Vector( Vector<T> && v );
 
 	///@brief Constructor using a static array.
 	///@template C Array element type.
 	///@template N Array size.
 	///@param data Array to be copied.
-	template<typename C, size_t N>
+	template<typename C, Size N>
 	Vector( const C( &data )[ N ] );
 
 	///@brief Constructor using an array and it's size.
@@ -123,6 +115,7 @@ public:
 	 * @param 	newSize	New size to be set for the vector.
 	 */
 	void resize( const Size newSize );
+	void resizeNoCopy(const Size newSize);
 
 	/**
 	 * @brief	Extend the size to the left by shifting the values.
@@ -138,229 +131,8 @@ public:
 	 */
 	void extendRight( const Size increasedSize );
 
-
-	/************************************************************************/
-	/* Iterations                                                           */
-	/************************************************************************/
-	/**
-	 * @brief 	Get the Begin Iterator
-	 *
-	 * @returns	Begin Iterator.
-	 */
-	typename Vector<T>::Iterator getBegin() const;
-
-	/**
-	 * @brief 	Get the End Iterator
-	 *
-	 * @returns	End Iterator.
-	 */
-	typename Vector<T>::Iterator getEnd() const;
-
-	/**
-	 * @brief 	alias of getBegin()
-	 *
-	 * @returns	A Vector<T>::Iterator.
-	 */
-	typename Vector<T>::Iterator begin() const;
-
-	/**
-	 * @brief 	alias of getEnd()
-	 *
-	 * @returns	A Vector<T>::Iterator.
-	 */
-	typename Vector<T>::Iterator end() const;
-
-	/**
-	 * @brief 	iterate ONE time the iterator and return if there is still data
-	 *
-	 * @param [in,out]	it	If non-null, the iterator.
-	 *
-	 * @returns	it in out Iterator to iterate.
-	 * @returns	If the iterator can return data.
-	 */
-	bool iterate( typename Vector<T>::Iterator * it ) const;
-
-	/**
-	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
-	 *
-	 * @param [in,out]	it	in out Iterator to iterate.
-	 * @param [in,out]	v 	out Pointer to a pointer to the value retrieved.
-	 *
-	 * @returns	True if a data has been retrieved or False if the end has been reached.
-	 */
-	bool iterate( typename Vector<T>::Iterator * it, ElemType ** v ) const;
-
-	/**
-	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
-	 *
-	 * @tparam	TestFunctor	Type of the test functor.
-	 * @param [in,out]	it		   	in out Iterator to iterate.
-	 * @param [in,out]	v		   	out Pointer to a pointer to the value retrieved.
-	 * @param [in,out]	testFunctor	Functor to check a condition before incrementing the iterator
-	 * 								  		bool operator()( const ElemType & e );
-	 *
-	 * @returns	True if a data has been retrieved or False if the end has been reached or false is the functor return false.
-	 */
-	template<typename TestFunctor>
-	bool iterate( typename Vector<T>::Iterator * it, ElemType ** v, TestFunctor & testFunctor ) const;
-
-	/************************************************************************/
-	/* Access                                                               */
-	/************************************************************************/
-
-	/**
-	 * @brief 	Get a value and can assign something else
-	 *
-	 * @param 	index	Index.
-	 *
-	 * @returns	Value founded.
-	 */
-	const T & operator[]( const Size index ) const;
-	/**
-	 * @brief 	Array indexer operator
-	 *
-	 * @param 	index	Zero-based index of the.
-	 *
-	 * @returns	The indexed value.
-	 */
-	T & operator[]( const Size index );
-
-	/**
-	 * @brief 	Get the Value associated with an direct access index (of type const Size)
-	 *
-	 * @param 	i	Iterator used to retrieve the value (no bound check is done here)
-	 *
-	 * @returns	Value founded.
-	 */
-	const T & getValueI( const Size i ) const;
-	/**
-	 * @brief 	Gets value i
-	 *
-	 * @param 	i	Zero-based index of the.
-	 *
-	 * @returns	The value i.
-	 */
-	T & getValueI( const Size i );
-
-	/**
-	 * @brief 	Get the Value associated with an iterator
-	 *
-	 * @param 	i	Iterator used to retrieve the value (no bound check is done here)
-	 *
-	 * @returns	Value founded.
-	 */
-	const T & getValueIt( typename Vector<T>::Iterator i ) const;
-	/**
-	 * @brief 	Gets value iterator
-	 *
-	 * @param 	i	Zero-based index of the.
-	 *
-	 * @returns	The value iterator.
-	 */
-	T & getValueIt( typename Vector<T>::Iterator i );
-
-	/**
-	 * @brief 	Set the Value associated with an direct access index (of type Size)
-	 *
-	 * @param 	i   	Iterator used to set the value (no bound check is done here)
-	 * @param 	data	The data.
-	 */
-	void setValueI( const Size i, const T & data );
-
-	/**
-	 * @brief 	Set the Value associated with an iterator
-	 *
-	 * @param 	i   	Iterator used to set the value.
-	 * @param 	data	The data.
-	 */
-	void setValueIt( typename Vector<T>::Iterator i, const T & data );
-
-	/**
-	 * @brief 	get the last element of this vector
-	 *
-	 * @returns	Last element in the vector.
-	 */
-	const T & getLast() const;
-	/**
-	 * @brief 	Gets the last
-	 *
-	 * @returns	The last.
-	 */
-	T & getLast();
-
-	/**
-	 * @brief 	get the first element of this vector
-	 *
-	 * @returns	First element in the vector.
-	 */
-	const T & getFirst() const;
-	/**
-	 * @brief 	Gets the first
-	 *
-	 * @returns	The first.
-	 */
-	T & getFirst();
-
-	/**
-	 * @brief	Get the index from an Iterator.
-	 *
-	 * @param	it	Iterator to be used.
-	 *
-	 * @return	Index from the Iterator.
-	 */
-	Size getIndex( typename Vector<T>::Iterator it ) const;
-
-
 	/************************************************************************/
 	/* LOGICAL                                                              */
-	/**
-	 * @brief 	Equality operator
-	 *
-	 * @param 	v	A Vector<T> to process.
-	 *
-	 * @returns	True if the parameters are considered equivalent.
-	 */
-	bool operator==( const Vector<T> & v ) const;
-	/**
-	 * @brief 	Inequality operator
-	 *
-	 * @param 	v	A Vector<T> to process.
-	 *
-	 * @returns	True if the parameters are not considered equivalent.
-	 */
-	bool operator!=( const Vector<T> & v ) const;
-	/**
-	 * @brief 	Less-than comparison operator
-	 *
-	 * @param 	v	A Vector<T> to process.
-	 *
-	 * @returns	True if the first parameter is less than the second.
-	 */
-	bool operator<( const Vector<T> & v ) const;
-	/**
-	 * @brief 	Greater-than comparison operator
-	 *
-	 * @param 	v	A Vector<T> to process.
-	 *
-	 * @returns	True if the first parameter is greater than to the second.
-	 */
-	bool operator>( const Vector<T> & v ) const;
-	/**
-	 * @brief 	Less-than-or-equal comparison operator
-	 *
-	 * @param 	v	A Vector<T> to process.
-	 *
-	 * @returns	True if the first parameter is less than or equal to the second.
-	 */
-	bool operator<=( const Vector<T> & v ) const;
-	/**
-	 * @brief 	Greater-than-or-equal comparison operator
-	 *
-	 * @param 	v	A Vector<T> to process.
-	 *
-	 * @returns	True if the first parameter is greater than or equal to the second.
-	 */
-	bool operator>=( const Vector<T> & v ) const;
 
 	/**
 	 * @brief 	Equality operator
@@ -422,14 +194,8 @@ public:
 	 */
 	template<typename C>
 	Vector<T> & operator=( const Vector<C> & vector );
-	/**
-	 * @brief 	Assignment operator
-	 *
-	 * @param 	vector	The vector.
-	 *
-	 * @returns	A shallow copy of this object.
-	 */
-	Vector<T> & operator=( const Vector<T> & vector );
+	template<typename C>
+	Vector<T>& operator=(const BasicVector<C>& vector);
 
 	/**
 	 * @brief 	Move operator
@@ -438,7 +204,7 @@ public:
 	 *
 	 * @returns	reference to THIS.
 	 */
-	Vector<T> & operator=( Vector && v );
+	Vector<T> & operator=( Vector<T> && v );
 
 	/**
 	 * @brief 	Concat another vector to this one
@@ -458,7 +224,59 @@ public:
 	template<typename C>
 	void concat( const Vector<C> & vector );
 
+	/************************************************************************/
+	/* Access                                                               */
+	/************************************************************************/
 
+	/**
+	 * @brief 	Get the Value associated with an direct access index (of type const Size)
+	 *
+	 * @param 	i	Iterator used to retrieve the value (no bound check is done here)
+	 *
+	 * @returns	Value founded.
+	 */
+	const T& getValueI(const Size i) const;
+	/**
+	 * @brief 	Gets value i
+	 *
+	 * @param 	i	Zero-based index of the.
+	 *
+	 * @returns	The value i.
+	 */
+	T& getValueI(const Size i);
+
+	/**
+	 * @brief 	Get the Value associated with an iterator
+	 *
+	 * @param 	i	Iterator used to retrieve the value (no bound check is done here)
+	 *
+	 * @returns	Value founded.
+	 */
+	const T& getValueIt(typename Vector<T>::Iterator i) const;
+	/**
+	 * @brief 	Gets value iterator
+	 *
+	 * @param 	i	Zero-based index of the.
+	 *
+	 * @returns	The value iterator.
+	 */
+	T& getValueIt(typename Vector<T>::Iterator i);
+
+	/**
+	 * @brief 	Set the Value associated with an direct access index (of type Size)
+	 *
+	 * @param 	i   	Iterator used to set the value (no bound check is done here)
+	 * @param 	data	The data.
+	 */
+	void setValueI(const Size i, const T& data);
+
+	/**
+	 * @brief 	Set the Value associated with an iterator
+	 *
+	 * @param 	i   	Iterator used to set the value.
+	 * @param 	data	The data.
+	 */
+	void setValueIt(typename Vector<T>::Iterator i, const T& data);
 
 	/**
 	 * @brief 	insert a new data in the vector getSize() will be incremented and the memory auto managed.
@@ -486,27 +304,6 @@ public:
 	void inserti( const Size i, const T & v );
 
 	/**
-	 * @brief 	Fill the complete vector with the specified data.
-	 *
-	 * @param 	data	data to be copied in the whole vector.
-	 */
-	void fill( const T & data );
-
-	/**
-	 * @brief 	Get the size of this vector
-	 *
-	 * @returns	Number of datas of this vector.
-	 */
-	const Size getSize() const;
-
-	/**
-	 * @brief 	Get the size of this vector in bytes
-	 *
-	 * @returns	const Size of this vector in bytes.
-	 */
-	const Size getSizeBytes() const;
-
-	/**
 	 * @brief 	Get the size of the inner buffer
 	 *
 	 * @returns	const Size of the inner buffer.
@@ -527,40 +324,6 @@ public:
 	bool isEmpty() const;
 
 	/**
-	 * @brief 	Get the datas of this vector
-	 *
-	 * @returns	Data buffer of this vector.
-	 */
-	const T * data() const;
-	/**
-	 * @brief 	Gets the data
-	 *
-	 * @returns	Null if it fails, else a pointer to a T.
-	 */
-	T * data();
-	/**
-	 * @brief 	Gets the data
-	 *
-	 * @returns	Null if it fails, else the data.
-	 */
-	const T * getData() const;
-	/**
-	 * @brief 	Gets the data
-	 *
-	 * @returns	Null if it fails, else the data.
-	 */
-	T * getData();
-
-	/**
-	 * @brief 	Test if a value exists in this vector
-	 *
-	 * @param 	value	The value.
-	 *
-	 * @returns	True if the value has been founded and false instead.
-	 */
-	bool exists( const T & value ) const;
-
-	/**
 	 * @brief 	Clear and re create this vector from a data table
 	 *
 	 * @tparam	C	Type of the c.
@@ -569,26 +332,6 @@ public:
 	 */
 	template<typename C>
 	void createFromData( const C * dataTable, const Size size );
-
-	/**
-	 * @brief 	Replace the first occurrence of the data
-	 *
-	 * @param 	search	Data to be searched.
-	 * @param 	data  	Data to be set instead.
-	 *
-	 * @returns	True if something has been replaced, False otherwise.
-	 */
-	bool replaceFirst( const T & search, const T & data );
-
-	/**
-	 * @brief 	Replace ALL occurrences of the data searched
-	 *
-	 * @param 	search	Data to be searched.
-	 * @param 	data  	Data to be set instead.
-	 *
-	 * @returns	True if something has been replaced, False otherwise.
-	 */
-	bool replaceAll( const T & search, const T & data );
 
 	/**
 	 * @brief 	Erase the first occurrence and rearrange the data
@@ -621,43 +364,6 @@ public:
 	 * @param 	index	Iterator to be erased.
 	 */
 	void eraseIt( const typename Vector<T>::Iterator it );
-
-	/** @brief	Quicksort the vector using the operator>() */
-	void sortDesc();
-
-	/** @brief	Quicksort the vector using the operator<() */
-	void sortAsc();
-
-	/**
-	 * @brief 	sort the elements of this vector using the quicksort algorithm
-	 *
-	 * @tparam	Func	Type of the function.
-	 * @param [in,out]	functor	(Optional) Functor with operator () overloaded with : bool operator()(const T &, const T &) const;
-	 */
-	template<typename Func = Math::Logical::Less>
-	void sort( Func & functor = Func() );
-
-	/**
-	 * @brief	Get the min value of this Vector using the specified functor to compare the items.
-	 *
-	 * @tparam	Func	Type of the Functor used to compare items.
-	 * @param [in,out]	functor Functor used to compare items.
-	 *
-	 * @return	Iterator to the founded item, NULL if none.
-	 */
-	template<typename Func = Math::Logical::Less>
-	typename Vector<T>::Iterator getMin( Func & functor = Func() ) const;
-
-	/**
-	 * @brief	Get the max value of this Vector using the specified functor to compare the items.
-	 *
-	 * @tparam	Func	Type of the Functor used to compare items.
-	 * @param [in,out]	functor Functor used to compare items.
-	 *
-	 * @return	Iterator to the founded item, NULL if none.
-	 */
-	template<typename Func = Math::Logical::Less>
-	typename Vector<T>::Iterator getMax( Func & functor = Func() ) const;
 
 	/**
 	 * @brief 	Copy a part of an another vector into this one
@@ -702,184 +408,14 @@ public:
 	template<typename Stream>
 	bool read( Stream * stream );
 
-	/**
-	 * @brief 	write this object as binary into a file stream
-	 *
-	 * @param [in,out]	stream	stream used to write this object.
-	 *
-	 * @returns	boolean to know if the operation is a success of not.
-	 */
-	template<typename Stream>
-	bool write( Stream * stream ) const;
 
-	/**
-	 * @brief 	Search a data and retrieve the index
-	 *
-	 * @param 	data	Data to be searched.
-	 *
-	 * @returns	Index where the data has bee founded if founded. return Vector<T>::overflow instead.
-	 */
-	const Size search( const T & data ) const;
-
-	/************************************************************************/
-	/* Static                                                               */
-	/************************************************************************/
-
-	/**
-	 * @brief 	Copy datas from a buffer into an another one
-	 *
-	 * @tparam	C	Type of the c.
-	 * @tparam	D	Type of the d.
-	 * @param [in,out]	destinationBuffer	Where to copy the datas.
-	 * @param 		  	sourceBuffer	 	From where to copy.
-	 * @param 		  	size			 	Number of elements to copy.
-	 */
-	template<typename C, typename D>
-	static void copy( C * destinationBuffer, const D * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @tparam	C	Type of the c.
-	 * @tparam	D	Type of the d.
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	template<typename C, typename D>
-	static void copy( C ** destinationBuffer, D * const * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( char * destinationBuffer, const char * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( unsigned char * destinationBuffer, const unsigned char * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( short * destinationBuffer, const short * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( unsigned short * destinationBuffer, const unsigned short * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( int * destinationBuffer, const int * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( unsigned int * destinationBuffer, const unsigned int * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( long int * destinationBuffer, const long int * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( unsigned long int * destinationBuffer, const unsigned long int * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( long long int * destinationBuffer, const long long int * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( unsigned long long int * destinationBuffer, const unsigned long long int * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( float * destinationBuffer, const float * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( double * destinationBuffer, const double * sourceBuffer, const Size size );
-	/**
-	 * @brief 	Copies this object
-	 *
-	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
-	 * @param 		  	sourceBuffer	 	Buffer for source data.
-	 * @param 		  	size			 	The size.
-	 */
-	static void copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer, const Size size );
-
-	/**
-	 * @brief 	Gets the overflow
-	 *
-	 * @returns	The overflow.
-	 */
-	static const Size overflow;
 protected:
-	/** @brief	Values that represent Constructors */
-	enum class ctor {
-		null
-	};
 	/**
 	 * @brief 	Constructor
 	 *
 	 * @param 	parameter1	The first parameter.
 	 */
 	Vector( Vector<T>::ctor );
-
-	/**
-	 * @brief 	Quicksorts
-	 *
-	 * @tparam	Compare	Type of the compare.
-	 * @param 	start	The start.
-	 * @param 	end  	The end.
-	 * @param 	func 	(Optional) The function.
-	 */
-	template<typename Compare>
-	void quicksort( typename Vector<T>::Iterator start, typename Vector<T>::Iterator end, Compare func = Math::Logical::Less );
 
 	/** @brief	Clears this object to its blank/initial state */
 	void _clear();
@@ -905,28 +441,6 @@ protected:
 	 */
 	void _extendBuffer( const Size newSizeNeeded );
 
-	/**
-	 * @brief 	Swaps
-	 *
-	 * @param 	index1	The first index.
-	 * @param 	index2	The second index.
-	 */
-	void swap( const Size index1, const Size index2 );
-	/**
-	 * @brief 	Swaps
-	 *
-	 * @param 	index1	The first index.
-	 * @param 	index2	The second index.
-	 */
-	void swap( typename Vector<T>::Iterator index1, typename Vector<T>::Iterator index2 );
-
-	/**
-	 * @brief 	Assigns
-	 *
-	 * @param 	index1	The first index.
-	 * @param 	index2	The second index.
-	 */
-	void assign( const Size index1, const Size index2 ); // index1 = index2
 	/** @brief	Updates the iterators */
 	void _updateIterators();
 
@@ -943,13 +457,8 @@ protected:
 	 */
 	void _eraseit( typename Vector<T>::Iterator it );
 
-	/** Size of the Vector */
-	Size size;
 	/** Size of the buffer */
 	Size maxSize;
-
-	/** @brief	The data table */
-	T * dataTable;
 
 	/** Pointer to the last value */
 	typename Vector<T>::Iterator iteratorEnd;

@@ -113,16 +113,16 @@ public:
 	using Vector<T>::reset;
 
 	/**
-	 * @brief	Search the index of a data using dichotomic search
+	 * @brief	Search the index of a data using dichotomic searchI
 	 *
 	 * @param	data	Data to searched.
 	 *
 	 * @returns	Index of the founded data or Vector<T>::overflow if nothing founded.
 	 */
-	Size search( const T & data );
+	Size searchI( const T & data );
 
 	/**
-	 * @brief	search if a data exists using dichotomic search
+	 * @brief	searchI if a data exists using dichotomic searchI
 	 *
 	 * @param	data	Data to be searched.
 	 *

@@ -64,7 +64,7 @@ Vector<T>(ctor::null)
 	this -> size = N - 1;
 	this -> maxSize = N;
 	this -> dataTable = new T[N];
-	Vector<T>::copy(this -> dataTable, s, N);
+	Utility::copy(this -> dataTable, s, N);
 	_updateIterators();
 }*/
 
@@ -206,20 +206,20 @@ template<typename T>
 template<typename C, size_t N>
 BasicString<T>::BasicString( const C( &str )[ N ] ) :
 	Vector<T>( N - 1, N ) {
-	Vector<T>::copy( this -> dataTable, str, N );
+	Utility::copy( this -> dataTable, str, N );
 }
 
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( const BasicString<C> & str ) :
 	Vector<T>( str.getSize(), str.getSize() + 1 ) {
-	Vector<T>::copy( this -> dataTable, str.getData(), Vector<T>::getMaxSize() );
+	Utility::copy( this -> dataTable, str.getData(), Vector<T>::getMaxSize() );
 }
 
 template<typename T>
 BasicString<T>::BasicString( const BasicString<T> & str ) :
 	Vector<T>( str.getSize(), str.getSize() + 1 ) {
-	Vector<T>::copy( this -> dataTable, str.dataTable, Vector<T>::getMaxSize() );
+	Utility::copy( this -> dataTable, str.dataTable, Vector<T>::getMaxSize() );
 }
 
 template<typename T>
@@ -1566,7 +1566,7 @@ inline void BasicString<T>::copy(const BasicString<T>::Iterator* itP, const EndF
 
 	resize(bufferSize);
 
-	Vector<T>::copy(beginIt, copySize);
+	Utility::copy(beginIt, copySize);
 
 	this->dataTable[ copySize ] = BasicString<T>::ElemType('\0');
 }
@@ -3185,7 +3185,7 @@ BasicString<T> & BasicString<T>::operator=( const C( &str )[ N ] ) {
 	auto sizePlusOne( N + 1 );
 	if ( getMaxSize() < sizePlusOne )
 		reserve( sizePlusOne );
-	Vector<T>::copy( this -> dataTable, str, sizePlusOne );
+	Utility::copy( this -> dataTable, str, sizePlusOne );
 	this -> size = N;
 	_updateIterators();
 	return *this;
@@ -3197,7 +3197,7 @@ BasicString<T> & BasicString<T>::operator=( const BasicString<C> & str ) {
 	auto sizePlusOne( str.getSize() + 1 );
 	if ( getMaxSize() < sizePlusOne )
 		reserve( sizePlusOne );
-	Vector<T>::copy( this -> dataTable, str.getData(), sizePlusOne );
+	Utility::copy( this -> dataTable, str.getData(), sizePlusOne );
 	this -> size = str.getSize();
 	_updateIterators();
 	return *this;
@@ -3225,7 +3225,7 @@ BasicString<T> & BasicString<T>::operator=( C * const & str ) {
 	}
 	_updateIterators();
 	setValueI( this -> size, T( '\0' ) );
-	copy( this->dataTable, str, this -> size );
+	Utility::copy( this->dataTable, str, this -> size );
 
 	return *this;
 }
@@ -4512,7 +4512,7 @@ N BasicString<T>::parseNumber( const T ** c ) {
 template<typename T>
 template<size_t N>
 Size BasicString<T>::copy( T ** destinationBuffer, const T( &sourceBuffer )[ N ] ) {
-	Vector<T>::copy( *destinationBuffer, sourceBuffer, N );
+	Utility::copy( *destinationBuffer, sourceBuffer, N );
 	destinationBuffer += N;
 	return static_cast< Size >( N );
 }

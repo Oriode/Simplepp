@@ -463,6 +463,162 @@ namespace Utility {
 			return sizeof( T ) * 8;
 		}
 	};
+
+	template<typename T>
+	class UtilityT {
+	public:
+		/**
+		 * @brief 	Copy datas from a buffer into an another one
+		 *
+		 * @tparam	C	Type of the c.
+		 * @tparam	D	Type of the d.
+		 * @param [in,out]	destinationBuffer	Where to copy the datas.
+		 * @param 		  	sourceBuffer	 	From where to copy.
+		 * @param 		  	size			 	Number of elements to copy.
+		 */
+		template<typename C, typename D>
+		static void copy(C* destinationBuffer, const D* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @tparam	C	Type of the c.
+		 * @tparam	D	Type of the d.
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		template<typename C, typename D>
+		static void copy(C** destinationBuffer, D* const* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(char* destinationBuffer, const char* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(unsigned char* destinationBuffer, const unsigned char* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(short* destinationBuffer, const short* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(unsigned short* destinationBuffer, const unsigned short* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(int* destinationBuffer, const int* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(unsigned int* destinationBuffer, const unsigned int* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(long int* destinationBuffer, const long int* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(unsigned long int* destinationBuffer, const unsigned long int* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(long long int* destinationBuffer, const long long int* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(unsigned long long int* destinationBuffer, const unsigned long long int* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(float* destinationBuffer, const float* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(double* destinationBuffer, const double* sourceBuffer, const Size size);
+		/**
+		 * @brief 	Copies this object
+		 *
+		 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+		 * @param 		  	sourceBuffer	 	Buffer for source data.
+		 * @param 		  	size			 	The size.
+		 */
+		static void copy(wchar_t* destinationBuffer, const wchar_t* sourceBuffer, const Size size);
+	};
+
+	using Utility = UtilityT<int>;
+
+	/**
+	* @brief 	Copy datas from a buffer into an another one
+	*
+	* @tparam	C	Type of the c.
+	* @tparam	D	Type of the d.
+	* @param [in,out]	destinationBuffer	Where to copy the datas.
+	* @param 		  	sourceBuffer	 	From where to copy.
+	* @param 		  	size			 	Number of elements to copy.
+	*/
+	template<typename C, typename D>
+	static void copy(C* destinationBuffer, const D* sourceBuffer, const Size size) { return Utility::copy(destinationBuffer, sourceBuffer, size); }
+	/**
+	 * @brief 	Copies this object
+	 *
+	 * @tparam	C	Type of the c.
+	 * @tparam	D	Type of the d.
+	 * @param [in,out]	destinationBuffer	If non-null, buffer for destination data.
+	 * @param 		  	sourceBuffer	 	Buffer for source data.
+	 * @param 		  	size			 	The size.
+	 */
+	template<typename C, typename D>
+	static void copy(C** destinationBuffer, D* const* sourceBuffer, const Size size) { return Utility::copy(destinationBuffer, sourceBuffer, size); }
 }
 
 

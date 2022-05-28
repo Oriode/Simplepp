@@ -1,6 +1,4 @@
-
-template<typename T>
-const Size Vector<T>::overflow = Size( -1 );
+#include "Vector.h"
 
 
 
@@ -9,14 +7,15 @@ const Size Vector<T>::overflow = Size( -1 );
 /************************************************************************/
 
 template<typename T>
-Vector<T>::Vector( ctor ) {}
+Vector<T>::Vector(Vector<T>::ctor ) :
+	BasicVector<T>(BasicVector<T>::ctor::null)
+{}
 
 
 template<typename T>
 Vector<T>::Vector( void ) :
+	BasicVector<T>(),
 	maxSize( 0 ),
-	size( 0 ),
-	dataTable( NULL ),
 	iteratorEnd( NULL ) {
 
 }
@@ -26,22 +25,12 @@ Vector<T>::Vector( void ) :
 template<typename T>
 template<typename C>
 Vector<T>::Vector( const Vector<C> & vector ) :
-	size( vector.getSize() ),
+	BasicVector<T>(BasicVector<T>::ctor::null),
 	maxSize( vector.getMaxSize() ),
-	dataTable( ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL ) {
+{
+	this->size = vector.getSize();
+	this->dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
 	copy( this -> dataTable, vector.getData(), this -> maxSize );
-	_updateIterators();
-}
-
-
-
-template<typename T>
-Vector<T>::Vector( const Vector<T> & vector ) :
-	maxSize( vector.maxSize ),
-	size( vector.size ),
-	dataTable( ( maxSize ) ? new T[ this -> maxSize ] : NULL ) {
-	copy( this -> dataTable, vector.getData(), this -> maxSize );
-
 	_updateIterators();
 }
 
@@ -49,11 +38,9 @@ Vector<T>::Vector( const Vector<T> & vector ) :
 
 template<typename T>
 Vector<T>::Vector( Vector && v ) :
-	dataTable( Utility::toRValue( v.dataTable ) ),
-	size( Utility::toRValue( v.size ) ),
+	BasicVector<T>(Utility::toRValue(v)),
 	maxSize( Utility::toRValue( v.maxSize ) ) {
 	_updateIterators();
-	v.dataTable = NULL;
 }
 
 
@@ -63,11 +50,13 @@ Vector<T>::Vector( Vector && v ) :
 
 template<typename T>
 Vector<T>::Vector( const Size size, const Size maxSize ) :
-	size( size ),
+	BasicVector<T>(BasicVector<T>::ctor::null),
 	maxSize( maxSize ),
-	dataTable( new T[ maxSize ] ),
-	iteratorEnd( dataTable + maxSize ) {
-	_assert( maxSize );
+	iteratorEnd( dataTable + maxSize )
+{
+	_assert(maxSize);
+	this->size = size;
+	this->dataTable = new T[ maxSize ];
 	_updateIterators();
 }
 
@@ -75,6 +64,15 @@ template<typename T>
 Vector<T>::Vector( const Size maxSize ) :
 	Vector<T>( maxSize, maxSize ) {}
 
+
+template<typename T>
+template<typename C>
+inline Vector<T>::Vector(const BasicVector<C>& vector) :
+	BasicVector<T>(vector),
+	maxSize(vector.getSize())
+{
+	_updateIterators();
+}
 
 template<typename T>
 template<typename C, size_t N>
@@ -113,11 +111,14 @@ Vector<T>::Vector( const C * data, const Size size ) :
 template<typename T>
 template<typename C>
 Vector<T>::Vector( const C * data, const Size size, const Size maxSize ) :
-	maxSize( maxSize ),
-	size( size ),
-	dataTable( new T[ maxSize ] ) {
+	BasicVector<T>(BasicVector<T>::ctor::null),
+	maxSize( maxSize )
+{
 	_assert( maxSize );
 	_assert( maxSize >= size );
+
+	this->size = size;
+	this->dataTable = new T[ maxSize ];
 	copy( data, this -> size );
 	_updateIterators();
 }
@@ -130,7 +131,7 @@ Vector<T>::Vector( const typename RandomAccessIterator<C> beginIt, const typenam
 
 template<typename T>
 Vector<T>::~Vector( void ) {
-	delete[] this -> dataTable;
+	
 }
 
 
@@ -143,10 +144,7 @@ Vector<T>::~Vector( void ) {
 
 
 
-template<typename T>
-const Size Vector<T>::getSizeBytes() const {
-	return this -> size * sizeof( T );
-}
+
 
 
 
@@ -154,7 +152,7 @@ template<typename T>
 template<typename C>
 void Vector<T>::copy( Vector<C> vector, Size indexSrc, const Size indexDst, Size size ) {
 	allocate( size + indexDst );
-	copy( this -> dataTable + indexDst, vector.getData() + indexSrc, size );
+	Utility::copy( this -> dataTable + indexDst, vector.getData() + indexSrc, size );
 }
 
 
@@ -162,18 +160,13 @@ void Vector<T>::copy( Vector<C> vector, Size indexSrc, const Size indexDst, Size
 template<typename T>
 template<typename C>
 void Vector<T>::copy( const C * datas, const Size index, const Size size ) {
-	copy( this -> dataTable + index, datas, size );
+	Utility::copy( this -> dataTable + index, datas, size );
 }
 
 template<typename T>
 template<typename C>
 void Vector<T>::copy( const C * datas, const Size size ) {
-	copy( this -> dataTable, datas, size );
-}
-
-template<typename T>
-void Vector<T>::assign( const Size index1, const Size index2 ) {
-	this -> dataTable[ index1 ] = this -> dataTable[ index2 ];
+	Utility::copy( this -> dataTable, datas, size );
 }
 
 template<typename T>
@@ -189,7 +182,7 @@ void Vector<T>::concat( const Vector<C> & vector ) {
 	if ( vector.size > Size(0) ) {
 		const Size oldSize(this->size);
 		this -> resize(this -> size + vector.size);
-		copy(this->dataTable + oldSize, vector.dataTable, vector.size);
+		Utility::copy(this->dataTable + oldSize, vector.dataTable, vector.size);
 	}
 }
 
@@ -199,7 +192,7 @@ void Vector<T>::createFromData( const C * dataTable, const Size size ) {
 	delete[] this -> dataTable;
 	this -> dataTable = new T[ size ];
 
-	copy( this -> dataTable, dataTable, size );
+	Utility::copy( this -> dataTable, dataTable, size );
 
 
 	this -> size = size;
@@ -217,89 +210,7 @@ void Vector<T>::reset() {
 /************************************************************************/
 /* LOGICAL                                                              */
 /************************************************************************/
-template<typename T>
-bool Vector<T>::operator<( const Vector<T> & v ) const {
-	if ( this -> size < v.size )
-		return true;
 
-	for ( Size i = 0; i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] < v[ i ] )
-			return true;
-		else if ( this -> dataTable[ i ] > v[ i ] )
-			return false;
-	}
-
-	return false;
-}
-
-template<typename T>
-bool Vector<T>::operator>( const Vector<T> & v ) const {
-	if ( this -> size > v.size )
-		return true;
-
-	for ( Size i = 0; i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] > v[ i ] )
-			return true;
-		else if ( this -> dataTable[ i ] < v[ i ] )
-			return false;
-	}
-
-	return false;
-}
-
-template<typename T>
-bool Vector<T>::operator<=( const Vector<T> & v ) const {
-	if ( this -> size < v.size )
-		return true;
-
-	for ( Size i = 0; i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] < v[ i ] )
-			return true;
-		else if ( this -> dataTable[ i ] > v[ i ] )
-			return false;
-	}
-
-	return true;
-}
-
-template<typename T>
-bool Vector<T>::operator>=( const Vector<T> & v ) const {
-	if ( this -> size > v.size )
-		return true;
-
-	for ( Size i = 0; i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] > v[ i ] )
-			return true;
-		else if ( this -> dataTable[ i ] < v[ i ] )
-			return false;
-	}
-
-	return true;
-}
-
-template<typename T>
-bool Vector<T>::operator!=( const Vector<T> & v ) const {
-	if ( this -> size != v.size )
-		return true;
-
-	for ( Size i = 0; i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] != v.dataTable[ i ] )
-			return true;
-	}
-	return false;
-}
-
-template<typename T>
-bool Vector<T>::operator==( const Vector<T> & v ) const {
-	if ( this -> size != v.size )
-		return false;
-
-	for ( Size i = 0; i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] != v.dataTable[ i ] )
-			return false;
-	}
-	return true;
-}
 
 
 template<typename T>
@@ -347,76 +258,6 @@ bool Vector<T>::operator>=( const T & v ) const {
 }
 
 
-
-
-template<typename T>
-template<typename Compare>
-void Vector<T>::quicksort( typename Vector<T>::Iterator start, typename Vector<T>::Iterator end, Compare func ) {
-	// Create an auxiliary stack
-	typedef struct {
-		typename Vector<T>::Iterator start;
-		typename Vector<T>::Iterator end;
-	} quicksortStackItem;
-
-	quicksortStackItem * stack = new quicksortStackItem[ ( end - start ) / 2 + 1 ];
-
-
-	// push initial values of l and h to stack
-	stack[ 0 ].start = start;
-	stack[ 0 ].end = end;
-
-	//initialize stack iterator
-	quicksortStackItem * top = &( stack[ 0 ] );
-
-	// Keep popping from stack while is not empty
-	while ( top >= stack ) {
-		end = top -> end;
-		start = top -> start;
-		top--;
-
-		typename Vector<T>::Iterator storeIndex = start;
-
-		for ( auto i = start; i < end; i++ ) {
-			if ( func( *i, *end ) ) {
-				Vector::swap( i, storeIndex );
-				storeIndex++;
-			}
-		}
-		Vector::swap( end, storeIndex );
-
-		// If there are elements on left side of pivot, then push 
-		if ( storeIndex - 1 > start ) {
-			top++;
-			top -> start = start;
-			top -> end = storeIndex - 1;
-		}
-
-		// If there are elements on right side of pivot, then push 
-		if ( storeIndex + 1 < end ) {
-			top++;
-			top -> start = storeIndex + 1;
-			top -> end = end;
-		}
-	}
-
-	delete[] stack;
-}
-
-
-
-
-template<typename T>
-void Vector<T>::swap( const Size index1, const Size index2 ) {
-	Utility::swap<T>( this -> dataTable[ index1 ], this -> dataTable[ index2 ] );
-}
-
-
-template<typename T>
-void Vector<T>::swap( typename Vector<T>::Iterator index1, typename Vector<T>::Iterator index2 ) {
-	Utility::swap<T>( *index1, *index2 );
-}
-
-
 template<typename T>
 bool Vector<T>::eraseAll( const T & value ) {
 	bool r( false );
@@ -430,100 +271,18 @@ bool Vector<T>::eraseAll( const T & value ) {
 }
 
 template<typename T>
-const Size Vector<T>::search( const T & data ) const {
-	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] == data )
-			return i;
-	}
-	return Vector<T>::overflow;
-}
-
-
-template<typename T>
-const T & Vector<T>::getLast() const {
-	return *( this -> iteratorEnd - 1 );
-}
-
-
-template<typename T>
-T & Vector<T>::getLast() {
-	return *( this -> iteratorEnd - 1 );
-}
-
-
-template<typename T>
-const T & Vector<T>::getFirst() const {
-	return *dataTable;
-}
-
-
-template<typename T>
-T & Vector<T>::getFirst() {
-	return *dataTable;
-}
-
-template<typename T>
-Size Vector<T>::getIndex( typename Vector<T>::Iterator it ) const {
-	return Size( it - this->dataTable );
-}
-
-
-template<typename T>
-void Vector<T>::sortAsc() {
-	sort( Math::Logical::Less() );
-}
-
-template<typename T>
-void Vector<T>::sortDesc() {
-	sort( Math::Logical::Greater() );
-}
-
-template<typename T>
-template<typename Func>
-void Vector<T>::sort( Func & functor ) {
-	if ( this -> size ) quicksort( this -> dataTable, this -> iteratorEnd - 1, functor );
-}
-
-template<typename T>
-template<typename Func>
-typename Vector<T>::Iterator Vector<T>::getMin( Func & functor ) const {
-	if ( this->size == Size( 0 ) ) {
-		return typename Vector<T>::Iterator( NULL );
-	} else {
-		typename Vector<T>::Iterator foundedMinIt( this->dataTable );
-		for ( typename Vector<T>::Iterator it( getBegin() + 1 ); it < getEnd(); iterate( &it ) ) {
-			const T & v( getValueIt( it ) );
-
-			if ( functor( v, getValueIt( foundedMinIt ) ) ) {
-				foundedMinIt = it;
-			}
-		}
-		return foundedMinIt;
-	}
-}
-
-template<typename T>
-template<typename Func>
-typename Vector<T>::Iterator Vector<T>::getMax( Func & functor ) const {
-	if ( this->size == Size( 0 ) ) {
-		return typename Vector<T>::Iterator( NULL );
-	} else {
-		typename Vector<T>::Iterator foundedMaxIt( this->dataTable );
-		for ( typename Vector<T>::Iterator it( getBegin() + 1 ); it < getEnd(); iterate( &it ) ) {
-			const T & v( getValueIt( it ) );
-
-			if ( functor( getValueIt( foundedMaxIt ), v ) ) {
-				foundedMaxIt = it;
-			}
-		}
-		return foundedMaxIt;
-	}
-}
-
-template<typename T>
 void Vector<T>::resize( const Size newSize ) {
 	if ( newSize > this -> maxSize )
 		reserve( newSize );
+
+	this -> size = newSize;
+	_updateIterators();
+}
+
+template<typename T>
+inline void Vector<T>::resizeNoCopy(const Size newSize) {
+	if ( newSize > this -> maxSize )
+		allocate(newSize);
 
 	this -> size = newSize;
 	_updateIterators();
@@ -545,40 +304,6 @@ void Vector<T>::extendLeft( const Size increasedSize ) {
 template<typename T>
 void Vector<T>::extendRight( const Size increasedSize ) {
 	resize( this -> size + increasedSize );
-}
-
-
-
-template<typename T>
-bool Vector<T>::replaceAll( const T & search, const T & data ) {
-	bool r( false );
-	for ( Size i( 0 ); i < this -> maxSize; i++ ) {
-		if ( this -> dataTable[ i ] == search ) {
-			this -> dataTable[ i ] = data;
-			r = true;
-		}
-	}
-	return r;
-}
-
-template<typename T>
-bool Vector<T>::replaceFirst( const T & search, const T & data ) {
-	for ( Size i( 0 ); i < this -> maxSize; i++ ) {
-		if ( this -> dataTable[ i ] == search ) {
-			this -> dataTable[ i ] = data;
-			return true;
-		}
-	}
-	return false;
-}
-
-template<typename T>
-bool Vector<T>::exists( const T & value ) const {
-	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] == value )
-			return true;
-	}
-	return false;
 }
 
 
@@ -622,65 +347,63 @@ T & Vector<T>::pop() {
 	return *this -> iteratorEnd;
 }
 
-template<typename T>
-T * Vector<T>::getData() {
-	return this -> dataTable;
-}
 
-template<typename T>
-T * Vector<T>::data() {
-	return this -> dataTable;
-}
+
+
 
 template<typename T>
-const T * Vector<T>::getData() const {
-	return this -> dataTable;
-}
-
-template<typename T>
-const T * Vector<T>::data() const {
-	return this -> dataTable;
-}
-
-
-
-
-
-
-
-
-
-/************************************************************************/
-/* ITERATIONS                                                           */
-/************************************************************************/
-
-template<typename T>
-bool Vector<T>::iterate( typename Vector<T>::Iterator * it ) const {
-	( *it )++;
-	return !( *it == getEnd() );
-}
-
-template<typename T>
-bool Vector<T>::iterate( typename Vector<T>::Iterator * it, ElemType ** e ) const {
-	if ( *it == getEnd() )
-		return false;
-	*e = *it;
-	( *it )++;
-	return true;
-}
-
-template<typename T>
-template<typename TestFunctor>
-bool Vector<T>::iterate( typename Vector<T>::Iterator * it, ElemType ** e, TestFunctor & testFunctor ) const {
-	if ( *it == getEnd() )
-		return false;
-	*e = *it;
-	if ( testFunctor( *e ) ) {
-		( *it )++;
-		return true;
+void Vector<T>::setValueI(const Size i, const T& data) {
+#ifdef DEBUG
+	if ( i >= this->maxSize ) {
+		_error("Vector::setValueI Out of bounds.");
 	}
-	return false;
+#endif
+	this -> dataTable[ i ] = data;
 }
+
+template<typename T>
+void Vector<T>::setValueIt(typename Vector<T>::Iterator i, const T& data) {
+#ifdef DEBUG
+	if ( i < this->dataTable || i >= this->iteratorEnd ) {
+		_error("Vector::setValueIt Out of bounds.");
+	}
+#endif
+	* i = data;
+}
+
+template<typename T>
+const T& Vector<T>::getValueI(const Size i) const {
+	return const_cast< Vector<T> * >( this )->getValueI(i);
+}
+
+template<typename T>
+T& Vector<T>::getValueI(const Size i) {
+#ifdef DEBUG
+	if ( i >= this->maxSize ) {
+		_error("Vector::getValueI Out of bounds.");
+	}
+#endif
+	return this -> dataTable[ i ];
+}
+
+template<typename T>
+const T& Vector<T>::getValueIt(typename Vector<T>::Iterator it) const {
+	return const_cast< Vector<T> * >( this )->getValueIt(it);
+}
+
+template<typename T>
+T& Vector<T>::getValueIt(typename Vector<T>::Iterator it) {
+#ifdef DEBUG
+	if ( it < this->dataTable || it >= this->iteratorEnd ) {
+		_error("Vector::getValueIt Out of bounds.");
+	}
+#endif
+	return *it;
+}
+
+
+
+
 
 
 
@@ -688,16 +411,12 @@ bool Vector<T>::iterate( typename Vector<T>::Iterator * it, ElemType ** e, TestF
 /* OPERATOR =                                                           */
 /************************************************************************/
 template<typename T>
-Vector<T> & Vector<T>::operator=( Vector && v ) {
-	if ( this->dataTable ) {
-		delete[] this -> dataTable;
-	}
-	this -> dataTable = Utility::toRValue( v.dataTable );
-	this -> size = Utility::toRValue( v.size );
+Vector<T> & Vector<T>::operator=( Vector<T> && v ) {
+	BasicVector<T>::operator=(Utility::toRValue(v));
+
 	this -> maxSize = Utility::toRValue( v.maxSize );
 	_updateIterators();
 
-	v.dataTable = NULL;
 	return *this;
 }
 
@@ -717,10 +436,15 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 	return *this;
 }
 
-
 template<typename T>
-Vector<T> & Vector<T>::operator=( const Vector<T> & vector ) {
-	return operator=<T>( vector );
+template<typename C>
+inline Vector<T>& Vector<T>::operator=(const BasicVector<C>& vector) {
+	BasicVector<T>::operator=(vector);
+
+	this->maxSize = this->size;
+	_updateIterators();
+
+	return *this;
 }
 
 template<typename T>
@@ -739,34 +463,24 @@ const Size Vector<T>::getMaxSize() const {
 	return this -> maxSize;
 }
 
-template<typename T>
-const Size Vector<T>::getSize() const {
-	return this -> size;
-}
-
-template<typename T>
-void Vector<T>::fill( const T & data ) {
-	for ( Size i( 0 ); i < this -> maxSize; i++ ) {
-		this -> dataTable[ i ] = data;
-	}
-}
-
 
 template<typename T>
 void Vector<T>::reserve( const Size newMax ) {
 	if ( this -> size > newMax )
 		this -> size = newMax;
 
-	if ( newMax == 0 ) {
+	if ( newMax == Size(0) ) {
 		delete[] this -> dataTable;
 		this -> dataTable = NULL;
 	} else {
 		T * newTable = new T[ newMax ];
-		//copy old data
 
-		copy( newTable, dataTable, this -> size );
+		if ( this->maxSize > Size(0) ) {
+			// Copy old data
+			Utility::copy(newTable, dataTable, this -> size);
 
-		delete[] this -> dataTable;
+			delete[] this -> dataTable;
+		}
 		this -> dataTable = newTable;
 	}
 	this -> maxSize = newMax;
@@ -849,17 +563,6 @@ void Vector<T>::_allocateNoNull( const Size newMax ) {
 }
 
 
-template<typename T>
-T & Vector<T>::operator[]( const Size i ) {
-	return getValueI(i);
-}
-
-template<typename T>
-const T & Vector<T>::operator[]( const Size i ) const {
-	return getValueI(i);
-}
-
-
 
 
 
@@ -878,29 +581,11 @@ std::ostream & operator<<( std::ostream & stream, const Vector<T> & vector ) {
 
 
 
-template<typename T>
-typename Vector<T>::Iterator Vector<T>::end() const {
-	return getEnd();
-}
 
-template<typename T>
-typename Vector<T>::Iterator Vector<T>::begin() const {
-	return getBegin();
-}
 
 template<typename T>
 void Vector<T>::_updateIterators() {
 	this -> iteratorEnd = this -> dataTable + this -> size;
-}
-
-template<typename T>
-typename Vector<T>::Iterator Vector<T>::getBegin() const {
-	return this -> dataTable;
-}
-
-template<typename T>
-typename Vector<T>::Iterator Vector<T>::getEnd() const {
-	return this -> iteratorEnd;
 }
 
 /*
@@ -914,71 +599,6 @@ const T & Vector<T>::operator[]( typename Vector<T>::RandomAccessIterator i ) co
 	return *i;
 }
 */
-
-template<typename T>
-void Vector<T>::setValueI( const Size i, const T & data ) {
-#ifdef DEBUG
-	if ( i >= this->maxSize ) {
-		_error("Vector::setValueI Out of bounds.");
-	}
-#endif
-	this -> dataTable[ i ] = data;
-}
-
-
-template<typename T>
-void Vector<T>::setValueIt( typename Vector<T>::Iterator i, const T & data ) {
-#ifdef DEBUG
-	if ( i < this->dataTable || i >= this->iteratorEnd ) {
-		_error("Vector::setValueIt Out of bounds.");
-	}
-#endif
-	*i = data;
-}
-
-
-
-template<typename T>
-const T & Vector<T>::getValueI( const Size i ) const {
-#ifdef DEBUG
-	if ( i >= this->maxSize ) {
-		_error("Vector::getValueI Out of bounds.");
-	}
-#endif
-	return this -> dataTable[ i ];
-}
-
-
-template<typename T>
-T & Vector<T>::getValueI( const Size i ) {
-#ifdef DEBUG
-	if ( i >= this->maxSize ) {
-		_error("Vector::getValueI Out of bounds.");
-	}
-#endif
-	return this -> dataTable[ i ];
-}
-
-
-template<typename T>
-const T & Vector<T>::getValueIt( typename Vector<T>::Iterator it ) const {
-#ifdef DEBUG
-	if ( it < this->dataTable || it >= this->iteratorEnd ) {
-		_error("Vector::getValueIt Out of bounds.");
-	}
-#endif
-	return *it;
-}
-
-template<typename T>
-T & Vector<T>::getValueIt( typename Vector<T>::Iterator it ) {
-#ifdef DEBUG
-	if ( it < this->dataTable || it >= this->iteratorEnd ) {
-		_error("Vector::getValueIt Out of bounds.");
-	}
-#endif
-	return *it;
-}
 
 
 template<typename T>
@@ -1003,79 +623,6 @@ void Vector<T>::_eraseit( typename Vector<T>::Iterator it ) {
 
 
 
-//Default implementation with a one per one copy.
-template<typename T>
-template<typename C, typename D>
-void Vector<T>::copy( C * destinationBuffer, const D * sourceBuffer, const Size size ) {
-	if ( Utility::isSame<C, D>::value ) {
-		for ( Size i( 0 ); i < size; i++ ) {
-			destinationBuffer[ i ] = static_cast< C >( sourceBuffer[ i ] );
-		}
-	} else {
-		for ( Size i( 0 ); i < size; i++ ) {
-			destinationBuffer[ i ] = static_cast< C >( sourceBuffer[ i ] );
-		}
-	}
-}
-
-
-template<typename T>
-template<typename C, typename D>
-void Vector<T>::copy( C ** destinationBuffer, D * const * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( C * ) );
-}
-template<typename T>
-void Vector<T>::copy( char * destinationBuffer, const char * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size );
-}
-template<typename T>
-void Vector<T>::copy( unsigned char * destinationBuffer, const unsigned char * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size );
-}
-template<typename T>
-void Vector<T>::copy( short * destinationBuffer, const short * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( short ) );
-}
-template<typename T>
-void Vector<T>::copy( unsigned short * destinationBuffer, const unsigned short * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( short ) );
-}
-template<typename T>
-void Vector<T>::copy( int * destinationBuffer, const int * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( int ) );
-}
-template<typename T>
-void Vector<T>::copy( unsigned int * destinationBuffer, const unsigned int * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( int ) );
-}
-template<typename T>
-void Vector<T>::copy( long int * destinationBuffer, const long int * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long int ) );
-}
-template<typename T>
-void Vector<T>::copy( unsigned long int * destinationBuffer, const unsigned long int * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long int ) );
-}
-template<typename T>
-void Vector<T>::copy( long long int * destinationBuffer, const long long int * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long int ) );
-}
-template<typename T>
-void Vector<T>::copy( unsigned long long int * destinationBuffer, const unsigned long long int * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( long long int ) );
-}
-template<typename T>
-void Vector<T>::copy( float * destinationBuffer, const float * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( float ) );
-}
-template<typename T>
-void Vector<T>::copy( double * destinationBuffer, const double * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( double ) );
-}
-template<typename T>
-void Vector<T>::copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer, const Size size ) {
-	memcpy( destinationBuffer, sourceBuffer, size * sizeof( wchar_t ) );
-}
 
 
 
@@ -1090,21 +637,6 @@ void Vector<T>::copy( wchar_t * destinationBuffer, const wchar_t * sourceBuffer,
 
 
 
-
-
-template<typename T>
-template<typename Stream>
-bool Vector<T>::write( Stream * stream ) const {
-	if ( !IO::write( stream, &this -> size ) )
-		return false;
-
-	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( !IO::write( stream, &( this -> dataTable[ i ] ) ) )
-			return false;
-	}
-
-	return true;
-}
 
 template<typename T>
 template<typename Stream>

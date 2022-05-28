@@ -105,8 +105,8 @@ public:
 	 *
 	 * @brief	Delete the first value founded from the map
 	 *
-	 * @param	index	Index to search and to be deleted.
-	 * @param	value	Value to search and to be deleted.
+	 * @param	index	Index to searchI and to be deleted.
+	 * @param	value	Value to searchI and to be deleted.
 	 *
 	 * @returns	Boolean if a key has been deleted.
 	 */
@@ -117,8 +117,8 @@ public:
 	 *
 	 * @brief	Delete all the values founded from the map
 	 *
-	 * @param	index	Index to search and to be deleted.
-	 * @param	value	Value to search and to be deleted.
+	 * @param	index	Index to searchI and to be deleted.
+	 * @param	value	Value to searchI and to be deleted.
 	 *
 	 * @returns	Boolean if a key has been deleted.
 	 */

@@ -49,9 +49,10 @@
 //#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
 //#define DEBUG_TIME
-#define DEBUG_DATE
+// #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
+#define DEBUG_VEC
 
 
 #ifndef _LIB
@@ -67,6 +68,7 @@
 #include "Network/Network.h"
 #include "Network/HTTPClient.h"
 #include "Math/Math.h"
+#include "Math/Vec.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
@@ -1499,6 +1501,26 @@ int main(int argc, char* argv[]) {
 		log( strRaw );
 		StringASCII strHexa( streamTest.toStringHexa() );
 		log( streamTest.toStringHexa() );
+	}
+#endif
+#ifdef DEBUG_VEC
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Vec															//
+	{
+		Math::Vec<double> v1({ 1,1,1,1 });
+		Math::Vec<double> v2({ 3,3,3,3 });
+		Math::Vec<double> v3(v1 + v2);
+		Math::Vec<double> v4(Math::Vec4<float>(1, 2,3,4));
+		Math::Vec<double> v5(v1 + Math::Vec4<double>(1, 2,3,4));
+		Math::Vec<double> v6(v1 + 2.0);
+
+		v6 = Math::Vec2<double>(5, 5);
+
+		v5.sortDesc();
+
+		v1 = { 2,2,2,2 };
+
+		int i;
 	}
 #endif
 

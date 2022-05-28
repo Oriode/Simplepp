@@ -1448,15 +1448,15 @@ public:
 	///@brief		Gets a first
 	///@param	buffer			The buffer.
 	///@param	bufferSize  	Size of the buffer.
-	///@param	toSearch		to search.
-	///@param	toSearchSize	Size of to search.
+	///@param	toSearch		to searchI.
+	///@param	toSearchSize	Size of to searchI.
 	///@returns	The first.
 	static Size getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 	///@brief		Gets a last
 	///@param	buffer			The buffer.
 	///@param	bufferSize  	Size of the buffer.
-	///@param	toSearch		to search.
-	///@param	toSearchSize	Size of to search.
+	///@param	toSearch		to searchI.
+	///@param	toSearchSize	Size of to searchI.
 	///@returns	The last.
 	static Size getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize );
 
@@ -1473,12 +1473,12 @@ public:
 
 	///@brief		Gets a first
 	///@param	buffer  	The buffer.
-	///@param	toSearch	to search.
+	///@param	toSearch	to searchI.
 	///@returns	The first.
 	static Size getFirst( const T * buffer, const T * toSearch );
 	///@brief		Gets a last
 	///@param	buffer  	The buffer.
-	///@param	toSearch	to search.
+	///@param	toSearch	to searchI.
 	///@returns	The last.
 	static Size getLast( const T * buffer, const T * toSearch );
 
@@ -1489,7 +1489,6 @@ public:
 	static N parseNumber( const T ** c );
 
 	using Vector<T>::copy;
-
 	/************************************************************************/
 	/* CONVERSION                                                           */
 	/************************************************************************/

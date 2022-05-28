@@ -32,7 +32,7 @@ namespace Graphic {
 	{
 		if ( gradient.interpolatedArray ) {
 			this -> interpolatedArray = new C[this -> size];
-			Vector<C>::copy( this -> interpolatedArray, gradient.interpolatedArray, this -> size );
+			Utility::copy( this -> interpolatedArray, gradient.interpolatedArray, this -> size );
 		} else {
 			this -> interpolatedArray = NULL;
 		}	
@@ -55,7 +55,7 @@ namespace Graphic {
 		delete[] this -> interpolatedArray;
 		if ( gradient.interpolatedArray ) {
 			this -> interpolatedArray = new C[this -> size];
-			Vector<C>::copy( this -> interpolatedArray, gradient.interpolatedArray, this -> size );
+			Utility::copy( this -> interpolatedArray, gradient.interpolatedArray, this -> size );
 		} else {
 			this -> interpolatedArray = NULL;
 		}

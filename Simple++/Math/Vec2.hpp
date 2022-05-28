@@ -1,3 +1,4 @@
+#include "Vec2.h"
 namespace Math {
 
 	template<typename T>
@@ -47,6 +48,16 @@ namespace Math {
 	MATH_FUNC_QUALIFIER void Vec2<T>::inverse() {
 		this -> x = T( 1 ) / x;
 		this -> y = T( 1 ) / y;
+	}
+
+	template<typename T>
+	inline constexpr Size Vec2<T>::getSize() const {
+		return Size(2);
+	}
+
+	template<typename T>
+	inline const T* Vec2<T>::getData() const {
+		return this->values;
 	}
 
 	template<typename T>
