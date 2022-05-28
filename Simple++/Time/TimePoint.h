@@ -75,9 +75,6 @@ namespace Time {
 		TimePoint & operator+=( TimeT t );
 		TimePoint & operator-=( TimeT t );
 
-		/** @brief	Destructor */
-		~TimePoint();
-
 
 		/**
 		 * @brie	f	Sets an old school time_t.

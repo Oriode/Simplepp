@@ -173,10 +173,6 @@ namespace Time {
 		return convertTime<Ratio2, Ratio>(this->t);
 	}
 
-
-	template<typename Ratio>
-	TimePoint<Ratio>::~TimePoint() {}
-
 	template<typename Ratio>
 	TimePoint<Ratio> getTime() {
 		TimePoint<Ratio> newTime;
