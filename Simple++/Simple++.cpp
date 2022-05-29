@@ -1510,13 +1510,21 @@ int main(int argc, char* argv[]) {
 		Math::Vec<double> v1({ 1,1,1,1 });
 		Math::Vec<double> v2({ 3,3,3,3 });
 		Math::Vec<double> v3(v1 + v2);
-		Math::Vec<double> v4(Math::Vec4<float>(1, 2,3,4));
-		Math::Vec<double> v5(v1 + Math::Vec4<double>(1, 2,3,4));
+		Math::Vec<double> v4({ 1,2,3,4 });
+		Math::Vec<double> v5(v1 + v4);
 		Math::Vec<double> v6(v1 + 2.0);
 
-		v6 = Math::Vec2<double>(5, 5);
+		// v6 = Math::Vec2<double>(5, 5);
 
 		v5.sortDesc();
+
+		v5 += v5;
+
+		v5 = -v5;
+
+		v5 = abs(v5);
+
+		log(Math::length(Math::normalize(v5)));
 
 		v1 = { 2,2,2,2 };
 

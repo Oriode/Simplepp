@@ -304,6 +304,23 @@ namespace Math {
 	using std::floor;
 	using std::exp;
 	using std::round;
+
+	/************************************************************************/
+	/* FUNCTORS                                                         */
+	/************************************************************************/
+
+	struct Abs {
+		template<typename T> inline constexpr T operator()(const T& v) { return Math::abs(v); }
+	};
+	struct Min {
+		template<typename T> inline constexpr T operator()(const T& x, const T& y) { return Math::min(x, y); }
+	};
+	struct Max {
+		template<typename T> inline constexpr T operator()(const T& x, const T& y) { return Math::max(x, y); }
+	};
+	struct Sqrt {
+		template<typename T> inline constexpr T operator()(const T& v) { return Math::sqrt(v); }
+	};
 }
 
 #include "BasicMath.hpp"

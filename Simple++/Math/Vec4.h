@@ -33,8 +33,8 @@ namespace Math {
 		MATH_FUNC_QUALIFIER operator Vec3<T>() const;
 
 
-		MATH_FUNC_QUALIFIER T & operator[]( unsigned int index );
-		MATH_FUNC_QUALIFIER const T & operator[]( unsigned int index ) const;
+		MATH_FUNC_QUALIFIER T & operator[](Size index );
+		MATH_FUNC_QUALIFIER const T & operator[](Size index ) const;
 
 
 		/************************************************************************/
@@ -47,6 +47,13 @@ namespace Math {
 		/************************************************************************/
 		/* Arithmetic                                                             */
 		/************************************************************************/
+
+		template<typename Compare>
+		MATH_FUNC_QUALIFIER Vec4<T>& apply(Compare& func, const Vec4<T>& v);
+		template<typename Compare>
+		MATH_FUNC_QUALIFIER Vec4<T>& apply(Compare& func, const T& v);
+		template<typename Compare>
+		MATH_FUNC_QUALIFIER Vec4<T>& apply(Compare& func);
 
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec4<T> & operator*=( const Vec4<U> & v );
@@ -111,19 +118,14 @@ namespace Math {
 
 
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare & func, const Vec4<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool AND( Compare & func, const Vec4<T> & v ) const;
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare & func, const T & v ) const;
+		MATH_FUNC_QUALIFIER bool AND( Compare & func, const T & v ) const;
 
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare & func, const Vec4<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool OR( Compare & func, const Vec4<T> & v ) const;
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare & func, const T & v )const;
-
-		template<typename Compare>
-		MATH_FUNC_QUALIFIER Vec4<T> & _MathOperator( Compare & func, const Vec4<T> & v );
-		template<typename Compare>
-		MATH_FUNC_QUALIFIER Vec4<T> & _MathOperator( Compare & func, const T & v );
+		MATH_FUNC_QUALIFIER bool OR( Compare & func, const T & v )const;
 
 	};
 

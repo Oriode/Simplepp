@@ -41,6 +41,7 @@ public:
 	BasicVector(const C* v, const Size size);
 	template<typename C>
 	BasicVector(const BasicVector<C>& v);
+	BasicVector(const BasicVector<T>& v);
 	BasicVector(BasicVector<T> && v);
 
 	~BasicVector();
@@ -49,6 +50,7 @@ public:
 	BasicVector<T>& operator=(const C(&v)[ N ]);
 	template<typename C>
 	BasicVector<T>& operator=(const BasicVector<C>& v);
+	BasicVector<T>& operator=(const BasicVector<T>& v);
 	BasicVector<T>& operator=(BasicVector<T>&& v);
 
 	/**
@@ -198,6 +200,19 @@ public:
 
 	typename BasicVector<T>::Iterator getIterator(const Size i) const;
 
+	/************************************************************************/
+	/* ================              LOGICAL               ================ */
+	/************************************************************************/
+
+	template<typename Compare>
+	MATH_FUNC_QUALIFIER bool AND(Compare& func, const BasicVector<T>& v) const;
+	template<typename Compare>
+	MATH_FUNC_QUALIFIER bool AND(Compare& func, const T& s) const;
+
+	template<typename Compare>
+	MATH_FUNC_QUALIFIER bool OR(Compare& func, const BasicVector<T>& v) const;
+	template<typename Compare>
+	MATH_FUNC_QUALIFIER bool OR(Compare& func, const T& s)const;
 
 	/**
 	 * @brief 	Equality operator
@@ -251,6 +266,13 @@ public:
 	/************************************************************************/
 	/* ================                MISC                ================ */
 	/************************************************************************/
+
+	template<typename Functor, typename C>
+	BasicVector<T>& apply(Functor& functor, const BasicVector<C>& v);
+	template<typename Functor>
+	BasicVector<T>& apply(Functor& functor, const T& s);
+	template<typename Functor>
+	BasicVector<T>& apply(Functor& functor);
 
 	void resize(const Size newSize);
 	void resizeNoCopy(const Size newSize);
@@ -501,6 +523,8 @@ inline BasicVector<T>& BasicVector<T>::operator=(BasicVector<T>&& v) {
 	this->dataTable = Utility::toRValue(v.dataTable);
 
 	v.dataTable = NULL;
+
+	return *this;
 }
 
 template<typename T>
@@ -544,6 +568,13 @@ inline BasicVector<T>::BasicVector(const BasicVector<C>& v) :
 }
 
 template<typename T>
+inline BasicVector<T>::BasicVector(const BasicVector<T>& v) :
+	size(v.size),
+	dataTable(new T[ v.size ]) {
+	Utility::copy(this->dataTable, v.dataTable, this->size);
+}
+
+template<typename T>
 template<typename C, Size N>
 inline BasicVector<T>& BasicVector<T>::operator=(const C(&v)[ N ]) {
 	resizeNoCopy(N);
@@ -556,7 +587,15 @@ template<typename T>
 template<typename C>
 inline BasicVector<T>& BasicVector<T>::operator=(const BasicVector<C>& v) {
 	resizeNoCopy(v.getSize());
-	Utility::copy(this->dataTable, v, this->size);
+	Utility::copy(this->dataTable, v.getData(), this->size);
+
+	return *this;
+}
+
+template<typename T>
+inline BasicVector<T>& BasicVector<T>::operator=(const BasicVector<T>& v) {
+	resizeNoCopy(v.getSize());
+	Utility::copy(this->dataTable, v.getData(), this->size);
 
 	return *this;
 }
@@ -622,6 +661,37 @@ bool BasicVector<T>::operator>=(const BasicVector<T>& v) const {
 }
 
 template<typename T>
+template<typename Functor, typename C>
+inline BasicVector<T>& BasicVector<T>::apply(Functor& functor, const BasicVector<C>& v) {
+	assert(getSize() == v.getSize());
+	for ( Size i(0); i < getSize(); i++ ) {
+		functor(this->dataTable[ i ], v[ i ]);
+	}
+
+	return *this;
+}
+
+template<typename T>
+template<typename Functor>
+inline BasicVector<T>& BasicVector<T>::apply(Functor& functor, const T& s) {
+	for ( Size i(0); i < getSize(); i++ ) {
+		functor(this->dataTable[ i ], s);
+	}
+
+	return *this;
+}
+
+template<typename T>
+template<typename Functor>
+inline BasicVector<T>& BasicVector<T>::apply(Functor& functor) {
+	for ( Size i(0); i < getSize(); i++ ) {
+		functor(this->dataTable[ i ]);
+	}
+
+	return *this;
+}
+
+template<typename T>
 inline void BasicVector<T>::resize(const Size newSize) {
 	if ( newSize == this->size ) {
 		return;
@@ -666,27 +736,62 @@ inline void BasicVector<T>::resizeNoCopy(const Size newSize) {
 }
 
 template<typename T>
-bool BasicVector<T>::operator!=(const BasicVector<T>& v) const {
+template<typename Compare>
+inline MATH_FUNC_QUALIFIER bool BasicVector<T>::AND(Compare& func, const BasicVector<T>& v) const {
 	if ( this -> size != v.size )
-		return true;
+		return false;
 
-	for ( Size i(0); i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] != v.dataTable[ i ] )
+	for ( Size i(0); i < this->size; i++ ) {
+		if ( !( func(this->dataTable[ i ], v[ i ]) ) ) {
+			return false;
+		}
+	}
+	return true;
+}
+
+template<typename T>
+template<typename Compare>
+inline MATH_FUNC_QUALIFIER bool BasicVector<T>::AND(Compare& func, const T& s) const {
+	for ( Size i(0); i < this->size; i++ ) {
+		if ( !( func(this->dataTable[ i ], s) ) ) {
+			return false;
+		}
+	}
+	return true;
+}
+
+template<typename T>
+template<typename Compare>
+inline MATH_FUNC_QUALIFIER bool BasicVector<T>::OR(Compare& func, const BasicVector<T>& v) const {
+	Size minSize(Math::min(getSize(), v.getSize()));
+
+	for ( Size i(0); i < minSize; i++ ) {
+		if ( func(this->dataTable[ i ], v[ i ]) ) {
 			return true;
+		}
 	}
 	return false;
 }
 
 template<typename T>
-bool BasicVector<T>::operator==(const BasicVector<T>& v) const {
-	if ( this -> size != v.size )
-		return false;
-
-	for ( Size i(0); i < this -> size; i++ ) {
-		if ( this -> dataTable[ i ] != v.dataTable[ i ] )
-			return false;
+template<typename Compare>
+inline MATH_FUNC_QUALIFIER bool BasicVector<T>::OR(Compare& func, const T& s) const {
+	for ( Size i(0); i < this->size; i++ ) {
+		if ( func(this->dataTable[ i ], s) ) {
+			return true;
+		}
 	}
-	return true;
+	return false;
+}
+
+template<typename T>
+bool BasicVector<T>::operator!=(const BasicVector<T>& v) const {
+	return !AND(Math::Logical::Equal());
+}
+
+template<typename T>
+bool BasicVector<T>::operator==(const BasicVector<T>& v) const {
+	return AND(Math::Logical::Equal());
 }
 
 template<typename T>

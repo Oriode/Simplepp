@@ -27,7 +27,7 @@ namespace Math {
 			template<typename T> inline T operator() ( const T& x, const T& y ) const { x << y; }
 		};
 		struct MinusUnary {
-			template<typename T> inline T operator() ( const T& x ) const { return -x; }
+			template<typename T> inline T operator() ( T& x ) const { return x = -x; }
 		};
 
 

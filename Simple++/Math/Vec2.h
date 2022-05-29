@@ -24,13 +24,20 @@ namespace Math {
 		template<typename U = char>
 		MATH_FUNC_QUALIFIER operator BasicString<U>() const;
 
-		MATH_FUNC_QUALIFIER T & operator[]( unsigned int index );
-		MATH_FUNC_QUALIFIER const T & operator[]( unsigned int index ) const;
+		MATH_FUNC_QUALIFIER T & operator[](Size index );
+		MATH_FUNC_QUALIFIER const T & operator[](Size index ) const;
 
 
 		/************************************************************************/
 		/* Arithmetic                                                           */
 		/************************************************************************/
+		template<typename Functor>
+		MATH_FUNC_QUALIFIER Vec2<T>& apply(Functor& func, const Vec2<T>& v);
+		template<typename Functor>
+		MATH_FUNC_QUALIFIER Vec2<T>& apply(Functor& func, const T& v);
+		template<typename Functor>
+		MATH_FUNC_QUALIFIER Vec2<T>& apply(Functor& func);
+
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec2<T> & operator*=( const Vec2<U> & v );
 		MATH_FUNC_QUALIFIER Vec2<T> & operator*=( const T & v );
@@ -87,19 +94,14 @@ namespace Math {
 		static const Vec2<T> null;
 
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare & func, const Vec2<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool AND( Compare & func, const Vec2<T> & v ) const;
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare & func, const T & v ) const;
+		MATH_FUNC_QUALIFIER bool AND( Compare & func, const T & v ) const;
 
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare & func, const Vec2<T> & v ) const;
+		MATH_FUNC_QUALIFIER bool OR( Compare & func, const Vec2<T> & v ) const;
 		template<typename Compare>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare & func, const T & v )const;
-
-		template<typename Compare>
-		MATH_FUNC_QUALIFIER Vec2<T> & _MathOperator( Compare & func, const Vec2<T> & v );
-		template<typename Compare>
-		MATH_FUNC_QUALIFIER Vec2<T> & _MathOperator( Compare & func, const T & v );
+		MATH_FUNC_QUALIFIER bool OR( Compare & func, const T & v )const;
 	};
 
 

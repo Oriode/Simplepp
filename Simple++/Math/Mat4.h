@@ -30,8 +30,8 @@ namespace Math {
 		template<typename U>
 		MATH_FUNC_QUALIFIER operator BasicString<U>() const;
 
-		MATH_FUNC_QUALIFIER Vec4<T> & operator[]( unsigned int index );
-		MATH_FUNC_QUALIFIER const Vec4<T> & operator[]( unsigned int index ) const;
+		MATH_FUNC_QUALIFIER Vec4<T> & operator[](Size index );
+		MATH_FUNC_QUALIFIER const Vec4<T> & operator[](Size index ) const;
 
 
 		/************************************************************************/
@@ -123,10 +123,10 @@ namespace Math {
 		static const Mat4<T> identity;
 	private:
 		template<typename Compare, typename U>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare & func, const Mat4<U> & v ) const;
+		MATH_FUNC_QUALIFIER bool AND( Compare & func, const Mat4<U> & v ) const;
 
 		template<typename Compare, typename U>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare & func, const Mat4<U> & v ) const;
+		MATH_FUNC_QUALIFIER bool OR( Compare & func, const Mat4<U> & v ) const;
 	};
 
 

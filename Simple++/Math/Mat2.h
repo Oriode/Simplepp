@@ -21,8 +21,8 @@ namespace Math {
 								  const T & v12, const T & v22 );
 		MATH_FUNC_QUALIFIER Mat2( const ColType & col0, const ColType & col1 );
 
-		MATH_FUNC_QUALIFIER Vec2<T> & operator[]( unsigned int index );
-		MATH_FUNC_QUALIFIER const Vec2<T> & operator[]( unsigned int index ) const;
+		MATH_FUNC_QUALIFIER Vec2<T> & operator[]( Size index );
+		MATH_FUNC_QUALIFIER const Vec2<T> & operator[](Size index ) const;
 
 
 		template<typename U = char>
@@ -127,10 +127,10 @@ namespace Math {
 
 	private:
 		template<typename Compare, typename U>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorAND( Compare & func, const Mat2<U> & v ) const;
+		MATH_FUNC_QUALIFIER bool AND( Compare & func, const Mat2<U> & v ) const;
 
 		template<typename Compare, typename U>
-		MATH_FUNC_QUALIFIER bool _logicalOperatorOR( Compare & func, const Mat2<U> & v ) const;
+		MATH_FUNC_QUALIFIER bool OR( Compare & func, const Mat2<U> & v ) const;
 	};
 
 

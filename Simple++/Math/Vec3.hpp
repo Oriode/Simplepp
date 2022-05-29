@@ -9,31 +9,31 @@ namespace Math {
 
 	template<typename T>
 	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Vec3<T>::_logicalOperatorOR( Compare & func, const Vec3<T> & v ) const {
+	MATH_FUNC_QUALIFIER bool Vec3<T>::OR( Compare & func, const Vec3<T> & v ) const {
 		return func( this -> x, v.x ) || func( this -> y, v.y ) || func( this -> z, v.z );
 	}
 
 	template<typename T>
 	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Vec3<T>::_logicalOperatorOR( Compare & func, const T & v ) const {
+	MATH_FUNC_QUALIFIER bool Vec3<T>::OR( Compare & func, const T & v ) const {
 		return func( this -> x, v ) || func( this -> y, v ) || func( this -> z, v );
 	}
 
 	template<typename T>
 	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Vec3<T>::_logicalOperatorAND( Compare & func, const Vec3<T> & v ) const {
+	MATH_FUNC_QUALIFIER bool Vec3<T>::AND( Compare & func, const Vec3<T> & v ) const {
 		return func( this -> x, v.x ) && func( this  -> y, v.y ) && func( this  -> z, v.z );
 	}
 
 	template<typename T>
 	template<typename Compare>
-	MATH_FUNC_QUALIFIER bool Vec3<T>::_logicalOperatorAND( Compare & func, const T & v ) const {
+	MATH_FUNC_QUALIFIER bool Vec3<T>::AND( Compare & func, const T & v ) const {
 		return func( this -> x, v ) && func( this  -> y, v ) && func( this  -> z, v );
 	}
 
 	template<typename T>
 	template<typename Compare>
-	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::_MathOperator( Compare & func, const T & v ) {
+	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::apply( Compare & func, const T & v ) {
 		func( this -> x, v );
 		func( this -> y, v );
 		func( this -> z, v );
@@ -41,7 +41,15 @@ namespace Math {
 	}
 	template<typename T>
 	template<typename Compare>
-	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::_MathOperator( Compare & func, const Vec3<T> & v ) {
+	inline MATH_FUNC_QUALIFIER Vec3<T>& Vec3<T>::apply(Compare& func) {
+		func(this -> x);
+		func(this -> y);
+		func(this -> z);
+		return *this;
+	}
+	template<typename T>
+	template<typename Compare>
+	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::apply( Compare & func, const Vec3<T> & v ) {
 		func( this -> x, v.x );
 		func( this -> y, v.y );
 		func( this -> z, v.z );
@@ -90,98 +98,92 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator-=( const T & v ) {
-		return _MathOperator( Math::Operations::SubEqual(), v );
+		return apply( Math::Operations::SubEqual(), v );
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator-=( const Vec3<U> & v ) {
-		return _MathOperator( Math::Operations::SubEqual(), v );
+		return apply( Math::Operations::SubEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator+=( const T & v ) {
-		return _MathOperator( Math::Operations::AddEqual(), v );
+		return apply( Math::Operations::AddEqual(), v );
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator+=( const Vec3<U> & v ) {
-		return _MathOperator( Math::Operations::AddEqual(), v );
+		return apply( Math::Operations::AddEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator/=( const T & v ) {
-		return _MathOperator( Math::Operations::DivEqual(), v );
+		return apply( Math::Operations::DivEqual(), v );
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator/=( const Vec3<U> & v ) {
-		return _MathOperator( Math::Operations::DivEqual(), v );
+		return apply( Math::Operations::DivEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator*=( const T & v ) {
-		return _MathOperator( Math::Operations::MulEqual(), v );
+		return apply( Math::Operations::MulEqual(), v );
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator*=( const Vec3<U> & v ) {
-		return _MathOperator( Math::Operations::MulEqual(), v );
+		return apply( Math::Operations::MulEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator>>=( const T & v ) {
-		return _MathOperator( Math::Operations::BinaryShiftRightEqual(), v );
+		return apply( Math::Operations::BinaryShiftRightEqual(), v );
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator>>=( const Vec3<U> & v ) {
-		return _MathOperator( Math::Operations::BinaryShiftRightEqual(), v );
+		return apply( Math::Operations::BinaryShiftRightEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator<<=( const T & v ) {
-		return _MathOperator( Math::Operations::BinaryShiftLeftEqual(), v );
+		return apply( Math::Operations::BinaryShiftLeftEqual(), v );
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator<<=( const Vec3<U> & v ) {
-		return _MathOperator( Math::Operations::BinaryShiftLeftEqual(), v );
+		return apply( Math::Operations::BinaryShiftLeftEqual(), v );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator++() {
-		this -> x++;
-		this -> y++;
-		this -> z++;
-		return *this;
+		return apply(Math::Operations::Increment());
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator--() {
-		this -> x--;
-		this -> y--;
-		this -> z--;
-		return *this;
+		return apply(Math::Operations::Decrement());
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> Vec3<T>::operator-() const {
-		return Vec3<T>( -this -> x, -this -> y, -this -> z );
+		return apply(Math::Operations::MinusUnary());
 	}
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER T & Vec3<T>::operator[]( unsigned int index ) {
+	MATH_FUNC_QUALIFIER T & Vec3<T>::operator[](Size index ) {
 		return this -> values[index];
 	}
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER const T & Vec3<T>::operator[]( unsigned int index ) const {
+	MATH_FUNC_QUALIFIER const T & Vec3<T>::operator[](Size index ) const {
 		return this -> values[index];
 	}
 
@@ -211,7 +213,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> & Vec3<T>::operator=( const T & v ) {
-		return _MathOperator( Math::Operations::Assign(), v );
+		return apply( Math::Operations::Assign(), v );
 	}
 
 	template<typename T>
@@ -255,80 +257,80 @@ namespace Math {
 	/************************************************************************/
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator==( const Vec3<T> & v1, const Vec3<T> & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::Equal(), v2 );
+		return v1.AND( Math::Logical::Equal(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator==( const Vec3<T> & v1, const T & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::Equal(), v2 );
+		return v1.AND( Math::Logical::Equal(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator==( const T & v1, const Vec3<T> & v2 ) {
-		return v2._logicalOperatorAND( Math::Logical::Equal(), v1 );
+		return v2.AND( Math::Logical::Equal(), v1 );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator!=( const Vec3<T> & v1, const Vec3<T> & v2 ) {
-		return v1._logicalOperatorOR( Math::Logical::NotEqual(), v2 );
+		return v1.OR( Math::Logical::NotEqual(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator!=( const Vec3<T> & v1, const T & v2 ) {
-		return v1._logicalOperatorOR( Math::Logical::NotEqual(), v2 );
+		return v1.OR( Math::Logical::NotEqual(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator!=( const T & v1, const Vec3<T> & v2 ) {
-		return v2._logicalOperatorOR( Math::Logical::NotEqual(), v1 );
+		return v2.OR( Math::Logical::NotEqual(), v1 );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator>=( const Vec3<T> & v1, const Vec3<T> & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::GreaterOrEqual(), v2 );
+		return v1.AND( Math::Logical::GreaterOrEqual(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator>=( const Vec3<T> & v1, const T & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::GreaterOrEqual(), v2 );
+		return v1.AND( Math::Logical::GreaterOrEqual(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator>=( const T & v1, const Vec3<T> & v2 ) {
-		return v2._logicalOperatorAND( Math::Logical::GreaterOrEqual(), v1 );
+		return v2.AND( Math::Logical::GreaterOrEqual(), v1 );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator<=( const Vec3<T> & v1, const Vec3<T> & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::LessOrEqual(), v2 );
+		return v1.AND( Math::Logical::LessOrEqual(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator<=( const Vec3<T> & v1, const T & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::LessOrEqual(), v2 );
+		return v1.AND( Math::Logical::LessOrEqual(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator<=( const T & v1, const Vec3<T> & v2 ) {
-		return v2._logicalOperatorAND( Math::Logical::LessOrEqual(), v1 );
+		return v2.AND( Math::Logical::LessOrEqual(), v1 );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator>( const Vec3<T> & v1, const Vec3<T> & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::Greater(), v2 );
+		return v1.AND( Math::Logical::Greater(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator>( const Vec3<T> & v1, const T & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::Greater(), v2 );
+		return v1.AND( Math::Logical::Greater(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator>( const T & v1, const Vec3<T> & v2 ) {
-		return v2._logicalOperatorAND( Math::Logical::Greater(), v1 );
+		return v2.AND( Math::Logical::Greater(), v1 );
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator<( const Vec3<T> & v1, const Vec3<T> & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::Less(), v2 );
+		return v1.AND( Math::Logical::Less(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator<( const Vec3<T> & v1, const T & v2 ) {
-		return v1._logicalOperatorAND( Math::Logical::Less(), v2 );
+		return v1.AND( Math::Logical::Less(), v2 );
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER bool operator<( const T & v1, const Vec3<T> & v2 ) {
-		return v2._logicalOperatorAND( Math::Logical::Less(), v1 );
+		return v2.AND( Math::Logical::Less(), v1 );
 	}
 	/************************************************************************/
 	/* Arithmetic                                                           */

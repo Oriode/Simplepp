@@ -303,32 +303,32 @@ namespace Math {
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator==( const Mat3<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::Equal(), m );
+		return AND( Math::Logical::Equal(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator!=( const Mat3<U> & m ) const {
-		return _logicalOperatorOR( Math::Logical::NotEqual(), m );
+		return OR( Math::Logical::NotEqual(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<( const Mat3<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::Less(), m );
+		return AND( Math::Logical::Less(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator<=( const Mat3<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::LessOrEqual(), m );
+		return AND( Math::Logical::LessOrEqual(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>( const Mat3<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::Greater(), m );
+		return AND( Math::Logical::Greater(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat3<T>::operator>=( const Mat3<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::GreaterOrEqual(), m );
+		return AND( Math::Logical::GreaterOrEqual(), m );
 	}
 
 
@@ -336,13 +336,13 @@ namespace Math {
 
 	template<typename T>
 	template<typename Compare, typename U>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::_logicalOperatorOR( Compare & func, const Mat3<U> & m ) const {
+	MATH_FUNC_QUALIFIER bool Mat3<T>::OR( Compare & func, const Mat3<U> & m ) const {
 		return func( this -> column[0], m[0] ) || func( this -> column[1], m[1] ) || func( this -> column[2], m[2] );
 	}
 
 	template<typename T>
 	template<typename Compare, typename U>
-	MATH_FUNC_QUALIFIER bool Mat3<T>::_logicalOperatorAND( Compare & func, const Mat3<U> & m )const {
+	MATH_FUNC_QUALIFIER bool Mat3<T>::AND( Compare & func, const Mat3<U> & m )const {
 		return func( this -> column[0], m[0] ) && func( this -> column[1], m[1] ) && func( this -> column[2], m[2] );
 	}
 

@@ -1,24 +1,27 @@
 #pragma once
 
-#include "../SimpleLog.h"
+#include "../Log.h"
 #include "../Utility.h"
 
+#include "BasicMath.h"
 #include "../BasicVector.h"
-#include "Vec2.h"
 
 namespace Math {
 
 	template<typename T>
 	class Vec : public BasicVector<T> {
 	public:
+		template<typename C>
+		friend class Mat;
+
 		Vec(const Size size);
-		template<typename V>
-		Vec(const V& v);
+		//template<typename V>
+		//Vec(const V& v);
 		template<typename C, Size N>
 		Vec(const C(&v)[ N ]);
 		template<typename C>
 		Vec(const BasicVector<C>& v);
-		Vec(Vec<T>&& v);
+		Vec(BasicVector<T>&& v);
 
 		~Vec();
 
@@ -30,21 +33,49 @@ namespace Math {
 		Vec<T>& operator=(const C(&v)[ N ]);
 		template<typename C>
 		Vec<T>& operator=(const BasicVector<C>& v);
-		template<typename V>
-		Vec<T>& operator=(const V& v);
-		Vec<T>& operator=(Vec<T>&& v);
+		Vec<T>& operator=(const BasicVector<T>& v);
+		//template<typename V>
+		//Vec<T>& operator=(const V& v);
+		Vec<T>& operator=(BasicVector<T>&& v);
 
 		/************************************************************************/
 		/* ================             ARITHMETIC             ================ */
 		/************************************************************************/
 
-		template<typename V>
-		Vec<T> & operator+=(const V& v);
+		template<typename Functor, typename C>
+		Vec<T>& apply(Functor & functor, const BasicVector<C>& v);
+		template<typename Functor>
+		Vec<T>& apply(Functor& functor, const T& s);
+		template<typename Functor>
+		Vec<T>& apply(Functor& functor);
+
+		template<typename C>
+		Vec<T> & operator+=(const BasicVector<C>& v);
 		Vec<T>& operator+=(const T& s);
 
-		template<typename V>
-		Vec<T>& operator-=(const V& v);
+		template<typename C>
+		Vec<T>& operator-=(const BasicVector<C>& v);
 		Vec<T>& operator-=(const T& s);
+
+		template<typename C>
+		Vec<T>& operator*=(const BasicVector<C>& v);
+		Vec<T>& operator*=(const T& s);
+
+		template<typename C>
+		Vec<T>& operator/=(const BasicVector<C>& v);
+		Vec<T>& operator/=(const T& s);
+
+		template<typename C>
+		Vec<T>& operator%=(const BasicVector<C>& v);
+		Vec<T>& operator%=(const T& s);
+
+		Vec<T>& operator++();
+		Vec<T>& operator--();
+		Vec<T>& operator-();
+
+		/************************************************************************/
+		/* ================              LOGICAL               ================ */
+		/************************************************************************/
 
 		/************************************************************************/
 		/* ================               ACCESS               ================ */
@@ -57,9 +88,6 @@ namespace Math {
 		void zeros();
 		void ones();
 		void randomF();
-		T sum() const;
-		T mean() const;
-		T standardDeviation() const;
 
 	private:
 	};
@@ -68,20 +96,62 @@ namespace Math {
 	/* ================             ARITHMETIC             ================ */
 	/************************************************************************/
 
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor & functor, const Vec<T>& v1, const Vec<T>& v2);
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const Vec<T>& v, const T& s);
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const T& s, const Vec<T>& v);
+	template<typename T, typename Functor, typename C>
+	Vec<T> apply(Functor& functor, const Vec<T>& v1, const BasicVector<C>& v2);
+	template<typename T, typename Functor, typename C>
+	Vec<T> apply(Functor& functor, const BasicVector<C>& v1, const Vec<T>& v2);
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const Vec<T>& v);
+
 	template<typename T>
 	Vec<T> operator+(const Vec<T>& v1, const Vec<T> & v2);
-
 	template<typename T>
 	Vec<T> operator+(const Vec<T>& v, const T& s);
-
 	template<typename T>
 	Vec<T> operator+(const T& s, const Vec<T>& v);
-
-	template<typename T, typename V>
+	/*template<typename T, typename V>
 	Vec<T> operator+(const Vec<T>& v1, const V& v2);
-
 	template<typename T, typename V>
-	Vec<T> operator+(const V& v1, const Vec<T>& v2);
+	Vec<T> operator+(const V& v1, const Vec<T>& v2);*/
+
+	template<typename T>
+	Vec<T> operator-(const Vec<T>& v1, const Vec<T>& v2);
+	template<typename T>
+	Vec<T> operator-(const Vec<T>& v, const T& s);
+	template<typename T>
+	Vec<T> operator-(const T& s, const Vec<T>& v);
+	/*template<typename T, typename V>
+	Vec<T> operator-(const Vec<T>& v1, const V& v2);
+	template<typename T, typename V>
+	Vec<T> operator-(const V& v1, const Vec<T>& v2);*/
+
+	template<typename T>
+	Vec<T> operator*(const Vec<T>& v1, const Vec<T>& v2);
+	template<typename T>
+	Vec<T> operator*(const Vec<T>& v, const T& s);
+	template<typename T>
+	Vec<T> operator*(const T& s, const Vec<T>& v);
+	/*template<typename T, typename V>
+	Vec<T> operator*(const Vec<T>& v1, const V& v2);
+	template<typename T, typename V>
+	Vec<T> operator*(const V& v1, const Vec<T>& v2);*/
+
+	template<typename T>
+	Vec<T> operator/(const Vec<T>& v1, const Vec<T>& v2);
+	template<typename T>
+	Vec<T> operator/(const Vec<T>& v, const T& s);
+	template<typename T>
+	Vec<T> operator/(const T& s, const Vec<T>& v);
+	/*template<typename T, typename V>
+	Vec<T> operator/(const Vec<T>& v1, const V& v2);
+	template<typename T, typename V>
+	Vec<T> operator/(const V& v1, const Vec<T>& v2);*/
 
 
 
@@ -106,7 +176,7 @@ namespace Math {
 	{}
 
 	template<typename T>
-	inline Vec<T>::Vec(Vec<T>&& v) :
+	inline Vec<T>::Vec(BasicVector<T>&& v) :
 		BasicVector<T>(Utility::toRValue(v))
 	{
 	}
@@ -134,43 +204,7 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline T Vec<T>::sum() const {
-		T sumValue(0);
-		for ( Size i(0); i < this->size; i++ ) {
-			sumValue += this->dataTable[ i ];
-		}
-		return sumValue;
-	}
-
-	template<typename T>
-	inline T Vec<T>::mean() const {
-		return sum() / T(this->size);
-	}
-
-	template<typename T>
-	inline T Vec<T>::standardDeviation() const {
-		if ( this->size == Size(0) ) {
-			return T(0);
-		} else {
-			T minV(this->dataTable[ 0 ]);
-			T maxV(this->dataTable[ 0 ]);
-
-			for ( Size i(1); i < this->size; i++ ) {
-				const T& v(this->dataTable[ i ]);
-
-				if ( v < minV ) {
-					minV = v;
-				} else if ( v > maxV ) {
-					maxV = v;
-				}
-			}
-
-			return maxV - minV;
-		}
-	}
-
-	template<typename T>
-	inline Vec<T>& Vec<T>::operator=(Vec<T>&& v) {
+	inline Vec<T>& Vec<T>::operator=(BasicVector<T>&& v) {
 		BasicVector<T>::operator=(Utility::toRValue(v));
 
 		return *this;
@@ -178,53 +212,107 @@ namespace Math {
 
 	template<typename T>
 	inline Vec<T>& Vec<T>::operator+=(const T& s) {
-		for ( Size i(0); i < this->size; i++ ) {
-			this->dataTable[ i ] += s;
-		}
-
-		return *this;
+		return apply(Math::Operations::AddEqual(), s);
 	}
 
 	template<typename T>
 	inline Vec<T>& Vec<T>::operator-=(const T& s) {
-		for ( Size i(0); i < this->size; i++ ) {
-			this->dataTable[ i ] -= s;
-		}
+		return apply(Math::Operations::SubEqual(), s);
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::operator*=(const T& s) {
+		return apply(Math::Operations::MulEqual(), s);
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::operator/=(const T& s) {
+		return apply(Math::Operations::DivEqual(), s);
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::operator%=(const T& s) {
+		return apply(Math::Operations::ModulusEqual(), s);
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::operator++() {
+		return apply(Math::Operations::Increment());
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::operator--() {
+		return apply(Math::Operations::Decrement());
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::operator-() {
+		return apply(Math::Operations::MinusUnary());
+	}
+
+	template<typename T>
+	template<typename Functor, typename C>
+	inline Vec<T>& Vec<T>::apply(Functor& functor, const BasicVector<C>& v) {
+		BasicVector<T>::apply(functor, v);
 
 		return *this;
 	}
 
 	template<typename T>
-	template<typename V>
-	inline Vec<T>& Vec<T>::operator+=(const V& v) {
-		Size minSize(Math::min(getSize(), v.getSize()));
-		for ( Size i(0); i < minSize; i++ ) {
-			this->dataTable[ i ] += v[ i ];
-		}
+	template<typename Functor>
+	inline Vec<T>& Vec<T>::apply(Functor& functor, const T& s) {
+		BasicVector<T>::apply(functor, s);
 
 		return *this;
 	}
 
 	template<typename T>
-	template<typename V>
-	inline Vec<T>& Vec<T>::operator-=(const V& v) {
-		Size minSize(Math::min(getSize(), v.getSize()));
-		for ( Size i(0); i < minSize; i++ ) {
-			this->dataTable[ i ] -= v[ i ];
-		}
+	template<typename Functor>
+	inline Vec<T>& Vec<T>::apply(Functor& functor) {
+		BasicVector<T>::apply(functor);
 
 		return *this;
 	}
 
 	template<typename T>
-	template<typename V>
-	inline Vec<T>::Vec(const V& v) :
-		BasicVector<T>(v.getSize())
-	{
-		for ( Size i(0); i < this->size; i++ ) {
-			this->dataTable[ i ] = v[ i ];
-		}
+	template<typename C>
+	inline Vec<T>& Vec<T>::operator+=(const BasicVector<C>& v) {
+		return apply(Math::Operations::AddEqual(), v);
 	}
+
+	template<typename T>
+	template<typename C>
+	inline Vec<T>& Vec<T>::operator-=(const BasicVector<C>& v) {
+		return apply(Math::Operations::SubEqual(), v);
+	}
+
+	template<typename T>
+	template<typename C>
+	inline Vec<T>& Vec<T>::operator*=(const BasicVector<C>& v) {
+		return apply(Math::Operations::MulEqual(), v);
+	}
+
+	template<typename T>
+	template<typename C>
+	inline Vec<T>& Vec<T>::operator/=(const BasicVector<C>& v) {
+		return apply(Math::Operations::DivEqual(), v);
+	}
+
+	template<typename T>
+	template<typename C>
+	inline Vec<T>& Vec<T>::operator%=(const BasicVector<C>& v) {
+		return apply(Math::Operations::ModulusEqual(), v);
+	}
+
+	//template<typename T>
+	//template<typename V>
+	//inline Vec<T>::Vec(const V& v) :
+	//	BasicVector<T>(v.getSize())
+	//{
+	//	for ( Size i(0); i < this->size; i++ ) {
+	//		this->dataTable[ i ] = v[ i ];
+	//	}
+	//}
 
 	template<typename T>
 	template<typename C, Size N>
@@ -257,60 +345,176 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline Vec<T>& Vec<T>::operator=(const BasicVector<T>& v) {
+		BasicVector<T>::operator=(v);
+
+		return *this;
+	}
+
+	/*template<typename T>
 	template<typename V>
 	inline Vec<T>& Vec<T>::operator=(const V& v) {
 		resizeNoCopy(v.getSize());
 		Utility::copy(this->dataTable, v.getData(), this->size);
 
 		return *this;
+	}*/
+
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const Vec<T>& v1, const Vec<T>& v2) {
+		_assert(v1.getSize() == v2.getSize());
+		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
+		for ( Size i(0); i < r.getSize(); i++ ) {
+			r[ i ] = functor(v1[ i ], v2[ i ]);
+		}
+		return r;
+	}
+
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const Vec<T>& v, const T& s) {
+		Vec<T> r(v.getSize());
+		for ( Size i(0); i < r.getSize(); i++ ) {
+			r[ i ] = functor(v[ i ], s);
+		}
+		return r;
+	}
+
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const T& s, const Vec<T>& v) {
+		Vec<T> r(v.getSize());
+		for ( Size i(0); i < r.getSize(); i++ ) {
+			r[ i ] = functor(s, v[ i ]);
+		}
+		return r;
+	}
+
+	template<typename T, typename Functor, typename C>
+	Vec<T> apply(Functor& functor, const Vec<T>& v1, const BasicVector<C>& v2) {
+		_assert(v1.getSize() == v2.getSize());
+		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
+		for ( Size i(0); i < r.getSize(); i++ ) {
+			r[ i ] = functor(v1[ i ], v2[ i ]);
+		}
+		return r;
+	}
+
+	template<typename T, typename Functor, typename C>
+	Vec<T> apply(Functor& functor, const BasicVector<C>& v1, const Vec<T>& v2) {
+		_assert(v1.getSize() == v2.getSize());
+		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
+		for ( Size i(0); i < r.getSize(); i++ ) {
+			r[ i ] = functor(v1[ i ], v2[ i ]);
+		}
+		return r;
+	}
+
+	template<typename T, typename Functor>
+	Vec<T> apply(Functor& functor, const Vec<T>& v) {
+		Vec<T> r(v.getSize());
+		for ( Size i(0); i < r.getSize(); i++ ) {
+			r[ i ] = functor(v[ i ]);
+		}
+		return r;
 	}
 
 	template<typename T>
 	Vec<T> operator+(const Vec<T>& v1, const Vec<T>& v2) {
-		_assert(v1.getSize() == v2.getSize());
-		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
-		for ( Size i(0); i < r.getSize(); i++ ) {
-			r[ i ] = v1[ i ] + v2[ i ];
-		}
-		return r;
+		return apply(Math::Operations::Add(), v1, v2);
 	}
 
 	template<typename T>
 	Vec<T> operator+(const Vec<T>& v, const T& s) {
-		Vec<T> r(v.getSize());
-		for ( Size i(0); i < r.getSize(); i++ ) {
-			r[ i ] = v[ i ] + s;
-		}
-		return r;
+		return apply(Math::Operations::Add(), v, s);
 	}
 
 	template<typename T>
 	Vec<T> operator+(const T& s, const Vec<T>& v) {
-		Vec<T> r(v.getSize());
-		for ( Size i(0); i < r.getSize(); i++ ) {
-			r[ i ] = v[ i ] + s;
-		}
-		return r;
+		return apply(Math::Operations::Add(), s, v);
 	}
 
 	template<typename T, typename V>
 	Vec<T> operator+(const Vec<T>& v1, const V& v2) {
-		_assert(v1.getSize() == v2.getSize());
-		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
-		for ( Size i(0); i < r.getSize(); i++ ) {
-			r[ i ] = v1[ i ] + v2[ i ];
-		}
-		return r;
+		return apply(Math::Operations::Add(), v1, v2);
 	}
 
 	template<typename T, typename V>
 	Vec<T> operator+(const V& v1, const Vec<T>& v2) {
-		_assert(v1.getSize() == v2.getSize());
-		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
-		for ( Size i(0); i < r.getSize(); i++ ) {
-			r[ i ] = v1[ i ] + v2[ i ];
-		}
-		return r;
+		return apply(Math::Operations::Add(), v1, v2);
+	}
+
+	template<typename T>
+	Vec<T> operator-(const Vec<T>& v1, const Vec<T>& v2) {
+		return apply(Math::Operations::Sub(), v1, v2);
+	}
+
+	template<typename T>
+	Vec<T> operator-(const Vec<T>& v, const T& s) {
+		return apply(Math::Operations::Sub(), v, s);
+	}
+
+	template<typename T>
+	Vec<T> operator-(const T& s, const Vec<T>& v) {
+		return apply(Math::Operations::Sub(), s, v);
+	}
+
+	template<typename T, typename V>
+	Vec<T> operator-(const Vec<T>& v1, const V& v2) {
+		return apply(Math::Operations::Sub(), v1, v2);
+	}
+
+	template<typename T, typename V>
+	Vec<T> operator-(const V& v1, const Vec<T>& v2) {
+		return apply(Math::Operations::Sub(), v1, v2);
+	}
+
+	template<typename T>
+	Vec<T> operator*(const Vec<T>& v1, const Vec<T>& v2) {
+		return apply(Math::Operations::Mul(), v1, v2);
+	}
+
+	template<typename T>
+	Vec<T> operator*(const Vec<T>& v, const T& s) {
+		return apply(Math::Operations::Mul(), v, s);
+	}
+
+	template<typename T>
+	Vec<T> operator*(const T& s, const Vec<T>& v) {
+		return apply(Math::Operations::Mul(), s, v);
+	}
+
+	template<typename T, typename V>
+	Vec<T> operator*(const Vec<T>& v1, const V& v2) {
+		return apply(Math::Operations::Mul(), v1, v2);
+	}
+
+	template<typename T, typename V>
+	Vec<T> operator*(const V& v1, const Vec<T>& v2) {
+		return apply(Math::Operations::Mul(), v1, v2);
+	}
+
+	template<typename T>
+	Vec<T> operator/(const Vec<T>& v1, const Vec<T>& v2) {
+		return apply(Math::Operations::Div(), v1, v2);
+	}
+
+	template<typename T>
+	Vec<T> operator/(const Vec<T>& v, const T& s) {
+		return apply(Math::Operations::Div(), v, s);
+	}
+
+	template<typename T>
+	Vec<T> operator/(const T& s, const Vec<T>& v) {
+		return apply(Math::Operations::Div(), s, v);
+	}
+
+	template<typename T, typename V>
+	Vec<T> operator/(const Vec<T>& v1, const V& v2) {
+		return apply(Math::Operations::Div(), v1, v2);
+	}
+
+	template<typename T, typename V>
+	Vec<T> operator/(const V& v1, const Vec<T>& v2) {
+		return apply(Math::Operations::Div(), v1, v2);
 	}
 
 }

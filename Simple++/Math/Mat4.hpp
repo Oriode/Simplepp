@@ -81,12 +81,12 @@ namespace Math {
 
 
 	template<typename T >
-	MATH_FUNC_QUALIFIER const Vec4<T> & Mat4<T>::operator[]( unsigned int index ) const {
+	MATH_FUNC_QUALIFIER const Vec4<T> & Mat4<T>::operator[](Size index ) const {
 		return this -> column[index];
 	}
 
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec4<T> & Mat4<T>::operator[]( unsigned int index ) {
+	MATH_FUNC_QUALIFIER Vec4<T> & Mat4<T>::operator[](Size index ) {
 		return this -> column[index];
 	}
 
@@ -417,44 +417,44 @@ namespace Math {
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat4<T>::operator==( const Mat4<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::Equal(), m );
+		return AND( Math::Logical::Equal(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat4<T>::operator!=( const Mat4<U> & m ) const {
-		return _logicalOperatorOR( Math::Logical::NotEqual(), m );
+		return OR( Math::Logical::NotEqual(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat4<T>::operator<( const Mat4<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::Less(), m );
+		return AND( Math::Logical::Less(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat4<T>::operator<=( const Mat4<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::LessOrEqual(), m );
+		return AND( Math::Logical::LessOrEqual(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat4<T>::operator>( const Mat4<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::Greater(), m );
+		return AND( Math::Logical::Greater(), m );
 	}
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER bool Mat4<T>::operator>=( const Mat4<U> & m ) const {
-		return _logicalOperatorAND( Math::Logical::GreaterOrEqual(), m );
+		return AND( Math::Logical::GreaterOrEqual(), m );
 	}
 
 
 	template<typename T>
 	template<typename Compare, typename U>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::_logicalOperatorOR( Compare & func, const Mat4<U> & m ) const {
+	MATH_FUNC_QUALIFIER bool Mat4<T>::OR( Compare & func, const Mat4<U> & m ) const {
 		return func( this -> column[0], m[0] ) || func( this -> column[1], m[1] ) || func( this -> column[2], m[2] ) || func( this -> column[3], m[3] );
 	}
 
 	template<typename T>
 	template<typename Compare, typename U>
-	MATH_FUNC_QUALIFIER bool Mat4<T>::_logicalOperatorAND( Compare & func, const Mat4<U> & m ) const {
+	MATH_FUNC_QUALIFIER bool Mat4<T>::AND( Compare & func, const Mat4<U> & m ) const {
 		return func( this -> column[0], m[0] ) && func( this -> column[1], m[1] ) && func( this -> column[2], m[2] ) && func( this -> column[3], m[3] );
 	}
 
