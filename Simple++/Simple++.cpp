@@ -53,6 +53,7 @@
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
 #define DEBUG_VEC
+#define DEBUG_MAT
 
 
 #ifndef _LIB
@@ -69,6 +70,7 @@
 #include "Network/HTTPClient.h"
 #include "Math/Math.h"
 #include "Math/Vec.h"
+#include "Math/Mat.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
@@ -1524,11 +1526,28 @@ int main(int argc, char* argv[]) {
 
 		v5 = abs(v5);
 
+		log(v5.toString());
+
 		log(Math::length(Math::normalize(v5)));
 
 		v1 = { 2,2,2,2 };
 
 		int i;
+	}
+#endif
+#ifdef DEBUG_MAT
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Mat															//
+	{
+		Math::Mat<double> m1(Size(100), Size(100));
+		Math::Mat<double> m2({ {1,2}, {3,4} });
+		Math::Mat<double> m3(m2);
+
+		m3 = { {1,0}, {0,1} };
+
+		m1.identity();
+
+		log(m3.toString());
 	}
 #endif
 

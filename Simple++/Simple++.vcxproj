@@ -253,6 +253,7 @@
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="Math\BasicMath.hpp" />
+    <ClInclude Include="Math\Mat.h" />
     <ClInclude Include="Math\Transformations.h" />
     <ClInclude Include="Math\Transformations.hpp" />
     <ClInclude Include="Math\Vec.h" />

@@ -2,6 +2,7 @@
 
 #include "../Log.h"
 #include "../Utility.h"
+#include "../String.h"
 
 #include "BasicMath.h"
 #include "../BasicVector.h"
@@ -14,6 +15,11 @@ namespace Math {
 		template<typename C>
 		friend class Mat;
 
+		/************************************************************************/
+		/* ================             CONSTRUCTOR            ================ */
+		/************************************************************************/
+
+		Vec();
 		Vec(const Size size);
 		//template<typename V>
 		//Vec(const V& v);
@@ -21,6 +27,7 @@ namespace Math {
 		Vec(const C(&v)[ N ]);
 		template<typename C>
 		Vec(const BasicVector<C>& v);
+		Vec(const BasicVector<T>& v);
 		Vec(BasicVector<T>&& v);
 
 		~Vec();
@@ -88,6 +95,9 @@ namespace Math {
 		void zeros();
 		void ones();
 		void randomF();
+
+		template<typename S = String>
+		S toString() const;
 
 	private:
 	};
@@ -171,6 +181,9 @@ namespace Math {
 
 
 	template<typename T>
+	inline Vec<T>::Vec() {}
+
+	template<typename T>
 	inline Vec<T>::Vec(const Size size) :
 		BasicVector<T>(size)
 	{}
@@ -201,6 +214,28 @@ namespace Math {
 		for ( Size i(0); i < this->size; i++ ) {
 			this->dataTable[ i ] = Math::randomF();
 		}
+	}
+
+	template<typename T>
+	template<typename S>
+	inline S Vec<T>::toString() const {
+		S outputStr;
+
+		outputStr << S::ElemType('[');
+		outputStr << S::ElemType(' ');
+
+		for ( Size i(0); i < this->size; i++ ) {
+			if ( i > Size(0) ) {
+				outputStr << S::ElemType(',');
+				outputStr << S::ElemType(' ');
+			}
+			outputStr << this->dataTable[ i ];
+		}
+
+		outputStr << S::ElemType(' ');
+		outputStr << S::ElemType(']');
+
+		return outputStr;
 	}
 
 	template<typename T>
@@ -327,6 +362,10 @@ namespace Math {
 		BasicVector<T>(v)
 	{
 	}
+
+	template<typename T>
+	inline Vec<T>::Vec(const BasicVector<T>& v) :
+		BasicVector<T>(v) {}
 
 	template<typename T>
 	template<typename C, Size N>

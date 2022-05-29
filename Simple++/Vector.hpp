@@ -30,7 +30,7 @@ Vector<T>::Vector( const Vector<C> & vector ) :
 {
 	this->size = vector.getSize();
 	this->dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
-	copy( this -> dataTable, vector.getData(), this -> maxSize );
+	Utility::copy( this -> dataTable, vector.getData(), this -> maxSize );
 	_updateIterators();
 }
 
@@ -430,7 +430,7 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 		delete[] this -> dataTable;
 	}
 	this -> dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
-	copy( this -> dataTable, vector.dataTable, this -> size );
+	Utility::copy( this -> dataTable, vector.dataTable, this -> size );
 	_updateIterators();
 
 	return *this;
@@ -528,7 +528,7 @@ void Vector<T>::_extendBuffer( const Size newSizeNeeded ) {
 	this -> maxSize = newSizeNeeded * 2;
 	T * newBuffer = new T[ this -> maxSize ];
 	if ( this -> dataTable != NULL ) {
-		copy( newBuffer, this -> dataTable, this -> size );
+		Utility::copy( newBuffer, this -> dataTable, this -> size );
 		delete[] this -> dataTable;
 	}
 	this -> dataTable = newBuffer;

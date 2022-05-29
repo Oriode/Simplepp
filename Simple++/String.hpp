@@ -1109,7 +1109,7 @@ BasicString<T> & BasicString<T>::_concatWOS( C * const & buffer, const Size & bu
 		_updateIterators();
 	}
 
-	copy( this -> iteratorEnd, buffer, bufferSize );
+	Utility::copy( this -> iteratorEnd, buffer, bufferSize );
 	this -> size = newSize;
 	Vector<T>::_updateIterators();
 	return *this;

@@ -59,11 +59,11 @@ namespace Math {
 
 
 	template<typename T >
-	MATH_FUNC_QUALIFIER const Vec3<T> & Mat3<T>::operator[]( unsigned int index ) const {
+	MATH_FUNC_QUALIFIER const Vec3<T> & Mat3<T>::operator[]( Size index ) const {
 		return this -> column[index];
 	}
 	template<typename T>
-	MATH_FUNC_QUALIFIER Vec3<T> & Mat3<T>::operator[]( unsigned int index ) {
+	MATH_FUNC_QUALIFIER Vec3<T> & Mat3<T>::operator[]( Size index ) {
 		return this -> column[index];
 	}
 

@@ -594,6 +594,9 @@
     <ClInclude Include="BasicVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\Mat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
