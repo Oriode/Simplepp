@@ -122,19 +122,19 @@ namespace AI {
 		typedef InputT Input;
 		typedef OutputT Output;
 
-		BasicData( const Input & input ) :
-			_input( input ),
-			_distance( 1 ) {}
+		BasicData(const Input& input) :
+			_input(input),
+			_distance(1) {}
 
-		const typename Distance & getDistance() const {
+		const typename Distance& getDistance() const {
 			return this->_distance;
 		}
 
-		const typename Distance getDistance( const typename Input & input ) const {
+		const typename Distance getDistance(const typename Input& input) const {
 			return this->_distance;
 		}
 
-		void setDistance( const typename Distance & distance ) {
+		void setDistance(const typename Distance& distance) {
 			this->_distance = distance;
 		}
 
@@ -169,7 +169,7 @@ namespace AI {
 		 * @returns	Null if no data has been founded ( or empty Vector )
 		 * @sa		this.getDataMap();
 		 */
-		const Vector< typename Data * > * getSubData( const Input & inputData ) const {
+		const Vector< typename Data* >* getSubData(const Input& inputData) const {
 			/** to be overloaded */
 			return NULL;
 		}
@@ -179,7 +179,7 @@ namespace AI {
 		 *
 		 * @returns	The Data Map.
 		 */
-		const MultiMap< typename Data::HashType, typename Data * > & getDataMap() {
+		const MultiMap< typename Data::HashType, typename Data* >& getDataMap() {
 			return this->_dataMap;
 		}
 
@@ -188,29 +188,29 @@ namespace AI {
 		 * @param		distanceable	Object to be compared.
 		 * @param		resultMap [in, out]	Map to be edited.
 		 */
-		void updateResultMap( const Input & inputData, Map< const typename Data *, typename Data::Distance > & resultMap ) const {
+		void updateResultMap(const Input& inputData, Map< const typename Data*, typename Data::Distance >& resultMap) const {
 			// Retrieve the sub data for this neurode.
-			const Vector< Data * > * nearestData = getSubData( inputData );
+			const Vector< Data* >* nearestData = getSubData(inputData);
 
 			// Check if we have founded something.
 			if ( nearestData ) {
-				for ( auto it( nearestData->getBegin() ); it!=nearestData->getEnd(); nearestData->iterate( &it ) ) {
-					const typename Data * data = nearestData->getValueIt( it );
-					const typename Map< const typename Data *, typename Data::Distance >::Iterator distanceNodeIt( resultMap.getNodeI( data ) );
+				for ( auto it(nearestData->getBegin()); it != nearestData->getEnd(); nearestData->iterate(&it) ) {
+					const typename Data* data = nearestData->getValueIt(it);
+					const typename Map< const typename Data*, typename Data::Distance >::Iterator distanceNodeIt(resultMap.getNodeI(data));
 
 					// If the Value has already been founded.
 					if ( distanceNodeIt ) {
-						const typename Data::Distance oldDistance( resultMap.getValueIt( distanceNodeIt ) );
-						const typename Data::Distance newDistance( oldDistance+data.getDistance( inputData ) );
+						const typename Data::Distance oldDistance(resultMap.getValueIt(distanceNodeIt));
+						const typename Data::Distance newDistance(oldDistance + data.getDistance(inputData));
 
 						// Update the old Value.
-						resultMap.setValueIt( distanceNodeIt, newDistance );
+						resultMap.setValueIt(distanceNodeIt, newDistance);
 					} else {
 						// The value does'nt exists actually.
-						const typename Data::Distance newDistance( data.getDistance( inputData ) );
+						const typename Data::Distance newDistance(data.getDistance(inputData));
 
 						// Insert into the Map.
-						resultMap.insert( data, newDistance );
+						resultMap.insert(data, newDistance);
 					}
 				}
 			}
@@ -222,14 +222,14 @@ namespace AI {
 		 *
 		 * @param		inputData Data used to learn.
 		 */
-		void learn( const Input & inputData ) {
+		void learn(const Input& inputData) {
 
 		}
 
 
 	private:
 		/** @brief	The data map */
-		MultiMap< typename Data::HashType, typename Data * > _dataMap;
+		MultiMap< typename Data::HashType, typename Data* > _dataMap;
 
 	};
 }
@@ -248,17 +248,17 @@ template<typename T>
 class ImageFunctor {
 public:
 	ImageFunctor() {};
-	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorR<T> & color ) {
+	ImageFunctor& operator()(const Math::Vec2<Graphic::Size>& p, Graphic::ColorR<T>& color) {
 		return *this;
 	}
-	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGB<T> & color ) {
-		unsigned int len = Math::length( p );
+	ImageFunctor& operator()(const Math::Vec2<Graphic::Size>& p, Graphic::ColorRGB<T>& color) {
+		unsigned int len = Math::length(p);
 		color.r += len;
 		color.g -= len;
-		color.b += color.r+color.g;
+		color.b += color.r + color.g;
 		return *this;
 	}
-	ImageFunctor & operator()( const Math::Vec2<Graphic::Size> & p, Graphic::ColorRGBA<T> & color ) {
+	ImageFunctor& operator()(const Math::Vec2<Graphic::Size>& p, Graphic::ColorRGBA<T>& color) {
 		return *this;
 	}
 };
@@ -1318,8 +1318,7 @@ int main(int argc, char* argv[]) {
 		struct GenerateVectorFunctor {
 			GenerateVectorFunctor(Size sizeMin, Size sizeMax) :
 				sizeMin(sizeMin),
-				sizeMax(sizeMax)
-			{}
+				sizeMax(sizeMax) {}
 
 			Vector<unsigned char> operator()() const {
 				Vector<unsigned char> outputVector;
@@ -1336,7 +1335,7 @@ int main(int argc, char* argv[]) {
 			Size sizeMin;
 			Size sizeMax;
 		};
-		
+
 		GenerateVectorFunctor generateVectorFunctor(Size(128), Size(256));
 		Size nbTests(10000);
 
@@ -1406,41 +1405,41 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Strings											//
 	{
-		info( "Hello World !" );
-		info( StringASCII( "hElLo WoRlD !" ).toUpper() );
-		info( StringASCII( "hElLo WoRlD !" ).toLower() );
-		StringASCII testStr( "STRING 1 : " );
-		StringASCII strConcat( "Hello World!" );
-		Log::displayLog( StringASCII( "10 in binary : " )<<StringASCII( 10, 2 ) );
-		Log::displayLog( StringASCII( "test:" ).concatFill( 255, StringASCII::Size( 5 ), '-', 16 ) );
-		Log::displayLog( StringASCII( 100.0f ) );
-		Log::displayLog( StringASCII( 0.2f ) );
-		Log::displayLog( StringASCII( 0.02f ) );
-		Log::displayLog( StringASCII( 0.002f ) );
-		Log::displayLog( StringASCII( 0.0002f ) );
-		Log::displayLog( StringASCII( 0.00002f ) );
+		info("Hello World !");
+		info(StringASCII("hElLo WoRlD !").toUpper());
+		info(StringASCII("hElLo WoRlD !").toLower());
+		StringASCII testStr("STRING 1 : ");
+		StringASCII strConcat("Hello World!");
+		Log::displayLog(StringASCII("10 in binary : ") << StringASCII(10, 2));
+		Log::displayLog(StringASCII("test:").concatFill(255, StringASCII::Size(5), '-', 16));
+		Log::displayLog(StringASCII(100.0f));
+		Log::displayLog(StringASCII(0.2f));
+		Log::displayLog(StringASCII(0.02f));
+		Log::displayLog(StringASCII(0.002f));
+		Log::displayLog(StringASCII(0.0002f));
+		Log::displayLog(StringASCII(0.00002f));
 
 
 
-		for ( size_t i( 0 ); i<2; i++ ) {
-			testStr += StringASCII( testStr );
+		for ( size_t i(0); i < 2; i++ ) {
+			testStr += StringASCII(testStr);
 		}
-		Log::displayLog( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+		Log::displayLog(testStr.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
 
-		Log::displayLog( StringASCII::format( "__/%__%__%__%__", "Hello World !", 50, 2.5f ) );
+		Log::displayLog(StringASCII::format("__/%__%__%__%__", "Hello World !", 50, 2.5f));
 
 		class EndFunc {
 		public:
-			bool operator()( const char * it ) const {
-				return ( *it==char( ' ' ) );
+			bool operator()(const char* it) const {
+				return ( *it == char(' ') );
 			}
 		};
 
-		const char * testParse = "42784.27 18";
-		const char ** iterable( &testParse );
-		float parsedValue( StringASCII::toFloat( iterable, 10, EndFunc() ) );
-		Log::displayLog( parsedValue );
-		Log::displayLog( StringASCII::toInt( iterable ) );
+		const char* testParse = "42784.27 18";
+		const char** iterable(&testParse);
+		float parsedValue(StringASCII::toFloat(iterable, 10, EndFunc()));
+		Log::displayLog(parsedValue);
+		Log::displayLog(StringASCII::toInt(iterable));
 
 	}
 #endif
@@ -1461,50 +1460,50 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Date															//
 	{
-		info( "Debuging Date..." );
+		info("Debuging Date...");
 		Time::Date nowDate = Time::getDate();
-		info( nowDate.toString( StringASCII( "HHH" ) ) );
-		info( nowDate.toString() );
-		info( nowDate.toStringISO( Time::Date::ISOFormat::DateOnly ) );
-		info( Time::Date::getLocalUTCBias() );
-		info( StringASCII( "This is the date ! " )<<Time::getDate()<<" YES !" );
-		info( Time::Date::parse( "2000-03-05T10:35:18-01:00" ).toStringISO() );
-		info( Time::Date::parse( "2000-03-05" ).toStringISO() );
-		info( Time::Date::parse( "T10:35:18.54547221Z" ).toStringISO() );
+		info(nowDate.toString(StringASCII("HHH")));
+		info(nowDate.toString());
+		info(nowDate.toStringISO(Time::Date::ISOFormat::DateOnly));
+		info(Time::Date::getLocalUTCBias());
+		info(StringASCII("This is the date ! ") << Time::getDate() << " YES !");
+		info(Time::Date::parse("2000-03-05T10:35:18-01:00").toStringISO());
+		info(Time::Date::parse("2000-03-05").toStringISO());
+		info(Time::Date::parse("T10:35:18.54547221Z").toStringISO());
 		// int n = StringASCII::charToNumber<int, 4>( "2242" );
 		// info( StringASCII( n ) );
 	}
 #endif
 #ifdef DEBUG_PATH
-//////////////////////////////////////////////////////////////////////////
-// DEBUG : Path															//
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Path															//
 	{
-		info( "Debuging Pathes..." );
-		OS::Path path( "C:\\testfolder" );
+		info("Debuging Pathes...");
+		OS::Path path("C:\\testfolder");
 
-		info( path.exists() );
-		info( path.toString() );
+		info(path.exists());
+		info(path.toString());
 
-		path.join( "folder2", "HelloWorld.txt" );
-		info( path.toString() );
+		path.join("folder2", "HelloWorld.txt");
+		info(path.toString());
 
-		info( path.basename() );
+		info(path.basename());
 	}
 #endif
 #ifdef DEBUG_STREAM
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Stream														//
 	{
-		info( StringASCII( "Hello World !" ).concatFill( -42, 4, '0'));
-		info( 42 );
+		info(StringASCII("Hello World !").concatFill(-42, 4, '0'));
+		info(42);
 		Stream streamTest = WString("Hello World !");
 		streamTest << 'H';
 		streamTest << 42;
 		streamTest << L"TEST Wide.";
-		StringASCII strRaw( streamTest.toStringRaw() );
-		info( strRaw );
-		StringASCII strHexa( streamTest.toStringHexa() );
-		info( streamTest.toStringHexa() );
+		StringASCII strRaw(streamTest.toStringRaw());
+		info(strRaw);
+		StringASCII strHexa(streamTest.toStringHexa());
+		info(streamTest.toStringHexa());
 	}
 #endif
 #ifdef DEBUG_VEC
@@ -1563,8 +1562,10 @@ int main(int argc, char* argv[]) {
 		Math::Tensor<double> t2({ {1,2}, {3,4} });
 		Math::Tensor<double> t3({ {{1,0},{2,0}}, {{3,0},{4,0}} });
 
-		info(t1[ 0 ]);
-		info(t2[ 0 ][ 0 ]);
+		Math::STensor<double> t4(t3[ 0 ]);
+
+		info(t4.toString());
+		// info(t2[ 0 ].toString());
 		info(t1.toString());
 		info(t2.toString());
 		info(t3.toString());
@@ -1572,42 +1573,42 @@ int main(int argc, char* argv[]) {
 #endif
 
 #else		//DEBUG
-	constexpr unsigned long long int G10( 10000000000 );
-	constexpr unsigned long long int G1( 1000000000 );
-	constexpr unsigned long long int M100( 100000000 );
-	constexpr unsigned long long int M10( 10000000 );
-	constexpr unsigned long long int M1( 1000000 );
-	constexpr unsigned long long int K100( 100000 );
-	constexpr unsigned long long int K10( 10000 );
-	constexpr unsigned long long int K1( 1000 );
+	constexpr unsigned long long int G10(10000000000);
+	constexpr unsigned long long int G1(1000000000);
+	constexpr unsigned long long int M100(100000000);
+	constexpr unsigned long long int M10(10000000);
+	constexpr unsigned long long int M1(1000000);
+	constexpr unsigned long long int K100(100000);
+	constexpr unsigned long long int K10(10000);
+	constexpr unsigned long long int K1(1000);
 
 #ifdef SPEEDTEST_DRAWLINE
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
 
 		Graphic::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
-		gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
-		gradientHorizontal.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
-		Graphic::ColorFunc::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor( gradientHorizontal );
+		gradientHorizontal.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
+		gradientHorizontal.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
+		Graphic::ColorFunc::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor(gradientHorizontal);
 
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M1; i++ ) {
+		for ( size_t i = 0; i < M1; i++ ) {
 			//image.drawLine(Graphic::LineF(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 5);
-			image.drawLineFunctor( Graphic::LineF( 0, 20, 500, 480 ), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>( Graphic::ColorR<unsigned char>( 255 ) ), 1 );
+			image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(255)), 1);
 
 			//image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), colorFunctor, 5);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW LINES R -> R (Last Result: 1.581s for M1)" );
+		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.581s for M1)");
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "drawline.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("drawline.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1616,20 +1617,20 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::ImageT<float> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<float> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M1; i++ ) {
-			image.drawLineFunctor( Graphic::LineF( 0, 20, 500, 480 ), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<float>>( Graphic::ColorR<float>( 1 ) ), 1 );
+		for ( size_t i = 0; i < M1; i++ ) {
+			image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<float>>(Graphic::ColorR<float>(1)), 1);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW LINES R -> R (Last Result: 1.6s for M1)" );
+		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.6s for M1)");
 
 
-		Graphic::ImageT<unsigned char> imageUC( image );
+		Graphic::ImageT<unsigned char> imageUC(image);
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) imageUC.getDatas(), imageUC.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) imageUC.getDatas(), imageUC.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("drawline_float.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 
 #endif
@@ -1639,22 +1640,22 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Graph									//
 
-		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
 
 
-		Math::Vec2<float> vStatic[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.25f, 0.2f ), Math::Vec2<float>( 0.5f, 0.1f ), Math::Vec2<float>( 0.6f, 0.8f ), Math::Vec2<float>( 0.7f, 0.1f ), Math::Vec2<float>( 1.0f, 0.8f ) };
-		Vector<Math::Vec2<float>> v( vStatic );
+		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
+		Vector<Math::Vec2<float>> v(vStatic);
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			image.drawGraphValuesFunctor( v, Graphic::Rectangle( 0, 0, 500, 500 ), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>( Graphic::ColorR<unsigned char>( 128 ) ) );
+		for ( size_t i = 0; i < K10; i++ ) {
+			image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(128)));
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW GRAPH R -> R (Last Result: 6.0s for K100)" );
+		Log::displayChrono("DRAW GRAPH R -> R (Last Result: 6.0s for K100)");
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "graph.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("graph.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1664,20 +1665,20 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
 
-		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			image.drawRectangleRounded( Graphic::Rectangle( 0, 0, 500, 500 ), 100, Graphic::ColorR<unsigned char>( 255 ) );
+		for ( size_t i = 0; i < K10; i++ ) {
+			image.drawRectangleRounded(Graphic::Rectangle(0, 0, 500, 500), 100, Graphic::ColorR<unsigned char>(255));
 
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.883s for K10)" );
+		Log::displayChrono("DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.883s for K10)");
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1686,30 +1687,30 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
 
-		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
 
-		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc( Graphic::ColorR<unsigned char>( 255 ) );
+		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc(Graphic::ColorR<unsigned char>(255));
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			image.drawRectangleRounded( Graphic::Rectangle( 0, 0, 500, 500 ), 250, Graphic::ColorR<unsigned char>( 255 ) );
+		for ( size_t i = 0; i < K10; i++ ) {
+			image.drawRectangleRounded(Graphic::Rectangle(0, 0, 500, 500), 250, Graphic::ColorR<unsigned char>(255));
 
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.779s for K10)" );
+		Log::displayChrono("DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.779s for K10)");
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			image._drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorR<unsigned char>>( Graphic::Point( 250, 250 ), 250, colorFunc );
+		for ( size_t i = 0; i < K10; i++ ) {
+			image._drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorR<unsigned char>>(Graphic::Point(250, 250), 250, colorFunc);
 
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW DISK RECTANGLE R -> R (Last Result: 0.778s for K10)" );
+		Log::displayChrono("DRAW DISK RECTANGLE R -> R (Last Result: 0.778s for K10)");
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1717,25 +1718,25 @@ int main(int argc, char* argv[]) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Text											//
-		Graphic::TrueTypeFont<unsigned char> font( L"consola.ttf", 15 );
+		Graphic::TrueTypeFont<unsigned char> font(L"consola.ttf", 15);
 		font.load();
-		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
+		font.loadGlyph(Graphic::Font<unsigned char>::Template::Ascii);
 
-		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::RGB );
+		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::RGB);
 
-		UTF8String testStr( "Hello World" );
+		UTF8String testStr("Hello World");
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M1; i++ ) {
-			Graphic::drawText( &image, font, Graphic::Rectangle( 0, 0, 250, 250 ), testStr, Graphic::ColorRGB<unsigned char>( 255, 100, 200 ), Math::Vec2<bool>( true, true ) );
+		for ( size_t i = 0; i < M1; i++ ) {
+			Graphic::drawText(&image, font, Graphic::Rectangle(0, 0, 250, 250), testStr, Graphic::ColorRGB<unsigned char>(255, 100, 200), Math::Vec2<bool>(true, true));
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW \"Hello World\" (Last Result: 1.629s for M1)" );
+		Log::displayChrono("DRAW \"Hello World\" (Last Result: 1.629s for M1)");
 
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImage.saveToFile("drawText.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1745,58 +1746,58 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Re sample												//
 
-		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
-		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
+		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
+		Graphic::FreeImage freeImageOriginal("sanctum.png", Graphic::FreeImage::Format::RGB);
 		freeImageIn.load();
 		freeImageOriginal.load();
-		Graphic::ImageT<unsigned char> imageOriginal( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false );
-		Graphic::ImageT<unsigned char> image( imageOriginal );
-		Graphic::ImageT<unsigned char> image2( imageOriginal.getSize(), Graphic::Format::RGB );
+		Graphic::ImageT<unsigned char> imageOriginal(freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false);
+		Graphic::ImageT<unsigned char> image(imageOriginal);
+		Graphic::ImageT<unsigned char> image2(imageOriginal.getSize(), Graphic::Format::RGB);
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			image2 = image.resample( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Nearest );
-			image = image2.resample( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Nearest );
+		for ( size_t i = 0; i < K10; i++ ) {
+			image2 = image.resample(Math::Vec2<Graphic::Size>(100, 400), Graphic::Image::ResamplingMode::Nearest);
+			image = image2.resample(Math::Vec2<Graphic::Size>(500, 100), Graphic::Image::ResamplingMode::Nearest);
 
 			image2 = image;
 			image = image2;
 
 		}
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE NEAREST RGB (Last Result: 8.1s for K10)" );
+		Log::displayChrono("RESAMPLE NEAREST RGB (Last Result: 8.1s for K10)");
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K1; i++ ) {
-			image2 = image.resample( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Bilinear );
-			image = image2.resample( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Bilinear );
+		for ( size_t i = 0; i < K1; i++ ) {
+			image2 = image.resample(Math::Vec2<Graphic::Size>(100, 400), Graphic::Image::ResamplingMode::Bilinear);
+			image = image2.resample(Math::Vec2<Graphic::Size>(500, 100), Graphic::Image::ResamplingMode::Bilinear);
 		}
 
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE LINEAR RGB (Last Result: 780ms for K1)" );
+		Log::displayChrono("RESAMPLE LINEAR RGB (Last Result: 780ms for K1)");
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K1; i++ ) {
+		for ( size_t i = 0; i < K1; i++ ) {
 			image = imageOriginal;
-			image = image.resample( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
+			image = image.resample(Math::Vec2<Graphic::Size>(200, 200), Graphic::Image::ResamplingMode::Lanczos);
 			//image = image2.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear );
 		}
 
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE LANCZOS RGB (Last Result: 3450ms for K1)" );
+		Log::displayChrono("RESAMPLE LANCZOS RGB (Last Result: 3450ms for K1)");
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K1; i++ ) {
-			freeImageIn.resize( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::FreeImage::Filter::Bilinear );
-			freeImageIn.resize( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::FreeImage::Filter::Bilinear );
+		for ( size_t i = 0; i < K1; i++ ) {
+			freeImageIn.resize(Math::Vec2<Graphic::Size>(100, 400), Graphic::FreeImage::Filter::Bilinear);
+			freeImageIn.resize(Math::Vec2<Graphic::Size>(500, 100), Graphic::FreeImage::Filter::Bilinear);
 
 		}
 		Log::stopChrono();
-		Log::displayChrono( "RESAMPLE FreeImage LINEAR RGB (Last Result: 1900ms for K1)" );
+		Log::displayChrono("RESAMPLE FreeImage LINEAR RGB (Last Result: 1900ms for K1)");
 
 
 		Graphic::FreeImage freeImageOut;
-		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "resample.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImageOut.saveToFile("resample.png", Graphic::FreeImage::SavingFormat::PNG);
 
 	}
 #endif
@@ -1807,22 +1808,22 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Polygon									//
 
-		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
+		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
 
-		Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.2f, 0.5f ), Math::Vec2<float>( 0.0f, 0.8f ), Math::Vec2<float>( 1.0f, 0.5f ) };
-		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc( Graphic::ColorR<unsigned char>( 128 ) );
+		Math::Vec2<float> vertices[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.2f, 0.5f), Math::Vec2<float>(0.0f, 0.8f), Math::Vec2<float>(1.0f, 0.5f) };
+		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc(Graphic::ColorR<unsigned char>(128));
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K100; i++ ) {
-			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>>( vertices, 4, Graphic::Rectangle( 100, 100, 400, 400 ), colorFunc );
+		for ( size_t i = 0; i < K100; i++ ) {
+			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>>(vertices, 4, Graphic::Rectangle(100, 100, 400, 400), colorFunc);
 
 		}
 		Log::stopChrono();
-		Log::displayChrono( "DRAW POLYGON R -> R (Last Result: 1.4s for K100)" );
+		Log::displayChrono("DRAW POLYGON R -> R (Last Result: 1.4s for K100)");
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "polygon.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
+		freeImage.saveToFile("polygon.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1830,38 +1831,38 @@ int main(int argc, char* argv[]) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Filter											//
-		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
+		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
 		freeImageIn.load();
-		Graphic::ImageT<unsigned char> image( freeImageIn.getDatas(), Math::Vec2<Graphic::Size>( 500 ), Graphic::LoadingFormat::BGR, false );
-		Graphic::ImageT<float> imagef( image );
+		Graphic::ImageT<unsigned char> image(freeImageIn.getDatas(), Math::Vec2<Graphic::Size>(500), Graphic::LoadingFormat::BGR, false);
+		Graphic::ImageT<float> imagef(image);
 
 
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K1; i++ ) {
-			image = image.applyGaussianBlur( 5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
+		for ( size_t i = 0; i < K1; i++ ) {
+			image = image.applyGaussianBlur(5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
 		}
 		Log::stopChrono();
-		Log::displayChrono( "FILTER RGB UCHAR (Last Result: 9.5s for K1)" );
+		Log::displayChrono("FILTER RGB UCHAR (Last Result: 9.5s for K1)");
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K1; i++ ) {
-			imagef = imagef.applyGaussianBlur( 5, Graphic::ImageT<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>( 0, 0, 0, 0 ) );
+		for ( size_t i = 0; i < K1; i++ ) {
+			imagef = imagef.applyGaussianBlur(5, Graphic::ImageT<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>(0, 0, 0, 0));
 		}
 		Log::stopChrono();
-		Log::displayChrono( "FILTER RGB FLOAT (Last Result: 15.1s for K1)" );
+		Log::displayChrono("FILTER RGB FLOAT (Last Result: 15.1s for K1)");
 
 
 		Graphic::FreeImage freeImageOut;
-		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "filterUCHAR.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImageOut.saveToFile("filterUCHAR.png", Graphic::FreeImage::SavingFormat::PNG);
 
 
 		image = imagef;
-		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImageOut.saveToFile("filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1870,21 +1871,21 @@ int main(int argc, char* argv[]) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Stroke											//
-		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
+		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
 		freeImageIn.load();
-		Graphic::ImageT<unsigned char> image( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::RGB, false );
-		image.threshold( Graphic::ColorRGBA<unsigned char>( 255 ), Graphic::ColorRGBA<unsigned char>( 0 ), Graphic::ColorRGBA<unsigned char>( 128, 0, 0, 0 ) );
+		Graphic::ImageT<unsigned char> image(freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::RGB, false);
+		image.threshold(Graphic::ColorRGBA<unsigned char>(255), Graphic::ColorRGBA<unsigned char>(0), Graphic::ColorRGBA<unsigned char>(128, 0, 0, 0));
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K1; i++ ) {
-			image.drawStrokeFunctor( Graphic::Point( 0, 0 ), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>( Graphic::ColorRGB<unsigned char>( 0, 255, 0 ) ), Graphic::Image::StrokeType::Outside );
+		for ( size_t i = 0; i < K1; i++ ) {
+			image.drawStrokeFunctor(Graphic::Point(0, 0), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>(Graphic::ColorRGB<unsigned char>(0, 255, 0)), Graphic::Image::StrokeType::Outside);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "STROKE THICKNESS 2 RGB UCHAR (Last Result: 11000ms for K1)" );
+		Log::displayChrono("STROKE THICKNESS 2 RGB UCHAR (Last Result: 11000ms for K1)");
 
 		Graphic::FreeImage freeImageOut;
-		freeImageOut.loadFromDatas( ( unsigned char * ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "stroke.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
+		freeImageOut.saveToFile("stroke.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -1895,19 +1896,19 @@ int main(int argc, char* argv[]) {
 	{
 		size_t sum = 0;
 		Log::startChrono();
-		for ( size_t i = 0; i<G10; i++ ) {
-			sum += ( i<i+2 ) ? 1 : 0;
+		for ( size_t i = 0; i < G10; i++ ) {
+			sum += ( i < i + 2 ) ? 1 : 0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "LOGICAL < (Last : 5914ms) " )+sum );
+		Log::displayChrono(StringASCII("LOGICAL < (Last : 5914ms) ") + sum);
 
 		sum = 0;
 		Log::startChrono();
-		for ( size_t i = 0; i<G10; i++ ) {
-			sum += ( i<=i+2 ) ? 1 : 0;
+		for ( size_t i = 0; i < G10; i++ ) {
+			sum += ( i <= i + 2 ) ? 1 : 0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "LOGICAL <= (Last : 8281ms) " )+sum );
+		Log::displayChrono(StringASCII("LOGICAL <= (Last : 8281ms) ") + sum);
 	}
 #endif
 
@@ -1915,41 +1916,41 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : INT VS UINT Array access times.					//
 	{
-		int * testArray = new int[ 10000000 ];
+		int* testArray = new int[ 10000000 ];
 		int sum = 0;
 		int iteratorInt;
-		int iteratorAdd = Math::random( 0, 100 );
+		int iteratorAdd = Math::random(0, 100);
 		size_t j;
 		Log::startChrono();
-		for ( j = 0; j<M10; j++ ) {
-			for ( iteratorInt = 0; iteratorInt<1000; iteratorInt++ ) {
-				sum += *( testArray+iteratorInt*iteratorAdd );
+		for ( j = 0; j < M10; j++ ) {
+			for ( iteratorInt = 0; iteratorInt < 1000; iteratorInt++ ) {
+				sum += *( testArray + iteratorInt * iteratorAdd );
 			}
 		}
 		Log::stopChrono();
-		Log::displayChrono( "INT ARRAY ACCESS"+sum );
+		Log::displayChrono("INT ARRAY ACCESS" + sum);
 
 		sum = 0;
 		unsigned int iteratorUInt;
 		Log::startChrono();
-		for ( j = 0; j<M10; j++ ) {
-			for ( iteratorUInt = 0; iteratorUInt<1000; iteratorUInt++ ) {
-				sum += *( testArray+iteratorUInt*iteratorAdd );
+		for ( j = 0; j < M10; j++ ) {
+			for ( iteratorUInt = 0; iteratorUInt < 1000; iteratorUInt++ ) {
+				sum += *( testArray + iteratorUInt * iteratorAdd );
 			}
 		}
 		Log::stopChrono();
-		Log::displayChrono( "UINT ARRAY ACCESS"+sum );
+		Log::displayChrono("UINT ARRAY ACCESS" + sum);
 
 		sum = 0;
 		size_t iteratorSizeT;
 		Log::startChrono();
-		for ( j = 0; j<M10; j++ ) {
-			for ( iteratorSizeT = 0; iteratorSizeT<1000; iteratorSizeT++ ) {
-				sum += *( testArray+iteratorSizeT*iteratorAdd );
+		for ( j = 0; j < M10; j++ ) {
+			for ( iteratorSizeT = 0; iteratorSizeT < 1000; iteratorSizeT++ ) {
+				sum += *( testArray + iteratorSizeT * iteratorAdd );
 			}
 		}
 		Log::stopChrono();
-		Log::displayChrono( "SIZE_T ARRAY ACCESS"+sum );
+		Log::displayChrono("SIZE_T ARRAY ACCESS" + sum);
 
 		//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
 		delete[] testArray;
@@ -1960,61 +1961,61 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
 	{
-		Graphic::ColorRGBA<unsigned char> colorWhite( 255, 255, 255, 10 );
-		Graphic::ColorRGBA<unsigned char> colorRed( 255, 0, 0, 10 );
+		Graphic::ColorRGBA<unsigned char> colorWhite(255, 255, 255, 10);
+		Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 10);
 
-		Graphic::Image testBlendRGBA1( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Format::RGBA );
-		Graphic::Image testBlendRGBA2( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Format::RGBA );
+		Graphic::Image testBlendRGBA1(Math::Vec2<Graphic::Size>(200, 200), Graphic::Format::RGBA);
+		Graphic::Image testBlendRGBA2(Math::Vec2<Graphic::Size>(200, 200), Graphic::Format::RGBA);
 
-		testBlendRGBA1.fillImage( colorRed );
-		testBlendRGBA2.fillImage( colorWhite );
+		testBlendRGBA1.fillImage(colorRed);
+		testBlendRGBA2.fillImage(colorWhite);
 
-		Graphic::ImageT<float> testBlendRGBAFloat1( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
-		Graphic::ImageT<float> testBlendRGBAFloat2( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
+		Graphic::ImageT<float> testBlendRGBAFloat1(Math::Vec2<Graphic::Size>(100, 100), Graphic::Format::RGBA);
+		Graphic::ImageT<float> testBlendRGBAFloat2(Math::Vec2<Graphic::Size>(100, 100), Graphic::Format::RGBA);
 
-		Graphic::ColorRGBA<float> colorWhiteF( 1.0f, 1.0f, 1.0f, float( 127 )/float( 255 ) );
-		Graphic::ColorRGBA<float> colorRedF( 1.0f, 0.0f, 0.0f, float( 127 )/float( 255 ) );
+		Graphic::ColorRGBA<float> colorWhiteF(1.0f, 1.0f, 1.0f, float(127) / float(255));
+		Graphic::ColorRGBA<float> colorRedF(1.0f, 0.0f, 0.0f, float(127) / float(255));
 
-		testBlendRGBAFloat1.fillImage( colorRedF );
-		testBlendRGBAFloat2.fillImage( colorWhiteF );
+		testBlendRGBAFloat1.fillImage(colorRedF);
+		testBlendRGBAFloat2.fillImage(colorWhiteF);
 
-		Graphic::Rectangle rectangle( testBlendRGBA2.getSize() );
-
-		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			testBlendRGBA2.drawImage( Graphic::Point( 0, 0 ), testBlendRGBA1 );
-		}
-		Log::stopChrono();
-		Log::displayChrono( "INT BLENDING RGBA -> RGB (last 1215ms)" );
-
+		Graphic::Rectangle rectangle(testBlendRGBA2.getSize());
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			testBlendRGBAFloat2.drawImage( Graphic::Point( 0, 0 ), testBlendRGBAFloat1 );
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBA2.drawImage(Graphic::Point(0, 0), testBlendRGBA1);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "FLOAT BLENDING RGBA -> RGB (last 205ms)" );
-
-		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			testBlendRGBA2.drawImage( Graphic::Point( 0, 0 ), rectangle, testBlendRGBA1, Graphic::BlendingFunc::Normal() );
-		}
-		Log::stopChrono();
-		Log::displayChrono( "INT BLENDING FUNCTOR RGBA -> RGB (last 1200ms)" );
+		Log::displayChrono("INT BLENDING RGBA -> RGB (last 1215ms)");
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K10; i++ ) {
-			testBlendRGBAFloat2.drawImage( Graphic::Point( 0, 0 ), rectangle, testBlendRGBAFloat1, Graphic::BlendingFunc::Normal() );
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBAFloat2.drawImage(Graphic::Point(0, 0), testBlendRGBAFloat1);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)" );
+		Log::displayChrono("FLOAT BLENDING RGBA -> RGB (last 205ms)");
 
-		Graphic::Image testblendCasted( testBlendRGBAFloat2 );
+		Log::startChrono();
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBA2.drawImage(Graphic::Point(0, 0), rectangle, testBlendRGBA1, Graphic::BlendingFunc::Normal());
+		}
+		Log::stopChrono();
+		Log::displayChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 1200ms)");
+
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBAFloat2.drawImage(Graphic::Point(0, 0), rectangle, testBlendRGBAFloat1, Graphic::BlendingFunc::Normal());
+		}
+		Log::stopChrono();
+		Log::displayChrono("FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)");
+
+		Graphic::Image testblendCasted(testBlendRGBAFloat2);
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas( ( unsigned char * ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA );
-		freeImage.saveToFile( "blending.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.loadFromDatas(( unsigned char* ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA);
+		freeImage.saveToFile("blending.png", Graphic::FreeImage::SavingFormat::PNG);
 	}
 #endif
 
@@ -2025,27 +2026,27 @@ int main(int argc, char* argv[]) {
 		struct tm timeinfo;
 		Time::Date date;
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M10; i++ ) {
-			date = Time::Date( Time::getValue() );
+		for ( unsigned long int i = 0; i < M10; i++ ) {
+			date = Time::Date(Time::getValue());
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII()<<"Date" );
+		Log::displayChrono(StringASCII() << "Date");
 
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M10; i++ ) {
-			time_t now = time( NULL );
-			localtime_s( &timeinfo, &now );
+		for ( unsigned long int i = 0; i < M10; i++ ) {
+			time_t now = time(NULL);
+			localtime_s(&timeinfo, &now);
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII()<<"localtime_s" );
+		Log::displayChrono(StringASCII() << "localtime_s");
 	}
 #endif
 #ifdef  SPEEDTEST_DATE_PARSE
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Dates Parse									//
 	{
-		StringASCII dateStr( "2020-11-11T16:17:00.00+01:00" );
-		std::string dateStrStd( "2020-11-11T16:17:00.00+01:00" );
+		StringASCII dateStr("2020-11-11T16:17:00.00+01:00");
+		std::string dateStrStd("2020-11-11T16:17:00.00+01:00");
 
 		Time::Date date;
 		tm dateStd;
@@ -2053,11 +2054,11 @@ int main(int argc, char* argv[]) {
 		int tmpVar = 0;
 
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M10; i++ ) {
-			tmpVar += Time::Date::parse( dateStr ).getMinutes();
+		for ( unsigned long int i = 0; i < M10; i++ ) {
+			tmpVar += Time::Date::parse(dateStr).getMinutes();
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( tmpVar ) );
+		Log::displayChrono(StringASCII(tmpVar));
 	}
 #endif //  SPEEDTEST_DATE_PARSE
 
@@ -2066,26 +2067,26 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings with Strings							//
 	{
-		StringASCII testStr1( "STRING 1 : " );
-		std::string testStr2( "STRING 2 : " );
+		StringASCII testStr1("STRING 1 : ");
+		std::string testStr2("STRING 2 : ");
 
-		StringASCII strConcat1( "Hello World!" );
-		std::string strConcat2( "Hello World!" );
+		StringASCII strConcat1("Hello World!");
+		std::string strConcat2("Hello World!");
 
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M100; i++ ) {
+		for ( size_t i = 0; i < M100; i++ ) {
 			testStr1 += strConcat1;
 		}
 		Log::stopChrono();
-		Log::displayChrono( testStr1.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+		Log::displayChrono(testStr1.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M100; i++ ) {
+		for ( size_t i = 0; i < M100; i++ ) {
 			testStr2 += strConcat2;
 		}
 		Log::stopChrono();
-		Log::displayChrono( testStr2.substr( 0, 30 ).c_str() );
+		Log::displayChrono(testStr2.substr(0, 30).c_str());
 	}
 #endif
 
@@ -2093,33 +2094,33 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings with numbers							//
 	{
-		StringASCII testMyStr1( "STRING 1 : " );
-		StringASCII testMyStr2( "STRING 1 : " );
-		std::string testStdStr1( "STRING 2 : " );
+		StringASCII testMyStr1("STRING 1 : ");
+		StringASCII testMyStr2("STRING 1 : ");
+		std::string testStdStr1("STRING 2 : ");
 
 		int numberInt = Math::random();
 		double numberFloat = 0.123456789123456789;
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M10; i++ ) {
-			testMyStr1.concat( numberFloat, 7, 2 );
+		for ( size_t i = 0; i < M10; i++ ) {
+			testMyStr1.concat(numberFloat, 7, 2);
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Simple++ concat float." )<<testMyStr1.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+		Log::displayChrono(StringASCII("Simple++ concat float.") << testMyStr1.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M10; i++ ) {
-			testMyStr2.concat( numberInt, 2 );
+		for ( size_t i = 0; i < M10; i++ ) {
+			testMyStr2.concat(numberInt, 2);
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Simple++ concat int." )<<testMyStr2.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+		Log::displayChrono(StringASCII("Simple++ concat int.") << testMyStr2.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
 
 		Log::startChrono();
-		for ( size_t i = 0; i<M10; i++ ) {
-			testStdStr1 += std::to_string( numberFloat );
+		for ( size_t i = 0; i < M10; i++ ) {
+			testStdStr1 += std::to_string(numberFloat);
 		}
 		Log::stopChrono();
-		Log::displayChrono( ( std::string( "std concat float." )+testStdStr1.substr( 0, 30 ).c_str() ).data() );
+		Log::displayChrono(( std::string("std concat float.") + testStdStr1.substr(0, 30).c_str() ).data());
 	}
 #endif
 
@@ -2127,15 +2128,15 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
-		StringASCII testStr( "STRING 1 : (%)" );
-		StringASCII strConcat( "STR %" );
+		StringASCII testStr("STRING 1 : (%)");
+		StringASCII strConcat("STR %");
 
 		Log::startChrono();
-		for ( size_t i = 0; i<K100; i++ ) {
-			testStr = StringASCII::format( testStr, strConcat );
+		for ( size_t i = 0; i < K100; i++ ) {
+			testStr = StringASCII::format(testStr, strConcat);
 		}
 		Log::stopChrono();
-		Log::displayChrono( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
+		Log::displayChrono(testStr.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
 	}
 #endif
 
@@ -2147,19 +2148,19 @@ int main(int argc, char* argv[]) {
 	{
 		float sum = 0.0f;
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<10000000; i++ ) {
-			sum += atof( "42.054217" );
+		for ( unsigned long int i = 0; i < 10000000; i++ ) {
+			sum += atof("42.054217");
 		}
 		Log::stopChrono();
-		Log::displayChrono( "ATOF : "+StringASCII( sum ) );
+		Log::displayChrono("ATOF : " + StringASCII(sum));
 
 		sum = 0.0f;
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<10000000; i++ ) {
-			sum += StringASCII::toFloat( "42.054217" );
+		for ( unsigned long int i = 0; i < 10000000; i++ ) {
+			sum += StringASCII::toFloat("42.054217");
 		}
 		Log::stopChrono();
-		Log::displayChrono( "toFloat : "+StringASCII( sum ) );
+		Log::displayChrono("toFloat : " + StringASCII(sum));
 	}
 #endif
 
@@ -2167,25 +2168,25 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Regex									//
 	{
-		for ( unsigned int i = 0; i<260; i++ ) {
-			info( StringASCII( i )+" : "+Regex::match( i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" ) );
+		for ( unsigned int i = 0; i < 260; i++ ) {
+			info(StringASCII(i) + " : " + Regex::match(i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$"));
 		}
-		for ( unsigned int i = 0; i<260; i++ ) {
-			info( StringASCII( i )+" : "+Regex::match( i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$" ) );
+		for ( unsigned int i = 0; i < 260; i++ ) {
+			info(StringASCII(i) + " : " + Regex::match(i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$"));
 		}
 
 		std::string stdString = "________255";
 
 		bool stdResult = true;
 
-		std::string txt_regex( "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" );
-		std::regex stdRegex( txt_regex, std::regex_constants::optimize );
+		std::string txt_regex("2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$");
+		std::regex stdRegex(txt_regex, std::regex_constants::optimize);
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M1; i++ ) {
-			stdResult &= std::regex_search( stdString, stdRegex );
+		for ( unsigned long int i = 0; i < M1; i++ ) {
+			stdResult &= std::regex_search(stdString, stdRegex);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "Regex .regex_match(); STD : "+StringASCII( stdResult ) );
+		Log::displayChrono("Regex .regex_match(); STD : " + StringASCII(stdResult));
 
 
 		bool mineResult = true;
@@ -2193,11 +2194,11 @@ int main(int argc, char* argv[]) {
 		StringASCII mineString = "________255";
 
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M1; i++ ) {
-			mineResult &= Regex::match( mineString, mineRegex );
+		for ( unsigned long int i = 0; i < M1; i++ ) {
+			mineResult &= Regex::match(mineString, mineRegex);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "Vector .regex_match(); Mine : "+StringASCII( mineResult ) );
+		Log::displayChrono("Vector .regex_match(); Mine : " + StringASCII(mineResult));
 	}
 #endif
 
@@ -2209,18 +2210,18 @@ int main(int argc, char* argv[]) {
 		std::vector<unsigned long int> vectorSTD;
 
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<10000000; i++ ) {
-			vectorMine.push( i );
+		for ( unsigned long int i = 0; i < 10000000; i++ ) {
+			vectorMine.push(i);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "Vector .push_back(); Mine" );
+		Log::displayChrono("Vector .push_back(); Mine");
 
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<10000000; i++ ) {
-			vectorSTD.push_back( i );
+		for ( unsigned long int i = 0; i < 10000000; i++ ) {
+			vectorSTD.push_back(i);
 		}
 		Log::stopChrono();
-		Log::displayChrono( "Vector .push_back(); STD" );
+		Log::displayChrono("Vector .push_back(); STD");
 	}
 #endif
 
@@ -2233,43 +2234,43 @@ int main(int argc, char* argv[]) {
 			std::map<unsigned long int, unsigned long int> mapSTD;
 
 			Log::startChrono();
-			for ( unsigned long int i = 0; i<M1; i++ ) {
-				mapSTD.insert( std::pair<unsigned long int, unsigned long int>( Math::random( 0, 1000000 ), i ) );
+			for ( unsigned long int i = 0; i < M1; i++ ) {
+				mapSTD.insert(std::pair<unsigned long int, unsigned long int>(Math::random(0, 1000000), i));
 			}
 			Log::stopChrono();
-			Log::displayChrono( "Map .insert(); STD" );
+			Log::displayChrono("Map .insert(); STD");
 
 
 			Log::startChrono();
-			for ( unsigned long int i = 0; i<M1; i++ ) {
-				mapRedBlackTree.insert( Math::random( 0, 1000000 ), i );
+			for ( unsigned long int i = 0; i < M1; i++ ) {
+				mapRedBlackTree.insert(Math::random(0, 1000000), i);
 			}
 			Log::stopChrono();
-			Log::displayChrono( StringASCII( "Map Red Black Tree .insert(); Mine " ) );
+			Log::displayChrono(StringASCII("Map Red Black Tree .insert(); Mine "));
 		}
 		{
 			Map<unsigned long int, unsigned long int> mapRedBlackTree;
 			std::map<unsigned long int, unsigned long int> mapSTD;
 
-			for ( unsigned long int i = 0; i<M1; i++ ) {
-				mapSTD.insert( std::pair<unsigned long int, unsigned long int>( i, i ) );
-				mapRedBlackTree.insert( i, i );
+			for ( unsigned long int i = 0; i < M1; i++ ) {
+				mapSTD.insert(std::pair<unsigned long int, unsigned long int>(i, i));
+				mapRedBlackTree.insert(i, i);
 			}
-			volatile unsigned long int tmp( 0 );
+			volatile unsigned long int tmp(0);
 			Log::startChrono();
-			for ( unsigned long int i = 0; i<M1; i++ ) {
+			for ( unsigned long int i = 0; i < M1; i++ ) {
 				tmp += mapSTD[ i ];
 			}
 			Log::stopChrono();
-			Log::displayChrono( "Map .operator[] STD" );
+			Log::displayChrono("Map .operator[] STD");
 
 
 			Log::startChrono();
-			for ( unsigned long int i = 0; i<M1; i++ ) {
+			for ( unsigned long int i = 0; i < M1; i++ ) {
 				tmp += *( mapRedBlackTree[ i ] );
 			}
 			Log::stopChrono();
-			Log::displayChrono( StringASCII( "Map Red Black Tree .operator[] Mine " ) );
+			Log::displayChrono(StringASCII("Map Red Black Tree .operator[] Mine "));
 
 		}
 
@@ -2281,37 +2282,37 @@ int main(int argc, char* argv[]) {
 	// SPEED TEST : Arithmetic												//
 	{
 
-		volatile float f0( 1 );
+		volatile float f0(1);
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i < M100; i++ ) {
 			f0 += f0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " )<<f0 );
+		Log::displayChrono(StringASCII("Float ADD ( Last 284ms ) : ") << f0);
 
-		volatile float f1( 1 );
+		volatile float f1(1);
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i < M100; i++ ) {
 			f1 *= f1;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Float MULT ( Last 331ms ) : " )<<f1 );
+		Log::displayChrono(StringASCII("Float MULT ( Last 331ms ) : ") << f1);
 
-		volatile int i0( 1 );
+		volatile int i0(1);
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i < M100; i++ ) {
 			i0 += i0;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " )<<StringASCII( int( i0 ) ) );
+		Log::displayChrono(StringASCII("Float ADD ( Last 284ms ) : ") << StringASCII(int(i0)));
 
-		volatile int i1( 1 );
+		volatile int i1(1);
 		Log::startChrono();
-		for ( unsigned long int i = 0; i<M100; i++ ) {
+		for ( unsigned long int i = 0; i < M100; i++ ) {
 			i1 *= i1;
 		}
 		Log::stopChrono();
-		Log::displayChrono( StringASCII( "Float MULT ( Last 331ms ) : " )<<StringASCII( int( i1 ) ) );
+		Log::displayChrono(StringASCII("Float MULT ( Last 331ms ) : ") << StringASCII(int(i1)));
 
 
 
@@ -2331,7 +2332,7 @@ int main(int argc, char* argv[]) {
 			testExplicitCast<unsigned char> c1, c2, c3;
 
 			Log::startChrono();
-			for ( unsigned long int i = 0; i<G1; i++ ) {
+			for ( unsigned long int i = 0; i < G1; i++ ) {
 				i1 += ( c1 );
 				i2 += ( c2 );
 				i3 += ( c3 );
@@ -2341,7 +2342,7 @@ int main(int argc, char* argv[]) {
 				c3 += ( i3 );
 			}
 			Log::stopChrono();
-			Log::displayChrono( StringASCII( "EXPLICIT CAST (Last Result : ???)" )<<c1.v<<c2.v1<<c3.v );
+			Log::displayChrono(StringASCII("EXPLICIT CAST (Last Result : ???)") << c1.v << c2.v1 << c3.v);
 		}
 
 		{
@@ -2349,7 +2350,7 @@ int main(int argc, char* argv[]) {
 			testImplicitCast<unsigned char> c1, c2, c3;
 
 			Log::startChrono();
-			for ( unsigned long int i = 0; i<G1; i++ ) {
+			for ( unsigned long int i = 0; i < G1; i++ ) {
 				i1 += ( c1 );
 				i2 += ( c2 );
 				i3 += ( c3 );
@@ -2359,18 +2360,18 @@ int main(int argc, char* argv[]) {
 				c3 += ( i3 );
 			}
 			Log::stopChrono();
-			Log::displayChrono( StringASCII( "IMPLICIT CAST (Last Result : ???)" )<<c1.v<<c2.v1<<c3.v );
+			Log::displayChrono(StringASCII("IMPLICIT CAST (Last Result : ???)") << c1.v << c2.v1 << c3.v);
 		}
 
 	}
 #endif
 #if defined SPEEDTEST_PATH
 	{
-		OS::Path path( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
-		StringASCII pathStrASCII( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
-		WString pathStringW( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
-		std::string pathStrStdASCII( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
-		std::wstring pathStrStdW( L"C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		OS::Path path("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
+		StringASCII pathStrASCII("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
+		WString pathStringW("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
+		std::string pathStrStdASCII("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
+		std::wstring pathStrStdW(L"C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
 
 		std::error_code ec;
 
@@ -2378,23 +2379,23 @@ int main(int argc, char* argv[]) {
 		struct _stat64 s;
 
 		Log::startChrono();
-		for ( unsigned long int i( 0 ); i<K100; i++ ) {
+		for ( unsigned long int i(0); i < K100; i++ ) {
 			// tmp += ( int ) OS::Path::exists( pathStrASCII );
-			tmp += ( int ) ( _wstat64( pathStringW.toCString(), &s )==0 );
+			tmp += ( int ) ( _wstat64(pathStringW.toCString(), &s) == 0 );
 		}
 		Log::stopChrono();
-		Log::displayChrono( String::format( "My Path.exists() : %", tmp ) );
+		Log::displayChrono(String::format("My Path.exists() : %", tmp));
 
 		Log::startChrono();
-		for ( unsigned long int i( 0 ); i<K100; i++ ) {
-			tmp += ( int ) std::filesystem::exists( pathStrStdASCII.c_str(), ec );
+		for ( unsigned long int i(0); i < K100; i++ ) {
+			tmp += ( int ) std::filesystem::exists(pathStrStdASCII.c_str(), ec);
 		}
 		Log::stopChrono();
-		Log::displayChrono( String::format( "Std Path.exists(ASCII) : %", tmp ) );
+		Log::displayChrono(String::format("Std Path.exists(ASCII) : %", tmp));
 
 		Log::startChrono();
-		for ( unsigned long int i( 0 ); i<K100; i++ ) {
-			tmp += ( int ) std::filesystem::exists( pathStrStdW.c_str() );
+		for ( unsigned long int i(0); i < K100; i++ ) {
+			tmp += ( int ) std::filesystem::exists(pathStrStdW.c_str());
 			/*
 			__std_fs_stats _Stats;
 
@@ -2404,7 +2405,7 @@ int main(int argc, char* argv[]) {
 			*/
 		}
 		Log::stopChrono();
-		Log::displayChrono( String::format( "Std Path.exists(WString) : %", tmp ) );
+		Log::displayChrono(String::format("Std Path.exists(WString) : %", tmp));
 	}
 #endif
 #ifdef SPEEDTEST_BASE64

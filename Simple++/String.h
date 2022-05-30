@@ -1567,7 +1567,7 @@ public:
 protected:
 	///@brief		Constructor
 	///@param	parameter1	The first parameter.
-	BasicString( typename Vector<T>::ctor );
+	BasicString( typename BasicString<T>::protectedCtor);
 
 	/************************************************************************/
 	/* concat() without adding sentinel                                     */

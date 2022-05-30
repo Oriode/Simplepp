@@ -7,14 +7,14 @@
 /************************************************************************/
 
 template<typename T>
-Vector<T>::Vector(Vector<T>::ctor ) :
-	BasicVector<T>(BasicVector<T>::ctor::null)
+Vector<T>::Vector(typename Vector<T>::protectedCtor) :
+	BasicVector<T, false>(BasicVector<T, false>::protectedCtor::null)
 {}
 
 
 template<typename T>
 Vector<T>::Vector( void ) :
-	BasicVector<T>(),
+	BasicVector<T, false>(),
 	maxSize( 0 ),
 	iteratorEnd( NULL ) {
 
@@ -25,7 +25,7 @@ Vector<T>::Vector( void ) :
 template<typename T>
 template<typename C>
 Vector<T>::Vector( const Vector<C> & vector ) :
-	BasicVector<T>(BasicVector<T>::ctor::null),
+	BasicVector<T, false>(BasicVector<T, false>::protectedCtor::null),
 	maxSize( vector.getMaxSize() ),
 {
 	this->size = vector.getSize();
@@ -38,7 +38,7 @@ Vector<T>::Vector( const Vector<C> & vector ) :
 
 template<typename T>
 Vector<T>::Vector( Vector && v ) :
-	BasicVector<T>(Utility::toRValue(v)),
+	BasicVector<T, false>(Utility::toRValue(v)),
 	maxSize( Utility::toRValue( v.maxSize ) ) {
 	_updateIterators();
 }
@@ -50,7 +50,7 @@ Vector<T>::Vector( Vector && v ) :
 
 template<typename T>
 Vector<T>::Vector( const Size size, const Size maxSize ) :
-	BasicVector<T>(BasicVector<T>::ctor::null),
+	BasicVector<T, false>(BasicVector<T, false>::protectedCtor::null),
 	maxSize( maxSize ),
 	iteratorEnd( dataTable + maxSize )
 {
@@ -68,7 +68,7 @@ Vector<T>::Vector( const Size maxSize ) :
 template<typename T>
 template<typename C>
 inline Vector<T>::Vector(const Table<C>& vector) :
-	BasicVector<T>(vector),
+	BasicVector<T, false>(vector),
 	maxSize(vector.getSize())
 {
 	_updateIterators();
@@ -111,7 +111,7 @@ Vector<T>::Vector( const C * data, const Size size ) :
 template<typename T>
 template<typename C>
 Vector<T>::Vector( const C * data, const Size size, const Size maxSize ) :
-	BasicVector<T>(BasicVector<T>::ctor::null),
+	BasicVector<T, false>(BasicVector<T, false>::protectedCtor::null),
 	maxSize( maxSize )
 {
 	_assert( maxSize );
@@ -388,9 +388,9 @@ template<typename T>
 template<typename Func>
 typename Vector<T>::Iterator Vector<T>::getMinIt(Func& functor) const {
 	if ( this->size == Size(0) ) {
-		return typename BasicVector<T>::Iterator(NULL);
+		return typename BasicVector<T, false>::Iterator(NULL);
 	} else {
-		typename BasicVector<T>::Iterator foundedMinIt(this->dataTable);
+		typename BasicVector<T, false>::Iterator foundedMinIt(this->dataTable);
 		for ( Size i(1); i < this->size; i++ ) {
 			const T& v(getValueI(i));
 
@@ -406,9 +406,9 @@ template<typename T>
 template<typename Func>
 typename Vector<T>::Iterator Vector<T>::getMaxIt(Func& functor) const {
 	if ( this->size == Size(0) ) {
-		return typename BasicVector<T>::Iterator(NULL);
+		return typename BasicVector<T, false>::Iterator(NULL);
 	} else {
-		typename BasicVector<T>::Iterator foundedMaxIt(this->dataTable);
+		typename BasicVector<T, false>::Iterator foundedMaxIt(this->dataTable);
 		for ( Size i(1); i < this->size; i++ ) {
 			const T& v(getValueI(i));
 
@@ -495,7 +495,7 @@ inline typename Vector<T>::Iterator Vector<T>::getIterator(const Size i) const {
 /************************************************************************/
 template<typename T>
 Vector<T> & Vector<T>::operator=( Vector<T> && v ) {
-	BasicVector<T>::operator=(Utility::toRValue(v));
+	BasicVector<T, false>::operator=(Utility::toRValue(v));
 
 	this -> maxSize = Utility::toRValue( v.maxSize );
 	_updateIterators();
@@ -522,7 +522,7 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 template<typename T>
 template<typename C>
 inline Vector<T>& Vector<T>::operator=(const Table<C>& vector) {
-	BasicVector<T>::operator=(vector);
+	BasicVector<T, false>::operator=(vector);
 
 	this->maxSize = this->size;
 	_updateIterators();

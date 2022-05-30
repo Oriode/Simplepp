@@ -13,6 +13,7 @@
 #include "Vec4.h"
 #include "Mat3.h"
 #include "Mat4.h"
+#include "Tensor.h"
 #include "BoundingBox2D.h"
 #include "Rectangle.h"
 #include "Line.h"

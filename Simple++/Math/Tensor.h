@@ -11,9 +11,15 @@ namespace Math {
 	template<typename T>
 	class TensorView;
 
-	template<typename T>
-	class Tensor : public BasicVector<T> {
+	template<typename T, bool Static = false>
+	class Tensor : public BasicVector<T, Static> {
 	public:
+		template<typename C, bool Static2>
+		friend class Tensor;
+
+		template<typename C>
+		friend class TensorView;
+
 		/************************************************************************/
 		/* ================             CONSTRUCTOR            ================ */
 		/************************************************************************/
@@ -30,8 +36,8 @@ namespace Math {
 		Tensor(const C(&v)[ X ][ Y ][Z]);
 		template<typename C>
 		Tensor(const Tensor<C>& tensor);
-		Tensor(const Tensor<T>& tensor);
-		Tensor(Tensor<T>&& tensor);
+		Tensor(const Tensor<T, Static>& tensor);
+		Tensor(Tensor<T, Static>&& tensor);
 
 		~Tensor();
 
@@ -40,13 +46,13 @@ namespace Math {
 		/************************************************************************/
 
 		template<typename C, Size N>
-		Tensor<T>& operator=(const C(&v)[ N ]);
+		Tensor<T, Static>& operator=(const C(&v)[ N ]);
 		template<typename C, Size M, Size N>
-		Tensor<T>& operator=(const C(&v)[ M ][ N ]);
+		Tensor<T, Static>& operator=(const C(&v)[ M ][ N ]);
 		template<typename C>
-		Tensor<T>& operator=(const Tensor<C>& tensor);
-		Tensor<T>& operator=(const Tensor<T>& tensor);
-		Tensor<T>& operator=(Tensor<T>&& tensor);
+		Tensor<T, Static>& operator=(const Tensor<C>& tensor);
+		Tensor<T, Static>& operator=(const Tensor<T, Static>& tensor);
+		Tensor<T, Static>& operator=(Tensor<T, Static>&& tensor);
 
 		/************************************************************************/
 		/* ================               ACCESS               ================ */
@@ -55,14 +61,17 @@ namespace Math {
 		const TensorView<T> operator[](const Size i) const;
 		TensorView<T> operator[](const Size i);
 
-		const T& operator[](const BasicVector<T> & indexes) const;
-		T& operator[](const BasicVector<T>& indexes);
+		const T& operator[](const BasicVector<T, Static> & indexes) const;
+		T& operator[](const BasicVector<T, Static>& indexes);
 
 		/************************************************************************/
 		/* ================                MISC                ================ */
 		/************************************************************************/
 
-		using BasicVector<T>::getSize;
+		operator const T& ( ) const;
+		operator T& ( );
+
+		using BasicVector<T, Static>::getSize;
 		const Size getSize(const Size dim) const;
 
 		const Size getDim() const;
@@ -70,16 +79,22 @@ namespace Math {
 		template<typename S = String>
 		S toString() const;
 
-	private:
-		Size getNbElem(const BasicVector<T>& sizes) const;
+	protected:
+		Tensor(const BasicVector<Size, true> & sizes, T* dataTable);
 
-		BasicVector<Size> sizes;
+		Size getNbElem(const BasicVector<Size, Static>& sizes) const;
+
+		BasicVector<Size, Static> sizes;
+
+	private:
+		template<typename S = String>
+		S _toString() const;
 	};
 
 	template<typename T>
 	class TensorView {
 	public:
-		TensorView(Tensor<T>& tensor, const Size finalIndex, const Size currentDim);
+		TensorView(Tensor<T, false>& tensor, const Size finalIndex, const Size currentDim);
 
 		/************************************************************************/
 		/* ================               ACCESS               ================ */
@@ -88,67 +103,72 @@ namespace Math {
 		const TensorView<T> operator[](const Size i) const;
 		TensorView<T> operator[](const Size i);
 
-		operator const T &() const;
-		operator T &();
-
 		/************************************************************************/
 		/* ================                MISC                ================ */
 		/************************************************************************/
 
+		operator const Tensor<T, true>() const;
+		operator Tensor<T, true>();
+
+		const Tensor<T, true> toTensor() const;
+		Tensor<T, true> toTensor();
+
 		const Size getDim() const;
 
-		template<typename S = String>
-		S toString() const;
-
 	private:
-		Tensor<T>& tensor;
+		T* getData() const;
+
+		Tensor<T, false>& tensor;
 		Size finalIndex;
 		Size currentDim;
 	};
 
 	template<typename T>
-	inline Tensor<T>::Tensor() {}
+	using STensor = Tensor<T, true>;
 
-	template<typename T>
-	inline Tensor<T>::Tensor(const Size n) :
-		BasicVector<T>(n),
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor() {}
+
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor(const Size n) :
+		BasicVector<T, Static>(n),
 		sizes(Size(1))
 	{
 		this->sizes[ 0 ] = n;
 	}
 
-	template<typename T>
-	inline Tensor<T>::Tensor(const Size m, const Size n) :
-		BasicVector<T>(m * n),
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor(const Size m, const Size n) :
+		BasicVector<T, Static>(m * n),
 		sizes(Size(2))
 	{
 		this->sizes[ 0 ] = m;
 		this->sizes[ 1 ] = n;
 	}
 
-	template<typename T>
-	inline Tensor<T>::Tensor(const BasicVector<Size>& sizes) :
-		BasicVector<T>(getNbElem(sizes)),
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor(const BasicVector<Size>& sizes) :
+		BasicVector<T, Static>(getNbElem(sizes)),
 		sizes(sizes)
 	{}
 
-	template<typename T>
-	inline const TensorView<T> Tensor<T>::operator[](const Size i) const {
-		return const_cast< Tensor<T> * >( this )->operator[](i);
+	template<typename T, bool Static>
+	inline const TensorView<T> Tensor<T, Static>::operator[](const Size i) const {
+		return const_cast< Tensor<T, Static> * >( this )->operator[](i);
 	}
 
-	template<typename T>
-	inline TensorView<T> Tensor<T>::operator[](const Size i) {
+	template<typename T, bool Static>
+	inline TensorView<T> Tensor<T, Static>::operator[](const Size i) {
 		return TensorView<T>(*this, i, Size(1));
 	}
 
-	template<typename T>
-	inline const T& Tensor<T>::operator[](const BasicVector<T>& indexes) const {
-		return const_cast< Tensor<T> * >( this )->operator[](indexes);
+	template<typename T, bool Static>
+	inline const T& Tensor<T, Static>::operator[](const BasicVector<T, Static>& indexes) const {
+		return const_cast< Tensor<T, Static> * >( this )->operator[](indexes);
 	}
 
-	template<typename T>
-	inline T& Tensor<T>::operator[](const BasicVector<T>& indexes) {
+	template<typename T, bool Static>
+	inline T& Tensor<T, Static>::operator[](const BasicVector<T, Static>& indexes) {
 		assert(indexes.getSize() <= this->sizes.getSize());
 
 		Size finalIndex(0);
@@ -165,23 +185,39 @@ namespace Math {
 			finaleIndex += index;
 		}
 
-		return BasicVector<T>::operator[](finalIndex);
+		return getValueI(finalIndex);
 	}
 
-	template<typename T>
-	inline const Size Tensor<T>::getSize(const Size dim) const {
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::operator const T& ( ) const {
+		return this->dataTable[ 0 ];
+	}
+
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::operator T& ( ) {
+		return this->dataTable[ 0 ];
+	}
+
+	template<typename T, bool Static>
+	inline const Size Tensor<T, Static>::getSize(const Size dim) const {
 		return this->sizes[ dim ];
 	}
 
-	template<typename T>
-	inline const Size Tensor<T>::getDim() const {
+	template<typename T, bool Static>
+	inline const Size Tensor<T, Static>::getDim() const {
 		return this->sizes.getSize();
 	}
 
-	template<typename T>
-	inline Size Tensor<T>::getNbElem(const BasicVector<T>& sizes) const {
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor(const BasicVector<Size, true>& sizes, T* dataTable) :
+		BasicVector<T, Static>(getNbElem(sizes), dataTable),
+		sizes(sizes)
+	{}
+
+	template<typename T, bool Static>
+	inline Size Tensor<T, Static>::getNbElem(const BasicVector<Size, Static>& sizes) const {
 		if ( sizes.getSize() == Size(0) ) {
-			return Size(0);
+			return Size(1);
 		}
 
 		Size nbElem(sizes[0]);
@@ -192,29 +228,29 @@ namespace Math {
 		return nbElem;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C, Size N>
-	inline Tensor<T>::Tensor(const C(&v)[ N ]) :
-		BasicVector<T>(v),
+	inline Tensor<T, Static>::Tensor(const C(&v)[ N ]) :
+		BasicVector<T, Static>(v),
 		sizes(Size(1))
 	{
 		this->sizes[ 0 ] = N;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C, Size M, Size N>
-	inline Tensor<T>::Tensor(const C(&v)[ M ][ N ]) :
-		BasicVector<T>(reinterpret_cast<const C *>(v), M * N),
+	inline Tensor<T, Static>::Tensor(const C(&v)[ M ][ N ]) :
+		BasicVector<T, Static>(reinterpret_cast<const C *>(v), M * N),
 		sizes(Size(2))
 	{
 		this->sizes[ 0 ] = M;
 		this->sizes[ 1 ] = N;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C, Size X, Size Y, Size Z>
-	inline Tensor<T>::Tensor(const C(&v)[ X ][ Y ][ Z ]) :
-		BasicVector<T>(reinterpret_cast< const C* >( v ), X * Y * Z),
+	inline Tensor<T, Static>::Tensor(const C(&v)[ X ][ Y ][ Z ]) :
+		BasicVector<T, Static>(reinterpret_cast< const C* >( v ), X * Y * Z),
 		sizes(Size(3))
 	{
 		this->sizes[ 0 ] = X;
@@ -222,17 +258,17 @@ namespace Math {
 		this->sizes[ 2 ] = Z;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C>
-	inline Tensor<T>::Tensor(const Tensor<C>& tensor) :
-		BasicVector<T>(tensor),
+	inline Tensor<T, Static>::Tensor(const Tensor<C>& tensor) :
+		BasicVector<T, Static>(tensor),
 		sizes(tensor.sizes)
 	{}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C, Size N>
-	inline Tensor<T>& Tensor<T>::operator=(const C(&v)[ N ]) {
-		BasicVector<T>::operator=(v);
+	inline Tensor<T, Static>& Tensor<T, Static>::operator=(const C(&v)[ N ]) {
+		BasicVector<T, Static>::operator=(v);
 
 		this->sizes.resizeNoCopy(Size(1));
 		this->sizes[ 0 ] = N;
@@ -240,9 +276,9 @@ namespace Math {
 		return *this;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C, Size M, Size N>
-	inline Tensor<T>& Tensor<T>::operator=(const C(&v)[ M ][ N ]) {
+	inline Tensor<T, Static>& Tensor<T, Static>::operator=(const C(&v)[ M ][ N ]) {
 		resizeNoCopy(M * N);
 
 		Utility::copy(this->dataTable, reinterpret_cast<const C *>(v), this->size);
@@ -253,18 +289,18 @@ namespace Math {
 		return *this;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename C>
-	inline Tensor<T>& Tensor<T>::operator=(const Tensor<C>& tensor) {
-		BasicVector<T>::operator=(tensor);
+	inline Tensor<T, Static>& Tensor<T, Static>::operator=(const Tensor<C>& tensor) {
+		BasicVector<T, Static>::operator=(tensor);
 		this->sizes = tensor.sizes;
 
 		return *this;
 	}
 
-	template<typename T>
+	template<typename T, bool Static>
 	template<typename S>
-	inline S Tensor<T>::toString() const {
+	inline S Tensor<T, Static>::toString() const {
 		S outputStr;
 
 		outputStr << S::ElemType('\n');
@@ -289,9 +325,9 @@ namespace Math {
 		outputStr << S::ElemType('=');
 		outputStr << S::ElemType('\n');
 
-		if ( this->sizes.getSize() == Size(0) ) {
+		if ( getDim() == Size(0) ) {
 			outputStr << S::ElemType('0');
-		} else if ( this->sizes.getSize() == Size(1) ) {
+		} else if ( getDim() == Size(1) ) {
 			outputStr << S::ElemType('[');
 			outputStr << S::ElemType(' ');
 
@@ -300,7 +336,7 @@ namespace Math {
 					outputStr << S::ElemType(',');
 					outputStr << S::ElemType(' ');
 				}
-				outputStr << operator[](i);
+				outputStr << getValueI(i);
 			}
 
 			outputStr << S::ElemType(' ');
@@ -311,7 +347,7 @@ namespace Math {
 				if ( i > Size(0) ) {
 					outputStr << S::ElemType('\n');
 				}
-				outputStr << operator[](i).toString<S>();
+				outputStr << operator[](i).toTensor()._toString<S>();
 			}
 
 		}
@@ -319,38 +355,66 @@ namespace Math {
 		return outputStr;
 	}
 
-	template<typename T>
-	inline Tensor<T>& Tensor<T>::operator=(const Tensor<T>& tensor) {
-		BasicVector<T>::operator=(tensor);
+	template<typename T, bool Static>
+	template<typename S>
+	inline S Tensor<T, Static>::_toString() const {
+		S outputStr;
+
+		if ( getDim() == Size(0) ) {
+			outputStr << getValueI(Size(0));
+		} else {
+			outputStr << S::ElemType('[');
+			outputStr << S::ElemType(' ');
+
+			for ( Size i(0); i < getSize(Size(0)); i++ ) {
+				if ( i > Size(0) ) {
+					outputStr << S::ElemType(',');
+					outputStr << S::ElemType(' ');
+				}
+				outputStr << operator[](i).toTensor()._toString<S>();
+			}
+
+			outputStr << S::ElemType(' ');
+			outputStr << S::ElemType(']');
+		}
+
+		return outputStr;
+	}
+
+	template<typename T, bool Static>
+	inline Tensor<T, Static>& Tensor<T, Static>::operator=(const Tensor<T, Static>& tensor) {
+		BasicVector<T, Static>::operator=(tensor);
 		this->sizes = tensor.sizes;
 
 		return *this;
 	}
 
-	template<typename T>
-	inline Tensor<T>& Tensor<T>::operator=(Tensor<T>&& tensor) {
-		BasicVector<T>::operator=(Utility::toRValue(tensor));
+	template<typename T, bool Static>
+	inline Tensor<T, Static>& Tensor<T, Static>::operator=(Tensor<T, Static>&& tensor) {
+		BasicVector<T, Static>::operator=(Utility::toRValue(tensor));
 		this->sizes = Utility::toRValue(tensor.sizes);
 
 		return *this;
 	}
 
-	template<typename T>
-	inline Tensor<T>::Tensor(const Tensor<T>& tensor) :
-		BasicVector<T>(tensor),
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor(const Tensor<T, Static>& tensor) :
+		BasicVector<T, Static>(tensor),
 		sizes(tensor.sizes) {}
 
-	template<typename T>
-	inline Tensor<T>::Tensor(Tensor<T>&& tensor) :
-		BasicVector<T>(Utility::toRValue(tensor)),
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::Tensor(Tensor<T, Static>&& tensor) :
+		BasicVector<T, Static>(Utility::toRValue(tensor)),
 		sizes(Utility::toRValue(tensor))
 	{}
 
-	template<typename T>
-	inline Tensor<T>::~Tensor() {}
+	template<typename T, bool Static>
+	inline Tensor<T, Static>::~Tensor() {
+
+	}
 
 	template<typename T>
-	inline TensorView<T>::TensorView(Tensor<T>& tensor, const Size finalIndex, const Size currentDim) :
+	inline TensorView<T>::TensorView(Tensor<T, false>& tensor, const Size finalIndex, const Size currentDim) :
 		tensor(tensor),
 		finalIndex(finalIndex),
 		currentDim(currentDim)
@@ -363,7 +427,6 @@ namespace Math {
 
 	template<typename T>
 	inline TensorView<T> TensorView<T>::operator[](const Size i) {
-
 		Size finalIndex(this->finalIndex);
 
 		finalIndex *= this->tensor.getSize(this->currentDim);
@@ -375,13 +438,35 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline TensorView<T>::operator const T& ( ) const {
-		return this->tensor.getValueI(this->finalIndex);
+	inline TensorView<T>::operator const Tensor<T, true>( ) const {
+		return const_cast< TensorView<T> * >( this )->operator Tensor<T, true>();
 	}
 
 	template<typename T>
-	inline TensorView<T>::operator T &() {
-		return this->tensor.getValueI(this->finalIndex);
+	inline TensorView<T>::operator Tensor<T, true>() {
+		return toTensor();
+	}
+
+	template<typename T>
+	inline const Tensor<T, true> TensorView<T>::toTensor() const {
+		return const_cast< TensorView<T> * >( this )->toTensor();
+	}
+
+	template<typename T>
+	inline Tensor<T, true> TensorView<T>::toTensor() {
+		Size offset(this->finalIndex);
+
+		if ( this->currentDim < this->tensor.getDim() ) {
+			BasicVector<Size, true> newSizes(this->tensor.getDim() - this->currentDim, this->tensor.sizes.getData() + this->currentDim);
+			for ( Size i(this->currentDim); i < this->tensor.getDim(); i++ ) {
+				// newSizes[ i - this->currentDim ] = this->tensor.getSize(i);
+				offset *= this->tensor.getSize(i);
+			}
+
+			return Tensor<T, true>(newSizes, this->tensor.getData() + offset);
+		} else {
+			return Tensor<T, true>(BasicVector<Size, true>(), this->tensor.getData() + this->finalIndex);
+		}
 	}
 
 	template<typename T>
@@ -390,29 +475,14 @@ namespace Math {
 	}
 
 	template<typename T>
-	template<typename S>
-	inline S TensorView<T>::toString() const {
-		S outputStr;
+	inline T* TensorView<T>::getData() const {
+		Size offset(this->finalIndex);
 
-		if ( getDim() == Size(0) ) {
-			outputStr << this->tensor.getValueI(this->finalIndex);
-		} else {
-			outputStr << S::ElemType('[');
-			outputStr << S::ElemType(' ');
-
-			for ( Size i(0); i < this->tensor.getSize(this->currentDim); i++ ) {
-				if ( i > Size(0) ) {
-					outputStr << S::ElemType(',');
-					outputStr << S::ElemType(' ');
-				}
-				outputStr << operator[](i).toString<S>();
-			}
-
-			outputStr << S::ElemType(' ');
-			outputStr << S::ElemType(']');
+		for ( Size i(this->currentDim); i < this->tensor.getDim() - Size(1); i++ ) {
+			offset *= this->tensor.getSize(i);
 		}
 
-		return outputStr;
+		return this->tensor.getData() + offset;
 	}
 
 }

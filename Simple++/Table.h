@@ -288,11 +288,11 @@ public:
 
 protected:
 	/** @brief	Values that represent Constructors */
-	enum class ctor {
+	enum class protectedCtor {
 		null
 	};
 
-	Table(Table<T>::ctor);
+	Table(typename Table<T>::protectedCtor);
 
 	/**
 	 * @brief 	Quicksorts
@@ -352,7 +352,7 @@ inline Table<T>& Table<T>::operator=(Table<T>&& v) {
 }
 
 template<typename T>
-inline Table<T>::Table(Table<T>::ctor) {}
+inline Table<T>::Table(typename Table<T>::protectedCtor) {}
 
 template<typename T>
 inline const T& Table<T>::operator[](const Size i) const {
@@ -425,7 +425,7 @@ inline T& Table<T>::getValueF(float f) {
 
 template<typename T>
 const T& Table<T>::getValueI(const Size i) const {
-	return const_cast< BasicVector<T> * >( this )->getValueI(i);
+	return const_cast< Table<T> * >( this )->getValueI(i);
 }
 
 template<typename T>

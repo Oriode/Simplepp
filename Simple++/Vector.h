@@ -29,7 +29,7 @@ using RandomAccessIterator = T*;
  * @tparam	T	Type of the Values to store.
  */
 template<typename T = int>
-class Vector : public BasicVector<T> {
+class Vector : public BasicVector<T, false> {
 public:
 	template<typename C>
 	friend class BasicString;
@@ -39,6 +39,8 @@ public:
 
 	/** @brief	Defines an alias representing the iterator */
 	typedef RandomAccessIterator<T> Iterator;
+
+	typedef T ElemType;
 	
 	/** @brief	Default constructor */
 	Vector( void );
@@ -229,7 +231,7 @@ public:
 	 * @param [in,out]	v 	out Pointer to a pointer to the value retrieved.
 	 * @returns	True if a data has been retrieved or False if the end has been reached.
 	 */
-	bool iterate(typename Vector<T>::Iterator* it, ElemType** v) const;
+	bool iterate(typename Vector<T>::Iterator* it, typename ElemType** v) const;
 
 	/**
 	 * @brief 	Iterate ONE time and set the pointer to the pointer of the data retrieved
@@ -433,7 +435,7 @@ protected:
 	 * @brief 	Constructor
 	 * @param 	parameter1	The first parameter.
 	 */
-	Vector( Vector<T>::ctor );
+	Vector( typename Vector<T>::protectedCtor);
 
 	/**
 	 * @brief 	Swaps

@@ -46,7 +46,7 @@ const typename BasicString<T>::IsEndSentinel BasicString<T>::IS_END_SENTINEL;
 template<typename T>
 template<typename C>
 BasicString<T>::BasicString( C * const & str ) :
-	Vector( Vector<T>::ctor::null ) {
+	Vector( Vector<T>::protectedCtor::null ) {
 	this -> size = BasicString<C>::getSize( str );
 	this -> maxSize = this -> size + 1;
 	this -> dataTable = new T[ this -> maxSize ];
@@ -94,7 +94,7 @@ BasicString<T>::BasicString() :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned char & ui, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 5;
 	this -> dataTable = new T[ 5 ];
 	this -> size = toCString( ui, this -> dataTable, base );
@@ -104,7 +104,7 @@ BasicString<T>::BasicString( const unsigned char & ui, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned short & ui, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 7;
 	this -> dataTable = new T[ 7 ];
 	this -> size = toCString( ui, this -> dataTable, base );
@@ -114,7 +114,7 @@ BasicString<T>::BasicString( const unsigned short & ui, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const int & i, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 12;
 	this -> dataTable = new T[ 12 ];
 	this -> size = toCString( i, this -> dataTable, base );
@@ -123,7 +123,7 @@ BasicString<T>::BasicString( const int & i, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned int & ui, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 11;
 	this -> dataTable = new T[ 11 ];
 	this -> size = toCString( ui, this -> dataTable, base );
@@ -132,7 +132,7 @@ BasicString<T>::BasicString( const unsigned int & ui, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const long int & l, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
 	this -> size = toCString( l, this -> dataTable, base );
@@ -141,7 +141,7 @@ BasicString<T>::BasicString( const long int & l, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned long int & ul, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
 	this -> size = toCString( ul, this -> dataTable, base );
@@ -150,7 +150,7 @@ BasicString<T>::BasicString( const unsigned long int & ul, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const long long int & ll, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
 	this -> size = toCString( ll, this -> dataTable, base );
@@ -159,7 +159,7 @@ BasicString<T>::BasicString( const long long int & ll, unsigned int base ) :
 
 template<typename T>
 BasicString<T>::BasicString( const unsigned long long int & ull, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
 	this -> size = toCString( ull, this -> dataTable, base );
@@ -168,7 +168,7 @@ BasicString<T>::BasicString( const unsigned long long int & ull, unsigned int ba
 
 template<typename T>
 BasicString<T>::BasicString( const double & d, unsigned int precision, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 50;
 	this -> dataTable = new T[ 50 ];
 	this -> size = toCString( d, this -> dataTable, precision, base );
@@ -177,7 +177,7 @@ BasicString<T>::BasicString( const double & d, unsigned int precision, unsigned 
 
 template<typename T>
 BasicString<T>::BasicString( const float & f, unsigned int precision, unsigned int base ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 30;
 	this -> dataTable = new T[ 30 ];
 	this -> size = toCString( f, this -> dataTable, precision, base );
@@ -186,7 +186,7 @@ BasicString<T>::BasicString( const float & f, unsigned int precision, unsigned i
 
 template<typename T>
 BasicString<T>::BasicString( const bool & b ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 6;
 	this -> dataTable = new T[ 6 ];
 	this -> size = toCString( b, this -> dataTable );
@@ -227,13 +227,13 @@ BasicString<T>::BasicString( BasicString<T> && str ) :
 	Vector<T>( Utility::toRValue( str ) ) {}
 
 template<typename T>
-BasicString<T>::BasicString( Vector<T>::ctor ) : Vector<T>( ctor::null ) {
+BasicString<T>::BasicString(typename BasicString<T>::protectedCtor) : Vector<T>( Vector<T>::protectedCtor::null ) {
 
 }
 
 template<typename T>
 inline BasicString<T>::BasicString( const typename Math::Compare::Value & compareValue ) :
-	Vector<T>( Vector<T>::ctor::null ) {
+	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this->maxSize = 8;
 	this->dataTable = new T[ 8 ];
 	this->size = toCString( compareValue, this->dataTable );
@@ -2872,7 +2872,7 @@ inline bool BasicString<T>::toBool() const {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( const T & c ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( 2 );
 	newStr.size = toCString( c, newStr.dataTable );
 	newStr._updateIterators();
@@ -2883,7 +2883,7 @@ BasicString<T> BasicString<T>::toString( const T & c ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned char number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned char ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2893,7 +2893,7 @@ BasicString<T> BasicString<T>::toString( unsigned char number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned short number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( short ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2903,7 +2903,7 @@ BasicString<T> BasicString<T>::toString( unsigned short number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned int number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2913,7 +2913,7 @@ BasicString<T> BasicString<T>::toString( unsigned int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( int number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2923,7 +2923,7 @@ BasicString<T> BasicString<T>::toString( int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned long long int number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long long int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2933,7 +2933,7 @@ BasicString<T> BasicString<T>::toString( unsigned long long int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( long long int number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( long long int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2943,7 +2943,7 @@ BasicString<T> BasicString<T>::toString( long long int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( unsigned long int number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2953,7 +2953,7 @@ BasicString<T> BasicString<T>::toString( unsigned long int number ) {
 template<typename T>
 template<unsigned int Base>
 BasicString<T> BasicString<T>::toString( long int number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( long int ) * 8 );
 	newStr.size = toCString<Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2973,7 +2973,7 @@ BasicString<T> BasicString<T>::toString( double number ) {
 template<typename T>
 template<unsigned int Precision, unsigned int Base>
 BasicString<T> BasicString<T>::toString( float number ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + Precision );
 	newStr.size = toCString<Precision, Base>( number, newStr.dataTable );
 	newStr._updateIterators();
@@ -2983,7 +2983,7 @@ BasicString<T> BasicString<T>::toString( float number ) {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned char number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned char ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -2992,7 +2992,7 @@ BasicString<T> BasicString<T>::toString( unsigned char number, unsigned int base
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned short number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned short ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3002,7 +3002,7 @@ BasicString<T> BasicString<T>::toString( unsigned short number, unsigned int bas
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned int number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3011,7 +3011,7 @@ BasicString<T> BasicString<T>::toString( unsigned int number, unsigned int base 
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( int number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3020,7 +3020,7 @@ BasicString<T> BasicString<T>::toString( int number, unsigned int base ) {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned long long int number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long long int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3029,7 +3029,7 @@ BasicString<T> BasicString<T>::toString( unsigned long long int number, unsigned
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( long long int number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( long long int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3038,7 +3038,7 @@ BasicString<T> BasicString<T>::toString( long long int number, unsigned int base
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( unsigned long int number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( unsigned long int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3047,7 +3047,7 @@ BasicString<T> BasicString<T>::toString( unsigned long int number, unsigned int 
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( long int number, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( long int ) * 8 );
 	newStr.size = toCString( number, newStr.dataTable, base );
 	newStr._updateIterators();
@@ -3056,7 +3056,7 @@ BasicString<T> BasicString<T>::toString( long int number, unsigned int base ) {
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( double number, unsigned int precision, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( double ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
 	newStr._updateIterators();
@@ -3065,7 +3065,7 @@ BasicString<T> BasicString<T>::toString( double number, unsigned int precision, 
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( float number, unsigned int precision, unsigned int base ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( sizeof( float ) * 8 + precision );
 	newStr.size = toCString( number, newStr.dataTable, precision, base );
 	newStr._updateIterators();
@@ -3075,7 +3075,7 @@ BasicString<T> BasicString<T>::toString( float number, unsigned int precision, u
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( bool b ) {
-	BasicString<T> newStr( Vector<T>::ctor::null );
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( 6 );
 	newStr.size = toCString( b, newStr.dataTable );
 	newStr._updateIterators();
@@ -4431,7 +4431,7 @@ BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, con
 template<typename T>
 template<typename C, typename T1, typename... Types>
 BasicString<T> BasicString<T>::_format( const C * referenceStringBegin, const C * referenceStringEnd, const T1 & arg1, Types ... args ) {
-	BasicString<T> newString(Vector<T>::ctor::null);
+	BasicString<T> newString(Vector<T>::protectedCtor::null);
 
 	Size referenceStringSize( referenceStringEnd - referenceStringBegin );
 
