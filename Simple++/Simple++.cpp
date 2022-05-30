@@ -52,8 +52,9 @@
 // #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-#define DEBUG_VEC
-#define DEBUG_MAT
+//#define DEBUG_VEC
+//#define DEBUG_MAT
+#define DEBUG_TENSOR
 
 
 #ifndef _LIB
@@ -71,6 +72,7 @@
 #include "Math/Math.h"
 #include "Math/Vec.h"
 #include "Math/Mat.h"
+#include "Math/Tensor.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
@@ -1548,6 +1550,19 @@ int main(int argc, char* argv[]) {
 		m1.identity();
 
 		log(m3.toString());
+	}
+#endif
+#ifdef DEBUG_TENSOR
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Tensor														//
+	{
+		Math::Tensor<double> t1({ {1,2}, {3,4} });
+		Math::Tensor<double> t2({1,2,3,4});
+		Math::Tensor<double> t3({ {{1,0},{2,0}}, {{3,0},{4,0}} });
+
+		log(t1[ 0 ][ 0 ]);
+
+		log(t3.toString());
 	}
 #endif
 
