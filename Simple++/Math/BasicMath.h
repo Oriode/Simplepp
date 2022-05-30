@@ -304,6 +304,9 @@ namespace Math {
 	using std::floor;
 	using std::exp;
 	using std::round;
+	using std::log;
+	using std::log2;
+	using std::log10;
 
 	/************************************************************************/
 	/* FUNCTORS                                                         */

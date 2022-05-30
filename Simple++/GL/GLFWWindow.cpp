@@ -512,7 +512,7 @@ namespace GLFW {
 					GLuint unusedIds = 0;
 					glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true );
 
-					log( "glDebugMessageCallback registered !" );
+					info( "glDebugMessageCallback registered !" );
 				} else {
 					glfwError( GLFW::Error::NotInitialized, "glDebugMessageCallback not available" );
 				}
@@ -784,12 +784,12 @@ namespace GLFW {
 
 	void Window::onMouseButton( MouseButton mouseButton, EventAction action, unsigned int mods ) {
 		// Virtual function to be overloaded
-		log( mouseButton2String( mouseButton ) );
+		info( mouseButton2String( mouseButton ) );
 	}
 
 	void Window::onText( UTF8String::CodePoint unicodeCodePoint ) {
 		// Virtual function to be overloaded
-		log( getClipboardString() );
+		info( getClipboardString() );
 	}
 
 	void Window::onDrop( Vector<String> filePathsVector ) {

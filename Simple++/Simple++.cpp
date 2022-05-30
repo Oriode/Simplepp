@@ -52,7 +52,7 @@
 // #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-//#define DEBUG_VEC
+#define DEBUG_VEC
 //#define DEBUG_MAT
 #define DEBUG_TENSOR
 
@@ -288,47 +288,47 @@ int main(int argc, char* argv[]) {
 
 			//assert( IO::write( "TextureManager.cmanager", &textureManager ) );
 			//assert( IO::read( "TextureManager.cmanager", &textureManager ) );
-			log(StringASCII("Resource counter : (expected : 0) : ") << textureManager.getNbUses(filePath));
+			info(StringASCII("Resource counter : (expected : 0) : ") << textureManager.getNbUses(filePath));
 
 			// Adding one resource with the Resource
 			assert(textureResource.setObject(filePath));
-			log(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
+			info(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
 
-			log(StringASCII("Texture Height : (expected : 500) : ") << textureResource.getObject()->getHeight());
+			info(StringASCII("Texture Height : (expected : 500) : ") << textureResource.getObject()->getHeight());
 
 			// Adding a texture directly to the manager.
 			assert(textureManager.addObject(filePath));
-			log(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
+			info(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
 
 			// Changing resource to something external.
 			Graphic::Texture<unsigned char> textureTest;
 			assert(textureResource.setObject(&textureTest));
 			// One Resource has been deleted, the counter should be 1.
-			log(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
+			info(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
 
 			// Set back an internaly texture.
 			assert(textureResource.setObject(filePath));
-			log(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
+			info(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
 			// Now the texture should be managed by the textureManager.
 
 			// Add a texture directly to the manager.
 			assert(textureManager.addObject(filePath));
-			log(StringASCII("Resource counter : (expected : 3) : ") << textureManager.getNbUses(filePath));
+			info(StringASCII("Resource counter : (expected : 3) : ") << textureManager.getNbUses(filePath));
 
 			IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable(filePath);
 
 			assert(textureLoadable.load());
-			log(StringASCII("Texture Loaded as a Loadable, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
+			info(StringASCII("Texture Loaded as a Loadable, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
 
 			// Now try to write the loadable as a BasicIO.
 			assert(IO::write(filePath, &textureLoadable));
 
 			// And now read it again.
 			assert(IO::read(filePath, &textureLoadable));
-			log(StringASCII("Texture Loaded as a BasicIO, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
+			info(StringASCII("Texture Loaded as a BasicIO, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
 
 
-			log("Every IO Tests passed.");
+			info("Every IO Tests passed.");
 		}
 		/*
 		{
@@ -430,7 +430,7 @@ int main(int argc, char* argv[]) {
 
 			nodeTest[ 0 ]->getChild(0)->addChild(new XML::NodeText(" Hello World!"));
 			UTF8String value(nodeTest[ 0 ]->getValue());
-			log(value);
+			info(value);
 		}
 
 		assert(IO::write(WString("testXML.cxml"), &testDocument));
@@ -532,7 +532,7 @@ int main(int argc, char* argv[]) {
 #endif
 #ifdef DEBUG_LIST
 	{
-		log("Debugging Lists...");
+		info("Debugging Lists...");
 
 		List<float> floatList;
 		floatList.push(42.0f);
@@ -557,18 +557,18 @@ int main(int argc, char* argv[]) {
 		IO::write(OS::Path("floatList.cl"), &floatListCopy);
 		IO::read(OS::Path("floatList.cl"), &floatListCopy);
 
-		log(floatListCopy.toString());
+		info(floatListCopy.toString());
 	}
 #endif // DEBUG_LIST
 #ifdef DEBUG_MAP
 	{
-		log("Debuging Maps...");
+		info("Debuging Maps...");
 
 		// Test if the compare is working fine.
 		auto r = Math::Compare::compare(UTF8String("Hello"), UTF8String("World"));
 
 		// Test if the convertion to String is working.
-		log(String(r));
+		info(String(r));
 
 		Map<unsigned long int, unsigned long int> testMap;
 
@@ -583,17 +583,17 @@ int main(int argc, char* argv[]) {
 		testMap.insert(8, 8);
 		testMap.insert(9, 9);
 
-		log("Map : ");
+		info("Map : ");
 		for ( auto it(testMap.getBegin()); it != testMap.getEnd(); testMap.iterate(&it) ) {
-			log(testMap.getValueIt(it));
+			info(testMap.getValueIt(it));
 		}
 
-		log("Map Ascending : ");
+		info("Map Ascending : ");
 		for ( auto it(testMap.getSmallest()); it != testMap.getEnd(); testMap.iterateAscending(&it) ) {
-			log(testMap.getValueIt(it));
+			info(testMap.getValueIt(it));
 		}
 
-		log(StringASCII(testMap));
+		info(StringASCII(testMap));
 
 
 		{
@@ -603,14 +603,14 @@ int main(int argc, char* argv[]) {
 			Map<unsigned long int, unsigned long int> mapLoaded;
 			assert(IO::read(WString("myMap.font"), &mapLoaded));
 
-			log(StringASCII(mapLoaded));
+			info(StringASCII(mapLoaded));
 		}
 
 		{
 			// Testing Copy
 			Map<unsigned long int, unsigned long int> mapCopied = testMap;
 
-			log(StringASCII(mapCopied));
+			info(StringASCII(mapCopied));
 
 		}
 
@@ -630,14 +630,14 @@ int main(int argc, char* argv[]) {
 		for ( unsigned long int i(0); i < 1000; i++ ) {
 			testMap.eraseI(Math::random(0, 1000));
 		}
-		//log( StringASCII( testMap ) );
+		//info( StringASCII( testMap ) );
 
 		Map<int, String> mapTest;
 		mapTest.insert(42, "Hello World !");
 
 		String* nodeResult(mapTest[ 42 ]);
 		if ( nodeResult ) {
-			log(StringASCII("Node 42 (expected : Hello World !) : ") << *nodeResult);
+			info(StringASCII("Node 42 (expected : Hello World !) : ") << *nodeResult);
 		} else {
 			error("Index 42 not founded.");
 		}
@@ -657,7 +657,7 @@ int main(int argc, char* argv[]) {
 	Graphic::ColorRGB<unsigned char> colorUC(6, 0, 8);
 	Graphic::ColorRGB<float> colorF(0.33, 0.86, 0.96);
 
-	log(StringASCII(colorF.HSLtoRGB()));
+	info(StringASCII(colorF.HSLtoRGB()));
 
 
 
@@ -1308,7 +1308,7 @@ int main(int argc, char* argv[]) {
 
 		StringASCII hashStr(StringASCII::encodeHexadecimal(hashBinary));
 
-		log(hashStr);
+		info(hashStr);
 	}
 #endif
 #ifdef DEBUG_BASE64
@@ -1346,7 +1346,7 @@ int main(int argc, char* argv[]) {
 			StringASCII outputStr(StringASCII::encodeBase64(dataVector));
 			Vector<unsigned char> outputVector(StringASCII::decodeBase64(outputStr));
 
-			log(outputStr);
+			info(outputStr);
 
 			if ( dataVector != outputVector ) {
 				error("Error.");
@@ -1354,7 +1354,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
-		log("Success !");
+		info("Success !");
 	}
 #endif
 #ifdef DEBUG_HEXADECIMAL
@@ -1391,7 +1391,7 @@ int main(int argc, char* argv[]) {
 			StringASCII outputStr(StringASCII::encodeHexadecimal(dataVector));
 			Vector<unsigned char> outputVector(StringASCII::decodeHexadecimal(outputStr));
 
-			log(outputStr);
+			info(outputStr);
 
 			if ( dataVector != outputVector ) {
 				error("Error.");
@@ -1399,16 +1399,16 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
-		log("Success !");
+		info("Success !");
 	}
 #endif
 #ifdef DEBUG_STRING
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Strings											//
 	{
-		log( "Hello World !" );
-		log( StringASCII( "hElLo WoRlD !" ).toUpper() );
-		log( StringASCII( "hElLo WoRlD !" ).toLower() );
+		info( "Hello World !" );
+		info( StringASCII( "hElLo WoRlD !" ).toUpper() );
+		info( StringASCII( "hElLo WoRlD !" ).toLower() );
 		StringASCII testStr( "STRING 1 : " );
 		StringASCII strConcat( "Hello World!" );
 		Log::displayLog( StringASCII( "10 in binary : " )<<StringASCII( 10, 2 ) );
@@ -1452,59 +1452,59 @@ int main(int argc, char* argv[]) {
 		Time::TimePointMS tpMS(Time::getTime<Time::MilliSecond>());
 		Time::TimePoint<Time::Day> tpD(Time::getTime<Time::Day>());
 		Time::Duration<Time::MilliSecond> d(tpMS - tpS);
-		log(d.getValue());
-		log(tpD.getValue());
-		log(Time::Duration<Time::Second>(12).toValue<Time::MilliSecond>());
+		info(d.getValue());
+		info(tpD.getValue());
+		info(Time::Duration<Time::Second>(12).toValue<Time::MilliSecond>());
 	}
 #endif
 #ifdef DEBUG_DATE
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Date															//
 	{
-		log( "Debuging Date..." );
+		info( "Debuging Date..." );
 		Time::Date nowDate = Time::getDate();
-		log( nowDate.toString( StringASCII( "HHH" ) ) );
-		log( nowDate.toString() );
-		log( nowDate.toStringISO( Time::Date::ISOFormat::DateOnly ) );
-		log( Time::Date::getLocalUTCBias() );
-		log( StringASCII( "This is the date ! " )<<Time::getDate()<<" YES !" );
-		log( Time::Date::parse( "2000-03-05T10:35:18-01:00" ).toStringISO() );
-		log( Time::Date::parse( "2000-03-05" ).toStringISO() );
-		log( Time::Date::parse( "T10:35:18.54547221Z" ).toStringISO() );
+		info( nowDate.toString( StringASCII( "HHH" ) ) );
+		info( nowDate.toString() );
+		info( nowDate.toStringISO( Time::Date::ISOFormat::DateOnly ) );
+		info( Time::Date::getLocalUTCBias() );
+		info( StringASCII( "This is the date ! " )<<Time::getDate()<<" YES !" );
+		info( Time::Date::parse( "2000-03-05T10:35:18-01:00" ).toStringISO() );
+		info( Time::Date::parse( "2000-03-05" ).toStringISO() );
+		info( Time::Date::parse( "T10:35:18.54547221Z" ).toStringISO() );
 		// int n = StringASCII::charToNumber<int, 4>( "2242" );
-		// log( StringASCII( n ) );
+		// info( StringASCII( n ) );
 	}
 #endif
 #ifdef DEBUG_PATH
 //////////////////////////////////////////////////////////////////////////
 // DEBUG : Path															//
 	{
-		log( "Debuging Pathes..." );
+		info( "Debuging Pathes..." );
 		OS::Path path( "C:\\testfolder" );
 
-		log( path.exists() );
-		log( path.toString() );
+		info( path.exists() );
+		info( path.toString() );
 
 		path.join( "folder2", "HelloWorld.txt" );
-		log( path.toString() );
+		info( path.toString() );
 
-		log( path.basename() );
+		info( path.basename() );
 	}
 #endif
 #ifdef DEBUG_STREAM
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Stream														//
 	{
-		log( StringASCII( "Hello World !" ).concatFill( -42, 4, '0'));
-		log( 42 );
+		info( StringASCII( "Hello World !" ).concatFill( -42, 4, '0'));
+		info( 42 );
 		Stream streamTest = WString("Hello World !");
 		streamTest << 'H';
 		streamTest << 42;
 		streamTest << L"TEST Wide.";
 		StringASCII strRaw( streamTest.toStringRaw() );
-		log( strRaw );
+		info( strRaw );
 		StringASCII strHexa( streamTest.toStringHexa() );
-		log( streamTest.toStringHexa() );
+		info( streamTest.toStringHexa() );
 	}
 #endif
 #ifdef DEBUG_VEC
@@ -1517,6 +1517,7 @@ int main(int argc, char* argv[]) {
 		Math::Vec<double> v4({ 1,2,3,4 });
 		Math::Vec<double> v5(v1 + v4);
 		Math::Vec<double> v6(v1 + 2.0);
+		Table<double> t1(v6);
 
 		// v6 = Math::Vec2<double>(5, 5);
 
@@ -1528,9 +1529,11 @@ int main(int argc, char* argv[]) {
 
 		v5 = abs(v5);
 
-		log(v5.toString());
+		v5 += t1;
 
-		log(Math::length(Math::normalize(v5)));
+		info(v5.toString());
+
+		info(Math::length(Math::normalize(v5)));
 
 		v1 = { 2,2,2,2 };
 
@@ -1549,20 +1552,22 @@ int main(int argc, char* argv[]) {
 
 		m1.identity();
 
-		log(m3.toString());
+		info(m3.toString());
 	}
 #endif
 #ifdef DEBUG_TENSOR
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Tensor														//
 	{
-		Math::Tensor<double> t1({ {1,2}, {3,4} });
-		Math::Tensor<double> t2({1,2,3,4});
+		Math::Tensor<double> t1({ 1,2,3,4 });
+		Math::Tensor<double> t2({ {1,2}, {3,4} });
 		Math::Tensor<double> t3({ {{1,0},{2,0}}, {{3,0},{4,0}} });
 
-		log(t1[ 0 ][ 0 ]);
-
-		log(t3.toString());
+		info(t1[ 0 ]);
+		info(t2[ 0 ][ 0 ]);
+		info(t1.toString());
+		info(t2.toString());
+		info(t3.toString());
 	}
 #endif
 
@@ -2163,10 +2168,10 @@ int main(int argc, char* argv[]) {
 	// SPEED TEST : Regex									//
 	{
 		for ( unsigned int i = 0; i<260; i++ ) {
-			log( StringASCII( i )+" : "+Regex::match( i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" ) );
+			info( StringASCII( i )+" : "+Regex::match( i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" ) );
 		}
 		for ( unsigned int i = 0; i<260; i++ ) {
-			log( StringASCII( i )+" : "+Regex::match( i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$" ) );
+			info( StringASCII( i )+" : "+Regex::match( i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$" ) );
 		}
 
 		std::string stdString = "________255";

@@ -52,7 +52,7 @@
 #define debug(code); code
 #define error(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__ );
 #define warn(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, Log::MessageColor::Yellow, TEXT( __FILE__ ), __LINE__ );
-#define log(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
+#define info(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
 #define verbose(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Verbose, Log::MessageColor::Gray, TEXT( __FILE__ ), __LINE__ );
 
 #define assert(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
@@ -61,7 +61,7 @@
 #else
 #undef debug
 #define debug( ... );
-#define log( ... );
+#define info( ... );
 #define verbose( ... );
 #define warn( ... );
 #define error( ... );

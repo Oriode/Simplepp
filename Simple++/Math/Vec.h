@@ -26,8 +26,8 @@ namespace Math {
 		template<typename C, Size N>
 		Vec(const C(&v)[ N ]);
 		template<typename C>
-		Vec(const BasicVector<C>& v);
-		Vec(const BasicVector<T>& v);
+		Vec(const Table<C>& v);
+		Vec(const Vec<T>& v);
 		Vec(BasicVector<T>&& v);
 
 		~Vec();
@@ -39,8 +39,8 @@ namespace Math {
 		template<typename C, Size N>
 		Vec<T>& operator=(const C(&v)[ N ]);
 		template<typename C>
-		Vec<T>& operator=(const BasicVector<C>& v);
-		Vec<T>& operator=(const BasicVector<T>& v);
+		Vec<T>& operator=(const Table<C>& v);
+		Vec<T>& operator=(const Vec<T>& v);
 		//template<typename V>
 		//Vec<T>& operator=(const V& v);
 		Vec<T>& operator=(BasicVector<T>&& v);
@@ -50,30 +50,30 @@ namespace Math {
 		/************************************************************************/
 
 		template<typename Functor, typename C>
-		Vec<T>& apply(Functor & functor, const BasicVector<C>& v);
+		Vec<T>& apply(Functor & functor, const Table<C>& v);
 		template<typename Functor>
 		Vec<T>& apply(Functor& functor, const T& s);
 		template<typename Functor>
 		Vec<T>& apply(Functor& functor);
 
 		template<typename C>
-		Vec<T> & operator+=(const BasicVector<C>& v);
+		Vec<T> & operator+=(const Table<C>& v);
 		Vec<T>& operator+=(const T& s);
 
 		template<typename C>
-		Vec<T>& operator-=(const BasicVector<C>& v);
+		Vec<T>& operator-=(const Table<C>& v);
 		Vec<T>& operator-=(const T& s);
 
 		template<typename C>
-		Vec<T>& operator*=(const BasicVector<C>& v);
+		Vec<T>& operator*=(const Table<C>& v);
 		Vec<T>& operator*=(const T& s);
 
 		template<typename C>
-		Vec<T>& operator/=(const BasicVector<C>& v);
+		Vec<T>& operator/=(const Table<C>& v);
 		Vec<T>& operator/=(const T& s);
 
 		template<typename C>
-		Vec<T>& operator%=(const BasicVector<C>& v);
+		Vec<T>& operator%=(const Table<C>& v);
 		Vec<T>& operator%=(const T& s);
 
 		Vec<T>& operator++();
@@ -113,9 +113,9 @@ namespace Math {
 	template<typename T, typename Functor>
 	Vec<T> apply(Functor& functor, const T& s, const Vec<T>& v);
 	template<typename T, typename Functor, typename C>
-	Vec<T> apply(Functor& functor, const Vec<T>& v1, const BasicVector<C>& v2);
+	Vec<T> apply(Functor& functor, const Vec<T>& v1, const Table<C>& v2);
 	template<typename T, typename Functor, typename C>
-	Vec<T> apply(Functor& functor, const BasicVector<C>& v1, const Vec<T>& v2);
+	Vec<T> apply(Functor& functor, const Table<C>& v1, const Vec<T>& v2);
 	template<typename T, typename Functor>
 	Vec<T> apply(Functor& functor, const Vec<T>& v);
 
@@ -287,7 +287,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename Functor, typename C>
-	inline Vec<T>& Vec<T>::apply(Functor& functor, const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::apply(Functor& functor, const Table<C>& v) {
 		BasicVector<T>::apply(functor, v);
 
 		return *this;
@@ -311,31 +311,31 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>& Vec<T>::operator+=(const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::operator+=(const Table<C>& v) {
 		return apply(Math::Operations::AddEqual(), v);
 	}
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>& Vec<T>::operator-=(const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::operator-=(const Table<C>& v) {
 		return apply(Math::Operations::SubEqual(), v);
 	}
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>& Vec<T>::operator*=(const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::operator*=(const Table<C>& v) {
 		return apply(Math::Operations::MulEqual(), v);
 	}
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>& Vec<T>::operator/=(const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::operator/=(const Table<C>& v) {
 		return apply(Math::Operations::DivEqual(), v);
 	}
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>& Vec<T>::operator%=(const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::operator%=(const Table<C>& v) {
 		return apply(Math::Operations::ModulusEqual(), v);
 	}
 
@@ -358,13 +358,13 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>::Vec(const BasicVector<C>& v) :
+	inline Vec<T>::Vec(const Table<C>& v) :
 		BasicVector<T>(v)
 	{
 	}
 
 	template<typename T>
-	inline Vec<T>::Vec(const BasicVector<T>& v) :
+	inline Vec<T>::Vec(const Vec<T>& v) :
 		BasicVector<T>(v) {}
 
 	template<typename T>
@@ -377,14 +377,14 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline Vec<T>& Vec<T>::operator=(const BasicVector<C>& v) {
+	inline Vec<T>& Vec<T>::operator=(const Table<C>& v) {
 		BasicVector<T>::operator=(v);
 
 		return *this;
 	}
 
 	template<typename T>
-	inline Vec<T>& Vec<T>::operator=(const BasicVector<T>& v) {
+	inline Vec<T>& Vec<T>::operator=(const Vec<T>& v) {
 		BasicVector<T>::operator=(v);
 
 		return *this;

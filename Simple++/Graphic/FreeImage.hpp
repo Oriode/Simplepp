@@ -150,7 +150,7 @@ namespace Graphic {
 						}
 					}
 
-					log( this -> filePath << this -> size << " has been loaded successfully !" );
+					info( this -> filePath << this -> size << " has been loaded successfully !" );
 					break;
 				}
 
@@ -247,7 +247,7 @@ namespace Graphic {
 		#endif
 
 		if ( r ) {
-			log( String( TEXT( "Success writing file : " ) ) << filePath );
+			info( String( TEXT( "Success writing file : " ) ) << filePath );
 			return true;
 		} else {
 			error( String( TEXT( "Error writing file : " ) ) << filePath );

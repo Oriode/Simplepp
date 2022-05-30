@@ -8,7 +8,7 @@
 /// @version	1.0
 ///
 /// Logging functions.
-/// use log(""); warning(""); error(""); macros to write inside the stdout.
+/// use info(""); warning(""); error(""); macros to write inside the stdout.
 ///
 
 
@@ -74,14 +74,14 @@
 
 #define debug(code); code
 #define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
-#define _log(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
+#define _info(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
 #define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
 #define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed "TEXT(__FILE__)"@"__LINE__" : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
 
 #else
 #undef debug
 #define debug(code);
-#define _log(msg);
+#define _info(msg);
 #define _warn(msg);
 #define _error(msg);
 #define _windowsDebug(msg);

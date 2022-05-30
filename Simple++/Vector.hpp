@@ -67,7 +67,7 @@ Vector<T>::Vector( const Size maxSize ) :
 
 template<typename T>
 template<typename C>
-inline Vector<T>::Vector(const BasicVector<C>& vector) :
+inline Vector<T>::Vector(const Table<C>& vector) :
 	BasicVector<T>(vector),
 	maxSize(vector.getSize())
 {
@@ -171,19 +171,56 @@ void Vector<T>::copy( const C * datas, const Size size ) {
 
 template<typename T>
 template<typename C>
-Vector<T> & Vector<T>::operator+=( const Vector<C> & vector ) {
+Vector<T> & Vector<T>::operator+=( const Table<C> & vector ) {
 	concat( vector );
 	return *this;
 }
 
 template<typename T>
 template<typename C>
-void Vector<T>::concat( const Vector<C> & vector ) {
+void Vector<T>::concat( const Table<C> & vector ) {
 	if ( vector.size > Size(0) ) {
 		const Size oldSize(this->size);
 		this -> resize(this -> size + vector.size);
 		Utility::copy(this->dataTable + oldSize, vector.dataTable, vector.size);
 	}
+}
+
+/************************************************************************/
+/* ITERATIONS                                                           */
+/************************************************************************/
+
+template<typename T>
+typename Vector<T>::Iterator Vector<T>::getBegin() const {
+	return this -> dataTable;
+}
+
+template<typename T>
+bool Vector<T>::iterate(typename Vector<T>::Iterator* it) const {
+	( *it )++;
+	return !( *it == getEnd() );
+}
+
+template<typename T>
+bool Vector<T>::iterate(typename Vector<T>::Iterator* it, ElemType** e) const {
+	if ( *it == getEnd() )
+		return false;
+	*e = *it;
+	( *it )++;
+	return true;
+}
+
+template<typename T>
+template<typename TestFunctor>
+bool Vector<T>::iterate(typename Vector<T>::Iterator* it, ElemType** e, TestFunctor& testFunctor) const {
+	if ( *it == getEnd() )
+		return false;
+	*e = *it;
+	if ( testFunctor(*e) ) {
+		( *it )++;
+		return true;
+	}
+	return false;
 }
 
 template<typename T>
@@ -347,6 +384,42 @@ T & Vector<T>::pop() {
 	return *this -> iteratorEnd;
 }
 
+template<typename T>
+template<typename Func>
+typename Vector<T>::Iterator Vector<T>::getMinIt(Func& functor) const {
+	if ( this->size == Size(0) ) {
+		return typename BasicVector<T>::Iterator(NULL);
+	} else {
+		typename BasicVector<T>::Iterator foundedMinIt(this->dataTable);
+		for ( Size i(1); i < this->size; i++ ) {
+			const T& v(getValueI(i));
+
+			if ( functor(v, getValueIt(foundedMinIt)) ) {
+				foundedMinIt = &v;
+			}
+		}
+		return foundedMinIt;
+	}
+}
+
+template<typename T>
+template<typename Func>
+typename Vector<T>::Iterator Vector<T>::getMaxIt(Func& functor) const {
+	if ( this->size == Size(0) ) {
+		return typename BasicVector<T>::Iterator(NULL);
+	} else {
+		typename BasicVector<T>::Iterator foundedMaxIt(this->dataTable);
+		for ( Size i(1); i < this->size; i++ ) {
+			const T& v(getValueI(i));
+
+			if ( functor(getValueIt(foundedMaxIt), v) ) {
+				foundedMaxIt = &v;
+			}
+		}
+		return foundedMaxIt;
+	}
+}
+
 
 
 
@@ -401,6 +474,16 @@ T& Vector<T>::getValueIt(typename Vector<T>::Iterator it) {
 	return *it;
 }
 
+template<typename T>
+Size Vector<T>::getIndex(typename Vector<T>::Iterator it) const {
+	return Size(it - this->dataTable);
+}
+
+template<typename T>
+inline typename Vector<T>::Iterator Vector<T>::getIterator(const Size i) const {
+	return this->dataTable + i;
+}
+
 
 
 
@@ -438,7 +521,7 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 
 template<typename T>
 template<typename C>
-inline Vector<T>& Vector<T>::operator=(const BasicVector<C>& vector) {
+inline Vector<T>& Vector<T>::operator=(const Table<C>& vector) {
 	BasicVector<T>::operator=(vector);
 
 	this->maxSize = this->size;
@@ -656,6 +739,11 @@ bool Vector<T>::read( Stream * stream ) {
 	}
 
 	return true;
+}
+
+template<typename T>
+void Vector<T>::swap(typename Vector<T>::Iterator it1, typename Vector<T>::Iterator it2) {
+	Utility::swap<T>(getValueIt(it1), getValueIt(it2));
 }
 
 template<typename T>

@@ -281,6 +281,7 @@
     <ClInclude Include="ParamContainer.h" />
     <ClInclude Include="ParamContainer.hpp" />
     <ClInclude Include="SimpleLog.hpp" />
+    <ClInclude Include="Table.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="Stream.hpp" />
     <ClInclude Include="Thread.hpp" />
