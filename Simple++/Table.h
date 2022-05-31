@@ -556,12 +556,12 @@ inline MATH_FUNC_QUALIFIER bool Table<T>::OR(Compare& func, const T& s) const {
 
 template<typename T>
 bool Table<T>::operator!=(const Table<T>& v) const {
-	return !AND(Math::Logical::Equal());
+	return !AND(Math::Logical::Equal(), v);
 }
 
 template<typename T>
 bool Table<T>::operator==(const Table<T>& v) const {
-	return AND(Math::Logical::Equal());
+	return AND(Math::Logical::Equal(), v);
 }
 
 template<typename T>

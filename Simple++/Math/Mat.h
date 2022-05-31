@@ -86,6 +86,47 @@ namespace Math {
 		void setValueN(const Size n, const Table<T>& v);
 
 		/************************************************************************/
+		/* ================              LOGICAL               ================ */
+		/************************************************************************/
+
+		/**
+		 * @brief 	Equality operator
+		 * @param 	v	A Mat<T> to process.
+		 * @returns	True if the parameters are considered equivalent.
+		 */
+		bool operator==(const Mat<T>& m) const;
+		/**
+		 * @brief 	Inequality operator
+		 * @param 	v	A Mat<T> to process.
+		 * @returns	True if the parameters are not considered equivalent.
+		 */
+		bool operator!=(const Mat<T>& m) const;
+		/**
+		 * @brief 	Less-than comparison operator
+		 * @param 	v	A Mat<T> to process.
+		 * @returns	True if the first parameter is less than the second.
+		 */
+		bool operator<(const Mat<T>& m) const;
+		/**
+		 * @brief 	Greater-than comparison operator
+		 * @param 	v	A Mat<T> to process.
+		 * @returns	True if the first parameter is greater than to the second.
+		 */
+		bool operator>(const Mat<T>& m) const;
+		/**
+		 * @brief 	Less-than-or-equal comparison operator
+		 * @param 	v	A Mat<T> to process.
+		 * @returns	True if the first parameter is less than or equal to the second.
+		 */
+		bool operator<=(const Mat<T>& m) const;
+		/**
+		 * @brief 	Greater-than-or-equal comparison operator
+		 * @param 	v	A Mat<T> to process.
+		 * @returns	True if the first parameter is greater than or equal to the second.
+		 */
+		bool operator>=(const Mat<T>& m) const;
+
+		/************************************************************************/
 		/* ================             ARITHMETIC             ================ */
 		/************************************************************************/
 
@@ -271,6 +312,76 @@ namespace Math {
 		for ( Size i(0); i < getSizeM(); i++ ) {
 			setValueI(i, n, v[ i ]);
 		}
+	}
+
+	template<typename T>
+	inline bool Mat<T>::operator==(const Mat<T>& m) const {
+		if ( getSizeM() != m.getSizeM() || getSizeN() != m.getSizeN() ) {
+			return false;
+		}
+		for ( Size i(0); i < this-> size; i++ ) {
+			if ( getValueI(i) != m.getValueI(i) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool Mat<T>::operator!=(const Mat<T>& m) const {
+		return !Mat<T>::operator%=(m);
+	}
+
+	template<typename T>
+	inline bool Mat<T>::operator<(const Mat<T>& m) const {
+		if ( getSizeM() != m.getSizeM() || getSizeN() != m.getSizeN() ) {
+			return false;
+		}
+		for ( Size i(0); i < this-> size; i++ ) {
+			if ( getValueI(i) < m.getValueI(i) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool Mat<T>::operator>(const Mat<T>& m) const {
+		if ( getSizeM() != m.getSizeM() || getSizeN() != m.getSizeN() ) {
+			return false;
+		}
+		for ( Size i(0); i < this-> size; i++ ) {
+			if ( getValueI(i) > m.getValueI(i) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool Mat<T>::operator<=(const Mat<T>& m) const {
+		if ( getSizeM() != m.getSizeM() || getSizeN() != m.getSizeN() ) {
+			return false;
+		}
+		for ( Size i(0); i < this-> size; i++ ) {
+			if ( getValueI(i) <= m.getValueI(i) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline bool Mat<T>::operator>=(const Mat<T>& m) const {
+		if ( getSizeM() != m.getSizeM() || getSizeN() != m.getSizeN() ) {
+			return false;
+		}
+		for ( Size i(0); i < this-> size; i++ ) {
+			if ( getValueI(i) >= m.getValueI(i) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	template<typename T>

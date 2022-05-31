@@ -1564,6 +1564,7 @@ int main(int argc, char* argv[]) {
 		m1.identity();
 
 		info((m5 * m6).toString());
+		info(m5 == m6);
 	}
 #endif
 #ifdef DEBUG_TENSOR
