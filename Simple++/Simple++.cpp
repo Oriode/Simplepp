@@ -52,9 +52,9 @@
 // #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-#define DEBUG_VEC
+//#define DEBUG_VEC
 #define DEBUG_MAT
-#define DEBUG_TENSOR
+//#define DEBUG_TENSOR
 
 
 #ifndef _LIB
@@ -1546,12 +1546,24 @@ int main(int argc, char* argv[]) {
 		Math::Mat<double> m1(Size(100), Size(100));
 		Math::Mat<double> m2({ {1,2}, {3,4} });
 		Math::Mat<double> m3(m2);
+		Math::Mat<double> m4(m2.transpose());
+		Math::Mat<double> m5({ {1,2,3}, {4,5,6} });
+		Math::Mat<double> m6({ {10,11}, {20,21}, {30,31} });
 
 		m3 = { {1,0}, {0,1} };
 
+		m3 += 1.0;
+		m3 *= 2.0;
+
+		m3 = m3 + 100.0;
+		m3 = m3 + Math::Mat<double>(2, 2).identity();
+		m3 = m3 * Math::Vec<double>(2).fill(10);
+		m3 *= Math::Vec<double>(2).fill(0.1);
+		m3 *= Math::Mat<double>(2, 2).identity();
+
 		m1.identity();
 
-		info(m1.toString());
+		info((m5 * m6).toString());
 	}
 #endif
 #ifdef DEBUG_TENSOR

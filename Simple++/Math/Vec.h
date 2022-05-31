@@ -94,9 +94,9 @@ namespace Math {
 		/* ================                MISC                ================ */
 		/************************************************************************/
 
-		void zeros();
-		void ones();
-		void randomF();
+		Vec<T>& zeros();
+		Vec<T>& ones();
+		Vec<T>& randomF();
 
 		template<typename S = String>
 		S toString() const;
@@ -203,20 +203,18 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline void Vec<T>::zeros() {
-		fill(T(0));
+	inline Vec<T>& Vec<T>::zeros() {
+		return fill(T(0));
 	}
 
 	template<typename T>
-	inline void Vec<T>::ones() {
-		fill(T(1));
+	inline Vec<T>& Vec<T>::ones() {
+		return fill(T(1));
 	}
 
 	template<typename T>
-	inline void Vec<T>::randomF() {
-		for ( Size i(0); i < this->size; i++ ) {
-			this->dataTable[ i ] = Math::randomF();
-		}
+	inline Vec<T>& Vec<T>::randomF() {
+		return set(Math::RandomF());
 	}
 
 	template<typename T>

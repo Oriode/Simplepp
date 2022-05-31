@@ -169,11 +169,18 @@ public:
 	template<typename Functor>
 	Table<T>& apply(Functor& functor);
 
+	template<typename Functor, typename C>
+	Table<T>& set(Functor& functor, const Table<C>& v);
+	template<typename Functor>
+	Table<T>& set(Functor& functor, const T& s);
+	template<typename Functor>
+	Table<T>& set(Functor& functor);
+
 	/**
 	 * @brief 	Fill the complete vector with the specified data.
 	 * @param 	data	data to be copied in the whole vector.
 	 */
-	void fill(const T& data);
+	Table<T> & fill(const T& data);
 
 	/**
 	 * @brief 	Get the size of this vector
@@ -614,10 +621,42 @@ inline Table<T>& Table<T>::apply(Functor& functor) {
 }
 
 template<typename T>
-void Table<T>::fill(const T& data) {
-	for ( Size i(0); i < this -> size; i++ ) {
-		this -> dataTable[ i ] = data;
+template<typename Functor, typename C>
+inline Table<T>& Table<T>::set(Functor& functor, const Table<C>& v) {
+	assert(getSize() == v.getSize());
+	for ( Size i(0); i < getSize(); i++ ) {
+		T& value(this->dataTable[ i ]);
+		value = functor(v[ i ]);
 	}
+
+	return *this;
+}
+
+template<typename T>
+template<typename Functor>
+inline Table<T>& Table<T>::set(Functor& functor, const T& s) {
+	for ( Size i(0); i < getSize(); i++ ) {
+		T& value(this->dataTable[ i ]);
+		value = functor(s);
+	}
+
+	return *this;
+}
+
+template<typename T>
+template<typename Functor>
+inline Table<T>& Table<T>::set(Functor& functor) {
+	for ( Size i(0); i < getSize(); i++ ) {
+		T& value(this->dataTable[ i ]);
+		value = functor();
+	}
+
+	return *this;
+}
+
+template<typename T>
+Table<T>& Table<T>::fill(const T& data) {
+	return apply(Math::Operations::Assign(), data);
 }
 
 template<typename T>
