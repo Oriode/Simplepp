@@ -9,16 +9,47 @@
 namespace Math {
 
 	template<typename T>
-	class TensorView;
-
-	template<typename T>
 	class Tensor : public BasicVector<T> {
 	public:
-		template<typename C>
-		friend class Tensor;
+		class View {
+		public:
+			/************************************************************************/
+			/* ================             CONSTRUCTOR            ================ */
+			/************************************************************************/
+
+			View(Tensor<T>& tensor, const Size finalIndex, const Size currentDim);
+
+			/************************************************************************/
+			/* ================               ACCESS               ================ */
+			/************************************************************************/
+
+			const typename Tensor<T>::View operator[](const Size i) const;
+			typename Tensor<T>::View operator[](const Size i);
+
+			/************************************************************************/
+			/* ================                MISC                ================ */
+			/************************************************************************/
+
+			operator const Tensor<T>() const;
+			operator Tensor<T>();
+
+			operator const T& ( ) const;
+			operator T& ( );
+
+			Tensor<T> toTensor() const;
+
+			const Size getDim() const;
+
+		private:
+			T* getData() const;
+
+			Tensor<T>& tensor;
+			Size finalIndex;
+			Size currentDim;
+		};
 
 		template<typename C>
-		friend class TensorView;
+		friend class Tensor;
 
 		/************************************************************************/
 		/* ================             CONSTRUCTOR            ================ */
@@ -60,8 +91,8 @@ namespace Math {
 		/* ================               ACCESS               ================ */
 		/************************************************************************/
 
-		const TensorView<T> operator[](const Size i) const;
-		TensorView<T> operator[](const Size i);
+		const typename Tensor<T>::View operator[](const Size i) const;
+		typename Tensor<T>::View operator[](const Size i);
 
 		const T& operator[](const BasicVector<T> & indexes) const;
 		T& operator[](const BasicVector<T>& indexes);
@@ -70,11 +101,10 @@ namespace Math {
 		/* ================                MISC                ================ */
 		/************************************************************************/
 
-		operator const T& ( ) const;
-		operator T& ( );
-
 		using BasicVector<T>::getSize;
 		const Size getSize(const Size dim) const;
+
+		const BasicVector<Size>& getSizes() const;
 
 		const Size getDim() const;
 
@@ -89,38 +119,6 @@ namespace Math {
 	private:
 		template<typename S = String>
 		S _toString() const;
-	};
-
-	template<typename T>
-	class TensorView {
-	public:
-		TensorView(Tensor<T>& tensor, const Size finalIndex, const Size currentDim);
-
-		/************************************************************************/
-		/* ================               ACCESS               ================ */
-		/************************************************************************/
-
-		const TensorView<T> operator[](const Size i) const;
-		TensorView<T> operator[](const Size i);
-
-		/************************************************************************/
-		/* ================                MISC                ================ */
-		/************************************************************************/
-
-		operator const Tensor<T>() const;
-		operator Tensor<T>();
-
-		const Tensor<T> toTensor() const;
-		Tensor<T> toTensor();
-
-		const Size getDim() const;
-
-	private:
-		T* getData() const;
-
-		Tensor<T>& tensor;
-		Size finalIndex;
-		Size currentDim;
 	};
 
 	template<typename T>
@@ -153,13 +151,13 @@ namespace Math {
 	{}
 
 	template<typename T>
-	inline const TensorView<T> Tensor<T>::operator[](const Size i) const {
+	inline typename const Tensor<T>::View Tensor<T>::operator[](const Size i) const {
 		return const_cast< Tensor<T> * >( this )->operator[](i);
 	}
 
 	template<typename T>
-	inline TensorView<T> Tensor<T>::operator[](const Size i) {
-		return TensorView<T>(*this, i, Size(1));
+	inline typename Tensor<T>::View Tensor<T>::operator[](const Size i) {
+		return Tensor<T>::View(*this, i, Size(1));
 	}
 
 	template<typename T>
@@ -189,18 +187,13 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline Tensor<T>::operator const T& ( ) const {
-		return this->dataTable[ 0 ];
-	}
-
-	template<typename T>
-	inline Tensor<T>::operator T& ( ) {
-		return this->dataTable[ 0 ];
-	}
-
-	template<typename T>
 	inline const Size Tensor<T>::getSize(const Size dim) const {
 		return this->sizes[ dim ];
+	}
+
+	template<typename T>
+	inline const BasicVector<Size>& Tensor<T>::getSizes() const {
+		return this->sizes;
 	}
 
 	template<typename T>
@@ -415,19 +408,19 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline TensorView<T>::TensorView(Tensor<T>& tensor, const Size finalIndex, const Size currentDim) :
+	inline Tensor<T>::View::View(Tensor<T>& tensor, const Size finalIndex, const Size currentDim) :
 		tensor(tensor),
 		finalIndex(finalIndex),
 		currentDim(currentDim)
 	{}
 
 	template<typename T>
-	inline const TensorView<T> TensorView<T>::operator[](const Size i) const {
-		return const_cast< TensorView<T> * >( this )->operator[](i);
+	inline typename const Tensor<T>::View Tensor<T>::View::operator[](const Size i) const {
+		return const_cast< Tensor<T>::View * >( this )->operator[](i);
 	}
 
 	template<typename T>
-	inline TensorView<T> TensorView<T>::operator[](const Size i) {
+	inline typename Tensor<T>::View Tensor<T>::View::operator[](const Size i) {
 		Size finalIndex(this->finalIndex);
 
 		finalIndex *= this->tensor.getSize(this->currentDim);
@@ -435,26 +428,31 @@ namespace Math {
 
 		Size currentDim(this->currentDim + Size(1));
 
-		return TensorView<T>(this->tensor, finalIndex, currentDim);
+		return Tensor<T>::View(this->tensor, finalIndex, currentDim);
 	}
 
 	template<typename T>
-	inline TensorView<T>::operator const Tensor<T>( ) const {
-		return const_cast< TensorView<T> * >( this )->operator Tensor<T>();
+	inline Tensor<T>::View::operator const Tensor<T>( ) const {
+		return const_cast< Tensor<T>::View * >( this )->operator Tensor<T>();
 	}
 
 	template<typename T>
-	inline TensorView<T>::operator Tensor<T>() {
+	inline Tensor<T>::View::operator Tensor<T>() {
 		return toTensor();
 	}
 
 	template<typename T>
-	inline const Tensor<T> TensorView<T>::toTensor() const {
-		return const_cast< TensorView<T> * >( this )->toTensor();
+	inline Tensor<T>::View::operator const T& ( ) const {
+		return this->tensor.getValueI(this->finalIndex);
 	}
 
 	template<typename T>
-	inline Tensor<T> TensorView<T>::toTensor() {
+	inline Tensor<T>::View::operator T& ( ) {
+		return this->tensor.getValueI(this->finalIndex);
+	}
+
+	template<typename T>
+	inline Tensor<T> Tensor<T>::View::toTensor() const {
 		Size offset(this->finalIndex);
 
 		if ( this->currentDim < this->tensor.getDim() ) {
@@ -470,12 +468,12 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline const Size TensorView<T>::getDim() const {
+	inline const Size Tensor<T>::View::getDim() const {
 		return this->tensor.getDim() - this->currentDim;
 	}
 
 	template<typename T>
-	inline T* TensorView<T>::getData() const {
+	inline T* Tensor<T>::View::getData() const {
 		Size offset(this->finalIndex);
 
 		for ( Size i(this->currentDim); i < this->tensor.getDim() - Size(1); i++ ) {

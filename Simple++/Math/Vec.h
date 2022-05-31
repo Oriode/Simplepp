@@ -28,6 +28,8 @@ namespace Math {
 		template<typename C>
 		Vec(const Table<C>& v);
 		Vec(const Vec<T>& v);
+		template<typename C>
+		Vec(const C* dataTable, const Size size);
 		Vec(BasicVector<T>&& v);
 
 		~Vec();
@@ -363,6 +365,12 @@ namespace Math {
 		BasicVector<T>(v)
 	{
 	}
+
+	template<typename T>
+	template<typename C>
+	inline Vec<T>::Vec(const C* dataTable, const Size size) :
+		BasicVector<T>(dataTable, size)
+	{}
 
 	template<typename T>
 	inline Vec<T>::Vec(const Vec<T>& v) :

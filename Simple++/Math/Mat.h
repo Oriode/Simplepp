@@ -8,34 +8,38 @@
 
 namespace Math {
 
-	//template<typename T>
-	//class MatView {
-	//public:
-	//	MatView(Mat<T>& M, const Size i);
-	//
-	//	const Mat<T>& getMat() const;
-	//	const Size getI() const;
-	//
-	//private:
-	//	Mat<T>& M;
-	//	const Size i;
-	//};
-	//
-	//template<typename T>
-	//class MatViewCol : public MatView<T> {
-	//public:
-	//	MatViewCol(Mat<T>& M, const Size i);
-	//};
-	//
-	//template<typename T>
-	//class MatViewRow : public MatView<T> {
-	//public:
-	//	MatViewRow(Mat<T>& M, const Size i);
-	//};
-
 	template<typename T>
-	class Mat {
+	class Mat : public BasicVector<T> {
 	public:
+		class View {
+		public:
+			/************************************************************************/
+			/* ================             CONSTRUCTOR            ================ */
+			/************************************************************************/
+
+			View(Mat<T>& mat, const Size m);
+
+			/************************************************************************/
+			/* ================               ACCESS               ================ */
+			/************************************************************************/
+
+			const T& operator[](const Size n) const;
+			T& operator[](const Size n);
+
+			/************************************************************************/
+			/* ================                MISC                ================ */
+			/************************************************************************/
+
+			operator const Vec<T>() const;
+			operator Vec<T>();
+
+			Vec<T> toVec() const;
+
+		private:
+			Mat<T>& mat;
+			Size m;
+		};
+
 		/************************************************************************/
 		/* ================             CONSTRUCTOR            ================ */
 		/************************************************************************/
@@ -66,8 +70,12 @@ namespace Math {
 		/* ================               ACCESS               ================ */
 		/************************************************************************/
 
-		const Vec<T>& operator[](const Size m) const;
-		Vec<T>& operator[](const Size m);
+		const typename Mat<T>::View operator[](const Size m) const;
+		typename Mat<T>::View operator[](const Size m);
+
+		using BasicVector<T>::getValueI;
+		const T& getValueI(const Size m, const Size n) const;
+		T& getValueI(const Size m, const Size n);
 
 		/************************************************************************/
 		/* ================                MISC                ================ */
@@ -82,50 +90,59 @@ namespace Math {
 		void zeros();
 		void ones();
 		void identity();
-		void fill(const T& v);
 
 		template<typename S = String>
 		S toString() const;
 
+		const Size getNbElem(const Size m, const Size n) const;
+
 	private:
 		Size m;
 		Size n;
-
-		Vec<Vec<T>> v;
 	};
 
 	template<typename T>
-	inline Mat<T>::Mat() {}
+	inline Mat<T>::Mat() :
+		m(Size(0)),
+		n(Size(0))
+	{}
 
 	template<typename T>
 	inline Mat<T>::Mat(const Size m, const Size n) :
+		BasicVector<T>(getNbElem(m, n)),
 		m(m),
-		n(n),
-		v(m)
+		n(n)
 	{
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ].resizeNoCopy(m);
-		}
 	}
 
 	template<typename T>
 	inline Mat<T>::Mat(Mat&& mat) :
+		BasicVector<T>(Utility::toRValue(mat)),
 		m(Utility::toRValue(mat.m)),
-		n(Utility::toRValue(mat.n)),
-		v(Utility::toRValue(mat.v))
+		n(Utility::toRValue(mat.n))
 	{}
 
 	template<typename T>
 	inline Mat<T>::~Mat() {}
 
 	template<typename T>
-	inline const Vec<T>& Mat<T>::operator[](const Size m) const {
-		return this->v[ m ];
+	inline const typename Mat<T>::View Mat<T>::operator[](const Size m) const {
+		return const_cast<Mat<T> *>(this )->operator[](m);
 	}
 
 	template<typename T>
-	inline Vec<T>& Mat<T>::operator[](const Size m) {
-		return this->v[ m ];
+	inline typename Mat<T>::View Mat<T>::operator[](const Size m) {
+		return Mat<T>::View(*this, m);
+	}
+
+	template<typename T>
+	inline const T& Mat<T>::getValueI(const Size m, const Size n) const {
+		return const_cast< Mat<T> * >( this )->getValueI(m, n);
+	}
+
+	template<typename T>
+	inline T& Mat<T>::getValueI(const Size m, const Size n) {
+		return getValueI(m * getSizeN() + n);
 	}
 
 	template<typename T>
@@ -133,13 +150,10 @@ namespace Math {
 		if ( newM == getSizeM() && newN == getSizeN() ) {
 			return;
 		}
-		this->v.resize(newM);
+
+		BasicVector<T>::resize(getNbElem(newM, newN));
+
 		this->m = newM;
-
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ].resize(newN);
-		}
-
 		this->n = newN;
 	}
 
@@ -148,13 +162,10 @@ namespace Math {
 		if ( newM == getSizeM() && newN == getSizeN() ) {
 			return;
 		}
-		this->v.resizeNoCopy(newM);
+
+		BasicVector<T>::resizeNoCopy(getNbElem(newM, newN));
+
 		this->m = newM;
-
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ].resizeNoCopy(newN);
-		}
-
 		this->n = newN;
 	}
 
@@ -170,16 +181,12 @@ namespace Math {
 
 	template<typename T>
 	inline void Mat<T>::zeros() {
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ].zeros();
-		}
+		BasicVector<T>::fill(T(0));
 	}
 
 	template<typename T>
 	inline void Mat<T>::ones() {
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ].ones();
-		}
+		BasicVector<T>::fill(T(1));
 	}
 
 	template<typename T>
@@ -187,57 +194,52 @@ namespace Math {
 		for ( Size i(0); i < getSizeM(); i++ ) {
 			for ( Size j(0); j < getSizeN(); j++ ) {
 				if ( i == j ) {
-					this->v[ i ][ j ] = T(1);
+					operator[](i)[j] = T(1);
 				} else {
-					this->v[ i ][ j ] = T(0);
+					operator[](i)[ j ] = T(0);
 				}
 			}
 		}
 	}
 
 	template<typename T>
-	inline void Mat<T>::fill(const T& v) {
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ].fill(v);
-		}
+	inline const Size Mat<T>::getNbElem(const Size m, const Size n) const {
+		return m * n;
 	}
 
 	template<typename T>
 	template<typename C, Size M, Size N>
 	inline Mat<T>::Mat(const C(&v)[ M ][ N ]) :
+		BasicVector<T>(reinterpret_cast<const C *>(v), getNbElem(M, N)),
 		m(M),
-		n(N),
-		v(M)
+		n(N)
 	{
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ] = v[ i ];
-		}
 	}
 
 	template<typename T>
 	template<typename C>
 	inline Mat<T>::Mat(const Mat<C>& mat) :
+		BasicVector<T>(mat),
 		m(mat.m),
-		n(mat.n),
-		v(mat.v)
+		n(mat.n)
 	{}
 
 	template<typename T>
 	inline Mat<T>::Mat(const Mat<T>& mat) :
+		BasicVector<T>(mat),
 		m(mat.m),
-		n(mat.n),
-		v(mat.v) {}
+		n(mat.n)
+	{}
 
 	template<typename T>
 	template<typename C, Size M, Size N>
 	inline Mat<T>& Mat<T>::operator=(const C(&v)[ M ][ N ]) {
+		resizeNoCopy(M, N);
+
+		Utility::copy(this->dataTable, reinterpret_cast< const C* >( v ), this->size);
+
 		this->m = M;
 		this->n = N;
-		this->v.resizeNoCopy(this->m);
-
-		for ( Size i(0); i < getSizeM(); i++ ) {
-			this->v[ i ] = v[ i ];
-		}
 
 		return *this;
 	}
@@ -245,27 +247,30 @@ namespace Math {
 	template<typename T>
 	template<typename C>
 	inline Mat<T>& Mat<T>::operator=(const Mat<C>& mat) {
+		BasicVector<T>::operator=(mat);
+
 		this->m = mat.m;
 		this->n = mat.n;
-		this->v = mat.v;
 
 		return *this;
 	}
 
 	template<typename T>
 	inline Mat<T>& Mat<T>::operator=(const Mat<T>& mat) {
+		BasicVector<T>::operator=(mat);
+
 		this->m = mat.m;
 		this->n = mat.n;
-		this->v = mat.v;
 
 		return *this;
 	}
 
 	template<typename T>
 	inline Mat<T>& Mat<T>::operator=(Mat<T>&& mat) {
+		BasicVector<T>::operator=(Utility::toRValue(mat));
+
 		this->m = Utility::toRValue(mat.m);
 		this->n = Utility::toRValue(mat.n);
-		this->v = Utility::toRValue(mat.v);
 
 		return *this;
 	}
@@ -299,10 +304,54 @@ namespace Math {
 			if ( i > Size(0) ) {
 				outputStr << S::ElemType('\n');
 			}
-			outputStr << this->v[ i ].toString();
+
+			outputStr << S::ElemType('[');
+			outputStr << S::ElemType(' ');
+
+			for ( Size j(0); j < getSizeN(); j++ ) {
+				if ( j > Size(0) ) {
+					outputStr << S::ElemType(',');
+					outputStr << S::ElemType(' ');
+				}
+				outputStr << getValueI(i, j);
+			}
+
+			outputStr << S::ElemType(' ');
+			outputStr << S::ElemType(']');
 		}
 
 		return outputStr;
+	}
+
+	template<typename T>
+	inline Mat<T>::View::View(Mat<T>& mat, const Size m) :
+		mat(mat),
+		m(m)
+	{}
+
+	template<typename T>
+	const T& Mat<T>::View::operator[](const Size n) const {
+		return const_cast<Mat<T>::View *>(this )->operator[](n);
+	}
+
+	template<typename T>
+	T& Mat<T>::View::operator[](const Size n) {
+		return this->mat.getValueI(this->m * this->mat.getSizeN() + n);
+	}
+
+	template<typename T>
+	inline Vec<T> Mat<T>::View::toVec() const {
+		return Vec<T>(this->mat.getData() + this->m * this->mat.getSizeN(), this->mat.getSizeN());
+	}
+
+	template<typename T>
+	inline Mat<T>::View::operator const Vec<T>() const {
+		return const_cast<Mat<T>::View *>(this )->operator Vec<T>();
+	}
+
+	template<typename T>
+	inline Mat<T>::View::operator Vec<T>() {
+		return toVec();
 	}
 
 }

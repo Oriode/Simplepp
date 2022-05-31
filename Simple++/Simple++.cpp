@@ -53,7 +53,7 @@
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
 #define DEBUG_VEC
-//#define DEBUG_MAT
+#define DEBUG_MAT
 #define DEBUG_TENSOR
 
 
@@ -1551,7 +1551,7 @@ int main(int argc, char* argv[]) {
 
 		m1.identity();
 
-		info(m3.toString());
+		info(m1.toString());
 	}
 #endif
 #ifdef DEBUG_TENSOR
@@ -1564,6 +1564,7 @@ int main(int argc, char* argv[]) {
 
 		Math::Tensor<double> t4(t3[ 0 ]);
 
+		info(t3[ 0 ][ 1 ][ 0 ]);	// 2.0
 		info(t4.toString());
 		// info(t2[ 0 ].toString());
 		info(t1.toString());
