@@ -1562,7 +1562,7 @@ int main(int argc, char* argv[]) {
 		Math::Tensor<double> t2({ {1,2}, {3,4} });
 		Math::Tensor<double> t3({ {{1,0},{2,0}}, {{3,0},{4,0}} });
 
-		Math::STensor<double> t4(t3[ 0 ]);
+		Math::Tensor<double> t4(t3[ 0 ]);
 
 		info(t4.toString());
 		// info(t2[ 0 ].toString());

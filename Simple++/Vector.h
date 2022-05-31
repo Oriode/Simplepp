@@ -29,7 +29,7 @@ using RandomAccessIterator = T*;
  * @tparam	T	Type of the Values to store.
  */
 template<typename T = int>
-class Vector : public BasicVector<T, false> {
+class Vector : public BasicVector<T> {
 public:
 	template<typename C>
 	friend class BasicString;

@@ -8,7 +8,7 @@
 #include "IO/SimpleIO.h"
 #include "Table.h"
 
-template<typename T, bool Static = false>
+template<typename T>
 class BasicVector : public Table<T> {
 public:
 	template<typename C>
@@ -41,8 +41,8 @@ public:
 	BasicVector(const C* v, const Size size);
 	template<typename C>
 	BasicVector(const Table<C>& v);
-	BasicVector(const BasicVector<T, Static>& v);
-	BasicVector(BasicVector<T, Static> && v);
+	BasicVector(const BasicVector<T>& v);
+	BasicVector(BasicVector<T> && v);
 
 	~BasicVector();
 
@@ -51,11 +51,11 @@ public:
 	/************************************************************************/
 
 	template<typename C, Size N>
-	BasicVector<T, Static>& operator=(const C(&v)[ N ]);
+	BasicVector<T>& operator=(const C(&v)[ N ]);
 	template<typename C>
-	BasicVector<T, Static>& operator=(const Table<C>& v);
-	BasicVector<T, Static>& operator=(const BasicVector<T, Static>& v);
-	BasicVector<T, Static>& operator=(BasicVector<T, Static>&& v);
+	BasicVector<T>& operator=(const Table<C>& v);
+	BasicVector<T>& operator=(const BasicVector<T>& v);
+	BasicVector<T>& operator=(BasicVector<T>&& v);
 
 	/************************************************************************/
 	/* ================                MISC                ================ */
@@ -72,36 +72,34 @@ public:
 	template<typename Stream>
 	bool read(Stream* stream);
 
-	BasicVector(const Size size, T* dataTable);
-
 protected:
-	BasicVector(BasicVector<T, Static>::protectedCtor);
+	BasicVector(BasicVector<T>::protectedCtor);
 };
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::BasicVector() :
+template<typename T>
+inline BasicVector<T>::BasicVector() :
 	Table<T>(Size(0), NULL)
 {}
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::BasicVector(const Size size) :
+template<typename T>
+inline BasicVector<T>::BasicVector(const Size size) :
 	Table<T>(size, ( size ) ? new T[ size ] : NULL)
 {}
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::BasicVector(BasicVector<T, Static> && v) :
+template<typename T>
+inline BasicVector<T>::BasicVector(BasicVector<T> && v) :
 	Table<T>(Utility::toRValue(v))
 {}
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::~BasicVector() {
-	if ( Static == false && this->dataTable ) {
+template<typename T>
+inline BasicVector<T>::~BasicVector() {
+	if ( this->dataTable ) {
 		delete[] this->dataTable;
 	}
 }
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>& BasicVector<T, Static>::operator=(BasicVector<T, Static>&& v) {
+template<typename T>
+inline BasicVector<T>& BasicVector<T>::operator=(BasicVector<T>&& v) {
 	if ( this->dataTable ) {
 		delete[] this->dataTable;
 	}
@@ -111,68 +109,63 @@ inline BasicVector<T, Static>& BasicVector<T, Static>::operator=(BasicVector<T, 
 	return *this;
 }
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::BasicVector(BasicVector<T, Static>::protectedCtor) :
+template<typename T>
+inline BasicVector<T>::BasicVector(BasicVector<T>::protectedCtor) :
 	Table<T>(Table<T>::protectedCtor::null)
 {}
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::BasicVector(const Size size, T * dataTable) :
-	Table<T>(size, dataTable)
-{}
-
-template<typename T, bool Static>
+template<typename T>
 template<typename C, Size N>
-inline BasicVector<T, Static>::BasicVector(const C(&v)[ N ]) :
+inline BasicVector<T>::BasicVector(const C(&v)[ N ]) :
 	Table<T>(N, new T[N])
 {
 	Utility::copy(this->dataTable, v, N);
 }
 
-template<typename T, bool Static>
+template<typename T>
 template<typename C>
-inline BasicVector<T, Static>::BasicVector(const C* v, const Size size) :
+inline BasicVector<T>::BasicVector(const C* v, const Size size) :
 	Table<T>(size, new T[size])
 {
 	Utility::copy(this->dataTable, v, this->size);
 }
 
-template<typename T, bool Static>
+template<typename T>
 template<typename C>
-inline BasicVector<T, Static>::BasicVector(const Table<C>& v) :
+inline BasicVector<T>::BasicVector(const Table<C>& v) :
 	Table<T>(v.getSize(), new T[v.getSize()])
 {
 	Utility::copy(this->dataTable, v.getData(), this->size);
 }
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>::BasicVector(const BasicVector<T, Static>& v) :
+template<typename T>
+inline BasicVector<T>::BasicVector(const BasicVector<T>& v) :
 	Table<T>(v.size, new T[v.size])
 {
 	Utility::copy(this->dataTable, v.dataTable, this->size);
 }
 
-template<typename T, bool Static>
+template<typename T>
 template<typename C, Size N>
-inline BasicVector<T, Static>& BasicVector<T, Static>::operator=(const C(&v)[ N ]) {
+inline BasicVector<T>& BasicVector<T>::operator=(const C(&v)[ N ]) {
 	resizeNoCopy(N);
 	Utility::copy(this->dataTable, v, this->size);
 
 	return *this;
 }
 
-template<typename T, bool Static>
+template<typename T>
 template<typename C>
-inline BasicVector<T, Static>& BasicVector<T, Static>::operator=(const Table<C>& v) {
+inline BasicVector<T>& BasicVector<T>::operator=(const Table<C>& v) {
 	resizeNoCopy(v.getSize());
 	Utility::copy(this->dataTable, v.getData(), this->size);
 
 	return *this;
 }
 
-template<typename T, bool Static>
+template<typename T>
 template<typename Stream>
-inline bool BasicVector<T, Static>::read(Stream* stream) {
+inline bool BasicVector<T>::read(Stream* stream) {
 	Size readSize;
 	if ( !IO::read(stream, &readSize) ) {
 		return false;
@@ -189,21 +182,19 @@ inline bool BasicVector<T, Static>::read(Stream* stream) {
 	return true;
 }
 
-template<typename T, bool Static>
-inline BasicVector<T, Static>& BasicVector<T, Static>::operator=(const BasicVector<T, Static>& v) {
+template<typename T>
+inline BasicVector<T>& BasicVector<T>::operator=(const BasicVector<T>& v) {
 	resizeNoCopy(v.getSize());
 	Utility::copy(this->dataTable, v.getData(), this->size);
 
 	return *this;
 }
 
-template<typename T, bool Static>
-inline void BasicVector<T, Static>::resize(const Size newSize) {
+template<typename T>
+inline void BasicVector<T>::resize(const Size newSize) {
 	if ( newSize == this->size ) {
 		return;
 	}
-
-	static_assert( Static == false, "Unable to resize a static BasicVector." );
 
 	if ( newSize == Size(0) ) {
 		delete[] this->dataTable;
@@ -223,13 +214,11 @@ inline void BasicVector<T, Static>::resize(const Size newSize) {
 	this->size = newSize;
 }
 
-template<typename T, bool Static>
-inline void BasicVector<T, Static>::resizeNoCopy(const Size newSize) {
+template<typename T>
+inline void BasicVector<T>::resizeNoCopy(const Size newSize) {
 	if ( newSize == this->size ) {
 		return;
 	}
-
-	static_assert( Static == false, "Unable to resize a static BasicVector." );
 
 	if ( newSize == Size(0) ) {
 		delete[] this->dataTable;
