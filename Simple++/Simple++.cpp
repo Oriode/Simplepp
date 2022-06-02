@@ -54,7 +54,7 @@
 //#define DEBUG_STREAM
 #define DEBUG_VEC
 #define DEBUG_MAT
-//#define DEBUG_TENSOR
+#define DEBUG_TENSOR
 
 
 #ifndef _LIB
@@ -1597,6 +1597,13 @@ int main(int argc, char* argv[]) {
 		info(t1.toString());
 		info(t2.toString());
 		info(t3.toString());
+
+		info(JSON::toJSON(t3)->toString());
+
+		Math::Tensor<double> t5;
+		JSON::fromJSON(JSON::toJSON(t3), &t5);
+
+		info(t5.toString());
 	}
 #endif
 
