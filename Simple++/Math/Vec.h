@@ -3,6 +3,7 @@
 #include "../Log.h"
 #include "../Utility.h"
 #include "../String.h"
+#include "../JSON/Node.h"
 
 #include "BasicMath.h"
 #include "../BasicVector.h"
@@ -10,7 +11,7 @@
 namespace Math {
 
 	template<typename T>
-	class Vec : public BasicVector<T> {
+	class Vec : public BasicVector<T>, public JSON::Jsonable {
 	public:
 		template<typename C>
 		friend class Mat;
@@ -101,6 +102,17 @@ namespace Math {
 		template<typename S = String>
 		S toString() const;
 
+		///@brief Read a JSON object and set this to the read values.
+		///@param nodeArray Pointer to the JSON object to be read.
+		///@return true if success, false otherwise.
+		template<typename C = UTF8String>
+		bool fromJSON(const JSON::BasicNodeT<C> * node);
+
+		///@brief Write this object to a Json object
+		///@param o Json node to write to.
+		template<typename C = UTF8String>
+		JSON::NodeArrayT<C> * toJSON() const;
+
 	protected:
 	};
 
@@ -183,8 +195,7 @@ namespace Math {
 
 
 	template<typename T>
-	inline Vec<T>::Vec() :
-	{}
+	inline Vec<T>::Vec() {}
 
 	template<typename T>
 	inline Vec<T>::Vec(const Size size) :
@@ -237,6 +248,18 @@ namespace Math {
 		outputStr << S::ElemType(']');
 
 		return outputStr;
+	}
+
+	template<typename T>
+	template<typename C>
+	inline bool Vec<T>::fromJSON(const JSON::BasicNodeT<C>* node) {
+		return JSON::fromJSON(node, reinterpret_cast< BasicVector<T> * >( this ));
+	}
+
+	template<typename T>
+	template<typename C>
+	inline JSON::NodeArrayT<C>* Vec<T>::toJSON() const {
+		return JSON::toJSON(*reinterpret_cast< const Table<T> * >( this ));
 	}
 
 	template<typename T>

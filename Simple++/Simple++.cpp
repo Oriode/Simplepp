@@ -52,7 +52,7 @@
 // #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-//#define DEBUG_VEC
+#define DEBUG_VEC
 #define DEBUG_MAT
 //#define DEBUG_TENSOR
 
@@ -1535,6 +1535,13 @@ int main(int argc, char* argv[]) {
 		info(Math::length(Math::normalize(v5)));
 
 		v1 = { 2,2,2,2 };
+
+		info(v1.toJSON()->toString());
+
+		Math::Vec<double> v7;
+		v7.fromJSON(JSON::toJSON(v1));
+
+		info(v7.toJSON()->toString());
 
 		int i;
 	}
