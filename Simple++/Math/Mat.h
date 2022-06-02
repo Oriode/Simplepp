@@ -191,6 +191,22 @@ namespace Math {
 
 		const Size getNbElem(const Size m, const Size n) const;
 
+		/**
+		 * @brief 	read from a file stream
+		 * @param [in,out]	stream	stream used to read load this object.
+		 * @returns	boolean to know if the operation is a success of not.
+		 */
+		template<typename Stream>
+		bool read(Stream* stream);
+
+		/**
+		 * @brief 	write this object as binary into a file stream
+		 * @param [in,out]	stream	stream used to write this object.
+		 * @returns	boolean to know if the operation is a success of not.
+		 */
+		template<typename Stream>
+		bool write(Stream* stream) const;
+
 	private:
 		Size m;
 		Size n;
@@ -713,6 +729,40 @@ namespace Math {
 		}
 
 		return outputStr;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	inline bool Mat<T>::read(Stream* stream) {
+		if ( !BasicVector<T>::read(stream) ) {
+			return false;
+		}
+
+		if ( !IO::read(stream, &this->m) ) {
+			return false;
+		}
+		if ( !IO::read(stream, &this->n) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	inline bool Mat<T>::write(Stream* stream) const {
+		if ( !BasicVector<T>::write(stream) ) {
+			return false;
+		}
+
+		if ( !IO::write(stream, &this->m) ) {
+			return false;
+		}
+		if ( !IO::write(stream, &this->n) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	template<typename T>

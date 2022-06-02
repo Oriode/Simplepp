@@ -111,6 +111,22 @@ namespace Math {
 		template<typename S = String>
 		S toString() const;
 
+		/**
+		 * @brief 	read from a file stream
+		 * @param [in,out]	stream	stream used to read load this object.
+		 * @returns	boolean to know if the operation is a success of not.
+		 */
+		template<typename Stream>
+		bool read(Stream* stream);
+
+		/**
+		 * @brief 	write this object as binary into a file stream
+		 * @param [in,out]	stream	stream used to write this object.
+		 * @returns	boolean to know if the operation is a success of not.
+		 */
+		template<typename Stream>
+		bool write(Stream* stream) const;
+
 	protected:
 		Size getNbElem(const BasicVector<Size>& sizes) const;
 
@@ -347,6 +363,34 @@ namespace Math {
 		}
 
 		return outputStr;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	inline bool Tensor<T>::read(Stream* stream) {
+		if ( !BasicVector<T>::read(stream) ) {
+			return false;
+		}
+
+		if ( !IO::read(stream, &this->size) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	inline bool Tensor<T>::write(Stream* stream) const {
+		if ( !BasicVector<T>::write(stream) ) {
+			return false;
+		}
+
+		if ( !IO::write(stream, &this->size) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	template<typename T>
