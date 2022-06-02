@@ -880,6 +880,9 @@ public:
 
 	bool toBool() const;
 
+	template<typename C>
+	C fromString() const;
+
 
 	/************************************************************************/
 	/* FromCString()                                                        */
@@ -1093,6 +1096,16 @@ public:
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
 	static double toDouble( const T ** it, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
 
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static double toBool(const T* it, const EndFunc& endFunc = IS_END_SENTINEL);
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static double toBool(const T** it, const EndFunc& endFunc = IS_END_SENTINEL);
+
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static C fromString(const T* it, const EndFunc& endFunc = IS_END_SENTINEL);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static C fromString(const T** it, const EndFunc& endFunc = IS_END_SENTINEL);
+
 
 	/************************************************************************/
 	/* Logical                                                              */
@@ -1145,6 +1158,11 @@ public:
 
 	/************************************************************************/
 	/* To StringASCII                                                            */
+	///@brief	Simple redirection for overload purposes.
+	///@param	str	BasicString<T> to be returned.
+	///@return	str
+	static const BasicString<T>& toString(const BasicString<T>& str);
+
 	///@brief		Convert this object into a string representation
 	///@param	c	A T to process.
 	///@returns	A BasicString<T> that represents this object.
@@ -1752,6 +1770,50 @@ protected:
 
 private:
 
+	char _fromString(const char*) const;
+	int _fromString(const int*) const;
+	short _fromString(const short*) const;
+	long int _fromString(const long int*) const;
+	long long int _fromString(const long long int*) const;
+	unsigned char _fromString(const unsigned char*) const;
+	unsigned int _fromString(const unsigned int*) const;
+	unsigned short _fromString(const unsigned short*) const;
+	unsigned long int _fromString(const unsigned long int*) const;
+	unsigned long long int _fromString(const unsigned long long int*) const;
+	float _fromString(const float*) const;
+	double _fromString(const double*) const;
+	bool _fromString(const bool*) const;
+	BasicString<T>& _fromString(...) const;
+
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static char _fromString(const T** it, const EndFunc& endFunc, const char*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static int _fromString(const T** it, const EndFunc& endFunc, const int*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static short _fromString(const T** it, const EndFunc& endFunc, const short*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static long int _fromString(const T** it, const EndFunc& endFunc, const long int*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static long long int _fromString(const T** it, const EndFunc& endFunc, const long long int*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned char _fromString(const T** it, const EndFunc& endFunc, const unsigned char*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned int _fromString(const T** it, const EndFunc& endFunc, const unsigned int*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned short _fromString(const T** it, const EndFunc& endFunc, const unsigned short*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned long int _fromString(const T** it, const EndFunc& endFunc, const unsigned long int*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static unsigned long long int _fromString(const T** it, const EndFunc& endFunc, const unsigned long long int*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static float _fromString(const T** it, const EndFunc& endFunc, const float*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static double _fromString(const T** it, const EndFunc& endFunc, const double*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static bool _fromString(const T** it, const EndFunc& endFunc, const bool*);
+	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
+	static T* _fromString(const T** it, const EndFunc& endFunc, ...);
+
 	///@brief		Formats
 	///@tparam	C		Reference string type.
 	///@tparam	T1   	First element type.
@@ -1932,6 +1994,9 @@ private:
 	///@returns	The given data converted to a Type.
 	template<typename Type, typename EndFunc = BasicString<T>::IsEndSentinel>
 	static Type _toUnsignedInteger( const T ** itP, unsigned int base = 10, const EndFunc & endFunc = IS_END_SENTINEL );
+
+	template<typename EndFunc = BasicString<T>::IsEndSentinel>
+	static bool _toBool(const T** itP, const EndFunc& endFunc = IS_END_SENTINEL);
 
 
 

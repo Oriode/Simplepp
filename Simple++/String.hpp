@@ -2291,6 +2291,18 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** itP, unsigned int bas
 
 template<typename T>
 template<typename EndFunc>
+inline bool BasicString<T>::_toBool(const T** itP, const EndFunc& endFunc) {
+	const T*& it(*itP);
+
+	if ( *it == T('t') || *it == T('1') ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+template<typename T>
+template<typename EndFunc>
 inline BasicString<T> BasicString<T>::_toString(const T** itP, const EndFunc& endFunc) {
 	const T*& it(*itP);
 
@@ -2427,6 +2439,12 @@ double BasicString<T>::toDouble( const T * buffer, const EndFunc & endFunc ) {
 
 
 template<typename T>
+template<typename C>
+inline C BasicString<T>::fromString() const {
+	return _fromString(reinterpret_cast< const C* >( NULL ));
+}
+
+template<typename T>
 template<typename EndFunc>
 inline BasicString<T> BasicString<T>::toString(const T* it, const EndFunc& endFunc) {
 	const T** itP(&it);
@@ -2515,6 +2533,13 @@ template<typename EndFunc>
 double BasicString<T>::toDouble( const T * it, unsigned int base, const EndFunc & endFunc ) {
 	const T ** itP( &it );
 	return _toFloat<double, EndFunc>(itP, base, endFunc );
+}
+
+template<typename T>
+template<typename EndFunc>
+inline double BasicString<T>::toBool(const T* it, const EndFunc& endFunc) {
+	const T** itP(&it);
+	return _toBool<EndFunc>(itP, endFunc);
 }
 
 
@@ -2683,6 +2708,109 @@ double BasicString<T>::toDouble( const T ** it, unsigned int base, const EndFunc
 	return _toFloat<double, EndFunc>( it, base, endFunc );
 }
 
+template<typename T>
+template<typename EndFunc>
+inline double BasicString<T>::toBool(const T** it, const EndFunc& endFunc) {
+	return _toBool<EndFunc>(it, endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline C BasicString<T>::fromString(const T* it, const EndFunc& endFunc) {
+	const T** itP(&it);
+	return fromString(itP, endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline C BasicString<T>::fromString(const T** it, const EndFunc& endFunc) {
+	return _fromString(it, endFunc, reinterpret_cast< const C* >( NULL ));
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline char BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const char*) {
+	return toChar(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const int*) {
+	return toInt(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline short BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const short*) {
+	return toShort(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const long int*) {
+	return toLong(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline long long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const long long int*) {
+	return toLongLong(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline unsigned char BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned char*) {
+	return toUChar(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline unsigned int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned int*) {
+	return toUInt(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline unsigned short BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned short*) {
+	return toShort(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline unsigned long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned long int*) {
+	return toLong(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline unsigned long long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned long long int*) {
+	return toLongLong(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline float BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const float*) {
+	return toFloat(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline double BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const double*) {
+	return toDouble(it, unsigned int(10), endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline bool BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const bool*) {
+	return toBool(it, endFunc);
+}
+
+template<typename T>
+template<typename C, typename EndFunc>
+inline T* BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, ...) {
+	return *it;
+}
+
 
 
 
@@ -2847,13 +2975,78 @@ double BasicString<T>::toDouble( unsigned int base ) const {
 
 template<typename T>
 inline bool BasicString<T>::toBool() const {
-	const T* it(this -> dataTable);
+	const T* tmpBuffer(this -> dataTable);
+	return _toBool(&tmpBuffer);
+}
 
-	if ( *it == T('t') || *it == T('1') ) {
-		return true;
-	} else {
-		return false;
-	}
+template<typename T>
+inline char BasicString<T>::_fromString(const char*) const {
+	return toChar();
+}
+
+template<typename T>
+inline int BasicString<T>::_fromString(const int*) const {
+	return toInt();
+}
+
+template<typename T>
+inline short BasicString<T>::_fromString(const short*) const {
+	return toShort();
+}
+
+template<typename T>
+inline long int BasicString<T>::_fromString(const long int*) const {
+	return toLong();
+}
+
+template<typename T>
+inline long long int BasicString<T>::_fromString(const long long int*) const {
+	return toLongLong();
+}
+
+template<typename T>
+inline unsigned char BasicString<T>::_fromString(const unsigned char*) const {
+	return toUChar();
+}
+
+template<typename T>
+inline unsigned int BasicString<T>::_fromString(const unsigned int*) const {
+	return toUInt();
+}
+
+template<typename T>
+inline unsigned short BasicString<T>::_fromString(const unsigned short*) const {
+	return toUShort();
+}
+
+template<typename T>
+inline unsigned long int BasicString<T>::_fromString(const unsigned long int*) const {
+	return toULong();
+}
+
+template<typename T>
+inline unsigned long long int BasicString<T>::_fromString(const unsigned long long int*) const {
+	return toULongLong();
+}
+
+template<typename T>
+inline float BasicString<T>::_fromString(const float*) const {
+	return toFloat();
+}
+
+template<typename T>
+inline double BasicString<T>::_fromString(const double*) const {
+	return toDouble();
+}
+
+template<typename T>
+inline bool BasicString<T>::_fromString(const bool*) const {
+	return toBool();
+}
+
+template<typename T>
+inline BasicString<T>& BasicString<T>::_fromString(...) const {
+	return *this;
 }
 
 
@@ -2869,6 +3062,11 @@ inline bool BasicString<T>::toBool() const {
 /* toString()                                                           */
 /************************************************************************/
 
+
+template<typename T>
+inline const BasicString<T>& BasicString<T>::toString(const BasicString<T>& str) {
+	return str;
+}
 
 template<typename T>
 BasicString<T> BasicString<T>::toString( const T & c ) {
