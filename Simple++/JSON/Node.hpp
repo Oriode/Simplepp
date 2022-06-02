@@ -1379,6 +1379,11 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 	}
 
 	template<typename T>
+	inline DocumentT<T>::DocumentT(BasicNodeT<T>* rootNode) :
+		reootNode(rootNode)
+	{}
+
+	template<typename T>
 	inline DocumentT<T>::~DocumentT() {
 		if ( this->rootNode ) {
 			delete this->rootNode;
@@ -1676,6 +1681,114 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 	BasicNodeT<T> * parseT( const T & str ) {
 		const typename T::ElemType * buffer( str.toCString() );
 		return parse<T, T::ElemType>( buffer );
+	}
+
+	template<typename C, typename T>
+	bool fromJSON(const BasicNodeT<T>* node, C* v) {
+		return _fromJSON(node, v, reinterpret_cast<const C *>(NULL ));
+	}
+
+	template<typename C, typename T>
+	bool fromJSON(const BasicNodeT<T>* node, Table<C>* t) {
+		if ( node->getType() != JSON::BasicNodeT<T>::Type::Array ) {
+			return false;
+		}
+
+		Size minSize(Math::min(node->getNbChildren(), t->getSize()));
+		for ( Size i(0); i < minSize; i++ ) {
+			const JSON::BasicNodeT<T>* nodeChild(node->getChild(i));
+			if ( !JSON::fromJSON(nodeChild, &t->getValueI(i)) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename C, typename T>
+	bool fromJSON(const BasicNodeT<T>* node, BasicVector<C>* v) {
+		if ( node->getType() != JSON::BasicNodeT<T>::Type::Array ) {
+			return false;
+		}
+
+		v->resizeNoCopy(node->getNbChildren());
+
+		for ( Size i(0); i < node->getNbChildren(); i++ ) {
+			const JSON::BasicNodeT<T>* nodeChild(node->getChild(i));
+			if ( !JSON::fromJSON(nodeChild, &v->getValueI(i)) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename C, typename T>
+	bool fromJSON(const BasicNodeT<T>* node, Vector<C>* v) {
+		return fromJSON(node, reinterpret_cast< Table<C> * >( v ));
+	}
+
+	template<typename C, typename T>
+	bool _fromJSON(const BasicNodeT<T>* node, C* v, const Jsonable*) {
+		return v->fromJSON(node);
+	}
+
+	template<typename C, typename T>
+	bool _fromJSON(const BasicNodeT<T>* node, C* v, ...) {
+		if ( node->getType() != BasicNodeT<T>::Type::Value ) {
+			return false;
+		}
+		( *v ) = node->getValue().fromString<C>();
+		return true;
+	}
+
+	template<typename C, typename T>
+	BasicNodeT<T>* toJSON(const C& v) {
+		return _toJSON(v, reinterpret_cast< const C* >( NULL ));
+	}
+
+	template<typename C, typename T>
+	NodeArrayT<T>* toJSON(const Table<C>& t) {
+		JSON::NodeArrayT<T>* nodeArray(new JSON::NodeArrayT<T>());
+
+		for ( Size i(0); i < t.getSize(); i++ ) {
+			JSON::BasicNodeT<T>* nodeValue(toJSON(t[i]));
+			nodeArray->addChild(nodeValue);
+		}
+
+		return nodeArray;
+	}
+
+	template<typename C, typename T>
+	NodeArrayT<T>* toJSON(const BasicVector<C>& v) {
+		return &reinterpret_cast<const Table<C> *>(*v );
+	}
+
+	template<typename C, typename T>
+	NodeArrayT<T>* toJSON(const Vector<C>& v) {
+		return &reinterpret_cast< const Table<C> * >( *v );
+	}
+
+	template<typename C, typename T>
+	BasicNodeT<T>* _toJSON(const C& v, const Jsonable*) {
+		return v.toJSON();
+	}
+
+	template<typename C, typename T>
+	BasicNodeT<T>* _toJSON(const C& v, ...) {
+		return new NodeValueT<T>(T::toString(v));
+	}
+
+	template<typename T>
+	inline bool Jsonable::fromJSON(const BasicNodeT<T>* node) {
+		error("Jsonable not overloaded the fromJSON method.");
+		return false;
+	}
+
+	template<typename T>
+	inline BasicNodeT<T>* Jsonable::toJSON() const {
+		error("Jsonable not overloaded the toJSON method.");
+		return NULL;
 	}
 
 }

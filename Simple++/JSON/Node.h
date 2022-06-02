@@ -519,6 +519,10 @@ namespace JSON {
 		///@param str String to be parsed.
 		DocumentT(const T& str);
 
+		///@brief Create a new JSON document using a pointer to a node. The node will be memory managed.
+		///@param rootNode JSON node.
+		DocumentT(BasicNodeT<T>* rootNode);
+
 		///@brief Destructor.
 		~DocumentT();
 
@@ -595,6 +599,20 @@ namespace JSON {
 		BasicNodeT<T>* rootNode;
 	};
 
+	class Jsonable {
+	public:
+		///@brief Read a JSON object and set this to the read values.
+		///@param nodeArray Pointer to the JSON object to be read.
+		///@return true if success, false otherwise.
+		template<typename T = UTF8String>
+		bool fromJSON(const BasicNodeT<T>* node);
+
+		///@brief Write this object to a Json object
+		///@param o Json node to write to.
+		template<typename T = UTF8String>
+		BasicNodeT<T>* toJSON() const;
+	};
+
 	using Node = BasicNodeT<UTF8String>;
 	using NodeMap = NodeMapT<UTF8String>;
 	using NodeValue = NodeValueT<UTF8String>;
@@ -606,9 +624,9 @@ namespace JSON {
 	///@param buffer Pointer to a String iterator
 	///@param endFunc Functor to check the buffer end.
 	///@return bool True if success, False otherwise.
-	template<typename T, typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+	template<typename T = UTF8String, typename C = T::ElemType, typename EndFunc = BasicString<C>::IsEndSentinel>
 	BasicNodeT<T> * parseT( const C ** buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
-	template<typename T, typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
+	template<typename T = UTF8String, typename C = T::ElemType, typename EndFunc = BasicString<C>::IsEndSentinel>
 	BasicNodeT<T> * parseT( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
 	///@brief read this object using a type T.
@@ -616,6 +634,35 @@ namespace JSON {
 	///@return bool True if success, False otherwise.
 	template<typename T>
 	BasicNodeT<T> * parseT( const T & str );
+
+	template<typename C, typename T = UTF8String>
+	bool fromJSON(const BasicNodeT<T>* node, C* v);
+
+	template<typename C, typename T = UTF8String>
+	bool fromJSON(const BasicNodeT<T>* node, Table<C>* t);
+	template<typename C, typename T = UTF8String>
+	bool fromJSON(const BasicNodeT<T>* node, BasicVector<C>* v);
+	template<typename C, typename T = UTF8String>
+	bool fromJSON(const BasicNodeT<T>* node, Vector<C>* v);
+
+	template<typename C, typename T = UTF8String>
+	bool _fromJSON(const BasicNodeT<T>* node, C* v, const Jsonable *);
+	template<typename C, typename T = UTF8String>
+	bool _fromJSON(const BasicNodeT<T>* node, C* v, ...);
+
+	template<typename C, typename T = UTF8String>
+	BasicNodeT<T>* toJSON(const C& v);
+	template<typename C, typename T = UTF8String>
+	NodeArrayT<T>* toJSON(const Table<C>& t);
+	template<typename C, typename T = UTF8String>
+	NodeArrayT<T>* toJSON(const BasicVector<C>& v);
+	template<typename C, typename T = UTF8String>
+	NodeArrayT<T>* toJSON(const Vector<C>& v);
+
+	template<typename C, typename T = UTF8String>
+	BasicNodeT<T>* _toJSON(const C& v, const Jsonable*);
+	template<typename C, typename T = UTF8String>
+	BasicNodeT<T>* _toJSON(const C& v, ...);
 
 }
 
