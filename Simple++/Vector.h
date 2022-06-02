@@ -59,6 +59,7 @@ public:
 	///@param stream Vector to be copied.
 	template<typename C>
 	Vector( const Vector<C> & vector );
+	Vector( const Vector<T> & vector );
 
 	///@brief Copy constructor.
 	///@template C type of the Vector to be copied.
@@ -135,6 +136,13 @@ public:
 
 	/************************************************************************/
 	/* LOGICAL                                                              */
+
+	using BasicVector<T>::operator==;
+	using BasicVector<T>::operator!=;
+	using BasicVector<T>::operator<;
+	using BasicVector<T>::operator>;
+	using BasicVector<T>::operator<=;
+	using BasicVector<T>::operator>=;
 
 	/**
 	 * @brief 	Equality operator
@@ -215,6 +223,12 @@ public:
 	 * @returns	Begin Iterator.
 	 */
 	typename Vector<T>::Iterator getBegin() const;
+
+	/**
+	 * @brief 	Get the End Iterator
+	 * @returns	End Iterator.
+	 */
+	typename Vector<T>::Iterator getEnd() const;
 
 	/**
 	 * @brief 	iterate ONE time the iterator and return if there is still data

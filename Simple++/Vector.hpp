@@ -26,11 +26,22 @@ template<typename T>
 template<typename C>
 Vector<T>::Vector( const Vector<C> & vector ) :
 	BasicVector<T>(BasicVector<T>::protectedCtor::null),
-	maxSize( vector.getMaxSize() ),
+	maxSize( vector.getMaxSize() )
 {
 	this->size = vector.getSize();
 	this->dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
 	Utility::copy( this -> dataTable, vector.getData(), this -> maxSize );
+	_updateIterators();
+}
+
+template<typename T>
+Vector<T>::Vector(const Vector<T>& vector) :
+	BasicVector<T>(BasicVector<T>::protectedCtor::null),
+	maxSize(vector.getMaxSize())
+{
+	this->size = vector.getSize();
+	this->dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
+	Utility::copy(this -> dataTable, vector.getData(), this -> maxSize);
 	_updateIterators();
 }
 
@@ -193,6 +204,11 @@ void Vector<T>::concat( const Table<C> & vector ) {
 template<typename T>
 typename Vector<T>::Iterator Vector<T>::getBegin() const {
 	return this -> dataTable;
+}
+
+template<typename T>
+inline typename Vector<T>::Iterator Vector<T>::getEnd() const {
+	return this->iteratorEnd;
 }
 
 template<typename T>
