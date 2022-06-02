@@ -2,6 +2,7 @@
 
 #include "../IO/BasicIO.h"
 #include "../String.h"
+#include "../JSON/Node.h"
 
 #include "BasicMath.h"
 #include "Vec.h"
@@ -9,7 +10,7 @@
 namespace Math {
 
 	template<typename T>
-	class Mat : public BasicVector<T> {
+	class Mat : public BasicVector<T>, public JSON::Jsonable {
 	public:
 		class View {
 		public:
@@ -206,6 +207,17 @@ namespace Math {
 		 */
 		template<typename Stream>
 		bool write(Stream* stream) const;
+
+		///@brief Read a JSON object and set this to the read values.
+		///@param nodeArray Pointer to the JSON object to be read.
+		///@return true if success, false otherwise.
+		template<typename C = UTF8String>
+		bool fromJSON(const JSON::BasicNodeT<C>* node);
+
+		///@brief Write this object to a Json object
+		///@param o Json node to write to.
+		template<typename C = UTF8String>
+		JSON::NodeArrayT<C>* toJSON() const;
 
 	private:
 		Size m;
@@ -763,6 +775,59 @@ namespace Math {
 		}
 
 		return true;
+	}
+
+	template<typename T>
+	template<typename C>
+	inline bool Mat<T>::fromJSON(const JSON::BasicNodeT<C>* node) {
+		if ( node->getType() != JSON::BasicNodeT<C>::Type::Array ) {
+			return false;
+		}
+
+		if ( node->getNbChildren() == Size(0) ) {
+			return false;
+		}
+
+		if ( node->getChild(Size(0))->getNbChildren() == Size(0) ) {
+			return false;
+		}
+
+		resizeNoCopy(node->getNbChildren(), node->getChild(Size(0))->getNbChildren());
+
+		for ( Size i(0); i < node->getNbChildren(); i++ ) {
+			const JSON::BasicNodeT<C>* childNode(node->getChild(i));
+			if ( childNode->getType() != JSON::BasicNodeT<C>::Type::Array ) {
+				return false;
+			}
+			if ( childNode->getNbChildren() != getSizeN() ) {
+				return false;
+			}
+			for ( Size j(0); j < childNode->getNbChildren(); j++ ) {
+				const JSON::BasicNodeT<C>* nodeValue(childNode->getChild(j));
+				if ( !JSON::fromJSON(nodeValue, &getValueI(i, j)) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	template<typename C>
+	inline JSON::NodeArrayT<C>* Mat<T>::toJSON() const {
+		JSON::NodeArrayT<C>* nodeArrayM(new JSON::NodeArrayT<C>());
+
+		for ( Size i(0); i < getSizeM(); i++ ) {
+			JSON::NodeArrayT<C>* nodeArrayN(new JSON::NodeArrayT<C>());
+			for ( Size j(0); j < getSizeN(); j++ ) {
+				JSON::BasicNodeT<C>* nodeValue(JSON::toJSON(getValueI(i, j)));
+				nodeArrayN->addChild(nodeValue);
+			}
+			nodeArrayM->addChild(nodeArrayN);
+		}
+
+		return nodeArrayM;
 	}
 
 	template<typename T>

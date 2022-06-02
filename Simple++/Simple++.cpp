@@ -1539,7 +1539,7 @@ int main(int argc, char* argv[]) {
 		info(v1.toJSON()->toString());
 
 		Math::Vec<double> v7;
-		v7.fromJSON(JSON::toJSON(v1));
+		JSON::fromJSON(JSON::toJSON(v1), &v7);
 
 		info(v7.toJSON()->toString());
 
@@ -1572,6 +1572,13 @@ int main(int argc, char* argv[]) {
 
 		info((m5 * m6).toString());
 		info(m5 == m6);
+		info(JSON::toJSON(m5)->toString());
+
+		Math::Mat<double> m7;
+		JSON::fromJSON(JSON::toJSON(m5), &m7);
+
+		info(m7.toString());
+
 	}
 #endif
 #ifdef DEBUG_TENSOR

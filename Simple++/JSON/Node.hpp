@@ -1725,7 +1725,7 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 
 	template<typename C, typename T>
 	bool fromJSON(const BasicNodeT<T>* node, Vector<C>* v) {
-		return fromJSON(node, reinterpret_cast< Table<C> * >( v ));
+		return _fromJSON(node, v, reinterpret_cast< Table<C> * >( v ));
 	}
 
 	template<typename C, typename T>
