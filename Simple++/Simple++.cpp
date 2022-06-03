@@ -52,9 +52,10 @@
 // #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-#define DEBUG_VEC
-#define DEBUG_MAT
-#define DEBUG_TENSOR
+//#define DEBUG_VEC
+//#define DEBUG_MAT
+//#define DEBUG_TENSOR
+#define DEBUG_LINEAR_REGRESSION
 
 
 #ifndef _LIB
@@ -73,6 +74,7 @@
 #include "Math/Vec.h"
 #include "Math/Mat.h"
 #include "Math/Tensor.h"
+#include "Math/ML/LinearRegression.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
@@ -1553,7 +1555,8 @@ int main(int argc, char* argv[]) {
 		Math::Mat<double> m1(Size(100), Size(100));
 		Math::Mat<double> m2({ {1,2}, {3,4} });
 		Math::Mat<double> m3(m2);
-		Math::Mat<double> m4(m2.transpose());
+		m2.transpose();
+		Math::Mat<double> m4(m2);
 		Math::Mat<double> m5({ {1,2,3}, {4,5,6} });
 		Math::Mat<double> m6({ {10,11}, {20,21}, {30,31} });
 
@@ -1563,10 +1566,15 @@ int main(int argc, char* argv[]) {
 		m3 *= 2.0;
 
 		m3 = m3 + 100.0;
-		m3 = m3 + Math::Mat<double>(2, 2).identity();
-		m3 = m3 * Math::Vec<double>(2).fill(10);
-		m3 *= Math::Vec<double>(2).fill(0.1);
-		m3 *= Math::Mat<double>(2, 2).identity();
+		Math::Mat<double> m8(2, 2);
+		m8.identity();
+		m3 = m3 + m8;
+		Math::Vec<double> v1(2);
+		v1.fill(10);
+		m3 = m3 * v1;
+		v1.fill(0.1);
+		m3 *= v1;
+		m3 *= m8;
 
 		m1.identity();
 
@@ -1606,6 +1614,18 @@ int main(int argc, char* argv[]) {
 		JSON::fromJSON(JSON::toJSON(t3), &t5);
 
 		info(t5.toString());
+	}
+#endif
+#ifdef DEBUG_LINEAR_REGRESSION
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Linear Regression											//
+	{
+		Math::ML::LinearRegression<double> linearRegression(Size(1), Size(2));
+
+		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(100), Size(1), Size(1), Size(2)));
+
+		linearRegression.addData(dataVector);
+		linearRegression.gradientDescent(0.01, Size(1000));
 	}
 #endif
 

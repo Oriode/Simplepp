@@ -19,6 +19,7 @@ namespace Math {
 			void addData(const Data<T>& data);
 			template<typename C, Size NbFeatures, Size NbOut>
 			void addData(const C(&featureTable)[ NbFeatures ], const C(&outTable)[ NbOut ]);
+			void addData(const Vector<Data<T>>& dataVector);
 
 			const Size getNbFeatures() const;
 			const Size getNbParams() const;
@@ -29,10 +30,11 @@ namespace Math {
 			T computeGrad(const Size m, const Size n) const;
 			void computeGradM(Mat<T>& m) const;
 
-			void gradientDescent(const T& learningRate = T(0.01), const Size nbIterations = Size(100));
+			void gradientDescent(const T& learningRate = T(0.01), const Size nbIterations = Size(100), int verbose = 2);
 
 			static void setXMat(Mat<T>& x, const Vector<Data<T>>& dataVector, const Size nbParams);
 			static void setParamMat(Mat<T>& paramMat, const Size nbParams, const Size nbOut);
+			static T computeY(const Vector<Data<T>>& dataVector, const Mat<T>& paramMat, const Size m, const Size n);
 
 		private:
 			void _updateXMat();
@@ -49,7 +51,7 @@ namespace Math {
 		};
 
 		template<typename T>
-		Vector<Data<T>> generateData(const Size nbFeatures, const Size nbOut, const Size nbParams);
+		Vector<Data<T>> generateData(const Size nbData, const Size nbFeatures, const Size nbOut, const Size nbParams, const T & noise = T(0.1), int verbose = 1);
 
 		template<typename T>
 		inline LinearRegression<T>::LinearRegression(const Size nbFeatures, const Size nbParams) :
@@ -74,6 +76,23 @@ namespace Math {
 		}
 
 		template<typename T>
+		inline void LinearRegression<T>::addData(const Vector<Data<T>>& dataVector) {
+			for ( Size i(0); i < dataVector.getSize(); i++ ) {
+				const Data<T>& data(dataVector.getValueI(i));
+
+				if ( data.getNbFeatures() != this->nbFeatures ) {
+					Log::displayError(String::format("Unable to add a data to the ML system. Number of features missmatch % (data) != % (system).", data.getNbFeatures(), this->nbFeatures));
+					continue;
+				}
+				if ( data.getNbOut() != this->nbOut ) {
+					Log::displayError(String::format("Unable to add a data to the ML system. Number of out missmatch % (data) != % (system).", data.getNbOut(), this->nbOut));
+					continue;
+				}
+				this->dataVector.push(data);
+			}
+		}
+
+		template<typename T>
 		inline const Size LinearRegression<T>::getNbFeatures() const {
 			return this->nbFeatures;
 		}
@@ -85,24 +104,7 @@ namespace Math {
 
 		template<typename T>
 		inline T LinearRegression<T>::computeY(const Size m, const Size n) const {
-			assert(this->dataVector.getSize() > m);
-			assert(this->NbOut > n);
-
-			const BasicVector<T>& featureTable(this->dataVector.getValueI(m).getFeatures());
-
-			T y(0);
-			for ( Size i(0); i < featureTable.getSize(); i++ ) {
-				const T& feature(featureTable.getValueI(i));
-				const T& param(this->paramMat.getValueI(i, n));
-
-				y += feature * param;
-			}
-			for ( Size i(featureTable.getSize()); i < this->paramMat.getSizeM(); i++ ) {
-				const T& param(this->paramMat.getValueI(i, n));
-
-				y += param;
-			}
-			return y;
+			return LinearRegression<T>::computeY(this->dataVector, this->paramMat, m, n);
 		}
 
 		template<typename T>
@@ -114,13 +116,13 @@ namespace Math {
 				const Data<T>& data(this->dataVector.getValueI(i));
 
 				for ( Size j(0); j < this->nbOut; j++ ) {
-					const T y(computeY(i, j) - data.getOuts().getValueI(j));
+					const T y(computeY(i, j) - data.getOut(j));
+					ySum += y * y;
 				}
 
-				ySum += y * y;
 			}
 
-			return T(1) / nbDataT * ySum;
+			return ySum / nbDataT;
 		}
 
 		template<typename T>
@@ -157,8 +159,8 @@ namespace Math {
 
 		template<typename T>
 		inline T LinearRegression<T>::computeGrad(const Size m, const Size n) const {
-			assert(this->nbParam > m);
-			assert(this->NbOut > n);
+			assert(this->nbParams > m);
+			assert(this->nbOut > n);
 
 			const T nbDataT(T(this->dataVector.getSize()));
 
@@ -180,7 +182,7 @@ namespace Math {
 				}
 			}
 
-			return T(1) / nbDataT * ySum;
+			return ySum / nbDataT;
 		}
 
 		template<typename T>
@@ -196,11 +198,24 @@ namespace Math {
 		}
 
 		template<typename T>
-		inline void LinearRegression<T>::gradientDescent(const T& learningRate, const Size nbIterations) {
+		inline void LinearRegression<T>::gradientDescent(const T& learningRate, const Size nbIterations, int verbose) {
 
-			Log::startStep(String::format("Starting gradient descent with % iterations...", nbIterations));
+			if ( verbose > 0 ) {
+				Log::startStep(String::format("Starting gradient descent with % iterations...", nbIterations));
+			}
 
-			for ( Size iterationI(0); iterationI < nbIterations; i++ ) {
+			Size nbIterationsLog;
+			if ( verbose > 1 ) {
+				if ( nbIterations > Size(100) ) {
+					nbIterationsLog = nbIterations / Size(100);
+				} else if ( nbIterations > Size(10) ) {
+					nbIterationsLog = nbIterations / Size(10);
+				} else {
+					nbIterationsLog = nbIterations;
+				}
+			}
+
+			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
 				for ( Size i(0); i < this->paramMat.getSizeM(); i++ ) {
 					for ( Size j(0); j < this->paramMat.getSizeN(); j++ ) {
 						T& param(this->paramMat.getValueI(i, j));
@@ -208,9 +223,19 @@ namespace Math {
 						param = param - learningRate * computeGrad(i, j);
 					}
 				}
+
+				if ( verbose > 1 ) {
+					if ( (iterationI + Size(1)) % nbIterationsLog == Size(0) ) {
+						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
+						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCost()), Log::MessageColor::DarkWhite);
+					}
+				}
 			}
 
-			Log::endStep(String::format("Finished with a cost of %.", computeCost()));
+			if ( verbose > 0 ) {
+				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoeficientOfDetermination() * T(100)));
+				Log::displayLog(this->paramMat.toString());
+			}
 		}
 
 		template<typename T>
@@ -240,6 +265,28 @@ namespace Math {
 		}
 
 		template<typename T>
+		inline T LinearRegression<T>::computeY(const Vector<Data<T>>& dataVector, const Mat<T>& paramMat, const Size m, const Size n) {
+			assert(dataVector.getSize() > m);
+			assert(paramMat.getSizeN() > n);
+
+			const BasicVector<T>& featureTable(dataVector.getValueI(m).getFeatures());
+
+			T y(0);
+			for ( Size i(0); i < featureTable.getSize(); i++ ) {
+				const T& feature(featureTable.getValueI(i));
+				const T& param(paramMat.getValueI(i, n));
+
+				y += feature * param;
+			}
+			for ( Size i(featureTable.getSize()); i < paramMat.getSizeM(); i++ ) {
+				const T& param(paramMat.getValueI(i, n));
+
+				y += param;
+			}
+			return y;
+		}
+
+		template<typename T>
 		inline void LinearRegression<T>::_updateXMat() {
 			if ( !this->bIsXMatUpdated ) {
 				setXMat(this->xMat, this->dataVector, this->nbParams);
@@ -254,6 +301,37 @@ namespace Math {
 			assert(this->nbFeatures == NbFeatures);
 			assert(this->nbOut = NbOut);
 			addData(Data<T>(featureTable, outTable));
+		}
+
+		template<typename T>
+		Vector<Data<T>> generateData(const Size nbData, const Size nbFeatures, const Size nbOut, const Size nbParams, const T& noise, int verbose) {
+			Vector<Data<T>> dataVector;
+			dataVector.resize(nbData);
+
+			Mat<T> paramMat;
+			LinearRegression<T>::setParamMat(paramMat, nbParams, nbOut);
+
+			for ( Size i(0); i < dataVector.getSize(); i++ ) {
+				Data<T> newData(nbFeatures, nbOut);
+				newData.setFeaturesRandom();
+				dataVector.setValueI(i, newData);
+			}
+
+			for ( Size i(0); i < dataVector.getSize(); i++ ) {
+				Data<T>& data(dataVector.getValueI(i));
+
+				for ( Size j(0); j < data.getNbOut(); j++ ) {
+					const T y(LinearRegression<T>::computeY(dataVector, paramMat, i, j));
+					const T noiseFactor(Math::random(-noise, noise));
+					data.setOut(j, y * ( T(1) + noiseFactor ));
+				}
+			}
+
+			if ( verbose > 0 ) {
+				Log::displayLog(String::format("Generated % data with %/% noise and the paramMat : %", nbData, noise * T(100), paramMat.toString()));
+			}
+
+			return dataVector;
 		}
 
 	}

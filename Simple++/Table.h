@@ -648,7 +648,7 @@ template<typename Functor>
 inline Table<T>& Table<T>::set(Functor& functor) {
 	for ( Size i(0); i < getSize(); i++ ) {
 		T& value(this->dataTable[ i ]);
-		value = functor();
+		value = functor.operator()<T>( );
 	}
 
 	return *this;

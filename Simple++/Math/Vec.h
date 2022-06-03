@@ -59,6 +59,13 @@ namespace Math {
 		template<typename Functor>
 		Vec<T>& apply(Functor& functor);
 
+		template<typename Functor, typename C>
+		Vec<T>& set(Functor& functor, const Table<C>& v);
+		template<typename Functor>
+		Vec<T>& set(Functor& functor, const T& s);
+		template<typename Functor>
+		Vec<T>& set(Functor& functor);
+
 		template<typename C>
 		Vec<T> & operator+=(const Table<C>& v);
 		Vec<T>& operator+=(const T& s);
@@ -94,6 +101,12 @@ namespace Math {
 		/************************************************************************/
 		/* ================                MISC                ================ */
 		/************************************************************************/
+
+		/**
+		 * @brief 	Fill the complete vector with the specified data.
+		 * @param 	data	data to be copied in the whole vector.
+		 */
+		Vec<T>& fill(const T& data);
 
 		Vec<T>& zeros();
 		Vec<T>& ones();
@@ -214,6 +227,12 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline Vec<T>& Vec<T>::fill(const T& data) {
+		BasicVector<T>::fill(data);
+		return *this;
+	}
+
+	template<typename T>
 	inline Vec<T>& Vec<T>::zeros() {
 		return fill(T(0));
 	}
@@ -330,6 +349,27 @@ namespace Math {
 	inline Vec<T>& Vec<T>::apply(Functor& functor) {
 		BasicVector<T>::apply(functor);
 
+		return *this;
+	}
+
+	template<typename T>
+	template<typename Functor, typename C>
+	inline Vec<T>& Vec<T>::set(Functor& functor, const Table<C>& v) {
+		BasicVector<T>::set(functor, v);
+		return *this;
+	}
+
+	template<typename T>
+	template<typename Functor>
+	inline Vec<T>& Vec<T>::set(Functor& functor, const T& s) {
+		BasicVector<T>::set(functor, s);
+		return *this;
+	}
+
+	template<typename T>
+	template<typename Functor>
+	inline Vec<T>& Vec<T>::set(Functor& functor) {
+		BasicVector<T>::set(functor);
 		return *this;
 	}
 

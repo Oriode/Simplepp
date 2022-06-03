@@ -472,7 +472,9 @@ namespace Math {
 
 	template<typename T>
 	inline Mat<T>& Mat<T>::randomF() {
-		return set(Math::RandomF());
+		set(Math::RandomF());
+
+		return *this;
 	}
 
 	template<typename T>

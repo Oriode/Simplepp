@@ -325,7 +325,7 @@ namespace Math {
 		template<typename T> inline constexpr T operator()(const T& v) { return Math::sqrt(v); }
 	};
 	struct RandomF {
-		template<typename T> inline constexpr T operator()(const T& v) { return Math::randomF(); }
+		template<typename T> inline constexpr T operator()() { return Math::randomF<T>(); }
 	};
 }
 
