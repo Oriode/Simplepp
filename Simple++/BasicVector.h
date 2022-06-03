@@ -61,6 +61,9 @@ public:
 	void resize(const Size newSize);
 	void resizeNoCopy(const Size newSize);
 
+	template<typename C>
+	BasicVector<T>& concat(const Table<C>& t);
+
 	/**
 	 * @brief 	read from a file stream
 	 * @param [in,out]	stream	stream used to read load this object.
@@ -156,6 +159,18 @@ template<typename C>
 inline BasicVector<T>& BasicVector<T>::operator=(const Table<C>& v) {
 	resizeNoCopy(v.getSize());
 	Utility::copy(this->dataTable, v.getData(), this->size);
+
+	return *this;
+}
+
+template<typename T>
+template<typename C>
+inline BasicVector<T>& BasicVector<T>::concat(const Table<C>& t) {
+	Size oldSize(this->size);
+	resize(oldSize + t.getSize());
+	for ( Size i(0); i < t.getSize(); i++ ) {
+		this->dataTable[ i + oldSize ] = t.getValueI(i);
+	}
 
 	return *this;
 }

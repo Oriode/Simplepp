@@ -1579,6 +1579,8 @@ int main(int argc, char* argv[]) {
 
 		info(m7.toString());
 
+		info(Math::sum(m7));
+
 	}
 #endif
 #ifdef DEBUG_TENSOR

@@ -11,6 +11,7 @@
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Vec4.h"
+#include "Mat.h"
 #include "Mat3.h"
 #include "Mat4.h"
 #include "Tensor.h"
@@ -165,6 +166,8 @@ namespace Math {
 	MATH_FUNC_QUALIFIER T sum(const Vec4<T>& v);
 	template<typename T>
 	MATH_FUNC_QUALIFIER T sum(const Vec<T>& v);
+	template<typename T>
+	MATH_FUNC_QUALIFIER T sum(const Mat<T>& v);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T mean(const Vec2<T>& v);

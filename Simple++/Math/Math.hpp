@@ -333,6 +333,15 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER T sum(const Mat<T>& m) {
+		T sumValue(0);
+		for ( Size i(0); i < m.getSize(); i++ ) {
+			sumValue += m.getValueI(i);
+		}
+		return sumValue;
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T mean(const Vec2<T>& v) {
 		return mean(v) / T(2);
 	}
