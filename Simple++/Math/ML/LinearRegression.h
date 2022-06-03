@@ -14,7 +14,7 @@ namespace Math {
 		template<typename T>
 		class LinearRegression : public IO::BasicIO {
 		public:
-			LinearRegression(const Size nbFeatures, const Size nbParams);
+			LinearRegression(const Size nbFeatures, const Size nbOut, const Size nbParams);
 
 			void addData(const Data<T>& data);
 			template<typename C, Size NbFeatures, Size NbOut>
@@ -26,7 +26,7 @@ namespace Math {
 
 			T computeY(const Size m, const Size n) const;
 			T computeCost() const;
-			T computeCoeficientOfDetermination() const;
+			T computeCoefficientOfDetermination() const;
 			T computeGrad(const Size m, const Size n) const;
 			void computeGradM(Mat<T>& m) const;
 
@@ -54,11 +54,11 @@ namespace Math {
 		Vector<Data<T>> generateData(const Size nbData, const Size nbFeatures, const Size nbOut, const Size nbParams, const T & noise = T(0.1), int verbose = 1);
 
 		template<typename T>
-		inline LinearRegression<T>::LinearRegression(const Size nbFeatures, const Size nbParams) :
+		inline LinearRegression<T>::LinearRegression(const Size nbFeatures, const Size nbOut, const Size nbParams) :
 			nbFeatures(nbFeatures),
-			nbOut(Size(1)),
+			nbOut(nbOut),
 			nbParams(nbParams),
-			paramMat(nbParams, Size(1)),
+			paramMat(nbParams, nbOut),
 			bIsXMatUpdated(false)
 		{
 			assert(this->nbFeatures <= this->nbParams);
@@ -126,7 +126,7 @@ namespace Math {
 		}
 
 		template<typename T>
-		inline T LinearRegression<T>::computeCoeficientOfDetermination() const {
+		inline T LinearRegression<T>::computeCoefficientOfDetermination() const {
 
 			Vec<T> meanVec(this->nbOut);
 			meanVec.zeros();
@@ -233,7 +233,7 @@ namespace Math {
 			}
 
 			if ( verbose > 0 ) {
-				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoeficientOfDetermination() * T(100)));
+				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoefficientOfDetermination() * T(100)));
 				Log::displayLog(this->paramMat.toString());
 			}
 		}

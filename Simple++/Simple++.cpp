@@ -31,7 +31,8 @@
  //#define SPEEDTEST_CAST
  //#define SPEEDTEST_ARITHMETIC
  //#define SPEEDTEST_PATH
-#define SPEEDTEST_BASE64
+//#define SPEEDTEST_BASE64
+#define SPEEDTEST_LINEAR_REGRESSION
 
 
 //#define DEBUG_GRAPHIC
@@ -1620,9 +1621,9 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Linear Regression											//
 	{
-		Math::ML::LinearRegression<double> linearRegression(Size(1), Size(2));
+		Math::ML::LinearRegression<double> linearRegression(Size(10), Size(10), Size(10));
 
-		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(100), Size(1), Size(1), Size(2)));
+		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(100), Size(10), Size(10), Size(10), 0.2));
 
 		linearRegression.addData(dataVector);
 		linearRegression.gradientDescent(0.01, Size(1000));
@@ -2474,6 +2475,20 @@ int main(int argc, char* argv[]) {
 		StringASCII outputStr(StringASCII::encodeBase64(dataVector));
 		Log::stopChrono();
 		Log::displayChrono(String::format("Base64 encoding : %", outputStr.getSubStr(Size(0), Size(10))));
+	}
+#endif
+#ifdef SPEEDTEST_LINEAR_REGRESSION
+	{
+		Math::ML::LinearRegression<double> linearRegression(Size(10), Size(10), Size(10));
+
+		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(10), 0.2, 0));
+
+		linearRegression.addData(dataVector);
+
+		Log::startChrono();
+		linearRegression.gradientDescent(0.01, Size(1000), 0);
+		Log::stopChrono();
+		Log::displayChrono(String::format("Linear regression : %%", linearRegression.computeCoefficientOfDetermination() * 100.0));
 	}
 #endif
 

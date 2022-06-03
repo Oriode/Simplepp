@@ -86,6 +86,9 @@ namespace Math {
 		void setValueM(const Size m, const Table<T>& v);
 		void setValueN(const Size n, const Table<T>& v);
 
+		Vec<T> getValueM(const Size m) const;
+		Vec<T> getValueN(const Size n) const;
+
 		/************************************************************************/
 		/* ================              LOGICAL               ================ */
 		/************************************************************************/
@@ -340,6 +343,22 @@ namespace Math {
 		for ( Size i(0); i < getSizeM(); i++ ) {
 			setValueI(i, n, v[ i ]);
 		}
+	}
+
+	template<typename T>
+	inline Vec<T> Mat<T>::getValueM(const Size m) const {
+		Vec<T> outputVec(getSizeN());
+		Utility::copy(outputVec.getData(), this->dataTable, getSizeN());
+		return outputVec;
+	}
+
+	template<typename T>
+	inline Vec<T> Mat<T>::getValueN(const Size n) const {
+		Vec<T> outputVec(getSizeN());
+		for ( Size i(0); i < getSizeM(); i++ ) {
+			outputVec.setValueI(i, getValueI(i, n));
+		}
+		return outputVec;
 	}
 
 	template<typename T>
