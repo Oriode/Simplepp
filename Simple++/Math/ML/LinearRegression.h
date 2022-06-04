@@ -44,7 +44,7 @@ namespace Math {
 			Size nbParams;
 
 			Vector<Data<T>> dataVector;
-			Mat<T> paramMat;		// Matrix of parameters of size [NbParams, 1].
+			Mat<T> paramMat;		// Matrix of parameters of size [NbParams, NbOut].
 			Mat<T> xMat;			// Matrix of input features of size [NbData, NbParams].
 
 			bool bIsXMatUpdated;
