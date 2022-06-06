@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../IO/IO.h"
+#include "../../StaticTable.h"
 #include "../../Vector.h"
 #include "../../String.h"
 
@@ -13,19 +14,19 @@ namespace Math {
 
 	namespace ML {
 
-		template<typename T, Size NbFeatures, Size NbParams>
+		template<typename T, Size NbFeatures, Size NbParams, typename Func = Math::Operations::Identity>
 		class Neurode : public IO::BasicIO {
 		public:
-			Neurode();
+			Neurode(const Func & activationFunc = Func());
 
-			void addData(const T(&featureTable)[ NbFeatures ], T * out);
+			void addData(const StaticTable<T, NbFeatures> & featureTable, T * out);
 
 			constexpr Size getNbFeatures() const;
 			constexpr Size getNbParams() const;
 			const Size getNbData() const;
 
-			const T * & getFeatures(const Size dataI) const;
-			T*& getFeatures(const Size dataI);
+			const StaticTable<T, NbFeatures>& getFeatures(const Size dataI) const;
+			StaticTable<T, NbFeatures>& getFeatures(const Size dataI);
 
 			const T& getOut(const Size dataI) const;
 			T& getOut(const Size dataI);
@@ -34,93 +35,119 @@ namespace Math {
 			T& getParam(const Size paramI);
 
 			T computeY(const Size dataI) const;
+			T computeY(const StaticTable<T, NbFeatures>& featureTable) const;
+			T computeCostQuadratic() const;
 			T computeCost() const;
 			T computeCoefficientOfDetermination() const;
 			T computeGrad(const Size paramI) const;
 
 			void gradientDescent(const T& learningRate = T(0.01), const Size nbIterations = Size(100), int verbose = 2);
 
-			static void setParamTable(T(&paramTable)[ NbParams ]);
-			static T computeY(const T(&featureTable)[ NbFeatures ], const T(&paramTable)[ NbParams ]);
+			static void setParamTable(StaticTable<T, NbParams> & paramTable);
+			static T computeY(const StaticTable<T, NbFeatures> & featureTable, const StaticTable<T, NbParams>& paramTable, const Func & activationFunc);
 
 		private:
-			Vector<const T *> inputVector;
+			Vector<StaticTable<T, NbFeatures>> inputVector;
 			Vector<T *> outputVector;
-			T paramTable[ NbParams ];		// Table of parameters of size [NbParams].
+			StaticTable<T, NbParams> paramTable;		// Table of parameters of size [NbParams].
+
+			const Func activationFunc;
 		};
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline Neurode<T, NbFeatures, NbParams>::Neurode() {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline Neurode<T, NbFeatures, NbParams, Func>::Neurode(const Func& activationFunc) :
+			activationFunc(activationFunc)
+		{
 			assert(NbFeatures <= NbParams);
 
 			setParamTable(this->paramTable);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline constexpr Size Neurode<T, NbFeatures, NbParams>::getNbFeatures() const {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline constexpr Size Neurode<T, NbFeatures, NbParams, Func>::getNbFeatures() const {
 			return NbFeatures;
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline constexpr Size Neurode<T, NbFeatures, NbParams>::getNbParams() const {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline constexpr Size Neurode<T, NbFeatures, NbParams, Func>::getNbParams() const {
 			return NbParams;
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline const Size Neurode<T, NbFeatures, NbParams>::getNbData() const {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const Size Neurode<T, NbFeatures, NbParams, Func>::getNbData() const {
 			return this->inputVector.getSize();
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline const T*& Neurode<T, NbFeatures, NbParams>::getFeatures(const Size dataI) const {
-			return const_cast< Neurode<T, NbFeatures, NbParams> * >( this )->getFeatures(dataI);
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const StaticTable<T, NbFeatures>& Neurode<T, NbFeatures, NbParams, Func>::getFeatures(const Size dataI) const {
+			return const_cast< Neurode<T, NbFeatures, NbParams, Func> * >( this )->getFeatures(dataI);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T*& Neurode<T, NbFeatures, NbParams>::getFeatures(const Size dataI) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline StaticTable<T, NbFeatures>& Neurode<T, NbFeatures, NbParams, Func>::getFeatures(const Size dataI) {
 			return this->inputVector.getValueI(dataI);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline const T& Neurode<T, NbFeatures, NbParams>::getOut(const Size dataI) const {
-			return const_cast< Neurode<T, NbFeatures, NbParams> * >( this )->getOut(dataI);
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const T& Neurode<T, NbFeatures, NbParams, Func>::getOut(const Size dataI) const {
+			return const_cast< Neurode<T, NbFeatures, NbParams, Func> * >( this )->getOut(dataI);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T& Neurode<T, NbFeatures, NbParams>::getOut(const Size dataI) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T& Neurode<T, NbFeatures, NbParams, Func>::getOut(const Size dataI) {
 			return *this->outputVector.getValueI(dataI);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline const T& Neurode<T, NbFeatures, NbParams>::getParam(const Size paramI) const {
-			return const_cast< Neurode<T, NbFeatures, NbParams> * >( this )->getParam(paramI);
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const T& Neurode<T, NbFeatures, NbParams, Func>::getParam(const Size paramI) const {
+			return const_cast< Neurode<T, NbFeatures, NbParams, Func> * >( this )->getParam(paramI);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T& Neurode<T, NbFeatures, NbParams>::getParam(const Size paramI) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T& Neurode<T, NbFeatures, NbParams, Func>::getParam(const Size paramI) {
 			return this->paramTable[paramI];
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T Neurode<T, NbFeatures, NbParams>::computeY(const Size dataI) const {
-			return Neurode<T, NbFeatures, NbParams>::computeY(getFeatures(dataI), this->paramTable);
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeY(const Size dataI) const {
+			return Neurode<T, NbFeatures, NbParams, Func>::computeY(getFeatures(dataI), this->paramTable, this->activationFunc);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T Neurode<T, NbFeatures, NbParams>::computeCost() const {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeY(const StaticTable<T, NbFeatures>& featureTable) const {
+			return Neurode<T, NbFeatures, NbParams, Func>::computeY(featureTable, this->paramTable, this->activationFunc);
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeCostQuadratic() const {
 			const T nbDataT(T(getNbData() * Size(2)));
 
 			T ySum(0);
 			for ( Size i(0); i < getNbData(); i++ ) {
 				const T& dataY(getOut(i));
 				const T y(computeY(i) - dataY);
+				ySum += y * y;
 			}
 
 			return ySum / nbDataT;
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T Neurode<T, NbFeatures, NbParams>::computeCoefficientOfDetermination() const {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeCost() const {
+			const T nbDataT(getNbData());
+
+			T ySum(0);
+			for ( Size i(0); i < getNbData(); i++ ) {
+				const T& dataY(getOut(i));
+				const T y(computeY(i));
+				ySum += dataY * Math::log(y) + ( T(1) - dataY ) * Math::log(T(1) - y);
+			}
+
+			return -ySum / nbDataT;
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeCoefficientOfDetermination() const {
 
 			T dataMean(0);
 			for ( Size i(0); i < getNbData(); i++ ) {
@@ -145,17 +172,17 @@ namespace Math {
 			return T(1) - errSum / meanSum;
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T Neurode<T, NbFeatures, NbParams>::computeGrad(const Size paramI) const {
-			assert(this->NbParams > paramI);
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeGrad(const Size paramI) const {
+			assert(getNbParams() > paramI);
 
-			const T nbDataT(T(getNbData()));
+			const T nbDataT(getNbData());
 
 			T ySum(0);
 
-			if ( m < this->NbFeatures ) {
+			if ( paramI < getNbFeatures() ) {
 				for ( Size i(0); i < getNbData(); i++ ) {
-					const T * & dataX(getFeatures(i));
+					const StaticTable<T, NbFeatures>& dataX(getFeatures(i));
 					const T& dataY(getOut(i));
 
 					const T y(computeY(i) - dataY);
@@ -173,8 +200,8 @@ namespace Math {
 			return ySum / nbDataT;
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline void Neurode<T, NbFeatures, NbParams>::gradientDescent(const T& learningRate, const Size nbIterations, int verbose) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline void Neurode<T, NbFeatures, NbParams, Func>::gradientDescent(const T& learningRate, const Size nbIterations, int verbose) {
 
 			if ( verbose > 0 ) {
 				Log::startStep(String::format("Starting gradient descent with % iterations...", nbIterations));
@@ -200,26 +227,26 @@ namespace Math {
 				if ( verbose > 1 ) {
 					if ( ( iterationI + Size(1) ) % nbIterationsLog == Size(0) ) {
 						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
-						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCost()), Log::MessageColor::DarkWhite);
+						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCostQuadratic()), Log::MessageColor::DarkWhite);
 					}
 				}
 			}
 
 			if ( verbose > 0 ) {
-				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoefficientOfDetermination() * T(100)));
-				Log::displayLog(this->paramTable.toString());
+				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCostQuadratic(), computeCoefficientOfDetermination() * T(100)));
+				// Log::displayLog(this->paramTable.toString());
 			}
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline void Neurode<T, NbFeatures, NbParams>::setParamTable(T(&paramTable)[ NbParams ]) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline void Neurode<T, NbFeatures, NbParams, Func>::setParamTable(StaticTable<T, NbParams>& paramTable) {
 			for ( Size i(0); i < NbParams; i++ ) {
 				paramTable[ i ] = Math::randomF();
 			}
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline T Neurode<T, NbFeatures, NbParams>::computeY(const T(&featureTable)[ NbFeatures ], const T(&paramTable)[ NbParams ]) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T Neurode<T, NbFeatures, NbParams, Func>::computeY(const StaticTable<T, NbFeatures>& featureTable, const StaticTable<T, NbParams>& paramTable, const Func& activationFunc) {
 			assert(NbFeatures <= NbParams);
 
 			T y(0);
@@ -229,11 +256,11 @@ namespace Math {
 			for ( Size i(NbFeatures); i < NbParams; i++ ) {
 				y += paramTable[ i ];
 			}
-			return y;
+			return activationFunc(y);
 		}
 
-		template<typename T, Size NbFeatures, Size NbParams>
-		inline void Neurode<T, NbFeatures, NbParams>::addData(const T(&featureTable)[ NbFeatures ], T * out) {
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline void Neurode<T, NbFeatures, NbParams, Func>::addData(const StaticTable<T, NbFeatures>& featureTable, T * out) {
 			this->inputVector.push(featureTable);
 			this->outputVector.push(out);
 		}

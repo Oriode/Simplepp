@@ -254,8 +254,10 @@
     <ClInclude Include="Math\Line.hpp" />
     <ClInclude Include="Math\BasicMath.hpp" />
     <ClInclude Include="Math\ML\Data.h" />
+    <ClInclude Include="Math\ML\DeepNeuralNetwork.h" />
     <ClInclude Include="Math\ML\LinearRegression.h" />
     <ClInclude Include="Math\Mat.h" />
+    <ClInclude Include="Math\ML\NeuralLayer.h" />
     <ClInclude Include="Math\ML\Neurode.h" />
     <ClInclude Include="Math\Tensor.h" />
     <ClInclude Include="Math\Transformations.h" />
@@ -284,6 +286,7 @@
     <ClInclude Include="ParamContainer.h" />
     <ClInclude Include="ParamContainer.hpp" />
     <ClInclude Include="SimpleLog.hpp" />
+    <ClInclude Include="StaticTable.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="Stream.hpp" />

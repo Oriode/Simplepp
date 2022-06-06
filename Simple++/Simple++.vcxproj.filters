@@ -612,6 +612,15 @@
     <ClInclude Include="Math\ML\Neurode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\ML\NeuralLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\ML\DeepNeuralNetwork.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
