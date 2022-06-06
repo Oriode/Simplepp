@@ -34,6 +34,8 @@ namespace Math {
 			const T& getParam(const Size paramI) const;
 			T& getParam(const Size paramI);
 
+			void setParam(const Size paramI, const T& v);
+
 			T computeY(const Size dataI) const;
 			T computeY(const StaticTable<T, NbFeatures>& featureTable) const;
 			T computeCostQuadratic() const;
@@ -106,6 +108,11 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>
 		inline T& Neurode<T, NbFeatures, NbParams, Func>::getParam(const Size paramI) {
 			return this->paramTable[paramI];
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline void Neurode<T, NbFeatures, NbParams, Func>::setParam(const Size paramI, const T& v) {
+			this->paramTable[ paramI ] = v;
 		}
 
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>

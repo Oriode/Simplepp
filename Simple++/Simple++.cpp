@@ -56,7 +56,8 @@
 //#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
-#define DEBUG_LINEAR_REGRESSION
+//#define DEBUG_LINEAR_REGRESSION
+#define DEBUG_DEEP_NEURAL_NETWORK
 
 
 #ifndef _LIB
@@ -76,6 +77,7 @@
 #include "Math/Mat.h"
 #include "Math/Tensor.h"
 #include "Math/ML/LinearRegression.h"
+#include "Math/ML/DeepNeuralNetwork.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"
@@ -101,6 +103,18 @@
 #include "OS/Path.h"
 #include "Stream.h"
 #include "Crypto/Crypto.h"
+
+namespace Math::ML {
+
+	template<typename T>
+	class MyModel : public Math::ML::Model<T> {
+	public:
+		constexpr MyModel() {}
+		static constexpr Size nbLayers = 3;
+		static constexpr Size m[ 2 ][ 2 ] = { {2,2}, {2,2} };
+	};
+
+}
 
 namespace AI {
 
@@ -1627,6 +1641,17 @@ int main(int argc, char* argv[]) {
 
 		linearRegression.addData(dataVector);
 		linearRegression.gradientDescent(0.01, Size(1000));
+	}
+#endif
+#ifdef DEBUG_DEEP_NEURAL_NETWORK
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Deep Neural Network											//
+	{
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::Operations::Identity> deepNeuralNetwork;
+		deepNeuralNetwork.addData(Math::ML::Data<double>({ 1,1 }, { 2,2 }));
+		StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
+
+		int i;
 	}
 #endif
 
