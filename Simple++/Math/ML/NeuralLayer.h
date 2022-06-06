@@ -18,10 +18,12 @@ namespace Math {
 			void addData();
 
 			const StaticTable<T, NbFeatures>& getIns(const Size dataI) const;
-			StaticTable<T, NbNeurodes>& getOuts(const Size dataI);
+			const StaticTable<T, NbFeatures + Size(1)>& getParams(const Size neurodeI) const;
+			const StaticTable<T, NbNeurodes>& getOuts(const Size dataI) const;
 			StaticTable<T, NbNeurodes>& getDeltas(const Size dataI);
 
 			const Vector< StaticTable<T, NbFeatures>>& getInVector() const;
+			const Vector< StaticTable<T, NbNeurodes>>& getOutVector() const;
 
 			T computeY(const Size neurodeI, const Size dataI) const;
 			T computeY(const Size neurodeI, const StaticTable<T, NbFeatures>& featureTable) const;
@@ -77,7 +79,12 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline StaticTable<T, NbNeurodes>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getOuts(const Size dataI) {
+		inline const StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParams(const Size neurodeI) const {
+			return this->neurodeTable[ neurodeI ].getParams();
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
+		inline const StaticTable<T, NbNeurodes>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getOuts(const Size dataI) const {
 			return this->outVector.getValueI(dataI);
 		}
 
@@ -89,6 +96,11 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
 		inline const Vector<StaticTable<T, NbFeatures>>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getInVector() const {
 			return *this->inVector;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
+		inline const Vector<StaticTable<T, NbNeurodes>>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getOutVector() const {
+			return this->outVector;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>

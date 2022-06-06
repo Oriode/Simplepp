@@ -32,7 +32,8 @@
  //#define SPEEDTEST_ARITHMETIC
  //#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
-#define SPEEDTEST_LINEAR_REGRESSION
+//#define SPEEDTEST_LINEAR_REGRESSION
+#define SPEEDTEST_DEEP_NEURAL_NETWORK
 
 
 //#define DEBUG_GRAPHIC
@@ -110,8 +111,8 @@ namespace Math::ML {
 	class MyModel : public Math::ML::Model<T> {
 	public:
 		constexpr MyModel() {}
-		static constexpr Size nbLayers = 3;
-		static constexpr Size m[ 2 ][ 2 ] = { {2,2}, {2,2} };
+		static constexpr Size nbLayers = 2;
+		static constexpr Size m[ 2 ][ 2 ] = { {10,10}, {10,10} };
 	};
 
 }
@@ -1648,8 +1649,14 @@ int main(int argc, char* argv[]) {
 	// DEBUG : Deep Neural Network											//
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::Operations::Identity> deepNeuralNetwork;
-		deepNeuralNetwork.addData(Math::ML::Data<double>({ 1,1 }, { 2,2 }));
-		StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
+
+		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.2));
+
+		deepNeuralNetwork.addData(dataVector);
+
+		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
+
+		deepNeuralNetwork.optimize(0.01, Size(1000));
 
 		int i;
 	}
@@ -2510,10 +2517,28 @@ int main(int argc, char* argv[]) {
 
 		linearRegression.addData(dataVector);
 
+		Log::displayLog(String::format("Current cost : %.", linearRegression.computeCoefficientOfDetermination() * 100.0));
+
 		Log::startChrono();
 		linearRegression.gradientDescent(0.01, Size(1000), 0);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Linear regression : %%", linearRegression.computeCoefficientOfDetermination() * 100.0));
+	}
+#endif
+#ifdef SPEEDTEST_DEEP_NEURAL_NETWORK
+	{
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::Operations::Identity> deepNeuralNetwork;
+
+		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.2));
+
+		deepNeuralNetwork.addData(dataVector);
+
+		Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCostQuadratic()));
+
+		Log::startChrono();
+		deepNeuralNetwork.optimize(0.1, Size(1000), 0);
+		Log::stopChrono();
+		Log::displayChrono(String::format("Deep Neural Network : %", String::toString(deepNeuralNetwork.computeCostQuadratic(), 10u)));
 	}
 #endif
 

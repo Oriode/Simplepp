@@ -28,6 +28,8 @@ namespace Math {
 			const StaticTable<T, NbFeatures>& getFeatures(const Size dataI) const;
 			StaticTable<T, NbFeatures>& getFeatures(const Size dataI);
 
+			const StaticTable<T, NbParams>& getParams() const;
+
 			const T& getOut(const Size dataI) const;
 			T& getOut(const Size dataI);
 
@@ -88,6 +90,11 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>
 		inline StaticTable<T, NbFeatures>& Neurode<T, NbFeatures, NbParams, Func>::getFeatures(const Size dataI) {
 			return this->inputVector.getValueI(dataI);
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const StaticTable<T, NbParams>& Neurode<T, NbFeatures, NbParams, Func>::getParams() const {
+			return this->paramTable;
 		}
 
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>
