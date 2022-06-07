@@ -1317,6 +1317,26 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 
 	T *& buffer( *bufferP );
 
+	// Check if inf.
+	if ( isinf<Type>(number) ) {
+		( *buffer++ ) = T('#');
+		( *buffer++ ) = T('i');
+		( *buffer++ ) = T('n');
+		( *buffer++ ) = T('f');
+		( *buffer++ ) = T('\0');
+		return;
+	}
+
+	// Check if nan.
+	if ( isnan<Type>(number) ) {
+		( *buffer++ ) = T('#');
+		( *buffer++ ) = T('n');
+		( *buffer++ ) = T('a');
+		( *buffer++ ) = T('n');
+		( *buffer++ ) = T('\0');
+		return;
+	}
+
 	if ( number == Type( 0 ) ) {
 		( *buffer ) = T( '0' );
 		buffer++;
