@@ -19,6 +19,10 @@ namespace Math {
 		public:
 			Neurode(const Func & activationFunc = Func());
 
+			void setActivationFunc(const Func& activationFunc = Func());
+
+			const Func& getActivationFunc() const;
+
 			constexpr Size getNbFeatures() const;
 			constexpr Size getNbParams() const;
 			const Size getNbData() const;
@@ -56,6 +60,16 @@ namespace Math {
 			activationFunc(activationFunc)
 		{
 			setParamTable(this->paramTable);
+		}
+
+		template<typename T, Size NbFeatures, typename Func>
+		inline void Neurode<T, NbFeatures, Func>::setActivationFunc(const Func& activationFunc) {
+			this->activationFunc = activationFunc;
+		}
+
+		template<typename T, Size NbFeatures, typename Func>
+		inline const Func& Neurode<T, NbFeatures, Func>::getActivationFunc() const {
+			return this->activationFunc;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>

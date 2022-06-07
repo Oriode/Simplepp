@@ -109,7 +109,7 @@ namespace Math {
 		template<typename T, typename M, typename Func>
 		inline const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& DeepNeuralNetwork<T, M, Func>::computeForwardPropagation(const Size dataI) {
 			_computeForwardPropagation<Size(0)>(dataI);
-			return getLayer< M::nbLayers - Size(1)>()->getOuts(dataI);
+			return getLayer< Size(0)>()->getOuts(dataI);
 		}
 
 		template<typename T, typename M, typename Func>
@@ -144,13 +144,13 @@ namespace Math {
 				if ( verbose > 1 ) {
 					if ( ( iterationI + Size(1) ) % nbIterationsLog == Size(0) ) {
 						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
-						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCost()), Log::MessageColor::DarkWhite);
+						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCostQuadratic()), Log::MessageColor::DarkWhite);
 					}
 				}
 			}
 
 			if ( verbose > 0 ) {
-				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoefficientOfDetermination() * T(100)));
+				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCostQuadratic(), computeCoefficientOfDetermination() * T(100)));
 				// Log::displayLog(this->paramMat.toString());
 			}
 		}
@@ -215,8 +215,9 @@ namespace Math {
 					meanVec[outI] += expectedTable[ outI ];
 				}
 			}
+			const T sizeInverse(T(1) / T(getNbData()));
 			for ( Size j(0); j < meanVec.getSize(); j++ ) {
-				meanVec[ j ] /= T(this->dataVector.getSize());
+				meanVec[ j ] *= sizeInverse;
 			}
 
 			T errSum(0);
@@ -283,6 +284,8 @@ namespace Math {
 				const Vector<StaticTable<T, M::m[ I ][ 0 ]>>& inVector(neuralLayer->getInVector());
 				const Vector<StaticTable<T, M::m[ I ][ 1 ]>>& outVector(neuralLayer->getOutVector());
 
+				const T sizeInverse(T(1) / T(getNbData()));
+
 				// Compute dZx
 				if constexpr ( I == M::nbLayers - Size(1) ) {
 					for ( Size dataI(0); dataI < this->dataVector.getSize(); dataI++ ) {
@@ -301,12 +304,13 @@ namespace Math {
 						const StaticTable<T, M::m[ I + Size(1) ][ 1 ]>& nextDeltaVecTable(nextNeuralLayer->getDeltas(dataI));
 						StaticTable<T, M::m[ I ][ 1 ]>& deltaVecTable(deltaVector.getValueI(dataI));
 						for ( Size outI(0); outI < deltaVecTable.getSize(); outI++ ) {
+							const Func& activationFunc(neuralLayer->getActivationFunc(outI));
 							T sum(0);
 							for ( Size outINext(0); outINext < nextDeltaVecTable.getSize(); outINext++ ) {
 								const StaticTable<T, M::m[ I + Size(1) ][ 0 ] + Size(1)>& paramTable(nextNeuralLayer->getParams(outINext));
 								sum += paramTable[ outI ] * nextDeltaVecTable[ outINext ];
 							}
-							deltaVecTable[ outI ] = sum * outTable[ outI ] * ( T(1) - outTable[ outI ] );
+							deltaVecTable[ outI ] = activationFunc.grad(sum, outTable[outI]);
 						}
 					}
 				}
@@ -321,7 +325,7 @@ namespace Math {
 
 							ySum += inTable[ featuresI ] * delta[ outI ];
 						}
-						ySum /= T(this->dataVector.getSize());
+						ySum *= sizeInverse;
 						neuralLayer->setGrad(outI, featuresI, ySum);
 					}
 				}
@@ -334,7 +338,7 @@ namespace Math {
 
 							ySum += delta[ outI ];
 						}
-						ySum /= T(this->dataVector.getSize());
+						ySum *= sizeInverse;
 						neuralLayer->setGrad(outI, paramI, ySum);
 					}
 				}

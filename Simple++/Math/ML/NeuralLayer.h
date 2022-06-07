@@ -30,6 +30,8 @@ namespace Math {
 			const Vector<StaticTable<T, NbNeurodes>>& getDeltaVector() const;
 			Vector<StaticTable<T, NbNeurodes>>& getDeltaVector();
 
+			const Func& getActivationFunc(const Size neurodeI) const;
+
 			T computeY(const Size neurodeI, const Size dataI) const;
 			T computeY(const Size neurodeI, const StaticTable<T, NbFeatures>& featureTable) const;
 			T computeGrad(const Size neurodeI, const Size paramI) const;
@@ -134,6 +136,11 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
 		inline Vector<StaticTable<T, NbNeurodes>>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getDeltaVector() {
 			return this->deltaVector;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
+		inline const Func& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getActivationFunc(const Size neurodeI) const {
+			return this->neurodeTable[ neurodeI ].getActivationFunc();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>

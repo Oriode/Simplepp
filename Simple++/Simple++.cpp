@@ -1648,7 +1648,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Deep Neural Network											//
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Sigmoid> deepNeuralNetwork;
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
 
 		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.2));
 
@@ -1656,7 +1656,7 @@ int main(int argc, char* argv[]) {
 
 		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
 
-		deepNeuralNetwork.optimize(0.1, Size(500));
+		deepNeuralNetwork.optimize(0.1, Size(2000));
 
 		int i;
 	}
@@ -2527,16 +2527,16 @@ int main(int argc, char* argv[]) {
 #endif
 #ifdef SPEEDTEST_DEEP_NEURAL_NETWORK
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Sigmoid> deepNeuralNetwork;
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.2));
+		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.0));
 
 		deepNeuralNetwork.addData(dataVector);
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		deepNeuralNetwork.optimize(0.1, Size(1000), 0);
+		deepNeuralNetwork.optimize(0.1, Size(2000), 0);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 	}
