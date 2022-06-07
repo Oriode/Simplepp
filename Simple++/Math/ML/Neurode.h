@@ -29,6 +29,10 @@ namespace Math {
 			StaticTable<T, NbFeatures>& getFeatures(const Size dataI);
 
 			const StaticTable<T, NbParams>& getParams() const;
+			StaticTable<T, NbParams>& getParams();
+
+			const StaticTable<T, NbParams>& getGrads() const;
+			StaticTable<T, NbParams>& getGrads();
 
 			const T& getOut(const Size dataI) const;
 			T& getOut(const Size dataI);
@@ -37,6 +41,11 @@ namespace Math {
 			T& getParam(const Size paramI);
 
 			void setParam(const Size paramI, const T& v);
+
+			const T& getGrad(const Size paramI) const;
+			T& getGrad(const Size paramI);
+
+			void setGrad(const Size paramI, const T& v);
 
 			T computeY(const Size dataI) const;
 			T computeY(const StaticTable<T, NbFeatures>& featureTable) const;
@@ -54,6 +63,7 @@ namespace Math {
 			Vector<StaticTable<T, NbFeatures>> inputVector;
 			Vector<T *> outputVector;
 			StaticTable<T, NbParams> paramTable;		// Table of parameters of size [NbParams].
+			StaticTable<T, NbParams> gradTable;			// Table of gradient of size [NbParams].
 
 			const Func activationFunc;
 		};
@@ -98,6 +108,21 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline StaticTable<T, NbParams>& Neurode<T, NbFeatures, NbParams, Func>::getParams() {
+			return this->paramTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const StaticTable<T, NbParams>& Neurode<T, NbFeatures, NbParams, Func>::getGrads() const {
+			return this->gradTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline StaticTable<T, NbParams>& Neurode<T, NbFeatures, NbParams, Func>::getGrads() {
+			return this->gradTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
 		inline const T& Neurode<T, NbFeatures, NbParams, Func>::getOut(const Size dataI) const {
 			return const_cast< Neurode<T, NbFeatures, NbParams, Func> * >( this )->getOut(dataI);
 		}
@@ -120,6 +145,21 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>
 		inline void Neurode<T, NbFeatures, NbParams, Func>::setParam(const Size paramI, const T& v) {
 			this->paramTable[ paramI ] = v;
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline const T& Neurode<T, NbFeatures, NbParams, Func>::getGrad(const Size paramI) const {
+			return this->gradTable[ paramI ];
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline T& Neurode<T, NbFeatures, NbParams, Func>::getGrad(const Size paramI) {
+			return this->gradTable[ paramI ];
+		}
+
+		template<typename T, Size NbFeatures, Size NbParams, typename Func>
+		inline void Neurode<T, NbFeatures, NbParams, Func>::setGrad(const Size paramI, const T& v) {
+			this->gradTable[ paramI ] = v;
 		}
 
 		template<typename T, Size NbFeatures, Size NbParams, typename Func>

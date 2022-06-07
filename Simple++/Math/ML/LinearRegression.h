@@ -5,6 +5,7 @@
 #include "../Math.h"
 #include "../Mat.h"
 
+#include "ActivationFunc.h"
 #include "Data.h"
 
 namespace Math {
@@ -308,6 +309,8 @@ namespace Math {
 			Vector<Data<T>> dataVector;
 			dataVector.resize(nbData);
 
+			static const ActivationFunc::Sigmoid activationFunc;
+
 			Mat<T> paramMat;
 			LinearRegression<T>::setParamMat(paramMat, nbParams, nbOut);
 
@@ -321,7 +324,7 @@ namespace Math {
 				Data<T>& data(dataVector.getValueI(i));
 
 				for ( Size j(0); j < data.getNbOut(); j++ ) {
-					const T y(LinearRegression<T>::computeY(dataVector, paramMat, i, j));
+					const T y(activationFunc(LinearRegression<T>::computeY(dataVector, paramMat, i, j)));
 					const T noiseFactor(Math::random(-noise, noise));
 					data.setOut(j, y * ( T(1) + noiseFactor ));
 				}
