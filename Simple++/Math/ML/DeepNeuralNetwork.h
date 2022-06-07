@@ -42,6 +42,7 @@ namespace Math {
 
 			T computeCost() const;
 			T computeCostQuadratic() const;
+			T computeCoefficientOfDetermination() const;
 
 		private:
 			template<Size I = Size(0)>
@@ -148,10 +149,8 @@ namespace Math {
 				}
 			}
 
-			info("Done.");
-
 			if ( verbose > 0 ) {
-				// Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoefficientOfDetermination() * T(100)));
+				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCost(), computeCoefficientOfDetermination() * T(100)));
 				// Log::displayLog(this->paramMat.toString());
 			}
 		}
@@ -199,6 +198,45 @@ namespace Math {
 			}
 
 			return ySum / T(getNbData() * Size(2));
+		}
+
+		template<typename T, typename M, typename Func>
+		inline T DeepNeuralNetwork<T, M, Func>::computeCoefficientOfDetermination() const {
+			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], Func>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
+
+			StaticTable<T, M::m[M::nbLayers - Size(1)][1]> meanVec;
+			for ( Size j(0); j < meanVec.getSize(); j++ ) {
+				meanVec[ j ] = T(0);
+			}
+			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& expectedTable(this->expectedYVector.getValueI(dataI));
+
+				for ( Size outI(0); outI < meanVec.getSize(); outI++ ) {
+					meanVec[outI] += expectedTable[ outI ];
+				}
+			}
+			for ( Size j(0); j < meanVec.getSize(); j++ ) {
+				meanVec[ j ] /= T(this->dataVector.getSize());
+			}
+
+			T errSum(0);
+			T meanSum(0);
+			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& expectedTable(this->expectedYVector.getValueI(dataI));
+				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(neuralLayer->getOuts(dataI));
+
+				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
+					const T y(outTable[outI]);
+					const T expectedY(expectedTable[ outI ]);
+					const T err(expectedY - y);
+					const T mean(expectedY - meanVec[outI]);
+
+					errSum += err * err;
+					meanSum += mean * mean;
+				}
+			}
+
+			return T(1) - errSum / meanSum;
 		}
 
 		template<typename T, typename M, typename Func>

@@ -46,14 +46,12 @@ namespace Math {
 
 			void setGrad(const Size neurodeI, const Size paramI, const T& v);
 
-			StaticTable<T, NbNeurodes>& computeForwardPropagation(const StaticTable<T, NbFeatures>& featureTable);
-
 		private:
 			const Vector<StaticTable<T, NbFeatures>>* inVector;
 			Vector<StaticTable<T, NbNeurodes>> outVector;
 			Vector<StaticTable<T, NbNeurodes>> deltaVector;
 
-			StaticTable<Neurode<T, NbFeatures, NbFeatures + Size(1), Func>, NbNeurodes> neurodeTable;
+			StaticTable<Neurode<T, NbFeatures, Func>, NbNeurodes> neurodeTable;
 		};
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
@@ -140,7 +138,7 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
 		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeY(const Size neurodeI, const Size dataI) const {
-			return this->neurodeTable[ neurodeI ].computeY(dataI);
+			return this->neurodeTable[ neurodeI ].computeY(getIns(dataI));
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
@@ -191,15 +189,6 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
 		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setGrad(const Size neurodeI, const Size paramI, const T& v) {
 			this->neurodeTable[ neurodeI ].setGrad(paramI, v);
-		}
-
-		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline StaticTable<T, NbNeurodes>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeForwardPropagation(const StaticTable<T, NbFeatures>& featureTable) {
-
-			StaticTable<T, NbNeurodes>& outTable(this->outVector.getValueI(dataI));
-			for ( Size i(0); i < getNbOut(); i++ ) {
-				outTable[i] = this->neurodeTable[i].computeY()
-			}
 		}
 
 	}

@@ -1656,7 +1656,7 @@ int main(int argc, char* argv[]) {
 
 		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
 
-		deepNeuralNetwork.optimize(0.1, Size(1000));
+		deepNeuralNetwork.optimize(0.1, Size(500));
 
 		int i;
 	}
@@ -2536,9 +2536,9 @@ int main(int argc, char* argv[]) {
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		deepNeuralNetwork.optimize(0.1, Size(1000), 2);
+		deepNeuralNetwork.optimize(0.1, Size(1000), 0);
 		Log::stopChrono();
-		Log::displayChrono(String::format("Deep Neural Network : %", String::toString(deepNeuralNetwork.computeCost(), 10u)));
+		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 	}
 #endif
 
