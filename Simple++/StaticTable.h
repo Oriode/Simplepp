@@ -9,10 +9,14 @@ public:
 	template<typename C>
 	StaticTable(const StaticTable<C, N>& t);
 	StaticTable(const StaticTable<T, N>& t);
+	template<typename C>
+	StaticTable(const C(&t)[ N ]);
 
 	template<typename C>
 	StaticTable<T, N>& operator=(const StaticTable<C, N>& t);
 	StaticTable<T, N>& operator=(const StaticTable<T, N>& t);
+	template<typename C>
+	StaticTable<T, N>& operator=(const C(&t)[ N ]);
 
 	const T& operator[](const Size i) const;
 	T& operator[](const Size i);
@@ -21,6 +25,9 @@ public:
 
 	const T* getData() const;
 	T* getData();
+
+	static const StaticTable<T, N> * reinterpret(const T * data);
+	static StaticTable<T, N> * reinterpret(T * data);
 
 private:
 	T dataTable[ N ];
@@ -45,6 +52,16 @@ inline T* StaticTable<T, N>::getData() {
 }
 
 template<typename T, Size N>
+inline const StaticTable<T, N>* StaticTable<T, N>::reinterpret(const T* data) {
+	return reinterpret_cast< const StaticTable<T, N> * >( data );
+}
+
+template<typename T, Size N>
+inline StaticTable<T, N> * StaticTable<T, N>::reinterpret(T* data) {
+	return reinterpret_cast< StaticTable<T, N> * >( data );
+}
+
+template<typename T, Size N>
 template<typename C>
 inline StaticTable<T, N>::StaticTable(const StaticTable<C, N>& t) {
 	Utility::copy(this->dataTable, t.getData(), N);
@@ -52,8 +69,22 @@ inline StaticTable<T, N>::StaticTable(const StaticTable<C, N>& t) {
 
 template<typename T, Size N>
 template<typename C>
+inline StaticTable<T, N>::StaticTable(const C(&t)[ N ]) {
+	Utility::copy(this->dataTable, t, N);
+}
+
+template<typename T, Size N>
+template<typename C>
 inline StaticTable<T, N>& StaticTable<T, N>::operator=(const StaticTable<C, N>& t) {
 	Utility::copy(this->dataTable, t.getData(), N);
+
+	return *this;
+}
+
+template<typename T, Size N>
+template<typename C>
+inline StaticTable<T, N>& StaticTable<T, N>::operator=(const C(&t)[ N ]) {
+	Utility::copy(this->dataTable, t, N);
 
 	return *this;
 }
