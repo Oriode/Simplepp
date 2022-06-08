@@ -15,9 +15,9 @@ namespace Math {
 	namespace ML {
 
 		template<typename T, Size NbFeatures, typename Func = Math::Operations::Identity>
-		class Neurode : public IO::BasicIO {
+		class Neuron : public IO::BasicIO {
 		public:
-			Neurode(const Func & activationFunc = Func());
+			Neuron(const Func & activationFunc = Func());
 
 			void setActivationFunc(const Func& activationFunc = Func());
 
@@ -56,101 +56,101 @@ namespace Math {
 		};
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline Neurode<T, NbFeatures, Func>::Neurode(const Func& activationFunc) :
+		inline Neuron<T, NbFeatures, Func>::Neuron(const Func& activationFunc) :
 			activationFunc(activationFunc)
 		{
 			setParamTable(this->paramTable);
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline void Neurode<T, NbFeatures, Func>::setActivationFunc(const Func& activationFunc) {
+		inline void Neuron<T, NbFeatures, Func>::setActivationFunc(const Func& activationFunc) {
 			this->activationFunc = activationFunc;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline const Func& Neurode<T, NbFeatures, Func>::getActivationFunc() const {
+		inline const Func& Neuron<T, NbFeatures, Func>::getActivationFunc() const {
 			return this->activationFunc;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline constexpr Size Neurode<T, NbFeatures, Func>::getNbFeatures() const {
+		inline constexpr Size Neuron<T, NbFeatures, Func>::getNbFeatures() const {
 			return NbFeatures;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline constexpr Size Neurode<T, NbFeatures, Func>::getNbParams() const {
+		inline constexpr Size Neuron<T, NbFeatures, Func>::getNbParams() const {
 			return NbFeatures + Size(1);
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline const Size Neurode<T, NbFeatures, Func>::getNbData() const {
+		inline const Size Neuron<T, NbFeatures, Func>::getNbData() const {
 			return this->inputVector.getSize();
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline const StaticTable<T, NbFeatures + Size(1)>& Neurode<T, NbFeatures, Func>::getParams() const {
+		inline const StaticTable<T, NbFeatures + Size(1)>& Neuron<T, NbFeatures, Func>::getParams() const {
 			return this->paramTable;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline StaticTable<T, NbFeatures + Size(1)>& Neurode<T, NbFeatures, Func>::getParams() {
+		inline StaticTable<T, NbFeatures + Size(1)>& Neuron<T, NbFeatures, Func>::getParams() {
 			return this->paramTable;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline const StaticTable<T, NbFeatures + Size(1)>& Neurode<T, NbFeatures, Func>::getGrads() const {
+		inline const StaticTable<T, NbFeatures + Size(1)>& Neuron<T, NbFeatures, Func>::getGrads() const {
 			return this->gradTable;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline StaticTable<T, NbFeatures + Size(1)>& Neurode<T, NbFeatures, Func>::getGrads() {
+		inline StaticTable<T, NbFeatures + Size(1)>& Neuron<T, NbFeatures, Func>::getGrads() {
 			return this->gradTable;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline const T& Neurode<T, NbFeatures, Func>::getParam(const Size paramI) const {
-			return const_cast< Neurode<T, NbFeatures, Func> * >( this )->getParam(paramI);
+		inline const T& Neuron<T, NbFeatures, Func>::getParam(const Size paramI) const {
+			return const_cast< Neuron<T, NbFeatures, Func> * >( this )->getParam(paramI);
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline T& Neurode<T, NbFeatures, Func>::getParam(const Size paramI) {
+		inline T& Neuron<T, NbFeatures, Func>::getParam(const Size paramI) {
 			return this->paramTable[paramI];
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline void Neurode<T, NbFeatures, Func>::setParam(const Size paramI, const T& v) {
+		inline void Neuron<T, NbFeatures, Func>::setParam(const Size paramI, const T& v) {
 			this->paramTable[ paramI ] = v;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline const T& Neurode<T, NbFeatures, Func>::getGrad(const Size paramI) const {
+		inline const T& Neuron<T, NbFeatures, Func>::getGrad(const Size paramI) const {
 			return this->gradTable[ paramI ];
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline T& Neurode<T, NbFeatures, Func>::getGrad(const Size paramI) {
+		inline T& Neuron<T, NbFeatures, Func>::getGrad(const Size paramI) {
 			return this->gradTable[ paramI ];
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline void Neurode<T, NbFeatures, Func>::setGrad(const Size paramI, const T& v) {
+		inline void Neuron<T, NbFeatures, Func>::setGrad(const Size paramI, const T& v) {
 			this->gradTable[ paramI ] = v;
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline T Neurode<T, NbFeatures, Func>::computeY(const StaticTable<T, NbFeatures>& featureTable) const {
-			return Neurode<T, NbFeatures, Func>::computeY(featureTable, this->paramTable, this->activationFunc);
+		inline T Neuron<T, NbFeatures, Func>::computeY(const StaticTable<T, NbFeatures>& featureTable) const {
+			return Neuron<T, NbFeatures, Func>::computeY(featureTable, this->paramTable, this->activationFunc);
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline void Neurode<T, NbFeatures, Func>::setParamTable(StaticTable<T, NbFeatures + Size(1)>& paramTable) {
+		inline void Neuron<T, NbFeatures, Func>::setParamTable(StaticTable<T, NbFeatures + Size(1)>& paramTable) {
 			for ( Size i(0); i < NbFeatures + Size(1); i++ ) {
 				paramTable[ i ] = Math::randomF();
 			}
 		}
 
 		template<typename T, Size NbFeatures, typename Func>
-		inline T Neurode<T, NbFeatures, Func>::computeY(const StaticTable<T, NbFeatures>& featureTable, const StaticTable<T, NbFeatures + Size(1)>& paramTable, const Func& activationFunc) {
+		inline T Neuron<T, NbFeatures, Func>::computeY(const StaticTable<T, NbFeatures>& featureTable, const StaticTable<T, NbFeatures + Size(1)>& paramTable, const Func& activationFunc) {
 			T y(0);
 			for ( Size i(0); i < NbFeatures; i++ ) {
 				y += featureTable[ i ] * paramTable[ i ];

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Neurode.h"
+#include "Neuron.h"
 
 namespace Math {
 
@@ -18,9 +18,9 @@ namespace Math {
 			void addData();
 
 			const StaticTable<T, NbFeatures>& getIns(const Size dataI) const;
-			const StaticTable<T, NbFeatures + Size(1)>& getParams(const Size neurodeI) const;
-			const StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neurodeI) const;
-			StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neurodeI);
+			const StaticTable<T, NbFeatures + Size(1)>& getParams(const Size neuronI) const;
+			const StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neuronI) const;
+			StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neuronI);
 			const StaticTable<T, NbNeurodes>& getOuts(const Size dataI) const;
 			StaticTable<T, NbNeurodes>& getDeltas(const Size dataI);
 
@@ -30,30 +30,30 @@ namespace Math {
 			const Vector<StaticTable<T, NbNeurodes>>& getDeltaVector() const;
 			Vector<StaticTable<T, NbNeurodes>>& getDeltaVector();
 
-			const Func& getActivationFunc(const Size neurodeI) const;
+			const Func& getActivationFunc(const Size neuronI) const;
 
-			T computeY(const Size neurodeI, const Size dataI) const;
-			T computeY(const Size neurodeI, const StaticTable<T, NbFeatures>& featureTable) const;
-			T computeGrad(const Size neurodeI, const Size paramI) const;
-			void setOut(const Size neurodeI, const Size dataI, const T& v);
-			const T& getOut(const Size neurodeI, const Size dataI);
+			T computeY(const Size neuronI, const Size dataI) const;
+			T computeY(const Size neuronI, const StaticTable<T, NbFeatures>& featureTable) const;
+			T computeGrad(const Size neuronI, const Size paramI) const;
+			void setOut(const Size neuronI, const Size dataI, const T& v);
+			const T& getOut(const Size neuronI, const Size dataI);
 
-			const T& getParam(const Size neurodeI, const Size paramI) const;
-			T& getParam(const Size neurodeI, const Size paramI);
+			const T& getParam(const Size neuronI, const Size paramI) const;
+			T& getParam(const Size neuronI, const Size paramI);
 
-			void setParam(const Size neurodeI, const Size paramI, const T& v);
+			void setParam(const Size neuronI, const Size paramI, const T& v);
 
-			const T& getGrad(const Size neurodeI, const Size paramI) const;
-			T& getGrad(const Size neurodeI, const Size paramI);
+			const T& getGrad(const Size neuronI, const Size paramI) const;
+			T& getGrad(const Size neuronI, const Size paramI);
 
-			void setGrad(const Size neurodeI, const Size paramI, const T& v);
+			void setGrad(const Size neuronI, const Size paramI, const T& v);
 
 		private:
 			const Vector<StaticTable<T, NbFeatures>>* inVector;
 			Vector<StaticTable<T, NbNeurodes>> outVector;
 			Vector<StaticTable<T, NbNeurodes>> deltaVector;
 
-			StaticTable<Neurode<T, NbFeatures, Func>, NbNeurodes> neurodeTable;
+			StaticTable<Neuron<T, NbFeatures, Func>, NbNeurodes> neuronTable;
 		};
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
@@ -89,18 +89,18 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline const StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParams(const Size neurodeI) const {
-			return this->neurodeTable[ neurodeI ].getParams();
+		inline const StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParams(const Size neuronI) const {
+			return this->neuronTable[ neuronI ].getParams();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline const StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrads(const Size neurodeI) const {
-			return this->neurodeTable[ neurodeI ].getGrads();
+		inline const StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrads(const Size neuronI) const {
+			return this->neuronTable[ neuronI ].getGrads();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrads(const Size neurodeI) {
-			return this->neurodeTable[ neurodeI ].getGrads();
+		inline StaticTable<T, NbFeatures + Size(1)>& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrads(const Size neuronI) {
+			return this->neuronTable[ neuronI ].getGrads();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
@@ -139,63 +139,63 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline const Func& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getActivationFunc(const Size neurodeI) const {
-			return this->neurodeTable[ neurodeI ].getActivationFunc();
+		inline const Func& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getActivationFunc(const Size neuronI) const {
+			return this->neuronTable[ neuronI ].getActivationFunc();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeY(const Size neurodeI, const Size dataI) const {
-			return this->neurodeTable[ neurodeI ].computeY(getIns(dataI));
+		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeY(const Size neuronI, const Size dataI) const {
+			return this->neuronTable[ neuronI ].computeY(getIns(dataI));
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeY(const Size neurodeI, const StaticTable<T, NbFeatures>& featureTable) const {
-			return this->neurodeTable[ neurodeI ].computeY(featureTable);
+		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeY(const Size neuronI, const StaticTable<T, NbFeatures>& featureTable) const {
+			return this->neuronTable[ neuronI ].computeY(featureTable);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeGrad(const Size neurodeI, const Size paramI) const {
-			return this->neurodeTable[ neurodeI ].computeGrad(paramI);
+		inline T NeuralLayer<T, NbFeatures, NbNeurodes, Func>::computeGrad(const Size neuronI, const Size paramI) const {
+			return this->neuronTable[ neuronI ].computeGrad(paramI);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setOut(const Size neurodeI, const Size dataI, const T& v) {
-			this->outVector.getValueI(dataI)[ neurodeI ] = v;
+		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setOut(const Size neuronI, const Size dataI, const T& v) {
+			this->outVector.getValueI(dataI)[ neuronI ] = v;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline const T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getOut(const Size neurodeI, const Size dataI) {
-			return this->outVector.getValueI(dataI)[ neurodeI ];
+		inline const T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getOut(const Size neuronI, const Size dataI) {
+			return this->outVector.getValueI(dataI)[ neuronI ];
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline const T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParam(const Size neurodeI, const Size paramI) const {
-			return const_cast< NeuralLayer<T, NbFeatures, NbNeurodes, Func> * >( this )->getParam(neurodeI, paramI);
+		inline const T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParam(const Size neuronI, const Size paramI) const {
+			return const_cast< NeuralLayer<T, NbFeatures, NbNeurodes, Func> * >( this )->getParam(neuronI, paramI);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParam(const Size neurodeI, const Size paramI) {
-			return this->neurodeTable[ neurodeI ].getParam(paramI);
+		inline T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getParam(const Size neuronI, const Size paramI) {
+			return this->neuronTable[ neuronI ].getParam(paramI);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setParam(const Size neurodeI, const Size paramI, const T& v) {
-			this->neurodeTable[ neurodeI ].setParam(paramI, v);
+		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setParam(const Size neuronI, const Size paramI, const T& v) {
+			this->neuronTable[ neuronI ].setParam(paramI, v);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline const T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrad(const Size neurodeI, const Size paramI) const {
-			return this->neurodeTable[ neurodeI ].getGrad(paramI);
+		inline const T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrad(const Size neuronI, const Size paramI) const {
+			return this->neuronTable[ neuronI ].getGrad(paramI);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrad(const Size neurodeI, const Size paramI) {
-			return this->neurodeTable[ neurodeI ].getGrad(paramI);
+		inline T& NeuralLayer<T, NbFeatures, NbNeurodes, Func>::getGrad(const Size neuronI, const Size paramI) {
+			return this->neuronTable[ neuronI ].getGrad(paramI);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurodes, typename Func>
-		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setGrad(const Size neurodeI, const Size paramI, const T& v) {
-			this->neurodeTable[ neurodeI ].setGrad(paramI, v);
+		inline void NeuralLayer<T, NbFeatures, NbNeurodes, Func>::setGrad(const Size neuronI, const Size paramI, const T& v) {
+			this->neuronTable[ neuronI ].setGrad(paramI, v);
 		}
 
 	}

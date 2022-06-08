@@ -609,7 +609,7 @@
     <ClInclude Include="Math\ML\Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Math\ML\Neurode.h">
+    <ClInclude Include="Math\ML\Neuron.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\ML\NeuralLayer.h">
