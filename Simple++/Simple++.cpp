@@ -32,7 +32,7 @@
  //#define SPEEDTEST_ARITHMETIC
  //#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
-//#define SPEEDTEST_LINEAR_REGRESSION
+#define SPEEDTEST_LINEAR_REGRESSION
 #define SPEEDTEST_DEEP_NEURAL_NETWORK
 
 
@@ -57,7 +57,7 @@
 //#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
-//#define DEBUG_LINEAR_REGRESSION
+#define DEBUG_LINEAR_REGRESSION
 #define DEBUG_DEEP_NEURAL_NETWORK
 
 
@@ -1636,12 +1636,12 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Linear Regression											//
 	{
-		Math::ML::LinearRegression<double> linearRegression(Size(10), Size(10), Size(10));
+		Math::ML::LinearRegression<double, 10, 10> linearRegression;
 
-		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(100), Size(10), Size(10), Size(10), 0.2));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.2));
 
 		linearRegression.addData(dataVector);
-		linearRegression.gradientDescent(0.01, Size(1000));
+		linearRegression.gradientDescent(0.01, Size(2000));
 	}
 #endif
 #ifdef DEBUG_DEEP_NEURAL_NETWORK
@@ -1650,7 +1650,7 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.2));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.2));
 
 		deepNeuralNetwork.addData(dataVector);
 
@@ -2511,13 +2511,13 @@ int main(int argc, char* argv[]) {
 #endif
 #ifdef SPEEDTEST_LINEAR_REGRESSION
 	{
-		Math::ML::LinearRegression<double> linearRegression(Size(10), Size(10), Size(10));
+		Math::ML::LinearRegression<double, 10, 10> linearRegression;
 
-		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(10), 0.2, 0));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.0, 0));
 
 		linearRegression.addData(dataVector);
 
-		Log::displayLog(String::format("Current cost : %.", linearRegression.computeCoefficientOfDetermination() * 100.0));
+		// Log::displayLog(String::format("Current cost : %.", linearRegression.computeCoefficientOfDetermination() * 100.0));
 
 		Log::startChrono();
 		linearRegression.gradientDescent(0.01, Size(1000), 0);
@@ -2529,7 +2529,7 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double>> dataVector(Math::ML::generateData<double>(Size(1000), Size(10), Size(10), Size(11), 0.0));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.0, 0));
 
 		deepNeuralNetwork.addData(dataVector);
 

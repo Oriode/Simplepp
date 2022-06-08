@@ -12,111 +12,114 @@ namespace Math {
 
 	namespace ML {
 
-		template<typename T>
+		template<typename T, Size NbFeatures, Size NbOut>
 		class LinearRegression : public IO::BasicIO {
 		public:
-			LinearRegression(const Size nbFeatures, const Size nbOut, const Size nbParams);
+			LinearRegression();
 
-			void addData(const Data<T>& data);
-			template<typename C, Size NbFeatures, Size NbOut>
+			void addData(const Data<T, NbFeatures, NbOut>& data);
+			template<typename C>
 			void addData(const C(&featureTable)[ NbFeatures ], const C(&outTable)[ NbOut ]);
-			void addData(const Vector<Data<T>>& dataVector);
+			void addData(const Vector<Data<T, NbFeatures, NbOut>>& dataVector);
 
-			const Size getNbFeatures() const;
-			const Size getNbParams() const;
+			constexpr Size getNbFeatures() const;
+			constexpr Size getNbParams() const;
+			constexpr Size getNbOut() const;
 
-			T computeY(const Size m, const Size n) const;
+			const Size getNbData() const;
+
+			T computeY(const Size dataI, const Size outI) const;
 			T computeCost() const;
 			T computeCoefficientOfDetermination() const;
-			T computeGrad(const Size m, const Size n) const;
-			void computeGradM(Mat<T>& m) const;
+			T computeGrad(const Mat<T> & outMat, const Size paramI, const Size outI) const;
+			void computeGradM(const Mat<T>& outMat, Mat<T>& m) const;
 
 			void gradientDescent(const T& learningRate = T(0.01), const Size nbIterations = Size(100), int verbose = 2);
 
-			static void setXMat(Mat<T>& x, const Vector<Data<T>>& dataVector, const Size nbParams);
-			static void setParamMat(Mat<T>& paramMat, const Size nbParams, const Size nbOut);
-			static T computeY(const Vector<Data<T>>& dataVector, const Mat<T>& paramMat, const Size m, const Size n);
+			static void setXMat(Mat<T>& x, const Vector<Data<T, NbFeatures, NbOut>>& dataVector);
+			static void setParamMat(Mat<T>& paramMat);
+			static T computeY(const Vector<Data<T, NbFeatures, NbOut>>& dataVector, const Mat<T>& paramMat, const Size dataI, const Size outI);
 
 		private:
 			void _updateXMat();
 
-			Size nbFeatures;
-			Size nbOut;
-			Size nbParams;
-
-			Vector<Data<T>> dataVector;
+			Vector<Data<T, NbFeatures, NbOut>> dataVector;
 			Mat<T> paramMat;		// Matrix of parameters of size [NbParams, NbOut].
 			Mat<T> xMat;			// Matrix of input features of size [NbData, NbParams].
 
 			bool bIsXMatUpdated;
 		};
 
-		template<typename T>
-		Vector<Data<T>> generateData(const Size nbData, const Size nbFeatures, const Size nbOut, const Size nbParams, const T & noise = T(0.1), int verbose = 1);
+		template<typename T, Size NbFeatures, Size NbOut>
+		Vector<Data<T, NbFeatures, NbOut>> generateData(const Size nbData, const T & noise = T(0.1), int verbose = 1);
 
-		template<typename T>
-		inline LinearRegression<T>::LinearRegression(const Size nbFeatures, const Size nbOut, const Size nbParams) :
-			nbFeatures(nbFeatures),
-			nbOut(nbOut),
-			nbParams(nbParams),
-			paramMat(nbParams, nbOut),
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline LinearRegression<T, NbFeatures, NbOut>::LinearRegression() :
+			paramMat(NbFeatures + Size(1), NbOut),
 			bIsXMatUpdated(false)
 		{
-			assert(this->nbFeatures <= this->nbParams);
-
-			setParamMat(this->paramMat, this->nbParams, this->nbOut);
+			setParamMat(this->paramMat);
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::addData(const Data<T>&data) {
-			assert(this->nbFeatures == data.getNbFeatures());
-			assert(this->nbOut == data.getNbOut());
-			this->dataVector.push(data);
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::addData(const Data<T, NbFeatures, NbOut>&data) {
 
+			if ( data.getNbFeatures() != getNbFeatures() ) {
+				Log::displayError(String::format("Unable to add a data to the ML system. Number of features missmatch % (data) != % (system).", data.getNbFeatures(), getNbFeatures()));
+				return;
+			}
+			if ( data.getNbOut() != getNbOut() ) {
+				Log::displayError(String::format("Unable to add a data to the ML system. Number of out missmatch % (data) != % (system).", data.getNbOut(), getNbOut()));
+				return;
+			}
+
+			this->dataVector.push(data);
 			this->bIsXMatUpdated = false;
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::addData(const Vector<Data<T>>& dataVector) {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::addData(const Vector<Data<T, NbFeatures, NbOut>>& dataVector) {
 			for ( Size i(0); i < dataVector.getSize(); i++ ) {
-				const Data<T>& data(dataVector.getValueI(i));
+				const Data<T, NbFeatures, NbOut>& data(dataVector.getValueI(i));
 
-				if ( data.getNbFeatures() != this->nbFeatures ) {
-					Log::displayError(String::format("Unable to add a data to the ML system. Number of features missmatch % (data) != % (system).", data.getNbFeatures(), this->nbFeatures));
-					continue;
-				}
-				if ( data.getNbOut() != this->nbOut ) {
-					Log::displayError(String::format("Unable to add a data to the ML system. Number of out missmatch % (data) != % (system).", data.getNbOut(), this->nbOut));
-					continue;
-				}
-				this->dataVector.push(data);
+				addData(data);
 			}
 		}
 
-		template<typename T>
-		inline const Size LinearRegression<T>::getNbFeatures() const {
-			return this->nbFeatures;
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline constexpr Size LinearRegression<T, NbFeatures, NbOut>::getNbFeatures() const {
+			return NbFeatures;
 		}
 
-		template<typename T>
-		inline const Size LinearRegression<T>::getNbParams() const {
-			return this->nbParams;
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline constexpr Size LinearRegression<T, NbFeatures, NbOut>::getNbParams() const {
+			return NbFeatures + Size(1);
 		}
 
-		template<typename T>
-		inline T LinearRegression<T>::computeY(const Size m, const Size n) const {
-			return LinearRegression<T>::computeY(this->dataVector, this->paramMat, m, n);
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline constexpr Size LinearRegression<T, NbFeatures, NbOut>::getNbOut() const {
+			return NbOut;
 		}
 
-		template<typename T>
-		inline T LinearRegression<T>::computeCost() const {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline const Size LinearRegression<T, NbFeatures, NbOut>::getNbData() const {
+			return this->dataVector.getSize();
+		}
+
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline T LinearRegression<T, NbFeatures, NbOut>::computeY(const Size dataI, const Size outI) const {
+			return LinearRegression<T, NbFeatures, NbOut>::computeY(this->dataVector, this->paramMat, dataI, outI);
+		}
+
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline T LinearRegression<T, NbFeatures, NbOut>::computeCost() const {
 			const T nbDataT(T(this->dataVector.getSize() * Size(2)));
 
 			T ySum(0);
 			for ( Size i(0); i < this->dataVector.getSize(); i++ ) {
-				const Data<T>& data(this->dataVector.getValueI(i));
+				const Data<T, NbFeatures, NbOut>& data(this->dataVector.getValueI(i));
 
-				for ( Size j(0); j < this->nbOut; j++ ) {
+				for ( Size j(0); j < getNbOut(); j++ ) {
 					const T y(computeY(i, j) - data.getOut(j));
 					ySum += y * y;
 				}
@@ -126,29 +129,34 @@ namespace Math {
 			return ySum / nbDataT;
 		}
 
-		template<typename T>
-		inline T LinearRegression<T>::computeCoefficientOfDetermination() const {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline T LinearRegression<T, NbFeatures, NbOut>::computeCoefficientOfDetermination() const {
 
-			Vec<T> meanVec(this->nbOut);
-			meanVec.zeros();
+			StaticTable<T, NbOut> meanVec;
+			for ( Size j(0); j < meanVec.getSize(); j++ ) {
+				meanVec[ j ] = T(0);
+			}
 			for ( Size i(0); i < this->dataVector.getSize(); i++ ) {
-				const Data<T>& data(this->dataVector.getValueI(i));
+				const Data<T, NbFeatures, NbOut>& data(this->dataVector.getValueI(i));
 
 				for ( Size j(0); j < data.getNbOut(); j++ ) {
-					meanVec.setValueI(j, meanVec.getValueI(j) + data.getOut(j));
+					meanVec[ j ] += data.getOut(j);
 				}
 			}
-			meanVec /= T(this->dataVector.getSize());
+			const T sizeInverse(T(1) / T(getNbData()));
+			for ( Size j(0); j < meanVec.getSize(); j++ ) {
+				meanVec[ j ] *= sizeInverse;
+			}
 
 			T errSum(0);
 			T meanSum(0);
 			for ( Size i(0); i < this->dataVector.getSize(); i++ ) {
-				const Data<T>& data(this->dataVector.getValueI(i));
+				const Data<T, NbFeatures, NbOut>& data(this->dataVector.getValueI(i));
 
 				for ( Size j(0); j < data.getNbOut(); j++ ) {
 					const T y(computeY(i, j));
 					const T err(data.getOut(j) - y);
-					const T mean(data.getOut(j) - meanVec.getValueI(j));
+					const T mean(data.getOut(j) - meanVec[j]);
 
 					errSum += err * err;
 					meanSum += mean * mean;
@@ -158,27 +166,29 @@ namespace Math {
 			return T(1) - errSum / meanSum;
 		}
 
-		template<typename T>
-		inline T LinearRegression<T>::computeGrad(const Size m, const Size n) const {
-			assert(this->nbParams > m);
-			assert(this->nbOut > n);
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline T LinearRegression<T, NbFeatures, NbOut>::computeGrad(const Mat<T>& outMat, const Size paramI, const Size outI) const {
+			assert(outMat.getSizeM() == getNbData());
+			assert(outMat.getSizeN() == getNbOut());
+			assert(getNbParams() > paramI);
+			assert(getNbOut() > outI);
 
-			const T nbDataT(T(this->dataVector.getSize()));
+			const T nbDataT(getNbData());
 
 			T ySum(0);
 
-			if ( m < this->nbFeatures ) {
-				for ( Size i(0); i < this->dataVector.getSize(); i++ ) {
-					const Data<T>& data(this->dataVector.getValueI(i));
+			if ( paramI < getNbFeatures() ) {
+				for ( Size dataI(0); dataI < this->dataVector.getSize(); dataI++ ) {
+					const Data<T, NbFeatures, NbOut>& data(this->dataVector.getValueI(dataI));
 
-					const T y(computeY(i, n) - data.getOut(n));
-					ySum += data.getFeature(m) * y;
+					const T y(outMat.getValueI(dataI, outI) - data.getOut(outI));
+					ySum += data.getFeature(paramI) * y;
 				}
 			} else {
-				for ( Size i(0); i < this->dataVector.getSize(); i++ ) {
-					const Data<T>& data(this->dataVector.getValueI(i));
+				for ( Size dataI(0); dataI < this->dataVector.getSize(); dataI++ ) {
+					const Data<T, NbFeatures, NbOut>& data(this->dataVector.getValueI(dataI));
 
-					const T y(computeY(i, n) - data.getOut(n));
+					const T y(outMat.getValueI(dataI, outI) - data.getOut(outI));
 					ySum += y;
 				}
 			}
@@ -186,20 +196,20 @@ namespace Math {
 			return ySum / nbDataT;
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::computeGradM(Mat<T>& m) const {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::computeGradM(const Mat<T>& outMat, Mat<T>& m) const {
 			assert(this->nbParam == m.getSizeM());
 			assert(this->NbOut == m.getSizeN());
 
 			for ( Size i(0); i < m.getSizeM(); i++ ) {
 				for ( Size j(0); j < m.getSizeN(); j++ ) {
-					m.setValueI(i, j, computeGrad(i, j));
+					m.setValueI(i, j, computeGrad(outMat, i, j));
 				}
 			}
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::gradientDescent(const T& learningRate, const Size nbIterations, int verbose) {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::gradientDescent(const T& learningRate, const Size nbIterations, int verbose) {
 
 			if ( verbose > 0 ) {
 				Log::startStep(String::format("Starting gradient descent with % iterations...", nbIterations));
@@ -216,12 +226,22 @@ namespace Math {
 				}
 			}
 
+			Mat<T> outMat(getNbData(), getNbOut());
+
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
-				for ( Size i(0); i < this->paramMat.getSizeM(); i++ ) {
-					for ( Size j(0); j < this->paramMat.getSizeN(); j++ ) {
+				// Forward propagation.
+				for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+					for ( Size outI(0); outI < getNbOut(); outI++ ) {
+						outMat.setValueI(dataI, outI, computeY(dataI, outI));
+					}
+				}
+
+				// Back propagation.
+				for ( Size i(0); i < getNbParams(); i++ ) {
+					for ( Size j(0); j < getNbOut(); j++ ) {
 						T& param(this->paramMat.getValueI(i, j));
 
-						param = param - learningRate * computeGrad(i, j);
+						param = param - learningRate * computeGrad(outMat, i, j);
 					}
 				}
 
@@ -239,92 +259,90 @@ namespace Math {
 			}
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::setXMat(Mat<T>& x, const Vector<Data<T>>& dataVector, const Size nbParams) {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::setXMat(Mat<T>& x, const Vector<Data<T, NbFeatures, NbOut>>& dataVector) {
 
 			const Size newM(dataVector.getSize());
-			const Size newN(NbParams);
+			constexpr Size newN(NbFeatures + Size(1));
 
 			x.resizeNoCopy(newM, newN);
 
 			for ( Size i(0); i < dataVector.getSize(); i++ ) {
-				const Data<T>& data(dataVector.getValueI(i));
+				const Data<T, NbFeatures, NbOut>& data(dataVector.getValueI(i));
 
 				for ( Size j(0); j < data.getNbFeatures(); j++ ) {
 					x.setValueI(i, j, data.getFeature(j));
 				}
-				for ( Size j(data.getNbFeatures()); j < nbParams; j++ ) {
+				for ( Size j(data.getNbFeatures()); j < newN; j++ ) {
 					x.setValueI(i, j, T(1));
 				}
 			}
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::setParamMat(Mat<T>& paramMat, const Size nbParams, const Size nbOut) {
-			paramMat.resizeNoCopy(nbParams, nbOut);
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::setParamMat(Mat<T>& paramMat) {
+			paramMat.resizeNoCopy(NbFeatures + Size(1), NbOut);
 			paramMat.randomF();
 		}
 
-		template<typename T>
-		inline T LinearRegression<T>::computeY(const Vector<Data<T>>& dataVector, const Mat<T>& paramMat, const Size m, const Size n) {
-			assert(dataVector.getSize() > m);
-			assert(paramMat.getSizeN() > n);
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline T LinearRegression<T, NbFeatures, NbOut>::computeY(const Vector<Data<T, NbFeatures, NbOut>>& dataVector, const Mat<T>& paramMat, const Size dataI, const Size outI) {
+			assert(dataVector.getSize() > dataI);
+			assert(paramMat.getSizeN() > outI);
 
-			const BasicVector<T>& featureTable(dataVector.getValueI(m).getFeatures());
+			const StaticTable<T, NbFeatures>& featureTable(dataVector.getValueI(dataI).getFeatures());
 
 			T y(0);
-			for ( Size i(0); i < featureTable.getSize(); i++ ) {
-				const T& feature(featureTable.getValueI(i));
-				const T& param(paramMat.getValueI(i, n));
+			for ( Size paramI(0); paramI < featureTable.getSize(); paramI++ ) {
+				const T& feature(featureTable[ paramI ]);
+				const T& param(paramMat.getValueI(paramI, outI));
 
 				y += feature * param;
 			}
-			for ( Size i(featureTable.getSize()); i < paramMat.getSizeM(); i++ ) {
-				const T& param(paramMat.getValueI(i, n));
+			for ( Size paramI(featureTable.getSize()); paramI < paramMat.getSizeM(); paramI++ ) {
+				const T& param(paramMat.getValueI(paramI, outI));
 
 				y += param;
 			}
 			return y;
 		}
 
-		template<typename T>
-		inline void LinearRegression<T>::_updateXMat() {
+		template<typename T, Size NbFeatures, Size NbOut>
+		inline void LinearRegression<T, NbFeatures, NbOut>::_updateXMat() {
 			if ( !this->bIsXMatUpdated ) {
-				setXMat(this->xMat, this->dataVector, this->nbParams);
+				setXMat(this->xMat, this->dataVector);
 
 				this->bIsXMatUpdated = true;
 			}
 		}
 
-		template<typename T>
-		template<typename C, Size NbFeatures, Size NbOut>
-		inline void LinearRegression<T>::addData(const C(&featureTable)[ NbFeatures ], const C(&outTable)[ NbOut ]) {
-			assert(this->nbFeatures == NbFeatures);
-			assert(this->nbOut = NbOut);
-			addData(Data<T>(featureTable, outTable));
+		template<typename T, Size NbFeatures, Size NbOut>
+		template<typename C>
+		inline void LinearRegression<T, NbFeatures, NbOut>::addData(const C(&featureTable)[ NbFeatures ], const C(&outTable)[ NbOut ]) {
+			addData(Data<T, NbFeatures, NbOut>(featureTable, outTable));
 		}
 
-		template<typename T>
-		Vector<Data<T>> generateData(const Size nbData, const Size nbFeatures, const Size nbOut, const Size nbParams, const T& noise, int verbose) {
-			Vector<Data<T>> dataVector;
+		template<typename T, Size NbFeatures, Size NbOut>
+		Vector<Data<T, NbFeatures, NbOut>> generateData(const Size nbData, const T& noise, int verbose) {
+			Vector<Data<T, NbFeatures, NbOut>> dataVector;
 			dataVector.resize(nbData);
 
 			static const ActivationFunc::Sigmoid activationFunc;
 
 			Mat<T> paramMat;
-			LinearRegression<T>::setParamMat(paramMat, nbParams, nbOut);
+			LinearRegression<T, NbFeatures, NbOut>::setParamMat(paramMat);
 
 			for ( Size i(0); i < dataVector.getSize(); i++ ) {
-				Data<T> newData(nbFeatures, nbOut);
+				Data<T, NbFeatures, NbOut> newData;
 				newData.setFeaturesRandom();
 				dataVector.setValueI(i, newData);
 			}
 
 			for ( Size i(0); i < dataVector.getSize(); i++ ) {
-				Data<T>& data(dataVector.getValueI(i));
+				Data<T, NbFeatures, NbOut>& data(dataVector.getValueI(i));
 
 				for ( Size j(0); j < data.getNbOut(); j++ ) {
-					const T y(activationFunc(LinearRegression<T>::computeY(dataVector, paramMat, i, j)));
+					const T y(activationFunc(LinearRegression<T, NbFeatures, NbOut>::computeY(dataVector, paramMat, i, j)));
 					const T noiseFactor(Math::random(-noise, noise));
 					data.setOut(j, y * ( T(1) + noiseFactor ));
 				}

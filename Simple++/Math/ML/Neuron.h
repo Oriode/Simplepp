@@ -14,7 +14,7 @@ namespace Math {
 
 	namespace ML {
 
-		template<typename T, Size NbFeatures, typename Func = Math::Operations::Identity>
+		template<typename T, Size NbFeatures, typename Func>
 		class Neuron : public IO::BasicIO {
 		public:
 			Neuron(const Func & activationFunc = Func());

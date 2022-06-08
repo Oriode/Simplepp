@@ -21,9 +21,10 @@ namespace Math {
 			static constexpr Size NbOut = M::m[ M::nbLayers - Size(1) ][ 1 ];
 
 			DeepNeuralNetwork();
+			~DeepNeuralNetwork();
 
-			void addData(const Data<T>& data);
-			void addData(const Vector<Data<T>>& dataVector);
+			void addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data);
+			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 
 			const Size getNbData() const;
 
@@ -58,6 +59,9 @@ namespace Math {
 			void _constructNeuralLayer();
 
 			template<Size I = Size(0)>
+			void _destructNeuralLayer();
+
+			template<Size I = Size(0)>
 			constexpr bool _checkModel() const;
 
 			template<Size I = Size(0)>
@@ -65,7 +69,7 @@ namespace Math {
 
 			StaticTable<void*, M::nbLayers> layerTable;
 
-			Vector<Data<T>> dataVector;
+			Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>> dataVector;
 			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector;
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> expectedYVector;
 		};
@@ -79,7 +83,12 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::addData(const Data<T>& data) {
+		inline DeepNeuralNetwork<T, M, Func>::~DeepNeuralNetwork() {
+			_destructNeuralLayer<Size(0)>();
+		}
+
+		template<typename T, typename M, typename Func>
+		inline void DeepNeuralNetwork<T, M, Func>::addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) {
 			assert(data.getNbFeatures() == M::m[ 0 ][ 0 ]);
 
 			StaticTable<T, NbFeatures> newFeatureTable;
@@ -95,7 +104,7 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::addData(const Vector<Data<T>>& dataVector) {
+		inline void DeepNeuralNetwork<T, M, Func>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
 			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
 				addData(dataVector.getValueI(dataI));
 			}
@@ -377,6 +386,16 @@ namespace Math {
 				}
 				this->layerTable[ I ] = reinterpret_cast< void* >( new NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>(inVector) );
 				_constructNeuralLayer<I + Size(1)>();
+			}
+		}
+
+		template<typename T, typename M, typename Func>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M, Func>::_destructNeuralLayer() {
+			if constexpr ( I < M::nbLayers ) {
+				delete getLayer<I>();
+
+				return _destructNeuralLayer<I + Size(1)>();
 			}
 		}
 
