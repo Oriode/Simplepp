@@ -14,7 +14,7 @@ namespace Math {
 			static constexpr Size m[ 2 ][ 2 ] = { {2,2}, {2,2} };
 		};
 
-		template<typename T, typename M = Model<T>, typename Func = Math::ML::ActivationFunc::Sigmoid>
+		template<typename T, typename M = Model<T>, typename ActivationFunc = Math::ML::ActivationFunc::Sigmoid>
 		class DeepNeuralNetwork {
 		public:
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
@@ -29,9 +29,9 @@ namespace Math {
 			const Size getNbData() const;
 
 			template<Size I>
-			const NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* getLayer() const;
+			const NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* getLayer() const;
 			template<Size I>
-			NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* getLayer();
+			NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* getLayer();
 
 			const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& computeForwardPropagation(const Size dataI);
 
@@ -74,60 +74,52 @@ namespace Math {
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> expectedYVector;
 		};
 
-		template<typename T, typename M, typename Func>
-		inline DeepNeuralNetwork<T, M, Func>::DeepNeuralNetwork() {
+		template<typename T, typename M, typename ActivationFunc>
+		inline DeepNeuralNetwork<T, M, ActivationFunc>::DeepNeuralNetwork() {
 			static_assert( Utility::isBase<Model<T>, M>::value, "Model type unknown." );
 			static_assert( M::nbLayers > Size(0), "Model error, nbLayers cannot be 0." );
 			_checkModel<Size(1)>();
 			_constructNeuralLayer<Size(0)>();
 		}
 
-		template<typename T, typename M, typename Func>
-		inline DeepNeuralNetwork<T, M, Func>::~DeepNeuralNetwork() {
+		template<typename T, typename M, typename ActivationFunc>
+		inline DeepNeuralNetwork<T, M, ActivationFunc>::~DeepNeuralNetwork() {
 			_destructNeuralLayer<Size(0)>();
 		}
 
-		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) {
-			assert(data.getNbFeatures() == M::m[ 0 ][ 0 ]);
-
-			StaticTable<T, NbFeatures> newFeatureTable;
-			Utility::copy(newFeatureTable.getData(), data.getFeatures().getData(), newFeatureTable.getSize());
-
-			StaticTable<T, NbOut> newExpectedYTable;
-			Utility::copy(newExpectedYTable.getData(), data.getOuts().getData(), newExpectedYTable.getSize());
-
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) {
 			this->dataVector.push(data);
-			this->featureVector.push(newFeatureTable);
-			this->expectedYVector.push(newExpectedYTable);
+			this->featureVector.push(data.getFeatures());
+			this->expectedYVector.push(data.getOuts());
 			_addData<Size(0)>();
 		}
 
-		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
 			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
 				addData(dataVector.getValueI(dataI));
 			}
 		}
 
-		template<typename T, typename M, typename Func>
-		inline const Size DeepNeuralNetwork<T, M, Func>::getNbData() const {
+		template<typename T, typename M, typename ActivationFunc>
+		inline const Size DeepNeuralNetwork<T, M, ActivationFunc>::getNbData() const {
 			return this->dataVector.getSize();
 		}
 
-		template<typename T, typename M, typename Func>
-		inline const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& DeepNeuralNetwork<T, M, Func>::computeForwardPropagation(const Size dataI) {
+		template<typename T, typename M, typename ActivationFunc>
+		inline const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& DeepNeuralNetwork<T, M, ActivationFunc>::computeForwardPropagation(const Size dataI) {
 			_computeForwardPropagation<Size(0)>(dataI);
 			return getLayer< Size(0)>()->getOuts(dataI);
 		}
 
-		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::computeBackPropagation() {
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::computeBackPropagation() {
 			return _computeBackPropagation<M::nbLayers - Size(1)>();
 		}
 
-		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::optimize(const T& learningRate, const Size nbIterations, int verbose) {
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::optimize(const T& learningRate, const Size nbIterations, int verbose) {
 			if ( verbose > 0 ) {
 				Log::startStep(String::format("Starting gradient descent with % iterations...", nbIterations));
 			}
@@ -164,20 +156,20 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, typename Func>
-		inline void DeepNeuralNetwork<T, M, Func>::updateModel(const T& learningRate) {
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::updateModel(const T& learningRate) {
 			return _updateModel<Size(0)>(learningRate);
 		}
 
-		template<typename T, typename M, typename Func>
-		inline T DeepNeuralNetwork<T, M, Func>::computeCost() const {
-			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], Func>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
+		template<typename T, typename M, typename ActivationFunc>
+		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCost() const {
+			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], ActivationFunc>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
 
 			T ySum(0);
 			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
 				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(neuralLayer->getOuts(dataI));
 				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& expectedYTable(this->expectedYVector.getValueI(dataI));
-				for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
+				for ( Size outI(0); outI < neuralLayer->getNbNeurons(); outI++ ) {
 					const T& expectedY(expectedYTable[ outI ]);
 					const T& y(outTable[ outI ]);
 					if constexpr ( false ) {
@@ -190,15 +182,15 @@ namespace Math {
 			return -ySum / T(getNbData());
 		}
 
-		template<typename T, typename M, typename Func>
-		inline T DeepNeuralNetwork<T, M, Func>::computeCostQuadratic() const {
-			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], Func>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
+		template<typename T, typename M, typename ActivationFunc>
+		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCostQuadratic() const {
+			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], ActivationFunc>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
 
 			T ySum(0);
 			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
 				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(neuralLayer->getOuts(dataI));
 				const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& expectedYTable(this->expectedYVector.getValueI(dataI));
-				for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
+				for ( Size outI(0); outI < neuralLayer->getNbNeurons(); outI++ ) {
 					const T& expectedY(expectedYTable[ outI ]);
 					const T& y(outTable[ outI ]);
 					const T delta(expectedY - y);
@@ -209,9 +201,9 @@ namespace Math {
 			return ySum / T(getNbData() * Size(2));
 		}
 
-		template<typename T, typename M, typename Func>
-		inline T DeepNeuralNetwork<T, M, Func>::computeCoefficientOfDetermination() const {
-			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], Func>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
+		template<typename T, typename M, typename ActivationFunc>
+		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCoefficientOfDetermination() const {
+			const NeuralLayer<T, M::m[ M::nbLayers - Size(1) ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ], ActivationFunc>* neuralLayer(getLayer<M::nbLayers - Size(1)>());
 
 			StaticTable<T, M::m[M::nbLayers - Size(1)][1]> meanVec;
 			for ( Size j(0); j < meanVec.getSize(); j++ ) {
@@ -249,32 +241,28 @@ namespace Math {
 			return T(1) - errSum / meanSum;
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline const NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* DeepNeuralNetwork<T, M, Func>::getLayer() const {
-			return const_cast< DeepNeuralNetwork<T, M, Func> * >( this )->getLayer<I>();
+		inline const NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* DeepNeuralNetwork<T, M, ActivationFunc>::getLayer() const {
+			return const_cast< DeepNeuralNetwork<T, M, ActivationFunc> * >( this )->getLayer<I>();
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* DeepNeuralNetwork<T, M, Func>::getLayer() {
-			return reinterpret_cast< NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* >( this->layerTable[ I ] );
+		inline NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* DeepNeuralNetwork<T, M, ActivationFunc>::getLayer() {
+			return reinterpret_cast< NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* >( this->layerTable[ I ] );
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, Func>::_computeForwardPropagation(const Size dataI) {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_computeForwardPropagation(const Size dataI) {
 			if constexpr ( I < M::nbLayers ) {
-				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* neuralLayer(getLayer<I>());
-				for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
-					const StaticTable<T, M::m[ I ][ 0 ]>& featureTable(neuralLayer->getIns(dataI));
-					const T v(neuralLayer->computeY(outI, featureTable));
-					neuralLayer->setOut(outI, dataI, v);
-				}
+				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* neuralLayer(getLayer<I>());
+				neuralLayer->computeForwardPropagation(dataI);
 
 				if constexpr ( I == M::nbLayers - Size(1) && false ) {
 					const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(neuralLayer->getOuts(dataI));
-					for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
+					for ( Size outI(0); outI < neuralLayer->getNbNeurons(); outI++ ) {
 						Log::displayLog(String::format("_computeForwardPropagation(): outTable[%][%] = %", dataI, outI, outTable[ outI ]));
 					}
 				}
@@ -283,100 +271,41 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, Func>::_computeBackPropagation() {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_computeBackPropagation() {
 			if constexpr ( I >= Size(0) ) {
-				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* neuralLayer(getLayer<I>());
-
-				Vector<StaticTable<T, M::m[ I ][ 1 ]>>& deltaVector(neuralLayer->getDeltaVector());
-				const Vector<StaticTable<T, M::m[ I ][ 0 ]>>& inVector(neuralLayer->getInVector());
-				const Vector<StaticTable<T, M::m[ I ][ 1 ]>>& outVector(neuralLayer->getOutVector());
-
-				const T sizeInverse(T(1) / T(getNbData()));
+				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* neuralLayer(getLayer<I>());
 
 				// Compute dZx
 				if constexpr ( I == M::nbLayers - Size(1) ) {
-					for ( Size dataI(0); dataI < this->dataVector.getSize(); dataI++ ) {
-						const StaticTable<T, M::m[ I ][ 1 ]>& outTable(outVector.getValueI(dataI));
-						const StaticTable<T, M::m[ I ][ 1 ]>& expectedYTable(this->expectedYVector.getValueI(dataI));
-						StaticTable<T, M::m[ I ][ 1 ]>& deltaVecTable(deltaVector.getValueI(dataI));
-						for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
-							deltaVecTable[ outI ] = outTable[ outI ] - expectedYTable[ outI ];
-						}
-					}
+					neuralLayer->computeDeltasLast(this->expectedYVector);
 				} else {
-					NeuralLayer<T, M::m[ I + Size(1) ][ 0 ], M::m[ I + Size(1) ][ 1 ], Func>* nextNeuralLayer(getLayer<I + Size(1)>());
-
-					for ( Size dataI(0); dataI < this->dataVector.getSize(); dataI++ ) {
-						const StaticTable<T, M::m[ I ][ 1 ]>& outTable(outVector.getValueI(dataI));
-						const StaticTable<T, M::m[ I + Size(1) ][ 1 ]>& nextDeltaVecTable(nextNeuralLayer->getDeltas(dataI));
-						StaticTable<T, M::m[ I ][ 1 ]>& deltaVecTable(deltaVector.getValueI(dataI));
-						for ( Size outI(0); outI < deltaVecTable.getSize(); outI++ ) {
-							const Func& activationFunc(neuralLayer->getActivationFunc(outI));
-							T sum(0);
-							for ( Size outINext(0); outINext < nextDeltaVecTable.getSize(); outINext++ ) {
-								const StaticTable<T, M::m[ I + Size(1) ][ 0 ] + Size(1)>& paramTable(nextNeuralLayer->getParams(outINext));
-								sum += paramTable[ outI ] * nextDeltaVecTable[ outINext ];
-							}
-							deltaVecTable[ outI ] = activationFunc.grad(sum, outTable[outI]);
-						}
-					}
+					neuralLayer->computeDeltas(*getLayer<I + Size(1)>());
 				}
 
-				for ( Size featuresI(0); featuresI < neuralLayer->getNbFeatures(); featuresI++ ) {
-					for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
-						T ySum(0);
-
-						for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
-							const StaticTable<T, M::m[ I ][ 1 ]>& delta(deltaVector.getValueI(dataI));
-							const StaticTable<T, M::m[ I ][ 0 ]>& inTable(inVector.getValueI(dataI));
-
-							ySum += inTable[ featuresI ] * delta[ outI ];
-						}
-						ySum *= sizeInverse;
-						neuralLayer->setGrad(outI, featuresI, ySum);
-					}
-				}
-				for ( Size paramI(neuralLayer->getNbFeatures()); paramI < neuralLayer->getNbParams(); paramI++ ) {
-					for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
-						T ySum(0);
-
-						for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
-							const StaticTable<T, M::m[ I ][ 1 ]>& delta(deltaVector.getValueI(dataI));
-
-							ySum += delta[ outI ];
-						}
-						ySum *= sizeInverse;
-						neuralLayer->setGrad(outI, paramI, ySum);
-					}
-				}
+				neuralLayer->computeBackPropagation();
 			}
 			if constexpr ( I > Size(0) ) {
 				return _computeBackPropagation<I - Size(1)>();
 			}
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, Func>::_updateModel(const T& learningRate) {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_updateModel(const T& learningRate) {
 			if constexpr ( I < M::nbLayers ) {
-				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* neuralLayer(getLayer<I>());
+				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* neuralLayer(getLayer<I>());
 
-				for ( Size outI(0); outI < neuralLayer->getNbOut(); outI++ ) {
-					for ( Size paramI(0); paramI < neuralLayer->getNbParams(); paramI++ ) {
-						const T& grad(neuralLayer->getGrad(outI, paramI));
-						neuralLayer->setParam(outI, paramI, neuralLayer->getParam(outI, paramI) - learningRate * grad);
-					}
-				}
+				neuralLayer->updateModel(learningRate);
 
 				return _updateModel<I + Size(1)>(learningRate);
 			}
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, Func>::_constructNeuralLayer() {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_constructNeuralLayer() {
 			if constexpr ( I < M::nbLayers ) {
 				const Vector<StaticTable<T, M::m[ I ][ 0 ]>>* inVector;
 				if constexpr ( I == Size(0) ) {
@@ -384,14 +313,14 @@ namespace Math {
 				} else {
 					inVector = &getLayer<I - Size(1)>()->getOutVector();
 				}
-				this->layerTable[ I ] = reinterpret_cast< void* >( new NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>(inVector) );
+				this->layerTable[ I ] = reinterpret_cast< void* >( new NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>(inVector) );
 				_constructNeuralLayer<I + Size(1)>();
 			}
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, Func>::_destructNeuralLayer() {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_destructNeuralLayer() {
 			if constexpr ( I < M::nbLayers ) {
 				delete getLayer<I>();
 
@@ -399,9 +328,9 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline constexpr bool DeepNeuralNetwork<T, M, Func>::_checkModel() const {
+		inline constexpr bool DeepNeuralNetwork<T, M, ActivationFunc>::_checkModel() const {
 			if constexpr ( I < M::nbLayers ) {
 
 				if ( M::m[ I - Size(1) ][ 1 ] != M::m[ I ][ 0 ] ) {
@@ -415,11 +344,11 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, typename Func>
+		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, Func>::_addData() {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_addData() {
 			if constexpr ( I < M::nbLayers ) {
-				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], Func>* neuralLayer(getLayer<I>());
+				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* neuralLayer(getLayer<I>());
 				neuralLayer->addData();
 				_addData<I + Size(1)>();
 			}

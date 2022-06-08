@@ -32,7 +32,7 @@
  //#define SPEEDTEST_ARITHMETIC
  //#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
-#define SPEEDTEST_LINEAR_REGRESSION
+//#define SPEEDTEST_LINEAR_REGRESSION
 #define SPEEDTEST_DEEP_NEURAL_NETWORK
 
 
@@ -57,7 +57,7 @@
 //#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
-#define DEBUG_LINEAR_REGRESSION
+//#define DEBUG_LINEAR_REGRESSION
 #define DEBUG_DEEP_NEURAL_NETWORK
 
 
@@ -2511,16 +2511,18 @@ int main(int argc, char* argv[]) {
 #endif
 #ifdef SPEEDTEST_LINEAR_REGRESSION
 	{
-		Math::ML::LinearRegression<double, 10, 10> linearRegression;
+		constexpr Size NbFeatures(500);
+		constexpr Size NbOut(500);
+		Math::ML::LinearRegression<double, NbFeatures, NbOut> linearRegression;
 
-		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.0, 0));
+		Vector<Math::ML::Data<double, NbFeatures, NbOut>> dataVector(Math::ML::generateData<double, NbFeatures, NbOut>(Size(1000), 0.0, 0));
 
 		linearRegression.addData(dataVector);
 
 		// Log::displayLog(String::format("Current cost : %.", linearRegression.computeCoefficientOfDetermination() * 100.0));
 
 		Log::startChrono();
-		linearRegression.gradientDescent(0.01, Size(1000), 0);
+		linearRegression.gradientDescent(0.01, Size(1), 0);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Linear regression : %%", linearRegression.computeCoefficientOfDetermination() * 100.0));
 	}
