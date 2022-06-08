@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <xmmintrin.h>
+#include <immintrin.h>
+
 #include "../BuildConfig.h"
 #include "Operations.h"
 #include "Vec.h"
@@ -115,6 +118,8 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T dot( const Vec4<T> & v1, const Vec4<T> & v2 );
 	template<typename T>
+	MATH_FUNC_QUALIFIER T dot(const T* v1, const T* v2, const Size n);
+	template<typename T>
 	MATH_FUNC_QUALIFIER T dot(const Vec<T>& v1, const Vec<T>& v2);
 
 	template<typename T>
@@ -186,6 +191,9 @@ namespace Math {
 	MATH_FUNC_QUALIFIER T standardDeviation(const Vec4<T>& v);
 	template<typename T>
 	MATH_FUNC_QUALIFIER T standardDeviation(const Vec<T>& v);
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER void mul(T* o, const T* v1, const T* v2, const Size N);
 
 }
 

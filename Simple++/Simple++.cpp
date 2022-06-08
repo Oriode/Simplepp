@@ -6,6 +6,7 @@
  * @date		26/05/2016 (DMY)
  */
 
+#define SPEEDTEST_MATH
  //#define SPEEDTEST_DRAWLINE
  //#define SPEEDTEST_DRAWLINE_FLOAT
  //#define SPEEDTEST_GRAPH
@@ -33,7 +34,7 @@
  //#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
 //#define SPEEDTEST_LINEAR_REGRESSION
-#define SPEEDTEST_DEEP_NEURAL_NETWORK
+//#define SPEEDTEST_DEEP_NEURAL_NETWORK
 
 
 //#define DEBUG_GRAPHIC
@@ -70,6 +71,7 @@
 #include <functional>
 #include <filesystem>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include "Network/Network.h"
 #include "Network/HTTPClient.h"
@@ -1671,7 +1673,53 @@ int main(int argc, char* argv[]) {
 	constexpr unsigned long long int K100(100000);
 	constexpr unsigned long long int K10(10000);
 	constexpr unsigned long long int K1(1000);
+#ifdef SPEEDTEST_MATH
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// SPEED TEST : Math								//
+		{
+			Math::Vec4<float> v1(Math::randomF());
+			Math::Vec4<float> v2(Math::randomF());
 
+			Log::startChrono();
+			for ( Size i(0); i < M10; i++ ) {
+				v1[ 0 ] = Math::dot(v1, v2);
+			}
+			Log::stopChrono();
+			Log::displayChrono(String::format("Vec4 dot product : %.", v1.toString()));
+		}
+		{
+			constexpr Size vSize(M10 * 16);
+			typedef float F;
+			F* v1;
+			F* v2;
+			if constexpr ( true ) {
+				v1 = (reinterpret_cast<F*>(_aligned_malloc(sizeof(F) * vSize, 512) ) );
+				v2 = (reinterpret_cast<F*>(_aligned_malloc(sizeof(F) * vSize, 512)));
+			} else {
+				v1 = (new F[ vSize ]);
+				v2 = (new F[ vSize ]);
+			}
+
+			for ( Size i(0); i < vSize >> Size(4); i++ ) {
+				F r(Math::randomF());
+				for ( Size j(0); j < Size(1) << Size(4); j++ ) {
+					v1[ i ] = r;
+					v2[ i ] = r;
+				}
+			}
+
+			F dotSum(0.0f);
+
+			Log::startChrono();
+			for ( Size i(0); i < Size(1); i++ ) {
+				Math::mul(v1, v2, v1, vSize);
+			}
+			Log::stopChrono();
+			Log::displayChrono(String::format("Vec4 dot product : %.", v1[0]));
+		}
+	}
+#endif
 #ifdef SPEEDTEST_DRAWLINE
 	{
 		//////////////////////////////////////////////////////////////////////////
