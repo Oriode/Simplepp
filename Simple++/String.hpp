@@ -1323,7 +1323,6 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		( *buffer++ ) = T('i');
 		( *buffer++ ) = T('n');
 		( *buffer++ ) = T('f');
-		( *buffer++ ) = T('\0');
 		return;
 	}
 
@@ -1333,14 +1332,12 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		( *buffer++ ) = T('n');
 		( *buffer++ ) = T('a');
 		( *buffer++ ) = T('n');
-		( *buffer++ ) = T('\0');
 		return;
 	}
 
 	if ( number == Type( 0 ) ) {
 		( *buffer ) = T( '0' );
 		buffer++;
-		( *buffer ) = T( '\0' );
 		return;
 	}
 
