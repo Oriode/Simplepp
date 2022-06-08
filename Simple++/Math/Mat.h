@@ -89,6 +89,9 @@ namespace Math {
 		Vec<T> getValueM(const Size m) const;
 		Vec<T> getValueN(const Size n) const;
 
+		const T* getDataM(const Size m) const;
+		T* getDataM(const Size m);
+
 		/************************************************************************/
 		/* ================              LOGICAL               ================ */
 		/************************************************************************/
@@ -359,6 +362,16 @@ namespace Math {
 			outputVec.setValueI(i, getValueI(i, n));
 		}
 		return outputVec;
+	}
+
+	template<typename T>
+	inline const T* Mat<T>::getDataM(const Size m) const {
+		return const_cast<Mat<T> *>(this )->getDataM(m);
+	}
+
+	template<typename T>
+	inline T* Mat<T>::getDataM(const Size m) {
+		return this->dataTable + m * getSizeN();
 	}
 
 	template<typename T>
