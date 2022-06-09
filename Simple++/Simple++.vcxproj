@@ -182,7 +182,6 @@
     <ClInclude Include="GL\GLFW.h" />
     <ClInclude Include="GL\GLFWWindow.h" />
     <ClInclude Include="Graphic\FreeImage.hpp" />
-    <ClInclude Include="IO\BasicSimpleIO.hpp" />
     <ClInclude Include="IO\FileStream.h" />
     <ClInclude Include="IO\FileStream.hpp" />
     <ClInclude Include="IO\Loadable.h" />
@@ -191,8 +190,6 @@
     <ClInclude Include="IO\Resource.hpp" />
     <ClInclude Include="IO\Manager.h" />
     <ClInclude Include="IO\Manager.hpp" />
-    <ClInclude Include="IO\SimpleFileStream.h" />
-    <ClInclude Include="IO\SimpleFileStream.hpp" />
     <ClInclude Include="JSON\Node.h" />
     <ClInclude Include="JSON\Node.hpp" />
     <ClInclude Include="List.h" />
@@ -202,7 +199,6 @@
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="IO\BasicIO.h" />
     <ClInclude Include="IO\BasicIO.hpp" />
-    <ClInclude Include="IO\BasicSimpleIO.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Graphic.hpp" />
     <ClInclude Include="Graphic\BasicGraphic.h" />
@@ -308,8 +304,6 @@
     <ClInclude Include="XML\Param.h" />
     <ClInclude Include="XML\Param.hpp" />
     <ClInclude Include="XML\XMLDocument.h" />
-    <ClInclude Include="IO\SimpleIO.h" />
-    <ClInclude Include="IO\SimpleIO.hpp" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Math\Logical.h" />
     <ClInclude Include="Math\Math.h" />
@@ -370,7 +364,6 @@
     <ClCompile Include="GL\BasicGlLoadable.cpp" />
     <ClCompile Include="GL\GLFW.cpp" />
     <ClCompile Include="GL\GLFWWindow.cpp" />
-    <ClCompile Include="IO\BasicSimpleIO.cpp" />
     <ClCompile Include="Math\BasicComparable.cpp" />
     <ClCompile Include="Simple++.cpp" />
     <ClCompile Include="UI\Event.cpp" />

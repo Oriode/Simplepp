@@ -15,8 +15,6 @@
 #include "Math/Logical.h"
 #include "Utility.h"
 #include "SimpleLog.h"
-#include "IO/BasicIO.h"
-#include "IO/SimpleIO.h"
 
  /** @brief	The Random Access Iterator */
 template<typename T>

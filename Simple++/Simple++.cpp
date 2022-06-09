@@ -55,11 +55,11 @@
 // #define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-//#define DEBUG_VEC
+#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
 //#define DEBUG_LINEAR_REGRESSION
-#define DEBUG_DEEP_NEURAL_NETWORK
+//#define DEBUG_DEEP_NEURAL_NETWORK
 
 
 #ifndef _LIB
@@ -1555,6 +1555,9 @@ int main(int argc, char* argv[]) {
 		info(Math::length(Math::normalize(v5)));
 
 		v1 = { 2,2,2,2 };
+
+		assert(IO::write(OS::Path("testV1.vec"), &v1));
+		assert(IO::read(OS::Path("testV1.vec"), &v1));
 
 		info(v1.toJSON()->toString());
 

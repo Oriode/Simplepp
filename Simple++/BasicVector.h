@@ -4,8 +4,6 @@
 #include "Math/BasicMath.h"
 #include "Utility.h"
 #include "SimpleLog.h"
-#include "IO/BasicIO.h"
-#include "IO/SimpleIO.h"
 #include "Table.h"
 
 template<typename T>

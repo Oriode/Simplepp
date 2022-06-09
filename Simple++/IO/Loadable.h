@@ -1,8 +1,7 @@
 #pragma once
 
-#include "IO.h"
+#include "../IO/BasicIO.h"
 #include "../BasicLoadable.h"
-#include "SimpleFileStream.h"
 #include "../OS/Path.h"
 
 namespace IO {

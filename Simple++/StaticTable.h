@@ -3,7 +3,6 @@
 #include "Utility.h"
 #include "SimpleLog.h"
 #include "IO/BasicIO.h"
-#include "IO/SimpleIO.h"
 
 template<typename T, Size N>
 class StaticTable : public IO::BasicIO {

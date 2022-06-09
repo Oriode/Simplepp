@@ -2,7 +2,6 @@
 
 #include "../Log.h"
 #include "../UTF8String.h"
-#include "SimpleIO.h"
 #include "BasicIO.h"
 #include "../OS/Path.h"
 #include "FileStream.h"
