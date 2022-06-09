@@ -70,12 +70,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	template<typename C>
-	C ParamT<T>::toString() const {
-		C newString;
+	template<typename S>
+	S ParamT<T>::toString() const {
+		S newString;
 		newString.reserve( this -> name.getSize() + this -> value.getSize() + 4 );
 
-		_writeXML<C, C::ElemType>( newString );
+		_writeXML<S, S::ElemType>( newString );
 		return newString;
 	}
 }

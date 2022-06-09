@@ -16,7 +16,7 @@ MultiMap<I, T, Compare>::MultiMap( MultiMap<I, T, Compare> && map ) : Map<I, Vec
 template<typename I, typename T, typename Compare>
 template<typename C>
 MultiMap<I, T, Compare>::operator BasicString<C>() const {
-	return toString<C>();
+	return toString<BasicString<C>>();
 }
 
 template<typename I, typename T, typename Compare>

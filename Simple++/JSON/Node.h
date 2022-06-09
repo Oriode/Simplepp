@@ -213,8 +213,8 @@ namespace JSON {
 		///@brief Print an human-readable String of this BasicNodeT<T> and it's children.
 		///@param indent Identation.
 		///@return Human-redable String.
-		template<typename C = T>
-		C toString( unsigned int indent = 0 ) const;
+		template<typename S = T>
+		S toString( unsigned int indent = 0 ) const;
 
 		///@brief Write this node to an Map that support opperator '<<'.
 		///@param o Map to write to.
@@ -590,8 +590,8 @@ namespace JSON {
 		///@brief Print an human-readable String of this BasicNodeT<T> and it's children.
 		///@param indent Identation.
 		///@return Human-redable String.
-		template<typename C = T>
-		C toString(unsigned int indent = 0) const;
+		template<typename S = T>
+		S toString(unsigned int indent = 0) const;
 
 	private:
 		void _unload();

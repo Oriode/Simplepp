@@ -77,6 +77,13 @@ public:
 	template<typename Stream>
 	bool write(Stream* stream) const;
 
+	template<typename S = String>
+	S toString() const;
+
+	/************************************************************************/
+	/* Static                                                               */
+	/************************************************************************/
+
 	static const StaticTable<T, N>* reinterpret(const T* data);
 	static StaticTable<T, N>* reinterpret(T* data);
 
@@ -173,6 +180,28 @@ inline bool StaticTable<T, N>::write(Stream* stream) const {
 	}
 
 	return true;
+}
+
+template<typename T, Size N>
+template<typename S>
+inline S StaticTable<T, N>::toString() const {
+	S outputStr;
+
+	outputStr << S::ElemType('[');
+	outputStr << S::ElemType(' ');
+
+	for ( Size i(0); i < getSize(); i++ ) {
+		if ( i > Size(0) ) {
+			outputStr << S::ElemType(',');
+			outputStr << S::ElemType(' ');
+		}
+		outputStr << getValueI(i);
+	}
+
+	outputStr << S::ElemType(' ');
+	outputStr << S::ElemType(']');
+
+	return outputStr;
 }
 
 template<typename T, Size N>

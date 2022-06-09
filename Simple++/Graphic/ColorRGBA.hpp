@@ -215,26 +215,26 @@ namespace Graphic {
 	template<typename T>
 	template<typename C /*= char*/>
 	ColorRGBA<T>::operator BasicString<C>() const {
-		return toString<C>();
+		return toString<BasicString<C>>();
 	}
 
 
 
 	template<typename T>
-	template<typename C /*= char*/>
-	BasicString<C> ColorRGBA<T>::toString() const {
-		BasicString<C> newString;
+	template<typename S /*= String*/>
+	S ColorRGBA<T>::toString() const {
+		S newString;
 		newString.reserve( 20 );
-		newString << BasicString<C>("RGBA(") << this -> r << C('\t') << this -> g << C( '\t' ) << this -> b << C( '\t' ) << this -> a << C( ')' );
+		newString << S::ElemType('R') << S::ElemType('G') << S::ElemType('B') << S::ElemType('A') << S::ElemType('(') << this -> r << S::ElemType('\t') << this -> g << S::ElemType('\t') << this -> b << S::ElemType('\t') << this -> a << S::ElemType(')');
 		return newString;
 	}
 
 	template<typename T>
-	template<typename C /*= char*/>
-	BasicString<C> ColorRGBA<T>::toHex() const {
-		BasicString<C> newString;
+	template<typename S /*= String*/>
+	S ColorRGBA<T>::toHex() const {
+		S newString;
 		newString.reserve( 8 );
-		newString << C( '#' ) << BasicString<C>::toString<16>( this -> r ) << BasicString<C>::toString<16>( this -> g ) << BasicString<C>::toString<16>( this -> b ) << BasicString<C>::toString<16>( this -> a );
+		newString << S::ElemType( '#' ) << S::toString<16>( this -> r ) << S::toString<16>( this -> g ) << S::toString<16>( this -> b ) << S::toString<16>( this -> a );
 		return newString;
 	}
 

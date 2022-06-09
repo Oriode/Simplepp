@@ -282,6 +282,9 @@ public:
 	 */
 	const Size searchI(const T& data) const;
 
+	template<typename S = String>
+	S toString() const;
+
 	/************************************************************************/
 	/* Static                                                               */
 	/************************************************************************/
@@ -769,6 +772,28 @@ const Size Table<T>::searchI(const T& data) const {
 			return i;
 	}
 	return BasicVector<T>::overflow;
+}
+
+template<typename T>
+template<typename S>
+inline S Table<T>::toString() const {
+	S outputStr;
+
+	outputStr << S::ElemType('[');
+	outputStr << S::ElemType(' ');
+
+	for ( Size i(0); i < this->size; i++ ) {
+		if ( i > Size(0) ) {
+			outputStr << S::ElemType(',');
+			outputStr << S::ElemType(' ');
+		}
+		outputStr << this->dataTable[ i ];
+	}
+
+	outputStr << S::ElemType(' ');
+	outputStr << S::ElemType(']');
+
+	return outputStr;
 }
 
 template<typename T>

@@ -473,38 +473,19 @@ namespace Math {
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Mat3<T>::operator BasicString<U>() const {
-		return toString();
-	}
-
-
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Mat3<T> & v ) {
-		stream << '[' << v[0].x << '\t' << v[1].x << '\t' << v[2].x << ']' << '\n';
-		stream << '[' << v[0].y << '\t' << v[1].y << '\t' << v[2].y << ']' << '\n';
-		stream << '[' << v[0].z << '\t' << v[1].z << '\t' << v[2].z << ']' << '\n';
-		return stream;
+		return toString< BasicString<U>>();
 	}
 
 
 	template<typename T /*= float*/>
-	template<typename C /*=char*/>
-	MATH_FUNC_QUALIFIER BasicString<C> Mat3<T>::toString() const {
-		BasicString<C> newString;
+	template<typename S /*=String*/>
+	MATH_FUNC_QUALIFIER S Mat3<T>::toString() const {
+		S newString;
 		newString.reserve( 180 );
-		newString << C( '[' ) << this -> column[0].x << C( '\t' ) << this -> column[1].x << C( '\t' ) << this -> column[2].x << C( ']' ) << C( '\n' );
-		newString << C( '[' ) << this -> column[0].y << C( '\t' ) << this -> column[1].y << C( '\t' ) << this -> column[2].y << C( ']' ) << C( '\n' );
-		newString << C( '[' ) << this -> column[0].z << C( '\t' ) << this -> column[1].z << C( '\t' ) << this -> column[2].z << C( ']' ) << C( '\n' );
+		newString << S::ElemType( '[' ) << this -> column[0].x << S::ElemType( '\t' ) << this -> column[1].x << S::ElemType( '\t' ) << this -> column[2].x << S::ElemType( ']' ) << S::ElemType( '\n' );
+		newString << S::ElemType( '[' ) << this -> column[0].y << S::ElemType( '\t' ) << this -> column[1].y << S::ElemType( '\t' ) << this -> column[2].y << S::ElemType( ']' ) << S::ElemType( '\n' );
+		newString << S::ElemType( '[' ) << this -> column[0].z << S::ElemType( '\t' ) << this -> column[1].z << S::ElemType( '\t' ) << this -> column[2].z << S::ElemType( ']' ) << S::ElemType( '\n' );
 		return newString;
-	}
-
-	template<typename T, typename C>
-	MATH_FUNC_QUALIFIER BasicString<C> & operator<<( BasicString<C> & string, const Mat3<T> & v ) {
-		string << C( '[' ) << v[0].x << C( '\t' ) << v[1].x << C( '\t' ) << v[2].x << C( ']' ) << C( '\n' );
-		string << C( '[' ) << v[0].y << C( '\t' ) << v[1].y << C( '\t' ) << v[2].y << C( ']' ) << C( '\n' );
-		string << C( '[' ) << v[0].z << C( '\t' ) << v[1].z << C( '\t' ) << v[2].z << C( ']' ) << C( '\n' );
-		return string;
 	}
 
 

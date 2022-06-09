@@ -76,8 +76,8 @@ namespace Math {
 
 		MATH_FUNC_QUALIFIER void inverse();
 
-		template<typename U = char>
-		MATH_FUNC_QUALIFIER BasicString<U> toString() const;
+		template<typename S = String>
+		MATH_FUNC_QUALIFIER S toString() const;
 
 		constexpr Size getSize() const;
 
@@ -202,12 +202,6 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Vec2<T> operator%( const Vec2<T> & v1, const T & v2 );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> operator%( const T & v1, const Vec2<T> & v2 );
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Vec2<T> & v );
-	template<typename T, typename U = char>
-	MATH_FUNC_QUALIFIER BasicString<U> & operator<<( BasicString<U> & string, const Vec2<T> & v );
 
 
 	typedef Vec2<MATH_FLOAT_DEFAULT> vec2;

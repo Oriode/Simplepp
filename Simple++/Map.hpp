@@ -935,16 +935,16 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 
 
 template<typename T>
-template<typename C>
-BasicString<C> RBNode<T>::toString() const {
-	return RBNode<T>::toString<C>( this );
+template<typename S>
+S RBNode<T>::toString() const {
+	return RBNode<T>::toString<S>( this );
 }
 
 
 template<typename T>
-template<typename C>
-BasicString<C> RBNode<T>::toString( RBNode<T> * root ) {
-	if ( !root ) return BasicString<C>();
+template<typename S>
+S RBNode<T>::toString( RBNode<T> * root ) {
+	if ( !root ) return S();
 
 	struct Stack {
 	public:
@@ -959,7 +959,7 @@ BasicString<C> RBNode<T>::toString( RBNode<T> * root ) {
 	stack.push( Stack( root, 0 ) );
 
 
-	BasicString<C> string;
+	S string;
 	string.reserve( 100 );
 
 
@@ -970,12 +970,12 @@ BasicString<C> RBNode<T>::toString( RBNode<T> * root ) {
 
 
 		for ( unsigned int i( 0 ); i < tabs; i++ )
-			string << C( '\t' );
+			string << S::ElemType( '\t' );
 		if ( node -> getColor() == Color::Black )
-			string << C( 'B' );
+			string << S::ElemType( 'B' );
 		else
-			string << C( 'R' );
-		string << BasicString<C>( node -> getValue() ) << C( '\n' );
+			string << S::ElemType( 'R' );
+		string << S( node -> getValue() ) << S::ElemType( '\n' );
 
 
 		if ( node -> getRight() )
@@ -1090,13 +1090,13 @@ void RBTree<I, T, Compare>::_clear() {
 template<typename I, typename T, typename Compare>
 template<typename C>
 inline RBTree<I, T, Compare>::operator BasicString<C>() const {
-	return toString<C>();
+	return toString<BasicString<C>>();
 }
 
 template<typename I, typename T, typename Compare>
-template<typename C>
-BasicString<C> RBTree<I, T, Compare>::toString() const {
-	return RBNode< MapObject<I, T> >::toString( this -> rootNode );
+template<typename S>
+S RBTree<I, T, Compare>::toString() const {
+	return RBNode< MapObject<I, T> >::toString<S>( this -> rootNode );
 }
 
 template<typename I, typename T, typename Compare>

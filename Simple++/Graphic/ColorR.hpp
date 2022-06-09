@@ -63,20 +63,20 @@ namespace Graphic {
 
 
 	template<typename T>
-	template<typename C /*= char*/>
-	BasicString<C> ColorR<T>::toString() const {
-		BasicString<C> newString;
+	template<typename S /*= String*/>
+	S ColorR<T>::toString() const {
+		S newString;
 		newString.reserve( 20 );
-		newString << C( 'R' ) << C( '(' ) << this -> r << C( ')' );
+		newString << S::ElemType( 'R' ) << S::ElemType( '(' ) << this -> r << S::ElemType( ')' );
 		return newString;
 	}
 
 	template<typename T>
-	template<typename C /*= char*/>
-	BasicString<C> ColorR<T>::toHex() const {
-		BasicString<C> newString;
+	template<typename S /*= String*/>
+	S ColorR<T>::toHex() const {
+		S newString;
 		newString.reserve( 4 );
-		newString << C( '#' ) << BasicString<C>::toString<16>( this -> r );
+		newString << S::ElemType( '#' ) << S::toString<16>( this -> r );
 		return newString;
 	}
 
@@ -88,7 +88,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename C /*= char*/>
 	ColorR<T>::operator BasicString<C>() const {
-		return toString<C>();
+		return toString<BasicString<C>>();
 	}
 
 	template<typename T>

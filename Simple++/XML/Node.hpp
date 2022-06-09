@@ -682,12 +682,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	template<typename C>
-	C NodeT<T>::toString( unsigned int indent ) const {
-		C newString;
+	template<typename S>
+	S NodeT<T>::toString( unsigned int indent ) const {
+		S newString;
 		newString.reserve( 128 );
 
-		_writeXML<C, C::ElemType>( newString, indent );
+		_writeXML<S, S::ElemType>( newString, indent );
 		return newString;
 	}
 
@@ -1092,12 +1092,12 @@ bool NodeTextT<T>::write( Stream * stream ) const {
 	}
 
 	template<typename T>
-	template<typename C>
-	C NodeTextT<T>::toString( unsigned int indent ) const {
-		C newString;
+	template<typename S>
+	S NodeTextT<T>::toString( unsigned int indent ) const {
+		S newString;
 		newString.reserve( 128 );
 
-		_writeXML<C, C::ElemType>( newString, indent );
+		_writeXML<S, S::ElemType>( newString, indent );
 		return newString;
 	}
 

@@ -301,8 +301,8 @@ public:
 	 *
 	 * @returns	StringASCII.
 	 */
-	template<typename C = char>
-	BasicString<C> toString() const;
+	template<typename S = String>
+	S toString() const;
 
 	/**
 	 * @brief 	read from a file stream (children will be read recursively)
@@ -387,8 +387,8 @@ public:
 	 *
 	 * @returns	StringASCII.
 	 */
-	template<typename C = char>
-	static BasicString<C> toString( RBNode<T> * root );
+	template<typename S = String>
+	static S toString( RBNode<T> * root );
 
 
 	/**
@@ -856,8 +856,8 @@ public:
 	 *
 	 * @returns	StringASCII.
 	 */
-	template<typename C = char>
-	BasicString<C> toString() const;
+	template<typename S = String>
+	S toString() const;
 
 	/**
 	 * @brief 	Read from a file stream (children will be read recursively)

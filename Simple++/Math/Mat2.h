@@ -109,8 +109,8 @@ namespace Math {
 
 		MATH_FUNC_QUALIFIER Mat2<T> inverse() const;
 
-		template<typename C = char>
-		MATH_FUNC_QUALIFIER BasicString<C> toString() const;
+		template<typename S = String>
+		MATH_FUNC_QUALIFIER S toString() const;
 
 		MATH_FUNC_QUALIFIER T getDeterminant() const;
 
@@ -184,16 +184,6 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Mat2<T> operator<<( const Mat2<T> & m, const U & v );
 	template<typename T, typename U>
 	MATH_FUNC_QUALIFIER Mat2<T> operator<<( const U & v, const Mat2<T> & m );
-
-
-
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Mat2<T> & v );
-
-	template<typename T, typename C = char>
-	MATH_FUNC_QUALIFIER BasicString<C> & operator<<( BasicString<C> & stream, const Mat2<T> & v );
 
 	typedef Mat2<MATH_FLOAT_DEFAULT> mat2;
 	typedef Mat2<float> mat2f;

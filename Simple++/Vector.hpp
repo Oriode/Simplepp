@@ -747,11 +747,9 @@ bool Vector<T>::read( Stream * stream ) {
 	}
 	allocate( this -> size );
 
-	for ( Size i( 0 ); i < this -> size; i++ ) {
-		if ( !IO::read( stream, &( this -> dataTable[ i ] ) ) ) {
-			_clear();
-			return false;
-		}
+	if ( !IO::read( stream, getData(), getSize() ) ) {
+		_clear();
+		return false;
 	}
 
 	return true;

@@ -707,15 +707,6 @@ namespace Time {
 		return timeT;
 	}
 
-	/************************************************************************/
-	/* OPERATOR CONCATENATE                                                 */
-	/************************************************************************/
-	template<typename C, typename T>
-	BasicString<C> & operator<<( BasicString<C> & str, const DateT<T> & date ) {
-		date.concatISO( str );
-		return str;
-	}
-
 
 	/************************************************************************/
 	/* OPERATOR LOGICAL                                                     */
@@ -781,34 +772,34 @@ namespace Time {
 	}
 
 	template<typename T>
-	template<typename C>
-	const BasicString<C> & DateT<T>::getWeekDayStr( unsigned char weekDay ) {
-		static const BasicString<C> weekDayShortStr[ 7 ] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fry", "Sat" };
+	template<typename S>
+	const S & DateT<T>::getWeekDayStr( unsigned char weekDay ) {
+		static const S weekDayShortStr[ 7 ] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fry", "Sat" };
 		return weekDayShortStr[ weekDay ];
 	}
 
 	template<typename T>
-	template<typename C>
-	const BasicString<C> & DateT<T>::getMonthStr( unsigned char month ) {
-		static const BasicString<C> monthShortStr[ 12 ] = { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	template<typename S>
+	const S & DateT<T>::getMonthStr( unsigned char month ) {
+		static const S monthShortStr[ 12 ] = { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
 		return monthShortStr[ month ];
 	}
 
 	template<typename T>
-	template<typename C>
-	BasicString<C> DateT<T>::toString() const {
-		BasicString<C> newString;
+	template<typename S>
+	S DateT<T>::toString() const {
+		S newString;
 		newString.reserve( 100 );
 		concat( newString );
 		return newString;
 	}
 
 	template<typename T>
-	template<typename C>
-	void DateT<T>::concat( BasicString<C> & str ) const {
-		str.concat( getWeekDayStr( DateT<T>::getWeekDay( *this ) ) );
+	template<typename S>
+	void DateT<T>::concat( S & str ) const {
+		str.concat( getWeekDayStr<S>( DateT<T>::getWeekDay( *this ) ) );
 		str.concat( C( ' ' ) );
-		str.concat( getMonthStr( getMonth() ) );
+		str.concat( getMonthStr<S>( getMonth() ) );
 		str.concat( C( ' ' ) );
 		str.concat( getDay() );
 		str.concat( C( ' ' ) );
@@ -820,17 +811,17 @@ namespace Time {
 	}
 
 	template<typename T>
-	template<typename C>
-	BasicString<C> DateT<T>::toString( const BasicString<C> & tpl ) const {
-		BasicString<C> newString;
+	template<typename S>
+	S DateT<T>::toString( const S & tpl ) const {
+		S newString;
 		newString.reserve( 100 );
 		concat( newString, tpl );
 		return newString;
 	}
 
 	template<typename T>
-	template<typename C>
-	void DateT<T>::concat( BasicString<C> & str, const BasicString<C> & tpl ) const {
+	template<typename S>
+	void DateT<T>::concat( S & str, const S & tpl ) const {
 		for ( auto it = tpl.getBegin(); it != tpl.getEnd(); it++ ) {
 			switch ( *it ) {
 				case C( '\\' ):
@@ -859,10 +850,10 @@ namespace Time {
 					break;
 					//DAY OF THE WEEK
 				case C( 'a' ):
-					str << getWeekDayStr( DateT<T>::getWeekDay( *this ) );
+					str << getWeekDayStr<S>( DateT<T>::getWeekDay( *this ) );
 					break;
 				case C( 'u' ):
-					str << ( DateT<T>::getWeekDay( *this ) + 1 );
+					str << ( DateT<T>::getWeekDay<S>( *this ) + 1 );
 					break;
 					//HOURS
 				case C( 'H' ):
@@ -881,17 +872,17 @@ namespace Time {
 	}
 
 	template<typename T>
-	template<typename C>
-	BasicString<C> DateT<T>::toStringISO( DateT<T>::ISOFormat isoFormat ) const {
-		BasicString<C> newString;
+	template<typename S>
+	S DateT<T>::toStringISO( DateT<T>::ISOFormat isoFormat ) const {
+		S newString;
 		newString.reserve( 100 );
 		concatISO( newString, isoFormat );
 		return newString;
 	}
 
 	template<typename T>
-	template<typename C>
-	void DateT<T>::concatISO( BasicString<C> & str, DateT<T>::ISOFormat isoFormat ) const {
+	template<typename S>
+	void DateT<T>::concatISO( S & str, DateT<T>::ISOFormat isoFormat ) const {
 
 		str.concatFill( getYear(), 4, C( '0' ) );
 		str.concat( C( '-' ) );

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <ostream>
-
 #include "Vec4.h"
 #include "Operations.h"
 
@@ -104,8 +102,8 @@ namespace Math {
 
 		MATH_FUNC_QUALIFIER Mat4<T> inverse() const;
 
-		template<typename C = char>
-		MATH_FUNC_QUALIFIER BasicString<C> toString() const;
+		template<typename S = String>
+		MATH_FUNC_QUALIFIER S toString() const;
 
 		MATH_FUNC_QUALIFIER T getDeterminant() const;
 
@@ -188,12 +186,6 @@ namespace Math {
 	MATH_FUNC_QUALIFIER Mat4<T> operator%( const Mat4<T> & m, const T & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Mat4<T> operator%( const T & v, const Mat4<T> & m );
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Mat4<T> & v );
-
-	template<typename T, typename C = char>
-	MATH_FUNC_QUALIFIER BasicString<C> & operator<<( BasicString<C> & stream, const Mat4<T> & v );
 
 	typedef Mat4<MATH_FLOAT_DEFAULT> mat4;
 	typedef Mat4<float> mat4f;

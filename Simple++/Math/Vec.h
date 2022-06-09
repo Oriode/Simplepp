@@ -112,9 +112,6 @@ namespace Math {
 		Vec<T>& ones();
 		Vec<T>& randomF();
 
-		template<typename S = String>
-		S toString() const;
-
 		///@brief Read a JSON object and set this to the read values.
 		///@param nodeArray Pointer to the JSON object to be read.
 		///@return true if success, false otherwise.
@@ -245,28 +242,6 @@ namespace Math {
 	template<typename T>
 	inline Vec<T>& Vec<T>::randomF() {
 		return set(Math::RandomF());
-	}
-
-	template<typename T>
-	template<typename S>
-	inline S Vec<T>::toString() const {
-		S outputStr;
-
-		outputStr << S::ElemType('[');
-		outputStr << S::ElemType(' ');
-
-		for ( Size i(0); i < this->size; i++ ) {
-			if ( i > Size(0) ) {
-				outputStr << S::ElemType(',');
-				outputStr << S::ElemType(' ');
-			}
-			outputStr << this->dataTable[ i ];
-		}
-
-		outputStr << S::ElemType(' ');
-		outputStr << S::ElemType(']');
-
-		return outputStr;
 	}
 
 	template<typename T>

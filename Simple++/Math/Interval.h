@@ -49,7 +49,8 @@ namespace Math {
 		///@brief Ensure begin < end.
 		void sort();
 
-		String toString() const;
+		template<typename S = String>
+		S toString() const;
 
 		///@brief read from a file stream
 		///@param stream stream used to read load this object

@@ -98,8 +98,19 @@ namespace Math {
 	}
 
 	template<typename T>
-	String Interval<T>::toString() const {
-		return String::format("{%, %}", this->begin, this->end);
+	template<typename S>
+	S Interval<T>::toString() const {
+		S outString;
+		outString.reserve(20);
+
+		outString << S::ElemType('{');
+		outString << this->begin;
+		outString << S::ElemType(',');
+		outString << S::ElemType(' ');
+		outString << this->end;
+		outString << S::ElemType('}');
+
+		return outString;
 	}
 
 	template<typename T>

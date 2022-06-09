@@ -235,29 +235,29 @@ StreamT<T> & StreamT<T>::operator<<( const C( &data )[ N ] ) {
 }
 
 template<typename T>
-template<typename C>
-BasicString<C> StreamT<T>::toStringRaw() const {
+template<typename S>
+S StreamT<T>::toStringRaw() const {
 	Size stringSize( this->size * Vector<T>::elementSize / Vector<C>::elementSize );
-	return BasicString<C>(reinterpret_cast<C *>(this->dataTable), stringSize);
+	return S(reinterpret_cast<S::ElemType *>(this->dataTable), stringSize);
 }
 
 template<typename T>
-template<typename C>
-BasicString<C> StreamT<T>::toStringHexa() const {
+template<typename S>
+S StreamT<T>::toStringHexa() const {
 	Size stringSize( this->size * ( Vector<T>::elementSize * Size( 2 ) + 1 ) ); // Every byte takes 2 characters in hexadecimal display. We add a third for a space.
-	BasicString<C> newString;
+	S newString;
 	newString.resize( stringSize );
-	C * newStringData( newString.getData() );
+	S::ElemType * newStringData( newString.getData() );
 
 	for ( auto it( getBegin() ); it != getEnd(); iterate( &it ) ) {
 		const T & v( getValueIt( it ) );
 
-		Size nbCharWritten( BasicString<C>::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Size( 2 ), C('0'), 16));
+		Size nbCharWritten( S::toCStringWOSFill( v, &newStringData, Vector<T>::elementSize * Size( 2 ), S::ElemType('0'), 16));
 		if ( nbCharWritten != Vector<T>::elementSize * Size( 2 ) ) {
 			int i = 42;
 		}
 		assert( nbCharWritten == Vector<T>::elementSize * Size( 2 ) );
-		*( newStringData++ ) = C( ' ' );
+		*( newStringData++ ) = S::ElemType( ' ' );
 	}
 
 	assert( stringSize == newStringData - newString.getData() );

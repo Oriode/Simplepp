@@ -229,12 +229,12 @@ namespace JSON {
 	}
 
 	template<typename T>
-	template<typename C>
-	C BasicNodeT<T>::toString( unsigned int indent ) const {
-		C newString;
+	template<typename S>
+	S BasicNodeT<T>::toString( unsigned int indent ) const {
+		S newString;
 		newString.reserve( 128 );
 
-		_writeJSON<C, C::ElemType>( newString, indent );
+		_writeJSON<S, S::ElemType>( newString, indent );
 		return newString;
 	}
 
@@ -1604,12 +1604,12 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 	}
 
 	template<typename T>
-	template<typename C>
-	inline C DocumentT<T>::toString(unsigned int indent) const {
+	template<typename S>
+	inline S DocumentT<T>::toString(unsigned int indent) const {
 		if ( this->rootNode ) {
 			return this->rootNode->toString(indent);
 		} else {
-			return C::null;
+			return S::null;
 		}
 	}
 

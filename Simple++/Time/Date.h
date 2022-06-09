@@ -265,8 +265,8 @@ namespace Time {
 		 * @tparam	T	Generic type parameter.
 		 * @returns	Human readable string of this date.
 		 */
-		template<typename T = char>
-		BasicString<T> toString() const;
+		template<typename S = String>
+		S toString() const;
 
 		/**
 		 * @brief	Create an human readable string of this date using a specified template
@@ -280,8 +280,8 @@ namespace Time {
 		 * 				S : Seconds (with zeros)
 		 * @returns	Str as a BasicString<T>
 		 */
-		template<typename C = char>
-		BasicString<C> toString( const BasicString<C> & str ) const;
+		template<typename S = String>
+		S toString( const S & str ) const;
 
 		/**
 		 * @brief	Concatenates this date to the given string.
@@ -289,8 +289,8 @@ namespace Time {
 		 * @tparam	C	Type of the string.
 		 * @param [in,out]	str	The string.
 		 */
-		template<typename C = char>
-		void concat( BasicString<C> & str ) const;
+		template<typename S = String>
+		void concat( S & str ) const;
 
 		/**
 		 * @brief	Concatenates this date to the given string with a template string.
@@ -299,15 +299,15 @@ namespace Time {
 		 * @param [in,out]	str	The string.
 		 * @param 		  	tpl	The template.
 		 */
-		template<typename C = char>
-		void concat( BasicString<C> & str, const BasicString<C> & tpl ) const;
+		template<typename S = String>
+		void concat( S & str, const S & tpl ) const;
 
 		/**
 		 * @brief		Generate an ISO 8601 String of this Date.
 		 * @return		ISO 8601 String.		  
 		 */
-		template<typename C = char>
-		BasicString<C> toStringISO( DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
+		template<typename S = String>
+		S toStringISO( DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
 
 		/**
 		 * @brief	Concatenates this date to the given string as ISO 8601.
@@ -315,8 +315,8 @@ namespace Time {
 		 * @tparam	C	Type of the string.
 		 * @param [in,out]	str	The string.
 		 */
-		template<typename C = char>
-		void concatISO( BasicString<C> & str, DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
+		template<typename S = String>
+		void concatISO( S & str, DateT<T>::ISOFormat isoFormat = DateT<T>::ISOFormat::DateTimeOffset ) const;
 
 		/**
 		 * @brief	convert this date to a TimePoint<Second>
@@ -354,8 +354,8 @@ namespace Time {
 		 * @param 	weekDay	Day number of the week [0-6].
 		 * @returns	Weekday name as a StringASCII<T>
 		 */
-		template<typename T = char>
-		static const BasicString<T> & getWeekDayStr( unsigned char weekDay );
+		template<typename S = String>
+		static const S & getWeekDayStr( unsigned char weekDay );
 
 
 		/**
@@ -364,8 +364,8 @@ namespace Time {
 		 * @param 	month	number [0-11].
 		 * @returns	Month name as a StringASCII<T>
 		 */
-		template<typename T = char>
-		static const BasicString<T> & getMonthStr( unsigned char month );
+		template<typename S = String>
+		static const S & getMonthStr( unsigned char month );
 
 
 		/**
@@ -487,17 +487,6 @@ namespace Time {
 	 */
 	template<typename T>
 	Duration<Second> operator-( const DateT<T> & d1, const DateT<T> & d2 );
-
-	/**
-	 * @brief	Concatenate a date to a string using the ISO 8601.
-	 *
-	 * @param [in,out]	str 	The string.
-	 * @param 		  	date	The date.
-	 *
-	 * @returns	The string.
-	 */
-	template<typename C, typename T>
-	BasicString<C> & operator<<( BasicString<C> & str, const DateT<T> & date );
 
 	/**
 	 * @brief	Gets the date

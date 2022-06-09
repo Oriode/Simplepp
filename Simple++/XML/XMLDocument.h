@@ -121,8 +121,8 @@ namespace XML {
 
 		///@brief Create an human-readable string of this param.
 		///@return Human-readable string of this param.
-		template<typename C = T>
-		C toString() const;
+		template<typename S = T>
+		S toString() const;
 
 		///@brief Create an human-readable string of this document.
 		///@return Human-readable string of this document.

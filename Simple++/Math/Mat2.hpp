@@ -405,33 +405,18 @@ namespace Math {
 	template<typename T /*= float*/>
 	template<typename C /*=char*/>
 	MATH_FUNC_QUALIFIER Mat2<T>::operator BasicString<C>() const {
-		return toString();
-	}
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Mat2<T> & v ) {
-		stream << '[' << v[0].x << '\t' << v[1].x << ']' << '\n';
-		stream << '[' << v[0].y << '\t' << v[1].y << ']' << '\n';
-		return stream;
+		return toString< BasicString<C>>();
 	}
 
 
 	template<typename T /*= float*/>
-	template<typename C /*=char*/>
-	MATH_FUNC_QUALIFIER BasicString<C> Mat2<T>::toString() const {
-		BasicString<C> newString;
+	template<typename S /*=String*/>
+	MATH_FUNC_QUALIFIER S Mat2<T>::toString() const {
+		S newString;
 		newString.reserve( 180 );
-		newString << C( '[' ) << this -> column[0].x << C( '\t' ) << this -> column[1].x << C( ']' ) << C( '\n' );
-		newString << C( '[' ) << this -> column[0].y << C( '\t' ) << this -> column[1].y << C( ']' ) << C( '\n' );
+		newString << S::ElemType( '[' ) << this -> column[0].x << S::ElemType( '\t' ) << this -> column[1].x << S::ElemType( ']' ) << S::ElemType( '\n' );
+		newString << S::ElemType( '[' ) << this -> column[0].y << S::ElemType( '\t' ) << this -> column[1].y << S::ElemType( ']' ) << S::ElemType( '\n' );
 		return newString;
-	}
-
-	template<typename T, typename C>
-	MATH_FUNC_QUALIFIER BasicString<C> & operator<<( BasicString<C> & string, const Mat2<T> & v ) {
-		string << C( '[' ) << v[0].x << C( '\t' ) << v[1].x << C( ']' ) << C( '\n' );
-		string << C( '[' ) << v[0].y << C( '\t' ) << v[1].y << C( ']' ) << C( '\n' );
-		return string;
 	}
 
 

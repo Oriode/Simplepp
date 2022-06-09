@@ -102,14 +102,14 @@ namespace Graphic {
 		///@brief convert this color into an human readable string
 		///@see toHex();
 		///@return StringASCII of type C
-		template<typename C = char>
-		BasicString<C> toString() const;
+		template<typename S = String>
+		S toString() const;
 
 
 		///@brief convert this color into Hexadecimal view
 		///@return StringASCII of type C
-		template<typename C = char>
-		BasicString<C> toHex() const;
+		template<typename S = String>
+		S toHex() const;
 
 
 

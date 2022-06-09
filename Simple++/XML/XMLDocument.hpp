@@ -344,12 +344,12 @@ namespace XML {
 	}
 
 	template<typename T>
-	template<typename C>
-	C DocumentT<T>::toString() const {
-		C newString;
+	template<typename S>
+	S DocumentT<T>::toString() const {
+		S newString;
 		newString.reserve( 2048 );
 
-		_writeXML<C, C::ElemType>( newString );
+		_writeXML<S, S::ElemType>( newString );
 		return newString;
 	}
 

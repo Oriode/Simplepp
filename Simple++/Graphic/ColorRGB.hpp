@@ -164,26 +164,26 @@ namespace Graphic {
 	template<typename T>
 	template<typename C /*= char*/>
 	ColorRGB<T>::operator BasicString<C>() const {
-		return toString<C>();
+		return toString<BasicString<C>>();
 	}
 
 
 
 	template<typename T>
-	template<typename C /*= char*/>
-	BasicString<C> ColorRGB<T>::toString() const {
-		BasicString<C> newString;
+	template<typename S /*= String*/>
+	S ColorRGB<T>::toString() const {
+		S newString;
 		newString.reserve( 20 );
-		newString << BasicString<C>("RGB(") << this -> r << C('\t') << this -> g << C( '\t' ) << this -> b << C( ')' );
+		newString << S::ElemType('R') << S::ElemType('G') << S::ElemType('B') << S::ElemType('(') << this -> r << S::ElemType('\t') << this -> g << S::ElemType('\t') << this -> b << S::ElemType(')');
 		return newString;
 	}
 
 	template<typename T>
-	template<typename C /*= char*/>
-	BasicString<C> ColorRGB<T>::toHex() const {
-		BasicString<C> newString;
+	template<typename S /*= String*/>
+	S ColorRGB<T>::toHex() const {
+		S newString;
 		newString.reserve( 6 );
-		newString << C( '#' ) << BasicString<C>::toString<16>( this -> r ) << BasicString<C>::toString<16>( this -> g ) << BasicString<C>::toString<16>( this -> b );
+		newString << S::ElemType( '#' ) << S::toString<16>( this -> r ) << S::toString<16>( this -> g ) << S::toString<16>( this -> b );
 		return newString;
 	}
 

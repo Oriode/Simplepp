@@ -205,11 +205,11 @@ namespace Math {
 
 
 	template<typename T /*= float*/>
-	template<typename U /*= char*/>
-	MATH_FUNC_QUALIFIER BasicString<U> Vec2<T>::toString() const {
-		BasicString<U> newString;
+	template<typename S /*= String*/>
+	MATH_FUNC_QUALIFIER S Vec2<T>::toString() const {
+		S newString;
 		newString.reserve( 40 );
-		newString << U( '[' ) << this -> x << U( '\t' ) << this -> y << U( ']' );
+		newString << S::ElemType( '[' ) << this -> x << S::ElemType( '\t' ) << this -> y << S::ElemType( ']' );
 		return newString;
 	}
 
@@ -385,19 +385,6 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> operator%( const T & v1, const Vec2<T> & v2 ) {
 		return Vec2<T>( v1 % v2.x, v1 % v2.y );
-	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Vec2<T> & v ) {
-		stream << '[' << v.x << '\t' << v.y << ']';
-		return stream;
-	}
-
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER BasicString<U> & operator<<( BasicString<U> & string, const Vec2<T> & v ) {
-		string << U( '[' ) << v.x << U( '\t' ) << v.y << U( ']' );
-		return string;
 	}
 
 	template<typename T>

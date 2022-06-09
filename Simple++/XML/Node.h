@@ -229,8 +229,8 @@ namespace XML {
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.
 		///@return Human-redable String.
-		template<typename C = T>
-		C toString( unsigned int indent = 0 ) const;
+		template<typename S = T>
+		S toString( unsigned int indent = 0 ) const;
 
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.
@@ -350,8 +350,8 @@ namespace XML {
 		///@brief Print an human-readable String of this NodeT<T> and it's children.
 		///@param indent Identation.
 		///@return Human-redable String.
-		template<typename C = T>
-		C toString( unsigned int indent = 0 ) const;
+		template<typename S = T>
+		S toString( unsigned int indent = 0 ) const;
 
 		template<typename C = T, typename Elem = C::ElemType>
 		void _writeXML( C & o, unsigned int tabs = 0 ) const;

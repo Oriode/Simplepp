@@ -472,33 +472,19 @@ namespace Math {
 		return Vec4<T>( v1 % v2.x, v1 % v2.y, v1 % v2.z, v1 % v2.w );
 	}
 
-
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER std::ostream & operator<<( std::ostream & stream, const Vec4<T> & v ) {
-		stream << '[' << v.x << '\t' << v.y << '\t' << v.z << '\t' << v.w << ']';
-		return stream;
-	}
-
 	template<typename T /*= float*/>
-	template<typename U /*=char*/>
-	MATH_FUNC_QUALIFIER BasicString<U> Vec4<T>::toString() const {
-		BasicString<U> newString;
+	template<typename S /*=String*/>
+	MATH_FUNC_QUALIFIER S Vec4<T>::toString() const {
+		S newString;
 		newString.reserve( 80 );
-		newString << U( '[' ) << this -> x << U( '\t' ) << this -> y << U( '\t' ) << this -> z << U( '\t' ) << this -> w << U( ']' );
+		newString << S::ElemType( '[' ) << this -> x << S::ElemType( '\t' ) << this -> y << S::ElemType( '\t' ) << this -> z << S::ElemType( '\t' ) << this -> w << S::ElemType( ']' );
 		return newString;
-	}
-
-	template<typename T, typename U>
-	MATH_FUNC_QUALIFIER BasicString<U> & operator<<( BasicString<U> & string, const Vec4<T> & v ) {
-		string << U( '[' ) << v.x << U( '\t' ) << v.y << U( '\t' ) << v.z << U( '\t' ) << v.w << ( ']' );
-		return string;
 	}
 
 	template<typename T>
 	template<typename U>
 	MATH_FUNC_QUALIFIER Vec4<T>::operator BasicString<U>() const {
-		return toString<U>();
+		return toString<BasicString<U>>();
 	}
 
 	template<typename T>

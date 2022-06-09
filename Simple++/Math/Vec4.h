@@ -100,8 +100,8 @@ namespace Math {
 
 		MATH_FUNC_QUALIFIER void inverse();
 
-		template<typename U = char>
-		MATH_FUNC_QUALIFIER BasicString<U> toString() const;
+		template<typename S = String>
+		MATH_FUNC_QUALIFIER S toString() const;
 
 		constexpr Size getSize() const;
 
