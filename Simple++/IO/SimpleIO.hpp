@@ -44,14 +44,14 @@ namespace IO {
 
 
 	template<typename Stream, typename C>
-	bool writeBuffer( Stream * stream, const C * buffer, Size size ) {
+	bool write( Stream * stream, const C * buffer, Size size ) {
 		if ( !buffer ) return true;
 		return _writeBuffer( stream, buffer, size, buffer );
 	}
 
 
 	template<typename Stream, typename C>
-	bool readBuffer( Stream * stream, C * buffer, Size size ) {
+	bool read( Stream * stream, C * buffer, Size size ) {
 		if ( !buffer ) return true;
 		return _readBuffer( stream, buffer, size, buffer );
 	}

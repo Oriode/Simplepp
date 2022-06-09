@@ -185,10 +185,8 @@ inline bool BasicVector<T>::read(Stream* stream) {
 
 	resizeNoCopy(readSize);
 
-	for ( Size i(0); i < this->size; i++ ) {
-		if ( !IO::read(stream, &( this -> dataTable[ i ] )) ) {
-			return false;
-		}
+	if ( !IO::read(stream, getData(), getSize()) ) {
+		return false;
 	}
 
 	return true;

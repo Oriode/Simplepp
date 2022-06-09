@@ -223,7 +223,7 @@ namespace Graphic {
 	bool FontT<T, LoadingFunc>::write(Stream* stream ) const {
 		if ( !IO::write( stream, &this -> memorySize ) )
 			return false;
-		if ( !IO::writeBuffer( stream, this -> memoryFontObject, this -> memorySize ) )
+		if ( !IO::write( stream, this -> memoryFontObject, this -> memorySize ) )
 			return false;
 
 		if ( !IO::write( stream, &this -> pixSize ) )
@@ -302,7 +302,7 @@ namespace Graphic {
 		if ( this -> memorySize ) this -> memoryFontObject = new char[this -> memorySize];
 		else this -> memoryFontObject = NULL;
 
-		if ( !IO::readBuffer( stream, this -> memoryFontObject, this -> memorySize ) )
+		if ( !IO::read( stream, this -> memoryFontObject, this -> memorySize ) )
 			return false;
 		
 		if ( !IO::read( stream, &this -> pixSize ) ) 

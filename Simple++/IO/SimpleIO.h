@@ -26,7 +26,7 @@ namespace IO {
 	///@param size number of elements in the table.
 	///@return Boolean if the result is a success or not.
 	template<typename Stream, typename C>
-	static bool writeBuffer(Stream * stream, const C * buffer, Size size);
+	static bool write(Stream * stream, const C * buffer, Size size);
 
 	///@brief read from a file stream to a table of objects, this function will automatically test for each object inherit from BasicIO themselves and then call there own write method.
 	///@param stream file stream where to read.
@@ -34,7 +34,7 @@ namespace IO {
 	///@param size number of elements in the table.
 	///@return Boolean if the result is a success or not.
 	template<typename Stream, typename C>
-	static bool readBuffer(Stream * stream, C * buffer, Size size);
+	static bool read(Stream * stream, C * buffer, Size size);
 
 
 

@@ -778,9 +778,8 @@ bool Table<T>::write(Stream* stream) const {
 	if ( !IO::write(stream, &this -> size) )
 		return false;
 
-	for ( Size i(0); i < this -> size; i++ ) {
-		if ( !IO::write(stream, &( this -> dataTable[ i ] )) )
-			return false;
+	if ( !IO::write(stream, getData(), getSize()) ) {
+		return false;
 	}
 
 	return true;
@@ -794,11 +793,13 @@ bool Table<T>::read(Stream* stream) {
 		return false;
 	}
 
+	if ( readSize != this->size ) {
+		SimpleLog::callErrorHandler(TEXT("Trying to load a Table of the wrong size."), SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Red);
+	}
+
 	Size minSize(Math::min(readSize, this->size));
-	for ( Size i(0); i < minSize; i++ ) {
-		if ( !IO::read(stream, &( this -> dataTable[ i ] )) ) {
-			return false;
-		}
+	if ( !IO::read(stream, getData(), minSize) ) {
+		return false;
 	}
 
 	return true;

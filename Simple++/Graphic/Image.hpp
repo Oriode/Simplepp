@@ -448,7 +448,7 @@ namespace Graphic {
 		if ( !IO::write( stream, &this -> format ) )
 			return false;
 		size_t nbComponents = this -> nbPixels * getNbComponents();
-		if ( !IO::writeBuffer( stream, this -> buffer, nbComponents ) )
+		if ( !IO::write( stream, this -> buffer, nbComponents ) )
 			return false;
 
 		return true;
@@ -494,7 +494,7 @@ namespace Graphic {
 		if ( this -> nbPixels ) this -> buffer = new T[nbComponents];
 		else this -> buffer = NULL;
 
-		if ( !IO::readBuffer( stream, this -> buffer, nbComponents ) ) {
+		if ( !IO::read( stream, this -> buffer, nbComponents ) ) {
 			delete[] this -> buffer;
 			this -> size.x = 0;
 			this -> size.y = 0;
