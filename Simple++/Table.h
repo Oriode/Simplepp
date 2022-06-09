@@ -365,12 +365,12 @@ inline Table<T>::Table(typename Table<T>::protectedCtor) {}
 
 template<typename T>
 inline const T& Table<T>::operator[](const Size i) const {
-	return this->dataTable[ i ];
+	return getValueI(i);
 }
 
 template<typename T>
 inline T& Table<T>::operator[](const Size i) {
-	return this->dataTable[ i ];
+	return getValueI(i);
 }
 
 template<typename T>
@@ -411,7 +411,7 @@ template<typename T>
 void Table<T>::setValueI(const Size i, const T& data) {
 #ifdef DEBUG
 	if ( i >= this->size ) {
-		_error("BasicVector::setValueI Out of bounds.");
+		_error("Table::setValueI Out of bounds.");
 	}
 #endif
 	this -> dataTable[ i ] = data;
@@ -424,7 +424,7 @@ inline void Table<T>::setValueF(float f, const T& data) {
 
 template<typename T>
 inline const T& Table<T>::getValueF(float f) const {
-	return const_cast< BasicVector<T> * >( this )->getValueF(f);
+	return const_cast< Table<T> * >( this )->getValueF(f);
 }
 
 template<typename T>
@@ -441,7 +441,7 @@ template<typename T>
 T& Table<T>::getValueI(const Size i) {
 #ifdef DEBUG
 	if ( i >= this->size ) {
-		_error("BasicVector::getValueI Out of bounds.");
+		_error("Table::getValueI Out of bounds.");
 	}
 #endif
 	return this -> dataTable[ i ];
@@ -733,7 +733,7 @@ template<typename T>
 template<typename Func>
 const Size Table<T>::getMinI(Func& functor) const {
 	if ( this->size == Size(0) ) {
-		return BasicVector<T>::overflow;
+		return Table<T>::overflow;
 	} else {
 		Size foundedMinI(0);
 		for ( Size i(0); i < this->size; i++ ) {
@@ -751,7 +751,7 @@ template<typename T>
 template<typename Func>
 const Size Table<T>::getMaxI(Func& functor) const {
 	if ( this->size == Size(0) ) {
-		return BasicVector<T>::overflow;
+		return Table<T>::overflow;
 	} else {
 		Size foundedMaxI(0);
 		for ( Size i(0); i < this->size; i++ ) {
@@ -771,7 +771,7 @@ const Size Table<T>::searchI(const T& data) const {
 		if ( this -> dataTable[ i ] == data )
 			return i;
 	}
-	return BasicVector<T>::overflow;
+	return Table<T>::overflow;
 }
 
 template<typename T>

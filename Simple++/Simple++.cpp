@@ -7,31 +7,31 @@
  */
 
 #define SPEEDTEST_MATH
- //#define SPEEDTEST_DRAWLINE
- //#define SPEEDTEST_DRAWLINE_FLOAT
- //#define SPEEDTEST_GRAPH
- //#define SPEEDTEST_ROUNDEDRECTANGLE
- //#define SPEEDTEST_DISK
- //#define SPEEDTEST_POLYGON
- //#define SPEEDTEST_STROKE
- //#define SPEEDTEST_RESAMPLE
- //#define SPEEDTEST_DRAWTEXT
- //#define SPEEDTEST_FILTER
- //#define SPEEDTEST_ARRAYACCESS
- //#define SPEEDTEST_LOGICAL
- //#define SPEEDTEST_BLENDING
- //#define SPEEDTEST_DATE
- //#define SPEEDTEST_DATE_PARSE
- //#define SPEEDTEST_STRING_CONCAT_STRING
- //#define SPEEDTEST_STRING_CONCAT_NUMBER
- //#define SPEEDTEST_STRING_FORMAT
- //#define SPEEDTEST_STRING_CAST
- //#define SPEEDTEST_REGEX
- //#define SPEEDTEST_VECTOR
- //#define SPEEDTEST_MAP
- //#define SPEEDTEST_CAST
- //#define SPEEDTEST_ARITHMETIC
- //#define SPEEDTEST_PATH
+//#define SPEEDTEST_DRAWLINE
+//#define SPEEDTEST_DRAWLINE_FLOAT
+//#define SPEEDTEST_GRAPH
+//#define SPEEDTEST_ROUNDEDRECTANGLE
+//#define SPEEDTEST_DISK
+//#define SPEEDTEST_POLYGON
+//#define SPEEDTEST_STROKE
+//#define SPEEDTEST_RESAMPLE
+//#define SPEEDTEST_DRAWTEXT
+//#define SPEEDTEST_FILTER
+//#define SPEEDTEST_ARRAYACCESS
+//#define SPEEDTEST_LOGICAL
+//#define SPEEDTEST_BLENDING
+//#define SPEEDTEST_DATE
+//#define SPEEDTEST_DATE_PARSE
+//#define SPEEDTEST_STRING_CONCAT_STRING
+//#define SPEEDTEST_STRING_CONCAT_NUMBER
+//#define SPEEDTEST_STRING_FORMAT
+//#define SPEEDTEST_STRING_CAST
+//#define SPEEDTEST_REGEX
+//#define SPEEDTEST_VECTOR
+//#define SPEEDTEST_MAP
+//#define SPEEDTEST_CAST
+//#define SPEEDTEST_ARITHMETIC
+//#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
 //#define SPEEDTEST_LINEAR_REGRESSION
 //#define SPEEDTEST_DEEP_NEURAL_NETWORK
@@ -46,13 +46,13 @@
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-// #define DEBUG_HTTP
+//#define DEBUG_HTTP
 //#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
 //#define DEBUG_STRING
 //#define DEBUG_TIME
-// #define DEBUG_DATE
+//#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
 #define DEBUG_VEC
@@ -1565,6 +1565,17 @@ int main(int argc, char* argv[]) {
 		JSON::fromJSON(JSON::toJSON(v1), &v7);
 
 		info(v7.toJSON()->toString());
+
+		Vector<float> v8;
+		v8.push(1.0f);
+		v8.push(2.0f);
+		v8.push(3.0f);
+
+		info(v8.toString());
+
+		StaticTable<float, 3> v9({1.0f, 2.0f, 3.0f});
+
+		info(v9.toString());
 
 		int i;
 	}

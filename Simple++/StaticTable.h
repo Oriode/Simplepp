@@ -52,6 +52,21 @@ public:
 	 */
 	T& operator[](const Size i);
 
+	/**
+	 * @brief 	Get the Value associated with an direct access index (of type const Size)
+	 * @param 	i	Iterator used to retrieve the value (no bound check is done here)
+	 * @returns	Value founded.
+	 */
+	const T& getValueI(const Size i) const;
+	T& getValueI(const Size i);
+
+	/**
+	 * @brief 	Set the Value associated with an direct access index (of type Size)
+	 * @param 	i   	Iterator used to set the value (no bound check is done here)
+	 * @param 	data	The data.
+	 */
+	void setValueI(const Size i, const T& data);
+
 	constexpr Size getSize() const;
 
 	const T* getData() const;
@@ -93,6 +108,16 @@ private:
 
 template<typename T, Size N>
 inline StaticTable<T, N>::StaticTable() {}
+
+template<typename T, Size N>
+inline void StaticTable<T, N>::setValueI(const Size i, const T& data) {
+#ifdef DEBUG
+	if ( i >= getSize() ) {
+		_error("StaticTable::setValueI Out of bounds.");
+	}
+#endif
+	this -> dataTable[ i ] = data;
+}
 
 template<typename T, Size N>
 inline constexpr Size StaticTable<T, N>::getSize() const {
@@ -213,12 +238,27 @@ inline StaticTable<T, N>& StaticTable<T, N>::operator=(const StaticTable<T, N>& 
 
 template<typename T, Size N>
 inline const T& StaticTable<T, N>::operator[](const Size i) const {
-	return this->dataTable[ i ];
+	return getValueI(i);
 }
 
 template<typename T, Size N>
 inline T& StaticTable<T, N>::operator[](const Size i) {
-	return this->dataTable[ i ];
+	return getValueI(i);
+}
+
+template<typename T, Size N>
+inline const T& StaticTable<T, N>::getValueI(const Size i) const {
+	return const_cast< StaticTable<T, N> * >( this )->getValueI(i);
+}
+
+template<typename T, Size N>
+inline T& StaticTable<T, N>::getValueI(const Size i) {
+#ifdef DEBUG
+	if ( i >= getSize() ) {
+		_error("StaticTable::getValueI Out of bounds.");
+	}
+#endif
+	return this -> dataTable[ i ];
 }
 
 template<typename T, Size N>
