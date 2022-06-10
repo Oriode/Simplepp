@@ -76,7 +76,7 @@ namespace Math {
 			constexpr bool _checkModel() const;
 
 			template<Size I = Size(0)>
-			void _addData();
+			void _setNbData();
 
 			StaticTable<void*, M::nbLayers> layerTable;
 
@@ -107,15 +107,20 @@ namespace Math {
 			this->dataVector.push(data);
 			this->featureVector.push(data.getFeatures());
 			this->expectedYVector.push(data.getOuts());
-			_addData<Size(0)>();
+			_setNbData<Size(0)>();
 			this->bNeedForwardPropagation = true;
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
 		inline void DeepNeuralNetwork<T, M, ActivationFunc>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
 			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
-				addData(dataVector.getValueI(dataI));
+				const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data(dataVector.getValueI(dataI));
+				this->dataVector.push(data);
+				this->featureVector.push(data.getFeatures());
+				this->expectedYVector.push(data.getOuts());
 			}
+			_setNbData<Size(0)>();
+			this->bNeedForwardPropagation = true;
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
@@ -345,11 +350,10 @@ namespace Math {
 
 		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_addData() {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_setNbData() {
 			if constexpr ( I < M::nbLayers ) {
-				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* neuralLayer(getLayer<I>());
-				neuralLayer->addData();
-				_addData<I + Size(1)>();
+				getLayer<I>()->setNbData(getNbData());
+				_setNbData<I + Size(1)>();
 			}
 		}
 

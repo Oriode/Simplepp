@@ -18,7 +18,7 @@ namespace Math {
 
 			const Size getNbData() const;
 
-			void addData();
+			void setNbData(const Size nbData);
 
 			const StaticTable<T, NbFeatures>& getIns(const Size dataI) const;
 			const StaticTable<T, NbFeatures + Size(1)>& getParams(const Size neuronI) const;
@@ -123,9 +123,9 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::addData() {
-			this->outTableVector.push(StaticTable<T, NbNeurons>());
-			this->deltaTableVector.push(StaticTable<T, NbNeurons>());
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::setNbData(const Size nbData) {
+			this->outTableVector.resize(nbData);
+			this->deltaTableVector.resize(nbData);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>

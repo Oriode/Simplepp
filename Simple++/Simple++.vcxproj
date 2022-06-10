@@ -256,6 +256,7 @@
     <ClInclude Include="Math\ML\DeepNeuralNetwork.h" />
     <ClInclude Include="Math\ML\LinearRegression.h" />
     <ClInclude Include="Math\Mat.h" />
+    <ClInclude Include="Math\ML\ML.h" />
     <ClInclude Include="Math\ML\NeuralLayer.h" />
     <ClInclude Include="Math\ML\Neuron.h" />
     <ClInclude Include="Math\Tensor.h" />

@@ -80,7 +80,7 @@
 #include "Math/Mat.h"
 #include "Math/Tensor.h"
 #include "Math/ML/LinearRegression.h"
-#include "Math/ML/DeepNeuralNetwork.h"
+#include "Math/ML/ML.h"
 #include "String.h"
 #include "Log.h"
 #include "UTF8String.h"

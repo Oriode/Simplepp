@@ -51,9 +51,6 @@ namespace Math {
 		};
 
 		template<typename T, Size NbFeatures, Size NbOut>
-		Vector<Data<T, NbFeatures, NbOut>> generateData(const Size nbData, const T & noise = T(0.1), int verbose = 1);
-
-		template<typename T, Size NbFeatures, Size NbOut>
 		inline LinearRegression<T, NbFeatures, NbOut>::LinearRegression() :
 			paramMat(NbFeatures + Size(1), NbOut),
 			bIsXMatUpdated(false)
@@ -320,39 +317,6 @@ namespace Math {
 		template<typename C>
 		inline void LinearRegression<T, NbFeatures, NbOut>::addData(const C(&featureTable)[ NbFeatures ], const C(&outTable)[ NbOut ]) {
 			addData(Data<T, NbFeatures, NbOut>(featureTable, outTable));
-		}
-
-		template<typename T, Size NbFeatures, Size NbOut>
-		Vector<Data<T, NbFeatures, NbOut>> generateData(const Size nbData, const T& noise, int verbose) {
-			Vector<Data<T, NbFeatures, NbOut>> dataVector;
-			dataVector.resize(nbData);
-
-			static const ActivationFunc::Sigmoid activationFunc;
-
-			Mat<T> paramMat;
-			LinearRegression<T, NbFeatures, NbOut>::setParamMat(paramMat);
-
-			for ( Size i(0); i < dataVector.getSize(); i++ ) {
-				Data<T, NbFeatures, NbOut> newData;
-				newData.setFeaturesRandom();
-				dataVector.setValueI(i, newData);
-			}
-
-			for ( Size i(0); i < dataVector.getSize(); i++ ) {
-				Data<T, NbFeatures, NbOut>& data(dataVector.getValueI(i));
-
-				for ( Size j(0); j < data.getNbOut(); j++ ) {
-					const T y(activationFunc(LinearRegression<T, NbFeatures, NbOut>::computeY(dataVector, paramMat, i, j)));
-					const T noiseFactor(Math::random(-noise, noise));
-					data.setOut(j, y * ( T(1) + noiseFactor ));
-				}
-			}
-
-			if ( verbose > 0 ) {
-				Log::displayLog(String::format("Generated % data with %/% noise and the paramMat : %", nbData, noise * T(100), paramMat.toString()));
-			}
-
-			return dataVector;
 		}
 
 	}
