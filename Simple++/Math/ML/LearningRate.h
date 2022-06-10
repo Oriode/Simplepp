@@ -35,7 +35,9 @@ namespace Math {
 				Exp(const T& v) :
 					BasicLearningRate<T>(v) {}
 
-				const T operator()(const Size epoch) const { return Math::exp(this->v * T(epoch + Size(1)) * T(0.01)); }
+				const T operator()(const Size epoch) const {
+					return this->v * (T(1.0) + Math::pow(T(10.0), T(epoch) / T(1000.0)));
+				}
 			};
 
 			template<typename T>
@@ -44,7 +46,14 @@ namespace Math {
 				Linear(const T& v) :
 					BasicLearningRate<T>(v) {}
 
-				const T operator()(const Size epoch) const { return this->v / (T(1) + T(epoch) * T(0.1)); }
+				const T operator()(const Size epoch) const {
+					if ( epoch < Size(10) ) {
+						return this->v;
+					} else {
+						const T x(T(epoch) - T(10.0));
+						return this->v * ( T(1.0) + x / T(10.0) );
+					}
+				}
 			};
 
 		}

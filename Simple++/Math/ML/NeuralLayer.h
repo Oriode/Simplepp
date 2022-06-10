@@ -59,6 +59,8 @@ namespace Math {
 			const Mat<T>& getParamMat() const;
 			Mat<T>& getParamMat();
 
+			void setParamRandom();
+
 			template<typename ActivationFunc>
 			const StaticTable<T, NbNeurons>& computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc);
 			template<typename ActivationFunc>
@@ -70,7 +72,7 @@ namespace Math {
 			void computeDeltas(const Math::Interval<Size>& dataIInterval, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext>& nextNeuralLayer, const ActivationFunc& activationFunc);
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void updateModel(const LearningRateFunc& learningRateFunc, const Size epoch);
+			void updateModel(const LearningRateFunc& learningRateFunc, const T & learningRateFactor, const Size epochNum);
 
 			T computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
@@ -98,13 +100,6 @@ namespace Math {
 			paramTableTable(*reinterpret_cast< StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>* >( paramMat.getData() )),
 			gradTableTable(*reinterpret_cast< StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>* >( gradMat.getData() ))
 		{
-			/*for ( Size neuronI(0); neuronI < this->paramMat.getSize(); neuronI++ ) {
-				StaticTable<T, NbFeatures + Size(1)> paramTable(getParams(neuronI));
-				for ( Size paramI(0); paramI < paramTable.getSize(); paramI++ ) {
-					paramTable[ paramI ] = Math::randomF();
-				}
-			}*/
-			paramMat.randomF();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
@@ -273,6 +268,11 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons>::setParamRandom() {
+			this->paramMat.randomF();
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
 		template<typename ActivationFunc>
 		inline const StaticTable<T, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons>::computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc) {
 			computeForwardPropagation(getIns(dataI), getOuts(dataI), activationFunc);
@@ -331,10 +331,10 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
 		template<typename LearningRateFunc>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons>::updateModel(const LearningRateFunc& learningRateFunc, const Size epoch) {
+		inline void NeuralLayer<T, NbFeatures, NbNeurons>::updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor, const Size epochNum) {
 			static_assert( Utility::isBase<LearningRate::BasicLearningRate<T>, LearningRateFunc>::value, "LearningRateFunc type unknown." );
 
-			const T learningRate(learningRateFunc(epoch));
+			const T learningRate(learningRateFunc(epochNum) * learningRateFactor);
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
 					const T& grad(getGrads(neuronI)[ paramI ]);
@@ -372,7 +372,7 @@ namespace Math {
 				}
 			}
 
-			return costSum / T(dataIInterval.getSize() * Size(2));
+			return Math::sqrt(costSum) / T(dataIInterval.getSize());
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>

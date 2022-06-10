@@ -55,6 +55,8 @@ namespace Math {
 
 			const Size getEpoch() const;
 
+			void setParamRandom();
+
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimize(const LearningRateFunc & learningRateFunc, const Size nbIterations, int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
@@ -63,7 +65,7 @@ namespace Math {
 			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01));
+			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
 
 			T computeCostLog(const Math::Interval<Size>& dataIInterval);
 			T computeCostLog();
@@ -83,7 +85,7 @@ namespace Math {
 			void _computeBackPropagation(const Math::Interval<Size> & dataIInterval);
 
 			template<Size I = Size(0), typename LearningRateFunc = LearningRate::Constant<T>>
-			void _updateModel(const LearningRateFunc& learningRateFunc);
+			void _updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor);
 
 			template<Size I = Size(0)>
 			void _constructNeuralLayer();
@@ -97,6 +99,9 @@ namespace Math {
 			template<Size I = Size(0)>
 			void _setNbData();
 
+			template<Size I = Size(0)>
+			void _setParamRandom();
+
 			StaticTable<void*, M::nbLayers> layerTable;
 
 			Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>> dataVector;
@@ -109,12 +114,14 @@ namespace Math {
 			typename M::ActivationFunc activationFunc;
 
 			Size epoch;
+			T learningRateFactor;
 		};
 
 		template<typename T, typename M>
 		inline DeepNeuralNetwork<T, M>::DeepNeuralNetwork() :
 			bNeedForwardPropagation(true),
-			epoch(0)
+			epoch(0),
+			learningRateFactor(1.0)
 		{
 			static_assert( Utility::isBase<Model, M>::value, "Model type unknown." );
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::ActivationFunc>::value, "Model ActivationFunc type unknown." );
@@ -169,7 +176,7 @@ namespace Math {
 		inline const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& DeepNeuralNetwork<T, M>::computeForwardPropagation(const Size dataI) {
 			_computeForwardPropagation<Size(0)>(dataI);
 			this->bNeedForwardPropagation = false;
-			return getLayer< Size(0)>()->getOuts(dataI);
+			return getLayer< M::nbLayers - Size(1)>()->getOuts(dataI);
 		}
 
 		template<typename T, typename M>
@@ -187,6 +194,11 @@ namespace Math {
 		template<typename T, typename M>
 		inline const Size DeepNeuralNetwork<T, M>::getEpoch() const {
 			return this->epoch;
+		}
+
+		template<typename T, typename M>
+		inline void DeepNeuralNetwork<T, M>::setParamRandom() {
+			_setParamRandom<Size(0)>();
 		}
 
 		template<typename T, typename M>
@@ -213,13 +225,37 @@ namespace Math {
 				}
 			}
 
+			if ( getEpoch() == Size(0) ) {
+				Log::startStep("Starting from epoch #0, randomizing params...");
+				setParamRandom();
+				this->learningRateFactor = T(1.0);
+				Log::endStep("Done.");
+			}
+
+			T lastCost(computeCostQuadratic());
+
+			if ( verbose > 0 ) {
+				Log::displayLog(String::format("Initial quadratic cost : %.", lastCost));
+			}
+
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
 				optimize(dataIInterval, learningRateFunc);
+
+				T newCost(computeCostQuadratic());
+				if ( newCost > lastCost ) {
+					this->learningRateFactor /= T(2.0);
+
+					if ( verbose > 1 ) {
+						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
+						Log::displayWarning(String::format("[%/%] epoch #% : New cost higher than the previous one.", progression, getEpoch()));
+					}
+				}
+				lastCost = newCost;
 
 				if ( verbose > 1 ) {
 					if ( ( iterationI + Size(1) ) % nbIterationsLog == Size(0) ) {
 						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
-						Log::displayLog(String::format("[%/%] epoch #% : Finished loop with cost of %.", progression, getEpoch(), computeCostQuadratic(dataIInterval)), Log::MessageColor::DarkWhite);
+						Log::displayLog(String::format("[%/%] epoch #% : Finished loop with cost of % and a coeficient of determination of %%.", progression, getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
 					}
 				}
 			}
@@ -235,13 +271,13 @@ namespace Math {
 		inline void DeepNeuralNetwork<T, M>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc) {
 			computeForwardPropagation(dataIInterval);
 			computeBackPropagation(dataIInterval);
-			updateModel(learningRateFunc);
+			updateModel(learningRateFunc, this->learningRateFactor);
 		}
 
 		template<typename T, typename M>
 		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M>::updateModel(const LearningRateFunc& learningRateFunc) {
-			_updateModel<Size(0)>(learningRateFunc);
+		inline void DeepNeuralNetwork<T, M>::updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor) {
+			_updateModel<Size(0)>(learningRateFunc, learningRateFactor);
 			this->epoch++;
 			this->bNeedForwardPropagation = true;
 		}
@@ -341,11 +377,11 @@ namespace Math {
 
 		template<typename T, typename M>
 		template<Size I, typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M>::_updateModel(const LearningRateFunc& learningRateFunc) {
+		inline void DeepNeuralNetwork<T, M>::_updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor) {
 			if constexpr ( I < M::nbLayers ) {
-				getLayer<I>()->updateModel<LearningRateFunc>(learningRateFunc, this->epoch);
+				getLayer<I>()->updateModel<LearningRateFunc>(learningRateFunc, learningRateFactor, this->epoch);
 
-				return _updateModel<I + Size(1)>(learningRateFunc);
+				return _updateModel<I + Size(1)>(learningRateFunc, learningRateFactor);
 			}
 		}
 
@@ -396,6 +432,15 @@ namespace Math {
 			if constexpr ( I < M::nbLayers ) {
 				getLayer<I>()->setNbData(getNbData());
 				_setNbData<I + Size(1)>();
+			}
+		}
+
+		template<typename T, typename M>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M>::_setParamRandom() {
+			if constexpr ( I < M::nbLayers ) {
+				getLayer<I>()->setParamRandom();
+				_setParamRandom<I + Size(1)>();
 			}
 		}
 

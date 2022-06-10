@@ -25,7 +25,7 @@ namespace Math {
 
 			struct ReLU : public BasicActivationFunc {
 				template<typename T> inline T operator()(const T& x) const { return (x > T(0)) ? x : T(0); }
-				template<typename T> inline T grad(const T& a) const { return (a > T(0)) ? T(1) : T(0); }
+				template<typename T> inline T grad(const T& a) const { return T(1); }
 			};
 
 		}
