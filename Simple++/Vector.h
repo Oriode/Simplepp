@@ -48,9 +48,9 @@ public:
 	///@param maxSize Max size of the vector.
 	Vector( const Size size, const Size maxSize );
 
-	///@brief Constructor initializing a Vector of a specific max size.
-	///@param maxSize Max size of the vector.
-	Vector( const Size maxSize );
+	///@brief Constructor initializing a Vector of a specific size.
+	///@param maxSize Size of the vector.
+	Vector( const Size size);
 
 	///@brief Copy constructor.
 	///@template C type of the Vector to be copied.

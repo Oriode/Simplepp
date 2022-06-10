@@ -72,8 +72,8 @@ Vector<T>::Vector( const Size size, const Size maxSize ) :
 }
 
 template<typename T>
-Vector<T>::Vector( const Size maxSize ) :
-	Vector<T>( maxSize, maxSize ) {}
+Vector<T>::Vector( const Size size) :
+	Vector<T>(size, size) {}
 
 
 template<typename T>
