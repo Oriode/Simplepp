@@ -115,6 +115,9 @@ namespace Math::ML {
 		constexpr MyModel() {}
 		static constexpr Size nbLayers = 2;
 		static constexpr Size m[2][2] = { {10,10}, {10,10} };
+
+		typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
+		typedef Math::ML::ActivationFunc::Linear ActivationFunc;
 	};
 
 }
@@ -1664,7 +1667,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Deep Neural Network											//
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>> deepNeuralNetwork;
 
 		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10, 1, Math::ML::ActivationFunc::Linear>(Size(1000), 0.2));
 
@@ -1672,7 +1675,7 @@ int main(int argc, char* argv[]) {
 
 		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
 
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 1000), 0.001, Size(2000));
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 1000), Math::ML::LearningRate::Constant(0.01), Size(1000));
 
 		int i;
 	}

@@ -254,6 +254,7 @@
     <ClInclude Include="Math\ML\ActivationFunc.h" />
     <ClInclude Include="Math\ML\Data.h" />
     <ClInclude Include="Math\ML\DeepNeuralNetwork.h" />
+    <ClInclude Include="Math\ML\LearningRate.h" />
     <ClInclude Include="Math\ML\LinearRegression.h" />
     <ClInclude Include="Math\Mat.h" />
     <ClInclude Include="Math\ML\ML.h" />
