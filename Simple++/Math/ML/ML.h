@@ -23,7 +23,7 @@ namespace Math {
 
 			// First layer.
 			{
-				Mat<T> paramMat(NbFeatures + Size(1), NbOut);
+				Mat<T> paramMat(NbOut, NbFeatures + Size(1));
 				paramMat.randomF();
 
 				for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
@@ -43,7 +43,7 @@ namespace Math {
 
 			// Other layers.
 			for ( Size layerI(1); layerI < NbLayers; layerI++ ) {
-				Mat<T> paramMat(NbOut, NbOut);
+				Mat<T> paramMat(NbOut, NbOut + Size(1));
 				paramMat.randomF();
 
 				for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
