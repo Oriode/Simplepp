@@ -1352,22 +1352,46 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		number /= Type( base );
 		comma++;
 	}
-	int i;
-	for ( i = 0; i < comma; i++, buffer++ ) {
-		unsigned long long int castedNumber = ( unsigned long long int )number;
-		*buffer = BasicString<T>::numbers[ castedNumber % base ];
-		number *= Type( base );
-	}
+	if ( comma < int(10) ) {
+		int i;
+		for ( i = 0; i < comma; i++, buffer++ ) {
+			int castedNumber = static_cast<int>(number);
+			*buffer = BasicString<T>::numbers[ castedNumber % base ];
+			number *= Type(base);
+		}
 
-	*buffer = T( '.' );
-	buffer++;
+		*buffer = T('.');
+		buffer++;
 
-	int precisionI = ( int ) precision;
+		int precisionI = ( int ) precision;
 
-	for ( ; i < precisionI; i++, buffer++ ) {
-		unsigned long long int castedNumber = ( unsigned long long int )number;
-		*buffer = BasicString<T>::numbers[ castedNumber % base ];
-		number *= Type( base );
+		for ( ; i < precisionI; i++, buffer++ ) {
+			int castedNumber = static_cast< int >( number );
+			*buffer = BasicString<T>::numbers[ castedNumber % base ];
+			number *= Type(base);
+		}
+	} else {
+		comma--;
+		{
+			int castedNumber = static_cast< int >( number );
+			*buffer = BasicString<T>::numbers[ castedNumber % base ];
+			buffer++;
+			number *= Type(base);
+		}
+		*buffer = T('.');
+		buffer++;
+
+		int precisionI = ( int ) precision;
+
+		for (int i(1); i < precisionI; i++, buffer++ ) {
+			int castedNumber = static_cast< int >( number );
+			*buffer = BasicString<T>::numbers[ castedNumber % base ];
+			number *= Type(base);
+		}
+		*buffer = T('E');
+		buffer++;
+
+		__convertUI2StringWOS<int>(comma, &buffer, base);
 	}
 }
 
