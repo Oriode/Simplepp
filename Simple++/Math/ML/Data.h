@@ -38,7 +38,7 @@ namespace Math {
 			constexpr Size getNbFeatures() const;
 			constexpr Size getNbOut() const;
 
-			void setFeaturesRandom(const T& min = T(-1), const T& max = T(1));
+			void setFeaturesRandom(const T& min = T(0), const T& max = T(1));
 
 		private:
 			StaticTable<T, NbFeatures> featureTable;

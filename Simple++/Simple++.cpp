@@ -6,7 +6,7 @@
  * @date		26/05/2016 (DMY)
  */
 
-#define SPEEDTEST_MATH
+//#define SPEEDTEST_MATH
 //#define SPEEDTEST_DRAWLINE
 //#define SPEEDTEST_DRAWLINE_FLOAT
 //#define SPEEDTEST_GRAPH
@@ -34,7 +34,7 @@
 //#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
 //#define SPEEDTEST_LINEAR_REGRESSION
-//#define SPEEDTEST_DEEP_NEURAL_NETWORK
+#define SPEEDTEST_DEEP_NEURAL_NETWORK
 
 
 //#define DEBUG_GRAPHIC
@@ -114,7 +114,7 @@ namespace Math::ML {
 	public:
 		constexpr MyModel() {}
 		static constexpr Size nbLayers = 2;
-		static constexpr Size m[ 2 ][ 2 ] = { {10,10}, {10,10} };
+		static constexpr Size m[2][2] = { {10,10}, {10,10} };
 	};
 
 }
@@ -1666,13 +1666,13 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.2));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10, 1, Math::ML::ActivationFunc::Linear>(Size(1000), 0.2));
 
 		deepNeuralNetwork.addData(dataVector);
 
 		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
 
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10), 0.1, Size(2000));
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 1000), 0.001, Size(2000));
 
 		int i;
 	}
@@ -2593,14 +2593,14 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>, Math::ML::ActivationFunc::Linear> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.0, 0));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10, 1, Math::ML::ActivationFunc::Linear>(Size(1000), 0.1));
 
 		deepNeuralNetwork.addData(dataVector);
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		deepNeuralNetwork.optimize(0.1, Size(2000), 0);
+		deepNeuralNetwork.optimize(0.001, Size(100000), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 	}

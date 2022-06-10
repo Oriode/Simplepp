@@ -282,7 +282,7 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
-			const T sizeInverse(T(1) / T(getNbData()));
+			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
 
 			for ( Size paramI(0); paramI < getNbFeatures(); paramI++ ) {
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
@@ -344,7 +344,7 @@ namespace Math {
 				}
 			}
 
-			return -costSum / T(getNbData());
+			return -costSum / T(dataIInterval.getSize());
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
@@ -359,7 +359,7 @@ namespace Math {
 				}
 			}
 
-			return costSum / T(getNbData() * Size(2));
+			return costSum / T(dataIInterval.getSize() * Size(2));
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
@@ -375,7 +375,7 @@ namespace Math {
 					meanVec[ neuronI ] += expectedTable[ neuronI ];
 				}
 			}
-			const T sizeInverse(T(1) / T(getNbData()));
+			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
 			for ( Size j(0); j < meanVec.getSize(); j++ ) {
 				meanVec[ j ] *= sizeInverse;
 			}
@@ -416,7 +416,7 @@ namespace Math {
 						const StaticTable<T, NbFeaturesNext + Size(1)>& paramTable(nextNeuralLayer.getParams(nextNeuronI));
 						dotSum += paramTable[ neuronI ] * nextDeltaVecTable[ nextNeuronI ];
 					}
-					deltaVecTable[ neuronI ] = activationFunc.grad(dotSum, outTable[ neuronI ]);
+					deltaVecTable[ neuronI ] = dotSum * activationFunc.grad(outTable[ neuronI ]);
 				}
 			}
 		}
