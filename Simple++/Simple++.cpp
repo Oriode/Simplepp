@@ -109,8 +109,7 @@
 
 namespace Math::ML {
 
-	template<typename T>
-	class MyModel : public Math::ML::Model<T> {
+	class MyModel : public Math::ML::Model {
 	public:
 		constexpr MyModel() {}
 		static constexpr Size nbLayers = 2;
@@ -1667,7 +1666,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Deep Neural Network											//
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel<double>> deepNeuralNetwork;
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork;
 
 		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10, 1, Math::ML::ActivationFunc::Linear>(Size(1000), 0.2));
 

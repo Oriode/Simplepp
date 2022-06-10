@@ -9,20 +9,26 @@ namespace Math {
 
 	namespace ML {
 
-		template<typename T>
 		class Model {
 		public:
+			constexpr Model() {};
+
+			///@brief Number of layers of the network.
 			static constexpr Size nbLayers = 2;
+
+			///@brief Table [nbLayers][2] representing for each layer the number of input (features) and output (neurons). The number of input of a layer should fit the number of output of the previous one.
 			static constexpr Size m[ 2 ][ 2 ] = { 
 				{2,2},	// {NbIn, NbOut}
 				{2,2}	// {NbIn, NbOut}
 			};
 
+			///@brief Type of the activation function of the hidden layers.
 			typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
+			///@brief Type of the activation function of the last layer.
 			typedef Math::ML::ActivationFunc::Linear ActivationFunc;
 		};
 
-		template<typename T, typename M = Model<T>>
+		template<typename T, typename M = Model>
 		class DeepNeuralNetwork {
 		public:
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
@@ -110,7 +116,7 @@ namespace Math {
 			bNeedForwardPropagation(true),
 			epoch(0)
 		{
-			static_assert( Utility::isBase<Model<T>, M>::value, "Model type unknown." );
+			static_assert( Utility::isBase<Model, M>::value, "Model type unknown." );
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::ActivationFunc>::value, "Model ActivationFunc type unknown." );
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::HiddenActivationFunc>::value, "Model HiddenActivationFunc type unknown." );
 			static_assert( M::nbLayers > Size(0), "Model error, nbLayers cannot be 0." );
