@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Interval.h"
 #include "ActivationFunc.h"
 #include "NeuralLayer.h"
 
@@ -34,23 +35,31 @@ namespace Math {
 			NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* getLayer();
 
 			const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& computeForwardPropagation(const Size dataI);
+			void computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const;
 
-			void computeBackPropagation();
+			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
 
 			void optimize(const T& learningRate = T(0.01), const Size nbIterations = Size(1000), int verbose = 2);
+			void optimize(const Math::Interval<Size>& dataIInterval, const T& learningRate = T(0.01), const Size nbIterations = Size(1000), int verbose = 2);
 
 			void updateModel(const T& learningRate = T(0.01));
 
+			T computeCostLog(const Math::Interval<Size>& dataIInterval) const;
 			T computeCostLog() const;
+			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval) const;
 			T computeCostQuadratic() const;
+			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval) const;
 			T computeCoefficientOfDetermination() const;
 
 		private:
 			template<Size I = Size(0)>
 			void _computeForwardPropagation(const Size dataI);
 
+			template<Size I = Size(0)>
+			void _computeForwardPropagation(const StaticTable<T, M::m[ I ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]> & outTableFinal) const;
+
 			template<Size I = M::nbLayers>
-			void _computeBackPropagation();
+			void _computeBackPropagation(const Math::Interval<Size> & dataIInterval);
 
 			template<Size I = Size(0)>
 			void _updateModel(const T& learningRate = T(0.01));
@@ -114,14 +123,25 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
-		inline void DeepNeuralNetwork<T, M, ActivationFunc>::computeBackPropagation() {
-			return _computeBackPropagation<M::nbLayers - Size(1)>();
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const {
+			const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(data.getFeatures());
+			StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(data.getOuts());
+		}
+
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
+			return _computeBackPropagation<M::nbLayers - Size(1)>(dataIInterval);
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
 		inline void DeepNeuralNetwork<T, M, ActivationFunc>::optimize(const T& learningRate, const Size nbIterations, int verbose) {
+			return optimize(Interval<Size>(Size(0), getNbData()), learningRate, nbIterations, verbose);
+		}
+
+		template<typename T, typename M, typename ActivationFunc>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::optimize(const Math::Interval<Size>& dataIInterval, const T& learningRate, const Size nbIterations, int verbose) {
 			if ( verbose > 0 ) {
-				Log::startStep(String::format("Starting gradient descent with % iterations...", nbIterations));
+				Log::startStep(String::format("Starting gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString()));
 			}
 
 			Size nbIterationsLog;
@@ -136,22 +156,22 @@ namespace Math {
 			}
 
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
-				for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+				for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 					computeForwardPropagation(dataI);
 				}
-				computeBackPropagation();
+				computeBackPropagation(dataIInterval);
 				updateModel(learningRate);
 
 				if ( verbose > 1 ) {
 					if ( ( iterationI + Size(1) ) % nbIterationsLog == Size(0) ) {
 						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
-						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCostQuadratic()), Log::MessageColor::DarkWhite);
+						Log::displayLog(String::format("[%/%] Finished loop with cost of %.", progression, computeCostQuadratic(dataIInterval)), Log::MessageColor::DarkWhite);
 					}
 				}
 			}
 
 			if ( verbose > 0 ) {
-				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCostQuadratic(), computeCoefficientOfDetermination() * T(100)));
+				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)));
 				// Log::displayLog(this->paramMat.toString());
 			}
 		}
@@ -162,18 +182,33 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
+		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCostLog(const Math::Interval<Size>& dataIInterval) const {
+			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(dataIInterval, this->expectedYVector);
+		}
+
+		template<typename T, typename M, typename ActivationFunc>
 		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCostLog() const {
-			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(this->expectedYVector);
+			return computeCostLog(Interval<Size>(Size(0), getNbData()));
+		}
+
+		template<typename T, typename M, typename ActivationFunc>
+		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval) const {
+			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(dataIInterval, this->expectedYVector);
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
 		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCostQuadratic() const {
-			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(this->expectedYVector);
+			return computeCostQuadratic(Interval<Size>(Size(0), getNbData()));
+		}
+
+		template<typename T, typename M, typename ActivationFunc>
+		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval) const {
+			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(dataIInterval, this->expectedYVector);
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
 		inline T DeepNeuralNetwork<T, M, ActivationFunc>::computeCoefficientOfDetermination() const {
-			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(this->expectedYVector);
+			return computeCoefficientOfDetermination(Interval<Size>(Size(0), getNbData()));
 		}
 
 		template<typename T, typename M, typename ActivationFunc>
@@ -200,21 +235,35 @@ namespace Math {
 
 		template<typename T, typename M, typename ActivationFunc>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_computeBackPropagation() {
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_computeForwardPropagation(const StaticTable<T, M::m[ I ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTableFinal) const {
+			if constexpr ( I < M::nbLayers ) {
+				if constexpr ( I < M::nbLayers - Size(1) ) {
+					StaticTable<T, M::m[ I ][ 1 ]> outTable;
+					getLayer<I>()->computeForwardPropagation(featureTable, outTable);
+					return _computeForwardPropagation(outTable, outTableFinal);
+				} else {
+					getLayer<I>()->computeForwardPropagation(featureTable, outTableFinal);
+				}
+			}
+		}
+
+		template<typename T, typename M, typename ActivationFunc>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M, ActivationFunc>::_computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
 			if constexpr ( I >= Size(0) ) {
 				NeuralLayer<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], ActivationFunc>* neuralLayer(getLayer<I>());
 
 				// Compute dZx
 				if constexpr ( I == M::nbLayers - Size(1) ) {
-					neuralLayer->computeDeltasLast(this->expectedYVector);
+					neuralLayer->computeDeltasLast(dataIInterval, this->expectedYVector);
 				} else {
-					neuralLayer->computeDeltas(*getLayer<I + Size(1)>());
+					neuralLayer->computeDeltas(dataIInterval , *getLayer<I + Size(1)>());
 				}
 
-				neuralLayer->computeBackPropagation();
+				neuralLayer->computeBackPropagation(dataIInterval);
 			}
 			if constexpr ( I > Size(0) ) {
-				return _computeBackPropagation<I - Size(1)>();
+				return _computeBackPropagation<I - Size(1)>(dataIInterval);
 			}
 		}
 

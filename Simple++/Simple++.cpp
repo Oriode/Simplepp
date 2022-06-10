@@ -55,11 +55,11 @@
 //#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-#define DEBUG_VEC
+//#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
 //#define DEBUG_LINEAR_REGRESSION
-//#define DEBUG_DEEP_NEURAL_NETWORK
+#define DEBUG_DEEP_NEURAL_NETWORK
 
 
 #ifndef _LIB
@@ -1672,7 +1672,7 @@ int main(int argc, char* argv[]) {
 
 		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
 
-		deepNeuralNetwork.optimize(0.1, Size(2000));
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10), 0.1, Size(2000));
 
 		int i;
 	}

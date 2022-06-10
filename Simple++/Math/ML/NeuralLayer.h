@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Interval.h"
 #include "Neuron.h"
 
 namespace Math {
@@ -25,6 +26,7 @@ namespace Math {
 			const StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neuronI) const;
 			StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neuronI);
 			const StaticTable<T, NbNeurons>& getOuts(const Size dataI) const;
+			StaticTable<T, NbNeurons>& getOuts(const Size dataI);
 			const StaticTable<T, NbNeurons>& getDeltas(const Size dataI) const;
 			StaticTable<T, NbNeurons>& getDeltas(const Size dataI);
 
@@ -54,17 +56,18 @@ namespace Math {
 			Mat<T>& getParamMat();
 
 			const StaticTable<T, NbNeurons>& computeForwardPropagation(const Size dataI);
-			void computeBackPropagation();
+			void computeForwardPropagation(const StaticTable<T, NbFeatures> & featureTable, StaticTable<T, NbNeurons> & outTable) const;
+			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
 
-			void computeDeltasLast(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector);
+			void computeDeltasLast(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector);
 			template<Size NbFeaturesNext, Size NbNeuronsNext>
-			void computeDeltas(const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, ActivationFunc>& nextNeuralLayer);
+			void computeDeltas(const Math::Interval<Size>& dataIInterval, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, ActivationFunc>& nextNeuralLayer);
 
 			void updateModel(const T& learningRate = T(0.01));
 
-			T computeCostLog(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
-			T computeCostQuadratic(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
-			T computeCoefficientOfDetermination(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
 		private:
 			const Vector<StaticTable<T, NbFeatures>>* inTableVector;		// Matrix of input of size [NbData, NbFeatures]
@@ -154,6 +157,11 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
 		inline const StaticTable<T, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::getOuts(const Size dataI) const {
+			return const_cast< NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc> * >( this )->getOuts(dataI);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
+		inline StaticTable<T, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::getOuts(const Size dataI) {
 			return this->outTableVector.getValueI(dataI);
 		}
 
@@ -259,23 +267,28 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
 		inline const StaticTable<T, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeForwardPropagation(const Size dataI) {
-			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
-				const T y(computeY(neuronI, dataI));
-				setOut(neuronI, dataI, y);
-			}
+			computeForwardPropagation(getIns(dataI), getOuts(dataI));
 
 			return getOuts(dataI);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeBackPropagation() {
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeForwardPropagation(const StaticTable<T, NbFeatures>& featureTable, StaticTable<T, NbNeurons>& outTable) const {
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+				const T y(computeY(neuronI, featureTable));
+				outTable[ neuronI ] = y;
+			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
 			const T sizeInverse(T(1) / T(getNbData()));
 
 			for ( Size paramI(0); paramI < getNbFeatures(); paramI++ ) {
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 
 					T dotSum(0);
-					for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+					for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 						dotSum += getIns(dataI)[ paramI ] * getDeltas(dataI)[ neuronI ];
 					}
 
@@ -286,7 +299,7 @@ namespace Math {
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 
 				T dotSum(0);
-				for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+				for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 					dotSum += getDeltas(dataI)[ neuronI ];
 				}
 
@@ -296,8 +309,8 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeDeltasLast(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) {
-			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeDeltasLast(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
 				const StaticTable<T, NbNeurons>& expectedYTable(expectedOutTableVector.getValueI(dataI));
 				StaticTable<T, NbNeurons>& deltaVecTable(getDeltas(dataI));
@@ -319,9 +332,9 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeCostLog(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			T costSum(0);
-			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
 				const StaticTable<T, NbNeurons>& expectedYTable(expectedOutTableVector.getValueI(dataI));
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
@@ -335,9 +348,9 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeCostQuadratic(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			T costSum(0);
-			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
 				const StaticTable<T, NbNeurons>& expectedYTable(expectedOutTableVector.getValueI(dataI));
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
@@ -350,12 +363,12 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeCoefficientOfDetermination(const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			StaticTable<T, NbNeurons> meanVec;
 			for ( Size j(0); j < meanVec.getSize(); j++ ) {
 				meanVec[ j ] = T(0);
 			}
-			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& expectedTable(expectedOutTableVector.getValueI(dataI));
 
 				for ( Size neuronI(0); neuronI < meanVec.getSize(); neuronI++ ) {
@@ -369,7 +382,7 @@ namespace Math {
 
 			T errSum(0);
 			T meanSum(0);
-			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& expectedTable(expectedOutTableVector.getValueI(dataI));
 				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
 
@@ -389,8 +402,8 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename ActivationFunc>
 		template<Size NbFeaturesNext, Size NbNeuronsNext>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeDeltas(const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, ActivationFunc>& nextNeuralLayer) {
-			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, ActivationFunc>::computeDeltas(const Math::Interval<Size>& dataIInterval, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, ActivationFunc>& nextNeuralLayer) {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
 				const StaticTable<T, NbNeuronsNext>& nextDeltaVecTable(nextNeuralLayer.getDeltas(dataI));
 				StaticTable<T, NbNeurons>& deltaVecTable(getDeltas(dataI));
