@@ -106,13 +106,15 @@ namespace Utility {
 	template < typename T1, typename T2 >
 	class isSame {
 	public:
-		typedef char( &no )[ 1 ];
-		typedef char( &yes )[ 2 ];
-
-		static yes checkType( T1 * );
-		static no  checkType( ... );
 		enum : bool {
-			value = sizeof( checkType( static_cast< T2 * >( 0 ) ) ) == sizeof( yes )
+			value = false
+		};
+	};
+	template < typename T1 >
+	class isSame<T1, T1> {
+	public:
+		enum : bool {
+			value = true
 		};
 	};
 

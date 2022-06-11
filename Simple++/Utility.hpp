@@ -26,7 +26,7 @@ namespace Utility {
 	template<typename T>
 	template<typename C, typename D>
 	void UtilityT<T>::copy(C* destinationBuffer, const D* sourceBuffer, const Size size) {
-		if ( isSame<C, D>::value ) {
+		if constexpr ( isSame<C, D>::value ) {
 			for ( Size i(0); i < size; i++ ) {
 				destinationBuffer[ i ] = sourceBuffer[ i ];
 			}
@@ -41,7 +41,13 @@ namespace Utility {
 	template<typename T>
 	template<typename C, typename D>
 	void UtilityT<T>::copy(C** destinationBuffer, D* const* sourceBuffer, const Size size) {
-		memcpy(destinationBuffer, sourceBuffer, size * sizeof(C*));
+		if constexpr ( isSame<C, D>::value ) {
+			memcpy(destinationBuffer, sourceBuffer, size * sizeof(C*));
+		} else {
+			for ( Size i(0); i < size; i++ ) {
+				destinationBuffer[ i ] = static_cast< C * >( sourceBuffer[ i ] );
+			}
+		}
 	}
 	template<typename T>
 	void UtilityT<T>::copy(char* destinationBuffer, const char* sourceBuffer, const Size size) {
