@@ -27,8 +27,8 @@ MutexT<T> & MutexT<T>::operator=( const MutexT & mutex ) {
 
 template<typename T>
 void MutexT<T>::lock() {
-	_assert( !this->bLocked );
 	this->mMutex.lock();
+	_assert(!this->bLocked);
 	//this -> lockingThreadId = Thread::getCurrentThreadId();
 	this->bLocked = true;
 }
@@ -36,8 +36,8 @@ void MutexT<T>::lock() {
 template<typename T>
 void MutexT<T>::unlock() {
 	_assert( this->bLocked );
-	this->mMutex.unlock();
 	this->bLocked = false;
+	this->mMutex.unlock();
 }
 
 template<typename T>
