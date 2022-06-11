@@ -21,9 +21,10 @@ namespace Math {
 				dataVector.setValueI(dataI, newData);
 			}
 
+			Mat<T> paramMat(NbOut, NbFeatures + Size(1));
+
 			// First layer.
 			{
-				Mat<T> paramMat(NbOut, NbFeatures + Size(1));
 				paramMat.randomF();
 
 				for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
@@ -31,19 +32,16 @@ namespace Math {
 
 					for ( Size outI(0); outI < data.getNbOut(); outI++ ) {
 						const StaticTable<T, NbFeatures + Size(1)>& paramTable(*StaticTable<T, NbFeatures + Size(1)>::reinterpret(paramMat.getDataM(outI)));
-
 						const T y(Neuron<T, NbFeatures, ActivationFunc>::computeY(data.getFeatures(), paramTable, activationFunc));
-						const T noiseFactor(Math::random(-noise, noise));
-						const T yNoise(y * ( T(1) + noiseFactor ));
-
-						data.setOut(outI, yNoise);
+						data.setOut(outI, y);
 					}
 				}
 			}
 
 			// Other layers.
+			paramMat.resize(NbOut, NbOut + Size(1));
+
 			for ( Size layerI(1); layerI < NbLayers; layerI++ ) {
-				Mat<T> paramMat(NbOut, NbOut + Size(1));
 				paramMat.randomF();
 
 				for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
@@ -52,13 +50,48 @@ namespace Math {
 
 					for ( Size outI(0); outI < NbOut; outI++ ) {
 						const StaticTable<T, NbOut + Size(1)>& paramTable(*StaticTable<T, NbOut + Size(1)>::reinterpret(paramMat.getDataM(outI)));
-
 						const T y(Neuron<T, NbOut, ActivationFunc>::computeY(featureTable, paramTable, activationFunc));
-						const T noiseFactor(Math::random(-noise, noise));
-						const T yNoise(y * ( T(1) + noiseFactor ));
-
-						data.setOut(outI, yNoise);
+						data.setOut(outI, y);
 					}
+				}
+			}
+
+			// Compute the min/max for every out.
+			StaticTable<Math::Interval<T>, NbOut> minMaxTable;
+
+			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
+				Data<T, NbFeatures, NbOut>& data(dataVector.getValueI(dataI));
+
+				for ( Size outI(0); outI < NbOut; outI++ ) {
+					const T& v(data.getOut(outI));
+					Math::Interval<T>& minMax(minMaxTable[ outI ]);
+
+					if ( dataI == Size(0) ) {
+						minMax.setBegin(v);
+						minMax.setEnd(v);
+					} else {
+						if ( v > minMax.getEnd() ) {
+							minMax.setEnd(v);
+						} else if ( v < minMax.getBegin() ) {
+							minMax.setBegin(v);
+						}
+					}
+				}
+			}
+
+			// Scale and apply noise for every out.
+			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
+				Data<T, NbFeatures, NbOut>& data(dataVector.getValueI(dataI));
+
+				for ( Size outI(0); outI < NbOut; outI++ ) {
+					const T& v(data.getOut(outI));
+					Math::Interval<T>& minMax(minMaxTable[ outI ]);
+
+					const T noiseFactor(Math::random(-noise, noise));
+					const T y(v / ( minMax.getEnd() - minMax.getBegin() ));
+					const T yNoise(y * ( T(1) + noiseFactor ));
+
+					data.setOut(outI, y);
 				}
 			}
 

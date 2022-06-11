@@ -12,6 +12,12 @@ namespace Math {
 		class NeuralLayer {
 		public:
 			NeuralLayer(const Vector<StaticTable<T, NbFeatures>>* inTableVector);
+			NeuralLayer(const NeuralLayer<T, NbFeatures, NbNeurons>& neuralLayer);
+
+			NeuralLayer<T, NbFeatures, NbNeurons>& operator=(const NeuralLayer<T, NbFeatures, NbNeurons>& neuralLayer);
+
+			void setParamMat(const Mat<T>& paramMat);
+			void setInTableVector(const Vector<StaticTable<T, NbFeatures>>* inTableVector);
 
 			constexpr Size getNbFeatures() const;
 			constexpr Size getNbNeurons() const;
@@ -78,6 +84,8 @@ namespace Math {
 			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
+			StaticTable<T, NbNeurons> computeMeanOutTable(const Math::Interval<Size>& dataIInterval) const;
+
 		private:
 			const Vector<StaticTable<T, NbFeatures>>* inTableVector;		// Matrix of input of size [NbData, NbFeatures]
 			Vector<StaticTable<T, NbNeurons>> outTableVector;				// Matrix of output of size [NbData, NbNeurons]
@@ -100,6 +108,42 @@ namespace Math {
 			paramTableTable(*reinterpret_cast< StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>* >( paramMat.getData() )),
 			gradTableTable(*reinterpret_cast< StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>* >( gradMat.getData() ))
 		{
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline NeuralLayer<T, NbFeatures, NbNeurons>::NeuralLayer(const NeuralLayer<T, NbFeatures, NbNeurons>& neuralLayer) :
+			inTableVector(neuralLayer.inTableVector),
+			outTableVector(neuralLayer.outTableVector),
+			deltaTableVector(neuralLayer.deltaTableVector),
+			paramMat(neuralLayer.paramMat),
+			gradMat(neuralLayer.gradMat),
+			paramTableTable(*reinterpret_cast< StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>* >( paramMat.getData() )),
+			gradTableTable(*reinterpret_cast< StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>* >( gradMat.getData() ))
+		{
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline NeuralLayer<T, NbFeatures, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons>::operator=(const NeuralLayer<T, NbFeatures, NbNeurons>& neuralLayer) {
+			this->inTableVector = neuralLayer.inTableVector;
+			this->outTableVector = neuralLayer.outTableVector;
+			this->deltaTableVector = neuralLayer.deltaTableVector;
+			this->paramMat = neuralLayer.paramMat;
+			this->gradMat = neuralLayer.gradMat;
+
+			return *this;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons>::setParamMat(const Mat<T>& paramMat) {
+			assert(paramMat.getSizeM() == getNbNeurons());
+			assert(paramMat.getSizeN() == getNbFeatures() + Size(1));
+
+			this->paramMat = paramMat;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons>::setInTableVector(const Vector<StaticTable<T, NbFeatures>>* inTableVector) {
+			this->inTableVector = inTableVector;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
@@ -377,21 +421,7 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
 		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
-			StaticTable<T, NbNeurons> meanVec;
-			for ( Size j(0); j < meanVec.getSize(); j++ ) {
-				meanVec[ j ] = T(0);
-			}
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				const StaticTable<T, NbNeurons>& expectedTable(expectedOutTableVector.getValueI(dataI));
-
-				for ( Size neuronI(0); neuronI < meanVec.getSize(); neuronI++ ) {
-					meanVec[ neuronI ] += expectedTable[ neuronI ];
-				}
-			}
-			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
-			for ( Size j(0); j < meanVec.getSize(); j++ ) {
-				meanVec[ j ] *= sizeInverse;
-			}
+			StaticTable<T, NbNeurons> meanOutTable(computeMeanOutTable(dataIInterval));
 
 			T errSum(0);
 			T meanSum(0);
@@ -403,7 +433,7 @@ namespace Math {
 					const T y(outTable[ neuronI ]);
 					const T expectedY(expectedTable[ neuronI ]);
 					const T err(expectedY - y);
-					const T mean(expectedY - meanVec[ neuronI ]);
+					const T mean(expectedY - meanOutTable[ neuronI ]);
 
 					errSum += err * err;
 					meanSum += mean * mean;
@@ -411,6 +441,29 @@ namespace Math {
 			}
 
 			return T(1) - errSum / meanSum;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline StaticTable<T, NbNeurons> NeuralLayer<T, NbFeatures, NbNeurons>::computeMeanOutTable(const Math::Interval<Size>& dataIInterval) const {
+			StaticTable<T, NbNeurons> meanOutTable;
+
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+				meanOutTable[ neuronI ] = T(0);
+			}
+
+			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
+				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+					meanOutTable[ neuronI ] += outTable[ neuronI ];
+				}
+			}
+
+			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+				meanOutTable[ neuronI ] *= sizeInverse;
+			}
+
+			return meanOutTable;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../Time/Time.h"
 #include "../Interval.h"
 #include "LearningRate.h"
 #include "ActivationFunc.h"
@@ -58,9 +59,9 @@ namespace Math {
 			void setParamRandom();
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const LearningRateFunc & learningRateFunc, const Size nbIterations, int verbose = 2);
+			void optimize(const LearningRateFunc & learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, int verbose = 2);
+			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond> & saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
 
@@ -203,27 +204,33 @@ namespace Math {
 
 		template<typename T, typename M>
 		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M>::optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, int verbose) {
-			return optimize(Interval<Size>(Size(0), getNbData()), learningRateFunc, nbIterations, verbose);
+		inline void DeepNeuralNetwork<T, M>::optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+			return optimize(Interval<Size>(Size(0), getNbData()), learningRateFunc, nbIterations, saveDuration, verbose);
 		}
 
 		template<typename T, typename M>
 		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, int verbose) {
+		inline void DeepNeuralNetwork<T, M>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+			class GetPercent {
+			public:
+				GetPercent(const Size nbIterations) :
+					nbIterations(nbIterations) {}
+
+				Size operator()(const Size iterationI) const {
+					return Size(T(iterationI + Size(1)) / T(this->nbIterations - Size(1)) * T(100));
+				}
+
+				const Size nbIterations;
+			};
+
 			if ( verbose > 0 ) {
 				Log::startStep(String::format("Starting gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString()));
 			}
 
-			Size nbIterationsLog;
-			if ( verbose > 1 ) {
-				if ( nbIterations > Size(100) ) {
-					nbIterationsLog = nbIterations / Size(100);
-				} else if ( nbIterations > Size(10) ) {
-					nbIterationsLog = nbIterations / Size(10);
-				} else {
-					nbIterationsLog = nbIterations;
-				}
-			}
+			const GetPercent getPercent(nbIterations);
+
+			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
+			Time::TimePointMS timePointLastLog(timePointBegin.getValue());
 
 			if ( getEpoch() == Size(0) ) {
 				Log::startStep("Starting from epoch #0, randomizing params...");
@@ -246,16 +253,16 @@ namespace Math {
 					this->learningRateFactor /= T(2.0);
 
 					if ( verbose > 1 ) {
-						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
-						Log::displayWarning(String::format("[%/%] epoch #% : New cost higher than the previous one.", progression, getEpoch()));
+						Log::displayWarning(String::format("[%/%] epoch #% : New cost higher than the previous one.", getPercent(iterationI), getEpoch()));
 					}
 				}
 				lastCost = newCost;
 
-				if ( verbose > 1 ) {
-					if ( ( iterationI + Size(1) ) % nbIterationsLog == Size(0) ) {
-						Size progression(T(iterationI + Size(1)) / T(nbIterations - Size(1)) * T(100));
-						Log::displayLog(String::format("[%/%] epoch #% : Finished loop with cost of % and a coeficient of determination of %%.", progression, getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
+				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
+				if ( timePointNow - timePointLastLog > saveDuration ) {
+					timePointLastLog.setValue(timePointNow.getValue());
+					if ( verbose > 1 ) {
+						Log::displayLog(String::format("[%/%] epoch #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
 					}
 				}
 			}

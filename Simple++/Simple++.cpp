@@ -1668,7 +1668,7 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10, 1, Math::ML::ActivationFunc::Linear>(Size(1000), 0.0));
+		Vector<Math::ML::Data<double, 16, 16>> dataVector(Math::ML::generateData<double, 16, 16, 1, Math::ML::ActivationFunc::Linear>(Size(1000), 0.0));
 
 		deepNeuralNetwork.addData(dataVector);
 
@@ -2595,14 +2595,14 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork;
 
-		Vector<Math::ML::Data<double, 16, 16>> dataVector(Math::ML::generateData<double, 16, 16, 20, Math::ML::ActivationFunc::Linear>(Size(1000), 0.0));
+		Vector<Math::ML::Data<double, 16, 16>> dataVector(Math::ML::generateData<double, 16, 16, 20, Math::ML::ActivationFunc::Linear>(Size(1024), 0.1));
 
 		deepNeuralNetwork.addData(dataVector);
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		deepNeuralNetwork.optimize(Math::ML::LearningRate::Linear(0.0000000000000000001), Size(50000), 2);
+		deepNeuralNetwork.optimize(Math::ML::LearningRate::Linear(0.001), Size(50000), Time::Duration<Time::MilliSecond>(1000), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 	}
