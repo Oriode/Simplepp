@@ -14,7 +14,7 @@ namespace Math {
 				BasicLearningRate(const T& v) :
 					v(v) {}
 
-				const T operator()(const Size epoch) const { static_assert( true, "BasicLearningRate::operator() should be overriden." ); }
+				const T operator()(const Size epochNum) const { static_assert( true, "BasicLearningRate::operator() should be overriden." ); }
 
 			protected:
 				T v;
@@ -26,7 +26,7 @@ namespace Math {
 				Constant(const T & v) :
 					BasicLearningRate<T>(v) {}
 
-				const T & operator()(const Size epoch) const { return this->v; }
+				const T & operator()(const Size epochNum) const { return this->v; }
 			};
 
 			template<typename T>
@@ -35,8 +35,8 @@ namespace Math {
 				Exp(const T& v) :
 					BasicLearningRate<T>(v) {}
 
-				const T operator()(const Size epoch) const {
-					return this->v * (T(1.0) + Math::pow(T(10.0), T(epoch) / T(1000.0)));
+				const T operator()(const Size epochNum) const {
+					return this->v * (T(1.0) + Math::pow(T(10.0), T(epochNum) / T(1000.0)));
 				}
 			};
 
@@ -46,11 +46,11 @@ namespace Math {
 				Linear(const T& v) :
 					BasicLearningRate<T>(v) {}
 
-				const T operator()(const Size epoch) const {
-					if ( epoch < Size(10) ) {
+				const T operator()(const Size epochNum) const {
+					if ( epochNum < Size(10) ) {
 						return this->v;
 					} else {
-						const T x(T(epoch) - T(10.0));
+						const T x(T(epochNum) - T(10.0));
 						return this->v * ( T(1.0) + x / T(10.0) );
 					}
 				}

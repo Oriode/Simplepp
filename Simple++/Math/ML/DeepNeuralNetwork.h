@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../Thread.h"
+#include "../../Mutex.h"
 #include "../../Time/Time.h"
 #include "../Interval.h"
 #include "LearningRate.h"
@@ -38,6 +40,7 @@ namespace Math {
 			DeepNeuralNetwork();
 			~DeepNeuralNetwork();
 
+			void addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable);
 			void addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data);
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 
@@ -55,15 +58,25 @@ namespace Math {
 			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
 
 			const Size getEpoch() const;
+			void setEpoch(const Size epochNum);
+
+			void setLearningRateFactor(const T& learningRateFactor);
+			const T& getLearningRateFactor() const;
+
+			void copyParamMat(const DeepNeuralNetwork<T, M>& deepNeuralNetwork);
+			template<Size I>
+			void setParamMat(const Mat<T>& paramMat);
 
 			void setParamRandom();
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const LearningRateFunc & learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond> & saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
+			template<typename LearningRateFunc = LearningRate::Constant<T>>
+			void optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			template<typename LearningRateFunc = LearningRate::Constant<T>>
+			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			template<typename LearningRateFunc = LearningRate::Constant<T>>
+			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbClusters = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
@@ -103,9 +116,15 @@ namespace Math {
 			template<Size I = Size(0)>
 			void _setParamRandom();
 
+			///@brief Set the average for each layer of every paramMat.
+			template<Size I = Size(0)>
+			void _setParamMat(const Vector<DeepNeuralNetwork<T, M>*>& deepNeuralNetworkVector);
+
+			template<Size I = Size(0)>
+			void _copyParamMat(const DeepNeuralNetwork<T, M>& deepNeuralNetwork);
+
 			StaticTable<void*, M::nbLayers> layerTable;
 
-			Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>> dataVector;
 			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector;
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> expectedYVector;
 
@@ -114,14 +133,16 @@ namespace Math {
 			typename M::HiddenActivationFunc hiddenActivationFunc;
 			typename M::ActivationFunc activationFunc;
 
-			Size epoch;
+			Size epochNum;
 			T learningRateFactor;
+
+			Mutex optimizeMutex;
 		};
 
 		template<typename T, typename M>
 		inline DeepNeuralNetwork<T, M>::DeepNeuralNetwork() :
 			bNeedForwardPropagation(true),
-			epoch(0),
+			epochNum(0),
 			learningRateFactor(1.0)
 		{
 			static_assert( Utility::isBase<Model, M>::value, "Model type unknown." );
@@ -138,29 +159,40 @@ namespace Math {
 		}
 
 		template<typename T, typename M>
+		inline void DeepNeuralNetwork<T, M>::addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) {
+			this->optimizeMutex.lock();
+			{
+				this->featureVector.push(featureTable);
+				this->expectedYVector.push(outTable);
+				_setNbData<Size(0)>();
+				this->bNeedForwardPropagation = true;
+			}
+			this->optimizeMutex.unlock();
+		}
+
+		template<typename T, typename M>
 		inline void DeepNeuralNetwork<T, M>::addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) {
-			this->dataVector.push(data);
-			this->featureVector.push(data.getFeatures());
-			this->expectedYVector.push(data.getOuts());
-			_setNbData<Size(0)>();
-			this->bNeedForwardPropagation = true;
+			addData(data.getFeatures(), data.getOuts());
 		}
 
 		template<typename T, typename M>
 		inline void DeepNeuralNetwork<T, M>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
-			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
-				const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data(dataVector.getValueI(dataI));
-				this->dataVector.push(data);
-				this->featureVector.push(data.getFeatures());
-				this->expectedYVector.push(data.getOuts());
+			this->optimizeMutex.lock();
+			{
+				for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
+					const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data(dataVector.getValueI(dataI));
+					this->featureVector.push(data.getFeatures());
+					this->expectedYVector.push(data.getOuts());
+				}
+				_setNbData<Size(0)>();
+				this->bNeedForwardPropagation = true;
 			}
-			_setNbData<Size(0)>();
-			this->bNeedForwardPropagation = true;
+			this->optimizeMutex.unlock();
 		}
 
 		template<typename T, typename M>
 		inline const Size DeepNeuralNetwork<T, M>::getNbData() const {
-			return this->dataVector.getSize();
+			return this->featureVector.getSize();
 		}
 
 		template<typename T, typename M>
@@ -194,12 +226,41 @@ namespace Math {
 
 		template<typename T, typename M>
 		inline const Size DeepNeuralNetwork<T, M>::getEpoch() const {
-			return this->epoch;
+			return this->epochNum;
+		}
+
+		template<typename T, typename M>
+		inline void DeepNeuralNetwork<T, M>::setEpoch(const Size epochNum) {
+			this->epochNum = epochNum;
+		}
+
+		template<typename T, typename M>
+		inline void DeepNeuralNetwork<T, M>::setLearningRateFactor(const T& learningRateFactor) {
+			this->learningRateFactor = learningRateFactor;
+		}
+
+		template<typename T, typename M>
+		inline const T& DeepNeuralNetwork<T, M>::getLearningRateFactor() const {
+			return this->learningRateFactor;
+		}
+
+		template<typename T, typename M>
+		inline void DeepNeuralNetwork<T, M>::copyParamMat(const DeepNeuralNetwork<T, M>& deepNeuralNetwork) {
+			_copyParamMat<Size(0)>(deepNeuralNetwork);
 		}
 
 		template<typename T, typename M>
 		inline void DeepNeuralNetwork<T, M>::setParamRandom() {
 			_setParamRandom<Size(0)>();
+			setLearningRateFactor(T(1.0));
+			setEpoch(Size(0));
+		}
+
+		template<typename T, typename M>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M>::setParamMat(const Mat<T>& paramMat) {
+			getLayer<I>()->setParamMat(paramMat);
+			this->bNeedForwardPropagation = true;
 		}
 
 		template<typename T, typename M>
@@ -229,40 +290,39 @@ namespace Math {
 
 			const GetPercent getPercent(nbIterations);
 
-			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
-			Time::TimePointMS timePointLastLog(timePointBegin.getValue());
-
 			if ( getEpoch() == Size(0) ) {
-				Log::startStep("Starting from epoch #0, randomizing params...");
+				Log::startStep("Starting from epochNum #0, randomizing params...");
 				setParamRandom();
-				this->learningRateFactor = T(1.0);
 				Log::endStep("Done.");
 			}
 
-			T lastCost(computeCostQuadratic());
+			T lastCost(computeCostQuadratic(dataIInterval));
 
 			if ( verbose > 0 ) {
 				Log::displayLog(String::format("Initial quadratic cost : %.", lastCost));
 			}
 
+			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
+			Time::TimePointMS timePointLast(timePointBegin.getValue());
+
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
 				optimize(dataIInterval, learningRateFunc);
 
-				T newCost(computeCostQuadratic());
+				T newCost(computeCostQuadratic(dataIInterval));
 				if ( newCost > lastCost ) {
-					this->learningRateFactor /= T(2.0);
+					setLearningRateFactor(getLearningRateFactor()* T(0.5));
 
 					if ( verbose > 1 ) {
-						Log::displayWarning(String::format("[%/%] epoch #% : New cost higher than the previous one.", getPercent(iterationI), getEpoch()));
+						Log::displayWarning(String::format("[%/%] epochNum #% : New cost higher than the previous one.", getPercent(iterationI), getEpoch()));
 					}
 				}
 				lastCost = newCost;
 
 				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
-				if ( timePointNow - timePointLastLog > saveDuration ) {
-					timePointLastLog.setValue(timePointNow.getValue());
+				if ( timePointNow - timePointLast > saveDuration ) {
+					timePointLast.setValue(timePointNow.getValue());
 					if ( verbose > 1 ) {
-						Log::displayLog(String::format("[%/%] epoch #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
+						Log::displayLog(String::format("[%/%] epochNum #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
 					}
 				}
 			}
@@ -275,9 +335,157 @@ namespace Math {
 
 		template<typename T, typename M>
 		template<typename LearningRateFunc>
+		inline void DeepNeuralNetwork<T, M>::optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbClusters, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+			class GetPercent {
+			public:
+				GetPercent(const Size nbIterations) :
+					nbIterations(nbIterations) {}
+
+				Size operator()(const Size iterationI) const {
+					return Size(T(iterationI + Size(1)) / T(this->nbIterations - Size(1)) * T(100));
+				}
+
+				const Size nbIterations;
+			};
+
+			class Cluster : public DeepNeuralNetwork<T, M>, public Thread {
+			public:
+				Cluster(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration) :
+					learningRateFunc(learningRateFunc),
+					runDuration(runDuration) {}
+
+				void init(const Size nbIterations) {
+					this->epochTarget = getEpoch() + nbIterations;
+					this->lastCost = computeCostQuadratic();
+				}
+
+				void run() override {
+					const Math::Interval<Size> dataIInterval(Size(0), getNbData());
+					Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
+
+					while ( true ) {
+						optimize(dataIInterval, learningRateFunc);
+
+						T newCost(computeCostQuadratic(dataIInterval));
+						if ( newCost > this->lastCost ) {
+							setLearningRateFactor(getLearningRateFactor() * T(0.5));
+						}
+						this->lastCost = newCost;
+
+						Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
+						if ( timePointNow - timePointBegin > this->runDuration ) {
+							break;
+						}
+					}
+				}
+
+			private:
+				const LearningRateFunc& learningRateFunc;
+				const Time::Duration<Time::MilliSecond>& runDuration;
+				Size epochTarget;
+				T lastCost;
+			};
+
+			const GetPercent getPercent(nbIterations);
+
+			// Creating the threads
+			Vector<Cluster*> clusterVector(nbClusters);
+			for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+				clusterVector.setValueI(i, new Cluster(learningRateFunc, saveDuration));
+			}
+
+			// Dispatch data into Clusters.
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				const Size clusterI(dataI% clusterVector.getSize());
+				Cluster* cluster(clusterVector.getValueI(clusterI));
+				cluster->addData(this->featureVector.getValueI(dataI), this->expectedYVector.getValueI(dataI));
+			}
+
+			if ( getEpoch() == Size(0) ) {
+				Log::startStep("Starting from epochNum #0, randomizing params...");
+				for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+					Cluster* cluster(clusterVector.getValueI(i));
+					cluster->setParamRandom();
+				}
+				Log::endStep("Done.");
+			} else {
+				for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+					Cluster* cluster(clusterVector.getValueI(i));
+					cluster->copyParamMat(*this);
+					cluster->setLearningRateFactor(getLearningRateFactor());
+					cluster->setEpoch(getEpoch());
+				}
+			}
+
+			for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+				Cluster* cluster(clusterVector.getValueI(i));
+				cluster->init(nbIterations);
+			}
+
+			T lastCost(computeCostQuadratic(dataIInterval));
+			if ( verbose > 0 ) {
+				Log::displayLog(String::format("Initial quadratic cost : %.", lastCost));
+			}
+
+			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
+			Time::TimePointMS timePointLast(timePointBegin.getValue());
+
+			// Run
+			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
+				for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+					Cluster* cluster(clusterVector.getValueI(i));
+					cluster->start();
+				}
+
+				for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+					Cluster* cluster(clusterVector.getValueI(i));
+					cluster->join();
+				}
+
+				/*T newCost(computeCostQuadratic(dataIInterval));
+				if ( newCost > lastCost ) {
+					setLearningRateFactor(getLearningRateFactor() * T(0.5));
+
+					for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+						Cluster* cluster(clusterVector.getValueI(i));
+						cluster->setLearningRateFactor(getLearningRateFactor());
+					}
+
+					if ( verbose > 1 ) {
+						Log::displayWarning(String::format("[%/%] epochNum #% : New cost higher than the previous one.", getPercent(iterationI), getEpoch()));
+					}
+				}*/
+				// lastCost = newCost;
+				setEpoch(getEpoch() + clusterVector.getSize());
+
+				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
+				if ( timePointNow - timePointLast > saveDuration ) {
+					timePointLast.setValue(timePointNow.getValue());
+
+					_setParamMat<Size(0)>(clusterVector);
+
+					if ( verbose > 1 ) {
+						Log::displayLog(String::format("[%/%] epochNum #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
+					}
+				}
+			}
+
+			// Deleting the threads.
+			for ( Size i(0); i < clusterVector.getSize(); i++ ) {
+				delete clusterVector.getValueI(i);
+			}
+		}
+
+		template<typename T, typename M>
+		template<typename LearningRateFunc>
 		inline void DeepNeuralNetwork<T, M>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc) {
-			computeForwardPropagation(dataIInterval);
-			computeBackPropagation(dataIInterval);
+			this->optimizeMutex.lock();
+			{
+				computeForwardPropagation(dataIInterval);
+				computeBackPropagation(dataIInterval);
+			}
+			this->optimizeMutex.unlock();
+
 			updateModel(learningRateFunc, this->learningRateFactor);
 		}
 
@@ -285,7 +493,7 @@ namespace Math {
 		template<typename LearningRateFunc>
 		inline void DeepNeuralNetwork<T, M>::updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor) {
 			_updateModel<Size(0)>(learningRateFunc, learningRateFactor);
-			this->epoch++;
+			this->epochNum++;
 			this->bNeedForwardPropagation = true;
 		}
 
@@ -386,7 +594,7 @@ namespace Math {
 		template<Size I, typename LearningRateFunc>
 		inline void DeepNeuralNetwork<T, M>::_updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor) {
 			if constexpr ( I < M::nbLayers ) {
-				getLayer<I>()->updateModel<LearningRateFunc>(learningRateFunc, learningRateFactor, this->epoch);
+				getLayer<I>()->updateModel<LearningRateFunc>(learningRateFunc, learningRateFactor, this->epochNum);
 
 				return _updateModel<I + Size(1)>(learningRateFunc, learningRateFactor);
 			}
@@ -448,6 +656,36 @@ namespace Math {
 			if constexpr ( I < M::nbLayers ) {
 				getLayer<I>()->setParamRandom();
 				_setParamRandom<I + Size(1)>();
+			}
+		}
+
+		template<typename T, typename M>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M>::_setParamMat(const Vector<DeepNeuralNetwork<T, M>*>& deepNeuralNetworkVector) {
+			if constexpr ( I < M::nbLayers ) {
+				Mat<T> paramMatSum(M::m[ I ][ 1 ], M::m[ I ][ 0 ] + Size(1));
+
+				paramMatSum.zeros();
+
+				for ( Size i(0); i < deepNeuralNetworkVector.getSize(); i++ ) {
+					const DeepNeuralNetwork<T, M>* deepNeuralNetwork(deepNeuralNetworkVector.getValueI(i));
+					paramMatSum += deepNeuralNetwork->getLayer<I>()->getParamMat();
+				}
+
+				paramMatSum /= T(deepNeuralNetworkVector.getSize());
+
+				setParamMat<I>(paramMatSum);
+
+				_setParamMat<I + Size(1)>(deepNeuralNetworkVector);
+			}
+		}
+
+		template<typename T, typename M>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M>::_copyParamMat(const DeepNeuralNetwork<T, M>& deepNeuralNetwork) {
+			if constexpr ( I < M::nbLayers ) {
+				setParamMat<I>(deepNeuralNetwork.getLayer<I>()->getParamMat());
+				_copyParamMat<I + Size(1)>(deepNeuralNetwork);
 			}
 		}
 
