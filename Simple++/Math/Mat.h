@@ -480,12 +480,14 @@ namespace Math {
 
 	template<typename T>
 	inline Mat<T>& Mat<T>::zeros() {
-		return BasicVector<T>::fill(T(0));
+		BasicVector<T>::fill(T(0));
+		return *this;
 	}
 
 	template<typename T>
 	inline Mat<T>& Mat<T>::ones() {
-		return BasicVector<T>::fill(T(1));
+		BasicVector<T>::fill(T(1));
+		return *this;
 	}
 
 	template<typename T>
