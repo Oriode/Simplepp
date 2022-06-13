@@ -3,6 +3,7 @@
 #include "../../Thread.h"
 #include "../../Mutex.h"
 #include "../../Time/Time.h"
+#include "../../IO/BasicIO.h"
 #include "../Interval.h"
 #include "LearningRate.h"
 #include "ActivationFunc.h"
@@ -32,8 +33,65 @@ namespace Math {
 			typedef Math::ML::ActivationFunc::Linear ActivationFunc;
 		};
 
+		template<typename T, typename M, Size NbThreads>
+		class DeepNeuralNetwork;
+
+		template<typename T, typename M, Size NbThreads, typename LearningRateFunc>
+		class SearchThread : public DeepNeuralNetwork<T, M, NbThreads>, public Thread {
+		public:
+			SearchThread(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration, const Math::Interval<Size>& dataIInterval) :
+				learningRateFunc(learningRateFunc),
+				runDuration(runDuration),
+				dataIInterval(dataIInterval) {}
+
+			SearchThread(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration) :
+				learningRateFunc(learningRateFunc),
+				runDuration(runDuration) {}
+
+			void init(const Size nbIterations) {
+				this->lastCost = computeCostQuadratic(this->dataIInterval);
+			}
+
+			void run() override {
+				Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
+
+				while ( true ) {
+					optimize(this->dataIInterval, learningRateFunc);
+
+					T newCost(computeCostQuadratic(this->dataIInterval));
+					if ( newCost > this->lastCost ) {
+						setLearningRateFactor(getLearningRateFactor() * T(0.5));
+					}
+					this->lastCost = newCost;
+
+					Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
+					if ( timePointNow - timePointBegin > this->runDuration ) {
+						break;
+					}
+				}
+			}
+
+			const T& getCost() const {
+				return this->lastCost;
+			}
+
+			bool operator<(const SearchThread& searchThread) const {
+				return this->lastCost < searchThread.getCost();
+			}
+
+			void setDataIInterval(const Math::Interval<Size>& dataIInterval) {
+				this->dataIInterval = dataIInterval;
+			}
+
+		private:
+			const LearningRateFunc& learningRateFunc;
+			const Time::Duration<Time::MilliSecond>& runDuration;
+			Math::Interval<Size> dataIInterval;
+			T lastCost;
+		};
+
 		template<typename T, typename M = Model, Size NbThreads = Size(1)>
-		class DeepNeuralNetwork {
+		class DeepNeuralNetwork : public IO::BasicIO {
 		public:
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
 			static constexpr Size NbOut = M::m[ M::nbLayers - Size(1) ][ 1 ];
@@ -47,6 +105,7 @@ namespace Math {
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 
 			const Size getNbData() const;
+			constexpr Size getNbLayers() const;
 
 			template<Size I>
 			const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* getLayer() const;
@@ -74,13 +133,11 @@ namespace Math {
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			void optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimizeDynamicLearningRate(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
@@ -91,6 +148,22 @@ namespace Math {
 			T computeCostQuadratic();
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval);
 			T computeCoefficientOfDetermination();
+
+			/**
+			 * @brief 	read from a file stream
+			 * @param [in,out]	stream	stream used to read load this object.
+			 * @returns	boolean to know if the operation is a success of not.
+			 */
+			template<typename Stream>
+			bool read(Stream* stream);
+
+			/**
+			 * @brief 	write this object as binary into a file stream
+			 * @param [in,out]	stream	stream used to write this object.
+			 * @returns	boolean to know if the operation is a success of not.
+			 */
+			template<typename Stream>
+			bool write(Stream* stream) const;
 
 		private:
 			template<Size I = Size(0)>
@@ -126,6 +199,12 @@ namespace Math {
 
 			template<Size I = Size(0)>
 			void _copyParamMat(const DeepNeuralNetwork<T, M, NbThreads>& deepNeuralNetwork);
+
+			template<Size I, typename Stream>
+			bool _write(Stream* stream) const;
+
+			template<Size I, typename Stream>
+			bool _read(Stream* stream);
 
 			StaticTable<void*, M::nbLayers> layerTable;
 
@@ -215,6 +294,11 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline constexpr Size DeepNeuralNetwork<T, M, NbThreads>::getNbLayers() const {
+			return M::nbLayers;
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval) {
 			if ( this->bNeedForwardPropagation ) {
 				for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
@@ -285,71 +369,8 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
-			return optimize(Interval<Size>(Size(0), getNbData()), learningRateFunc, nbIterations, saveDuration, verbose);
-		}
-
-		template<typename T, typename M, Size NbThreads>
-		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
-			class GetPercent {
-			public:
-				GetPercent(const Size nbIterations) :
-					nbIterations(nbIterations) {}
-
-				Size operator()(const Size iterationI) const {
-					return Size(T(iterationI + Size(1)) / T(this->nbIterations - Size(1)) * T(100));
-				}
-
-				const Size nbIterations;
-			};
-
-			if ( verbose > 0 ) {
-				Log::startStep(String::format("Starting gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString()));
-			}
-
-			const GetPercent getPercent(nbIterations);
-
-			if ( getEpoch() == Size(0) ) {
-				Log::startStep("Starting from epochNum #0, randomizing params...");
-				setParamRandom();
-				Log::endStep("Done.");
-			}
-
-			T lastCost(computeCostQuadratic(dataIInterval));
-
-			if ( verbose > 0 ) {
-				Log::displayLog(String::format("Initial quadratic cost : %.", lastCost));
-			}
-
-			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
-			Time::TimePointMS timePointLast(timePointBegin.getValue());
-
-			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
-				optimize(dataIInterval, learningRateFunc);
-
-				T newCost(computeCostQuadratic(dataIInterval));
-				if ( newCost > lastCost ) {
-					setLearningRateFactor(getLearningRateFactor()* T(0.5));
-
-					if ( verbose > 1 ) {
-						Log::displayWarning(String::format("[%/%] epochNum #% : New cost higher than the previous one.", getPercent(iterationI), getEpoch()));
-					}
-				}
-				lastCost = newCost;
-
-				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
-				if ( timePointNow - timePointLast > saveDuration ) {
-					timePointLast.setValue(timePointNow.getValue());
-					if ( verbose > 1 ) {
-						Log::displayLog(String::format("[%/%] epochNum #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
-					}
-				}
-			}
-
-			if ( verbose > 0 ) {
-				Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)));
-			}
+		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+			return optimize(Interval<Size>(Size(0), getNbData()), learningRateFunc, nbIterations, nbSearchThreads, randomFactor, saveDuration, verbose);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -367,54 +388,21 @@ namespace Math {
 				const Size nbIterations;
 			};
 
-			class SearchThread : public DeepNeuralNetwork<T, M, NbThreads>, public Thread {
-			public:
-				SearchThread(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration) :
-					learningRateFunc(learningRateFunc),
-					runDuration(runDuration) {}
-
-				void init(const Size nbIterations) {
-					this->epochTarget = getEpoch() + nbIterations;
-					this->lastCost = computeCostQuadratic();
-				}
-
-				void run() override {
-					const Math::Interval<Size> dataIInterval(Size(0), getNbData());
-					Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
-
-					while ( true ) {
-						optimize(dataIInterval, learningRateFunc);
-
-						T newCost(computeCostQuadratic(dataIInterval));
-						if ( newCost > this->lastCost ) {
-							setLearningRateFactor(getLearningRateFactor() * T(0.5));
-						}
-						this->lastCost = newCost;
-
-						Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
-						if ( timePointNow - timePointBegin > this->runDuration ) {
-							break;
-						}
-					}
-				}
-
-			private:
-				const LearningRateFunc& learningRateFunc;
-				const Time::Duration<Time::MilliSecond>& runDuration;
-				Size epochTarget;
-				T lastCost;
-			};
-
+			using SearchThread = SearchThread<T, M, NbThreads, LearningRateFunc>;
 			const GetPercent getPercent(nbIterations);
 
 			if ( verbose > 0 ) {
-				Log::startStep(String::format("Starting gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString()));
+				Log::startStep(String::format("Starting clustered gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString()));
 			}
 
 			// Creating the threads
 			Vector<SearchThread*> searchThreadVector(nbSearchThreads);
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 				searchThreadVector.setValueI(i, new SearchThread(learningRateFunc, saveDuration));
+			}
+
+			if ( verbose > 0 ) {
+				Log::startStep("Copying data to the threads...");
 			}
 
 			// Dispatch data into Clusters.
@@ -424,25 +412,48 @@ namespace Math {
 				searchThread->addData(this->featureVector.getValueI(dataI), this->expectedYVector.getValueI(dataI));
 			}
 
+			if ( verbose > 0 ) {
+				Log::endStep("Done.");
+			}
+
 			if ( getEpoch() == Size(0) ) {
-				Log::startStep("Starting from epochNum #0, randomizing params...");
+				if ( verbose > 0 ) {
+					Log::startStep("Starting from epochNum #0, randomizing params...");
+				}
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->setParamRandom();
 				}
-				Log::endStep("Done.");
+				if ( verbose > 0 ) {
+					Log::endStep("Done.");
+				}
 			} else {
+				if ( verbose > 0 ) {
+					Log::startStep(String::format("Resuming from epoch #%. Copying params to the threads...", getEpoch()));
+				}
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->copyParamMat(*this);
 					searchThread->setLearningRateFactor(getLearningRateFactor());
 					searchThread->setEpoch(getEpoch());
 				}
+				if ( verbose > 0 ) {
+					Log::endStep("Done.");
+				}
+			}
+
+			if ( verbose > 0 ) {
+				Log::startStep("Initializing threads...");
 			}
 
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 				SearchThread* searchThread(searchThreadVector.getValueI(i));
+				searchThread->setDataIInterval(Math::Interval<Size>(Size(0), searchThread->getNbData()));
 				searchThread->init(nbIterations);
+			}
+
+			if ( verbose > 0 ) {
+				Log::endStep("Done.");
 			}
 
 			T lastCost(computeCostQuadratic(dataIInterval));
@@ -453,32 +464,20 @@ namespace Math {
 			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
 			Time::TimePointMS timePointLast(timePointBegin.getValue());
 
+			if ( verbose > 0 ) {
+				Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every % ms...", nbIterations, saveDuration.getValue()));
+			}
+
 			// Run
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->start();
 				}
-
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->join();
 				}
-
-				/*T newCost(computeCostQuadratic(dataIInterval));
-				if ( newCost > lastCost ) {
-					setLearningRateFactor(getLearningRateFactor() * T(0.5));
-
-					for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-						SearchThread* searchThread(searchThreadVector.getValueI(i));
-						searchThread->setLearningRateFactor(getLearningRateFactor());
-					}
-
-					if ( verbose > 1 ) {
-						Log::displayWarning(String::format("[%/%] epochNum #% : New cost higher than the previous one.", getPercent(iterationI), getEpoch()));
-					}
-				}*/
-				// lastCost = newCost;
 				setEpoch(getEpoch() + searchThreadVector.getSize());
 
 				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
@@ -487,10 +486,19 @@ namespace Math {
 
 					_setParamMat<Size(0)>(searchThreadVector);
 
+					for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
+						SearchThread* searchThread(searchThreadVector.getValueI(i));
+						searchThread->copyParamMat(*this);
+					}
+
 					if ( verbose > 1 ) {
 						Log::displayLog(String::format("[%/%] epochNum #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite);
 					}
 				}
+			}
+
+			if ( verbose > 0 ) {
+				Log::endStep("Done.");
 			}
 
 			// Deleting the threads.
@@ -505,7 +513,7 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimizeDynamicLearningRate(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 			class GetPercent {
 			public:
 				GetPercent(const Size nbIterations) :
@@ -518,52 +526,7 @@ namespace Math {
 				const Size nbIterations;
 			};
 
-			class SearchThread : public DeepNeuralNetwork<T, M, NbThreads>, public Thread {
-			public:
-				SearchThread(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration, const Math::Interval<Size> & dataIInterval) :
-					learningRateFunc(learningRateFunc),
-					runDuration(runDuration),
-					dataIInterval(dataIInterval)
-				{}
-
-				void init(const Size nbIterations) {
-					this->lastCost = computeCostQuadratic(this->dataIInterval);
-				}
-
-				void run() override {
-					Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
-
-					while ( true ) {
-						optimize(this->dataIInterval, learningRateFunc);
-
-						T newCost(computeCostQuadratic(this->dataIInterval));
-						if ( newCost > this->lastCost ) {
-							setLearningRateFactor(getLearningRateFactor() * T(0.5));
-						}
-						this->lastCost = newCost;
-
-						Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
-						if ( timePointNow - timePointBegin > this->runDuration ) {
-							break;
-						}
-					}
-				}
-
-				const T& getCost() const {
-					return this->lastCost;
-				}
-
-				bool operator<(const SearchThread& searchThread) const {
-					return this->lastCost < searchThread.getCost();
-				}
-
-			private:
-				const LearningRateFunc& learningRateFunc;
-				const Time::Duration<Time::MilliSecond>& runDuration;
-				const Math::Interval<Size>& dataIInterval;
-				T lastCost;
-			};
-
+			using SearchThread = SearchThread<T, M, NbThreads, LearningRateFunc>;
 			const GetPercent getPercent(nbIterations);
 
 			if ( verbose > 0 ) {
@@ -591,21 +554,29 @@ namespace Math {
 			}
 
 			if ( getEpoch() == Size(0) ) {
-				Log::startStep("Starting from epochNum #0, randomizing params...");
+				if ( verbose > 0 ) {
+					Log::startStep("Starting from epochNum #0, randomizing params...");
+				}
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->setParamRandom();
 				}
-				Log::endStep("Done.");
+				if ( verbose > 0 ) {
+					Log::endStep("Done.");
+				}
 			} else {
-				Log::startStep(String::format("Resuming from epoch #%. Copying params to the threads...", getEpoch()));
+				if ( verbose > 0 ) {
+					Log::startStep(String::format("Resuming from epoch #%. Copying params to the threads...", getEpoch()));
+				}
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->copyParamMat(*this);
 					searchThread->setLearningRateFactor(getLearningRateFactor());
 					searchThread->setEpoch(getEpoch());
 				}
-				Log::endStep("Done.");
+				if ( verbose > 0 ) {
+					Log::endStep("Done.");
+				}
 			}
 
 			if ( verbose > 0 ) {
@@ -659,24 +630,27 @@ namespace Math {
 				if ( timePointNow - timePointLast > saveDuration ) {
 					timePointLast.setValue(timePointNow.getValue());
 
-					typename Vector<SearchThread*>::Iterator minIt(searchThreadVector.getBegin());
+					typename Vector<SearchThread*>::Iterator minIt(NULL);
+					T searchCost(lastCost);
 					for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 						SearchThread* searchThread(searchThreadVector.getValueI(i));
 
 						const T& searchThreadCost(searchThreadVector.getValueI(i)->getCost());
 
-						if ( !Utility::isInf(searchThreadCost) && !Utility::isNan(searchThreadCost) && searchThreadCost < searchThreadVector.getValueIt(minIt)->getCost() ) {
-							minIt = searchThreadVector.getIterator(i);
+						if ( !Utility::isInf(searchThreadCost) && !Utility::isNan(searchThreadCost) ) {
+							if ( searchThreadCost < searchCost ) {
+								minIt = searchThreadVector.getIterator(i);
+							}
 						}
 					}
-					SearchThread* minSearchThread(searchThreadVector.getValueIt(minIt));
-					if ( searchThreadVector.getValueIt(minIt)->getCost() < lastCost ) {
+					if ( minIt ) {
+						SearchThread* minSearchThread(searchThreadVector.getValueIt(minIt));
 						setLearningRateFactor(minSearchThread->getLearningRateFactor());
 						copyParamMat(*minSearchThread);
 						setEpoch(minSearchThread->getEpoch());
 						lastCost = computeCostQuadratic(dataIInterval);
 					} else {
-						setEpoch(minSearchThread->getEpoch());
+						setLearningRateFactor(getLearningRateFactor() * T(0.1));
 						Log::displayWarning(String::format("[%/%] epochNum #% : No better value founded. Maybe the maximum has been founded. Cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), lastCost, computeCoefficientOfDetermination(dataIInterval) * T(100)));
 					}
 
@@ -764,6 +738,72 @@ namespace Math {
 		template<Size I>
 		inline NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* DeepNeuralNetwork<T, M, NbThreads>::getLayer() {
 			return reinterpret_cast< NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* >( this->layerTable[ I ] );
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		template<typename Stream>
+		inline bool DeepNeuralNetwork<T, M, NbThreads>::read(Stream* stream) {
+			const Size nbLayers;
+			if ( !IO::write(stream, &nbLayers) ) {
+				return false;
+			}
+			if ( nbLayers != getNbLayers() ) {
+				Log::displayError(String::format("Trying to read a DeepNeuralNetwork of the wrong number of layers : this[ % ] != read[ % ].", getNbLayers(), nbLayers));
+				return false;
+			}
+			if ( !IO::read(stream, &this->featureVector) ) {
+				return false;
+			}
+			if ( !IO::read(stream, &this->expectedYVector) ) {
+				return false;
+			}
+			if ( !_read<Size(0)>(stream) ) {
+				return false;
+			}
+			if ( !IO::read(stream, &this->hiddenActivationFunc) ) {
+				return false;
+			}
+			if ( !IO::read(stream, &this->activationFunc) ) {
+				return false;
+			}
+			if ( !IO::read(stream, &this->epochNum) ) {
+				return false;
+			}
+			if ( !IO::read(stream, &this->learningRateFactor) ) {
+				return false;
+			}
+			return true;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		template<typename Stream>
+		inline bool DeepNeuralNetwork<T, M, NbThreads>::write(Stream* stream) const {
+			const Size nbLayers(getNbLayers());
+			if ( !IO::write(stream, &nbLayers) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->featureVector) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->expectedYVector) ) {
+				return false;
+			}
+			if ( !_write<Size(0)>(stream) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->hiddenActivationFunc) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->activationFunc) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->epochNum) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->learningRateFactor) ) {
+				return false;
+			}
+			return true;
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -911,6 +951,32 @@ namespace Math {
 				setParamMat<I>(deepNeuralNetwork.getLayer<I>()->getParamMat());
 				_copyParamMat<I + Size(1)>(deepNeuralNetwork);
 			}
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		template<Size I, typename Stream>
+		inline bool DeepNeuralNetwork<T, M, NbThreads>::_write(Stream* stream) const {
+			if constexpr ( I < M::nbLayers ) {
+				if ( !IO::write(stream, getLayer<I>()) ) {
+					return false;
+				}
+
+				return _write<I + Size(1)>(stream);
+			}
+			return true;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		template<Size I, typename Stream>
+		inline bool DeepNeuralNetwork<T, M, NbThreads>::_read(Stream* stream) {
+			if constexpr ( I < M::nbLayers ) {
+				if ( !IO::read(stream, getLayer<I>()) ) {
+					return false;
+				}
+
+				return _read<I + Size(1)>(stream);
+			}
+			return true;
 		}
 
 	}

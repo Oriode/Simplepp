@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../IO/BasicIO.h"
 #include "../Interval.h"
 #include "ActivationFunc.h"
 #include "Neuron.h"
@@ -9,7 +10,7 @@ namespace Math {
 	namespace ML {
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
-		class NeuralLayer {
+		class NeuralLayer : public IO::BasicIO {
 		public:
 			NeuralLayer(const Vector<StaticTable<T, NbFeatures>>* inTableVector);
 			NeuralLayer(const NeuralLayer<T, NbFeatures, NbNeurons>& neuralLayer);
@@ -87,6 +88,22 @@ namespace Math {
 			StaticTable<T, NbNeurons> computeMeanTable(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
 			T computeNeuronWeight(const Size neuronI) const;
+
+			/**
+			 * @brief 	read from a file stream
+			 * @param [in,out]	stream	stream used to read load this object.
+			 * @returns	boolean to know if the operation is a success of not.
+			 */
+			template<typename Stream>
+			bool read(Stream* stream);
+
+			/**
+			 * @brief 	write this object as binary into a file stream
+			 * @param [in,out]	stream	stream used to write this object.
+			 * @returns	boolean to know if the operation is a success of not.
+			 */
+			template<typename Stream>
+			bool write(Stream* stream) const;
 
 		private:
 			const Vector<StaticTable<T, NbFeatures>>* inTableVector;		// Matrix of input of size [NbData, NbFeatures]
@@ -397,6 +414,44 @@ namespace Math {
 					param = param - learningRate * grad;
 				}
 			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		template<typename Stream>
+		inline bool NeuralLayer<T, NbFeatures, NbNeurons>::read(Stream* stream) {
+			const Size nbFeatures;
+			const Size nbNeurons;
+			if ( !IO::read(stream, &nbFeatures) ) {
+				return false;
+			}
+			if ( !IO::read(stream, &nbNeurons) ) {
+				return false;
+			}
+			if ( nbFeatures != getNbFeatures() || nbNeurons != getNbNeurons() ) {
+				Log::displayError(String::format("Trying to read a NeuralLayer of the wrong size : this[ % x % ] != read[ % x % ].", getNbFeatures(), getNbNeurons(), nbFeatures, nbNeurons));
+				return false;
+			}
+			if ( !IO::read(stream, &this->paramMat) ) {
+				return false;
+			}
+			return true;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		template<typename Stream>
+		inline bool NeuralLayer<T, NbFeatures, NbNeurons>::write(Stream* stream) const {
+			const Size nbFeatures(getNbFeatures());
+			const Size nbNeurons(getNbNeurons());
+			if ( !IO::write(stream, &nbFeatures) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &nbNeurons) ) {
+				return false;
+			}
+			if ( !IO::write(stream, &this->paramMat) ) {
+				return false;
+			}
+			return true;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
