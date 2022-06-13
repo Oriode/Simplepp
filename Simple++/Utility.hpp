@@ -1,3 +1,4 @@
+#include "Utility.h"
 
 namespace Utility {
 
@@ -20,6 +21,16 @@ namespace Utility {
 	template<typename T>
 	constexpr typename removeReference<T>::Type && toRValue( T && t ) {
 		return static_cast< typename removeReference<T>::Type && >( t );
+	}
+
+	template<typename T>
+	bool isInf(const T& x) {
+		return isinf(x);
+	}
+
+	template<typename T>
+	bool isNan(const T& x) {
+		return isnan(x);
 	}
 
 	//Default implementation with a one per one copy.

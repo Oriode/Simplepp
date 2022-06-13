@@ -1318,7 +1318,7 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 	T *& buffer( *bufferP );
 
 	// Check if inf.
-	if ( isinf<Type>(number) ) {
+	if ( Utility::isInf<Type>(number) ) {
 		( *buffer++ ) = T('#');
 		( *buffer++ ) = T('i');
 		( *buffer++ ) = T('n');
@@ -1327,7 +1327,7 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 	}
 
 	// Check if nan.
-	if ( isnan<Type>(number) ) {
+	if ( Utility::isNan<Type>(number) ) {
 		( *buffer++ ) = T('#');
 		( *buffer++ ) = T('n');
 		( *buffer++ ) = T('a');

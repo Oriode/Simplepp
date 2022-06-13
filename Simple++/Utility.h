@@ -118,6 +118,12 @@ namespace Utility {
 		};
 	};
 
+	template<typename T>
+	bool isInf(const T& x);
+
+	template<typename T>
+	bool isNan(const T& x);
+
 	/**
 	 * @brief		Template Struct used to get compile-time informations of a number type.
 	 *
