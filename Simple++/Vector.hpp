@@ -404,14 +404,14 @@ template<typename T>
 template<typename Func>
 typename Vector<T>::Iterator Vector<T>::getMinIt(Func& functor) const {
 	if ( this->size == Size(0) ) {
-		return typename BasicVector<T>::Iterator(NULL);
+		return typename Vector<T>::Iterator(NULL);
 	} else {
-		typename BasicVector<T>::Iterator foundedMinIt(this->dataTable);
-		for ( Size i(1); i < this->size; i++ ) {
-			const T& v(getValueI(i));
+		typename Vector<T>::Iterator foundedMinIt(this->dataTable);
+		for ( typename Vector<T>::Iterator it(getBegin()); it != getEnd(); iterate(&it) ) {
+			const T& v(getValueIt(it));
 
 			if ( functor(v, getValueIt(foundedMinIt)) ) {
-				foundedMinIt = &v;
+				foundedMinIt = it;
 			}
 		}
 		return foundedMinIt;
@@ -422,14 +422,14 @@ template<typename T>
 template<typename Func>
 typename Vector<T>::Iterator Vector<T>::getMaxIt(Func& functor) const {
 	if ( this->size == Size(0) ) {
-		return typename BasicVector<T>::Iterator(NULL);
+		return typename Vector<T>::Iterator(NULL);
 	} else {
-		typename BasicVector<T>::Iterator foundedMaxIt(this->dataTable);
-		for ( Size i(1); i < this->size; i++ ) {
-			const T& v(getValueI(i));
+		typename Vector<T>::Iterator foundedMaxIt(this->dataTable);
+		for ( typename Vector<T>::Iterator it(getBegin()); it != getEnd(); iterate(&it) ) {
+			const T& v(getValueIt(it));
 
 			if ( functor(getValueIt(foundedMaxIt), v) ) {
-				foundedMaxIt = &v;
+				foundedMaxIt = it;
 			}
 		}
 		return foundedMaxIt;

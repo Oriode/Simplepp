@@ -259,6 +259,7 @@
     <ClInclude Include="Math\Mat.h" />
     <ClInclude Include="Math\ML\ML.h" />
     <ClInclude Include="Math\ML\NeuralLayer.h" />
+    <ClInclude Include="Math\ML\NeuralLayerMT.h" />
     <ClInclude Include="Math\ML\Neuron.h" />
     <ClInclude Include="Math\Tensor.h" />
     <ClInclude Include="Math\Transformations.h" />

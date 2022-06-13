@@ -86,6 +86,8 @@ namespace Math {
 
 			StaticTable<T, NbNeurons> computeMeanTable(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
+			T computeNeuronWeight(const Size neuronI) const;
+
 		private:
 			const Vector<StaticTable<T, NbFeatures>>* inTableVector;		// Matrix of input of size [NbData, NbFeatures]
 			Vector<StaticTable<T, NbNeurons>> outTableVector;				// Matrix of output of size [NbData, NbNeurons]
@@ -314,6 +316,15 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurons>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons>::setParamRandom() {
 			this->paramMat.randomF();
+
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
+				const T neuronWeight(computeNeuronWeight(neuronI));
+
+				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+					paramTable[ paramI ] /= neuronWeight;
+				}
+			}
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
@@ -464,6 +475,18 @@ namespace Math {
 			}
 
 			return outTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons>
+		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeNeuronWeight(const Size neuronI) const {
+			StaticTable<T, NbFeatures + Size(1)> paramTable(getParams(neuronI));
+
+			T weight(0);
+			for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+				weight += paramTable[ paramI ];
+			}
+
+			return weight;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
