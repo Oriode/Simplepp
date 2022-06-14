@@ -4,6 +4,7 @@
 #include "../../Mutex.h"
 #include "../../Time/Time.h"
 #include "../../IO/BasicIO.h"
+#include "../../IO/IO.h"
 #include "../Interval.h"
 #include "LearningRate.h"
 #include "ActivationFunc.h"
@@ -96,16 +97,23 @@ namespace Math {
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
 			static constexpr Size NbOut = M::m[ M::nbLayers - Size(1) ][ 1 ];
 
-			DeepNeuralNetwork();
+			DeepNeuralNetwork(const OS::Path & filePath = OS::Path());
 			~DeepNeuralNetwork();
 
 			void addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable);
 			void addData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable);
 			void addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data);
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
+			void clearData();
 
 			const Size getNbData() const;
 			constexpr Size getNbLayers() const;
+
+			const OS::Path& getFilePath() const;
+			void setFilePath(const OS::Path& filePath);
+
+			bool saveToFile(const OS::Path& filePath) const;
+			bool loadFromFile(const OS::Path& filePath);
 
 			template<Size I>
 			const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* getLayer() const;
@@ -128,7 +136,7 @@ namespace Math {
 			template<Size I>
 			void setParamMat(const Mat<T>& paramMat);
 
-			void setParamRandom();
+			void resetParams();
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
@@ -142,10 +150,13 @@ namespace Math {
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
 
+			T computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> & expectedYVector);
 			T computeCostLog(const Math::Interval<Size>& dataIInterval);
 			T computeCostLog();
+			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedYVector);
 			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval);
 			T computeCostQuadratic();
+			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedYVector);
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval);
 			T computeCoefficientOfDetermination();
 
@@ -191,7 +202,7 @@ namespace Math {
 			void _setNbData();
 
 			template<Size I = Size(0)>
-			void _setParamRandom();
+			void _resetParams();
 
 			///@brief Set the average for each layer of every paramMat.
 			template<Size I = Size(0)>
@@ -220,13 +231,15 @@ namespace Math {
 			T learningRateFactor;
 
 			Mutex optimizeMutex;
+
+			OS::Path filePath;
 		};
 
 		template<typename T, typename M, Size NbThreads>
-		inline DeepNeuralNetwork<T, M, NbThreads>::DeepNeuralNetwork() :
+		inline DeepNeuralNetwork<T, M, NbThreads>::DeepNeuralNetwork(const OS::Path& filePath) :
 			bNeedForwardPropagation(true),
 			epochNum(0),
-			learningRateFactor(1.0)
+			filePath(filePath)
 		{
 			static_assert( Utility::isBase<Model, M>::value, "Model type unknown." );
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::ActivationFunc>::value, "Model ActivationFunc type unknown." );
@@ -234,6 +247,13 @@ namespace Math {
 			static_assert( M::nbLayers > Size(0), "Model error, nbLayers cannot be 0." );
 			_checkModel<Size(1)>();
 			_constructNeuralLayer<Size(0)>();
+
+			if ( this->filePath.getSize() ) {
+				if ( !loadFromFile(this->filePath) ) {
+					Log::displayError(String::format("Unable to read the DeepNeuralNetwork from \"%\".", this->filePath));
+				}
+			}
+
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -289,6 +309,18 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::clearData() {
+			this->optimizeMutex.lock();
+			{
+				this->featureVector.clear();
+				this->expectedYVector.clear();
+				_setNbData<Size(0)>();
+				this->bNeedForwardPropagation = true;
+			}
+			this->optimizeMutex.unlock();
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		inline const Size DeepNeuralNetwork<T, M, NbThreads>::getNbData() const {
 			return this->featureVector.getSize();
 		}
@@ -296,6 +328,32 @@ namespace Math {
 		template<typename T, typename M, Size NbThreads>
 		inline constexpr Size DeepNeuralNetwork<T, M, NbThreads>::getNbLayers() const {
 			return M::nbLayers;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline const OS::Path& DeepNeuralNetwork<T, M, NbThreads>::getFilePath() const {
+			return this->filePath;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::setFilePath(const OS::Path& filePath) {
+			this->filePath = filePath;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline bool DeepNeuralNetwork<T, M, NbThreads>::saveToFile(const OS::Path& filePath) const {
+			if ( !IO::write(filePath, this) ) {
+				return false;
+			}
+			return true;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline bool DeepNeuralNetwork<T, M, NbThreads>::loadFromFile(const OS::Path& filePath) {
+			if ( !IO::read(filePath, this) ) {
+				return false;
+			}
+			return true;
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -354,8 +412,8 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::setParamRandom() {
-			_setParamRandom<Size(0)>();
+		inline void DeepNeuralNetwork<T, M, NbThreads>::resetParams() {
+			_resetParams<Size(0)>();
 			setLearningRateFactor(T(1.0));
 			setEpoch(Size(0));
 		}
@@ -391,6 +449,8 @@ namespace Math {
 			using SearchThread = SearchThread<T, M, NbThreads, LearningRateFunc>;
 			const GetPercent getPercent(nbIterations);
 
+			this->optimizeMutex.lock();
+
 			if ( verbose > 0 ) {
 				Log::startStep(String::format("Starting clustered gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString()));
 			}
@@ -422,7 +482,7 @@ namespace Math {
 				}
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
-					searchThread->setParamRandom();
+					searchThread->resetParams();
 				}
 				if ( verbose > 0 ) {
 					Log::endStep("Done.");
@@ -486,6 +546,12 @@ namespace Math {
 
 					_setParamMat<Size(0)>(searchThreadVector);
 
+					if ( this->filePath.getSize() && !saveToFile(this->filePath) ) {
+						if ( verbose > -1 ) {
+							Log::displayWarning(String::format("Unable to save the DeepNeuralNetwork to the file \"%\".", this->filePath));
+						}
+					}
+
 					for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 						SearchThread* searchThread(searchThreadVector.getValueI(i));
 						searchThread->copyParamMat(*this);
@@ -496,6 +562,8 @@ namespace Math {
 					}
 				}
 			}
+
+			this->optimizeMutex.unlock();
 
 			if ( verbose > 0 ) {
 				Log::endStep("Done.");
@@ -529,6 +597,8 @@ namespace Math {
 			using SearchThread = SearchThread<T, M, NbThreads, LearningRateFunc>;
 			const GetPercent getPercent(nbIterations);
 
+			this->optimizeMutex.lock();
+
 			if ( verbose > 0 ) {
 				Log::startStep(String::format("Starting optimisation with % iterations with % threads over % data...", nbIterations, nbSearchThreads, dataIInterval.toString()));
 			}
@@ -559,7 +629,7 @@ namespace Math {
 				}
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
-					searchThread->setParamRandom();
+					searchThread->resetParams();
 				}
 				if ( verbose > 0 ) {
 					Log::endStep("Done.");
@@ -651,7 +721,15 @@ namespace Math {
 						lastCost = computeCostQuadratic(dataIInterval);
 					} else {
 						setLearningRateFactor(getLearningRateFactor() * T(0.1));
-						Log::displayWarning(String::format("[%/%] epochNum #% : No better value founded. Maybe the maximum has been founded. Cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), lastCost, computeCoefficientOfDetermination(dataIInterval) * T(100)));
+						if ( verbose > -1 ) {
+							Log::displayWarning(String::format("[%/%] epochNum #% : No better value founded. Maybe the maximum has been founded. Cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), lastCost, computeCoefficientOfDetermination(dataIInterval) * T(100)));
+						}
+					}
+
+					if ( this->filePath.getSize() && !saveToFile(this->filePath) ) {
+						if ( verbose > -1 ) {
+							Log::displayWarning(String::format("Unable to save the DeepNeuralNetwork to the file \"%\".", this->filePath));
+						}
 					}
 
 					if ( verbose > 1 ) {
@@ -659,6 +737,8 @@ namespace Math {
 					}
 				}
 			}
+
+			this->optimizeMutex.unlock();
 
 			if ( verbose > 0 ) {
 				Log::endStep("Done.");
@@ -696,9 +776,14 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedYVector) {
+			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(dataIInterval, this->expectedYVector);
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLog(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
-			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(dataIInterval, this->expectedYVector);
+			return computeCostLog(dataIInterval, this->expectedYVector);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -707,9 +792,14 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedYVector) {
+			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(dataIInterval, this->expectedYVector);
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
-			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(dataIInterval, this->expectedYVector);
+			return computeCostQuadratic(dataIInterval, this->expectedYVector);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -718,9 +808,14 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedYVector) {
+			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(dataIInterval, this->expectedYVector);
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
-			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(dataIInterval, this->expectedYVector);
+			return computeCoefficientOfDetermination(dataIInterval, this->expectedYVector);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -743,8 +838,8 @@ namespace Math {
 		template<typename T, typename M, Size NbThreads>
 		template<typename Stream>
 		inline bool DeepNeuralNetwork<T, M, NbThreads>::read(Stream* stream) {
-			const Size nbLayers;
-			if ( !IO::write(stream, &nbLayers) ) {
+			Size nbLayers;
+			if ( !IO::read(stream, &nbLayers) ) {
 				return false;
 			}
 			if ( nbLayers != getNbLayers() ) {
@@ -772,6 +867,8 @@ namespace Math {
 			if ( !IO::read(stream, &this->learningRateFactor) ) {
 				return false;
 			}
+			_setNbData<Size(0)>();
+			this->bNeedForwardPropagation = true;
 			return true;
 		}
 
@@ -916,10 +1013,10 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_setParamRandom() {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::_resetParams() {
 			if constexpr ( I < M::nbLayers ) {
-				getLayer<I>()->setParamRandom();
-				_setParamRandom<I + Size(1)>();
+				getLayer<I>()->resetParams();
+				_resetParams<I + Size(1)>();
 			}
 		}
 

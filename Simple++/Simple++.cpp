@@ -1666,19 +1666,16 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Deep Neural Network											//
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork;
+		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork("myDeepNeuralNetwork.dnn");
 
-		Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
-
-		deepNeuralNetwork.addData(dataVector);
-
-		// StaticTable<double, Size(2)> forwardPropagation(deepNeuralNetwork.computeForwardPropagation(0));
+		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
+			Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+			deepNeuralNetwork.addData(dataVector);
+		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
-		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000), Size(10));
+		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000));
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Constant(0.01), Size(10000), Size(16), 0.25);
-
-		int i;
 	}
 #endif
 

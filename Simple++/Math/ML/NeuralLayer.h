@@ -66,7 +66,7 @@ namespace Math {
 			const Mat<T>& getParamMat() const;
 			Mat<T>& getParamMat();
 
-			void setParamRandom();
+			void resetParams();
 
 			template<typename ActivationFunc>
 			const StaticTable<T, NbNeurons>& computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc);
@@ -331,7 +331,7 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons>::setParamRandom() {
+		inline void NeuralLayer<T, NbFeatures, NbNeurons>::resetParams() {
 			this->paramMat.randomF();
 
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
@@ -419,8 +419,8 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurons>
 		template<typename Stream>
 		inline bool NeuralLayer<T, NbFeatures, NbNeurons>::read(Stream* stream) {
-			const Size nbFeatures;
-			const Size nbNeurons;
+			Size nbFeatures;
+			Size nbNeurons;
 			if ( !IO::read(stream, &nbFeatures) ) {
 				return false;
 			}
