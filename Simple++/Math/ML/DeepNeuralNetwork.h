@@ -128,6 +128,7 @@ namespace Math {
 
 			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval);
 			const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& computeForwardPropagation(const Size dataI);
+			void computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
 			void computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const;
 
 			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
@@ -433,10 +434,15 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
+			_computeForwardPropagation<Size(0)>(featureTable, outTable);
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const {
 			const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(data.getFeatures());
 			StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(data.getOuts());
-			_computeForwardPropagation<Size(0)>(featureTable, outTable);
+			return computeForwardPropagation(featureTable, outTable);
 		}
 
 		template<typename T, typename M, Size NbThreads>
