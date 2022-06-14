@@ -334,6 +334,23 @@ namespace Math {
 		inline void NeuralLayer<T, NbFeatures, NbNeurons>::resetParams() {
 			this->paramMat.randomF();
 
+			struct InterpolationFunc {
+				inline T operator()(const T& x) const {
+					T _x(x - T(0.5));
+					return T(3.0) * ( x * x * x ) + T(0.25) * x + T(0.5);
+				}
+			};
+
+			static const InterpolationFunc interpolationFunc;
+
+			// Use a square root func to converge params to 0.5.
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
+				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+					paramTable[ paramI ] = interpolationFunc(paramTable[ paramI ]);
+				}
+			}
+
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
 				const T neuronWeight(computeNeuronWeight(neuronI));

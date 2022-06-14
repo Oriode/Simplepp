@@ -106,6 +106,9 @@ namespace Math {
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			void clearData();
 
+			void normalizeData();
+			void normalizeData(const Math::Interval<Size>& dataIInterval);
+
 			static Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 
@@ -311,6 +314,43 @@ namespace Math {
 				this->bNeedForwardPropagation = true;
 			}
 			this->optimizeMutex.unlock();
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData() {
+			normalizeData(Math::Interval<Size>(Size(0), getNbData()));
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(const Math::Interval<Size>& dataIInterval) {
+			T featureSum(0);
+			T outSum(0);
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
+
+				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
+					featureSum += featureTable[ featureI ];
+				}
+				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
+					outSum += outTable[ outI ];
+				}
+			}
+
+			featureSum /= T(getNbData() * M::m[ 0 ][ 0 ]);
+			outSum /= T(getNbData() * M::m[ M::nbLayers - Size(1) ][ 1 ]);
+
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
+
+				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
+					featureTable[ featureI ] /= featureSum;
+				}
+				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
+					outTable[ outI ] /= outSum;
+				}
+			}
 		}
 
 		template<typename T, typename M, Size NbThreads>

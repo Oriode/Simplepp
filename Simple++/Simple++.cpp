@@ -1674,8 +1674,9 @@ int main(int argc, char* argv[]) {
 		}
 
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
-			Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 20, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+			Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 			deepNeuralNetwork.addData(dataVector);
+			deepNeuralNetwork.normalizeData();
 		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));

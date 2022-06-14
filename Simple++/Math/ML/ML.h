@@ -89,9 +89,9 @@ namespace Math {
 
 					const T noiseFactor(Math::random(-noise, noise));
 					const T y(v / ( minMax.getEnd() - minMax.getBegin() ));
-					const T yNoise(y * ( T(1) + noiseFactor ));
+					const T yNoise(v * ( T(1) + noiseFactor ));
 
-					data.setOut(outI, y);
+					data.setOut(outI, yNoise);
 				}
 			}
 
