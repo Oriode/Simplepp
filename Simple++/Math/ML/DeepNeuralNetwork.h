@@ -106,6 +106,9 @@ namespace Math {
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			void clearData();
 
+			static Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
+			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
+
 			const Size getNbData() const;
 			constexpr Size getNbLayers() const;
 
@@ -293,19 +296,9 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
-			this->optimizeMutex.lock();
-			{
-				this->featureVector.reserve(this->featureVector.getSize() + dataVector.getSize());
-				this->expectedYVector.reserve(this->expectedYVector.getSize() + dataVector.getSize());
-				for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
-					const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data(dataVector.getValueI(dataI));
-					this->featureVector.push(data.getFeatures());
-					this->expectedYVector.push(data.getOuts());
-				}
-				_setNbData<Size(0)>();
-				this->bNeedForwardPropagation = true;
-			}
-			this->optimizeMutex.unlock();
+			const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector(DeepNeuralNetwork<T, M, NbThreads>::createFeatureVector(dataVector));
+			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outVector(DeepNeuralNetwork<T, M, NbThreads>::createOutVector(dataVector));
+			return addData(featureVector, outVector);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -318,6 +311,32 @@ namespace Math {
 				this->bNeedForwardPropagation = true;
 			}
 			this->optimizeMutex.unlock();
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> DeepNeuralNetwork<T, M, NbThreads>::createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
+			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector;
+			featureVector.resize(dataVector.getSize());
+
+			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
+				const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data(dataVector.getValueI(dataI));
+				featureVector.setValueI(dataI, data.getFeatures());
+			}
+
+			return featureVector;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> DeepNeuralNetwork<T, M, NbThreads>::createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
+			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outVector;
+			outVector.resize(dataVector.getSize());
+
+			for ( Size dataI(0); dataI < dataVector.getSize(); dataI++ ) {
+				const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data(dataVector.getValueI(dataI));
+				outVector.setValueI(dataI, data.getOuts());
+			}
+
+			return outVector;
 		}
 
 		template<typename T, typename M, Size NbThreads>

@@ -1668,8 +1668,13 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork("myDeepNeuralNetwork.dnn");
 
+		if ( deepNeuralNetwork.getEpoch() > Size(0) ) {
+			deepNeuralNetwork.resetParams();
+			deepNeuralNetwork.clearData();
+		}
+
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
-			Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+			Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 20, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 			deepNeuralNetwork.addData(dataVector);
 		}
 
