@@ -327,6 +327,17 @@ namespace Math {
 	struct RandomF {
 		template<typename T> inline constexpr T operator()() { return Math::randomF<T>(); }
 	};
+	template<typename T>
+	struct Random {
+		Random(const T& min, const T& max) :
+			min(min),
+			max(max) {}
+
+		inline T operator()() const { return Math::random(this->min, this->max); }
+
+		const T& min;
+		const T& max;
+	};
 }
 
 #include "BasicMath.hpp"

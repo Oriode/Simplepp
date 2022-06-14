@@ -190,6 +190,7 @@ namespace Math {
 		Mat<T>& ones();
 		Mat<T>& identity();
 		Mat<T>& randomF();
+		Mat<T>& random(const T & min, const T & max);
 
 		Mat<T>& transpose();
 
@@ -507,6 +508,13 @@ namespace Math {
 	template<typename T>
 	inline Mat<T>& Mat<T>::randomF() {
 		set(Math::RandomF());
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Mat<T>& Mat<T>::random(const T& min, const T& max) {
+		set(Math::Random<T>(min, max));
 
 		return *this;
 	}

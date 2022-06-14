@@ -111,6 +111,7 @@ namespace Math {
 		Vec<T>& zeros();
 		Vec<T>& ones();
 		Vec<T>& randomF();
+		Vec<T>& random(const T & min, const T & max);
 
 		///@brief Read a JSON object and set this to the read values.
 		///@param nodeArray Pointer to the JSON object to be read.
@@ -242,6 +243,11 @@ namespace Math {
 	template<typename T>
 	inline Vec<T>& Vec<T>::randomF() {
 		return set(Math::RandomF());
+	}
+
+	template<typename T>
+	inline Vec<T>& Vec<T>::random(const T& min, const T& max) {
+		return set(Math::Random<T>(min, max));
 	}
 
 	template<typename T>
