@@ -808,6 +808,8 @@ namespace Time {
 		str.concatFill( getMinutes(), 2, S::ElemType( '0' ) );
 		str.concat(S::ElemType( ':' ) );
 		str.concatFill( getSeconds(), 2, S::ElemType( '0' ) );
+		str.concat(S::ElemType(' '));
+		str.concat(getYear());
 	}
 
 	template<typename T>
