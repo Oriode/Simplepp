@@ -10,7 +10,7 @@ StreamT<T>::StreamT( const T * data, const Size size ) :
 template<typename T>
 template<typename C>
 StreamT<T>::StreamT( const C * data, const Size size ) :
-	Vector<T>( Vector<T>::ctor::null ),
+	Vector<T>( Vector<T>::protectedCtor::null ),
 	position( 0 ) {
 	_assert( size );
 	Size sizeBytes( size * Vector<C>::elementSize );
@@ -24,7 +24,7 @@ StreamT<T>::StreamT( const C * data, const Size size ) :
 
 template<typename T>
 StreamT<T>::StreamT( const T * data, const Size size, const Size maxSize ) :
-	Vector<T>( Vector<T>::ctor::null ),
+	Vector<T>( Vector<T>::protectedCtor::null ),
 	position( 0 ) {
 	_assert( size );
 	_assert( maxSize >= size );
@@ -40,7 +40,7 @@ StreamT<T>::StreamT( const T * data, const Size size, const Size maxSize ) :
 template<typename T>
 template<typename C>
 StreamT<T>::StreamT( const BasicString<C> & str ) :
-	Vector<T>( Vector<T>::ctor::null ),
+	Vector<T>( Vector<T>::protectedCtor::null ),
 	position( 0 ) {
 	if ( str.getSize() ) {
 		Size sizeBytes( str.getSize() * Vector<C>::elementSize );

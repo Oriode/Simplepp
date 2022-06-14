@@ -838,7 +838,8 @@ void Table<T>::quicksort(T* startIt, T* endIt, Compare func) {
 		T* endIt;
 	} quicksortStackItem;
 
-	quicksortStackItem* stack = new quicksortStackItem[ Math::log(endIt - startIt) + Size(1) ];
+	const Size stackSize((endIt - startIt) >> Size(1));
+	quicksortStackItem* stack = new quicksortStackItem[ stackSize ];
 
 	// push initial values of l and h to stack
 	stack[ 0 ].startIt = startIt;
@@ -849,6 +850,11 @@ void Table<T>::quicksort(T* startIt, T* endIt, Compare func) {
 
 	// Keep popping from stack while is not empty
 	while ( top >= stack ) {
+#ifdef DEBUG
+		if ( !( top >= stack && top < stack + stackSize ) ) {
+			SimpleLog::callErrorHandler("quicksort overflow", SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red);
+		}
+#endif
 		endIt = top -> endIt;
 		startIt = top -> startIt;
 		top--;
@@ -866,6 +872,11 @@ void Table<T>::quicksort(T* startIt, T* endIt, Compare func) {
 		// If there are elements on left side of pivot, then push 
 		if ( storeIt - Size(1) > startIt ) {
 			top++;
+#ifdef DEBUG
+			if ( !( top >= stack && top < stack + stackSize ) ) {
+				SimpleLog::callErrorHandler("quicksort overflow", SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red);
+			}
+#endif
 			top -> startIt = startIt;
 			top -> endIt = storeIt - Size(1);
 		}
@@ -873,6 +884,11 @@ void Table<T>::quicksort(T* startIt, T* endIt, Compare func) {
 		// If there are elements on right side of pivot, then push 
 		if ( storeIt + Size(1) < endIt ) {
 			top++;
+#ifdef DEBUG
+			if ( !( top >= stack && top < stack + stackSize ) ) {
+				SimpleLog::callErrorHandler("quicksort overflow", SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red);
+			}
+#endif
 			top -> startIt = storeIt + Size(1);
 			top -> endIt = endIt;
 		}

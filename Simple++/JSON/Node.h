@@ -8,7 +8,7 @@
 #include "../IO/IO.h"
 #include "../Vector.h"
 #include "../MultiMap.h"
-#include "../Math/Math.h"
+#include "../Math/BasicMath.h"
 #include "../OS/Path.h"
 
 

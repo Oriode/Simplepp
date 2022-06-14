@@ -798,16 +798,16 @@ namespace Time {
 	template<typename S>
 	void DateT<T>::concat( S & str ) const {
 		str.concat( getWeekDayStr<S>( DateT<T>::getWeekDay( *this ) ) );
-		str.concat( C( ' ' ) );
+		str.concat( S::ElemType( ' ' ) );
 		str.concat( getMonthStr<S>( getMonth() ) );
-		str.concat( C( ' ' ) );
+		str.concat(S::ElemType( ' ' ) );
 		str.concat( getDay() );
-		str.concat( C( ' ' ) );
-		str.concatFill( getHours(), 2, C( '0' ) );
-		str.concat( C( ':' ) );
-		str.concatFill( getMinutes(), 2, C( '0' ) );
-		str.concat( C( ':' ) );
-		str.concatFill( getSeconds(), 2, C( '0' ) );
+		str.concat(S::ElemType( ' ' ) );
+		str.concatFill( getHours(), 2, S::ElemType( '0' ) );
+		str.concat(S::ElemType( ':' ) );
+		str.concatFill( getMinutes(), 2, S::ElemType( '0' ) );
+		str.concat(S::ElemType( ':' ) );
+		str.concatFill( getSeconds(), 2, S::ElemType( '0' ) );
 	}
 
 	template<typename T>
@@ -824,45 +824,45 @@ namespace Time {
 	void DateT<T>::concat( S & str, const S & tpl ) const {
 		for ( auto it = tpl.getBegin(); it != tpl.getEnd(); it++ ) {
 			switch ( *it ) {
-				case C( '\\' ):
+				case S::ElemType( '\\' ):
 					it++;
 					break;
 					//YEAR
-				case C( 'Y' ):
+				case S::ElemType( 'Y' ):
 					str.concatFill( getYear(), 4 );
 					break;
-				case C( 'y' ):
+				case S::ElemType( 'y' ):
 					str.concatFill( getYear() % 100, 4 );
 					break;
 					//MONTH
-				case C( 'b' ):
+				case S::ElemType( 'b' ):
 					str << getMonthStr( getMonth() );
 					break;
-				case C( 'm' ):
+				case S::ElemType( 'm' ):
 					str.concatFill( getMonth() + 1, 2 );
 					break;
 					//DAY OF THE MONTH
-				case C( 'd' ):
+				case S::ElemType( 'd' ):
 					str.concatFill( getDay(), 2 );
 					break;
-				case C( 'e' ):
+				case S::ElemType( 'e' ):
 					str.concatFill( getDay(), 2 );
 					break;
 					//DAY OF THE WEEK
-				case C( 'a' ):
+				case S::ElemType( 'a' ):
 					str << getWeekDayStr<S>( DateT<T>::getWeekDay( *this ) );
 					break;
-				case C( 'u' ):
+				case S::ElemType( 'u' ):
 					str << ( DateT<T>::getWeekDay<S>( *this ) + 1 );
 					break;
 					//HOURS
-				case C( 'H' ):
+				case S::ElemType( 'H' ):
 					str.concatFill( getHours(), 2 );
 					break;
-				case C( 'M' ):
+				case S::ElemType( 'M' ):
 					str.concatFill( getMinutes(), 2 );
 					break;
-				case C( 'S' ):
+				case S::ElemType( 'S' ):
 					str.concatFill( getSeconds(), 2 );
 					break;
 				default:
@@ -884,24 +884,24 @@ namespace Time {
 	template<typename S>
 	void DateT<T>::concatISO( S & str, DateT<T>::ISOFormat isoFormat ) const {
 
-		str.concatFill( getYear(), 4, C( '0' ) );
-		str.concat( C( '-' ) );
-		str.concatFill( getMonth() + 1, 2, C( '0' ) );
-		str.concat( C( '-' ) );
-		str.concatFill( getDay(), 2, C( '0' ) );
+		str.concatFill( getYear(), 4, S::ElemType( '0' ) );
+		str.concat( S::ElemType( '-' ) );
+		str.concatFill( getMonth() + 1, 2, S::ElemType( '0' ) );
+		str.concat( S::ElemType( '-' ) );
+		str.concatFill( getDay(), 2, S::ElemType( '0' ) );
 
 		if ( isoFormat != DateT<T>::ISOFormat::DateOnly ) {
-			str.concat( C( 'T' ) );
-			str.concatFill( getHours(), 2, C( '0' ) );
-			str.concat( C( ':' ) );
-			str.concatFill( getMinutes(), 2, C( '0' ) );
-			str.concat( C( ':' ) );
-			str.concatFill( getSeconds(), 2, C( '0' ) );
+			str.concat( S::ElemType( 'T' ) );
+			str.concatFill( getHours(), 2, S::ElemType( '0' ) );
+			str.concat( S::ElemType( ':' ) );
+			str.concatFill( getMinutes(), 2, S::ElemType( '0' ) );
+			str.concat( S::ElemType( ':' ) );
+			str.concatFill( getSeconds(), 2, S::ElemType( '0' ) );
 		}
 
 		if ( isoFormat == DateT<T>::ISOFormat::DateTimeOffset ) {
 			if ( this -> utcBias == 0 ) {
-				str.concat( C( 'Z' ) );
+				str.concat( S::ElemType( 'Z' ) );
 			} else {
 				TimeT utcBias( this -> utcBias );
 				TimeT utcBiasH( utcBias / ( 3600 ) );
@@ -911,15 +911,15 @@ namespace Time {
 				TimeT utcBiasS( utcBias );
 
 				if ( this -> utcBias > 0 ) {
-					str.concat( C( '+' ) );
-					str.concatFill( utcBiasH, 2, C( '0' ) );
-					str.concat( C( ':' ) );
-					str.concatFill( utcBiasM, 2, C( '0' ) );
+					str.concat( S::ElemType( '+' ) );
+					str.concatFill( utcBiasH, 2, S::ElemType( '0' ) );
+					str.concat( S::ElemType( ':' ) );
+					str.concatFill( utcBiasM, 2, S::ElemType( '0' ) );
 				} else {
-					str.concat( C( '-' ) );
-					str.concatFill( -utcBiasH, 2, C( '0' ) );
-					str.concat( C( ':' ) );
-					str.concatFill( -utcBiasM, 2, C( '0' ) );
+					str.concat( S::ElemType( '-' ) );
+					str.concatFill( -utcBiasH, 2, S::ElemType( '0' ) );
+					str.concat( S::ElemType( ':' ) );
+					str.concatFill( -utcBiasM, 2, S::ElemType( '0' ) );
 				}
 			}
 		}

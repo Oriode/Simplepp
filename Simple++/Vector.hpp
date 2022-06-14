@@ -536,6 +536,21 @@ Vector<T> & Vector<T>::operator=( const Vector<C> & vector ) {
 }
 
 template<typename T>
+Vector<T>& Vector<T>::operator=(const Vector<T>& vector) {
+	this -> maxSize = vector.getMaxSize();
+	this -> size = vector.getSize();
+
+	if ( this->dataTable ) {
+		delete[] this -> dataTable;
+	}
+	this -> dataTable = ( this -> maxSize ) ? new T[ this -> maxSize ] : NULL;
+	Utility::copy(this -> dataTable, vector.dataTable, this -> size);
+	_updateIterators();
+
+	return *this;
+}
+
+template<typename T>
 template<typename C>
 inline Vector<T>& Vector<T>::operator=(const Table<C>& vector) {
 	BasicVector<T>::operator=(vector);

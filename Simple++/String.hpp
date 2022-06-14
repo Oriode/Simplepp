@@ -4177,7 +4177,7 @@ BasicString<T> BasicString<T>::getSubStr( typename BasicString<T>::Iterator begi
 template<typename T>
 BasicString<T> BasicString<T>::toLower() const {
 	// Pre allocate the new string with the same size.
-	BasicString<T> lowerString( BasicString<T>::ctor::null );
+	BasicString<T> lowerString( BasicString<T>::protectedCtor::null );
 	lowerString._allocateNoNullDelete( this -> getMaxSize() );
 	lowerString.size = this -> size;
 	lowerString._updateIterators();
@@ -4201,7 +4201,7 @@ BasicString<T> BasicString<T>::toLower() const {
 template<typename T>
 BasicString<T> BasicString<T>::toUpper() const {
 	// Pre allocate the new string with the same size.
-	BasicString<T> lowerString( BasicString<T>::ctor::null );
+	BasicString<T> lowerString( BasicString<T>::protectedCtor::null );
 	lowerString._allocateNoNullDelete( this -> getMaxSize() );
 	lowerString.size = this -> size;
 	lowerString._updateIterators();
@@ -4612,7 +4612,7 @@ bool BasicString<T>::read(Stream* stream, Size size ) {
 	_updateIterators();
 
 
-	if ( !IO::readBuffer( stream, getData(), getSize() ) ) {
+	if ( !IO::read( stream, getData(), getSize() ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
 		_updateIterators();
@@ -4709,7 +4709,8 @@ BasicString<T> BasicString<T>::format( const C( &str )[ N ], const T1 & arg1, Ty
 
 template<typename T>
 Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const BasicString<T> & y ) {
-	for ( Size i( 0 ); i < x.getSize(); i++ ) {
+	const Size minSize(Math::min(x.getSize(), y.getSize()));
+	for ( Size i( 0 ); i < minSize; i++ ) {
 		const T & t1 = x[ i ];
 		const T & t2 = y[ i ];
 

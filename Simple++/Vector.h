@@ -188,6 +188,7 @@ public:
 	 */
 	template<typename C>
 	Vector<T> & operator=( const Vector<C> & vector );
+	Vector<T> & operator=( const Vector<T> & vector );
 	template<typename C>
 	Vector<T>& operator=(const Table<C>& vector);
 
