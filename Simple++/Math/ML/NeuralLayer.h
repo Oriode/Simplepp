@@ -81,9 +81,9 @@ namespace Math {
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void updateModel(const LearningRateFunc& learningRateFunc, const T & learningRateFactor, const Size epochNum);
 
-			T computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
-			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
-			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
 			StaticTable<T, NbNeurons> computeMeanTable(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
@@ -472,10 +472,10 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			T costSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
+				const StaticTable<T, NbNeurons>& outTable(outTableVector.getValueI(dataI));
 				const StaticTable<T, NbNeurons>& expectedYTable(expectedOutTableVector.getValueI(dataI));
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 					const T& expectedY(expectedYTable[ neuronI ]);
@@ -488,10 +488,10 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			T costSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
+				const StaticTable<T, NbNeurons>& outTable(outTableVector.getValueI(dataI));
 				const StaticTable<T, NbNeurons>& expectedYTable(expectedOutTableVector.getValueI(dataI));
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 					const T delta(expectedYTable[ neuronI ] - outTable[ neuronI ]);
@@ -503,14 +503,14 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			StaticTable<T, NbNeurons> meanExpectedTable(computeMeanTable(dataIInterval, expectedOutTableVector));
 
 			T errSum(0);
 			T meanSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& expectedTable(expectedOutTableVector.getValueI(dataI));
-				const StaticTable<T, NbNeurons>& outTable(getOuts(dataI));
+				const StaticTable<T, NbNeurons>& outTable(outTableVector.getValueI(dataI));
 
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 					const T y(outTable[ neuronI ]);
