@@ -106,8 +106,10 @@ namespace Math {
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			void clearData();
 
-			void normalizeData();
-			void normalizeData(const Math::Interval<Size>& dataIInterval);
+			void normalizeFeature();
+			void normalizeFeature(const Math::Interval<Size>& dataIInterval);
+			void normalizeOut();
+			void normalizeOut(const Math::Interval<Size>& dataIInterval);
 			void normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable);
 			void normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector);
 			void unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable);
@@ -153,11 +155,11 @@ namespace Math {
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			void optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), int verbose = 2);
+			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
@@ -330,14 +332,13 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData() {
-			normalizeData(Math::Interval<Size>(Size(0), getNbData()));
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature() {
+			normalizeFeature(Math::Interval<Size>(Size(0), getNbData()));
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(const Math::Interval<Size>& dataIInterval) {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(const Math::Interval<Size>& dataIInterval) {
 			T featureSum(0);
-			T outSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
 				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
@@ -345,16 +346,11 @@ namespace Math {
 				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 					featureSum += featureTable[ featureI ];
 				}
-				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
-					outSum += outTable[ outI ];
-				}
 			}
 
 			featureSum /= T(getNbData() * M::m[ 0 ][ 0 ]);
-			outSum /= T(getNbData() * M::m[ M::nbLayers - Size(1) ][ 1 ]);
 
 			this->normalizeFeatureFactor = T(1) / featureSum;
-			this->normalizeOutFactor = T(1) / outSum;
 
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
@@ -363,6 +359,36 @@ namespace Math {
 				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 					featureTable[ featureI ] *= this->normalizeFeatureFactor;
 				}
+			}
+
+			this->bNeedForwardPropagation = true;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut() {
+			normalizeOut(Math::Interval<Size>(Size(0), getNbData()));
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
+			T outSum(0);
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
+
+				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
+					outSum += outTable[ outI ];
+				}
+			}
+
+			outSum /= T(getNbData() * M::m[ M::nbLayers - Size(1) ][ 1 ]);
+
+			this->normalizeOutFactor = T(1) / outSum;
+
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
+
 				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
 					outTable[ outI ] *= this->normalizeOutFactor;
 				}
@@ -989,13 +1015,13 @@ namespace Math {
 				Log::displayError(String::format("Trying to read a DeepNeuralNetwork of the wrong number of layers : this[ % ] != read[ % ].", getNbLayers(), nbLayers));
 				return false;
 			}
+			if ( !_read<Size(0)>(stream) ) {
+				return false;
+			}
 			if ( !IO::read(stream, &this->featureVector) ) {
 				return false;
 			}
 			if ( !IO::read(stream, &this->expectedYVector) ) {
-				return false;
-			}
-			if ( !_read<Size(0)>(stream) ) {
 				return false;
 			}
 			if ( !IO::read(stream, &this->hiddenActivationFunc) ) {
@@ -1028,13 +1054,13 @@ namespace Math {
 			if ( !IO::write(stream, &nbLayers) ) {
 				return false;
 			}
+			if ( !_write<Size(0)>(stream) ) {
+				return false;
+			}
 			if ( !IO::write(stream, &this->featureVector) ) {
 				return false;
 			}
 			if ( !IO::write(stream, &this->expectedYVector) ) {
-				return false;
-			}
-			if ( !_write<Size(0)>(stream) ) {
 				return false;
 			}
 			if ( !IO::write(stream, &this->hiddenActivationFunc) ) {
