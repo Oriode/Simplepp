@@ -49,6 +49,16 @@ namespace Math {
 		///@brief Ensure begin < end.
 		void sort();
 
+		///@brief Scale a value between [0.0;1.0] using this Interval.
+		///@param v Value to be scaled.
+		///@return value between [0.0;1.0].
+		T scale(const T& v) const;
+
+		///@brief Unscale a value between [0.0;1.0] using this Interval.
+		///@param v Value to be unscaled between [0.0;1.0].
+		///@return value.
+		T unscale(const T& v) const;
+
 		template<typename S = String>
 		S toString() const;
 

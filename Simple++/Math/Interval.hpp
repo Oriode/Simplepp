@@ -98,6 +98,16 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline T Interval<T>::scale(const T& v) const {
+		return ( v - this->begin ) / getSize();
+	}
+
+	template<typename T>
+	inline T Interval<T>::unscale(const T& v) const {
+		return v * getSize() + this->begin;
+	}
+
+	template<typename T>
 	template<typename S>
 	S Interval<T>::toString() const {
 		S outString;
