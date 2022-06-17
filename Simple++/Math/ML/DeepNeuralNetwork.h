@@ -110,10 +110,10 @@ namespace Math {
 			void normalizeFeature(const Math::Interval<Size>& dataIInterval);
 			void normalizeOut();
 			void normalizeOut(const Math::Interval<Size>& dataIInterval);
-			void normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable);
-			void normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector);
-			void unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable);
-			void unnormalizeData(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector);
+			void normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const;
+			void normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const;
+			void unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
+			void unnormalizeData(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const;
 
 			static Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
@@ -135,7 +135,7 @@ namespace Math {
 			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval);
 			void computeForwardPropagation(const Size dataI);
 			void computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
-			void computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable);
+			void computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable) const;
 			void computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const;
 
 			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
@@ -164,15 +164,15 @@ namespace Math {
 			template<typename LearningRateFunc = LearningRate::Constant<T>>
 			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
 
-			T computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable);
+			T computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCostLog(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCostLog(const Math::Interval<Size>& dataIInterval);
 			T computeCostLog();
-			T computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable);
+			T computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCostQuadratic(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval);
 			T computeCostQuadratic();
-			T computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable);
+			T computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCoefficientOfDetermination(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval);
 			T computeCoefficientOfDetermination();
@@ -398,29 +398,29 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
 			for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 				featureTable[ featureI ] *= this->normalizeFeatureFactor;
 			}
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
 				normalizeData(featureTableVector.getValueI(dataI));
 			}
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) {
-			const Size unnormalizeFactor(T(1) / this->normalizeOutFactor);
+		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
+			const T unnormalizeFactor(T(1) / this->normalizeOutFactor);
 			for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
 				outTable[ outI ] *= unnormalizeFactor;
 			}
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeData(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeData(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
 				unnormalizeData(outTableVector.getValueI(dataI));
 			}
@@ -506,19 +506,18 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
-			const StaticTable<T, M::m[ 0 ][ 0 ]> featureTableNormalized(featureTable);
+			StaticTable<T, M::m[ 0 ][ 0 ]> featureTableNormalized(featureTable);
 			normalizeData(featureTableNormalized);
 			_computeForwardPropagation<Size(0)>(featureTableNormalized, outTable);
 			unnormalizeData(outTable);
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			outTableVector.resize(featureTableVector.getSize());
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
 				computeForwardPropagation(featureTableVector.getValueI(dataI), outTableVector.getValueI(dataI));
 			}
-			this->bNeedForwardPropagation = true;
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -924,8 +923,8 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) {
-			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(feattureTable.getSize());
+		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(featureTable.getSize());
 			computeForwardPropagation(featureTable, outTable);
 			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(Math::Interval<Size>(Size(0), featureTable.getSize()), outTable, expectedOutTable);
 		}
@@ -947,8 +946,8 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) {
-			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(feattureTable.getSize());
+		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(featureTable.getSize());
 			computeForwardPropagation(featureTable, outTable);
 			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(Math::Interval<Size>(Size(0), featureTable.getSize()), outTable, expectedOutTable);
 		}
@@ -970,10 +969,10 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) {
-			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(feattureTable.getSize());
-			computeForwardPropagation(featureTable, outTable);
-			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(Math::Interval<Size>(Size(0), featureTable.getSize()), outTable, expectedOutTable);
+		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const {
+			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTableVector(featureTableVector.getSize());
+			computeForwardPropagation(featureTableVector, outTableVector);
+			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(Math::Interval<Size>(Size(0), featureTableVector.getSize()), outTableVector, expectedOutTableVector);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -1105,7 +1104,7 @@ namespace Math {
 				if constexpr ( I < M::nbLayers - Size(1) ) {
 					StaticTable<T, M::m[ I ][ 1 ]> outTable;
 					getLayer<I>()->computeForwardPropagation<M::HiddenActivationFunc>(featureTable, outTable, this->hiddenActivationFunc);
-					return _computeForwardPropagation(outTable, outTableFinal);
+					return _computeForwardPropagation<I + Size(1)>(outTable, outTableFinal);
 				} else {
 					getLayer<I>()->computeForwardPropagation<M::ActivationFunc>(featureTable, outTableFinal, this->activationFunc);
 				}
