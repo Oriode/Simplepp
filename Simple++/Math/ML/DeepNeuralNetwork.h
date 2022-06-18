@@ -110,10 +110,14 @@ namespace Math {
 			void normalizeFeature(const Math::Interval<Size>& dataIInterval);
 			void normalizeOut();
 			void normalizeOut(const Math::Interval<Size>& dataIInterval);
-			void normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const;
-			void normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const;
-			void unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
-			void unnormalizeData(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const;
+			void normalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const;
+			void normalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const;
+			void unnormalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const;
+			void unnormalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const;
+			void normalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
+			void normalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const;
+			void unnormalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
+			void unnormalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const;
 
 			static Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
@@ -240,6 +244,11 @@ namespace Math {
 			template<Size I, typename Stream>
 			bool _read(Stream* stream);
 
+			void resetNormalizeTable();
+
+			T normalizeValue(const T& x, const Math::Vec2<T>& v) const;
+			T unnormalizeValue(const T& x, const Math::Vec2<T>& v) const;
+
 			StaticTable<void*, M::nbLayers> layerTable;
 
 			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector;
@@ -255,6 +264,9 @@ namespace Math {
 			T normalizeFeatureFactor;
 			T normalizeOutFactor;
 
+			StaticTable<Math::Vec2<T>, M::m[ 0 ][ 0 ]> normalizeFeatureTable;		// Used to compute the z-score. [mean, standard deviation].
+			StaticTable<Math::Interval<T>, M::m[ M::nbLayers - Size(1) ][ 1 ]> normalizeOutTable;
+
 			Mutex optimizeMutex;
 
 			OS::Path filePath;
@@ -264,8 +276,6 @@ namespace Math {
 		inline DeepNeuralNetwork<T, M, NbThreads>::DeepNeuralNetwork(const OS::Path& filePath) :
 			bNeedForwardPropagation(true),
 			epochNum(0),
-			normalizeFeatureFactor(1),
-			normalizeOutFactor(1),
 			filePath(filePath)
 		{
 			static_assert( Utility::isBase<Model, M>::value, "Model type unknown." );
@@ -281,6 +291,8 @@ namespace Math {
 				}
 			}
 
+			resetNormalizeTable();
+
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -293,7 +305,9 @@ namespace Math {
 			this->optimizeMutex.lock();
 			{
 				this->featureVector.push(featureTable);
+				normalizeFeature(this->featureVector.getLast());
 				this->expectedYVector.push(outTable);
+				normalizeOut(this->featureVector.getLast());
 				_setNbData<Size(0)>();
 				this->bNeedForwardPropagation = true;
 			}
@@ -305,6 +319,12 @@ namespace Math {
 			assert(featureTableVector.getSize() == outTableVector.getSize());
 			this->optimizeMutex.lock();
 			{
+				Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureTableVectorCpy(featureTableVector);
+				Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTableVectorCpy(outTableVector);
+
+				normalizeFeature(featureTableVectorCpy);
+				normalizeOut(outTableVectorCpy);
+
 				this->featureVector.concat(featureTableVector);
 				this->expectedYVector.concat(outTableVector);
 				_setNbData<Size(0)>();
@@ -331,8 +351,7 @@ namespace Math {
 			{
 				this->featureVector.clear();
 				this->expectedYVector.clear();
-				this->normalizeFeatureFactor = T(1);
-				this->normalizeOutFactor = T(1);
+				resetNormalizeTable();
 				_setNbData<Size(0)>();
 				this->bNeedForwardPropagation = true;
 			}
@@ -346,18 +365,63 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(const Math::Interval<Size>& dataIInterval) {
-			T featureSum(0);
+
+			// unnormalize first.
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				unnormalizeFeature(this->featureVector.getValueI(dataI));
+			}
+
+			// Recompute the mean.
+			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+				this->normalizeFeatureTable[ featureI ].x = T(0);
+			}
+
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
 
 				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
-					featureSum += featureTable[ featureI ];
+					T& v(featureTable[ featureI ]);
+					Math::Vec2<T>& i(this->normalizeFeatureTable[ featureI ]);
+
+					i.x += v;
 				}
 			}
 
-			featureSum /= T(M::m[0][0]);
+			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
+			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+				this->normalizeFeatureTable[ featureI ].x *= sizeInverse;
+			}
 
-			this->normalizeFeatureFactor = T(1) / featureSum;
+			// Recompute the standard deviation
+			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+				this->normalizeFeatureTable[ featureI ].y = T(0);
+			}
+
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+
+				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
+					T& v(featureTable[ featureI ]);
+					Math::Vec2<T>& i(this->normalizeFeatureTable[ featureI ]);
+
+					const T delta(v - i.x);
+					i.y += delta * delta;
+				}
+			}
+
+			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+				Math::Vec2<T>& i(this->normalizeFeatureTable[ featureI ]);
+				i.y = Math::sqrt(i.y * sizeInverse);
+			}
+
+			// Normalize
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				normalizeFeature(this->featureVector.getValueI(dataI));
+			}
+
+			// ===============================================
+
+			/*this->normalizeFeatureFactor = T(1) / featureSum;
 
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
@@ -365,7 +429,7 @@ namespace Math {
 				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 					featureTable[ featureI ] *= this->normalizeFeatureFactor;
 				}
-			}
+			}*/
 
 			this->bNeedForwardPropagation = true;
 		}
@@ -377,7 +441,7 @@ namespace Math {
 
 		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
-			T outSum(0);
+			/*T outSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
 
@@ -396,37 +460,72 @@ namespace Math {
 				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
 					outTable[ outI ] *= this->normalizeOutFactor;
 				}
-			}
+			}*/
 
 			this->bNeedForwardPropagation = true;
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
 			for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
-				featureTable[ featureI ] *= this->normalizeFeatureFactor;
+				T& v(featureTable[ featureI ]);
+
+				v = normalizeValue(v, this->normalizeFeatureTable[ featureI ]);
 			}
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeData(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
-				normalizeData(featureTableVector.getValueI(dataI));
+				normalizeFeature(featureTableVector.getValueI(dataI));
 			}
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeData(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
-			const T unnormalizeFactor(T(1) / this->normalizeOutFactor);
+		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
+			for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
+				T& v(featureTable[ featureI ]);
+
+				v = unnormalizeValue(v, this->normalizeFeatureTable[ featureI ]);
+			}
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
+			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
+				unnormalizeFeature(featureTableVector.getValueI(dataI));
+			}
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
 			for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
-				outTable[ outI ] *= unnormalizeFactor;
+				T& v(outTable[ outI ]);
+
+				v = normalizeValue(v, this->normalizeOutTable[ outI ]);
 			}
 		}
 
 		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeData(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
-			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
-				unnormalizeData(outTableVector.getValueI(dataI));
+		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+			for ( Size dataI(0); dataI < outTableVector.getSize(); dataI++ ) {
+				normalizeOut(outTableVector.getValueI(dataI));
+			}
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
+			for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
+				T& v(outTable[ outI ]);
+
+				v = unnormalizeValue(v, this->normalizeOutTable[ outI ]);
+			}
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+			for ( Size dataI(0); dataI < outTableVector.getSize(); dataI++ ) {
+				unnormalizeOut(outTableVector.getValueI(dataI));
 			}
 		}
 
@@ -516,9 +615,9 @@ namespace Math {
 		template<typename T, typename M, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
 			StaticTable<T, M::m[ 0 ][ 0 ]> featureTableNormalized(featureTable);
-			normalizeData(featureTableNormalized);
+			normalizeFeature(featureTableNormalized);
 			_computeForwardPropagation<Size(0)>(featureTableNormalized, outTable);
-			unnormalizeData(outTable);
+			unnormalizeOut(outTable);
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -1064,6 +1163,31 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::resetNormalizeTable() {
+			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+				Math::Vec2<T>& i(this->normalizeFeatureTable.getValueI(featureI));
+				i.x = T(0.0);
+				i.y = T(1.0);
+			}
+
+			for ( Size outI(0); outI < this->normalizeOutTable.getSize(); outI++ ) {
+				Math::Vec2<T>& i(this->normalizeOutTable.getValueI(outI));
+				i.x = T(0.0);
+				i.y = T(1.0);
+			}
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, NbThreads>::normalizeValue(const T& x, const Math::Vec2<T>& v) const {
+			return ( x - v.x ) / v.y;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, NbThreads>::unnormalizeValue(const T& x, const Math::Vec2<T>& v) const {
+			return x * v.y + v.x;
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		template<Size I>
 		inline const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* DeepNeuralNetwork<T, M, NbThreads>::getLayer() const {
 			return const_cast< DeepNeuralNetwork<T, M, NbThreads> * >( this )->getLayer<I>();
@@ -1107,10 +1231,10 @@ namespace Math {
 			if ( !IO::read(stream, &this->learningRateFactor) ) {
 				return false;
 			}
-			if ( !IO::read(stream, &this->normalizeFeatureFactor) ) {
+			if ( !IO::read(stream, &this->normalizeFeatureTable) ) {
 				return false;
 			}
-			if ( !IO::read(stream, &this->normalizeOutFactor) ) {
+			if ( !IO::read(stream, &this->normalizeOutTable) ) {
 				return false;
 			}
 			_setNbData<Size(0)>();
@@ -1146,10 +1270,10 @@ namespace Math {
 			if ( !IO::write(stream, &this->learningRateFactor) ) {
 				return false;
 			}
-			if ( !IO::write(stream, &this->normalizeFeatureFactor) ) {
+			if ( !IO::write(stream, &this->normalizeFeatureTable) ) {
 				return false;
 			}
-			if ( !IO::write(stream, &this->normalizeOutFactor) ) {
+			if ( !IO::write(stream, &this->normalizeOutTable) ) {
 				return false;
 			}
 			return true;

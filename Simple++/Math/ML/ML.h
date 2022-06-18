@@ -88,8 +88,8 @@ namespace Math {
 					Math::Interval<T>& minMax(minMaxTable[ outI ]);
 
 					const T noiseFactor(Math::random(-noise, noise));
-					const T vScaled(v / ( minMax.getEnd() - minMax.getBegin() ));
-					const T yNoise(v * ( T(1) + noiseFactor ));
+					const T vScaled(minMax.scale(v));
+					const T yNoise(vScaled * ( T(1) + noiseFactor ));
 
 					data.setOut(outI, yNoise);
 				}

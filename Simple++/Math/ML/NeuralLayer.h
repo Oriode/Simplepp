@@ -367,7 +367,7 @@ namespace Math {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
 
 				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
-					paramTable[ paramI ] = paramTable[ paramI ] * weightFactor * T(2.0) - weightFactor;
+					paramTable[ paramI ] = (paramTable[ paramI ] * T(2.0) - T(1.0)) * weightFactor;
 				}
 			}
 		}

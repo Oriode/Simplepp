@@ -1678,13 +1678,13 @@ int main(int argc, char* argv[]) {
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 			deepNeuralNetwork.addData(dataVector);
-			// deepNeuralNetwork.normalizeFeature();
+			deepNeuralNetwork.normalizeFeature();
 			// deepNeuralNetwork.normalizeOut();
 		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000));
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Constant(0.01), Size(100), Size(16), 0.25);
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Constant(0.01), Size(100), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
 
 		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
 		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
@@ -2610,10 +2610,9 @@ int main(int argc, char* argv[]) {
 
 		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 
-		deepNeuralNetwork.clearData();
 		deepNeuralNetwork.addData(dataVector);
-		deepNeuralNetwork.normalizeFeature();
-		deepNeuralNetwork.normalizeOut();
+		// deepNeuralNetwork.normalizeFeature();
+		// deepNeuralNetwork.normalizeOut();
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
