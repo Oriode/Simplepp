@@ -113,7 +113,7 @@ namespace Math::ML {
 	public:
 		constexpr MyModel() {}
 		static constexpr Size nbLayers = 2;
-		static constexpr Size m[2][2] = { {64,64}, {64,16} };
+		static constexpr Size m[2][2] = { {16,16}, {16,16} };
 
 		typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
 		typedef Math::ML::ActivationFunc::Linear ActivationFunc;
@@ -1666,7 +1666,9 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Deep Neural Network											//
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork("myDeepNeuralNetwork.dnn");
+		typedef double F;
+
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork;
 
 		if ( deepNeuralNetwork.getEpoch() > Size(0) ) {
 			deepNeuralNetwork.resetParams();
@@ -1674,15 +1676,18 @@ int main(int argc, char* argv[]) {
 		}
 
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
-			Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+			Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 			deepNeuralNetwork.addData(dataVector);
-			deepNeuralNetwork.normalizeFeature();
-			deepNeuralNetwork.normalizeOut();
+			// deepNeuralNetwork.normalizeFeature();
+			// deepNeuralNetwork.normalizeOut();
 		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
-		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000));
-		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Constant(0.01), Size(10000), Size(16), 0.25);
+		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000));
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Constant(0.01), Size(100), Size(16), 0.25);
+
+		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
+		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
 	}
 #endif
 
@@ -2599,20 +2604,28 @@ int main(int argc, char* argv[]) {
 #endif
 #ifdef SPEEDTEST_DEEP_NEURAL_NETWORK
 	{
-		Math::ML::DeepNeuralNetwork<double, Math::ML::MyModel> deepNeuralNetwork;
+		typedef double F;
 
-		Vector<Math::ML::Data<double, 64, 16>> dataVector(Math::ML::generateData<double, 64, 16, 20, Math::ML::ActivationFunc::Linear>(Size(32768), 0.0));
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork;
 
+		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+
+		deepNeuralNetwork.clearData();
 		deepNeuralNetwork.addData(dataVector);
+		deepNeuralNetwork.normalizeFeature();
+		deepNeuralNetwork.normalizeOut();
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
 		// deepNeuralNetwork.optimize(Math::ML::LearningRate::Linear(0.01), Size(50000), Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 32768), Math::ML::LearningRate::Constant(0.01), Size(10000), Size(16));
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 32768), Math::ML::LearningRate::Constant(0.01), Size(50000), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Math::ML::LearningRate::Constant(0.01), Size(10), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
+
+		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
+		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
 	}
 #endif
 

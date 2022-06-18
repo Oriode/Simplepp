@@ -132,6 +132,7 @@ namespace Math {
 			template<Size I>
 			NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* getLayer();
 
+			void computeForwardPropagation();
 			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval);
 			void computeForwardPropagation(const Size dataI);
 			void computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
@@ -176,6 +177,11 @@ namespace Math {
 			T computeCoefficientOfDetermination(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval);
 			T computeCoefficientOfDetermination();
+
+			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable) const;
+			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable) const;
+			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Math::Interval<Size>& dataIInterval);
+			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance();
 
 			/**
 			 * @brief 	read from a file stream
@@ -325,6 +331,8 @@ namespace Math {
 			{
 				this->featureVector.clear();
 				this->expectedYVector.clear();
+				this->normalizeFeatureFactor = T(1);
+				this->normalizeOutFactor = T(1);
 				_setNbData<Size(0)>();
 				this->bNeedForwardPropagation = true;
 			}
@@ -341,20 +349,18 @@ namespace Math {
 			T featureSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
-				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
 
 				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 					featureSum += featureTable[ featureI ];
 				}
 			}
 
-			featureSum /= T(getNbData() * M::m[ 0 ][ 0 ]);
+			featureSum /= T(M::m[0][0]);
 
 			this->normalizeFeatureFactor = T(1) / featureSum;
 
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
-				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
 
 				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 					featureTable[ featureI ] *= this->normalizeFeatureFactor;
@@ -373,7 +379,6 @@ namespace Math {
 		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
 			T outSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
 				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
 
 				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
@@ -381,12 +386,11 @@ namespace Math {
 				}
 			}
 
-			outSum /= T(getNbData() * M::m[ M::nbLayers - Size(1) ][ 1 ]);
+			outSum /= T(M::m[M::nbLayers - Size(1)][1]);
 
 			this->normalizeOutFactor = T(1) / outSum;
 
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
 				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
 
 				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
@@ -486,6 +490,11 @@ namespace Math {
 				return false;
 			}
 			return true;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation() {
+			computeForwardPropagation(Math::Interval<Size>(Size(0), getNbData()));
 		}
 
 		template<typename T, typename M, Size NbThreads>
@@ -992,6 +1001,69 @@ namespace Math {
 		}
 
 		template<typename T, typename M, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
+			StaticTable<T, M::m[ 0 ][ 0 ]> featureImportanceTable;
+
+			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTableVector(featureTableVector.getSize());
+			computeFeatureImportanceF(featureTable, outTableVector);
+
+			return computeFeatureImportance(featureTableVector, outTableVector);
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+			StaticTable<T, M::m[ 0 ][ 0 ]> featureImportanceTable;
+
+			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureTableVectorCpy(featureTableVector.getSize());
+
+			for ( Size featureI(0); featureI < M::m[ 0 ][ 0 ]; featureI++ ) {
+				Utility::copy(featureTableVectorCpy.getData(), featureTableVector.getData(), featureTableVector.getSize());
+
+				Math::Interval<T> featureMinMax(featureTableVectorCpy.getFirst()[ featureI ], featureTableVectorCpy.getFirst()[ featureI ]);
+				for ( Size dataI(1); dataI < featureTableVectorCpy.getSize(); dataI++ ) {
+					StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(featureTableVectorCpy.getValueI(dataI));
+					const T& v(featureTable[ featureI ]);
+
+					if ( v < featureMinMax.getBegin() ) {
+						featureMinMax.setBegin(v);
+					} else if ( v > featureMinMax.getEnd() ) {
+						featureMinMax.setEnd(v);
+					}
+				}
+
+				for ( Size dataI(0); dataI < featureTableVectorCpy.getSize(); dataI++ ) {
+					StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(featureTableVectorCpy.getValueI(dataI));
+
+					featureTable[ featureI ] = featureMinMax.unscale(Math::randomF());
+				}
+
+				const T costFeature(computeCostQuadraticF(featureTableVectorCpy, outTableVector));
+
+				featureImportanceTable[ featureI ] = costFeature;
+			}
+
+			return featureImportanceTable;
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance(const Math::Interval<Size>& dataIInterval) {
+			computeForwardPropagation(dataIInterval);
+			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector(getLayer < M::nbLayers - Size(1) >()->getOutVector());
+
+			return computeFeatureImportance(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>(this->featureVector.getIterator(dataIInterval.getBegin()), this->featureVector.getIterator(dataIInterval.getEnd())),
+											Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>(outTableVector.getIterator(dataIInterval.getBegin()), outTableVector.getIterator(dataIInterval.getEnd())));
+		}
+
+		template<typename T, typename M, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance() {
+			computeForwardPropagation();
+			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector(getLayer< M::nbLayers - Size(1) >()->getOutVector());
+
+			return computeFeatureImportance(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>(this->featureVector),
+											Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>(outTableVector));
+		}
+
+		template<typename T, typename M, Size NbThreads>
 		template<Size I>
 		inline const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* DeepNeuralNetwork<T, M, NbThreads>::getLayer() const {
 			return const_cast< DeepNeuralNetwork<T, M, NbThreads> * >( this )->getLayer<I>();
@@ -1195,7 +1267,11 @@ namespace Math {
 		template<Size I>
 		inline void DeepNeuralNetwork<T, M, NbThreads>::_resetParams() {
 			if constexpr ( I < M::nbLayers ) {
-				getLayer<I>()->resetParams();
+				if constexpr ( I == M::nbLayers - Size(1) ) {
+					getLayer<I>()->resetParams<M::ActivationFunc>(this->activationFunc);
+				} else {
+					getLayer<I>()->resetParams<M::HiddenActivationFunc>(this->hiddenActivationFunc);
+				}
 				_resetParams<I + Size(1)>();
 			}
 		}

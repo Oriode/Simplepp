@@ -66,7 +66,8 @@ namespace Math {
 			const Mat<T>& getParamMat() const;
 			Mat<T>& getParamMat();
 
-			void resetParams();
+			template<typename ActivationFunc>
+			void resetParams(const ActivationFunc& activationFunc);
 
 			template<typename ActivationFunc>
 			const StaticTable<T, NbNeurons>& computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc);
@@ -331,7 +332,8 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons>
-		inline void NeuralLayer<T, NbFeatures, NbNeurons>::resetParams() {
+		template<typename ActivationFunc>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons>::resetParams(const ActivationFunc& activationFunc) {
 			this->paramMat.randomF();
 
 			struct InterpolationFunc {
@@ -344,19 +346,28 @@ namespace Math {
 			static const InterpolationFunc interpolationFunc;
 
 			// Use a square root func to converge params to 0.5.
-			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+			/*for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
 				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
 					paramTable[ paramI ] = interpolationFunc(paramTable[ paramI ]);
 				}
-			}
+			}*/
 
-			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+			/*for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
 				const T neuronWeight(computeNeuronWeight(neuronI));
 
 				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
 					paramTable[ paramI ] /= neuronWeight;
+				}
+			}*/
+
+			const T weightFactor(activationFunc.weightInit<T>(getNbFeatures(), getNbNeurons(), getNbData()));
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
+
+				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+					paramTable[ paramI ] = paramTable[ paramI ] * weightFactor * T(2.0) - weightFactor;
 				}
 			}
 		}
