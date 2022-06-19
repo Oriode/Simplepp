@@ -349,6 +349,21 @@ int main(int argc, char* argv[]) {
 			assert(IO::read(filePath, &textureLoadable));
 			info(StringASCII("Texture Loaded as a BasicIO, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
 
+			Math::Vec2<double> vIn(1.0, 42.0);
+			Math::Vec2<double> vOut(0.0, 0.0);
+			assert(IO::write(OS::Path("v.test"), &vIn));
+			assert(IO::read(OS::Path("v.test"), &vOut));
+			assert(vIn == vOut);
+
+			StaticTable<Math::Vec2<double>, Size(1)> vec2TableIn;
+			StaticTable<Math::Vec2<double>, Size(1)> vec2TableOut;
+
+			vec2TableIn[ 0 ] = vIn;
+
+			assert(IO::write(OS::Path("v.test"), &vec2TableIn));
+			assert(IO::read(OS::Path("v.test"), &vec2TableOut));
+			assert(vec2TableIn[0] == vec2TableOut[0]);
+
 
 			info("Every IO Tests passed.");
 		}
@@ -1668,15 +1683,14 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
-		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork;
+		Math::ML::Optimizer::Constant optimizerFunc(0.01);
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork(optimizerFunc, "debug.dnn");
 
-		if ( deepNeuralNetwork.getEpoch() > Size(0) ) {
-			deepNeuralNetwork.resetParams();
-			deepNeuralNetwork.clearData();
-		}
+		deepNeuralNetwork.resetParams();
 
+		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
-			Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
 			deepNeuralNetwork.normalizeFeature();
 			// deepNeuralNetwork.normalizeOut();
@@ -1684,7 +1698,11 @@ int main(int argc, char* argv[]) {
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000));
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Constant(0.01), Size(100), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Size(10), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+
+		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
+
+		Log::displayLog(String::format("Coefficient of determination : %.", coefficientOfDetermination));
 
 		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
 		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
@@ -2606,20 +2624,26 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
-		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork;
+		Math::ML::Optimizer::Constant optimizerFunc(0.01);
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork(optimizerFunc, "release.dnn");
 
 		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 
-		deepNeuralNetwork.addData(dataVector);
-		// deepNeuralNetwork.normalizeFeature();
-		// deepNeuralNetwork.normalizeOut();
+		// deepNeuralNetwork.resetParams();
+
+		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
+			deepNeuralNetwork.clearData();
+			deepNeuralNetwork.addData(dataVector);
+			deepNeuralNetwork.normalizeFeature();
+			// deepNeuralNetwork.normalizeOut();
+		}
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
 		// deepNeuralNetwork.optimize(Math::ML::LearningRate::Linear(0.01), Size(50000), Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 32768), Math::ML::LearningRate::Constant(0.01), Size(10000), Size(16));
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Math::ML::LearningRate::Constant(0.01), Size(10), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 

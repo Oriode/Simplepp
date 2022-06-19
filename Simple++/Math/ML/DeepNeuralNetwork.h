@@ -6,7 +6,7 @@
 #include "../../IO/BasicIO.h"
 #include "../../IO/IO.h"
 #include "../Interval.h"
-#include "LearningRate.h"
+#include "Optimizer.h"
 #include "ActivationFunc.h"
 #include "NeuralLayerMT.h"
 #include "NeuralLayerMT.h"
@@ -34,19 +34,19 @@ namespace Math {
 			typedef Math::ML::ActivationFunc::Linear ActivationFunc;
 		};
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		class DeepNeuralNetwork;
 
-		template<typename T, typename M, Size NbThreads, typename LearningRateFunc>
-		class SearchThread : public DeepNeuralNetwork<T, M, NbThreads>, public Thread {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		class SearchThread : public DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>, public Thread {
 		public:
-			SearchThread(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration, const Math::Interval<Size>& dataIInterval) :
-				learningRateFunc(learningRateFunc),
+			SearchThread(const OptimizerFunc& optimizerFunc, const Time::Duration<Time::MilliSecond>& runDuration, const Math::Interval<Size>& dataIInterval) :
+				DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>(optimizerFunc),
 				runDuration(runDuration),
 				dataIInterval(dataIInterval) {}
 
-			SearchThread(const LearningRateFunc& learningRateFunc, const Time::Duration<Time::MilliSecond>& runDuration) :
-				learningRateFunc(learningRateFunc),
+			SearchThread(const OptimizerFunc& optimizerFunc, const Time::Duration<Time::MilliSecond>& runDuration) :
+				DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>(optimizerFunc),
 				runDuration(runDuration) {}
 
 			void init(const Size nbIterations) {
@@ -57,7 +57,7 @@ namespace Math {
 				Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
 
 				while ( true ) {
-					optimize(this->dataIInterval, learningRateFunc);
+					optimize(this->dataIInterval);
 
 					T newCost(computeCostQuadratic(this->dataIInterval));
 					if ( newCost > this->lastCost ) {
@@ -85,23 +85,24 @@ namespace Math {
 			}
 
 		private:
-			const LearningRateFunc& learningRateFunc;
 			const Time::Duration<Time::MilliSecond>& runDuration;
 			Math::Interval<Size> dataIInterval;
 			T lastCost;
 		};
 
-		template<typename T, typename M = Model, Size NbThreads = Size(1)>
+		template<typename T, typename M = Model, typename OptimizerFunc = Optimizer::Constant<T>, Size NbThreads = Size(1)>
 		class DeepNeuralNetwork : public IO::BasicIO {
 		public:
+			friend SearchThread<T, M, OptimizerFunc, NbThreads>;
+
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
 			static constexpr Size NbOut = M::m[ M::nbLayers - Size(1) ][ 1 ];
 
-			DeepNeuralNetwork(const OS::Path & filePath = OS::Path());
+			DeepNeuralNetwork(const OptimizerFunc & optimizerFunc, const OS::Path & filePath = OS::Path());
 			~DeepNeuralNetwork();
 
 			void addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable);
-			void addData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable);
+			void addData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector);
 			void addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data);
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			void clearData();
@@ -132,15 +133,15 @@ namespace Math {
 			bool loadFromFile(const OS::Path& filePath);
 
 			template<Size I>
-			const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* getLayer() const;
+			const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>* getLayer() const;
 			template<Size I>
-			NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* getLayer();
+			NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>* getLayer();
 
 			void computeForwardPropagation();
 			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval);
 			void computeForwardPropagation(const Size dataI);
 			void computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const;
-			void computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable) const;
+			void computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const;
 			void computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const;
 
 			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
@@ -151,39 +152,35 @@ namespace Math {
 			void setLearningRateFactor(const T& learningRateFactor);
 			const T& getLearningRateFactor() const;
 
-			void copyParamMat(const DeepNeuralNetwork<T, M, NbThreads>& deepNeuralNetwork);
+			void copyParamMat(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork);
+			void copyOptimizerFunc(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork);
 			template<Size I>
 			void setParamMat(const Mat<T>& paramMat);
 
 			void resetParams();
 
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc);
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
+			void optimize(const Math::Interval<Size>& dataIInterval);
+			void optimize(const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
+			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
+			void optimize(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 
-			template<typename LearningRateFunc = LearningRate::Constant<T>>
-			void updateModel(const LearningRateFunc& learningRateFunc = LearningRateFunc(0.01), const T& learningRateFactor = T(1.0));
+			void updateModel(const T& learningRateFactor = T(1.0));
 
-			T computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
-			T computeCostLog(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
+			T computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const;
+			T computeCostLog(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const;
 			T computeCostLog(const Math::Interval<Size>& dataIInterval);
 			T computeCostLog();
-			T computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
-			T computeCostQuadratic(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
+			T computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const;
+			T computeCostQuadratic(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const;
 			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval);
 			T computeCostQuadratic();
-			T computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
-			T computeCoefficientOfDetermination(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const;
+			T computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const;
+			T computeCoefficientOfDetermination(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const;
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval);
 			T computeCoefficientOfDetermination();
 
-			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable) const;
-			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable) const;
+			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const;
+			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const;
 			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance(const Math::Interval<Size>& dataIInterval);
 			StaticTable<T, M::m[ 0 ][ 0 ]> computeFeatureImportance();
 
@@ -213,11 +210,11 @@ namespace Math {
 			template<Size I = M::nbLayers>
 			void _computeBackPropagation(const Math::Interval<Size> & dataIInterval);
 
-			template<Size I = Size(0), typename LearningRateFunc = LearningRate::Constant<T>>
-			void _updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor);
+			template<Size I = Size(0)>
+			void _updateModel(const T& learningRateFactor);
 
 			template<Size I = Size(0)>
-			void _constructNeuralLayer();
+			void _constructNeuralLayer(const OptimizerFunc& optimizerFunc);
 
 			template<Size I = Size(0)>
 			void _destructNeuralLayer();
@@ -233,10 +230,13 @@ namespace Math {
 
 			///@brief Set the average for each layer of every paramMat.
 			template<Size I = Size(0)>
-			void _setParamMat(const Vector<DeepNeuralNetwork<T, M, NbThreads>*>& deepNeuralNetworkVector);
+			void _setParamMat(const Vector<DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>*>& deepNeuralNetworkVector);
 
 			template<Size I = Size(0)>
-			void _copyParamMat(const DeepNeuralNetwork<T, M, NbThreads>& deepNeuralNetwork);
+			void _copyParamMat(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork);
+
+			template<Size I = Size(0)>
+			void _copyOptimizerFunc(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork);
 
 			template<Size I, typename Stream>
 			bool _write(Stream* stream) const;
@@ -248,6 +248,8 @@ namespace Math {
 
 			T normalizeValue(const T& x, const Math::Vec2<T>& v) const;
 			T unnormalizeValue(const T& x, const Math::Vec2<T>& v) const;
+
+			void setData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector);
 
 			StaticTable<void*, M::nbLayers> layerTable;
 
@@ -261,8 +263,6 @@ namespace Math {
 
 			Size epochNum;
 			T learningRateFactor;
-			T normalizeFeatureFactor;
-			T normalizeOutFactor;
 
 			StaticTable<Math::Vec2<T>, M::m[ 0 ][ 0 ]> normalizeFeatureTable;		// Used to compute the z-score. [mean, standard deviation].
 			StaticTable<Math::Interval<T>, M::m[ M::nbLayers - Size(1) ][ 1 ]> normalizeOutTable;
@@ -272,8 +272,8 @@ namespace Math {
 			OS::Path filePath;
 		};
 
-		template<typename T, typename M, Size NbThreads>
-		inline DeepNeuralNetwork<T, M, NbThreads>::DeepNeuralNetwork(const OS::Path& filePath) :
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::DeepNeuralNetwork(const OptimizerFunc& optimizerFunc, const OS::Path& filePath) :
 			bNeedForwardPropagation(true),
 			epochNum(0),
 			filePath(filePath)
@@ -283,25 +283,30 @@ namespace Math {
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::HiddenActivationFunc>::value, "Model HiddenActivationFunc type unknown." );
 			static_assert( M::nbLayers > Size(0), "Model error, nbLayers cannot be 0." );
 			_checkModel<Size(1)>();
-			_constructNeuralLayer<Size(0)>();
+			_constructNeuralLayer<Size(0)>(optimizerFunc);
 
+			bool bIsLoaded(false);
 			if ( this->filePath.getSize() ) {
 				if ( !loadFromFile(this->filePath) ) {
 					Log::displayError(String::format("Unable to read the DeepNeuralNetwork from \"%\".", this->filePath));
+				} else {
+					bIsLoaded = true;
 				}
 			}
 
-			resetNormalizeTable();
+			if ( !bIsLoaded ) {
+				resetNormalizeTable();
+			}
 
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline DeepNeuralNetwork<T, M, NbThreads>::~DeepNeuralNetwork() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::~DeepNeuralNetwork() {
 			_destructNeuralLayer<Size(0)>();
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) {
 			this->optimizeMutex.lock();
 			{
 				this->featureVector.push(featureTable);
@@ -314,8 +319,8 @@ namespace Math {
 			this->optimizeMutex.unlock();
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::addData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::addData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
 			assert(featureTableVector.getSize() == outTableVector.getSize());
 			this->optimizeMutex.lock();
 			{
@@ -333,20 +338,33 @@ namespace Math {
 			this->optimizeMutex.unlock();
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::setData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
+			assert(featureTableVector.getSize() == outTableVector.getSize());
+			this->optimizeMutex.lock();
+			{
+				this->featureVector = featureTableVector;
+				this->expectedYVector = outTableVector;
+				_setNbData<Size(0)>();
+				this->bNeedForwardPropagation = true;
+			}
+			this->optimizeMutex.unlock();
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) {
 			addData(data.getFeatures(), data.getOuts());
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
-			const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector(DeepNeuralNetwork<T, M, NbThreads>::createFeatureVector(dataVector));
-			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outVector(DeepNeuralNetwork<T, M, NbThreads>::createOutVector(dataVector));
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
+			const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector(DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createFeatureVector(dataVector));
+			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outVector(DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createOutVector(dataVector));
 			return addData(featureVector, outVector);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::clearData() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::clearData() {
 			this->optimizeMutex.lock();
 			{
 				this->featureVector.clear();
@@ -358,13 +376,13 @@ namespace Math {
 			this->optimizeMutex.unlock();
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature() {
 			normalizeFeature(Math::Interval<Size>(Size(0), getNbData()));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(const Math::Interval<Size>& dataIInterval) {
 
 			// unnormalize first.
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
@@ -419,54 +437,21 @@ namespace Math {
 				normalizeFeature(this->featureVector.getValueI(dataI));
 			}
 
-			// ===============================================
-
-			/*this->normalizeFeatureFactor = T(1) / featureSum;
-
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
-
-				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
-					featureTable[ featureI ] *= this->normalizeFeatureFactor;
-				}
-			}*/
-
 			this->bNeedForwardPropagation = true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeOut() {
 			normalizeOut(Math::Interval<Size>(Size(0), getNbData()));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
-			/*T outSum(0);
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
-
-				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
-					outSum += outTable[ outI ];
-				}
-			}
-
-			outSum /= T(M::m[M::nbLayers - Size(1)][1]);
-
-			this->normalizeOutFactor = T(1) / outSum;
-
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(this->expectedYVector.getValueI(dataI));
-
-				for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
-					outTable[ outI ] *= this->normalizeOutFactor;
-				}
-			}*/
-
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
 			this->bNeedForwardPropagation = true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
 			for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 				T& v(featureTable[ featureI ]);
 
@@ -474,15 +459,15 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
 				normalizeFeature(featureTableVector.getValueI(dataI));
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeFeature(StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable) const {
 			for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
 				T& v(featureTable[ featureI ]);
 
@@ -490,15 +475,15 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeFeature(Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
 				unnormalizeFeature(featureTableVector.getValueI(dataI));
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
 			for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
 				T& v(outTable[ outI ]);
 
@@ -506,15 +491,15 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::normalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			for ( Size dataI(0); dataI < outTableVector.getSize(); dataI++ ) {
 				normalizeOut(outTableVector.getValueI(dataI));
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeOut(StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
 			for ( Size outI(0); outI < outTable.getSize(); outI++ ) {
 				T& v(outTable[ outI ]);
 
@@ -522,15 +507,15 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::unnormalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeOut(Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			for ( Size dataI(0); dataI < outTableVector.getSize(); dataI++ ) {
 				unnormalizeOut(outTableVector.getValueI(dataI));
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> DeepNeuralNetwork<T, M, NbThreads>::createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
 			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureVector;
 			featureVector.resize(dataVector.getSize());
 
@@ -542,8 +527,8 @@ namespace Math {
 			return featureVector;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> DeepNeuralNetwork<T, M, NbThreads>::createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector) {
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outVector;
 			outVector.resize(dataVector.getSize());
 
@@ -555,49 +540,49 @@ namespace Math {
 			return outVector;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline const Size DeepNeuralNetwork<T, M, NbThreads>::getNbData() const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline const Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getNbData() const {
 			return this->featureVector.getSize();
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline constexpr Size DeepNeuralNetwork<T, M, NbThreads>::getNbLayers() const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline constexpr Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getNbLayers() const {
 			return M::nbLayers;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline const OS::Path& DeepNeuralNetwork<T, M, NbThreads>::getFilePath() const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline const OS::Path& DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getFilePath() const {
 			return this->filePath;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::setFilePath(const OS::Path& filePath) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::setFilePath(const OS::Path& filePath) {
 			this->filePath = filePath;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline bool DeepNeuralNetwork<T, M, NbThreads>::saveToFile(const OS::Path& filePath) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::saveToFile(const OS::Path& filePath) const {
 			if ( !IO::write(filePath, this) ) {
 				return false;
 			}
 			return true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline bool DeepNeuralNetwork<T, M, NbThreads>::loadFromFile(const OS::Path& filePath) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::loadFromFile(const OS::Path& filePath) {
 			if ( !IO::read(filePath, this) ) {
 				return false;
 			}
 			return true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeForwardPropagation() {
 			computeForwardPropagation(Math::Interval<Size>(Size(0), getNbData()));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval) {
 			if ( this->bNeedForwardPropagation ) {
 				for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 					computeForwardPropagation(dataI);
@@ -606,89 +591,92 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const Size dataI) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeForwardPropagation(const Size dataI) {
 			_computeForwardPropagation<Size(0)>(dataI);
 			this->bNeedForwardPropagation = false;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeForwardPropagation(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable) const {
 			StaticTable<T, M::m[ 0 ][ 0 ]> featureTableNormalized(featureTable);
 			normalizeFeature(featureTableNormalized);
 			_computeForwardPropagation<Size(0)>(featureTableNormalized, outTable);
 			unnormalizeOut(outTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeForwardPropagation(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			outTableVector.resize(featureTableVector.getSize());
 			for ( Size dataI(0); dataI < featureTableVector.getSize(); dataI++ ) {
 				computeForwardPropagation(featureTableVector.getValueI(dataI), outTableVector.getValueI(dataI));
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeForwardPropagation(Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data) const {
 			const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(data.getFeatures());
 			StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable(data.getOuts());
 			return computeForwardPropagation(featureTable, outTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
 			return _computeBackPropagation<M::nbLayers - Size(1)>(dataIInterval);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline const Size DeepNeuralNetwork<T, M, NbThreads>::getEpoch() const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline const Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getEpoch() const {
 			return this->epochNum;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::setEpoch(const Size epochNum) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::setEpoch(const Size epochNum) {
 			this->epochNum = epochNum;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::setLearningRateFactor(const T& learningRateFactor) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::setLearningRateFactor(const T& learningRateFactor) {
 			this->learningRateFactor = learningRateFactor;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline const T& DeepNeuralNetwork<T, M, NbThreads>::getLearningRateFactor() const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline const T& DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getLearningRateFactor() const {
 			return this->learningRateFactor;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::copyParamMat(const DeepNeuralNetwork<T, M, NbThreads>& deepNeuralNetwork) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::copyParamMat(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork) {
 			_copyParamMat<Size(0)>(deepNeuralNetwork);
 			this->bNeedForwardPropagation = true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::resetParams() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::copyOptimizerFunc(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork) {
+			_copyOptimizerFunc<Size(0)>(deepNeuralNetwork);
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::resetParams() {
 			_resetParams<Size(0)>();
 			setLearningRateFactor(T(1.0));
 			setEpoch(Size(0));
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::setParamMat(const Mat<T>& paramMat) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::setParamMat(const Mat<T>& paramMat) {
 			getLayer<I>()->setParamMat(paramMat);
 			this->bNeedForwardPropagation = true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimize(const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 			return optimize(Interval<Size>(Size(0), getNbData()), learningRateFunc, nbIterations, nbSearchThreads, randomFactor, saveDuration, verbose);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimizeCluster(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 			class GetPercent {
 			public:
 				GetPercent(const Size nbIterations) :
@@ -701,7 +689,7 @@ namespace Math {
 				const Size nbIterations;
 			};
 
-			using SearchThread = SearchThread<T, M, NbThreads, LearningRateFunc>;
+			using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
 
 			this->optimizeMutex.lock();
@@ -713,7 +701,7 @@ namespace Math {
 			// Creating the threads
 			Vector<SearchThread*> searchThreadVector(nbSearchThreads);
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-				searchThreadVector.setValueI(i, new SearchThread(learningRateFunc, saveDuration));
+				searchThreadVector.setValueI(i, new SearchThread(OptimizerFunc(), saveDuration));
 			}
 
 			if ( verbose > 0 ) {
@@ -738,6 +726,7 @@ namespace Math {
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->resetParams();
+					searchThread->copyOptimizerFunc(*this);
 				}
 				if ( verbose > 0 ) {
 					Log::endStep("Done.");
@@ -749,6 +738,7 @@ namespace Math {
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->copyParamMat(*this);
+					searchThread->copyOptimizerFunc(*this);
 					searchThread->setLearningRateFactor(getLearningRateFactor());
 					searchThread->setEpoch(getEpoch());
 				}
@@ -834,9 +824,8 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 			class GetPercent {
 			public:
 				GetPercent(const Size nbIterations) :
@@ -849,7 +838,7 @@ namespace Math {
 				const Size nbIterations;
 			};
 
-			using SearchThread = SearchThread<T, M, NbThreads, LearningRateFunc>;
+			using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
 
 			this->optimizeMutex.lock();
@@ -861,17 +850,17 @@ namespace Math {
 			// Creating the threads
 			Vector<SearchThread*> searchThreadVector(nbSearchThreads);
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-				searchThreadVector.setValueI(i, new SearchThread(learningRateFunc, saveDuration, dataIInterval));
+				searchThreadVector.setValueI(i, new SearchThread(OptimizerFunc(), saveDuration, dataIInterval));
 			}
 
 			if (verbose > 0 ){
 				Log::startStep("Copying data to the threads...");
 			}
 
-			// Copy data into Clusters.
+			// Copy data into threads.
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 				SearchThread* searchThread(searchThreadVector.getValueI(i));
-				searchThread->addData(this->featureVector, this->expectedYVector);
+				searchThread->setData(this->featureVector, this->expectedYVector);
 			}
 
 			if ( verbose > 0 ) {
@@ -885,6 +874,7 @@ namespace Math {
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->resetParams();
+					searchThread->copyOptimizerFunc(*this);
 				}
 				if ( verbose > 0 ) {
 					Log::endStep("Done.");
@@ -896,6 +886,7 @@ namespace Math {
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 					SearchThread* searchThread(searchThreadVector.getValueI(i));
 					searchThread->copyParamMat(*this);
+					searchThread->copyOptimizerFunc(*this);
 					searchThread->setLearningRateFactor(getLearningRateFactor());
 					searchThread->setEpoch(getEpoch());
 				}
@@ -929,7 +920,7 @@ namespace Math {
 				Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every % ms...", nbIterations, saveDuration.getValue()));
 			}
 
-			const T randomFactorFinal(T(1) + T(searchThreadVector.getSize() - Size(1)) * randomFactor);
+			const T randomFactorFinal(T(1) + T(Math::min(searchThreadVector.getSize(), Size(8)) - Size(1)) * randomFactor);
 
 			// Run
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
@@ -939,6 +930,11 @@ namespace Math {
 
 					const T newLearningRateFactor(getLearningRateFactor()* Math::random(T(1.0) / randomFactorFinal, randomFactorFinal));
 					searchThread->setLearningRateFactor(newLearningRateFactor);
+
+					if ( getEpoch() > Size(0) ) {
+						searchThread->copyParamMat(*this);
+						searchThread->copyOptimizerFunc(*this);
+					}
 				}
 
 				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
@@ -970,8 +966,9 @@ namespace Math {
 					}
 					if ( minIt ) {
 						SearchThread* minSearchThread(searchThreadVector.getValueIt(minIt));
-						setLearningRateFactor(minSearchThread->getLearningRateFactor());
+						// setLearningRateFactor(getLearningRateFactor() + (minSearchThread->getLearningRateFactor() - getLearningRateFactor() ) * T(0.25));
 						copyParamMat(*minSearchThread);
+						copyOptimizerFunc(*minSearchThread);
 						setEpoch(minSearchThread->getEpoch());
 						lastCost = computeCostQuadratic(dataIInterval);
 					} else {
@@ -1009,9 +1006,8 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval, const LearningRateFunc& learningRateFunc) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval) {
 			this->optimizeMutex.lock();
 			{
 				computeForwardPropagation(dataIInterval);
@@ -1019,88 +1015,87 @@ namespace Math {
 			}
 			this->optimizeMutex.unlock();
 
-			updateModel(learningRateFunc, this->learningRateFactor);
+			updateModel(this->learningRateFactor);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		template<typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor) {
-			_updateModel<Size(0)>(learningRateFunc, learningRateFactor);
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::updateModel(const T& learningRateFactor) {
+			_updateModel<Size(0)>(learningRateFactor);
 			this->epochNum++;
 			this->bNeedForwardPropagation = true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostLogF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(featureTable.getSize());
 			computeForwardPropagation(featureTable, outTable);
 			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(Math::Interval<Size>(Size(0), featureTable.getSize()), outTable, expectedOutTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLog(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostLog(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
 			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(Math::Interval<Size>(Size(0), outTable.getSize()), outTable, expectedOutTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLog(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostLog(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
 			return getLayer<M::nbLayers - Size(1)>()->computeCostLog(dataIInterval, getLayer<M::nbLayers - Size(1)>()->getOutVector(), this->expectedYVector);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostLog() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostLog() {
 			return computeCostLog(Interval<Size>(Size(0), getNbData()));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostQuadraticF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTable(featureTable.getSize());
 			computeForwardPropagation(featureTable, outTable);
 			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(Math::Interval<Size>(Size(0), featureTable.getSize()), outTable, expectedOutTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadratic(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostQuadratic(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
 			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(Math::Interval<Size>(Size(0), outTable.getSize()), outTable, expectedOutTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
 			return getLayer<M::nbLayers - Size(1)>()->computeCostQuadratic(dataIInterval, getLayer<M::nbLayers - Size(1)>()->getOutVector(), this->expectedYVector);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCostQuadratic() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCostQuadratic() {
 			return computeCostQuadratic(Interval<Size>(Size(0), getNbData()));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCoefficientOfDeterminationF(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTableVector) const {
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTableVector(featureTableVector.getSize());
 			computeForwardPropagation(featureTableVector, outTableVector);
 			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(Math::Interval<Size>(Size(0), featureTableVector.getSize()), outTableVector, expectedOutTableVector);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDetermination(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCoefficientOfDetermination(const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTable, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& expectedOutTable) const {
 			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(Math::Interval<Size>(Size(0), outTable.getSize()), outTable, expectedOutTable);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
 			return getLayer<M::nbLayers - Size(1)>()->computeCoefficientOfDetermination(dataIInterval, getLayer<M::nbLayers - Size(1)>()->getOutVector(), this->expectedYVector);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::computeCoefficientOfDetermination() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeCoefficientOfDetermination() {
 			return computeCoefficientOfDetermination(Interval<Size>(Size(0), getNbData()));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector) const {
 			StaticTable<T, M::m[ 0 ][ 0 ]> featureImportanceTable;
 
 			Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> outTableVector(featureTableVector.getSize());
@@ -1109,8 +1104,8 @@ namespace Math {
 			return computeFeatureImportance(featureTableVector, outTableVector);
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			StaticTable<T, M::m[ 0 ][ 0 ]> featureImportanceTable;
 
 			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureTableVectorCpy(featureTableVector.getSize());
@@ -1144,8 +1139,8 @@ namespace Math {
 			return featureImportanceTable;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance(const Math::Interval<Size>& dataIInterval) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeFeatureImportance(const Math::Interval<Size>& dataIInterval) {
 			computeForwardPropagation(dataIInterval);
 			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector(getLayer < M::nbLayers - Size(1) >()->getOutVector());
 
@@ -1153,8 +1148,8 @@ namespace Math {
 											Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>(outTableVector.getIterator(dataIInterval.getBegin()), outTableVector.getIterator(dataIInterval.getEnd())));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, NbThreads>::computeFeatureImportance() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeFeatureImportance() {
 			computeForwardPropagation();
 			const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector(getLayer< M::nbLayers - Size(1) >()->getOutVector());
 
@@ -1162,8 +1157,8 @@ namespace Math {
 											Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>(outTableVector));
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::resetNormalizeTable() {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::resetNormalizeTable() {
 			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
 				Math::Vec2<T>& i(this->normalizeFeatureTable.getValueI(featureI));
 				i.x = T(0.0);
@@ -1177,31 +1172,31 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::normalizeValue(const T& x, const Math::Vec2<T>& v) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeValue(const T& x, const Math::Vec2<T>& v) const {
 			return ( x - v.x ) / v.y;
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, NbThreads>::unnormalizeValue(const T& x, const Math::Vec2<T>& v) const {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeValue(const T& x, const Math::Vec2<T>& v) const {
 			return x * v.y + v.x;
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* DeepNeuralNetwork<T, M, NbThreads>::getLayer() const {
-			return const_cast< DeepNeuralNetwork<T, M, NbThreads> * >( this )->getLayer<I>();
+		inline const NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>* DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getLayer() const {
+			return const_cast< DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads> * >( this )->getLayer<I>();
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* DeepNeuralNetwork<T, M, NbThreads>::getLayer() {
-			return reinterpret_cast< NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* >( this->layerTable[ I ] );
+		inline NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>* DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getLayer() {
+			return reinterpret_cast< NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>* >( this->layerTable[ I ] );
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<typename Stream>
-		inline bool DeepNeuralNetwork<T, M, NbThreads>::read(Stream* stream) {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::read(Stream* stream) {
 			Size nbLayers;
 			if ( !IO::read(stream, &nbLayers) ) {
 				return false;
@@ -1242,9 +1237,9 @@ namespace Math {
 			return true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<typename Stream>
-		inline bool DeepNeuralNetwork<T, M, NbThreads>::write(Stream* stream) const {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::write(Stream* stream) const {
 			const Size nbLayers(getNbLayers());
 			if ( !IO::write(stream, &nbLayers) ) {
 				return false;
@@ -1279,9 +1274,9 @@ namespace Math {
 			return true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_computeForwardPropagation(const Size dataI) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_computeForwardPropagation(const Size dataI) {
 			if constexpr ( I < M::nbLayers ) {
 				if constexpr ( I == M::nbLayers - Size(1) ) {
 					getLayer<I>()->computeForwardPropagation<M::ActivationFunc>(dataI, this->activationFunc);
@@ -1293,9 +1288,9 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_computeForwardPropagation(const StaticTable<T, M::m[ I ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTableFinal) const {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_computeForwardPropagation(const StaticTable<T, M::m[ I ][ 0 ]>& featureTable, StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTableFinal) const {
 			if constexpr ( I < M::nbLayers ) {
 				if constexpr ( I < M::nbLayers - Size(1) ) {
 					StaticTable<T, M::m[ I ][ 1 ]> outTable;
@@ -1307,11 +1302,11 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
 			if constexpr ( I >= Size(0) ) {
-				NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>* neuralLayer(getLayer<I>());
+				NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>* neuralLayer(getLayer<I>());
 
 				// Compute dZx
 				if constexpr ( I == M::nbLayers - Size(1) ) {
@@ -1327,19 +1322,19 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
-		template<Size I, typename LearningRateFunc>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_updateModel(const LearningRateFunc& learningRateFunc, const T& learningRateFactor) {
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_updateModel(const T& learningRateFactor) {
 			if constexpr ( I < M::nbLayers ) {
-				getLayer<I>()->updateModel<LearningRateFunc>(learningRateFunc, learningRateFactor, this->epochNum);
+				getLayer<I>()->updateModel(learningRateFactor, this->epochNum);
 
-				return _updateModel<I + Size(1)>(learningRateFunc, learningRateFactor);
+				return _updateModel<I + Size(1)>(learningRateFactor);
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_constructNeuralLayer() {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_constructNeuralLayer(const OptimizerFunc& optimizerFunc) {
 			if constexpr ( I < M::nbLayers ) {
 				const Vector<StaticTable<T, M::m[ I ][ 0 ]>>* inVector;
 				if constexpr ( I == Size(0) ) {
@@ -1347,14 +1342,14 @@ namespace Math {
 				} else {
 					inVector = &getLayer<I - Size(1)>()->getOutVector();
 				}
-				this->layerTable[ I ] = reinterpret_cast< void* >( new NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], NbThreads>(inVector) );
-				_constructNeuralLayer<I + Size(1)>();
+				this->layerTable[ I ] = reinterpret_cast< void* >( new NeuralLayerMT<T, M::m[ I ][ 0 ], M::m[ I ][ 1 ], OptimizerFunc, NbThreads>(inVector, optimizerFunc) );
+				_constructNeuralLayer<I + Size(1)>(optimizerFunc);
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_destructNeuralLayer() {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_destructNeuralLayer() {
 			if constexpr ( I < M::nbLayers ) {
 				delete getLayer<I>();
 
@@ -1362,9 +1357,9 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline constexpr bool DeepNeuralNetwork<T, M, NbThreads>::_checkModel() const {
+		inline constexpr bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_checkModel() const {
 			if constexpr ( I < M::nbLayers ) {
 
 				if ( M::m[ I - Size(1) ][ 1 ] != M::m[ I ][ 0 ] ) {
@@ -1378,18 +1373,18 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_setNbData() {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_setNbData() {
 			if constexpr ( I < M::nbLayers ) {
 				getLayer<I>()->setNbData(getNbData());
 				_setNbData<I + Size(1)>();
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_resetParams() {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_resetParams() {
 			if constexpr ( I < M::nbLayers ) {
 				if constexpr ( I == M::nbLayers - Size(1) ) {
 					getLayer<I>()->resetParams<M::ActivationFunc>(this->activationFunc);
@@ -1400,16 +1395,16 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_setParamMat(const Vector<DeepNeuralNetwork<T, M, NbThreads>*>& deepNeuralNetworkVector) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_setParamMat(const Vector<DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>*>& deepNeuralNetworkVector) {
 			if constexpr ( I < M::nbLayers ) {
 				Mat<T> paramMatSum(M::m[ I ][ 1 ], M::m[ I ][ 0 ] + Size(1));
 
 				paramMatSum.zeros();
 
 				for ( Size i(0); i < deepNeuralNetworkVector.getSize(); i++ ) {
-					const DeepNeuralNetwork<T, M, NbThreads>* deepNeuralNetwork(deepNeuralNetworkVector.getValueI(i));
+					const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>* deepNeuralNetwork(deepNeuralNetworkVector.getValueI(i));
 					paramMatSum += deepNeuralNetwork->getLayer<I>()->getParamMat();
 				}
 
@@ -1421,18 +1416,27 @@ namespace Math {
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I>
-		inline void DeepNeuralNetwork<T, M, NbThreads>::_copyParamMat(const DeepNeuralNetwork<T, M, NbThreads>& deepNeuralNetwork) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_copyParamMat(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork) {
 			if constexpr ( I < M::nbLayers ) {
 				setParamMat<I>(deepNeuralNetwork.getLayer<I>()->getParamMat());
 				_copyParamMat<I + Size(1)>(deepNeuralNetwork);
 			}
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_copyOptimizerFunc(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork) {
+			if constexpr ( I < M::nbLayers ) {
+				getLayer<I>()->setOptimizerFunc(deepNeuralNetwork.getLayer<I>()->getOptimizerFunc());
+				_copyOptimizerFunc<I + Size(1)>(deepNeuralNetwork);
+			}
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I, typename Stream>
-		inline bool DeepNeuralNetwork<T, M, NbThreads>::_write(Stream* stream) const {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_write(Stream* stream) const {
 			if constexpr ( I < M::nbLayers ) {
 				if ( !IO::write(stream, getLayer<I>()) ) {
 					return false;
@@ -1443,9 +1447,9 @@ namespace Math {
 			return true;
 		}
 
-		template<typename T, typename M, Size NbThreads>
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<Size I, typename Stream>
-		inline bool DeepNeuralNetwork<T, M, NbThreads>::_read(Stream* stream) {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_read(Stream* stream) {
 			if constexpr ( I < M::nbLayers ) {
 				if ( !IO::read(stream, getLayer<I>()) ) {
 					return false;
