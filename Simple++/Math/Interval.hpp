@@ -108,6 +108,38 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline Vector<Interval<T>> Interval<T>::split(const Size nbSplits) const {
+
+		const Size intervalSize(getSize());
+
+		if ( intervalSize == Size(0) ) {
+			return Vector<Interval<T>>();
+		}
+
+		Vector<Interval<T>> splitVector;
+		const Size nbSplitsSafe(Math::min(nbSplits, intervalSize));
+
+		splitVector.reserve(nbSplitsSafe);
+
+		const double splitSizeF(double(intervalSize) / double(nbSplitsSafe));
+		double endIF(getBegin());
+		T beginI(getBegin());
+		for ( Size i(0); i < nbSplitsSafe; i++ ) {
+			endIF += splitSizeF;
+
+			Interval<T> newInterval(beginI, T(endIF));
+			splitVector.push(newInterval);
+
+			beginI = T(endIF);
+		}
+
+		// To overcome precision issues.
+		splitVector.getLast().setEnd(getEnd());
+
+		return splitVector;
+	}
+
+	template<typename T>
 	template<typename S>
 	S Interval<T>::toString() const {
 		S outString;

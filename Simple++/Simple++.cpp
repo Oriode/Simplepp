@@ -60,6 +60,7 @@
 //#define DEBUG_TENSOR
 //#define DEBUG_LINEAR_REGRESSION
 #define DEBUG_DEEP_NEURAL_NETWORK
+//#define DEBUG_INTERVAL
 
 
 #ifndef _LIB
@@ -1688,7 +1689,7 @@ int main(int argc, char* argv[]) {
 
 		deepNeuralNetwork.resetParams();
 
-		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
@@ -1697,8 +1698,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
-		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(1000), 2);
-		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
 
 		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
 
@@ -1706,6 +1707,22 @@ int main(int argc, char* argv[]) {
 
 		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
 		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
+	}
+#endif
+#ifdef DEBUG_INTERVAL
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Interval											//
+	{
+		typedef double T;
+
+		Math::Interval<T> interval(Math::random(Size(0), Size(100)), Math::random(Size(100), Size(200)));
+		// Math::Interval<T> interval(3,42);
+		Vector<Math::Interval<T>> intervalVector(interval.split(7));
+
+		Log::displayLog(String::format("Interval : %.", interval.toString()));
+		for ( Size i(0); i < intervalVector.getSize(); i++ ) {
+			Log::displayLog(String::format("%", intervalVector.getValueI(i).toString()));
+		}
 	}
 #endif
 

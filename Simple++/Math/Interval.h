@@ -59,6 +59,8 @@ namespace Math {
 		///@return value.
 		T unscale(const T& v) const;
 
+		Vector<Interval<T>> split(const Size nbSplits) const;
+
 		template<typename S = String>
 		S toString() const;
 

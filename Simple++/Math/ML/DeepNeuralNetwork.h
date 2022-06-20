@@ -51,14 +51,14 @@ namespace Math {
 
 			void init() {
 				this->lastCost = computeCostQuadratic(this->dataIInterval);
+				this->dataIIntervalVector = this->dataIInterval.split(getNbData() / Size(32) + Size(1));
 			}
 
 			void run() override {
 				Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
 
 				while ( true ) {
-					computeGrad(this->dataIInterval);
-					updateModel(getLearningRateFactor());
+					optimizeStochastic(this->dataIIntervalVector);
 
 					T newCost(computeCostQuadratic(this->dataIInterval));
 					if ( newCost > this->lastCost ) {
@@ -86,6 +86,7 @@ namespace Math {
 			}
 
 		private:
+			Vector<Math::Interval<Size>> dataIIntervalVector;
 			const Time::Duration<Time::MilliSecond>& runDuration;
 			Math::Interval<Size> dataIInterval;
 			T lastCost;
@@ -165,6 +166,8 @@ namespace Math {
 
 			void computeGrad(const Math::Interval<Size>& dataIInterval);
 
+			void optimize(const Math::Interval<Size>& dataIInterval);
+			void optimizeStochastic(const Vector<Math::Interval<Size>>& dataIIntervalVector);
 			void optimize(const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 			void optimize(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const T & randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
@@ -695,6 +698,23 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval) {
+			computeGrad(dataIInterval);
+			updateModel(getLearningRateFactor());
+			setEpoch(getEpoch() + Size(1));
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Vector<Math::Interval<Size>>& dataIIntervalVector) {
+			for ( Size i(0); i < dataIIntervalVector.getSize(); i++ ) {
+				const Math::Interval<Size>& dataIInterval(dataIIntervalVector.getValueI(i));
+				computeGrad(dataIInterval);
+				updateModel(getLearningRateFactor());
+			}
+			setEpoch(getEpoch() + Size(1));
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimize(const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 			return optimize(Interval<Size>(Size(0), getNbData()), learningRateFunc, nbIterations, nbSearchThreads, randomFactor, saveDuration, verbose);
 		}
@@ -812,7 +832,8 @@ namespace Math {
 				if ( timePointNow - timePointLast > saveDuration ) {
 					timePointLast.setValue(timePointNow.getValue());
 
-					updateModel(searchThreadVector, getLearningRateFactor());
+					// updateModel(searchThreadVector, getLearningRateFactor());
+					_setParamMatMean<Size(0)>(searchThreadVector);
 					const T newCost(computeCostQuadratic(dataIInterval));
 					if ( newCost > lastCost ) {
 						setLearningRateFactor(getLearningRateFactor() * T(0.5));
@@ -969,7 +990,7 @@ namespace Math {
 						setEpoch(minSearchThread->getEpoch());
 						lastCost = computeCostQuadratic(dataIInterval);
 					} else {
-						setLearningRateFactor(getLearningRateFactor() * T(0.1));
+						setLearningRateFactor(getLearningRateFactor() * T(0.5));
 						if ( verbose > -1 ) { Log::displayWarning(String::format("[%/%] epochNum #% : No better value founded. Maybe the maximum has been founded. Cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), lastCost, computeCoefficientOfDetermination(dataIInterval) * T(100))); }
 					}
 
@@ -1006,7 +1027,6 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::updateModel(const T& learningRateFactor) {
 			_updateModel<Size(0)>(learningRateFactor);
-			this->epochNum++;
 			this->bNeedForwardPropagation = true;
 		}
 
