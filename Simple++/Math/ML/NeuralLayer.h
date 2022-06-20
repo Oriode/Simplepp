@@ -71,6 +71,12 @@ namespace Math {
 			const Mat<T>& getGradMat() const;
 			Mat<T>& getGradMat();
 
+			const StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& getParamTableTable() const;
+			StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& getParamTableTable();
+
+			const StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& getGradTableTable() const;
+			StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& getGradTableTable();
+
 			const OptimizerFunc& getOptimizerFunc() const;
 			void setOptimizerFunc(const OptimizerFunc& optimizerFunc);
 
@@ -89,6 +95,10 @@ namespace Math {
 			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const ActivationFunc& activationFunc);
 			template<typename ActivationFunc>
 			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbFeatures>>& featureTableVector, Vector<StaticTable<T, NbNeurons>>& outTableVector, const ActivationFunc& activationFunc) const;
+			template<typename ActivationFunc, Size NbData>
+			void computeForwardPropagationS(const Size dataIBegin, const ActivationFunc& activationFunc);
+			template<typename ActivationFunc, Size NbData>
+			void computeForwardPropagationS(const StaticTable<StaticTable<T, NbFeatures>, NbData>& featureTableTable, StaticTable<StaticTable<T, NbNeurons>, NbData>& outTableTable, const ActivationFunc& activationFunc) const;
 
 
 			/************************************************************************/
@@ -98,12 +108,28 @@ namespace Math {
 			void computeDeltasLast(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector);
 			template<Size NbFeaturesNext, Size NbNeuronsNext, typename ActivationFunc>
 			void computeDeltas(const Math::Interval<Size>& dataIInterval, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, OptimizerFunc>& nextNeuralLayer, const ActivationFunc& activationFunc);
+			template<Size NbData>
+			void computeDeltasLastS(const Size dataIBegin, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector);
+			template<Size NbData>
+			void computeDeltasLastS(const StaticTable<StaticTable<T, NbNeurons>, NbData>& outTableTable, const StaticTable<StaticTable<T, NbNeurons>, NbData>& expectedOutTableTable, StaticTable<StaticTable<T, NbNeurons>, NbData> & deltaTableTable) const;
+			template<Size NbFeaturesNext, Size NbNeuronsNext, typename ActivationFunc, Size NbData>
+			void computeDeltasS(const Size dataIBegin, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, OptimizerFunc>& nextNeuralLayer, const ActivationFunc& activationFunc);
+			template<Size NbFeaturesNext, Size NbNeuronsNext, typename ActivationFunc, Size NbData>
+			void computeDeltasS(const StaticTable<StaticTable<T, NbNeurons>, NbData>& outTableTable,
+								const StaticTable<StaticTable<T, NbNeuronsNext>, NbData> & nextDeltaTableTable,
+								const StaticTable<StaticTable<T, NbFeaturesNext + Size(1)>, NbNeuronsNext> & nextParamTable,
+								StaticTable<StaticTable<T, NbNeurons>, NbData>& deltaTableTable,
+								const ActivationFunc& activationFunc) const;
 
 			/************************************************************************/
 			/* ================          Back Propagation          ================ */
 			/************************************************************************/
 
 			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
+			template<Size NbData>
+			void computeBackPropagationS(const Size dataIBegin);
+			template<Size NbData>
+			void computeBackPropagationS(const StaticTable<StaticTable<T, NbFeatures>, NbData> & inTableTable, const StaticTable<StaticTable<T, NbNeurons>, NbData> & deltaTableTable, StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& gradTableTable);
 
 
 
@@ -384,6 +410,26 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline const StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getParamTableTable() const {
+			return this->paramTableTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getParamTableTable() {
+			return this->paramTableTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline const StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getGradTableTable() const {
+			return this->gradTableTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getGradTableTable() {
+			return this->gradTableTable;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		inline const OptimizerFunc& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getOptimizerFunc() const {
 			return this->optimizerFunc;
 		}
@@ -461,6 +507,22 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<typename ActivationFunc, Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagationS(const Size dataIBegin, const ActivationFunc& activationFunc) {
+			computeForwardPropagationS(*reinterpret_cast< const StaticTable<StaticTable<T, NbFeatures>, NbData> * >( getInVector().getData() + dataIBegin ),
+									   *reinterpret_cast< StaticTable<StaticTable<T, NbNeurons>, NbData> * >( getOutVector().getData() + dataIBegin ),
+									   activationFunc);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<typename ActivationFunc, Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagationS(const StaticTable<StaticTable<T, NbFeatures>, NbData>& featureTableTable, StaticTable<StaticTable<T, NbNeurons>, NbData>& outTableTable, const ActivationFunc& activationFunc) const {
+			for ( Size dataI(0); dataI < NbData; dataI++ ) {
+				computeForwardPropagation(featureTableTable[ dataI ], outTableTable[ dataI ], activationFunc);
+			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		template<typename ActivationFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(const StaticTable<T, NbFeatures>& featureTable, StaticTable<T, NbNeurons>& outTable, const ActivationFunc& activationFunc) const {
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
@@ -473,16 +535,16 @@ namespace Math {
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeBackPropagation(const Math::Interval<Size>& dataIInterval) {
 			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
 
-			for ( Size paramI(0); paramI < getNbFeatures(); paramI++ ) {
+			for ( Size featureI(0); featureI < getNbFeatures(); featureI++ ) {
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 
 					T dotSum(0);
 					for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-						dotSum += getIns(dataI)[ paramI ] * getDeltas(dataI)[ neuronI ];
+						dotSum += getIns(dataI)[ featureI ] * getDeltas(dataI)[ neuronI ];
 					}
 
 					dotSum *= sizeInverse;
-					setGrad(neuronI, paramI, dotSum);
+					setGrad(neuronI, featureI, dotSum);
 				}
 			}
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
@@ -670,6 +732,94 @@ namespace Math {
 					}
 					deltaVecTable[ neuronI ] = dotSum * activationFunc.grad(outTable[ neuronI ]);
 				}
+			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeDeltasLastS(const Size dataIBegin, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) {
+			computeDeltasLastS(*reinterpret_cast< const StaticTable<StaticTable<T, NbNeurons>, NbData> * >( getOutVector().getData() + dataIBegin ),
+							   *reinterpret_cast< const StaticTable<StaticTable<T, NbNeurons>, NbData> * >( expectedOutTableVector.getData() + dataIBegin ),
+							   *reinterpret_cast< StaticTable<StaticTable<T, NbNeurons>, NbData> * >( getDeltaVector().getData() + dataIBegin ));
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeDeltasLastS(const StaticTable<StaticTable<T, NbNeurons>, NbData>& outTableTable, const StaticTable<StaticTable<T, NbNeurons>, NbData>& expectedOutTableTable, StaticTable<StaticTable<T, NbNeurons>, NbData>& deltaTableTable) const {
+			for ( Size dataI(0); dataI < NbData; dataI++ ) {
+				const StaticTable<T, NbNeurons>& outTable(outTableTable[dataI]);
+				const StaticTable<T, NbNeurons>& expectedYTable(expectedOutTableTable[dataI]);
+				StaticTable<T, NbNeurons>& deltaTable(deltaTableTable[dataI]);
+
+				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+					deltaTable[ neuronI ] = outTable[ neuronI ] - expectedYTable[ neuronI ];
+				}
+			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<Size NbFeaturesNext, Size NbNeuronsNext, typename ActivationFunc, Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeDeltasS(const Size dataIBegin, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, OptimizerFunc>& nextNeuralLayer, const ActivationFunc& activationFunc) {
+			computeDeltasS<NbFeaturesNext, NbNeuronsNext, ActivationFunc, NbData>(*reinterpret_cast< const StaticTable<StaticTable<T, NbNeurons>, NbData> * >( getOutVector().getData() + dataIBegin ),
+						   *reinterpret_cast< const StaticTable<StaticTable<T, NbNeuronsNext>, NbData> * >( nextNeuralLayer.getDeltaVector().getData() + dataIBegin ),
+						   nextNeuralLayer.getParamTableTable(),
+						   *reinterpret_cast< StaticTable<StaticTable<T, NbNeurons>, NbData> * >( getDeltaVector().getData() + dataIBegin ),
+						   activationFunc);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<Size NbFeaturesNext, Size NbNeuronsNext, typename ActivationFunc, Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeDeltasS(const StaticTable<StaticTable<T, NbNeurons>, NbData>& outTableTable, const StaticTable<StaticTable<T, NbNeuronsNext>, NbData>& nextDeltaTableTable, const StaticTable<StaticTable<T, NbFeaturesNext + Size(1)>, NbNeuronsNext>& nextParamTable, StaticTable<StaticTable<T, NbNeurons>, NbData>& deltaTableTable, const ActivationFunc& activationFunc) const {
+			for ( Size dataI(0); dataI < NbData; dataI++ ) {
+				const StaticTable<T, NbNeurons>& outTable(outTableTable[ dataI ]);
+				const StaticTable<T, NbNeuronsNext>& nextDeltaTable(nextDeltaTableTable[dataI]);
+				StaticTable<T, NbNeurons>& deltaTable(deltaTableTable[dataI]);
+
+				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+					T dotSum(0);
+					for ( Size nextNeuronI(0); nextNeuronI < NbNeuronsNext; nextNeuronI++ ) {
+						const StaticTable<T, NbFeaturesNext + Size(1)>& paramTable(nextParamTable[nextNeuronI]);
+						dotSum += paramTable[ neuronI ] * nextDeltaTable[ nextNeuronI ];
+					}
+					deltaTable[ neuronI ] = dotSum * activationFunc.grad(outTable[ neuronI ]);
+				}
+			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeBackPropagationS(const Size dataIBegin) {
+			computeBackPropagationS(*reinterpret_cast< const StaticTable<StaticTable<T, NbFeatures>, NbData> * >( getInVector().getData() + dataIBegin ),
+									*reinterpret_cast< const StaticTable<StaticTable<T, NbNeurons>, NbData> * >( getDeltaVector().getData() + dataIBegin ),
+									getGradTableTable());
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<Size NbData>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeBackPropagationS(const StaticTable<StaticTable<T, NbFeatures>, NbData>& inTableTable, const StaticTable<StaticTable<T, NbNeurons>, NbData>& deltaTableTable, StaticTable<StaticTable<T, NbFeatures + Size(1)>, NbNeurons>& gradTableTable) {
+			constexpr T sizeInverse(T(1) / T(NbData));
+
+			for ( Size featureI(0); featureI < getNbFeatures(); featureI++ ) {
+				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+
+					T dotSum(0);
+					for ( Size dataI(0); dataI < NbData; dataI++ ) {
+						dotSum += inTableTable[dataI][ featureI ] * deltaTableTable[dataI][ neuronI ];
+					}
+
+					dotSum *= sizeInverse;
+					gradTableTable[ neuronI ][ featureI ] = dotSum;
+				}
+			}
+			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
+
+				T dotSum(0);
+				for ( Size dataI(0); dataI < NbData; dataI++ ) {
+					dotSum += deltaTableTable[dataI][ neuronI ];
+				}
+
+				dotSum *= sizeInverse;
+				gradTableTable[ neuronI ][ getNbFeatures() ] = dotSum;
 			}
 		}
 

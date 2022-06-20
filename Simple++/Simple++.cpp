@@ -113,8 +113,12 @@ namespace Math::ML {
 	class MyModel : public Math::ML::Model {
 	public:
 		constexpr MyModel() {}
-		static constexpr Size nbLayers = 2;
-		static constexpr Size m[2][2] = { {16,16}, {16,16} };
+		static constexpr Size nbLayers = 5;
+		static constexpr Size m[5][2] = { {64,64},
+			{64,64},
+			{64,64},
+			{64,64},
+			{64,64} };
 
 		typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
 		typedef Math::ML::ActivationFunc::Linear ActivationFunc;
@@ -2641,12 +2645,12 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
-		Math::ML::Optimizer::Constant optimizerFunc(0.01);
+		Math::ML::Optimizer::Adam<F> optimizerFunc;
 		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork(optimizerFunc, "release.dnn");
 
-		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+		Vector<Math::ML::Data<F, 64, 64>> dataVector(Math::ML::generateData<F, 64, 64, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 
-		// deepNeuralNetwork.resetParams();
+		deepNeuralNetwork.resetParams();
 
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			deepNeuralNetwork.clearData();
@@ -2660,7 +2664,8 @@ int main(int argc, char* argv[]) {
 		Log::startChrono();
 		// deepNeuralNetwork.optimize(Math::ML::LearningRate::Linear(0.01), Size(50000), Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 32768), Math::ML::LearningRate::Constant(0.01), Size(10000), Size(16));
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(1), Time::Duration<Time::MilliSecond>(100), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 
