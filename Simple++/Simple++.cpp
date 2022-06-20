@@ -1683,12 +1683,12 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
-		Math::ML::Optimizer::Constant optimizerFunc(0.01);
-		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork(optimizerFunc, "debug.dnn");
+		Math::ML::Optimizer::Adam<F> optimizerFunc(0.01);
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel, Math::ML::Optimizer::Adam<F>> deepNeuralNetwork(optimizerFunc, "debug.dnn");
 
 		deepNeuralNetwork.resetParams();
 
-		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 1, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
@@ -1697,8 +1697,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
-		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(10000), Size(8), Time::Duration<Time::MilliSecond>(1000), 2);
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(10), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(1000), 2);
+		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
 
 		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
 

@@ -91,7 +91,7 @@ namespace Math {
 			T lastCost;
 		};
 
-		template<typename T, typename M = Model, typename OptimizerFunc = Optimizer::Constant<T>, Size NbThreads = Size(1)>
+		template<typename T, typename M = Model, typename OptimizerFunc = Optimizer::Adam<T>, Size NbThreads = Size(1)>
 		class DeepNeuralNetwork : public IO::BasicIO {
 		public:
 			friend SearchThread<T, M, OptimizerFunc, NbThreads>;
@@ -99,7 +99,7 @@ namespace Math {
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
 			static constexpr Size NbOut = M::m[ M::nbLayers - Size(1) ][ 1 ];
 
-			DeepNeuralNetwork(const OptimizerFunc & optimizerFunc, const OS::Path & filePath = OS::Path());
+			DeepNeuralNetwork(const OptimizerFunc & optimizerFunc = OptimizerFunc(), const OS::Path& filePath = OS::Path());
 			~DeepNeuralNetwork();
 
 			void addData(const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable, const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& outTable);
@@ -813,6 +813,11 @@ namespace Math {
 					timePointLast.setValue(timePointNow.getValue());
 
 					updateModel(searchThreadVector, getLearningRateFactor());
+					const T newCost(computeCostQuadratic(dataIInterval));
+					if ( newCost > lastCost ) {
+						setLearningRateFactor(getLearningRateFactor() * T(0.5));
+					}
+					lastCost = newCost;
 
 					if ( this->filePath.getSize() && !saveToFile(this->filePath) ) {
 						if ( verbose > -1 ) { Log::displayWarning(String::format("Unable to save the DeepNeuralNetwork to the file \"%\".", this->filePath)); }
