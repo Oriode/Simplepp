@@ -19,6 +19,7 @@ namespace Math {
 			NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>& operator=(const NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>& neuralLayer);
 
 			void setParamMat(const Mat<T>& paramMat);
+			void setGradMat(const Mat<T>& gradMat);
 			void setInTableVector(const Vector<StaticTable<T, NbFeatures>>* inTableVector);
 
 			constexpr Size getNbFeatures() const;
@@ -66,6 +67,9 @@ namespace Math {
 
 			const Mat<T>& getParamMat() const;
 			Mat<T>& getParamMat();
+
+			const Mat<T>& getGradMat() const;
+			Mat<T>& getGradMat();
 
 			const OptimizerFunc& getOptimizerFunc() const;
 			void setOptimizerFunc(const OptimizerFunc& optimizerFunc);
@@ -169,6 +173,14 @@ namespace Math {
 			assert(paramMat.getSizeN() == getNbFeatures() + Size(1));
 
 			this->paramMat = paramMat;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::setGradMat(const Mat<T>& gradMat) {
+			assert(paramMat.getSizeM() == getNbNeurons());
+			assert(paramMat.getSizeN() == getNbFeatures() + Size(1));
+
+			this->gradMat = gradMat;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
@@ -342,6 +354,16 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline const Mat<T>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getGradMat() const {
+			return this->gradMat;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline Mat<T>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getGradMat() {
+			return this->gradMat;
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		inline const OptimizerFunc& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getOptimizerFunc() const {
 			return this->optimizerFunc;
 		}
@@ -457,7 +479,7 @@ namespace Math {
 				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
 					const T& grad(getGrads(neuronI)[ paramI ]);
 					T& param(getParams(neuronI)[ paramI ]);
-					param = this->optimizerFunc(epochNum, neuronI, paramI, param, grad);
+					param = this->optimizerFunc(epochNum, neuronI, paramI, param, grad, learningRateFactor);
 				}
 			}
 		}

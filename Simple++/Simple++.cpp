@@ -1697,8 +1697,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, 100), Math::ML::LearningRate::Linear(0.0001), Size(10000));
-		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 10000), Math::ML::LearningRate::Linear(0.01), Size(10000));
-		deepNeuralNetwork.optimize(Math::Interval<Size>(0, 10000), Size(10), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
+		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(10000), Size(8), Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(10), Size(8), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
 
 		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
 

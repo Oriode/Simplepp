@@ -13,7 +13,7 @@ namespace Math {
 			class BasicOptimizer {
 			public:
 				void init(const Size nbParams, const Size nbNeurons){ static_assert( false, "BasicOptimizer::init() should be overriden." ); }
-				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T & lastParam, const T & grad) const { static_assert( false, "BasicOptimizer::operator() should be overriden." ); }
+				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T & lastParam, const T & grad, const T & learningRateFactor) const { static_assert( false, "BasicOptimizer::operator() should be overriden." ); }
 				void reset(){ static_assert( false, "BasicOptimizer::reset() should be overriden." ); }
 			};
 
@@ -29,8 +29,8 @@ namespace Math {
 
 				}
 
-				const T & operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad) const {
-					return lastParam - this->learningRate * grad;
+				const T & operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T & learningRateFactor) const {
+					return lastParam - this->learningRate * learningRateFactor * grad;
 				}
 
 				void reset() {
@@ -53,9 +53,9 @@ namespace Math {
 
 				}
 
-				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad) const {
+				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T& learningRateFactor) const {
 					T currentLearningRate(this->learningRate * (T(1.0) + Math::pow(T(10.0), T(epochNum) / T(1000.0))));
-					return lastParam - currentLearningRate * grad;
+					return lastParam - currentLearningRate * learningRateFactor * grad;
 				}
 
 				void reset() {
@@ -78,7 +78,7 @@ namespace Math {
 
 				}
 
-				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad) const {
+				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T& learningRateFactor) const {
 					T currentLearningRate;
 					if ( epochNum < Size(10) ) {
 						currentLearningRate = this->learningRate;
@@ -86,7 +86,7 @@ namespace Math {
 						const T x(T(epochNum) - T(10.0));
 						currentLearningRate = this->learningRate * ( T(1.0) + x / T(10.0) );
 					}
-					return lastParam - currentLearningRate * grad;
+					return lastParam - currentLearningRate * learningRateFactor * grad;
 				}
 
 				void reset() {
