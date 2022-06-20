@@ -14,18 +14,24 @@ namespace Math {
 
 			constexpr Size getNbThreads() const;
 
+			void setNbData(const Size nbData);
+
+			using NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation;
 			template<typename ActivationFunc>
-			const StaticTable<T, NbNeurons>& computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc);
+			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const ActivationFunc& activationFunc);
 			template<typename ActivationFunc>
-			void computeForwardPropagation(const StaticTable<T, NbFeatures>& featureTable, StaticTable<T, NbNeurons>& outTable, const ActivationFunc& activationFunc) const;
+			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbFeatures>>& featureTableVector, Vector<StaticTable<T, NbNeurons>>& outTableVector, const ActivationFunc& activationFunc) const;
 
 			template<typename ActivationFunc>
-			void _runComputeForwardPropagation(const StaticTable<T, NbFeatures>* featureTable, StaticTable<T, NbNeurons>* outTable, const ActivationFunc* activationFunc, const Math::Interval<Size> * neuronIInterval);
+			void _runComputeForwardPropagation(const Math::Interval<Size>* dataIInterval, const Vector<StaticTable<T, NbFeatures>>* featureTableVector, Vector<StaticTable<T, NbNeurons>>* outTableVector, const ActivationFunc* activationFunc);
 
 			void test(const int * i);
 
+			static void createIntervalTable(const Math::Interval<Size>& interval, StaticTable<Math::Interval<Size>, NbThreads>& outTable);
+
 		private:
 			StaticTable<Math::Interval<Size>, NbThreads> neuronIIntervalTable;
+			StaticTable<Math::Interval<Size>, NbThreads> dataIIntervalTable;
 		};
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
@@ -46,45 +52,61 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
+		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::setNbData(const Size nbData) {
+			NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::setNbData(nbData);
+
+			NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::createIntervalTable(Math::Interval<Size>(Size(0), nbData), this->dataIIntervalTable);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
 		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::test(const int * i) {
 			
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
-		template<typename ActivationFunc>
-		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::_runComputeForwardPropagation(const StaticTable<T, NbFeatures>* featureTable, StaticTable<T, NbNeurons>* outTable, const ActivationFunc* activationFunc, const Math::Interval<Size>* neuronIInterval) {
-			for ( Size neuronI(neuronIInterval->getBegin()); neuronI < neuronIInterval->getEnd(); neuronI++ ) {
-				const T y(computeY(neuronI, *featureTable, *activationFunc));
-				(*outTable)[ neuronI ] = y;
+		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::createIntervalTable(const Math::Interval<Size>& interval, StaticTable<Math::Interval<Size>, NbThreads>& outTable) {
+			Vector<Math::Interval<Size>> intervalVector(interval.split(NbThreads));
+
+			Size i(0);
+			for ( ; i < intervalVector.getSize(); i++ ) {
+				outTable[ i ] = intervalVector.getValueI(i);
+			}
+			for ( ; i < NbThreads; i++ ) {
+				outTable[ i ] = Math::Interval<Size>(Size(0), Size(0));
 			}
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
 		template<typename ActivationFunc>
-		inline const StaticTable<T, NbNeurons>& NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc) {
-			computeForwardPropagation(getIns(dataI), getOuts(dataI), activationFunc);
-			return getOuts(dataI);
+		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const ActivationFunc& activationFunc) {
+			computeForwardPropagation(dataIInterval, getInVector(), getOutVector(), activationFunc);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
 		template<typename ActivationFunc>
-		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::computeForwardPropagation(const StaticTable<T, NbFeatures>& featureTable, StaticTable<T, NbNeurons>& outTable, const ActivationFunc& activationFunc) const {
-			if constexpr ( NbThreads == Size(1) ) {
-				return NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(featureTable, outTable, activationFunc);
+		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbFeatures>>& featureTableVector, Vector<StaticTable<T, NbNeurons>>& outTableVector, const ActivationFunc& activationFunc) const {
+			if constexpr ( NbThreads <= Size(1) ) {
+				return NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(dataIInterval, featureTableVector, outTableVector, activationFunc);
 			} else {
 				StaticTable<std::thread, NbThreads> threadTable;
 				for ( Size i(0); i < getNbThreads(); i++ ) {
 					threadTable[ i ] = std::thread(&NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::_runComputeForwardPropagation< ActivationFunc>,
 												   const_cast< NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads> * >( this ),
-												   &featureTable,
-												   &outTable,
-												   &activationFunc,
-												   &this->neuronIIntervalTable[i]);
+												   &this->dataIIntervalTable[i],
+												   &featureTableVector,
+												   &outTableVector,
+												   &activationFunc);
 				}
 				for ( Size i(0); i < getNbThreads(); i++ ) {
 					threadTable[ i ].join();
 				}
 			}
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc, Size NbThreads>
+		template<typename ActivationFunc>
+		inline void NeuralLayerMT<T, NbFeatures, NbNeurons, OptimizerFunc, NbThreads>::_runComputeForwardPropagation(const Math::Interval<Size>* dataIInterval, const Vector<StaticTable<T, NbFeatures>>* featureTableVector, Vector<StaticTable<T, NbNeurons>>* outTableVector, const ActivationFunc* activationFunc) {
+			NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(*dataIInterval, *featureTableVector, *outTableVector, *activationFunc);
 		}
 
 	}

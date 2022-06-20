@@ -77,15 +77,35 @@ namespace Math {
 			template<typename ActivationFunc>
 			void resetParams(const ActivationFunc& activationFunc);
 
+			/************************************************************************/
+			/* ================         Forward Propagation        ================ */
+			/************************************************************************/
+
 			template<typename ActivationFunc>
 			const StaticTable<T, NbNeurons>& computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc);
 			template<typename ActivationFunc>
 			void computeForwardPropagation(const StaticTable<T, NbFeatures> & featureTable, StaticTable<T, NbNeurons> & outTable, const ActivationFunc& activationFunc) const;
-			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
+			template<typename ActivationFunc>
+			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const ActivationFunc& activationFunc);
+			template<typename ActivationFunc>
+			void computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbFeatures>>& featureTableVector, Vector<StaticTable<T, NbNeurons>>& outTableVector, const ActivationFunc& activationFunc) const;
+
+
+			/************************************************************************/
+			/* ================           Compute Deltas           ================ */
+			/************************************************************************/
 
 			void computeDeltasLast(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector);
 			template<Size NbFeaturesNext, Size NbNeuronsNext, typename ActivationFunc>
 			void computeDeltas(const Math::Interval<Size>& dataIInterval, const NeuralLayer<T, NbFeaturesNext, NbNeuronsNext, OptimizerFunc>& nextNeuralLayer, const ActivationFunc& activationFunc);
+
+			/************************************************************************/
+			/* ================          Back Propagation          ================ */
+			/************************************************************************/
+
+			void computeBackPropagation(const Math::Interval<Size>& dataIInterval);
+
+
 
 			void updateModel(const T & learningRateFactor, const Size epochNum);
 
@@ -422,6 +442,22 @@ namespace Math {
 			computeForwardPropagation(getIns(dataI), getOuts(dataI), activationFunc);
 
 			return getOuts(dataI);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<typename ActivationFunc>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const ActivationFunc& activationFunc) {
+			computeForwardPropagation(dataIInterval, getInVector(), getOutVector(), activationFunc);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		template<typename ActivationFunc>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbFeatures>>& featureTableVector, Vector<StaticTable<T, NbNeurons>>& outTableVector, const ActivationFunc& activationFunc) const {
+			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+				const StaticTable<T, NbFeatures>& featureTable(featureTableVector.getValueI(dataI));
+				StaticTable<T, NbNeurons>& outTable(outTableVector.getValueI(dataI));
+				computeForwardPropagation(featureTable, outTable, activationFunc);
+			}
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
