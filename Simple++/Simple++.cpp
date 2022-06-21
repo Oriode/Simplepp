@@ -1704,7 +1704,6 @@ int main(int argc, char* argv[]) {
 			deepNeuralNetwork.normalizeFeature();
 		}
 
-		// deepNeuralNetwork.optimizeRng(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), 1.0, Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(100), 2);
 		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(1000), 2);
 
@@ -2667,7 +2666,6 @@ int main(int argc, char* argv[]) {
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		// deepNeuralNetwork.optimizeRng(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(8), 10.0, Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(2500), 2);
 		// deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(100), 2);
 		Log::stopChrono();
