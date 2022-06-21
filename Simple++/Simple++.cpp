@@ -113,10 +113,13 @@ namespace Math::ML {
 	class MyModel : public Math::ML::Model::BasicModel {
 	public:
 		constexpr MyModel() {}
-		static constexpr Size nbLayers = 2;
-		static constexpr Size m[2][2] = {
-			{16,16},
-			{16,16} };
+		static constexpr Size nbLayers = 5;
+		static constexpr Size m[5][2] = {
+			{64,1024},
+			{1024,64},
+			{64,64},
+			{64,64},
+			{64,64} };
 
 		typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
 		typedef Math::ML::ActivationFunc::Linear ActivationFunc;
@@ -1699,10 +1702,9 @@ int main(int argc, char* argv[]) {
 			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
 			deepNeuralNetwork.normalizeFeature();
-			// deepNeuralNetwork.normalizeOut();
 		}
 
-		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), 1.0, Time::Duration<Time::MilliSecond>(1000), 2);
+		// deepNeuralNetwork.optimizeRng(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), 1.0, Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(100), 2);
 		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(1000), 2);
 
@@ -2646,10 +2648,13 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
+		constexpr Size nbFeatures(Math::ML::getNbFeatures<Math::ML::MyModel>());
+		constexpr Size nbOut(Math::ML::getNbOut<Math::ML::MyModel>());
+
 		Math::ML::Optimizer::Adam<F> optimizerFunc;
 		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork(optimizerFunc, "release.dnn");
 
-		Vector<Math::ML::Data<F, 64, 64>> dataVector(Math::ML::generateData<F, 64, 64, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector(Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>(Size(50000), 0.0));
 
 		deepNeuralNetwork.resetParams();
 
@@ -2657,16 +2662,14 @@ int main(int argc, char* argv[]) {
 			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
 			deepNeuralNetwork.normalizeFeature();
-			// deepNeuralNetwork.normalizeOut();
 		}
 
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		// deepNeuralNetwork.optimize(Math::ML::LearningRate::Linear(0.01), Size(50000), Time::Duration<Time::MilliSecond>(1000), 2);
-		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, 32768), Math::ML::LearningRate::Constant(0.01), Size(10000), Size(16));
-		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(16), 0.25, Time::Duration<Time::MilliSecond>(1000), 2);
-		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(1), Time::Duration<Time::MilliSecond>(100), 2);
+		// deepNeuralNetwork.optimizeRng(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(8), 10.0, Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(10000), 2);
+		// deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(100), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 

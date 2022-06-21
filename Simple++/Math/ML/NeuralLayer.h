@@ -82,6 +82,7 @@ namespace Math {
 
 			template<typename ActivationFunc>
 			void resetParams(const ActivationFunc& activationFunc);
+			void resetOptimizerFunc();
 
 			/************************************************************************/
 			/* ================         Forward Propagation        ================ */
@@ -136,7 +137,7 @@ namespace Math {
 			void updateModel(const T & learningRateFactor, const Size epochNum);
 
 			T computeCostLog(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
-			T computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
+			T computeMeanSquaredError(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 			T computeCoefficientOfDetermination(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
 
 			StaticTable<T, NbNeurons> computeMeanTable(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const;
@@ -440,6 +441,11 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::resetOptimizerFunc() {
+			this->optimizerFunc.reset();
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		template<typename ActivationFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::resetParams(const ActivationFunc& activationFunc) {
 			this->paramMat.randomF();
@@ -479,7 +485,7 @@ namespace Math {
 				}
 			}
 
-			this->optimizerFunc.reset();
+			resetOptimizerFunc();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
@@ -643,7 +649,7 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline T NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeCostQuadratic(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
+		inline T NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeMeanSquaredError(const Math::Interval<Size>& dataIInterval, const Vector<StaticTable<T, NbNeurons>>& outTableVector, const Vector<StaticTable<T, NbNeurons>>& expectedOutTableVector) const {
 			T costSum(0);
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				const StaticTable<T, NbNeurons>& outTable(outTableVector.getValueI(dataI));
