@@ -24,6 +24,7 @@ namespace Math {
 
 			constexpr Size getNbFeatures() const;
 			constexpr Size getNbNeurons() const;
+			constexpr Size getNbNeuronParams() const;
 			constexpr Size getNbParams() const;
 
 			const Size getNbData() const;
@@ -186,7 +187,7 @@ namespace Math {
 			optimizerFunc(optimizerFunc)
 		{
 			static_assert( Utility::isBase<Optimizer::BasicOptimizer<T>, OptimizerFunc>::value, "OptimizerFunc type unknown." );
-			this->optimizerFunc.init(getNbParams(), getNbNeurons());
+			this->optimizerFunc.init(getNbNeuronParams(), getNbNeurons());
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
@@ -246,8 +247,13 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbParams() const {
+		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbNeuronParams() const {
 			return NbFeatures + Size(1);
+		}
+
+		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
+		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbParams() const {
+			return getNbNeuronParams() * getNbNeurons();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
@@ -462,7 +468,7 @@ namespace Math {
 			// Use a square root func to converge params to 0.5.
 			/*for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
-				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+				for ( Size paramI(0); paramI < getNbNeuronParams(); paramI++ ) {
 					paramTable[ paramI ] = interpolationFunc(paramTable[ paramI ]);
 				}
 			}*/
@@ -471,7 +477,7 @@ namespace Math {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
 				const T neuronWeight(computeNeuronWeight(neuronI));
 
-				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+				for ( Size paramI(0); paramI < getNbNeuronParams(); paramI++ ) {
 					paramTable[ paramI ] /= neuronWeight;
 				}
 			}*/
@@ -480,7 +486,7 @@ namespace Math {
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				StaticTable<T, NbFeatures + Size(1)>& paramTable(getParams(neuronI));
 
-				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+				for ( Size paramI(0); paramI < getNbNeuronParams(); paramI++ ) {
 					paramTable[ paramI ] = (paramTable[ paramI ] * T(2.0) - T(1.0)) * weightFactor;
 				}
 			}
@@ -580,7 +586,7 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::updateModel(const T& learningRateFactor, const Size epochNum) {
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
-				for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+				for ( Size paramI(0); paramI < getNbNeuronParams(); paramI++ ) {
 					const T& grad(getGrads(neuronI)[ paramI ]);
 					T& param(getParams(neuronI)[ paramI ]);
 					param = this->optimizerFunc(epochNum, neuronI, paramI, param, grad, learningRateFactor);
@@ -715,7 +721,7 @@ namespace Math {
 			StaticTable<T, NbFeatures + Size(1)> paramTable(getParams(neuronI));
 
 			T weight(0);
-			for ( Size paramI(0); paramI < getNbParams(); paramI++ ) {
+			for ( Size paramI(0); paramI < getNbNeuronParams(); paramI++ ) {
 				weight += paramTable[ paramI ];
 			}
 

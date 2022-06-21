@@ -23,7 +23,7 @@ namespace Math {
 			void addData(const Vector<Data<T, NbFeatures, NbOut>>& dataVector);
 
 			constexpr Size getNbFeatures() const;
-			constexpr Size getNbParams() const;
+			constexpr Size getNbNeuronParams() const;
 			constexpr Size getNbOut() const;
 
 			const Size getNbData() const;
@@ -89,7 +89,7 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbOut>
-		inline constexpr Size LinearRegression<T, NbFeatures, NbOut>::getNbParams() const {
+		inline constexpr Size LinearRegression<T, NbFeatures, NbOut>::getNbNeuronParams() const {
 			return NbFeatures + Size(1);
 		}
 
@@ -167,7 +167,7 @@ namespace Math {
 		inline T LinearRegression<T, NbFeatures, NbOut>::computeGrad(const Mat<T>& outMat, const Size paramI, const Size outI) const {
 			assert(outMat.getSizeM() == getNbData());
 			assert(outMat.getSizeN() == getNbOut());
-			assert(getNbParams() > paramI);
+			assert(getNbNeuronParams() > paramI);
 			assert(getNbOut() > outI);
 
 			const T nbDataT(getNbData());
@@ -234,7 +234,7 @@ namespace Math {
 				}
 
 				// Back propagation.
-				for ( Size i(0); i < getNbParams(); i++ ) {
+				for ( Size i(0); i < getNbNeuronParams(); i++ ) {
 					for ( Size j(0); j < getNbOut(); j++ ) {
 						T& param(this->paramMat.getValueI(i, j));
 

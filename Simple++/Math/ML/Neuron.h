@@ -24,7 +24,7 @@ namespace Math {
 			const ActivationFunc& getActivationFunc() const;
 
 			constexpr Size getNbFeatures() const;
-			constexpr Size getNbParams() const;
+			constexpr Size getNbNeuronParams() const;
 
 			const StaticTable<T, NbFeatures + Size(1)>& getParams() const;
 			StaticTable<T, NbFeatures + Size(1)>& getParams();
@@ -77,7 +77,7 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, typename ActivationFunc>
-		inline constexpr Size Neuron<T, NbFeatures, ActivationFunc>::getNbParams() const {
+		inline constexpr Size Neuron<T, NbFeatures, ActivationFunc>::getNbNeuronParams() const {
 			return NbFeatures + Size(1);
 		}
 

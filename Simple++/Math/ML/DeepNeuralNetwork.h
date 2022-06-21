@@ -33,7 +33,7 @@ namespace Math {
 				runDuration(runDuration) {}
 
 			void init() {
-				this->lastCost = computeMeanSquaredError(this->dataIInterval);
+				// this->lastCost = computeMeanSquaredError(this->dataIInterval);
 				this->dataIIntervalVector = DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createDataIntervalVector(this->dataIInterval);
 			}
 
@@ -125,6 +125,7 @@ namespace Math {
 
 			const Size getNbData() const;
 			constexpr Size getNbLayers() const;
+			constexpr Size getNbParams() const;
 
 			const OS::Path& getFilePath() const;
 			void setFilePath(const OS::Path& filePath);
@@ -273,6 +274,9 @@ namespace Math {
 			template<Size I = Size(0)>
 			void _copyOptimizerFunc(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork);
 
+			template<Size I = Size(0)>
+			constexpr Size _getNbParams() const;
+
 			template<Size I, typename Stream>
 			bool _write(Stream* stream) const;
 
@@ -285,6 +289,8 @@ namespace Math {
 			T unnormalizeValue(const T& x, const Math::Vec2<T>& v) const;
 
 			void setData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector);
+
+			void checkNbDataNbParamsRatio(const Math::Interval<Size>& dataIInterval, int verbose = 1) const;
 
 			StaticTable<void*, M::nbLayers> layerTable;
 
@@ -384,6 +390,19 @@ namespace Math {
 				this->bNeedForwardPropagation = true;
 			}
 			this->optimizeMutex.unlock();
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::checkNbDataNbParamsRatio(const Math::Interval<Size>& dataIInterval, int verbose) const {
+			const T nbDataNbParamsRatio(T(dataIInterval.getSize()) / T(getNbParams()));
+
+			if ( nbDataNbParamsRatio < T(1.0) ) {
+				if ( verbose > -1 ) { Log::displayError(String::format("NbData (%) / NbParams (%) = %", dataIInterval.getSize(), getNbParams(), nbDataNbParamsRatio)); }
+			} else if ( nbDataNbParamsRatio < T(2.0) ) {
+				if ( verbose > -1 ) { Log::displayWarning(String::format("NbData (%) / NbParams (%) = %", dataIInterval.getSize(), getNbParams(), nbDataNbParamsRatio)); }
+			} else {
+				if ( verbose > 0 ) { Log::displaySuccess(String::format("NbData (%) / NbParams (%) = %", dataIInterval.getSize(), getNbParams(), nbDataNbParamsRatio)); }
+			}
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
@@ -583,6 +602,11 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline constexpr Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getNbLayers() const {
 			return M::nbLayers;
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline constexpr Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getNbParams() const {
+			return _getNbParams<Size(0)>();
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
@@ -931,6 +955,8 @@ namespace Math {
 
 			if ( verbose > 0 ) { Log::startStep(String::format("Starting stochastic optimisation with % iterations over % data...", nbIterations, dataIInterval.toString())); }
 
+			checkNbDataNbParamsRatio(dataIInterval, verbose);
+
 			if ( getEpoch() == Size(0) ) {
 				if ( verbose > 0 ) { Log::startStep("Starting from epochNum #0, reseting params..."); }
 				resetParams();
@@ -984,26 +1010,56 @@ namespace Math {
 
 			saveToFile(verbose);
 
-			if ( verbose > 0 ) { Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100))); }
+			if ( verbose > 0 ) { Log::endStepSuccess(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100))); }
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 
-			using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
+			class SearchThread : public DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>, public Thread {
+			public:
+				SearchThread(const OptimizerFunc& optimizerFunc) :
+					DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>(optimizerFunc)
+				{}
+
+				void init() {
+					this->dataIIntervalVector = DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createDataIntervalVector(Math::Interval<Size>(Size(0), getNbData()));
+				}
+
+				void run() override {
+					for ( Size i(0); i < this->dataIIntervalVector.getSize(); i++ ) {
+						const Math::Interval<Size>& dataIInterval(this->dataIIntervalVector.getValueI(i));
+
+						{
+							assert(dataIInterval.getSize() == M::dataChunkSize);
+							computeGradS(dataIInterval.getBegin());
+							updateModel(getLearningRateFactor());
+						}
+
+					}
+				}
+
+			private:
+				Vector<Math::Interval<Size>> dataIIntervalVector;
+				Size intervalI;
+			};
+
+			// using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
 
-			this->optimizeMutex.lock();
-
 			if ( verbose > 0 ) { Log::startStep(String::format("Starting clustered gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString())); }
+
+			checkNbDataNbParamsRatio(dataIInterval, verbose);
 
 			// Creating the threads
 			Vector<SearchThread*> searchThreadVector(nbSearchThreads);
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-				searchThreadVector.setValueI(i, new SearchThread(OptimizerFunc(), saveDuration));
+				searchThreadVector.setValueI(i, new SearchThread(OptimizerFunc()));
 			}
 
 			if ( verbose > 0 ) { Log::startStep("Dispatching data to the threads..."); }
+
+			this->optimizeMutex.lock();
 
 			// Dispatch data into Clusters.
 			Vector<Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>> featureTableVectorVector(searchThreadVector.getSize());
@@ -1033,6 +1089,8 @@ namespace Math {
 				searchThread->addData(featureTableVector, outTableVector);
 			}
 
+			this->optimizeMutex.unlock();
+
 			if ( verbose > 0 ) { Log::endStep("Done."); }
 
 			if ( getEpoch() == Size(0) ) {
@@ -1055,23 +1113,19 @@ namespace Math {
 				if ( verbose > 0 ) { Log::endStep("Done."); }
 			}
 
-			if ( verbose > 0 ) { Log::startStep("Initializing threads..."); }
-
 			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 				SearchThread* searchThread(searchThreadVector.getValueI(i));
-				searchThread->setDataIInterval(Math::Interval<Size>(Size(0), searchThread->getNbData()));
 				searchThread->init();
 			}
 
-			if ( verbose > 0 ) { Log::endStep("Done."); }
-
+			if ( verbose > 0 ) { Log::startStep("Computing Initial MSE..."); }
 			T lastCost(computeMeanSquaredError(dataIInterval));
-			if ( verbose > 0 ) { Log::displayLog(String::format("Initial MSE : %.", lastCost)); }
+			if ( verbose > 0 ) { Log::endStep(String::format("Initial MSE : %.", lastCost)); }
+
+			if ( verbose > 0 ) { Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every % ms...", nbIterations, float(saveDuration.getValue()) * float(0.001))); }
 
 			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
 			Time::TimePointMS timePointLast(timePointBegin.getValue());
-
-			if ( verbose > 0 ) { Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every % ms...", nbIterations, saveDuration.getValue())); }
 
 			// Run
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
@@ -1112,8 +1166,6 @@ namespace Math {
 				}
 			}
 
-			this->optimizeMutex.unlock();
-
 			Time::Duration<Time::MilliSecond> totalElapsedDuration(Time::getTime<Time::MilliSecond>() - timePointBegin);
 			if ( verbose > 0 ) { Log::endStep(String::format("Done in %s.", float(totalElapsedDuration.getValue()) * float(0.001))); }
 
@@ -1124,7 +1176,7 @@ namespace Math {
 				delete searchThreadVector.getValueI(i);
 			}
 
-			if ( verbose > 0 ) { Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100))); }
+			if ( verbose > 0 ) { Log::endStepSuccess(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100))); }
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
@@ -1252,6 +1304,8 @@ namespace Math {
 		inline StaticTable<T, M::m[ 0 ][ 0 ]> DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::computeFeatureImportance(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) const {
 			StaticTable<T, M::m[ 0 ][ 0 ]> featureImportanceTable;
 
+			const T baseMeanSquaredError(computeMeanSquaredErrorF(featureTableVector, outTableVector));
+
 			Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureTableVectorCpy(featureTableVector.getSize());
 
 			for ( Size featureI(0); featureI < M::m[ 0 ][ 0 ]; featureI++ ) {
@@ -1275,9 +1329,11 @@ namespace Math {
 					featureTable[ featureI ] = featureMinMax.unscale(Math::randomF());
 				}
 
-				const T costFeature(computeMeanSquaredErrorF(featureTableVectorCpy, outTableVector));
+				const T featureMeanSquaredError(computeMeanSquaredErrorF(featureTableVectorCpy, outTableVector));
 
-				featureImportanceTable[ featureI ] = costFeature;
+				const T featureImportance(T(1) - baseMeanSquaredError / featureMeanSquaredError);
+
+				featureImportanceTable[ featureI ] = featureImportance;
 			}
 
 			return featureImportanceTable;
@@ -1657,7 +1713,7 @@ namespace Math {
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_copyParamMat(const DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>& deepNeuralNetwork) {
 			if constexpr ( I < M::nbLayers ) {
 				setParamMat<I>(deepNeuralNetwork.getLayer<I>()->getParamMat());
-				getLayer<I>()->resetOptimizerFunc();
+				// getLayer<I>()->resetOptimizerFunc();
 				_copyParamMat<I + Size(1)>(deepNeuralNetwork);
 			}
 		}
@@ -1677,6 +1733,16 @@ namespace Math {
 			if constexpr ( I < M::nbLayers ) {
 				getLayer<I>()->setOptimizerFunc(deepNeuralNetwork.getLayer<I>()->getOptimizerFunc());
 				_copyOptimizerFunc<I + Size(1)>(deepNeuralNetwork);
+			}
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		template<Size I>
+		inline constexpr Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_getNbParams() const {
+			if constexpr ( I < M::nbLayers ) {
+				return getLayer<I>()->getNbParams() + _getNbParams<I + Size(1)>();
+			} else {
+				return Size(0);
 			}
 		}
 

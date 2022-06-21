@@ -115,8 +115,8 @@ namespace Math::ML {
 		constexpr MyModel() {}
 		static constexpr Size nbLayers = 5;
 		static constexpr Size m[5][2] = {
-			{64,1024},
-			{1024,64},
+			{64,64},
+			{64,64},
 			{64,64},
 			{64,64},
 			{64,64} };
@@ -2656,7 +2656,7 @@ int main(int argc, char* argv[]) {
 
 		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector(Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>(Size(50000), 0.0));
 
-		deepNeuralNetwork.resetParams();
+		// deepNeuralNetwork.resetParams();
 
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			deepNeuralNetwork.clearData();
@@ -2668,12 +2668,12 @@ int main(int argc, char* argv[]) {
 
 		Log::startChrono();
 		// deepNeuralNetwork.optimizeRng(Math::Interval<Size>(0, dataVector.getSize()), Size(1000), Size(8), 10.0, Time::Duration<Time::MilliSecond>(1000), 2);
-		deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(10000), 2);
+		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(2500), 2);
 		// deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(100), 2);
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 
-		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
+		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance(Math::Interval<Size>(Size(0), Size(1000))));
 		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
 	}
 #endif
