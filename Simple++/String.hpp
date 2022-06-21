@@ -1353,8 +1353,7 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		comma++;
 	}
 	if ( comma < int(10) ) {
-		int i;
-		for ( i = 0; i < comma; i++, buffer++ ) {
+		for (int i(0); i < comma; i++, buffer++ ) {
 			int castedNumber = static_cast<int>(number);
 			*buffer = BasicString<T>::numbers[ castedNumber % base ];
 			number *= Type(base);
@@ -1365,7 +1364,7 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 
 		int precisionI = ( int ) precision;
 
-		for ( ; i < precisionI; i++, buffer++ ) {
+		for (int i(0); i < precisionI; i++, buffer++ ) {
 			int castedNumber = static_cast< int >( number );
 			*buffer = BasicString<T>::numbers[ castedNumber % base ];
 			number *= Type(base);

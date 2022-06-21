@@ -39,6 +39,9 @@ public:
 		const T * endIt;
 	};
 
+	static constexpr Size DefaultPrecisionDouble = 5;
+	static constexpr Size DefaultPrecisionFloat = 3;
+
 
 	using Vector<T>::ElemType;
 
@@ -109,8 +112,8 @@ public:
 	///@param	f/d	A Float to process.
 	///@param		precision Precision to be used.
 	///@param base	Base used for the conversion.
-	BasicString( const double & d, unsigned int precision = 5, unsigned int base = 10 );
-	BasicString( const float & f, unsigned int precision = 5, unsigned int base = 10 );
+	BasicString( const double & d, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	BasicString( const float & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 	///@brief		Constructor using a Boolean.
 	///@param		b	Boolean.
@@ -397,7 +400,7 @@ public:
 	///@tparam	Base	 	Type of the base.
 	///@param	f	A float to process.
 	///@returns	A reference to a BasicString.
-	// template<unsigned int Precision = 5, unsigned int Base = 10>
+	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// BasicString & concat( const float & f );
 
 
@@ -419,8 +422,8 @@ public:
 	///@param	precision	The number of decimals to be displayed.
 	///@param	base	 	The base.
 	///@returns				Reference to this.
-	BasicString & concat( const double & d, unsigned int precision = 5, unsigned int base = 10 );
-	BasicString & concat( const float & f, unsigned int precision = 5, unsigned int base = 10 );
+	BasicString & concat( const double & d, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	BasicString & concat( const float & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
 	///@brief	Concatenate the number and fill the first characters to have at least the specified number.
@@ -445,7 +448,7 @@ public:
 	///@param	precision	(Optional) The precision.
 	///@param 	base		(Optional) The base.
 	///@returns	A reference to this.
-	// BasicString & concatFill( const double & d, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
+	// BasicString & concatFill( const double & d, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
 	///@brief	Concatenate the number and fill the first characters to have at least the specified number.
 	///@param 	f			Number.
 	///@param 	fillNb  	Characters number to be concatenated.
@@ -453,7 +456,7 @@ public:
 	///@param	precision	(Optional) The precision.
 	///@param 	base		(Optional) The base.
 	///@returns	A reference to this.
-	// BasicString & concatFill( const float & f, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = 5, unsigned int base = 10 );
+	// BasicString & concatFill( const float & f, const Size & fillNb, const T & fillChar = T( ' ' ), unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 	template<typename EndFunc = BasicString<T>::IsEndSentinel>
 	void copy(const BasicString<T>::Iterator* itP, const EndFunc& endFunc = BasicString<T>::IS_END_SENTINEL);
@@ -558,7 +561,7 @@ public:
 	///@param 		  	number	Value to converted to a String.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
-	// template<unsigned int Precision = 5, unsigned int Base = 10>
+	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// static Size toCString( float number, T * buffer );
 
 
@@ -590,10 +593,10 @@ public:
 	///@param			precision	The number of decimals.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static Size toCString( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static Size toCString( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static Size toCString( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static Size toCString( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCString( double number, T * buffer, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	static Size toCString( double number, T ** buffer, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	static Size toCString( float number, T * buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
+	static Size toCString( float number, T ** buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 	///@brief				Write in the buffer a value representing a bool
 	///@param 		  	b	  	Value to converted to a String.
@@ -702,7 +705,7 @@ public:
 	///@param 		  	number	Number of.
 	///@param [in,out]	buffer	If non-null, the buffer.
 	///@returns			Number of characters written.
-	// template<unsigned int Precision = 5, unsigned int Base = 10>
+	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// static Size toCStringWOS( float number, T * buffer );
 
 
@@ -734,10 +737,10 @@ public:
 	///@param			precision	The number of decimals.
 	///@param 		  	base  	The base.
 	///@returns			Number of characters written.
-	static Size toCStringWOS( double number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static Size toCStringWOS( double number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static Size toCStringWOS( float number, T * buffer, unsigned int precision = 5, unsigned int base = 10 );
-	static Size toCStringWOS( float number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size toCStringWOS( double number, T * buffer, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	static Size toCStringWOS( double number, T ** buffer, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	static Size toCStringWOS( float number, T * buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
+	static Size toCStringWOS( float number, T ** buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 	///@brief		Converts this object to a c string whithout \0
 	///@param 		  	b	  	True to b.
@@ -1237,7 +1240,7 @@ public:
 	///@tparam	Base	 	Type of the base.
 	///@param	number	Number of.
 	///@returns	Number as a BasicString<T>
-	// template<unsigned int Precision = 5, unsigned int Base = 10>
+	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// static BasicString<T> toString( float number );
 
 
@@ -1259,8 +1262,8 @@ public:
 	///@param	precision	Number of decimals.
 	///@param	base  	The base.
 	///@returns	A BasicString<T> that represents the Number.
-	static BasicString<T> toString( double number, unsigned int precision = 5, unsigned int base = 10 );
-	static BasicString<T> toString( float number, unsigned int precision = 5, unsigned int base = 10 );
+	static BasicString<T> toString( double number, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
+	static BasicString<T> toString( float number, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 	///@brief		Convert this object into a string representation
 	///@param	b	True to b.
@@ -1706,7 +1709,7 @@ protected:
 	///@tparam	Base	 	Type of the base.
 	///@param	f	A float to process.
 	///@returns	A reference to a BasicString.
-	// template<unsigned int Precision = 5, unsigned int Base = 10>
+	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// BasicString & _concatWOS( const float & f );
 
 
@@ -1755,13 +1758,13 @@ protected:
 	///@param	precision	The precision.
 	///@param	base	 	The base.
 	///@returns	A reference to a BasicString.
-	BasicString & _concatWOS( const double & d, unsigned int precision = 5, unsigned int base = 10 );
+	BasicString & _concatWOS( const double & d, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
 	///@brief		Concatenate whithout \0
 	///@param	f		 	A float to process.
 	///@param	precision	The precision.
 	///@param	base	 	The base.
 	///@returns	A reference to a BasicString.
-	BasicString & _concatWOS( const float & f, unsigned int precision = 5, unsigned int base = 10 );
+	BasicString & _concatWOS( const float & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
 
@@ -1876,7 +1879,7 @@ private:
 	///@tparam	Base	 	Type of the base.
 	///@param	f	Float to be concatenated.
 	///@returns	A reference to a BasicString.
-	// template<typename Type, unsigned int Precision = 5, unsigned int Base = 10>
+	// template<typename Type, unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// BasicString & _concatFloat( const Type & f );
 
 	///@brief		Concatenate float
@@ -1886,7 +1889,7 @@ private:
 	///@param	base	 	The base.
 	///@returns	A reference to a BasicString.
 	template<typename Type>
-	BasicString & _concatFloat( const Type & f, unsigned int precision = 5, unsigned int base = 10 );
+	BasicString & _concatFloat( const Type & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
 
@@ -1912,7 +1915,7 @@ private:
 	///@tparam	Base	 	Type of the base.
 	///@param	f	A Type to process.
 	///@returns	A reference to a BasicString.
-	// template<typename Type, unsigned int Precision = 5, unsigned int Base = 10>
+	// template<typename Type, unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
 	// BasicString & _concatFloatWOS( const Type & f );
 
 	///@brief		Concatenate float whithout \0
@@ -1922,7 +1925,7 @@ private:
 	///@param	base	 	The base.
 	///@returns	A reference to a BasicString.
 	template<typename Type>
-	BasicString & _concatFloatWOS( const Type & f, unsigned int precision = 5, unsigned int base = 10 );
+	BasicString & _concatFloatWOS( const Type & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
 
@@ -2054,7 +2057,7 @@ private:
 	///@param 		  	base	 	The base.
 	///@returns	The float converted 2 string.
 	template<typename Type>
-	static Size _convertFloat2String( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size _convertFloat2String( Type number, T ** buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
 
@@ -2117,9 +2120,9 @@ private:
 	///@param 		  	base	 	The base.
 	///@returns	The float converted 2 string whithout \0.
 	template<typename Type>
-	static Size _convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static Size _convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 	template<typename Type>
-	static void __convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = 5, unsigned int base = 10 );
+	static void __convertFloat2StringWOS( Type number, T ** buffer, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
 	///@brief			Converts a Number to a String without adding the sentinel and filling for AT LEAST the fillNb number of characters.
