@@ -102,6 +102,16 @@ namespace Math {
 			return dataVector;
 		}
 
+		template<typename M, Size I = Size(0)>
+		constexpr Size getNbFeatures() {
+			return M::m[ I ][ 0 ];
+		}
+
+		template<typename M, Size I = M::nbLayers - Size(1)>
+		constexpr Size getNbOut() {
+			return M::m[ I ][ 1 ];
+		}
+
 	}
 
 }

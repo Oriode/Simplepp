@@ -615,6 +615,9 @@
     <ClInclude Include="Math\ML\NeuralLayerMT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\ML\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

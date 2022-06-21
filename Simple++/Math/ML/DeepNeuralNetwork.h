@@ -6,6 +6,8 @@
 #include "../../IO/BasicIO.h"
 #include "../../IO/IO.h"
 #include "../Interval.h"
+
+#include "Model.h"
 #include "Optimizer.h"
 #include "ActivationFunc.h"
 #include "NeuralLayerMT.h"
@@ -14,28 +16,6 @@
 namespace Math {
 
 	namespace ML {
-
-		class Model {
-		public:
-			constexpr Model() {};
-
-			///@brief Number of layers of the network.
-			static constexpr Size nbLayers = 2;
-
-			///@brief Table [nbLayers][2] representing for each layer the number of input (features) and output (neurons). The number of input of a layer should fit the number of output of the previous one.
-			static constexpr Size m[ 2 ][ 2 ] = { 
-				{2,2},	// {NbIn, NbOut}
-				{2,2}	// {NbIn, NbOut}
-			};
-
-			///@brief Type of the activation function of the hidden layers.
-			typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
-			///@brief Type of the activation function of the last layer.
-			typedef Math::ML::ActivationFunc::Linear ActivationFunc;
-
-			///@brief Data chunk size ued in stochastic gradient descent.
-			static constexpr Size dataChunkSize = 16;
-		};
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		class DeepNeuralNetwork;
@@ -114,9 +94,22 @@ namespace Math {
 			Math::Interval<Size> dataIInterval;
 		};
 
-		template<typename T, typename M = Model, typename OptimizerFunc = Optimizer::Adam<T>, Size NbThreads = Size(1)>
+		template<typename T = double, typename M = Model::BasicModel, typename OptimizerFunc = Optimizer::Adam<T>, Size NbThreads = Size(1)>
 		class DeepNeuralNetwork : public IO::BasicIO {
 		public:
+			class GetPercent {
+			public:
+				GetPercent(const Size nbIterations) :
+					nbIterations(nbIterations) {}
+
+				Size operator()(const Size iterationI) const {
+					return Size(T(iterationI + Size(1)) / T(this->nbIterations) * T(100));
+				}
+
+			private:
+				const Size nbIterations;
+			};
+
 			friend SearchThread<T, M, OptimizerFunc, NbThreads>;
 
 			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
@@ -187,6 +180,7 @@ namespace Math {
 			void setGradMat(const Mat<T>& gradMat);
 
 			void resetParams();
+			void resetAll();
 
 			void computeGrad(const Math::Interval<Size>& dataIInterval);
 			void computeGradS(const Size dataIBegin);
@@ -197,7 +191,7 @@ namespace Math {
 			void optimizeStochastic(const Vector<Math::Interval<Size>>& dataIIntervalVector);
 			void optimize(const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 			void optimize(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const T& randomFactor = T(0.25), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
-			void optimizeStochastic(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
+			void optimizeStochastic(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(10000), int verbose = 2);
 
 			void updateModel(const T& learningRateFactor = T(1.0));
@@ -334,7 +328,7 @@ namespace Math {
 			epochNum(0),
 			filePath(filePath)
 		{
-			static_assert( Utility::isBase<Model, M>::value, "Model type unknown." );
+			static_assert( Utility::isBase<Model::BasicModel, M>::value, "Model type unknown." );
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::ActivationFunc>::value, "Model ActivationFunc type unknown." );
 			static_assert( Utility::isBase<ActivationFunc::BasicActivationFunc, M::HiddenActivationFunc>::value, "Model HiddenActivationFunc type unknown." );
 			static_assert( M::nbLayers > Size(0), "Model error, nbLayers cannot be 0." );
@@ -732,6 +726,13 @@ namespace Math {
 			_resetParams<Size(0)>();
 			setLearningRateFactor(T(1.0));
 			setEpoch(Size(0));
+			this->bNeedForwardPropagation = true;
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::resetAll() {
+			resetParams();
+			clearData();
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
@@ -772,17 +773,6 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimize(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const T& randomFactor, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
-			class GetPercent {
-			public:
-				GetPercent(const Size nbIterations) :
-					nbIterations(nbIterations) {}
-
-				Size operator()(const Size iterationI) const {
-					return Size(T(iterationI + Size(1)) / T(this->nbIterations - Size(1)) * T(100));
-				}
-
-				const Size nbIterations;
-			};
 
 			using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
@@ -920,46 +910,16 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
-			class GetPercent {
-			public:
-				GetPercent(const Size nbIterations) :
-					nbIterations(nbIterations) {}
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
 
-				Size operator()(const Size iterationI) const {
-					return Size(T(iterationI + Size(1)) / T(this->nbIterations - Size(1)) * T(100));
-				}
-
-				const Size nbIterations;
-			};
-
-			using SearchThread = StochasticThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
 
-			if ( verbose > 0 ) { Log::startStep(String::format("Starting optimisation with % iterations with % threads over % data...", nbIterations, nbSearchThreads, dataIInterval.toString())); }
-
-			// Creating the threads
-			Vector<SearchThread*> searchThreadVector(nbSearchThreads);
-			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-				searchThreadVector.setValueI(i, new SearchThread(OptimizerFunc()));
-			}
-
-			this->optimizeMutex.lock();
-			{
-				if ( verbose > 0 ) { Log::startStep("Copying data to the threads..."); }
-
-				// Copy data into threads.
-				for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-					SearchThread* searchThread(searchThreadVector.getValueI(i));
-					searchThread->setData(this->featureVector, this->expectedYVector);
-				}
-
-				if ( verbose > 0 ) { Log::endStep("Done."); }
-			}
-			this->optimizeMutex.unlock();
+			if ( verbose > 0 ) { Log::startStep(String::format("Starting stochastic optimisation with % iterations over % data...", nbIterations, dataIInterval.toString())); }
 
 			if ( getEpoch() == Size(0) ) {
-				if ( verbose > 0 ) { Log::displayLog("Starting from epochNum #0."); }
+				if ( verbose > 0 ) { Log::startStep("Starting from epochNum #0, reseting params..."); }
+				resetParams();
+				if ( verbose > 0 ) { Log::endStep("Done."); }
 			} else {
 				if ( verbose > 0 ) { Log::displayLog(String::format("Resuming from epoch #%.", getEpoch())); }
 			}
@@ -973,63 +933,16 @@ namespace Math {
 			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
 			Time::TimePointMS timePointLast(timePointBegin.getValue());
 
-			if ( verbose > 0 ) { Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every % ms...", nbIterations, saveDuration.getValue())); }
+			if ( verbose > 0 ) { Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every %s...", nbIterations, float(saveDuration.getValue()) * float(0.001))); }
 
 			// Run
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
 
-				for ( Size dataIntervalI(0); dataIntervalI < dataIIntervalVector.getSize(); ) {
-
-					if ( getEpoch() == Size(0) ) {
-						if ( verbose > 0 ) { Log::startStep("EpochNum #0, reseting threads..."); }
-						for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-							SearchThread* searchThread(searchThreadVector.getValueI(i));
-
-							searchThread->resetParams();
-						}
-						if ( verbose > 0 ) { Log::endStep("Done."); }
-					} else {
-						for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-							SearchThread* searchThread(searchThreadVector.getValueI(i));
-
-							searchThread->copyParamMat(*this);
-						}
-					}
-
-					Size nbRunningThread(0);
-					for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-						if ( dataIntervalI >= dataIIntervalVector.getSize() ) {
-							break;
-						}
-
-						SearchThread* searchThread(searchThreadVector.getValueI(i));
-						const Math::Interval<Size>& interval(dataIIntervalVector.getValueI(dataIntervalI));
-						searchThread->setDataIInterval(interval);
-
-						dataIntervalI++;
-						nbRunningThread++;
-					}
-
-					for ( Size i(0); i < nbRunningThread; i++ ) {
-						SearchThread* searchThread(searchThreadVector.getValueI(i));
-						searchThread->start();
-					}
-
-					for ( Size i(0); i < nbRunningThread; i++ ) {
-						SearchThread* searchThread(searchThreadVector.getValueI(i));
-						searchThread->join();
-					}
-
-					Vector<SearchThread*> searchThreadVectorCpy(searchThreadVector);
-					searchThreadVectorCpy.resize(nbRunningThread);
-					updateModel(searchThreadVectorCpy, getLearningRateFactor());
-
-					setEpoch(getEpoch() + Size(1));
-
-				}
+				optimizeStochastic(dataIIntervalVector);
 
 				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
-				if ( timePointNow - timePointLast > saveDuration ) {
+				const Time::Duration<Time::MilliSecond> elapsedTime(timePointNow - timePointLast);
+				if ( elapsedTime > saveDuration ) {
 					timePointLast.setValue(timePointNow.getValue());
 
 					if ( this->filePath.getSize() && !saveToFile(this->filePath) ) {
@@ -1037,33 +950,17 @@ namespace Math {
 					}
 
 					lastCost = computeCostQuadratic(dataIInterval);
-					if ( verbose > 1 ) { Log::displayLog(String::format("[%/%] epochNum #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), getEpoch(), lastCost, computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite); }
+					if ( verbose > 1 ) { Log::displayLog(String::format("[%/%][%s] epochNum #% : Finished loop with cost of % and a coeficient of determination of %%.", getPercent(iterationI), float(elapsedTime.getValue()) * float(0.001), getEpoch(), lastCost, computeCoefficientOfDetermination(dataIInterval) * T(100)), Log::MessageColor::DarkWhite); }
 				}
 			}
 
 			if ( verbose > 0 ) { Log::endStep("Done."); }
-
-			// Deleting the threads.
-			for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
-				delete searchThreadVector.getValueI(i);
-			}
 
 			if ( verbose > 0 ) { Log::endStep(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeCostQuadratic(dataIInterval), computeCoefficientOfDetermination(dataIInterval) * T(100))); }
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, int verbose) {
-			class GetPercent {
-			public:
-				GetPercent(const Size nbIterations) :
-					nbIterations(nbIterations) {}
-
-				Size operator()(const Size iterationI) const {
-					return Size(T(iterationI + Size(1)) / T(this->nbIterations - Size(1)) * T(100));
-				}
-
-				const Size nbIterations;
-			};
 
 			using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
@@ -1420,30 +1317,39 @@ namespace Math {
 				return false;
 			}
 			if ( !_read<Size(0)>(stream) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->featureVector) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->expectedYVector) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->hiddenActivationFunc) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->activationFunc) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->epochNum) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->learningRateFactor) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->normalizeFeatureTable) ) {
+				resetAll();
 				return false;
 			}
 			if ( !IO::read(stream, &this->normalizeOutTable) ) {
+				resetAll();
 				return false;
 			}
 			_setNbData<Size(0)>();

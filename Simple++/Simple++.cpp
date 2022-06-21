@@ -110,15 +110,13 @@
 
 namespace Math::ML {
 
-	class MyModel : public Math::ML::Model {
+	class MyModel : public Math::ML::Model::BasicModel {
 	public:
 		constexpr MyModel() {}
-		static constexpr Size nbLayers = 5;
-		static constexpr Size m[5][2] = { {64,64},
-			{64,64},
-			{64,64},
-			{64,64},
-			{64,64} };
+		static constexpr Size nbLayers = 2;
+		static constexpr Size m[2][2] = {
+			{16,16},
+			{16,16} };
 
 		typedef Math::ML::ActivationFunc::ReLU HiddenActivationFunc;
 		typedef Math::ML::ActivationFunc::Linear ActivationFunc;
@@ -1688,12 +1686,15 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
+		constexpr Size nbFeatures(Math::ML::getNbFeatures<Math::ML::MyModel>());
+		constexpr Size nbOut(Math::ML::getNbOut<Math::ML::MyModel>());
+
 		Math::ML::Optimizer::Adam<F> optimizerFunc(0.01);
 		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel, Math::ML::Optimizer::Adam<F>> deepNeuralNetwork(optimizerFunc, "debug.dnn");
 
 		deepNeuralNetwork.resetParams();
 
-		Vector<Math::ML::Data<F, 16, 16>> dataVector(Math::ML::generateData<F, 16, 16, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
+		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector(Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
@@ -1703,7 +1704,7 @@ int main(int argc, char* argv[]) {
 
 		// deepNeuralNetwork.optimize(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), 1.0, Time::Duration<Time::MilliSecond>(1000), 2);
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(100), 2);
-		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(10000), Size(1), Time::Duration<Time::MilliSecond>(1000), 2);
+		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(1000), 2);
 
 		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
 
