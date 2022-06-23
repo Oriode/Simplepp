@@ -1704,8 +1704,8 @@ int main(int argc, char* argv[]) {
 			deepNeuralNetwork.normalizeFeature();
 		}
 
-		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(100), 2);
-		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(1000), 2);
+		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(100));
+		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(1000));
 
 		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
 
@@ -2666,8 +2666,8 @@ int main(int argc, char* argv[]) {
 		// Log::displayLog(String::format("Current cost : %.", deepNeuralNetwork.computeCost()));
 
 		Log::startChrono();
-		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(2500), 2);
-		// deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(100), 2);
+		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(2500));
+		// deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(100));
 		Log::stopChrono();
 		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
 

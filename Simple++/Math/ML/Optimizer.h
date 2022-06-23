@@ -30,7 +30,7 @@ namespace Math {
 
 				}
 
-				const T & operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T & learningRateFactor) {
+				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T & learningRateFactor) {
 					return lastParam - this->learningRate * learningRateFactor * grad;
 				}
 
@@ -111,7 +111,7 @@ namespace Math {
 					this->gradSumMat.resize(nbNeurons, nbParams);
 				}
 
-				const T& operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T& learningRateFactor) {
+				const T operator()(const Size epochNum, const Size neuronI, const Size paramI, const T& lastParam, const T& grad, const T& learningRateFactor) {
 					T& gradAggregate(this->gradAggregadeMat.getValueI(neuronI, paramI));
 					T& gradSum(this->gradSumMat.getValueI(neuronI, paramI));
 
