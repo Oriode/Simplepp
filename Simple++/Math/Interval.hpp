@@ -99,7 +99,12 @@ namespace Math {
 
 	template<typename T>
 	inline T Interval<T>::scale(const T& v) const {
-		return ( v - this->begin ) / getSize();
+		const T size(getSize());
+		if ( size == T(0) ) {
+			return T(0);
+		} else {
+			return ( v - this->begin ) / getSize();
+		}
 	}
 
 	template<typename T>

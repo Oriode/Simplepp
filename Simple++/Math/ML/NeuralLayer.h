@@ -540,6 +540,9 @@ namespace Math {
 			for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 				const T y(computeY(neuronI, featureTable, activationFunc));
 				outTable[ neuronI ] = y;
+				/*if ( Utility::isNan(y) ) {
+					Log::displayError(String::format("computeForwardPropagation is NaN : % * %.", getParams(neuronI).toString(), featureTable.toString()));
+				}*/
 			}
 		}
 
@@ -663,6 +666,9 @@ namespace Math {
 				for ( Size neuronI(0); neuronI < getNbNeurons(); neuronI++ ) {
 					const T delta(expectedYTable[ neuronI ] - outTable[ neuronI ]);
 					costSum += delta * delta;
+					/*if ( Utility::isNan(costSum) ) {
+						Log::displayError(String::format("computeMeanSquaredError value is NaN : expectedYTable[ neuronI ] = %, outTable[ neuronI ] = %.", expectedYTable[ neuronI ], outTable[ neuronI ]));
+					}*/
 				}
 			}
 

@@ -222,8 +222,8 @@ namespace Math {
 
 			void resetNormalizeTable();
 
-			T normalizeFeature(const T& x, const Math::Vec2<T>& v) const;
-			T unnormalizeFeature(const T& x, const Math::Vec2<T>& v) const;
+			T normalizeFeature(const T& x, const Math::Interval<T>& v) const;
+			T unnormalizeFeature(const T& x, const Math::Interval<T>& v) const;
 
 			T normalizeOut(const T& x, const Math::Interval<T>& v) const;
 			T unnormalizeOut(const T& x, const Math::Interval<T>& v) const;
@@ -245,7 +245,7 @@ namespace Math {
 			Size epochNum;
 			T learningRateFactor;
 
-			StaticTable<Math::Vec2<T>, M::m[ 0 ][ 0 ]> normalizeFeatureTable;		// Used to compute the z-score. [mean, standard deviation].
+			StaticTable<Math::Interval<T>, M::m[ 0 ][ 0 ]> normalizeFeatureTable;		// Used to compute the z-score. [mean, standard deviation].
 			StaticTable<Math::Interval<T>, M::m[ M::nbLayers - Size(1) ][ 1 ]> normalizeOutTable;
 
 			Mutex optimizeMutex;
@@ -383,47 +383,68 @@ namespace Math {
 				unnormalizeFeature(this->featureVector.getValueI(dataI));
 			}
 
-			// Recompute the mean.
-			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
-				this->normalizeFeatureTable[ featureI ].x = T(0);
+			//// Recompute the mean.
+			//for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+			//	this->normalizeFeatureTable[ featureI ].x = T(0);
+			//}
+
+			//for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+			//	StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+
+			//	for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
+			//		T& v(featureTable[ featureI ]);
+			//		Math::Interval<T>& i(this->normalizeFeatureTable[ featureI ]);
+
+			//		i.x += v;
+			//	}
+			//}
+
+			//const T sizeInverse(T(1) / T(dataIInterval.getSize()));
+			//for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+			//	this->normalizeFeatureTable[ featureI ].x *= sizeInverse;
+			//}
+
+			//// Recompute the standard deviation
+			//for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+			//	this->normalizeFeatureTable[ featureI ].y = T(0);
+			//}
+
+			//for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+			//	StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+
+			//	for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
+			//		T& v(featureTable[ featureI ]);
+			//		Math::Interval<T>& i(this->normalizeFeatureTable[ featureI ]);
+
+			//		const T delta(v - i.x);
+			//		i.y += delta * delta;
+			//	}
+			//}
+
+			//for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
+			//	Math::Interval<T>& i(this->normalizeFeatureTable[ featureI ]);
+			//	i.y = Math::sqrt(i.y * sizeInverse);
+			//}
+
+			const StaticTable<T, M::m[ 0 ][ 0 ]>& firstFeatureTable(this->featureVector.getValueI(dataIInterval.getBegin()));
+			for ( Size outI(0); outI < this->normalizeFeatureTable.getSize(); outI++ ) {
+				const T& x(firstFeatureTable[ outI ]);
+				this->normalizeFeatureTable[ outI ].setBegin(x);
+				this->normalizeFeatureTable[ outI ].setEnd(x);
 			}
 
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
+			for ( Size dataI(dataIInterval.getBegin() + Size(1)); dataI < dataIInterval.getEnd(); dataI++ ) {
+				const StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
 
-				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
-					T& v(featureTable[ featureI ]);
-					Math::Vec2<T>& i(this->normalizeFeatureTable[ featureI ]);
+				for ( Size outI(0); outI < this->normalizeFeatureTable.getSize(); outI++ ) {
+					const T& x(featureTable[ outI ]);
 
-					i.x += v;
+					if ( x < this->normalizeFeatureTable[ outI ].getBegin() ) {
+						this->normalizeFeatureTable[ outI ].setBegin(x);
+					} else if ( x > this->normalizeFeatureTable[ outI ].getEnd() ) {
+						this->normalizeFeatureTable[ outI ].setEnd(x);
+					}
 				}
-			}
-
-			const T sizeInverse(T(1) / T(dataIInterval.getSize()));
-			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
-				this->normalizeFeatureTable[ featureI ].x *= sizeInverse;
-			}
-
-			// Recompute the standard deviation
-			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
-				this->normalizeFeatureTable[ featureI ].y = T(0);
-			}
-
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-				StaticTable<T, M::m[ 0 ][ 0 ]>& featureTable(this->featureVector.getValueI(dataI));
-
-				for ( Size featureI(0); featureI < featureTable.getSize(); featureI++ ) {
-					T& v(featureTable[ featureI ]);
-					Math::Vec2<T>& i(this->normalizeFeatureTable[ featureI ]);
-
-					const T delta(v - i.x);
-					i.y += delta * delta;
-				}
-			}
-
-			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
-				Math::Vec2<T>& i(this->normalizeFeatureTable[ featureI ]);
-				i.y = Math::sqrt(i.y * sizeInverse);
 			}
 
 			// Normalize
@@ -483,6 +504,10 @@ namespace Math {
 				T& v(featureTable[ featureI ]);
 
 				v = normalizeFeature(v, this->normalizeFeatureTable[ featureI ]);
+
+				/*if ( Utility::isNan(v) ) {
+					Log::displayError(String::format("Normalization has generated an NaN : %, %.", v, this->normalizeFeatureTable[ featureI ].toString()));
+				}*/
 			}
 		}
 
@@ -1213,26 +1238,28 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::resetNormalizeTable() {
 			for ( Size featureI(0); featureI < this->normalizeFeatureTable.getSize(); featureI++ ) {
-				Math::Vec2<T>& i(this->normalizeFeatureTable.getValueI(featureI));
+				Math::Interval<T>& i(this->normalizeFeatureTable.getValueI(featureI));
 				i.x = T(0.0);
 				i.y = T(1.0);
 			}
 
 			for ( Size outI(0); outI < this->normalizeOutTable.getSize(); outI++ ) {
-				Math::Vec2<T>& i(this->normalizeOutTable.getValueI(outI));
+				Math::Interval<T>& i(this->normalizeOutTable.getValueI(outI));
 				i.x = T(0.0);
 				i.y = T(1.0);
 			}
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(const T& x, const Math::Vec2<T>& v) const {
-			return ( x - v.x ) / v.y;
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(const T& x, const Math::Interval<T>& v) const {
+			// return ( x - v.x ) / v.y;
+			return v.scale(x);
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeFeature(const T& x, const Math::Vec2<T>& v) const {
-			return x * v.y + v.x;
+		inline T DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::unnormalizeFeature(const T& x, const Math::Interval<T>& v) const {
+			// return x * v.y + v.x;
+			return v.unscale(x);
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
