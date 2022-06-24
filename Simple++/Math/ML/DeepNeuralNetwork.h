@@ -105,6 +105,7 @@ namespace Math {
 			void setGradMat(const Mat<T>& gradMat);
 
 			void resetParams();
+			void resetOptimizerFunc();
 			void resetAll();
 
 			void computeGrad(const Math::Interval<Size>& dataIInterval);
@@ -193,6 +194,9 @@ namespace Math {
 
 			template<Size I = Size(0)>
 			void _resetParams();
+
+			template<Size I = Size(0)>
+			void _resetOptimizerFunc();
 
 			///@brief Set the average for each layer of every paramMat.
 			template<Size I = Size(0)>
@@ -763,6 +767,11 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::resetOptimizerFunc() {
+			_resetOptimizerFunc<Size(0)>();
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::resetAll() {
 			resetParams();
 			clearData();
@@ -1012,6 +1021,7 @@ namespace Math {
 				}
 
 				setEpoch(getEpoch() + Size(1));
+				copyOptimizerFunc(*searchThreadVector.getFirst());
 
 				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
 				const Time::Duration<Time::MilliSecond> elapsedDuration(timePointNow - timePointLast);
@@ -1025,15 +1035,20 @@ namespace Math {
 					const T deltaCOD(newCOD - lastCOD);
 					lastCOD = newCOD;
 
-					/*if ( deltaMSE > T(0) ) {
-						break;
-					}*/
+					if ( deltaMSE > T(0) ) {
+						// setLearningRateFactor(getLearningRateFactor() * T(0.5));
+						for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
+							SearchThread* searchThread(searchThreadVector.getValueI(i));
+							searchThread->setLearningRateFactor(getLearningRateFactor());
+						}
+					}
 
 					if ( verbose > 1 ) {
-						Log::displayLog(String::format("[%/%][ElapsedTime: %s][epochNum #%] : Finished loop with a MSE of % (%) and a coeficient of determination of %/% (%%).",
+						Log::displayLog(String::format("[%/%][ElapsedTime: %s][epochNum #%][LearningRateFactor: %] : Finished loop with a MSE of % (%) and a coeficient of determination of %/% (%%).",
 										getPercent(iterationI),
 										float(elapsedDuration.getValue()) * float(0.001),
 										getEpoch(),
+										getLearningRateFactor(),
 										lastMSE,
 										deltaMSE,
 										lastCOD,
@@ -1553,6 +1568,15 @@ namespace Math {
 					getLayer<I>()->resetParams<M::HiddenActivationFunc>(this->hiddenActivationFunc);
 				}
 				_resetParams<I + Size(1)>();
+			}
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		template<Size I>
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::_resetOptimizerFunc() {
+			if constexpr ( I < M::nbLayers ) {
+				getLayer<I>()->resetOptimizerFunc();
+				_resetOptimizerFunc<I + Size(1)>();
 			}
 		}
 
