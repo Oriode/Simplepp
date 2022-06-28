@@ -382,6 +382,8 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(const Math::Interval<Size>& dataIInterval) {
 
+			assert(this->featureVector.getSize());
+
 			// unnormalize first.
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
 				unnormalizeFeature(this->featureVector.getValueI(dataI));
@@ -466,6 +468,8 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
+
+			assert(this->expectedYVector.getSize());
 
 			// unnormalize first.
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
