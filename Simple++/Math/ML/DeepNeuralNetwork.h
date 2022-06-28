@@ -261,6 +261,7 @@ namespace Math {
 		inline DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::DeepNeuralNetwork(const OptimizerFunc& optimizerFunc, const OS::Path& filePath) :
 			bNeedForwardPropagation(true),
 			epochNum(0),
+			learningRateFactor(1.0),
 			filePath(filePath)
 		{
 			static_assert( Utility::isBase<Model::BasicModel, M>::value, "Model type unknown." );
