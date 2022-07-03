@@ -26,41 +26,41 @@
 #endif // !WIN32
 
 
-#if defined WIN32
-#if defined WIN32_WSTRING
-#if !defined TEXT
-#define __TEXT(str) L##str
-#define TEXT(str) __TEXT(str)
-#endif
-
-#ifndef TCHAR
-#define TCHAR wchar_t
-#endif
-#else
 #if defined TEXT
-#undef TEXT
-#undef __TEXT
-#define __TEXT(str) #str
-#define TEXT(str) __TEXT(str)
+	#undef TEXT
+	#undef __TEXT
 #endif
 
-#ifndef TCHAR
-#define TCHAR char
-#endif
-#endif
+#if defined WIN32
+	#if defined WIN32_WSTRING
+		#if !defined TEXT
+			#define __TEXT(str) L##str
+			#define TEXT(str) __TEXT(str)
+		#endif
 
+		#ifndef TCHAR
+			#define TCHAR wchar_t
+		#endif
+	#else
+		#if !defined TEXT
+			#define __TEXT(str) #str
+			#define TEXT(str) __TEXT(str)
+		#endif
 
-
+		#ifndef TCHAR
+			#define TCHAR char
+		#endif
+	#endif
 #else
-#ifndef TEXT
-#define TEXT(str) str
-#endif
-#ifndef TEXT2
-#define TEXT2(str) str
-#endif
-#ifndef TCHAR
-#define TCHAR char
-#endif
+	#ifndef TEXT
+		#define TEXT(str) str
+	#endif
+	#ifndef TEXT2
+		#define TEXT2(str) str
+	#endif
+	#ifndef TCHAR
+		#define TCHAR char
+	#endif
 #endif
 
 #if defined DEBUG

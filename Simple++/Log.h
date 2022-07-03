@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #include "BuildConfig.h"
+#include "SimpleLog.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
 #include <WinSock2.h>
@@ -71,7 +72,6 @@
 
 #endif
 
-#include "SimpleLog.h"
 #include "String.h"
 
 template<typename T>
