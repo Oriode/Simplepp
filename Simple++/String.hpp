@@ -218,8 +218,18 @@ BasicString<T>::BasicString( const BasicString<C> & str ) :
 
 template<typename T>
 BasicString<T>::BasicString( const BasicString<T> & str ) :
-	Vector<T>( str.getSize(), str.getSize() + 1 ) {
-	Utility::copy( this -> dataTable, str.dataTable, Vector<T>::getMaxSize() );
+	Vector<T>(Vector<T>::protectedCtor::null) {
+	if ( str.getSize() > Size(0) ) {
+		this->size = str.getSize();
+		this->maxSize = str.getMaxSize();
+		this->dataTable = new T[ this->maxSize ];
+		Utility::copy(this -> dataTable, str.dataTable, Vector<T>::getMaxSize());
+	} else {
+		this->size = Size(0);
+		this->maxSize = Size(1);
+		this->dataTable = new T[ this->maxSize ];
+		this->dataTable[ 0 ] = T('\0');
+	}
 }
 
 template<typename T>
