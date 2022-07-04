@@ -34,6 +34,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline T Interval<T>::getMean() const {
+		return ( this->begin + this->end ) / T(2.0);
+	}
+
+	template<typename T>
 	bool Interval<T>::intersect(const Interval<T>& interval) const {
 		if ( isInside(interval) ) {
 			return true;

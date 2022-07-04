@@ -37,6 +37,9 @@ namespace Math {
 		///@return Interval size.
 		T getSize() const;
 
+		///@brief Get the mean of getBegin() & getMax().
+		T getMean() const;
+
 		bool intersect(const Interval<T>& interval) const;
 
 		bool isInside(const T& v) const;
