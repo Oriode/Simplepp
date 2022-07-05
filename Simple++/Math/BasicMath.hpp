@@ -116,7 +116,7 @@ namespace Math {
 	template<typename FakeType>
 	template<typename T>
 	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::pow( const T & v, unsigned int e ) {
-		return ( e == int( 0 ) ) ? T( 1 ) : v * pow( v, e - int( 1 ) );
+		return ( e == unsigned int( 0 ) ) ? T( 1 ) : v * pow( v, e - unsigned int( 1 ) );
 	}
 
 	template<typename FakeType>
