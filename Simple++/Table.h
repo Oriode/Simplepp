@@ -838,7 +838,7 @@ void Table<T>::quicksort(T* startIt, T* endIt, Compare func) {
 		T* endIt;
 	} quicksortStackItem;
 
-	const Size stackSize((endIt - startIt) >> Size(1));
+	const Size stackSize(((endIt - startIt) >> Size(1)) + Size(1));
 	quicksortStackItem* stack = new quicksortStackItem[ stackSize ];
 
 	// push initial values of l and h to stack
