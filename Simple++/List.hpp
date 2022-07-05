@@ -301,6 +301,11 @@ inline T& List<T>::popBegin() {
 }
 
 template<typename T>
+inline const Size List<T>::getSize() const {
+	return this->size;
+}
+
+template<typename T>
 inline void List<T>::clear() {
 	_delete();
 	this->firstNode = NULL;
