@@ -103,6 +103,8 @@ public:
 	typename List<T>::Iterator pushBegin(const T& data);
 	T& popBegin();
 
+	const Size getSize() const;
+
 	void clear();
 
 	bool isEmpty() const;
