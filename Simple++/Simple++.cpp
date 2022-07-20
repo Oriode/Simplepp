@@ -34,7 +34,7 @@
 //#define SPEEDTEST_PATH
 //#define SPEEDTEST_BASE64
 //#define SPEEDTEST_LINEAR_REGRESSION
-#define SPEEDTEST_DEEP_NEURAL_NETWORK
+//#define SPEEDTEST_DEEP_NEURAL_NETWORK
 
 
 //#define DEBUG_GRAPHIC
@@ -59,8 +59,9 @@
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
 //#define DEBUG_LINEAR_REGRESSION
-#define DEBUG_DEEP_NEURAL_NETWORK
+//#define DEBUG_DEEP_NEURAL_NETWORK
 //#define DEBUG_INTERVAL
+#define DEBUG_STATS
 
 
 #ifndef _LIB
@@ -102,11 +103,12 @@
 #include "IO/Resource.h"
 #include "IO/Manager.h"
 #include "IO/Loadable.h"
-#include "Math/BasicDistanceable.h"
+#include "Math/Distance.h"
 #include "MultiMap.h"
 #include "OS/Path.h"
 #include "Stream.h"
 #include "Crypto/Crypto.h"
+#include "Math/Stats/Stats.h"
 
 namespace Math::ML {
 
@@ -175,7 +177,7 @@ namespace AI {
 
 	/**
 	 * @brief		An AI Neurode.
-	 * @tparam	Distanceable	Object Base of Math.Compare.BasicDistanceable.
+	 * @tparam	Distanceable	Object Base of Math.Compare.DistanceFunc.
 	 * @tparam	T			Entry of our AI Database.
 	 */
 	template< typename Input, typename DataT, typename HashTypeT = int >
@@ -1728,6 +1730,38 @@ int main(int argc, char* argv[]) {
 		Log::displayLog(String::format("Interval : %.", interval.toString()));
 		for ( Size i(0); i < intervalVector.getSize(); i++ ) {
 			Log::displayLog(String::format("%", intervalVector.getValueI(i).toString()));
+		}
+	}
+#endif
+#ifdef DEBUG_STATS
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG : Stats											//
+	{
+		typedef double T;
+
+		Vector<T> testVector;
+
+		testVector.push(T(1.0));
+		testVector.push(T(2.0));
+		testVector.push(T(3.0));
+
+		testVector.push(T(5.0));
+		testVector.push(T(6.0));
+		testVector.push(T(7.0));
+		testVector.push(T(8.0));
+		testVector.push(T(9.0));
+		testVector.push(T(10.0));
+
+		testVector.push(T(14.0));
+		testVector.push(T(15.0));
+
+		Vector<Math::Stats::Cluster<T>> clusterVector(Math::Stats::computeKMeans(testVector, Size(3), Size(10), Size(10)));
+
+		for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
+			Math::Stats::Cluster<T>& cluster(clusterVector.getValueI(clusterI));
+
+			Log::displayNewLine();
+			Log::displayLog(cluster.getData().toString());
 		}
 	}
 #endif
