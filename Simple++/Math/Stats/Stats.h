@@ -32,11 +32,6 @@ namespace Math {
 			const Vector<T> & getData() const;
 			Vector<T> & getData();
 
-			template<typename CompareFunc = Math::Logical::Less>
-			void updateMinMax(const CompareFunc& compareFunc = CompareFunc());
-
-			const Math::Interval<T>& getMinMaxInterval() const;
-
 			Math::Compare::Distance getDistanceMean() const;
 
 			void clear();
@@ -44,7 +39,6 @@ namespace Math {
 		private:
 			T mean;
 			Vector<T> dataVector;
-			Math::Interval<T> minMaxInterval;
 			Math::Compare::Distance distanceSum;
 		};
 
@@ -90,17 +84,6 @@ namespace Math {
 		template<typename T>
 		inline Vector<T>& Cluster<T>::getData() {
 			return this->dataVector;
-		}
-
-		template<typename T>
-		template<typename CompareFunc>
-		inline void Cluster<T>::updateMinMax(const CompareFunc& compareFunc) {
-			this->minMaxInterval = getMinMax<T, CompareFunc>(this->dataVector, compareFunc);
-		}
-
-		template<typename T>
-		inline const Math::Interval<T>& Cluster<T>::getMinMaxInterval() const {
-			return this->minMaxInterval;
 		}
 
 		template<typename T>
