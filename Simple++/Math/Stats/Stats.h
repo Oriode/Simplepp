@@ -121,6 +121,11 @@ namespace Math {
 		template<typename T, typename CompareFunc = Math::Logical::Less>
 		static Math::Interval<T> getMinMax(const Vector<T>& vector, const CompareFunc& compareFunc = CompareFunc());
 
+		///@brief Use the KMeans algorithm to compute k clusters on a vector.
+		///			In addition to the functors, type T should have the next operators :
+		///				T & operator+=(const T &);
+		///				T & operator-=(const T &);
+		///				T & operator/=(double);
 		template<typename T, typename DistanceFunc = Math::Compare::DistanceFunc, typename CompareFunc = Math::Logical::Less>
 		static Vector<Cluster<T>> computeKMeans(const Vector<T> & vector, const Size k, const Size nbLoops = Size(10), const Size nbRngLoops = Size(10), const DistanceFunc& distanceFunc = DistanceFunc(), const CompareFunc& compareFunc = CompareFunc());
 
@@ -158,7 +163,8 @@ namespace Math {
 			}
 
 			Math::Interval<T> minMaxInterval(getMinMax<T, CompareFunc>(vector));
-			const T range(minMaxInterval.getSize());
+			T range(minMaxInterval.getEnd());
+			range -= minMaxInterval.getBegin();
 
 			for ( Size rngLoopI(0); rngLoopI < clusterVectorVector.getSize(); rngLoopI++ ) {
 				Vector<Cluster<T>> & clusterVector(clusterVectorVector.getValueI(rngLoopI));
@@ -186,7 +192,7 @@ namespace Math {
 
 								clusterNewMean += v;
 							}
-							clusterNewMean /= T(cluster.getData().getSize());
+							clusterNewMean /= double(cluster.getData().getSize());
 							cluster.setMean(clusterNewMean);
 
 							// Clear the cluster.
