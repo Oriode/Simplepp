@@ -350,22 +350,22 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec3<T>& v1, const Vec3<T>& v2) {
-		return dot(v2 - v1);
+		return length(v2 - v1);
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec2<T>& v1, const Vec2<T>& v2) {
-		return dot(v2 - v1);
+		return length(v2 - v1);
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec4<T>& v1, const Vec4<T>& v2) {
-		return dot(v2 - v1);
+		return length(v2 - v1);
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec<T>& v1, const Vec<T>& v2) {
-		return dot(v2 - v1);
+		return length(v2 - v1);
 	}
 
 	template<typename T>
@@ -534,6 +534,31 @@ namespace Math {
 		}
 
 		return result;
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(T& v) {
+		v = Math::randomF();
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec2<T>& v) {
+		v.randomF();
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec3<T>& v) {
+		v.randomF();
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec4<T>& v) {
+		v.randomF();
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec<T>& v) {
+		v.randomF();
 	}
 
 

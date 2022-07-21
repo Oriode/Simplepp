@@ -10,10 +10,6 @@ namespace Math {
 
 	namespace Stats {
 
-		struct BasicRangeFunctor {
-			template<typename T> T operator()(const Vector<T>& vector) const;
-		};
-
 		template<typename T>
 		class BasicRngInit {
 		public:
@@ -134,9 +130,7 @@ namespace Math {
 		///			In addition to the functors, type T should have the next operators :
 		///				T(const T &);
 		///				T & operator+=(const T &);
-		///				T & operator-=(const T &);
 		///				T & operator/=(double);
-		///				T & operator*=(double);
 		template<typename T, typename DistanceFunc = Math::Compare::DistanceFunc, typename InitFunc = RngInit<T>>
 		static Vector<Cluster<T>> computeKMeans(const Vector<T> & vector, const Size k, const Size nbLoops = Size(10), const Size nbRngLoops = Size(10), const DistanceFunc& distanceFunc = DistanceFunc(), InitFunc& initFunc = InitFunc());
 
@@ -221,7 +215,7 @@ namespace Math {
 						for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
 							Cluster<T>& cluster(clusterVector.getValueI(clusterI));
 
-							const T distance(cluster.getDistance(v, distanceFunc));
+							const Math::Compare::Distance distance(cluster.getDistance(v, distanceFunc));
 							if ( distance < distanceMin ) {
 								distanceMin = distance;
 								clusterMinI = clusterI;
@@ -262,28 +256,6 @@ namespace Math {
 		}
 
 		template<typename T>
-		inline T BasicRangeFunctor::operator()(const Vector<T>& vector) const {
-			if ( vector.getSize() == Size(0) ) {
-				return T(0);
-			}
-
-			T minV(vector.getFirst());
-			T maxV(vector.getFirst());
-
-			for ( Size i(1); i < vector.getSize(); i++ ) {
-				const T& v(vector.getValueI(i));
-
-				if ( v < minV ) {
-					minV = v;
-				} else if ( maxV < v ) {
-					maxV = v;
-				}
-			}
-
-			return maxV - minV;
-		}
-
-		template<typename T>
 		inline RngInit<T>::RngInit() {}
 
 		template<typename T>
@@ -309,7 +281,7 @@ namespace Math {
 		template<typename T>
 		inline T RngInit<T>::operator()() {
 			T rngValues;
-			rngValues.randomF();
+			Math::setRandomF(rngValues);
 
 			rngValues *= this->range;
 

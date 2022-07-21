@@ -219,6 +219,17 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T standardDeviation(const Vec<T>& v);
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(T& v);
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec2<T> & v);
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec3<T> & v);
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec4<T> & v);
+	template<typename T>
+	MATH_FUNC_QUALIFIER void setRandomF(Vec<T> & v);
+
 }
 
 
