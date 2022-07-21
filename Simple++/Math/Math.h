@@ -217,9 +217,6 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T standardDeviation(const Vec<T>& v);
 
-	template<typename T>
-	MATH_FUNC_QUALIFIER void mul(T* o, const T* v1, const T* v2, const Size N);
-
 }
 
 

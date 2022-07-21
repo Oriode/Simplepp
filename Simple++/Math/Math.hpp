@@ -12,39 +12,11 @@ namespace Math {
 	}
 	template<typename T>
 	MATH_FUNC_QUALIFIER T dot( const Vec4<T> & v1, const Vec4<T> & v2 ) {
-#ifdef __AVX2___
-		if constexpr ( Utility::isSame<T, float>::value ) {
-			__m128 __v1(_mm_loadu_ps(v1.getData()));
-			__m128 __v2(_mm_loadu_ps(v2.getData()));
-
-			__m128 __r(_mm_mul_ps(__v1, __v2));
-			Vec4<float> v(*reinterpret_cast< Vec4<float> * >( &__r ));
-			return v.x + v.y + v.z + v.w;
-		}
-		return T(0);
-#else
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
-#endif
 	}
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T dot(const T* v1, const T* v2, const Size n) {
-#ifdef __AVX2__
-		if constexpr ( Utility::isSame<T, float>::value ) {
-			if ( n % Size(16) == Size(0) ) {
-				T sum(0);
-				const Size nbLoops(n >> 4);
-				for ( Size i(0); i < nbLoops; i++ ) {
-					const Size shift(i << 4);
-					__m512 __v1(_mm512_loadu_ps(reinterpret_cast< void* >( const_cast< T* >( v1 + shift ) )));
-					__m512 __v2(_mm512_loadu_ps(reinterpret_cast< void* >( const_cast< T* >( v2 + shift ) )));
-					__m512 __r(_mm512_mul_ps(__v1, __v2));
-					sum += _mm512_reduce_add_ps(__r);
-				}
-				return sum;
-			}
-		}
-#endif
 		T sumDot(0);
 		for ( Size i(0); i < n; i++ ) {
 			sumDot += v1[ i ] * v2[ i ];
@@ -557,31 +529,6 @@ namespace Math {
 		}
 
 		return result;
-	}
-
-	template<typename T>
-	MATH_FUNC_QUALIFIER void mul(T* o, const T* v1, const T* v2, const Size N) {
-#ifdef __AVX2__
-		if constexpr ( Utility::isSame<T, float>::value ) {
-			if ( N % Size(16) == Size(0) ) {
-				const Size nbLoops(N >> 4);
-				for ( Size i(0); i < nbLoops; i++ ) {
-					const Size shift(i << 4);
-					__m512 __v1(_mm512_loadu_ps(reinterpret_cast< void* >( const_cast< T* >( v1 + shift ) )));
-					__m512 __v2(_mm512_loadu_ps(reinterpret_cast< void* >( const_cast< T* >( v2 + shift ) )));
-
-					__m512 __r(_mm512_mul_ps(__v1, __v2));
-
-					T* v(reinterpret_cast< T* >( &__r ));
-
-					Utility::copy(o + shift, v, Size(16));
-				}
-			}
-		}
-#endif
-		for ( Size i(0); i < N; i++ ) {
-			o[ i ] = v1[ i ] * v2[ i ];
-		}
 	}
 
 
