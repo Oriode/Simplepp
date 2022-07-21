@@ -69,6 +69,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> min(const Vec3<T>& v1, const Vec3<T>& v2) {
+		return Vec3<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z));
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec4<T> & v ) {
 		return min( min( min( v.x, v.y ), v.z ), v.w );
 	}
@@ -76,6 +81,11 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> min( const Vec4<T> & v, const T & x ) {
 		return Vec4<T>( min( v.x, x ), min( v.y, x ), min( v.z, x ), min( v.w, x ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> min(const Vec4<T>& v1, const Vec4<T>& v2) {
+		return Vec4<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z), min(v1.w, v2.w));
 	}
 
 	template<typename T>
@@ -100,6 +110,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec<T> min(const Vec<T>& v1, const Vec<T>& v2) {
+		return apply(Math::Min(), v1, v2);
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec2<T> & v ) {
 		return min( v.x, v.y );
 	}
@@ -107,6 +122,11 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> min( const Vec2<T> & v, const T & x ) {
 		return Vec2<T>( min( v.x, x ), min( v.y, x ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> min(const Vec2<T>& v1, const Vec2<T>& v2) {
+		return Vec2<T>(min(v1.x, v2.x), min(v1.y, v2.y));
 	}
 
 	template<typename T>
@@ -120,6 +140,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> max(const Vec3<T>& v1, const Vec3<T>& v2) {
+		return Vec3<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec4<T> & v ) {
 		return max( max( max( v.x, v.y ), v.z ), v.w );
 	}
@@ -127,6 +152,11 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> max( const Vec4<T> & v, const T & x ) {
 		return Vec4<T>( max( v.x, x ), max( v.y, x ), max( v.z, x ), max(v.w, x) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> max(const Vec4<T>& v1, const Vec4<T>& v2) {
+		return Vec4<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z), max(v1.w, v2.w));
 	}
 
 	template<typename T>
@@ -151,6 +181,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec<T> max(const Vec<T>& v1, const Vec<T>& v2) {
+		return apply(Math::Max(), v1, v2);
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec2<T> & v ) {
 		return max( v.x, v.y );
 	}
@@ -158,6 +193,11 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> max( const Vec2<T> & v, const T & x ) {
 		return Vec2<T>( max( v.x, x ), max( v.y, x ) );
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> max(const Vec2<T>& v1, const Vec2<T>& v2) {
+		return Vec2<T>(max(v1.x, v2.x), max(v1.y, v2.y));
 	}
 
 	template<typename T>
@@ -329,6 +369,26 @@ namespace Math {
 			l += value2;
 		}
 		return sqrt(l);
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec3<T>& v1, const Vec3<T>& v2) {
+		return dot(v2 - v1);
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec2<T>& v1, const Vec2<T>& v2) {
+		return dot(v2 - v1);
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec4<T>& v1, const Vec4<T>& v2) {
+		return dot(v2 - v1);
+	}
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec<T>& v1, const Vec<T>& v2) {
+		return dot(v2 - v1);
 	}
 
 	template<typename T>

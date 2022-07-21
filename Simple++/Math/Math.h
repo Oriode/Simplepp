@@ -36,40 +36,65 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T length(const Vec<T>& v);
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec3<T>& v1, const Vec3<T>& v2);
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec2<T>& v1, const Vec2<T>& v2);
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec4<T>& v1, const Vec4<T>& v2);
+	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const Vec<T>& v1, const Vec<T>& v2);
+
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec2<T> & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> min( const Vec2<T> & v, const T & x );
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> min(const Vec2<T>& v1, const Vec2<T>& v2);
+	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec3<T> & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> min( const Vec3<T> & v, const T & x );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> min( const Vec3<T> & v1, const Vec3<T>& v2);
 	template<typename T>
 	MATH_FUNC_QUALIFIER T min( const Vec4<T> & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> min( const Vec4<T> & v, const T & x );
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> min(const Vec4<T>& v1, const Vec4<T>& v2);
+	template<typename T>
 	MATH_FUNC_QUALIFIER T min(const Vec<T>& v);
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec<T> min(const Vec<T>& v, const T& x);
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec<T> min(const Vec<T>& v1, const Vec<T>& v2);
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec2<T> & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec2<T> max( const Vec2<T> & v, const T & x );
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec2<T> max(const Vec2<T>& v1, const Vec2<T>& v2);
+	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec3<T> & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec3<T> max( const Vec3<T> & v, const T & x );
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec3<T> max(const Vec3<T>& v1, const Vec3<T>& v2);
 	template<typename T>
 	MATH_FUNC_QUALIFIER T max( const Vec4<T> & v );
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec4<T> max( const Vec4<T> & v, const T & x );
 	template<typename T>
+	MATH_FUNC_QUALIFIER Vec4<T> max(const Vec4<T>& v1, const Vec4<T>& v2);
+	template<typename T>
 	MATH_FUNC_QUALIFIER T max(const Vec<T>& v);
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec<T> max(const Vec<T>& v, const T& x);
+	template<typename T>
+	MATH_FUNC_QUALIFIER Vec<T> max(const Vec<T>& v1, const Vec<T>& v2);
 
 	///@brief get the min and the max values of a Vec3
 	///@param v Vector of 3 values
