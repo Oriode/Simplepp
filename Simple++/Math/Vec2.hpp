@@ -68,6 +68,40 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline Vec2<T>& Vec2<T>::fill(const T& v) {
+		this->x = v;
+		this->y = v;
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Vec2<T>& Vec2<T>::zeros() {
+		return fill(T(0));
+	}
+
+	template<typename T>
+	inline Vec2<T>& Vec2<T>::ones() {
+		return fill(T(1));
+	}
+
+	template<typename T>
+	inline Vec2<T>& Vec2<T>::randomF() {
+		this->x = Math::randomF();
+		this->y = Math::randomF();
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Vec2<T>& Vec2<T>::random(const T& min, const T& max) {
+		this->x = Math::random(min, max);
+		this->y = Math::random(min, max);
+
+		return *this;
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T & Vec2<T>::operator[](Size index ) {
 		return this -> values[index];
 	}

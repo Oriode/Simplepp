@@ -344,6 +344,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const T& v1, const T& v2) {
+		return Math::abs(v2 - v1);
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec3<T>& v1, const Vec3<T>& v2) {
 		return dot(v2 - v1);
 	}

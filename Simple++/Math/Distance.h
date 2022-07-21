@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "BasicMath.h"
+#include "Math.h"
 #include "../Utility.h"
 
 namespace Math {
@@ -26,12 +26,12 @@ namespace Math {
 			 * @returns	Distance between the two.
 			 */
 			template<typename T>
-			Distance getDistance( const T & x, const T & y ) const;
+			Distance operator()( const T & x, const T & y ) const;
 		};
 
 		template<typename T>
-		inline Distance DistanceFunc::getDistance(const T& x, const T& y) const {
-			return Math::abs(y - x);
+		inline Distance DistanceFunc::operator()(const T& x, const T& y) const {
+			return Math::distance(x, y);
 		}
 	}
 }

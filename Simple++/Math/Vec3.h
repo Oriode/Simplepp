@@ -87,7 +87,9 @@ namespace Math {
 		template<typename U>
 		MATH_FUNC_QUALIFIER Vec3<T> & operator=( const U( &v )[3] );
 
-
+		/************************************************************************/
+		/* ================                MISC                ================ */
+		/************************************************************************/
 		MATH_FUNC_QUALIFIER void inverse();
 
 		template<typename S = String>
@@ -96,6 +98,17 @@ namespace Math {
 		constexpr Size getSize() const;
 
 		const T* getData() const;
+
+		/**
+		 * @brief 	Fill the complete vector with the specified value.
+		 * @param 	v	Value to be copied in the whole vector.
+		 */
+		Vec3<T>& fill(const T& v);
+
+		Vec3<T>& zeros();
+		Vec3<T>& ones();
+		Vec3<T>& randomF();
+		Vec3<T>& random(const T& min, const T& max);
 
 
 		union {

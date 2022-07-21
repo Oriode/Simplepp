@@ -37,6 +37,8 @@ namespace Math {
 	MATH_FUNC_QUALIFIER const T length(const Vec<T>& v);
 
 	template<typename T>
+	MATH_FUNC_QUALIFIER const T distance(const T & v1, const T & v2);
+	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec3<T>& v1, const Vec3<T>& v2);
 	template<typename T>
 	MATH_FUNC_QUALIFIER const T distance(const Vec2<T>& v1, const Vec2<T>& v2);

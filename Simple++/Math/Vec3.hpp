@@ -80,6 +80,41 @@ namespace Math {
 		return this->values;
 	}
 
+	template<typename T>
+	inline Vec3<T>& Vec3<T>::fill(const T& v) {
+		this->x = v;
+		this->y = v;
+		this->z = v;
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Vec3<T>& Vec3<T>::zeros() {
+		return fill(T(0));
+	}
+
+	template<typename T>
+	inline Vec3<T>& Vec3<T>::ones() {
+		return fill(T(1));
+	}
+
+	template<typename T>
+	inline Vec3<T>& Vec3<T>::randomF() {
+		this->x = Math::randomF();
+		this->y = Math::randomF();
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Vec3<T>& Vec3<T>::random(const T& min, const T& max) {
+		this->x = Math::random(min, max);
+		this->y = Math::random(min, max);
+
+		return *this;
+	}
+
 
 
 	template<typename T>
