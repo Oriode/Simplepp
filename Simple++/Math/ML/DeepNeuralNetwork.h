@@ -68,8 +68,8 @@ namespace Math {
 			const OS::Path& getFilePath() const;
 			void setFilePath(const OS::Path& filePath);
 
-			bool saveToFile(const OS::Path& filePath) const;
-			bool loadFromFile(const OS::Path& filePath);
+			bool saveToFile(const OS::Path& filePath, int verbose = 1) const;
+			bool loadFromFile(const OS::Path& filePath, int verbose = 1);
 
 			bool saveToFile(int verbose = 1) const;
 			bool loadFromFile(int verbose = 1);
@@ -273,9 +273,7 @@ namespace Math {
 
 			bool bIsLoaded(false);
 			if ( this->filePath.getSize() ) {
-				if ( !loadFromFile(this->filePath) ) {
-					Log::displayError(String::format("Unable to read the DeepNeuralNetwork from \"%\".", this->filePath));
-				} else {
+				if ( loadFromFile(this->filePath, int(1)) ) {
 					bIsLoaded = true;
 				}
 			}
@@ -627,29 +625,30 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::saveToFile(const OS::Path& filePath) const {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::saveToFile(const OS::Path& filePath, int verbose) const {
 			if ( !IO::write(filePath, this) ) {
+				if ( verbose > -1 ) { Log::displayWarning(String::format("Unable to save the DeepNeuralNetwork to the file \"%\".", filePath)); }
 				return false;
 			}
+			if ( verbose > 0 ) { Log::displayLog(String::format("Saved the DeepNeuralNetwork to the file \"%\".", filePath)); }
 			return true;
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::loadFromFile(const OS::Path& filePath) {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::loadFromFile(const OS::Path& filePath, int verbose) {
 			if ( !IO::read(filePath, this) ) {
+				if ( verbose > -1 ) { Log::displayWarning(String::format("Unable to load the DeepNeuralNetwork from the file \"%\".", filePath)); }
 				return false;
 			}
+			if ( verbose > 0 ) { Log::displayLog(String::format("Loaded the DeepNeuralNetwork from the file \"%\".", filePath)); }
 			return true;
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::saveToFile(int verbose) const {
 			if ( this->filePath.getSize() ) {
-				if ( !saveToFile(this->filePath) ) {
-					if ( verbose > -1 ) { Log::displayWarning(String::format("Unable to save the DeepNeuralNetwork to the file \"%\".", this->filePath)); }
+				if ( !saveToFile(this->filePath, verbose) ) {
 					return false;
-				} else {
-					if ( verbose > 0 ) { Log::displayLog(String::format("Saved the DeepNeuralNetwork to the file \"%\".", this->filePath)); }
 				}
 			}
 			return true;
@@ -658,12 +657,8 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::loadFromFile(int verbose) {
 			if ( this->filePath.getSize() ) {
-				if ( !loadFromFile(this->filePath) ) {
-					if ( verbose > -1 ) { Log::displayWarning(String::format("Unable to load the DeepNeuralNetwork from the file \"%\".", this->filePath)); }
+				if ( !loadFromFile(this->filePath, verbose) ) {
 					return false;
-				} else {
-					if ( verbose > 0 ) { Log::displayLog(String::format("Loaded the DeepNeuralNetwork from the file \"%\".", this->filePath)); }
-					return true;
 				}
 			}
 			return true;
