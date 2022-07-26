@@ -1,4 +1,5 @@
-namespace IO { 
+#include "FileStream.h"
+namespace IO {
 
 	template<typename T>
 	FileStreamT<T>::FileStreamT(const OS::PathT<T> & filePath, OpenMode openMode) :
@@ -16,6 +17,11 @@ namespace IO {
 	template<typename T>
 	bool FileStreamT<T>::exists() const {
 		return this->filePath.exists();
+	}
+
+	template<typename T>
+	inline void FileStreamT<T>::close() {
+		this->stream.close();
 	}
 
 	template<typename T>

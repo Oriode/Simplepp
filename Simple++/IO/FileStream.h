@@ -31,6 +31,9 @@ namespace IO {
 		///@brief Test if the file actually exists on the operating system. (Same as Path::exists()).
 		bool exists() const;
 
+		///@brief Close this object.
+		void close();
+
 		///@brief Read the whole file and convert it to a String Object.
 		///@template C Should be a BasicStringT.
 		///@param [out] stringP String to be modified.

@@ -33,11 +33,14 @@ namespace OS {
 		PathT<T> & join( const C & c, Args ... args );
 		PathT<T> & join();
 
+		bool remove() const;
+
 		T basename() const;
 
 		const T & toString() const;
 
 		static bool exists( const T & str );
+		static bool remove(const T& str);
 
 	#if defined WIN32
 		static constexpr typename T::ElemType separatorChar = T::ElemType( '\\' );

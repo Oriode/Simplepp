@@ -56,6 +56,11 @@ namespace OS {
 	}
 
 	template<typename T>
+	inline bool PathT<T>::remove() const {
+		return PathT<T>::remove(*this);
+	}
+
+	template<typename T>
 	T PathT<T>::basename() const {
 		T result;
 
@@ -75,6 +80,11 @@ namespace OS {
 	template<typename T>
 	inline bool PathT<T>::exists( const T & str ) {
 		return std::filesystem::exists( str.toCString() );
+	}
+
+	template<typename T>
+	inline bool PathT<T>::remove(const T& str) {
+		return std::filesystem::remove(str.toCString());
 	}
 
 	template<typename T>
