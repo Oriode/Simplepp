@@ -45,7 +45,7 @@ namespace IO {
 		///@param data data to be wrtitten into the file.
 		///@param size number of bytes to be written.
 		///@return True if success, False otherwise.
-		bool write(char* data, Size size);
+		bool write(const char* data, Size size);
 
 		///@brief read data from the file at the current position.
 		///@param data Buffer to be filled with the read data.

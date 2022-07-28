@@ -40,7 +40,7 @@ namespace IO {
 	}
 
 	template<typename T>
-	bool FileStreamT<T>::write(char* data, Size size) {
+	bool FileStreamT<T>::write(const char* data, Size size) {
 		this->stream.write(data, size);
 		return !hasFailed();
 	}
