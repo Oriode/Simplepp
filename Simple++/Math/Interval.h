@@ -14,6 +14,7 @@ namespace Math {
 	public:
 		Interval();
 		Interval(const T begin, const T end);
+		Interval(const Vec2<T>& v);
 
 		const T getBegin() const;
 		const T getEnd() const;

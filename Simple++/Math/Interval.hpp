@@ -14,6 +14,11 @@ namespace Math {
 	}
 
 	template<typename T>
+	inline Interval<T>::Interval(const Vec2<T>& v) :
+		Vec2<T>(v)
+	{}
+
+	template<typename T>
 	const T Interval<T>::getBegin() const {
 		return this -> begin;
 	}
