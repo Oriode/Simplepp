@@ -667,7 +667,7 @@ namespace Network {
 
 		str << HTTPRequestT<T>::getMethodString(this->method);
 		str << StringASCII::ElemType(' ');
-		if ( this->method == Method::POST ) {
+		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
 			this->url.formatEndPointWOParams(&str);
 		} else {
 			this->url.formatEndPoint(&str);
