@@ -9,6 +9,16 @@ namespace Network {
 	template<typename T>
 	class HTTPQueryT : protected ParamContainerT<StringASCII, StringASCII> {
 	public:
+
+		enum class ContentType : unsigned char {
+			None,
+			Text,
+			Html,
+			Params,
+			Json,
+			Xml
+		};
+
 		HTTPQueryT();
 
 		~HTTPQueryT();
@@ -37,10 +47,19 @@ namespace Network {
 		void setContent(const StringASCII& content);
 		void clearContent();
 
+		typename HTTPQueryT<T>::ContentType getContentType() const;
+		void setContentType(typename HTTPQueryT<T>::ContentType contentType);
+
 		const StringASCII& getProtocol() const;
 		const StringASCII& getContent() const;
 
+		static const StringASCII& getContentTypeString(typename ContentType contentType);
+		static typename ContentType getContentType(const StringASCII& contentTypeStr);
+
+		static const StringASCII contentTypeStrTable[];
+
 	protected:
+		ContentType contentType;
 		StringASCII protocolStr;
 
 	private:

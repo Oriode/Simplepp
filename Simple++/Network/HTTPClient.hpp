@@ -3,7 +3,9 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPQueryT<T>::HTTPQueryT() :
-		bHeaderNeedFormat(false) {}
+		bHeaderNeedFormat(false),
+		contentType(ContentType::None)
+	{}
 
 	template<typename T>
 	inline HTTPQueryT<T>::~HTTPQueryT() {
@@ -59,6 +61,17 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline typename HTTPQueryT<T>::ContentType HTTPQueryT<T>::getContentType() const {
+		return this->contentType;
+	}
+
+	template<typename T>
+	inline void HTTPQueryT<T>::setContentType(typename HTTPQueryT<T>::ContentType contentType) {
+		this->bHeaderNeedFormat = true;
+		this->contentType = contentType;
+	}
+
+	template<typename T>
 	inline const StringASCII& HTTPQueryT<T>::getProtocol() const {
 		return this->protocolStr;
 	}
@@ -67,6 +80,32 @@ namespace Network {
 	inline const StringASCII& HTTPQueryT<T>::getContent() const {
 		return this->contentStr;
 	}
+
+	template<typename T>
+	inline const StringASCII& HTTPQueryT<T>::getContentTypeString(typename ContentType contentType) {
+		return HTTPQueryT<T>::contentTypeStrTable[ static_cast< unsigned char >( contentType ) ];
+	}
+
+	template<typename T>
+	inline typename HTTPQueryT<T>::ContentType HTTPQueryT<T>::getContentType(const StringASCII& contentTypeStr) {
+		constexpr Size enumSize(sizeof(HTTPQueryT<T>::contentTypeStrTable));
+		for ( Size i(0); i < enumSize; i++ ) {
+			if ( contentTypeStr == HTTPQueryT<T>::contentTypeStrTable[ i ] ) {
+				return static_cast< typename HTTPQueryT<T>::ContentType >( i );
+			}
+		}
+		return HTTPQueryT<T>::ContentType::None;
+	}
+
+	template<typename T>
+	const StringASCII HTTPQueryT<T>::contentTypeStrTable[] = {
+			StringASCII("none"),
+			StringASCII("text/plain"),
+			StringASCII("text/html"),
+			StringASCII("application/x-www-form-urlencoded"),
+			StringASCII("application/json"),
+			StringASCII("application/xml")
+	};
 
 	template<typename T>
 	template<typename EndFunc>
@@ -115,11 +154,11 @@ namespace Network {
 				formatHeaderParam(&this->headerStr, *param);
 			}
 
-			if ( this->contentStr.getSize() ) {
-				static const ParamT<StringASCII, StringASCII> contentTypeParam(StringASCII("Content-Type"), StringASCII("application/x-www-form-urlencoded"));
+			if ( this->contentType != HTTPQueryT<T>::ContentType::None && this->contentStr.getSize() ) {
+				static const StringASCII contentTypeName("Content-Type");
 				static const StringASCII contentLengthParamName("Content-Length");
 
-				formatHeaderParam(&this->headerStr, contentTypeParam);
+				formatHeaderParam(&this->headerStr, ParamT<StringASCII, StringASCII>(contentTypeName, HTTPQueryT<T>::getContentTypeString(this->contentType)));
 				formatHeaderParam(&this->headerStr, ParamT<StringASCII, StringASCII>(contentLengthParamName, StringASCII::toString(this->contentStr.getSize())));
 			}
 
@@ -160,6 +199,7 @@ namespace Network {
 		FunctorSpace functorSpace(endFunc);
 
 		clearParams();
+		this->contentType = HTTPQueryT<T>::ContentType::None;
 
 		const StringASCII::ElemType*& it(*itP);
 		while ( true ) {
@@ -191,7 +231,13 @@ namespace Network {
 
 			HTTPParam* newParam(new HTTPParam(newParamName, newParamValue));
 
-			addParam(newParam);
+			const StringASCII contentTypeName("Content-Type");
+			if ( newParam->getName() == contentTypeName ) {
+				this->contentType = getContentType(newParam->getValue());
+				delete newParam;
+			} else {
+				addParam(newParam);
+			}
 
 			// End condition.
 			if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
@@ -381,6 +427,7 @@ namespace Network {
 		HTTPParam* hostParam(new HTTPParam(StringASCII("Host")));
 		addParam(hostParam);
 
+		this->contentType = HTTPQueryT<T>::ContentType::Text;
 		this->hostParam = hostParam;
 	}
 
@@ -390,6 +437,10 @@ namespace Network {
 	{
 		HTTPParam* hostParam(new HTTPParam(StringASCII("Host"), hostname));
 		addParam(hostParam);
+
+		if ( this->method == HTTPRequestT<T>::Method::POST ) {
+			setContentType(HTTPQueryT<T>::ContentType::Params);
+		}
 
 		this->hostParam = hostParam;
 	}
@@ -509,8 +560,10 @@ namespace Network {
 	template<typename T>
 	template<typename EndFunc>
 	inline bool HTTPRequestT<T>::parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		if ( !this->url.parseParams(itP, endFunc) ) {
-			return false;
+		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
+			if ( !this->url.parseParams(itP, endFunc) ) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -527,7 +580,7 @@ namespace Network {
 	inline void HTTPRequestT<T>::formatQuery(StringASCII* outputStr) const {
 		formatQueryTitle(outputStr);
 
-		if ( this->method == Method::POST ) {
+		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
 			StringASCII paramStr;
 			this->url.formatParams(&paramStr);
 			const_cast<HTTPRequestT<T> *>(this)->setContent(paramStr);
@@ -694,7 +747,7 @@ namespace Network {
 			}
 
 			// Now we have the title and the header. Let's check for the Content-Length.
-			static StringASCII contentLengthParamName("Content-Length");
+			static const StringASCII contentLengthParamName("Content-Length");
 			HTTPParam* contentSizeParam(this->response.getHeaderParam(contentLengthParamName));
 
 			int contentLength;
