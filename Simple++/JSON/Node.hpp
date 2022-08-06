@@ -122,6 +122,36 @@ namespace JSON {
 	}
 
 	template<typename T>
+	inline void BasicNodeT<T>::setValue(int value) {
+		error(TEXT("Trying to set a value on a non-value node."));
+	}
+
+	template<typename T>
+	inline void BasicNodeT<T>::setValue(unsigned int value) {
+		error(TEXT("Trying to set a value on a non-value node."));
+	}
+
+	template<typename T>
+	inline void BasicNodeT<T>::setValue(long long int value) {
+		error(TEXT("Trying to set a value on a non-value node."));
+	}
+
+	template<typename T>
+	inline void BasicNodeT<T>::setValue(unsigned long long int value) {
+		error(TEXT("Trying to set a value on a non-value node."));
+	}
+
+	template<typename T>
+	inline void BasicNodeT<T>::setValue(double value) {
+		error(TEXT("Trying to set a value on a non-value node."));
+	}
+
+	template<typename T>
+	inline void BasicNodeT<T>::setValue(bool value) {
+		error(TEXT("Trying to set a value on a non-value node."));
+	}
+
+	template<typename T>
 	void BasicNodeT<T>::setName( const T & name ) {
 		if ( this -> parent ) {
 			getParent() -> _setChildName( this, this -> name, name );
@@ -1087,29 +1117,143 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 	/************************************************************************/
 
 	template<typename T>
-	NodeValueT<T>::NodeValueT() : BasicNodeT<T>( BasicNodeT<T>::Type::Value ) {
+	NodeValueT<T>::NodeValueT() :
+		BasicNodeT<T>( BasicNodeT<T>::Type::Value ),
+		bAddQuotes(true)
+	{
 
 	}
 
 	template<typename T>
-	NodeValueT<T>::NodeValueT( const T & value ) : BasicNodeT<T>( BasicNodeT<T>::Type::Value ) {
-		this -> value = value;
+	NodeValueT<T>::NodeValueT( const T & value ) :
+		BasicNodeT<T>( BasicNodeT<T>::Type::Value ),
+		value(value),
+		bAddQuotes(true)
+	{
 	}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(value),
+		bAddQuotes(false)
+	{}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(unsigned int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(value),
+		bAddQuotes(false)
+	{}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(long long int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(unsigned long long int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(double value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(bool value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{}
 
 	template<typename T>
 	NodeValueT<T>::NodeValueT( const T & name, const T & value ) :
-		BasicNodeT<T>( BasicNodeT<T>::Type::Value ) {
+		BasicNodeT<T>( BasicNodeT<T>::Type::Value ),
+		value(value),
+		bAddQuotes(true)
+	{
 		this -> name = name;
-		this -> value = value;
 	}
 
 	template<typename T>
-	NodeValueT<T>::NodeValueT( const NodeValueT<T> & node ) : NodeT( node ), value(node.value), name( node.name ) {
+	inline NodeValueT<T>::NodeValueT(const T& name, int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(value),
+		bAddQuotes(false)
+	{
+		this -> name = name;
+	}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(const T& name, unsigned int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(value),
+		bAddQuotes(false)
+	{
+		this -> name = name;
+	}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(const T& name, long long int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{
+		this -> name = name;
+	}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(const T& name, unsigned long long int value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{
+		this -> name = name;
+	}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(const T& name, double value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{
+		this -> name = name;
+	}
+
+	template<typename T>
+	inline NodeValueT<T>::NodeValueT(const T& name, bool value) :
+		BasicNodeT<T>(BasicNodeT<T>::Type::Value),
+		value(T::toString(value)),
+		bAddQuotes(false)
+	{
+		this -> name = name;
+	}
+
+	template<typename T>
+	NodeValueT<T>::NodeValueT( const NodeValueT<T> & node ) :
+		NodeT( node ),
+		value(node.value),
+		bAddQuotes(node.bAddQuotes),
+		name( node.name )
+	{
 
 	}
 
 	template<typename T>
-	NodeValueT<T>::NodeValueT( NodeValueT<T> && node ) : NodeT( Utility::toRValue( node ) ), value( Utility::toRValue( node.value )), name( Utility::toRValue( node.name ) ) {
+	NodeValueT<T>::NodeValueT( NodeValueT<T> && node ) :
+		NodeT( Utility::toRValue( node ) ),
+		value( Utility::toRValue( node.value )),
+		bAddQuotes(Utility::toRValue(node.bAddQuotes)),
+		name( Utility::toRValue( node.name ) )
+	{
 
 	}
 
@@ -1121,6 +1265,43 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 	template<typename T>
 	void NodeValueT<T>::setValue( const T & value ) {
 		this -> value = value;
+		this -> bAddQuotes = true;
+	}
+
+	template<typename T>
+	inline void NodeValueT<T>::setValue(int value) {
+		this -> value = T::toString(value);
+		this -> bAddQuotes = false;
+	}
+
+	template<typename T>
+	inline void NodeValueT<T>::setValue(unsigned int value) {
+		this -> value = T::toString(value);
+		this -> bAddQuotes = false;
+	}
+
+	template<typename T>
+	inline void NodeValueT<T>::setValue(long long int value) {
+		this -> value = T::toString(value);
+		this -> bAddQuotes = false;
+	}
+
+	template<typename T>
+	inline void NodeValueT<T>::setValue(unsigned long long int value) {
+		this -> value = T::toString(value);
+		this -> bAddQuotes = false;
+	}
+
+	template<typename T>
+	inline void NodeValueT<T>::setValue(double value) {
+		this -> value = T::toString(value);
+		this -> bAddQuotes = false;
+	}
+
+	template<typename T>
+	inline void NodeValueT<T>::setValue(bool value) {
+		this -> value = T::toString(value);
+		this -> bAddQuotes = false;
 	}
 
 	template<typename T>
@@ -1163,10 +1344,12 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 			}
 
 			T nodeValue( beginIt, Size( it - beginIt ) );
-			this -> value = nodeValue;
-			this -> type = Type::Value;
 
 			if ( !_expectChar( &it, C( '"' ) ) ) return false;
+
+			this -> value = nodeValue;
+			this -> type = Type::Value;
+			this -> bAddQuotes = true;
 		} else {
 			// Value without quote.
 
@@ -1189,6 +1372,8 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 				this -> value = nodeValue;
 				this -> type = Type::Value;
 			}
+
+			this -> bAddQuotes = false;
 		}
 
 		return true;
@@ -1216,9 +1401,13 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 			o << Elem( ' ' );
 		}
 
-		o << Elem( '"' );
-		o << this -> getValue();
-		o << Elem( '"' );
+		if ( this -> bAddQuotes ) {
+			o << Elem('"');
+			o << this -> getValue();
+			o << Elem('"');
+		} else {
+			o << this -> getValue();
+		}
 	}
 
 	template<typename T>
@@ -1232,6 +1421,10 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 			_clear();
 			return false;
 		}
+		if ( !IO::read(stream, &this -> bAddQuotes) ) {
+			_clear();
+			return false;
+		}
 		return true;
 	}
 
@@ -1241,8 +1434,12 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 		if ( !BasicNodeT<T>::_write( stream ) ) {
 			return false;
 		}
-		if ( !IO::write( stream, &this -> value ) )
+		if ( !IO::write(stream, &this -> value) ) {
 			return false;
+		}
+		if ( !IO::write(stream, &this -> bAddQuotes) ) {
+			return false;
+		}
 		return true;
 	}
 

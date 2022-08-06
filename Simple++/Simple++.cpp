@@ -39,7 +39,7 @@
 
 //#define DEBUG_GRAPHIC
 //#define DEBUG_XML
-//#define DEBUG_JSON
+#define DEBUG_JSON
 //#define DEBUG_LIST
 //#define DEBUG_MAP
 //#define DEBUG_UI
@@ -61,7 +61,7 @@
 //#define DEBUG_LINEAR_REGRESSION
 //#define DEBUG_DEEP_NEURAL_NETWORK
 //#define DEBUG_INTERVAL
-#define DEBUG_STATS
+//#define DEBUG_STATS
 
 
 #ifndef _LIB

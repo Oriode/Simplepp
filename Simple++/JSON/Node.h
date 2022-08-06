@@ -95,6 +95,12 @@ namespace JSON {
 		///@brief Set the value of this node (Will change this node value if getType() == Value, otherwise will try to change this node type to be a value one.)
 		///@param value Value to be set
 		virtual void setValue( const T & value );
+		virtual void setValue(int value);
+		virtual void setValue(unsigned int value);
+		virtual void setValue(long long int value);
+		virtual void setValue(unsigned long long int value);
+		virtual void setValue(double value);
+		virtual void setValue(bool value);
 
 		///@brief set the name of this node
 		///@param name Name of this node
@@ -405,11 +411,23 @@ namespace JSON {
 		///@brief create node
 		///@param value value of the node
 		NodeValueT( const T & value );
+		NodeValueT(int value);
+		NodeValueT(unsigned int value);
+		NodeValueT( long long int value );
+		NodeValueT( unsigned long long int value );
+		NodeValueT( double value );
+		NodeValueT( bool value );
 
 		///@brief Constructor using a name and a value.
 		///@param name NodeMap name.
 		///@param value NodeMap value.
 		NodeValueT( const T & name, const T & value );
+		NodeValueT( const T & name, int value );
+		NodeValueT( const T & name, unsigned int value );
+		NodeValueT( const T & name, long long int value );
+		NodeValueT( const T & name, unsigned long long int value );
+		NodeValueT( const T & name, double value );
+		NodeValueT( const T & name, bool value );
 
 		///@brief Copy Constructor
 		///@param node BasicNodeT<T> to be copied
@@ -425,7 +443,13 @@ namespace JSON {
 
 		///@brief Set the value of this node (Will change this node value if getType() == Value, otherwise will try to change this node type to be a value one.)
 		///@param value Value to be set
-		void setValue( const T & value ) override;
+		virtual void setValue( const T & value ) override;
+		virtual void setValue( int value ) override;
+		virtual void setValue( unsigned int value ) override;
+		virtual void setValue( long long int value ) override;
+		virtual void setValue( unsigned long long int value ) override;
+		virtual void setValue( double value ) override;
+		virtual void setValue( bool value ) override;
 
 		///@brief Read this object using a pointer to a String Iterator.
 		///@param buffer Pointer to a String iterator
@@ -460,6 +484,7 @@ namespace JSON {
 		void _writeJSON( C & o, unsigned int indent = 0 ) const;
 	protected:
 		T value;
+		bool bAddQuotes;
 	};
 
 	template<typename T>
