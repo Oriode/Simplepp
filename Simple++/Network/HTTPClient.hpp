@@ -693,8 +693,6 @@ namespace Network {
 		bWasConnected(false)
 	{
 		this->request.setProtocol(StringASCII("HTTP/1.1"));
-
-		// this->request.setHeaderParam(StringASCII("Accept"), StringASCII("*/*"));
 		this->request.setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
 	}
 
@@ -708,6 +706,24 @@ namespace Network {
 		this->request.setMethod(method);
 		this->request.setEndPoint(endPointStr, urlParams);
 
+		return _query(this->request);
+	}
+
+	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>* request) {
+		this->request->setProtocol(StringASCII("HTTP/1.1"));
+		this->request->setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
+
+		return _query(*request);
+	}
+
+	template<typename T>
+	inline const HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() const {
+		return &this->response;
+	}
+
+	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::_query(const typename HTTPRequestT<T>& request) {
 		if ( this->request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
 
 			this->sendBuffer.clear();
@@ -782,11 +798,6 @@ namespace Network {
 		}
 
 		return NULL;
-	}
-
-	template<typename T>
-	inline const HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() const {
-		return &this->response;
 	}
 
 }

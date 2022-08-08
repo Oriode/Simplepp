@@ -174,10 +174,13 @@ namespace Network {
 		HTTPParam* setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue);
 
 		HTTPResponseT<T> * query(typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams);
+		HTTPResponseT<T> * query(typename HTTPRequestT<T> * request);
 
 		const HTTPResponseT<T>* getLastResponse() const;
 
 	private:
+		HTTPResponseT<T>* _query(const typename HTTPRequestT<T>& request);
+
 		HTTPRequestT<T> request;
 		HTTPResponseT<T> response;
 
