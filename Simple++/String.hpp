@@ -4655,9 +4655,14 @@ template<typename T>
 template<typename C, typename T1, typename... Types>
 void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
-		if ( *it == T( '/' ) && it + 1 < referenceStringEnd && *( it + 1 ) == T( '%' ) ) {
-			newString -> _concatWOS( T( '%' ) );
-			it++;
+		if ( *it == T( '/' ) && it + 1 < referenceStringEnd ) {
+			if ( *( it + 1 ) == T('/') ) {
+				newString -> _concatWOS(T('/'));
+				it++;
+			} else if ( *( it + 1 ) == T('%') ) {
+				newString -> _concatWOS(T('%'));
+				it++;
+			}
 		} else if ( *it == T( '%' ) ) {
 			newString -> _concatWOS( arg1 );
 			return __format( it + 1, referenceStringEnd, newString, args... );
