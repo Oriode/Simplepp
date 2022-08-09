@@ -710,9 +710,9 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>* request) {
-		this->request->setProtocol(StringASCII("HTTP/1.1"));
-		this->request->setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
+	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T> * request) {
+		request->setProtocol(StringASCII("HTTP/1.1"));
+		request->setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
 
 		return _query(*request);
 	}
@@ -724,14 +724,14 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPResponseT<T>* HTTPClientT<T>::_query(const typename HTTPRequestT<T>& request) {
-		if ( this->request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
+		if ( request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
 
 			this->sendBuffer.clear();
-			this->request.formatQuery(&this->sendBuffer);
+			request.formatQuery(&this->sendBuffer);
 
 			// Try sending directly as we are in keep alive.
 			if ( !this->bWasConnected ) {
-				if ( !this->connection.connect(this->request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
+				if ( !this->connection.connect(request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
 					return NULL;
 				}
 				this->bWasConnected = true;
@@ -793,7 +793,7 @@ namespace Network {
 
 			return &this->response;
 		} else {
-			error(String::format("Unsuported query type %.", UrlT<T>::getTypeString(this->request.getEndPoint().getType())));
+			error(String::format("Unsuported query type %.", UrlT<T>::getTypeString(request.getEndPoint().getType())));
 			return NULL;
 		}
 

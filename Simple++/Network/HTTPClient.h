@@ -155,9 +155,6 @@ namespace Network {
 	protected:
 		void updateHostParamValue();
 
-		using HTTPQueryT<T>::setContent;
-		using HTTPQueryT<T>::getContent;
-
 		Method method;
 		UrlT<T> url;
 
