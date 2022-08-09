@@ -25,6 +25,9 @@
 # include <openssl/core.h>
 # include <openssl/x509.h>
 # include <openssl/pkcs12err.h>
+# ifndef OPENSSL_NO_STDIO
+#  include <stdio.h>
+# endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +44,7 @@ extern "C" {
 
 # define PKCS12_MAC_KEY_LENGTH 20
 
+/* The macro is expected to be used only internally. Kept for backwards compatibility. */
 # define PKCS12_SALT_LEN 8
 
 /* It's not clear if these are actually needed... */

@@ -21,9 +21,9 @@ extern "C" {
 #define OSSL_PROV_PARAM_CORE_MODULE_FILENAME "module-filename" /* utf8_ptr */
 
 /* Well known parameter names that Providers can define */
-#define OSSL_PROV_PARAM_NAME            "name"                /* utf8_string */
-#define OSSL_PROV_PARAM_VERSION         "version"             /* utf8_string */
-#define OSSL_PROV_PARAM_BUILDINFO       "buildinfo"           /* utf8_string */
+#define OSSL_PROV_PARAM_NAME            "name"                /* utf8_ptr */
+#define OSSL_PROV_PARAM_VERSION         "version"             /* utf8_ptr */
+#define OSSL_PROV_PARAM_BUILDINFO       "buildinfo"           /* utf8_ptr */
 #define OSSL_PROV_PARAM_STATUS          "status"              /* uint */
 #define OSSL_PROV_PARAM_SECURITY_CHECKS "security-checks"     /* uint */
 
@@ -119,6 +119,11 @@ extern "C" {
 #define OSSL_CIPHER_CTS_MODE_CS1 "CS1"
 #define OSSL_CIPHER_CTS_MODE_CS2 "CS2"
 #define OSSL_CIPHER_CTS_MODE_CS3 "CS3"
+
+/* Known CIPHER names (not a complete list) */
+#define OSSL_CIPHER_NAME_AES_128_GCM_SIV      "AES-128-GCM-SIV"
+#define OSSL_CIPHER_NAME_AES_192_GCM_SIV      "AES-192-GCM-SIV"
+#define OSSL_CIPHER_NAME_AES_256_GCM_SIV      "AES-256-GCM-SIV"
 
 /* digest parameters */
 #define OSSL_DIGEST_PARAM_XOFLEN       "xoflen"        /* size_t */

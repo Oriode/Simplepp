@@ -28,6 +28,9 @@
 # include <openssl/symhacks.h>
 # include <openssl/types.h>
 # include <openssl/pkcs7err.h>
+# ifndef OPENSSL_NO_STDIO
+#  include <stdio.h>
+# endif
 
 #ifdef  __cplusplus
 extern "C" {

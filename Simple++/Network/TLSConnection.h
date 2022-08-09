@@ -292,6 +292,9 @@ namespace Network {
 	template<typename T>
 	inline bool TLSConnectionT<T>::_initSSL() {
 		SSL_CTX* sslContext(SSL_CTX_new(TLS_method()));
+		SSL_CTX_set_min_proto_version(sslContext, TLS1_3_VERSION);
+		SSL_CTX_clear_options(sslContext, SSL_OP_NO_COMPRESSION);
+		SSL_CTX_set_cipher_list(sslContext, "TLS_AES_128_GCM_SHA256");
 		if ( !sslContext ) {
 			logSSL();
 			return false;

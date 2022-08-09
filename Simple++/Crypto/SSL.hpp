@@ -39,7 +39,7 @@ namespace Crypto {
 
 	template<typename T>
 	inline StringASCII SSLObjectT<T>::getErrorStr(const int errorCode) {
-		char* errorCStr(ERR_error_string(errorCode, NULL));
+		const char* errorCStr(ERR_error_string(errorCode, NULL));
 		return StringASCII(errorCStr);
 	}
 
