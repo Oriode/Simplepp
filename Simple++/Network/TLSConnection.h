@@ -115,14 +115,20 @@ namespace Network {
 		/** @brief	close the connection */
 		void close();
 
+		static int sniCallback(SSL* ssl, int* al, void* arg);
+
 	protected:
 		///@brief Should be called before every connect/listen. Ensure networking is enabled and the socket initialy closed.
 		///@return True if succeed, False otherwise.
 		bool _init();
 	private:
 		bool _initSSL();
+		bool _setSniHostname(const StringASCII& hostname);
+		bool _sslConnect();
 
 		SSL* ssl;
+
+		StringASCII hostname;
 	};
 
 	using TLSConnection = TLSConnectionT<int>;
@@ -174,6 +180,9 @@ namespace Network {
 		if ( !_initSSL() ) {
 			return false;
 		}
+		if ( !_sslConnect() ) {
+			return false;
+		}
 		return true;
 	}
 
@@ -189,6 +198,12 @@ namespace Network {
 			return false;
 		}
 		if ( !_initSSL() ) {
+			return false;
+		}
+		if ( !_setSniHostname(address) ) {
+			return false;
+		}
+		if ( !_sslConnect() ) {
 			return false;
 		}
 		return true;
@@ -208,6 +223,12 @@ namespace Network {
 		if ( !_initSSL() ) {
 			return false;
 		}
+		if ( !_setSniHostname(address) ) {
+			return false;
+		}
+		if ( !_sslConnect() ) {
+			return false;
+		}
 		return true;
 	}
 
@@ -225,6 +246,12 @@ namespace Network {
 		if ( !_initSSL() ) {
 			return false;
 		}
+		if ( !_setSniHostname(address) ) {
+			return false;
+		}
+		if ( !_sslConnect() ) {
+			return false;
+		}
 		return true;
 	}
 
@@ -240,6 +267,10 @@ namespace Network {
 		}
 
 		if ( !_initSSL() ) {
+			return false;
+		}
+
+		if ( !_sslConnect() ) {
 			return false;
 		}
 
@@ -277,6 +308,11 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline int TLSConnectionT<T>::sniCallback(SSL* ssl, int* al, void* arg) {
+		return SSL_TLSEXT_ERR_OK;
+	}
+
+	template<typename T>
 	inline bool TLSConnectionT<T>::_init() {
 		if ( !NetworkObject::init() ) return false;
 		if ( !Crypto::SSLObject::init() ) return false;
@@ -291,23 +327,39 @@ namespace Network {
 
 	template<typename T>
 	inline bool TLSConnectionT<T>::_initSSL() {
-		SSL_CTX* sslContext(SSL_CTX_new(TLS_method()));
-		SSL_CTX_set_min_proto_version(sslContext, TLS1_3_VERSION);
-		SSL_CTX_clear_options(sslContext, SSL_OP_NO_COMPRESSION);
-		SSL_CTX_set_cipher_list(sslContext, "TLS_AES_128_GCM_SHA256");
-		if ( !sslContext ) {
-			logSSL();
-			return false;
-		}
-		this->ssl = SSL_new(sslContext);
 		if ( !this->ssl ) {
-			logSSL();
-			return false;
+			SSL_CTX* sslContext(SSL_CTX_new(TLS_method()));
+			SSL_CTX_set_tlsext_servername_callback(sslContext, TLSConnectionT<T>::sniCallback);
+			if ( !sslContext ) {
+				logSSL();
+				return false;
+			}
+			this->ssl = SSL_new(sslContext);
+			if ( !this->ssl ) {
+				logSSL();
+				return false;
+			}
 		}
+		
+		return true;
+	}
+
+	template<typename T>
+	inline bool TLSConnectionT<T>::_setSniHostname(const StringASCII& hostname) {
+
+		SSL_set_tlsext_host_name(this->ssl, hostname.toCString());
+
+		return true;
+	}
+
+	template<typename T>
+	inline bool TLSConnectionT<T>::_sslConnect() {
+
 		if ( !SSL_set_fd(this->ssl, int(getSocket())) ) {
 			logSSL();
 			return false;
 		}
+
 		int errorCode(SSL_connect(this->ssl));
 		if ( errorCode < 1 ) {
 			logSSL();
