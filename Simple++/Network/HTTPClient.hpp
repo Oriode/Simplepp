@@ -584,8 +584,6 @@ namespace Network {
 			StringASCII paramStr;
 			this->url.formatParams(&paramStr);
 			const_cast<HTTPRequestT<T> *>(this)->setContent(paramStr);
-		} else {
-			const_cast< HTTPRequestT<T>* >( this )->clearContent();
 		}
 
 		HTTPQueryT<T>::formatQuery(outputStr);
