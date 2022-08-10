@@ -199,10 +199,10 @@ namespace JSON {
 		///@param indent Indentation.
 		///@return True if success, False otherwise
 		template<typename Stream>
-		bool writeJSON(Stream* stream, unsigned int indent = 0 ) const;
+		bool writeJSON(Stream* stream, unsigned int indent = 0, bool beautyfy = true) const;
 
 		template<typename C = T>
-		bool writeJSON( C & str, unsigned int indent = 0 ) const;
+		bool writeJSON( C & str, unsigned int indent = 0, bool beautyfy = true) const;
 
 		///@brief read from a file stream
 		///@param stream stream used to read load this object
@@ -220,13 +220,13 @@ namespace JSON {
 		///@param indent Identation.
 		///@return Human-redable String.
 		template<typename S = T>
-		S toString( unsigned int indent = 0 ) const;
+		S toString( unsigned int indent = 0, bool beautyfy = true) const;
 
 		///@brief Write this node to an Map that support opperator '<<'.
 		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
-		void _writeJSON( C & o, unsigned int indent = 0 ) const;
+		void _writeJSON( C & o, unsigned int indent = 0, bool beautyfy = true ) const;
 
 		NodeMapT<T> * parent;
 	protected:
@@ -387,7 +387,7 @@ namespace JSON {
 		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
-		void _writeJSON( C & o, unsigned int indent = 0 ) const;
+		void _writeJSON( C & o, unsigned int indent = 0, bool beautyfy = true) const;
 
 		bool _setChildName( BasicNodeT<T> * child, const T & oldName, const T & newName );
 	protected:
@@ -481,7 +481,7 @@ namespace JSON {
 		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
-		void _writeJSON( C & o, unsigned int indent = 0 ) const;
+		void _writeJSON( C & o, unsigned int indent = 0, bool beautyfy = true) const;
 	protected:
 		T value;
 		bool bAddQuotes;
@@ -529,7 +529,7 @@ namespace JSON {
 		///@param o Map to write to.
 		///@param tabs Number of tabulations to be added.
 		template<typename C = T, typename Elem = C::ElemType>
-		void _writeJSON( C & o, unsigned int indent = 0 ) const;
+		void _writeJSON( C & o, unsigned int indent = 0, bool beautyfy = true) const;
 
 	private:
 	};
@@ -595,10 +595,10 @@ namespace JSON {
 		///@param indent Indentation.
 		///@return True if success, False otherwise
 		template<typename Stream>
-		bool writeJSON(Stream* stream, unsigned int indent = 0) const;
+		bool writeJSON(Stream* stream, unsigned int indent = 0, bool beautyfy = true) const;
 
 		template<typename C = T>
-		bool writeJSON(C& str, unsigned int indent = 0) const;
+		bool writeJSON(C& str, unsigned int indent = 0, bool beautyfy = true) const;
 
 		///@brief read from a file stream
 		///@param stream stream used to read load this object
@@ -616,7 +616,7 @@ namespace JSON {
 		///@param indent Identation.
 		///@return Human-redable String.
 		template<typename S = T>
-		S toString(unsigned int indent = 0) const;
+		S toString(unsigned int indent = 0, bool beautyfy = true) const;
 
 	private:
 		void _unload();

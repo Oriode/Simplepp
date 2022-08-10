@@ -243,40 +243,40 @@ namespace JSON {
 
 	template<typename T>
 	template<typename Stream>
-	bool BasicNodeT<T>::writeJSON(Stream* fileStreamP, unsigned int indent ) const {
+	bool BasicNodeT<T>::writeJSON(Stream* fileStreamP, unsigned int indent, bool beautyfy) const {
 		Stream & stream( *fileStreamP );
 
 		// Call the virtual protected method.
-		_writeJSON<Stream, char>( stream, indent );
+		_writeJSON<Stream, char>( stream, indent, beautyfy );
 
 		return !( fileStreamP -> hasFailed() );
 	}
 
 	template<typename T>
 	template<typename C>
-	bool BasicNodeT<T>::writeJSON( C & str, unsigned int indent ) const {
-		return _writeJSON<C, C::ElemType>( str, indent );
+	bool BasicNodeT<T>::writeJSON( C & str, unsigned int indent, bool beautyfy) const {
+		return _writeJSON<C, C::ElemType>( str, indent, beautyfy );
 	}
 
 	template<typename T>
 	template<typename S>
-	S BasicNodeT<T>::toString( unsigned int indent ) const {
+	S BasicNodeT<T>::toString( unsigned int indent, bool beautyfy) const {
 		S newString;
 		newString.reserve( 128 );
 
-		_writeJSON<S, S::ElemType>( newString, indent );
+		_writeJSON<S, S::ElemType>( newString, indent, beautyfy );
 		return newString;
 	}
 
 	template<typename T>
 	template<typename C, typename Elem>
-	void BasicNodeT<T>::_writeJSON( C & o, unsigned int indent ) const {
+	void BasicNodeT<T>::_writeJSON( C & o, unsigned int indent, bool beautyfy) const {
 		if ( getType() == Type::Map ) {
-			this -> toMap() -> _writeJSON<C, Elem>( o, indent );
+			this -> toMap() -> _writeJSON<C, Elem>( o, indent, beautyfy );
 		} else if ( getType() == Type::Array ) {
-			this -> toArray() -> _writeJSON<C, Elem>( o, indent );
+			this -> toArray() -> _writeJSON<C, Elem>( o, indent, beautyfy);
 		} else if ( getType() == Type::Value ) {
-			this -> toValue() -> _writeJSON<C, Elem>( o, indent );
+			this -> toValue() -> _writeJSON<C, Elem>( o, indent, beautyfy);
 		}
 	}
 
@@ -859,14 +859,16 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 
 	template<typename T>
 	template<typename C, typename Elem>
-	void NodeMapT<T>::_writeJSON( C & o, unsigned int indent ) const {
+	void NodeMapT<T>::_writeJSON( C & o, unsigned int indent, bool beautyfy) const {
 
 		if ( this -> getName().getSize() ) {
 			o << Elem( '"' );
 			o << this -> getName();
 			o << Elem( '"' );
 			o << Elem( ':' );
-			o << Elem( ' ' );
+			if ( beautyfy ) {
+				o << Elem(' ');
+			}
 		}
 
 		/*
@@ -895,31 +897,38 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 		} else {
 		*/
 		o << Elem( '{' );
-		if ( this -> childrenVector.getSize() ) {
-			o << Elem( '\n' );
-			for ( unsigned int i( 0 ) ; i < indent + 1 ; i++ ) {
-				o << Elem( '\t' );
+		if ( beautyfy ) {
+			if ( this -> childrenVector.getSize() ) {
+				o << Elem('\n');
+				for ( unsigned int i(0); i < indent + 1; i++ ) {
+					o << Elem('\t');
+				}
 			}
 		}
 
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			if ( it != this -> childrenVector.getBegin() ) {
 				o << Elem( ',' );
-				o << Elem( '\n' );
 
-				for ( unsigned int i( 0 ) ; i < indent + 1 ; i++ ) {
-					o << Elem( '\t' );
+				if ( beautyfy ) {
+					o << Elem('\n');
+
+					for ( unsigned int i(0); i < indent + 1; i++ ) {
+						o << Elem('\t');
+					}
 				}
 			}
 
 			BasicNodeT<T> * child( this -> childrenVector.getValueIt( it ) );
-			child -> _writeJSON<C, Elem>( o, indent + 1 );
+			child -> _writeJSON<C, Elem>( o, indent + 1, beautyfy );
 		}
 
-		if ( this -> childrenVector.getSize() ) {
-			o << Elem( '\n' );
-			for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
-				o << Elem( '\t' );
+		if ( beautyfy ) {
+			if ( this -> childrenVector.getSize() ) {
+				o << Elem('\n');
+				for ( unsigned int i(0); i < indent; i++ ) {
+					o << Elem('\t');
+				}
 			}
 		}
 
@@ -1392,13 +1401,15 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 
 	template<typename T>
 	template<typename C, typename Elem>
-	void NodeValueT<T>::_writeJSON( C & o, unsigned int indent ) const {
+	void NodeValueT<T>::_writeJSON( C & o, unsigned int indent, bool beautyfy) const {
 		if ( this -> getName().getSize() ) {
 			o << Elem( '"' );
 			o << this -> getName();
 			o << Elem( '"' );
 			o << Elem( ':' );
-			o << Elem( ' ' );
+			if ( beautyfy ) {
+				o << Elem(' ');
+			}
 		}
 
 		if ( this -> bAddQuotes ) {
@@ -1529,24 +1540,28 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 
 	template<typename T>
 	template<typename C, typename Elem>
-	void NodeArrayT<T>::_writeJSON( C & o, unsigned int indent ) const {
+	void NodeArrayT<T>::_writeJSON( C & o, unsigned int indent, bool beautyfy) const {
 		if ( this -> getName().getSize() ) {
 			o << Elem( '"' );
 			o << this -> getName();
 			o << Elem( '"' );
 			o << Elem( ':' );
-			o << Elem( ' ' );
+			if ( beautyfy ) {
+				o << Elem(' ');
+			}
 		}
 
 		o << Elem( '[' );
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			if ( it != this -> childrenVector.getBegin() ) {
 				o << Elem( ',' );
-				o << Elem( ' ' );
+				if ( beautyfy ) {
+					o << Elem(' ');
+				}
 			}
 
 			BasicNodeT<T> * child( this -> childrenVector.getValueIt( it ) );
-			child -> _writeJSON<C, Elem>( o, indent );
+			child -> _writeJSON<C, Elem>( o, indent, beautyfy );
 		}
 		o << Elem( ']' );
 	}
@@ -1646,9 +1661,9 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 
 	template<typename T>
 	template<typename Stream>
-	inline bool DocumentT<T>::writeJSON(Stream* stream, unsigned int indent) const {
+	inline bool DocumentT<T>::writeJSON(Stream* stream, unsigned int indent, bool beautyfy) const {
 		if ( this->rootNode ) {
-			return this->rootNode->writeJSON(stream, indent);
+			return this->rootNode->writeJSON(stream, indent, beautyfy);
 		}
 		return true;
 	}
@@ -1793,18 +1808,18 @@ bool NodeMapT<T>::write( Stream * stream ) const {
 
 	template<typename T>
 	template<typename C>
-	inline bool DocumentT<T>::writeJSON(C& str, unsigned int indent) const {
+	inline bool DocumentT<T>::writeJSON(C& str, unsigned int indent, bool beautyfy) const {
 		if ( this->rootNode ) {
-			return this->rootNode->writeJSON(str, indent);
+			return this->rootNode->writeJSON(str, indent, beautyfy);
 		}
 		return true;
 	}
 
 	template<typename T>
 	template<typename S>
-	inline S DocumentT<T>::toString(unsigned int indent) const {
+	inline S DocumentT<T>::toString(unsigned int indent, bool beautyfy) const {
 		if ( this->rootNode ) {
-			return this->rootNode->toString(indent);
+			return this->rootNode->toString(indent, beautyfy);
 		} else {
 			return S::null;
 		}
