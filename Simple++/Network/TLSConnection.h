@@ -347,13 +347,15 @@ namespace Network {
 	template<typename T>
 	inline bool TLSConnectionT<T>::_setSniHostname(const StringASCII& hostname) {
 
-		SSL_set_tlsext_host_name(this->ssl, hostname.toCString());
+		this->hostname = hostname;
 
 		return true;
 	}
 
 	template<typename T>
 	inline bool TLSConnectionT<T>::_sslConnect() {
+
+		SSL_set_tlsext_host_name(this->ssl, hostname.toCString());
 
 		if ( !SSL_set_fd(this->ssl, int(getSocket())) ) {
 			logSSL();
