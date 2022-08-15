@@ -2296,18 +2296,24 @@ static Type BasicString<T>::_toSignedInteger( const T ** itP, unsigned int base,
 		if ( !endFunc( it ) ) {
 			result = -( *it - 48 );
 			it++;
+
+			for ( ; !endFunc(it); it++ ) {	//Start the computation
+				result = result * base - ( *it - T('0') );
+			}
+
 		} else
 			return 0;
 	} else {
 		if ( !endFunc( it ) ) {
 			result = *it - 48;
 			it++;
+
+			for ( ; !endFunc(it); it++ ) {	//Start the computation
+				result = result * base + ( *it - T('0') );
+			}
+
 		} else
 			return 0;
-	}
-
-	for ( ; !endFunc( it ) ; it++ ) {	//Start the computation
-		result = result * base + ( *it - T( '0' ) );
 	}
 
 	return result;
@@ -2828,13 +2834,13 @@ inline unsigned short BasicString<T>::_fromString(const T** it, const EndFunc& e
 template<typename T>
 template<typename C, typename EndFunc>
 inline unsigned long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned long int*) {
-	return toLong(it, unsigned int(10), endFunc);
+	return toULong(it, unsigned int(10), endFunc);
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
 inline unsigned long long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned long long int*) {
-	return toLongLong(it, unsigned int(10), endFunc);
+	return toULongLong(it, unsigned int(10), endFunc);
 }
 
 template<typename T>
