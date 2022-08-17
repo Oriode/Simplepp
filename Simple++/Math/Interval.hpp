@@ -73,7 +73,7 @@ namespace Math {
 
 	template<typename T>
 	inline Interval<T> Interval<T>::getIntersect(const Interval<T>& interval) const {
-		if ( interval.getBegin() < this->begin ) {
+		if ( this->begin > interval.getBegin() ) {
 			if ( this->begin < interval.getEnd() ) {
 				if ( this->end < interval.getEnd() ) {
 					return Interval<T>(this->begin, this->end);
@@ -85,8 +85,8 @@ namespace Math {
 				return Interval<T>(T(0.0), T(0.0));
 			}
 		} else {
-			if ( interval.getBegin() < this->end ) {
-				if ( interval.getEnd() < this->end ) {
+			if ( this->end > interval.getBegin() ) {
+				if ( this->end > interval.getEnd() ) {
 					return Interval<T>(interval.getBegin(), interval.getEnd());
 				} else {
 					return Interval<T>(interval.getBegin(), this->end);
