@@ -38,7 +38,7 @@ namespace Math {
 	}
 	template<typename T>
 	template<typename Functor>
-	inline MATH_FUNC_QUALIFIER Vec2<T>& Vec2<T>::apply(Functor& func) {
+	MATH_FUNC_QUALIFIER Vec2<T>& Vec2<T>::apply(Functor& func) {
 		func(this -> x);
 		func(this -> y);
 		return *this;
@@ -58,17 +58,17 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline constexpr Size Vec2<T>::getSize() const {
+	constexpr Size Vec2<T>::getSize() const {
 		return Size(2);
 	}
 
 	template<typename T>
-	inline const T* Vec2<T>::getData() const {
+	const T* Vec2<T>::getData() const {
 		return this->values;
 	}
 
 	template<typename T>
-	inline Vec2<T>& Vec2<T>::fill(const T& v) {
+	Vec2<T>& Vec2<T>::fill(const T& v) {
 		this->x = v;
 		this->y = v;
 
@@ -76,17 +76,17 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline Vec2<T>& Vec2<T>::zeros() {
+	Vec2<T>& Vec2<T>::zeros() {
 		return fill(T(0));
 	}
 
 	template<typename T>
-	inline Vec2<T>& Vec2<T>::ones() {
+	Vec2<T>& Vec2<T>::ones() {
 		return fill(T(1));
 	}
 
 	template<typename T>
-	inline Vec2<T>& Vec2<T>::randomF() {
+	Vec2<T>& Vec2<T>::randomF() {
 		this->x = Math::randomF();
 		this->y = Math::randomF();
 
@@ -94,7 +94,7 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline Vec2<T>& Vec2<T>::random(const T& min, const T& max) {
+	Vec2<T>& Vec2<T>::random(const T& min, const T& max) {
 		this->x = Math::random(min, max);
 		this->y = Math::random(min, max);
 

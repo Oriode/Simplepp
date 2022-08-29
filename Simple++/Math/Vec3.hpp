@@ -41,7 +41,7 @@ namespace Math {
 	}
 	template<typename T>
 	template<typename Compare>
-	inline MATH_FUNC_QUALIFIER Vec3<T>& Vec3<T>::apply(Compare& func) {
+	MATH_FUNC_QUALIFIER Vec3<T>& Vec3<T>::apply(Compare& func) {
 		func(this -> x);
 		func(this -> y);
 		func(this -> z);
@@ -71,17 +71,17 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline constexpr Size Vec3<T>::getSize() const {
+	constexpr Size Vec3<T>::getSize() const {
 		return Size(3);
 	}
 
 	template<typename T>
-	inline const T* Vec3<T>::getData() const {
+	const T* Vec3<T>::getData() const {
 		return this->values;
 	}
 
 	template<typename T>
-	inline Vec3<T>& Vec3<T>::fill(const T& v) {
+	Vec3<T>& Vec3<T>::fill(const T& v) {
 		this->x = v;
 		this->y = v;
 		this->z = v;
@@ -90,17 +90,17 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline Vec3<T>& Vec3<T>::zeros() {
+	Vec3<T>& Vec3<T>::zeros() {
 		return fill(T(0));
 	}
 
 	template<typename T>
-	inline Vec3<T>& Vec3<T>::ones() {
+	Vec3<T>& Vec3<T>::ones() {
 		return fill(T(1));
 	}
 
 	template<typename T>
-	inline Vec3<T>& Vec3<T>::randomF() {
+	Vec3<T>& Vec3<T>::randomF() {
 		this->x = Math::randomF();
 		this->y = Math::randomF();
 
@@ -108,7 +108,7 @@ namespace Math {
 	}
 
 	template<typename T>
-	inline Vec3<T>& Vec3<T>::random(const T& min, const T& max) {
+	Vec3<T>& Vec3<T>::random(const T& min, const T& max) {
 		this->x = Math::random(min, max);
 		this->y = Math::random(min, max);
 

@@ -16,8 +16,8 @@ namespace Math {
 		Interval(const T begin, const T end);
 		Interval(const Vec2<T>& v);
 
-		const T getBegin() const;
-		const T getEnd() const;
+		const T & getBegin() const;
+		const T & getEnd() const;
 
 		void setBegin(const T& begin);
 		void setEnd(const T& end);
@@ -26,13 +26,13 @@ namespace Math {
 		///@param i Current index.
 		///@param delta T to rollback.
 		///@return Safe index inside the Interval.
-		T getMin(const T i, const T delta) const;
+		const T & getMin(const T i, const T delta) const;
 
 		///@brief Get the safe candle index of "i + delta".
 		///@param i Current index.
 		///@param delta T to add.
 		///@return Safe index inside the Interval.
-		T getMax(const T i, const T delta) const;
+		const T & getMax(const T i, const T delta) const;
 
 		///@brief Get the size of this Interval.
 		///@return Interval size.

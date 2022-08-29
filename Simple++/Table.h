@@ -331,19 +331,19 @@ template<typename T>
 const Size Table<T>::overflow = Size(-1);
 
 template<typename T>
-inline Table<T>::Table() :
+Table<T>::Table() :
 	size(Size(0)),
 	dataTable(NULL)
 {}
 
 template<typename T>
-inline Table<T>::Table(const Size size, T * dataTable) :
+Table<T>::Table(const Size size, T * dataTable) :
 	size(size),
 	dataTable(dataTable)
 {}
 
 template<typename T>
-inline Table<T>::Table(Table<T> && v) :
+Table<T>::Table(Table<T> && v) :
 	size(Utility::toRValue(v.size)),
 	dataTable(Utility::toRValue(v.dataTable))
 {
@@ -351,7 +351,7 @@ inline Table<T>::Table(Table<T> && v) :
 }
 
 template<typename T>
-inline Table<T>& Table<T>::operator=(Table<T>&& v) {
+Table<T>& Table<T>::operator=(Table<T>&& v) {
 	this->size = Utility::toRValue(v.size);
 	this->dataTable = Utility::toRValue(v.dataTable);
 
@@ -361,15 +361,15 @@ inline Table<T>& Table<T>::operator=(Table<T>&& v) {
 }
 
 template<typename T>
-inline Table<T>::Table(typename Table<T>::protectedCtor) {}
+Table<T>::Table(typename Table<T>::protectedCtor) {}
 
 template<typename T>
-inline const T& Table<T>::operator[](const Size i) const {
+const T& Table<T>::operator[](const Size i) const {
 	return getValueI(i);
 }
 
 template<typename T>
-inline T& Table<T>::operator[](const Size i) {
+T& Table<T>::operator[](const Size i) {
 	return getValueI(i);
 }
 
@@ -394,7 +394,7 @@ T& Table<T>::getFirst() {
 }
 
 template<typename T>
-inline Size Table<T>::getIndex(float f) const {
+Size Table<T>::getIndex(float f) const {
 	float rounding(0.5f / float(this->size));
 	f = f + rounding;
 	if ( f < 0.0f ) {
@@ -402,7 +402,7 @@ inline Size Table<T>::getIndex(float f) const {
 	} else if ( f > 1.0f ) {
 		return this->size - Size(1);
 	} else {
-		Size i(f * float(this->size - Size(1)));
+		Size i(static_cast< Size >( f * float(this->size - Size(1)) ));
 		return i;
 	}
 }
@@ -418,17 +418,17 @@ void Table<T>::setValueI(const Size i, const T& data) {
 }
 
 template<typename T>
-inline void Table<T>::setValueF(float f, const T& data) {
+void Table<T>::setValueF(float f, const T& data) {
 	this->dataTable[ getIndex(f) ] = data;
 }
 
 template<typename T>
-inline const T& Table<T>::getValueF(float f) const {
+const T& Table<T>::getValueF(float f) const {
 	return const_cast< Table<T> * >( this )->getValueF(f);
 }
 
 template<typename T>
-inline T& Table<T>::getValueF(float f) {
+T& Table<T>::getValueF(float f) {
 	return this->dataTable[ getIndex(f) ];
 }
 
@@ -509,7 +509,7 @@ bool Table<T>::operator>=(const Table<T>& v) const {
 
 template<typename T>
 template<typename Compare>
-inline MATH_FUNC_QUALIFIER bool Table<T>::AND(Compare& func, const Table<T>& v) const {
+MATH_FUNC_QUALIFIER bool Table<T>::AND(Compare& func, const Table<T>& v) const {
 	if ( this -> size != v.size )
 		return false;
 
@@ -523,7 +523,7 @@ inline MATH_FUNC_QUALIFIER bool Table<T>::AND(Compare& func, const Table<T>& v) 
 
 template<typename T>
 template<typename Compare>
-inline MATH_FUNC_QUALIFIER bool Table<T>::AND(Compare& func, const T& s) const {
+MATH_FUNC_QUALIFIER bool Table<T>::AND(Compare& func, const T& s) const {
 	for ( Size i(0); i < this->size; i++ ) {
 		if ( !( func(this->dataTable[ i ], s) ) ) {
 			return false;
@@ -534,7 +534,7 @@ inline MATH_FUNC_QUALIFIER bool Table<T>::AND(Compare& func, const T& s) const {
 
 template<typename T>
 template<typename Compare>
-inline MATH_FUNC_QUALIFIER bool Table<T>::OR(Compare& func, const Table<T>& v) const {
+MATH_FUNC_QUALIFIER bool Table<T>::OR(Compare& func, const Table<T>& v) const {
 	Size minSize(Math::min(getSize(), v.getSize()));
 
 	for ( Size i(0); i < minSize; i++ ) {
@@ -547,7 +547,7 @@ inline MATH_FUNC_QUALIFIER bool Table<T>::OR(Compare& func, const Table<T>& v) c
 
 template<typename T>
 template<typename Compare>
-inline MATH_FUNC_QUALIFIER bool Table<T>::OR(Compare& func, const T& s) const {
+MATH_FUNC_QUALIFIER bool Table<T>::OR(Compare& func, const T& s) const {
 	for ( Size i(0); i < this->size; i++ ) {
 		if ( func(this->dataTable[ i ], s) ) {
 			return true;
@@ -568,32 +568,32 @@ bool Table<T>::operator==(const Table<T>& v) const {
 
 template<typename T>
 template<typename C>
-inline Table<T>::Table(const Table<C>& v) :
+Table<T>::Table(const Table<C>& v) :
 	size(v.size),
 	dataTable(v.dataTable)
 {}
 
 template<typename T>
 template<typename C>
-inline Table<T>& Table<T>::operator=(const Table<C>&v) {
+Table<T>& Table<T>::operator=(const Table<C>&v) {
 	this->size = v.size;
 	this->dataTable = v.dataTable;
 }
 
 template<typename T>
-inline Table<T>& Table<T>::operator=(const Table<T>& v) {
+Table<T>& Table<T>::operator=(const Table<T>& v) {
 	this->size = v.size;
 	this->dataTable = v.dataTable;
 }
 
 template<typename T>
-inline Table<T>::Table(const Table<T>& v) :
+Table<T>::Table(const Table<T>& v) :
 	size(v.size),
 	dataTable(v.dataTable) {}
 
 template<typename T>
 template<typename Functor, typename C>
-inline Table<T>& Table<T>::apply(Functor& functor, const Table<C>& v) {
+Table<T>& Table<T>::apply(Functor& functor, const Table<C>& v) {
 	assert(getSize() == v.getSize());
 	for ( Size i(0); i < getSize(); i++ ) {
 		functor(this->dataTable[ i ], v[ i ]);
@@ -604,7 +604,7 @@ inline Table<T>& Table<T>::apply(Functor& functor, const Table<C>& v) {
 
 template<typename T>
 template<typename Functor>
-inline Table<T>& Table<T>::apply(Functor& functor, const T& s) {
+Table<T>& Table<T>::apply(Functor& functor, const T& s) {
 	for ( Size i(0); i < getSize(); i++ ) {
 		functor(this->dataTable[ i ], s);
 	}
@@ -614,7 +614,7 @@ inline Table<T>& Table<T>::apply(Functor& functor, const T& s) {
 
 template<typename T>
 template<typename Functor>
-inline Table<T>& Table<T>::apply(Functor& functor) {
+Table<T>& Table<T>::apply(Functor& functor) {
 	for ( Size i(0); i < getSize(); i++ ) {
 		functor(this->dataTable[ i ]);
 	}
@@ -624,7 +624,7 @@ inline Table<T>& Table<T>::apply(Functor& functor) {
 
 template<typename T>
 template<typename Functor, typename C>
-inline Table<T>& Table<T>::set(Functor& functor, const Table<C>& v) {
+Table<T>& Table<T>::set(Functor& functor, const Table<C>& v) {
 	assert(getSize() == v.getSize());
 	for ( Size i(0); i < getSize(); i++ ) {
 		T& value(this->dataTable[ i ]);
@@ -636,7 +636,7 @@ inline Table<T>& Table<T>::set(Functor& functor, const Table<C>& v) {
 
 template<typename T>
 template<typename Functor>
-inline Table<T>& Table<T>::set(Functor& functor, const T& s) {
+Table<T>& Table<T>::set(Functor& functor, const T& s) {
 	for ( Size i(0); i < getSize(); i++ ) {
 		T& value(this->dataTable[ i ]);
 		value = functor(s);
@@ -647,7 +647,7 @@ inline Table<T>& Table<T>::set(Functor& functor, const T& s) {
 
 template<typename T>
 template<typename Functor>
-inline Table<T>& Table<T>::set(Functor& functor) {
+Table<T>& Table<T>::set(Functor& functor) {
 	for ( Size i(0); i < getSize(); i++ ) {
 		T& value(this->dataTable[ i ]);
 		value = functor.operator()<T>( );
@@ -776,7 +776,7 @@ const Size Table<T>::searchI(const T& data) const {
 
 template<typename T>
 template<typename S>
-inline S Table<T>::toString() const {
+S Table<T>::toString() const {
 	S outputStr;
 
 	outputStr << S::ElemType('[');

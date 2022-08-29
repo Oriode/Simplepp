@@ -2387,7 +2387,7 @@ static Type BasicString<T>::_toFloat( const T ** itP, unsigned int base, const E
 		negative = false;
 	}
 
-	const Type baseType( base );
+	const Type baseType(static_cast<Type>(base) );
 	for ( ; !endFunc( it ) && *it != T( '.' ); it++ ) {			//Start the computation
 		result *= baseType;
 		result += Type( *it - T( '0' ) );

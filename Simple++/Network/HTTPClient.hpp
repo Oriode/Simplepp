@@ -766,12 +766,12 @@ namespace Network {
 
 			int contentLength;
 			if ( contentSizeParam ) {
-				contentLength = contentSizeParam->getValue().toULongLong();
+				contentLength = contentSizeParam->getValue().toInt();
 			} else {
 				contentLength = Size(0);
 			}
 
-			maxSizeReceive = contentLength + ( parseIt - this->receiveBuffer );
+			maxSizeReceive = contentLength + static_cast<int>( parseIt - this->receiveBuffer );
 
 			while ( totalReceivedLength < maxSizeReceive ) {
 				int receivedLength(connection.receive(this->receiveBuffer + totalReceivedLength, maxSizeReceive - totalReceivedLength));
