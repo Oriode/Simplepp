@@ -26,13 +26,13 @@ namespace Math {
 		///@param i Current index.
 		///@param delta T to rollback.
 		///@return Safe index inside the Interval.
-		const T & getMin(const T i, const T delta) const;
+		T getMin(const T i, const T delta) const;
 
 		///@brief Get the safe candle index of "i + delta".
 		///@param i Current index.
 		///@param delta T to add.
 		///@return Safe index inside the Interval.
-		const T & getMax(const T i, const T delta) const;
+		T getMax(const T i, const T delta) const;
 
 		///@brief Get the size of this Interval.
 		///@return Interval size.

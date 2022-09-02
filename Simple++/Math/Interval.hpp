@@ -200,7 +200,7 @@ namespace Math {
 	}
 
 	template<typename T>
-	const T & Interval<T>::getMax(const T i, const T delta) const {
+	T Interval<T>::getMax(const T i, const T delta) const {
 		T max(i + delta);
 		if ( max > this->end ) {
 			return this->end;
@@ -210,7 +210,7 @@ namespace Math {
 	}
 
 	template<typename T>
-	const T & Interval<T>::getMin(const T i, const T delta) const {
+	T Interval<T>::getMin(const T i, const T delta) const {
 		if ( i < this->begin + delta ) {
 			return this->begin;
 		} else {
