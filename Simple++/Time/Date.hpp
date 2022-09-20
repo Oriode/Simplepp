@@ -855,7 +855,7 @@ namespace Time {
 					str << getWeekDayStr<S>( DateT<T>::getWeekDay( *this ) );
 					break;
 				case S::ElemType( 'u' ):
-					str << ( DateT<T>::getWeekDay<S>( *this ) + 1 );
+					str << ( DateT<T>::getWeekDay( *this ) + 1 );
 					break;
 					//HOURS
 				case S::ElemType( 'H' ):
