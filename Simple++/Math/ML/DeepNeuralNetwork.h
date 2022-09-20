@@ -62,8 +62,20 @@ namespace Math {
 			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 
 			const Size getNbData() const;
-			constexpr Size getNbLayers() const;
+
+			static constexpr Size getNbLayers() {
+				return M::nbLayers;
+			}
+
 			constexpr Size getNbParams() const;
+
+			static constexpr Size getNbFeatures() {
+				return M::m[ Size(0) ][ Size(0) ];
+			}
+
+			static constexpr Size getNbOuts() {
+				return M::m[ getNbLayers() - Size(1)][Size(1)];
+			}
 
 			const OS::Path& getFilePath() const;
 			void setFilePath(const OS::Path& filePath);
@@ -602,11 +614,6 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline const Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getNbData() const {
 			return this->featureVector.getSize();
-		}
-
-		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline constexpr Size DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getNbLayers() const {
-			return M::nbLayers;
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>

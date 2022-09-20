@@ -22,10 +22,18 @@ namespace Math {
 			void setGradMat(const Mat<T>& gradMat);
 			void setInTableVector(const Vector<StaticTable<T, NbFeatures>>* inTableVector);
 
-			constexpr Size getNbFeatures() const;
-			constexpr Size getNbNeurons() const;
-			constexpr Size getNbNeuronParams() const;
-			constexpr Size getNbParams() const;
+			static constexpr Size getNbFeatures() {
+				return NbFeatures;
+			}
+			static constexpr Size getNbNeurons() {
+				return NbNeurons;
+			}
+			static constexpr Size getNbNeuronParams() {
+				return NbFeatures + Size(1);
+			}
+			static constexpr Size getNbParams() {
+				return getNbNeuronParams() * getNbNeurons();
+			}
 
 			const Size getNbData() const;
 
@@ -234,26 +242,6 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::setInTableVector(const Vector<StaticTable<T, NbFeatures>>* inTableVector) {
 			this->inTableVector = inTableVector;
-		}
-
-		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbFeatures() const {
-			return NbFeatures;
-		}
-
-		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbNeurons() const {
-			return NbNeurons;
-		}
-
-		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbNeuronParams() const {
-			return NbFeatures + Size(1);
-		}
-
-		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline constexpr Size NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getNbParams() const {
-			return getNbNeuronParams() * getNbNeurons();
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
