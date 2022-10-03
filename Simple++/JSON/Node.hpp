@@ -1603,7 +1603,7 @@ bool NodeMapT<S>::write( Stream * stream ) const {
 
 	template<typename S>
 	inline DocumentT<S>::DocumentT(BasicNodeT<S>* rootNode) :
-		reootNode(rootNode)
+		rootNode(rootNode)
 	{}
 
 	template<typename S>
