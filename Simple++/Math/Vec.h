@@ -253,13 +253,13 @@ namespace Math {
 	template<typename T>
 	template<typename C>
 	inline bool Vec<T>::fromJSON(const JSON::BasicNodeT<C>* node) {
-		return JSON::fromJSON(node, reinterpret_cast< BasicVector<T> * >( this ));
+		return JSON::fromJSON<C>(node, reinterpret_cast< BasicVector<T> * >( this ));
 	}
 
 	template<typename T>
 	template<typename C>
 	inline JSON::NodeArrayT<C>* Vec<T>::toJSON() const {
-		return JSON::toJSON(*reinterpret_cast< const Table<T> * >( this ));
+		return JSON::toJSON<C>(*reinterpret_cast< const Table<T> * >( this ));
 	}
 
 	template<typename T>

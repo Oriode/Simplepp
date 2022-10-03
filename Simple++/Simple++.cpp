@@ -46,7 +46,7 @@
 //#define DEBUG_IO
 //#define DEBUG_NETWORK
 //#define DEBUG_SSL
-#define DEBUG_HTTP
+//#define DEBUG_HTTP
 //#define DEBUG_CRYPTO
 //#define DEBUG_BASE64
 //#define DEBUG_HEXADECIMAL
@@ -55,7 +55,7 @@
 //#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-//#define DEBUG_VEC
+#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
 //#define DEBUG_LINEAR_REGRESSION
@@ -1587,7 +1587,7 @@ int main(int argc, char* argv[]) {
 		info(v1.toJSON()->toString());
 
 		Math::Vec<double> v7;
-		JSON::fromJSON(JSON::toJSON(v1), &v7);
+		JSON::fromJSON(JSON::toJSON<UTF8String>(v1), &v7);
 
 		info(v7.toJSON()->toString());
 

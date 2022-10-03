@@ -848,7 +848,7 @@ namespace Math {
 			}
 			for ( Size j(0); j < childNode->getNbChildren(); j++ ) {
 				const JSON::BasicNodeT<C>* nodeValue(childNode->getChild(j));
-				if ( !JSON::fromJSON(nodeValue, &getValueI(i, j)) ) {
+				if ( !JSON::fromJSON<C>(nodeValue, &getValueI(i, j)) ) {
 					return false;
 				}
 			}

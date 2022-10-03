@@ -102,6 +102,58 @@ namespace Math {
 	}
 
 	template<typename T>
+	template<typename S>
+	inline bool Vec2<T>::fromJSON(const JSON::BasicNodeT<S>* node) {
+		if ( node->getNbChildren() != Size(2) ) {
+			return false;
+		}
+
+		if ( !JSON::fromJSON<S>(node, &this->x) ) {
+			return false;
+		}
+		if ( !JSON::fromJSON<S>(node, &this->y) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	template<typename S>
+	inline JSON::BasicNodeT<S>* Vec2<T>::toJSON() const {
+		JSON::NodeArrayT<S>* nodeArray(new JSON::NodeArrayT<S>());
+
+		nodeArray->addChild(JSON::fromJSON<S>(this->x));
+		nodeArray->addChild(JSON::fromJSON<S>(this->y));
+
+		return nodeArray;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	bool Vec2<T>::read(Stream* stream) {
+		if ( !IO::read(stream, &this->x) ) {
+			return false;
+		}
+		if ( !IO::read(stream, &this->y) ) {
+			return false;
+		}
+		return true;
+	}
+
+	template<typename T>
+	template<typename Stream>
+	bool Vec2<T>::write(Stream* stream) const {
+		if ( !IO::write(stream, &this->x) ) {
+			return false;
+		}
+		if ( !IO::write(stream, &this->y) ) {
+			return false;
+		}
+		return true;
+	}
+
+	template<typename T>
 	MATH_FUNC_QUALIFIER T & Vec2<T>::operator[](Size index ) {
 		return this -> values[index];
 	}

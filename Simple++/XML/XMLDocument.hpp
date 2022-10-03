@@ -1,51 +1,51 @@
 namespace XML {
 
-	template<typename T>
-	DocumentT<T>::DocumentT( const T & str ) :
+	template<typename S>
+	DocumentT<S>::DocumentT( const S & str ) :
 		rootNode( NULL ) {
 		_parse( str );
 	}
 
-	template<typename T>
-	DocumentT<T>::DocumentT( const DocumentT<T> & document ) :
+	template<typename S>
+	DocumentT<S>::DocumentT( const DocumentT<S> & document ) :
 		version( document.version ),
 		encoding( document.encoding ),
-		rootNode( new NodeT<T>( *document.rootNode ) ) {}
+		rootNode( new NodeT<S>( *document.rootNode ) ) {}
 
-	template<typename T>
-	DocumentT<T>::DocumentT( DocumentT<T> && document ) :
+	template<typename S>
+	DocumentT<S>::DocumentT( DocumentT<S> && document ) :
 		version( Utility::toRValue( document.version ) ),
 		encoding( Utility::toRValue( document.encoding ) ),
 		rootNode( Utility::toRValue( document.rootNode ) ) {
 		document.rootNode = NULL;
 	}
 
-	template<typename T>
-	DocumentT<T>::DocumentT( const OS::Path & filePath ) {
+	template<typename S>
+	DocumentT<S>::DocumentT( const OS::Path & filePath ) {
 		_readFileXML( filePath );
 	}
 
-	template<typename T>
-	DocumentT<T>::DocumentT() :
+	template<typename S>
+	DocumentT<S>::DocumentT() :
 		version( 0.0 ),
-		rootNode( new NodeT<T>( "#document", NodeT<T>::Type::Document ) ) {
+		rootNode( new NodeT<S>( "#document", NodeT<S>::Type::Document ) ) {
 
 	}
 
-	template<typename T>
-	DocumentT<T> & DocumentT<T>::operator=( const DocumentT<T> & document ) {
+	template<typename S>
+	DocumentT<S> & DocumentT<S>::operator=( const DocumentT<S> & document ) {
 		_unload();
 
 		this -> version = document.version;
 		this -> encoding = document.encoding;
 
-		this -> rootNode = new NodeT<T>( *( document.rootNode ) );
+		this -> rootNode = new NodeT<S>( *( document.rootNode ) );
 
 		return *this;
 	}
 
-	template<typename T>
-	DocumentT<T> & DocumentT<T>::operator=( DocumentT<T> && document ) {
+	template<typename S>
+	DocumentT<S> & DocumentT<S>::operator=( DocumentT<S> && document ) {
 		_unload();
 
 		this -> version = Utility::toRValue( document.version );
@@ -56,20 +56,20 @@ namespace XML {
 		return *this;
 	}
 
-	template<typename T>
-	DocumentT<T>::~DocumentT() {
+	template<typename S>
+	DocumentT<S>::~DocumentT() {
 		_unload();
 	}
 
-	template<typename T>
-	bool DocumentT<T>::readXML( const T & str ) {
-		const typename T::ElemType * buffer( str.toCString() );
-		return readXML<T::ElemType>( &buffer );
+	template<typename S>
+	bool DocumentT<S>::readXML( const S & str ) {
+		const typename S::ElemType * buffer( str.toCString() );
+		return readXML<S::ElemType>( &buffer );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool DocumentT<T>::_parseParameterSpecial( const C ** buffer, T * nameP, T * valueP, const EndFunc & endFunc ) {
+	bool DocumentT<S>::_parseParameterSpecial( const C ** buffer, S * nameP, S * valueP, const EndFunc & endFunc ) {
 		const C *& it( *buffer );
 
 		struct FunctorValue {
@@ -102,10 +102,10 @@ namespace XML {
 		}
 
 		if ( iteratorBegin != it ) {
-			T & name( *nameP );
-			T & value( *valueP );
+			S & name( *nameP );
+			S & value( *valueP );
 
-			name = T( iteratorBegin, Size( it - iteratorBegin ) );
+			name = S( iteratorBegin, Size( it - iteratorBegin ) );
 
 			if ( (*it) == C( '=' ) ) {
 				( it )++; // Just to skip the equal sign
@@ -123,7 +123,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					value = T( iteratorBegin, Size( it - iteratorBegin ) );
+					value = S( iteratorBegin, Size( it - iteratorBegin ) );
 
 					if ( ( *it ) == C( '"' ) ) ( it )++; // Skip the quotes again
 				} else {
@@ -137,7 +137,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					value = T( iteratorBegin, Size( it - iteratorBegin ) );
+					value = S( iteratorBegin, Size( it - iteratorBegin ) );
 				}
 
 			}
@@ -147,51 +147,51 @@ namespace XML {
 	}
 
 
-	template<typename T>
-	Vector< NodeT<T> * > DocumentT<T>::getElementsById( const T & id ) const {
+	template<typename S>
+	Vector< NodeT<S> * > DocumentT<S>::getElementsById( const S & id ) const {
 		return this -> rootNode -> getElementsById( id );
 	}
 
-	template<typename T>
-	Vector< NodeT<T> * > DocumentT<T>::getElementsByName( const T & name ) const {
+	template<typename S>
+	Vector< NodeT<S> * > DocumentT<S>::getElementsByName( const S & name ) const {
 		return this -> rootNode -> getElementsByName( name );
 	}
 
-	template<typename T>
-	NodeT<T> * DocumentT<T>::getRoot() {
+	template<typename S>
+	NodeT<S> * DocumentT<S>::getRoot() {
 		return this -> rootNode;
 	}
 
-	template<typename T>
-	float DocumentT<T>::getVersion() const {
+	template<typename S>
+	float DocumentT<S>::getVersion() const {
 		return this -> version;
 	}
 
-	template<typename T>
-	void DocumentT<T>::setVersion( float version ) {
+	template<typename S>
+	void DocumentT<S>::setVersion( float version ) {
 		this -> version = version;
 	}
 
-	template<typename T>
-	const StringASCII & DocumentT<T>::getEncoding() const {
+	template<typename S>
+	const StringASCII & DocumentT<S>::getEncoding() const {
 		return this -> encoding;
 	}
 
-	template<typename T>
-	void DocumentT<T>::setEncoding( const T & encoding ) {
+	template<typename S>
+	void DocumentT<S>::setEncoding( const S & encoding ) {
 		this -> encoding = encoding;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool DocumentT<T>::writeXML( Stream * fileStreamP ) const {
+	bool DocumentT<S>::writeXML( Stream * fileStreamP ) const {
 		Stream & stream( *fileStreamP );
 		_writeXML<Stream, char>( stream );
 		return !( fileStreamP -> hasFailed() );
 	}
 
-	template<typename T>
-	bool DocumentT<T>::writeFileXML( const OS::Path & filePath ) const {
+	template<typename S>
+	bool DocumentT<S>::writeFileXML( const OS::Path & filePath ) const {
 		IO::FileStream stream( filePath, IO::OpenMode::Write );
 		if ( stream.isOpen() ) {
 			return writeXML(&stream);
@@ -199,16 +199,16 @@ namespace XML {
 		return false;
 	}
 
-	template<typename T>
-	bool DocumentT<T>::readFileXML( const OS::Path & filePath ) {
+	template<typename S>
+	bool DocumentT<S>::readFileXML( const OS::Path & filePath ) {
 		_clear();
 
 		return _readXML( filePath );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool DocumentT<T>::readXML( const C ** buffer, const EndFunc & endFunc ) {
+	bool DocumentT<S>::readXML( const C ** buffer, const EndFunc & endFunc ) {
 		struct FunctorSpace {
 			bool operator()( const C & c ) { return c != C( '<' ) && c != C( '\n' ) && c != C( '\t' ) && c != C( ' ' ); }
 		};
@@ -221,13 +221,13 @@ namespace XML {
 
 		const C *& it( *buffer );
 
-		T rootName( "#document" );
-		this -> rootNode = new NodeT<T>( rootName, NodeT<T>::Type::Document );
+		S rootName( "#document" );
+		this -> rootNode = new NodeT<S>( rootName, NodeT<S>::Type::Document );
 
 		while ( functorSpace( *it ) ) it++;
 
-		if ( !NodeT<T>::_expectChar( &it, C( '<' ) ) ) return false;
-		if ( !NodeT<T>::_expectChar( &it, C( '?' ) ) ) {
+		if ( !NodeT<S>::_expectChar( &it, C( '<' ) ) ) return false;
+		if ( !NodeT<S>::_expectChar( &it, C( '?' ) ) ) {
 			// No special node. Directly parse the content.
 			it--; // Roll back to the '<'.
 			return this -> rootNode -> appendXML( &it, endFunc );
@@ -236,13 +236,13 @@ namespace XML {
 
 		// We have a special node
 		static C xmlFlag[] = { C( 'x' ), C( 'm' ), C( 'l' ) };
-		static T encodingStr( "encoding" );
-		static T versionStr( "version" );
+		static S encodingStr( "encoding" );
+		static S versionStr( "version" );
 
-		if ( DocumentT<T>::cmpStr( it, xmlFlag, 3 ) ) {
+		if ( DocumentT<S>::cmpStr( it, xmlFlag, 3 ) ) {
 			it += 3;
-			T paramName;
-			T paramValue;
+			S paramName;
+			S paramValue;
 
 			while ( _parseParameterSpecial( &it, &paramName, &paramValue, endFunc ) ) {
 				if ( paramName == encodingStr ) {
@@ -256,31 +256,31 @@ namespace XML {
 			return false;
 		}
 
-		if ( !NodeT<T>::_expectChar( &it, C( '?' ) ) ) return false;
-		if ( !NodeT<T>::_expectChar( &it, C( '>' ) ) ) return false;
+		if ( !NodeT<S>::_expectChar( &it, C( '?' ) ) ) return false;
+		if ( !NodeT<S>::_expectChar( &it, C( '>' ) ) ) return false;
 
 
 		return this -> rootNode -> appendXML( &it, endFunc );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool DocumentT<T>::readXML( const C * buffer, const EndFunc & endFunc ) {
+	bool DocumentT<S>::readXML( const C * buffer, const EndFunc & endFunc ) {
 		return readXML( &buffer, endFunc );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C>
-	bool DocumentT<T>::cmpStr( const C * b1, const C * b2, int size ) {
+	bool DocumentT<S>::cmpStr( const C * b1, const C * b2, int size ) {
 		for ( int i( 0 ); i < size; i++ ) {
 			if ( b1[i] != b2[i] ) return false;
 		}
 		return true;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool DocumentT<T>::read( Stream * stream ) {
+	bool DocumentT<S>::read( Stream * stream ) {
 		_unload();
 		this -> rootNode = NULL;
 
@@ -292,7 +292,7 @@ namespace XML {
 			_clear();
 			return false;
 		}
-		this -> rootNode = new NodeT<T>( T( "#document" ), NodeT<T>::Type::Document );
+		this -> rootNode = new NodeT<S>( S( "#document" ), NodeT<S>::Type::Document );
 		if ( !IO::read( stream, this -> rootNode ) ) {
 			_clear();
 			return false;
@@ -302,9 +302,9 @@ namespace XML {
 		return true;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool DocumentT<T>::write( Stream * stream ) const {
+	bool DocumentT<S>::write( Stream * stream ) const {
 		if ( !IO::write( stream, &this -> version ) )
 			return false;
 		if ( !IO::write( stream, &this -> encoding ) )
@@ -315,25 +315,25 @@ namespace XML {
 		return true;
 	}
 
-	template<typename T>
-	void DocumentT<T>::_clear() {
+	template<typename S>
+	void DocumentT<S>::_clear() {
 		_unload();
 		this -> version = 0.0f;
 		this -> encoding.clear();
-		this -> rootNode = new NodeT<T>( "#document", NodeT<T>::Type::Document );
+		this -> rootNode = new NodeT<S>( "#document", NodeT<S>::Type::Document );
 	}
 
-	template<typename T>
-	void DocumentT<T>::_unload() {
+	template<typename S>
+	void DocumentT<S>::_unload() {
 		delete this -> rootNode;
 	}
 
-	template<typename T>
-	bool DocumentT<T>::_readFileXML( const OS::Path & filePath ) {
+	template<typename S>
+	bool DocumentT<S>::_readFileXML( const OS::Path & filePath ) {
 		_unload();
 		this -> rootNode = NULL;
 
-		T strOut;
+		S strOut;
 		if (IO::readToString(filePath, &strOut) != size_t(-1)) {
 			return readXML(strOut);
 		}
@@ -343,72 +343,72 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
 	template<typename S>
-	S DocumentT<T>::toString() const {
-		S newString;
+	template<typename S2>
+	S2 DocumentT<S>::toString() const {
+		S2 newString;
 		newString.reserve( 2048 );
 
-		_writeXML<S, S::ElemType>( newString );
+		_writeXML<S2, S2::ElemType>( newString );
 		return newString;
 	}
 
-	template<typename T>
-	T DocumentT<T>::toStringDebug() const {
-		T newString;
+	template<typename S>
+	S DocumentT<S>::toStringDebug() const {
+		S newString;
 		newString.reserve( 1024 );
 
-		newString << T::ElemType( '<' );
-		newString << T::ElemType( 'x' );
-		newString << T::ElemType( 'm' );
-		newString << T::ElemType( 'l' );
-		newString << T::ElemType( ' ' );
-		newString << T::ElemType( 'v' );
-		newString << T::ElemType( 'e' );
-		newString << T::ElemType( 'r' );
-		newString << T::ElemType( 's' );
-		newString << T::ElemType( 'i' );
-		newString << T::ElemType( 'o' );
-		newString << T::ElemType( 'n' );
-		newString << T::ElemType( '=' );
-		newString << T::ElemType( '"' );
+		newString << S::ElemType( '<' );
+		newString << S::ElemType( 'x' );
+		newString << S::ElemType( 'm' );
+		newString << S::ElemType( 'l' );
+		newString << S::ElemType( ' ' );
+		newString << S::ElemType( 'v' );
+		newString << S::ElemType( 'e' );
+		newString << S::ElemType( 'r' );
+		newString << S::ElemType( 's' );
+		newString << S::ElemType( 'i' );
+		newString << S::ElemType( 'o' );
+		newString << S::ElemType( 'n' );
+		newString << S::ElemType( '=' );
+		newString << S::ElemType( '"' );
 		newString << this -> version;
-		newString << T::ElemType( '"' );
-		newString << T::ElemType( ' ' );
-		newString << T::ElemType( 'e' );
-		newString << T::ElemType( 'n' );
-		newString << T::ElemType( 'c' );
-		newString << T::ElemType( 'o' );
-		newString << T::ElemType( 'd' );
-		newString << T::ElemType( 'i' );
-		newString << T::ElemType( 'n' );
-		newString << T::ElemType( 'g' );
-		newString << T::ElemType( '=' );
-		newString << T::ElemType( '"' );
+		newString << S::ElemType( '"' );
+		newString << S::ElemType( ' ' );
+		newString << S::ElemType( 'e' );
+		newString << S::ElemType( 'n' );
+		newString << S::ElemType( 'c' );
+		newString << S::ElemType( 'o' );
+		newString << S::ElemType( 'd' );
+		newString << S::ElemType( 'i' );
+		newString << S::ElemType( 'n' );
+		newString << S::ElemType( 'g' );
+		newString << S::ElemType( '=' );
+		newString << S::ElemType( '"' );
 		newString << this->encoding;
-		newString << T::ElemType( '"' );
+		newString << S::ElemType( '"' );
 
-		newString << T::ElemType( '>' );
-		newString << T::ElemType( '\n' );
+		newString << S::ElemType( '>' );
+		newString << S::ElemType( '\n' );
 
 		if ( this -> rootNode ) {
 			newString << this->rootNode->toStringDebug( 1 );
-			newString << T::ElemType( '\n' );
+			newString << S::ElemType( '\n' );
 		}
 
-		newString << T::ElemType( '<' );
-		newString << T::ElemType( '/' );
-		newString << T::ElemType( 'x' );
-		newString << T::ElemType( 'm' );
-		newString << T::ElemType( 'l' );
-		newString << T::ElemType( '>' );
+		newString << S::ElemType( '<' );
+		newString << S::ElemType( '/' );
+		newString << S::ElemType( 'x' );
+		newString << S::ElemType( 'm' );
+		newString << S::ElemType( 'l' );
+		newString << S::ElemType( '>' );
 
 		return newString;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename Elem>
-	void DocumentT<T>::_writeXML( C & o ) const {
+	void DocumentT<S>::_writeXML( C & o ) const {
 		o << Elem( '<' );
 		o << Elem( '?' );
 		o << Elem( 'x' );

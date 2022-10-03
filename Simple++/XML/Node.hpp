@@ -1,43 +1,43 @@
 namespace XML {
 
-	template<typename T>
-	NodeT<T>::NodeT() :
+	template<typename S>
+	NodeT<S>::NodeT() :
 		type( Type::Element ),
 		parent( NULL ) {
 
-		// Ensure T is a derived of BasicString.
-		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+		// Ensure S is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<S::ElemType>, S>::value );
 	}
 
-	template<typename T>
-	NodeT<T>::NodeT( const T & name, Type type ) :
+	template<typename S>
+	NodeT<S>::NodeT( const S & name, Type type ) :
 		name( name ),
 		type( type ),
 		parent( NULL ) {
 
-		// Ensure T is a derived of BasicString.
-		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+		// Ensure S is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<S::ElemType>, S>::value );
 	}
 
-	template<typename T>
-	NodeT<T>::NodeT( const NodeT<T> & node ) :
+	template<typename S>
+	NodeT<S>::NodeT( const NodeT<S> & node ) :
 		name( node.name ),
 		id( node.id ),
 		type( node.type ),
 		parent( NULL ) {
 
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
-			NodeT<T> * newNode( new NodeT<T>( *( node.childrenVector.getValueIt( it ) ) ) );
+			NodeT<S> * newNode( new NodeT<S>( *( node.childrenVector.getValueIt( it ) ) ) );
 			addChild( newNode );
 		}
 		for ( auto it( node.paramsVector.getBegin() ); it != node.paramsVector.getEnd(); node.paramsVector.iterate( &it ) ) {
-			ParamT<T> * newParam( new ParamT<T>( *( node.paramsVector.getValueIt( it ) ) ) );
+			ParamT<S> * newParam( new ParamT<S>( *( node.paramsVector.getValueIt( it ) ) ) );
 			addParam( newParam );
 		}
 	}
 
-	template<typename T>
-	NodeT<T>::NodeT( NodeT<T> && node ) :
+	template<typename S>
+	NodeT<S>::NodeT( NodeT<S> && node ) :
 		name( Utility::toRValue( node.name ) ),
 		id( Utility::toRValue( node.id ) ),
 		type( Utility::toRValue( node.type ) ),
@@ -51,31 +51,31 @@ namespace XML {
 		node.paramsVector.clear();
 	}
 
-	template<typename T>
-	NodeT<T>::~NodeT() {
+	template<typename S>
+	NodeT<S>::~NodeT() {
 		_unload();
 	}
 
-	template<typename T>
-	NodeT<T> & NodeT<T>::operator=( const NodeT<T> & node ) {
+	template<typename S>
+	NodeT<S> & NodeT<S>::operator=( const NodeT<S> & node ) {
 		this -> name = node.name;
 		this -> id = node.id;
 		this -> type = node.type;
 		this -> parent = NULL;
 
 		for ( auto it( node.childrenVector.getBegin() ); it != node.childrenVector.getEnd(); node.childrenVector.iterate( &it ) ) {
-			NodeT<T> * newNode( new NodeT<T>( *( node.childrenVector.getValueIt( it ) ) ) );
+			NodeT<S> * newNode( new NodeT<S>( *( node.childrenVector.getValueIt( it ) ) ) );
 			addChild( newNode );
 		}
 		for ( auto it( node.paramsVector.getBegin() ); it != node.paramsVector.getEnd(); node.paramsVector.iterate( &it ) ) {
-			ParamT<T> * newParam( new ParamT<T>( *( node.paramsVector.getValueIt( it ) ) ) );
+			ParamT<S> * newParam( new ParamT<S>( *( node.paramsVector.getValueIt( it ) ) ) );
 			addParam( newParam );
 		}
 		return *this;
 	}
 
-	template<typename T>
-	NodeT<T> & NodeT<T>::operator=( NodeT<T> && node ) {
+	template<typename S>
+	NodeT<S> & NodeT<S>::operator=( NodeT<S> && node ) {
 		this -> name = Utility::toRValue( node.name );
 		this -> id = Utility::toRValue( node.id );
 		this -> type = Utility::toRValue( node.type );
@@ -91,45 +91,45 @@ namespace XML {
 		return *this;
 	}
 
-	template<typename T>
-	typename NodeT<T>::Type NodeT<T>::getType() const {
+	template<typename S>
+	typename NodeT<S>::Type NodeT<S>::getType() const {
 		return this -> type;
 	}
 
-	template<typename T>
-	const NodeTextT<T> * NodeT<T>::toText() const {
-		return ( static_cast< const NodeTextT<T> * >( this ) );
+	template<typename S>
+	const NodeTextT<S> * NodeT<S>::toText() const {
+		return ( static_cast< const NodeTextT<S> * >( this ) );
 	}
 
-	template<typename T>
-	NodeTextT<T> * NodeT<T>::toText() {
-		return ( static_cast< NodeTextT<T> * >( this ) );
+	template<typename S>
+	NodeTextT<S> * NodeT<S>::toText() {
+		return ( static_cast< NodeTextT<S> * >( this ) );
 	}
 
-	template<typename T>
-	const NodeT<T> * NodeT<T>::getParent() const {
+	template<typename S>
+	const NodeT<S> * NodeT<S>::getParent() const {
 		return this -> parent;
 	}
 
-	template<typename T>
-	NodeT<T> * NodeT<T>::getParent() {
+	template<typename S>
+	NodeT<S> * NodeT<S>::getParent() {
 		return this -> parent;
 	}
 
-	template<typename T>
-	const T & NodeT<T>::getValue() const {
+	template<typename S>
+	const S & NodeT<S>::getValue() const {
 		if ( getType() == Type::Text ) {
 			return toText() -> getValue();
 		} else if ( this -> childrenVector.getSize() == 1 ) {
 			return this -> childrenVector[ 0 ] -> getValue();
 		} else {
 			//Error, you shouldn't call this method, return an empty string
-			return T::null;
+			return S::null;
 		}
 	}
 
-	template<typename T>
-	void NodeT<T>::setValue( const T & value ) {
+	template<typename S>
+	void NodeT<S>::setValue( const S & value ) {
 		if ( getType() == Type::Text ) {
 			this -> toText() -> setValue( value );
 		} else {
@@ -139,14 +139,14 @@ namespace XML {
 					this -> childrenVector[ 0 ] -> toText() -> setValue( value );
 			} else {
 				// We are not a Text node, and do not have any child, add one
-				NodeTextT<T> * newNode( new NodeTextT<T>( value ) );
+				NodeTextT<S> * newNode( new NodeTextT<S>( value ) );
 				addChild( newNode );
 			}
 		}
 	}
 
-	template<typename T>
-	void NodeT<T>::setName( const T & name ) {
+	template<typename S>
+	void NodeT<S>::setName( const S & name ) {
 		if ( this -> parent ) {
 			this -> parent -> _setChildName( this, name );
 		} else {
@@ -154,30 +154,30 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	const T & NodeT<T>::getName() const {
+	template<typename S>
+	const S & NodeT<S>::getName() const {
 		return this -> name;
 	}
 
-	template<typename T>
-	void NodeT<T>::addParam( const ParamT<T> & param ) {
-		ParamT<T> * newParam( new ParamT<T>( param ) );
+	template<typename S>
+	void NodeT<S>::addParam( const ParamT<S> & param ) {
+		ParamT<S> * newParam( new ParamT<S>( param ) );
 
 		this -> paramsMap.insert( newParam -> getName(), newParam );
 		this -> paramsVector.push( newParam );
 	}
 
-	template<typename T>
-	void NodeT<T>::addParam( const T & name, const T & value ) {
-		ParamT<T> * newParam( new ParamT<T>( name, value ) );
+	template<typename S>
+	void NodeT<S>::addParam( const S & name, const S & value ) {
+		ParamT<S> * newParam( new ParamT<S>( name, value ) );
 
 		this -> paramsMap.insert( newParam -> getName(), newParam );
 		this -> paramsVector.push( newParam );
 	}
 
-	template<typename T>
-	void NodeT<T>::addParam( ParamT<T> * param ) {
-		static T idStr( "id" );
+	template<typename S>
+	void NodeT<S>::addParam( ParamT<S> * param ) {
+		static S idStr( "id" );
 		if ( param -> getName() == idStr )
 			setId( param -> getValue() );
 
@@ -185,32 +185,32 @@ namespace XML {
 		this -> paramsVector.push( param );
 	}
 
-	template<typename T>
-	ParamT<T> * NodeT<T>::getParam( const T & name ) {
+	template<typename S>
+	ParamT<S> * NodeT<S>::getParam( const S & name ) {
 		auto paramP = this -> paramsMap[ name ];
 		if ( paramP ) return *paramP;
 		else return NULL;
 	}
 
-	template<typename T>
-	const ParamT<T> * NodeT<T>::getParam( const T & name ) const {
+	template<typename S>
+	const ParamT<S> * NodeT<S>::getParam( const S & name ) const {
 		auto paramP = this -> paramsMap[ name ];
 		if ( paramP ) return *paramP;
 		else return NULL;
 	}
 
-	template<typename T>
-	ParamT<T> & NodeT<T>::getParam( Size i ) {
+	template<typename S>
+	ParamT<S> & NodeT<S>::getParam( Size i ) {
 		return *( this -> paramsVector.getValueI( i ) );
 	}
 
-	template<typename T>
-	const ParamT<T> & NodeT<T>::getParam( Size i ) const {
+	template<typename S>
+	const ParamT<S> & NodeT<S>::getParam( Size i ) const {
 		return *( this -> paramsVector.getValueI( i ) );
 	}
 
-	template<typename T>
-	bool NodeT<T>::deleteParam( ParamT<T> * param ) {
+	template<typename S>
+	bool NodeT<S>::deleteParam( ParamT<S> * param ) {
 		if ( this -> paramsVector.eraseFirst( param ) ) {
 			this -> paramsMap.eraseI( param -> getName() );
 			delete param;
@@ -219,12 +219,12 @@ namespace XML {
 		return false;
 	}
 
-	template<typename T>
-	bool NodeT<T>::deleteParam( Size i ) {
+	template<typename S>
+	bool NodeT<S>::deleteParam( Size i ) {
 		if ( i >= this -> paramsVector.getSize() ) {
 			return false;
 		} else {
-			ParamT<T> * param( this -> paramsVector[ i ] );
+			ParamT<S> * param( this -> paramsVector[ i ] );
 			this -> paramsVector.eraseI( i );
 			this -> paramsMap.eraseI( param -> getName() );
 			delete param;
@@ -232,8 +232,8 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	void NodeT<T>::setId( const T & id ) {
+	template<typename S>
+	void NodeT<S>::setId( const S & id ) {
 		if ( this -> parent ) {
 			this -> parent -> _setChildId( this, id );
 		} else {
@@ -241,51 +241,51 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	const T & NodeT<T>::getId() const {
+	template<typename S>
+	const S & NodeT<S>::getId() const {
 		return this -> id;
 	}
 
-	template<typename T>
-	Vector< NodeT<T> * > NodeT<T>::getElementsById( const T & id ) const {
-		Vector< NodeT<T> * > nodeVector;
+	template<typename S>
+	Vector< NodeT<S> * > NodeT<S>::getElementsById( const S & id ) const {
+		Vector< NodeT<S> * > nodeVector;
 		nodeVector.reserve( 20 );
 
 		if ( id == this -> id )
-			nodeVector.push( const_cast< NodeT<T> * >( this ) );
+			nodeVector.push( const_cast< NodeT<S> * >( this ) );
 
 		_getElementsById( &nodeVector, id );
 		return nodeVector;
 	}
 
-	template<typename T>
-	Vector< NodeT<T> * > NodeT<T>::getElementsByName( const T & name ) const {
-		Vector< NodeT<T> * > nodeVector;
+	template<typename S>
+	Vector< NodeT<S> * > NodeT<S>::getElementsByName( const S & name ) const {
+		Vector< NodeT<S> * > nodeVector;
 		nodeVector.reserve( 20 );
 
 		if ( name == this -> name )
-			nodeVector.push( const_cast< NodeT<T> * >( this ) );
+			nodeVector.push( const_cast< NodeT<S> * >( this ) );
 
 		_getElementsByName( &nodeVector, name );
 		return nodeVector;
 	}
 
-	template<typename T>
-	Size NodeT<T>::getNbChildren() const {
+	template<typename S>
+	Size NodeT<S>::getNbChildren() const {
 		return this -> childrenVector.getSize();
 	}
 
-	template<typename T>
-	Size NodeT<T>::getNbParams() const {
+	template<typename S>
+	Size NodeT<S>::getNbParams() const {
 		return this -> paramsVector.getSize();
 	}
 
-	template<typename T>
-	void NodeT<T>::addChild( NodeT<T> * child ) {
+	template<typename S>
+	void NodeT<S>::addChild( NodeT<S> * child ) {
 		if ( this -> type == Type::Text ) {
 			if ( child -> getType() == Type::Text ) {
-				NodeTextT<T> * nodeTextThis( this -> toText() );
-				NodeTextT<T> * nodeTextChild( child -> toText() );
+				NodeTextT<S> * nodeTextThis( this -> toText() );
+				NodeTextT<S> * nodeTextChild( child -> toText() );
 
 				nodeTextThis -> getValue().concat( nodeTextChild -> getValue() );
 				delete nodeTextChild;
@@ -306,8 +306,8 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	void NodeT<T>::_clear() {
+	template<typename S>
+	void NodeT<S>::_clear() {
 		_unload();
 
 		this -> name.clear();
@@ -320,17 +320,17 @@ namespace XML {
 		this -> childrenVector.clear();
 	}
 
-	template<typename T>
-	void NodeT<T>::_unload() {
+	template<typename S>
+	void NodeT<S>::_unload() {
 		for ( auto it( this -> paramsVector.getBegin() ); it != this -> paramsVector.getEnd(); this -> paramsVector.iterate( &it ) ) {
 			delete this -> paramsVector.getValueIt( it );
 		}
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
-			NodeT<T> * node( this -> childrenVector.getValueIt( it ) );
+			NodeT<S> * node( this -> childrenVector.getValueIt( it ) );
 			switch ( node->getType() ) {
-				case NodeT<T>::Type::Text:
+				case NodeT<S>::Type::Text:
 				{
-					NodeTextT<T> * nodeText( ( NodeTextT<T> * ) node );
+					NodeTextT<S> * nodeText( ( NodeTextT<S> * ) node );
 					delete nodeText;
 					break;
 				}
@@ -343,27 +343,27 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	const Vector< NodeT<T> * > NodeT<T>::getChild( const T & name ) const {
+	template<typename S>
+	const Vector< NodeT<S> * > NodeT<S>::getChild( const S & name ) const {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) return *childP;
 		else return NULL;
 	}
 
-	template<typename T>
-	Vector< NodeT<T> * > NodeT<T>::getChild( const T & name ) {
+	template<typename S>
+	Vector< NodeT<S> * > NodeT<S>::getChild( const S & name ) {
 		auto childP = this -> childrenMap[ name ];
 		if ( childP ) return *childP;
 		else return NULL;
 	}
 
-	template<typename T>
-	const NodeT<T> * NodeT<T>::getChild( Size i ) const {
-		return const_cast< NodeT<T> * >( this ) -> getChild( i );
+	template<typename S>
+	const NodeT<S> * NodeT<S>::getChild( Size i ) const {
+		return const_cast< NodeT<S> * >( this ) -> getChild( i );
 	}
 
-	template<typename T>
-	NodeT<T> * NodeT<T>::getChild( Size i ) {
+	template<typename S>
+	NodeT<S> * NodeT<S>::getChild( Size i ) {
 		if ( i < this->childrenVector.getSize() ) {
 			return this->childrenVector.getValueI( i );
 		} else {
@@ -371,9 +371,9 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	bool NodeT<T>::deleteChild( NodeT<T> * child ) {
-		NodeT<T> * childRemoved( removeChild( child ) );
+	template<typename S>
+	bool NodeT<S>::deleteChild( NodeT<S> * child ) {
+		NodeT<S> * childRemoved( removeChild( child ) );
 		if ( childRemoved ) {
 			delete childRemoved;
 			return true;
@@ -382,9 +382,9 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	bool NodeT<T>::deleteChild( Size i ) {
-		NodeT<T> * childRemoved( removeChild( i ) );
+	template<typename S>
+	bool NodeT<S>::deleteChild( Size i ) {
+		NodeT<S> * childRemoved( removeChild( i ) );
 		if ( childRemoved ) {
 			delete childRemoved;
 			return true;
@@ -393,8 +393,8 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	NodeT<T> * NodeT<T>::removeChild( NodeT<T> * child ) {
+	template<typename S>
+	NodeT<S> * NodeT<S>::removeChild( NodeT<S> * child ) {
 		if ( this -> childrenVector.eraseFirst( child ) ) {
 			this -> childrenMap.eraseFirst( child -> getName(), child );
 			if ( child -> getId().getSize() )
@@ -406,12 +406,12 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	NodeT<T> * NodeT<T>::removeChild( Size i ) {
+	template<typename S>
+	NodeT<S> * NodeT<S>::removeChild( Size i ) {
 		if ( i >= this -> childrenVector.getSize() ) {
 			return NULL;
 		} else {
-			NodeT<T> * child( this -> childrenVector[ i ] );
+			NodeT<S> * child( this -> childrenVector[ i ] );
 			this -> childrenVector.eraseI( i );
 			this -> childrenMap.eraseFirst( child -> getName(), child );
 			if ( child -> getId().getSize() )
@@ -421,9 +421,9 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeT<T>::writeXML( Stream * fileStreamP, unsigned int tabs ) const {
+	bool NodeT<S>::writeXML( Stream * fileStreamP, unsigned int tabs ) const {
 		Stream & stream( *fileStreamP );
 		
 		_writeXML<Stream, char>( stream, tabs );
@@ -431,16 +431,16 @@ namespace XML {
 		return !( fileStreamP -> bad() );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C>
-	bool NodeT<T>::writeXML( C & str, unsigned int tabs ) const {
+	bool NodeT<S>::writeXML( C & str, unsigned int tabs ) const {
 		_writeXML<C, C::ElemType>( str, tabs );
 		return true;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool NodeT<T>::_readXML( const C ** buffer, const EndFunc & endFunc ) {
+	bool NodeT<S>::_readXML( const C ** buffer, const EndFunc & endFunc ) {
 		struct FunctorNodeName {
 			bool operator()( const C & c ) { return c != C( ' ' ) && c != C( '\t' ) && c != C( '>' ) && c != C( '/' ); }
 		};
@@ -462,7 +462,7 @@ namespace XML {
 		{
 			while ( functorSpace( *it ) ) it++;
 
-			if ( !NodeT<T>::_expectChar( &it, C( '<' ) ) ) return false;
+			if ( !NodeT<S>::_expectChar( &it, C( '<' ) ) ) return false;
 
 			// We have an opening node or self closing
 			auto beginIt( it );
@@ -475,7 +475,7 @@ namespace XML {
 				it++;
 			}
 			// Call the constructor (pointer, size).
-			T nodeName( beginIt, Size( it - beginIt ) );
+			S nodeName( beginIt, Size( it - beginIt ) );
 
 			this -> setName( nodeName );
 
@@ -486,7 +486,7 @@ namespace XML {
 				it++;
 				while ( functorSpace( *it ) ) it++;
 
-				return NodeT<T>::_expectChar( &it, C( '>' ) );
+				return NodeT<S>::_expectChar( &it, C( '>' ) );
 			} else {
 				while ( functorSpace( *it ) ) it++;
 				if ( ( *it ) != C( '>' ) ) {
@@ -515,7 +515,7 @@ namespace XML {
 			}
 
 			// Call the constructor (pointer, size).
-			T nodeName( beginIt, Size( it - beginIt ) );
+			S nodeName( beginIt, Size( it - beginIt ) );
 
 			while ( functorSpace( *it ) ) it++;
 
@@ -524,14 +524,14 @@ namespace XML {
 				// SYNTAX ERROR
 				return false;
 			} else {
-				return NodeT<T>::_expectChar( &it, C( '>' ) );
+				return NodeT<S>::_expectChar( &it, C( '>' ) );
 			}
 		}
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool NodeT<T>::appendXML( const C ** buffer, const EndFunc & endFunc ) {
+	bool NodeT<S>::appendXML( const C ** buffer, const EndFunc & endFunc ) {
 		struct FunctorContent {
 			bool operator()( const C & c ) { return c != C( '<' ); }
 		};
@@ -557,8 +557,8 @@ namespace XML {
 				if ( endIt != beginIt ) {
 					// We have content, so we gonna create a text node and add the content
 					// Call the constructor (pointer, size).
-					T textContent( beginIt, Size( endIt - beginIt ) );
-					NodeTextT<T> * nodeText( new NodeTextT<T>( textContent ) );
+					S textContent( beginIt, Size( endIt - beginIt ) );
+					NodeTextT<S> * nodeText( new NodeTextT<S>( textContent ) );
 
 					this -> addChild( nodeText );
 				}
@@ -576,7 +576,7 @@ namespace XML {
 					it = tmpIt;
 					break;
 				} else {
-					NodeT<T> * newNode( new NodeT<T>() );
+					NodeT<S> * newNode( new NodeT<S>() );
 					this -> addChild( newNode );
 
 					if ( !newNode -> _readXML( &it, endFunc ) )
@@ -589,22 +589,22 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool NodeT<T>::appendXML( const C * buffer, const EndFunc & endFunc ) {
+	bool NodeT<S>::appendXML( const C * buffer, const EndFunc & endFunc ) {
 		return appendXML( &buffer, endFunc );
 	}
 
-	template<typename T>
-	bool NodeT<T>::appendXML( const T & str ) {
-		const T::ElemType * buffer( str.toCString() );
-		return appendXML<T::ElemType>( &buffer );
+	template<typename S>
+	bool NodeT<S>::appendXML( const S & str ) {
+		const S::ElemType * buffer( str.toCString() );
+		return appendXML<S::ElemType>( &buffer );
 	}
 
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename EndFunc>
-	bool NodeT<T>::_parseParameter( const C ** buffer, const EndFunc & endFunc ) {
+	bool NodeT<S>::_parseParameter( const C ** buffer, const EndFunc & endFunc ) {
 		const C *& it( *buffer );
 
 		struct FunctorValue {
@@ -637,9 +637,9 @@ namespace XML {
 		}
 
 		if ( iteratorBegin != it ) {
-			ParamT<T> * newParam( new ParamT<T>() );
+			ParamT<S> * newParam( new ParamT<S>() );
 
-			newParam -> setName( T( iteratorBegin, Size( it - iteratorBegin ) ) );
+			newParam -> setName( S( iteratorBegin, Size( it - iteratorBegin ) ) );
 
 			if ( ( *it ) == C( '=' ) ) {
 				( it )++; // Just to skip the equal sign
@@ -657,7 +657,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					newParam -> setValue( T( iteratorBegin, Size( it - iteratorBegin ) ) );
+					newParam -> setValue( S( iteratorBegin, Size( it - iteratorBegin ) ) );
 
 					if ( ( *it ) == C( '"' ) ) ( it )++; // Skip the quotes again
 				} else {
@@ -671,7 +671,7 @@ namespace XML {
 							break;
 						it++;
 					}
-					newParam -> setValue( T( iteratorBegin, Size( it - iteratorBegin ) ) );
+					newParam -> setValue( S( iteratorBegin, Size( it - iteratorBegin ) ) );
 				}
 
 			}
@@ -681,28 +681,28 @@ namespace XML {
 		return false;
 	}
 
-	template<typename T>
 	template<typename S>
-	S NodeT<T>::toString( unsigned int indent ) const {
-		S newString;
+	template<typename S2>
+	S2 NodeT<S>::toString( unsigned int indent ) const {
+		S2 newString;
 		newString.reserve( 128 );
 
-		_writeXML<S, S::ElemType>( newString, indent );
+		_writeXML<S2, S2::ElemType>( newString, indent );
 		return newString;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeT<T>::read( Stream * stream ) {
+	bool NodeT<S>::read( Stream * stream ) {
 		if ( getType() == Type::Text )
 			return this -> toText() -> read( stream );
 		else
 			return _read( stream );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeT<T>::_read( Stream * stream ) {
+	bool NodeT<S>::_read( Stream * stream ) {
 		_unload();
 		this -> paramsMap.clear();
 		this -> paramsVector.clear();
@@ -728,7 +728,7 @@ namespace XML {
 		}
 		nbParams = Math::min( nbParams, Size( 1000 ) );
 		for ( Size i( 0 ); i < nbParams; i++ ) {
-			ParamT<T> * newParam( new ParamT<T>() );
+			ParamT<S> * newParam( new ParamT<S>() );
 			if ( !IO::read( stream, newParam ) ) {
 				delete newParam;
 				_clear();
@@ -751,7 +751,7 @@ namespace XML {
 				return false;
 			}
 			if ( newNodeType == Type::Text ) {
-				NodeTextT<T> * newNode( new NodeTextT<T>() );
+				NodeTextT<S> * newNode( new NodeTextT<S>() );
 				newNode -> parent = this;
 				if ( !IO::read( stream, newNode ) ) {
 					delete newNode;
@@ -761,7 +761,7 @@ namespace XML {
 				this -> childrenVector.push( newNode );
 				this -> childrenMap.insert( newNode -> getName(), newNode );
 			} else {
-				NodeT<T> * newNode( new NodeT() );
+				NodeT<S> * newNode( new NodeT() );
 				newNode -> parent = this;
 				if ( !IO::read( stream, newNode ) ) {
 					delete newNode;
@@ -779,8 +779,8 @@ namespace XML {
 		return true;
 	}
 
-	template<typename T>
-	bool NodeT<T>::_setChildName( NodeT<T> * child, const T & name ) {
+	template<typename S>
+	bool NodeT<S>::_setChildName( NodeT<S> * child, const S & name ) {
 		if ( this -> childrenMap.eraseFirst( child -> getName(), child ) ) {
 			child -> name = name;
 			this -> childrenMap.insert( child -> getName(), child );
@@ -790,8 +790,8 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	bool NodeT<T>::_setChildId( NodeT<T> * child, const T & id ) {
+	template<typename S>
+	bool NodeT<S>::_setChildId( NodeT<S> * child, const S & id ) {
 		this -> childrenByIdMap.eraseFirst( child -> getId(), child );
 		child -> id = id;
 		if ( id.getSize() )
@@ -799,9 +799,9 @@ namespace XML {
 		return true;
 	}
 
-	template<typename T>
-	void NodeT<T>::_getElementsById( Vector < NodeT<T> * > * nodeVector, const T & id ) const {
-		const Vector < NodeT<T> * > * vectorFounded( this -> childrenByIdMap[ id ] );
+	template<typename S>
+	void NodeT<S>::_getElementsById( Vector < NodeT<S> * > * nodeVector, const S & id ) const {
+		const Vector < NodeT<S> * > * vectorFounded( this -> childrenByIdMap[ id ] );
 		if ( vectorFounded ) {
 			// Concat the new one with what we already have
 			nodeVector -> concat( *vectorFounded );
@@ -812,9 +812,9 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
-	void NodeT<T>::_getElementsByName( Vector < NodeT<T> * > * nodeVector, const T & name ) const {
-		const Vector < NodeT<T> * > * vectorFounded( this -> childrenMap[ name ] );
+	template<typename S>
+	void NodeT<S>::_getElementsByName( Vector < NodeT<S> * > * nodeVector, const S & name ) const {
+		const Vector < NodeT<S> * > * vectorFounded( this -> childrenMap[ name ] );
 		if ( vectorFounded ) {
 			// Concat the new one with what we already have
 			nodeVector -> concat( *vectorFounded );
@@ -825,18 +825,18 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeT<T>::write( Stream * stream ) const {
+	bool NodeT<S>::write( Stream * stream ) const {
 		if ( getType() == Type::Text )
 			return this -> toText() -> write( stream );
 		else
 			return _write( stream );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeT<T>::_write( Stream * stream ) const {
+	bool NodeT<S>::_write( Stream * stream ) const {
 
 
 		if ( !IO::write( stream, &this -> name ) )
@@ -867,55 +867,55 @@ namespace XML {
 		return true;
 	}
 
-	template<typename T>
-	T NodeT<T>::toStringDebug( unsigned int indent ) const {
-		T newString;
+	template<typename S>
+	S NodeT<S>::toStringDebug( unsigned int indent ) const {
+		S newString;
 		newString.reserve( 100 );
 
 		for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
-			newString << T::ElemType( '\t' );
+			newString << S::ElemType( '\t' );
 		}
 
-		newString << T::ElemType( '<' );
+		newString << S::ElemType( '<' );
 		newString << this -> name;
 
 		for ( auto it( this -> paramsVector.getBegin() ); it != this -> paramsVector.getEnd(); this -> paramsVector.iterate( &it ) ) {
-			newString << T::ElemType( ' ' );
+			newString << S::ElemType( ' ' );
 			newString << this -> paramsVector.getValueIt( it ) -> toString();
 		}
 
-		newString << T::ElemType( '>' );
-		newString << T::ElemType( '\n' );
+		newString << S::ElemType( '>' );
+		newString << S::ElemType( '\n' );
 
 		for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 			newString << this -> childrenVector.getValueIt( it ) -> toStringDebug( indent + 1 );
-			newString << T::ElemType( '\n' );
+			newString << S::ElemType( '\n' );
 		}
 
 		if ( this -> type == Type::Text ) {
 			for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
-				newString << T::ElemType( '\t' );
+				newString << S::ElemType( '\t' );
 			}
 
 			newString << this -> toText() -> getValue();
-			newString << T::ElemType( '\n' );
+			newString << S::ElemType( '\n' );
 		}
 
 		for ( unsigned int i( 0 ) ; i < indent ; i++ ) {
-			newString << T::ElemType( '\t' );
+			newString << S::ElemType( '\t' );
 		}
 
-		newString << T::ElemType( '<' );
-		newString << T::ElemType( '/' );
+		newString << S::ElemType( '<' );
+		newString << S::ElemType( '/' );
 		newString << this -> name;
-		newString << T::ElemType( '>' );
+		newString << S::ElemType( '>' );
 
 		return newString;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename Elem>
-	void NodeT<T>::_writeXML( C & o, unsigned int tabs ) const {
+	void NodeT<S>::_writeXML( C & o, unsigned int tabs ) const {
 		if ( getType() == Type::Text )
 			return this -> toText() -> _writeXML<C, Elem>( o, tabs );
 
@@ -937,8 +937,8 @@ namespace XML {
 			for ( auto it( this -> childrenVector.getBegin() ); it != this -> childrenVector.getEnd(); this -> childrenVector.iterate( &it ) ) {
 				if ( getNbChildren() > 1 )
 					o << Elem( '\n' );
-				NodeT<T> * child( this -> childrenVector.getValueIt( it ) );
-				if ( child -> getType() == NodeT<T>::Type::Text && getNbChildren() == 1 ) {
+				NodeT<S> * child( this -> childrenVector.getValueIt( it ) );
+				if ( child -> getType() == NodeT<S>::Type::Text && getNbChildren() == 1 ) {
 					this -> childrenVector.getValueIt( it ) -> _writeXML<C, Elem>( o, 0 );
 				} else {
 					this -> childrenVector.getValueIt( it ) -> _writeXML<C, Elem>( o, tabs + 1 );
@@ -962,9 +962,9 @@ namespace XML {
 		}
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C>
-	bool NodeT<T>::_expectChar( const C ** buffer, const C & c ) {
+	bool NodeT<S>::_expectChar( const C ** buffer, const C & c ) {
 		const C *& it( *buffer );
 
 		if ( ( *it ) == c ) {
@@ -983,12 +983,12 @@ namespace XML {
 
 
 	/************************************************************************/
-	/* NodeTextT<T>                                                         */
+	/* NodeTextT<S>                                                         */
 	/************************************************************************/
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeTextT<T>::writeXML( Stream * fileStreamP ) const {
+	bool NodeTextT<S>::writeXML( Stream * fileStreamP ) const {
 		Stream & stream( *fileStreamP );
 
 		_writeXML<Stream, char>( stream, 0 );
@@ -996,13 +996,13 @@ namespace XML {
 		return !( fileStreamP -> bad() );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-	bool NodeTextT<T>::read( Stream * stream ) {
+	bool NodeTextT<S>::read( Stream * stream ) {
 		this -> value.clear();
 
 		/*
-		if ( !NodeT<T>::_read( stream ) ) {
+		if ( !NodeT<S>::_read( stream ) ) {
 			return false;
 		}
 		*/
@@ -1013,11 +1013,11 @@ namespace XML {
 		return true;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename Stream>
-bool NodeTextT<T>::write( Stream * stream ) const {
+bool NodeTextT<S>::write( Stream * stream ) const {
 		/*
-		if ( !NodeT<T>::_write( stream ) )
+		if ( !NodeT<S>::_write( stream ) )
 			return false;
 		*/
 		if ( !IO::write( stream, &this -> value ) )
@@ -1025,79 +1025,79 @@ bool NodeTextT<T>::write( Stream * stream ) const {
 		return true;
 	}
 
-	template<typename T>
-	void NodeTextT<T>::_clear() {
-		NodeT<T>::_clear();
+	template<typename S>
+	void NodeTextT<S>::_clear() {
+		NodeT<S>::_clear();
 		this -> value.clear();
 	}
 
-	template<typename T>
-	NodeTextT<T>::NodeTextT() : NodeT<T>( T( "#text" ), NodeT<T>::Type::Text ) {
+	template<typename S>
+	NodeTextT<S>::NodeTextT() : NodeT<S>( S( "#text" ), NodeT<S>::Type::Text ) {
 
 	}
 
-	template<typename T>
-	NodeTextT<T>::NodeTextT( const T & value ) : NodeT<T>( T( "#text" ), NodeT<T>::Type::Text ),
+	template<typename S>
+	NodeTextT<S>::NodeTextT( const S & value ) : NodeT<S>( S( "#text" ), NodeT<S>::Type::Text ),
 		value( value ) {
 
 	}
 
-	template<typename T>
-	NodeTextT<T>::NodeTextT( const NodeTextT<T> & node ) : NodeT( node ),
+	template<typename S>
+	NodeTextT<S>::NodeTextT( const NodeTextT<S> & node ) : NodeT( node ),
 		value( node.value ) {
 
 	}
 
-	template<typename T>
-	NodeTextT<T>::NodeTextT( NodeTextT<T> && node ) : NodeT( Utility::toRValue( node ) ),
+	template<typename S>
+	NodeTextT<S>::NodeTextT( NodeTextT<S> && node ) : NodeT( Utility::toRValue( node ) ),
 		value( Utility::toRValue( node.value ) ) {
 
 	}
 
-	template<typename T>
-	NodeTextT<T> & NodeTextT<T>::operator=( const NodeTextT<T> & node ) {
-		NodeT<T>::operator=( node );
+	template<typename S>
+	NodeTextT<S> & NodeTextT<S>::operator=( const NodeTextT<S> & node ) {
+		NodeT<S>::operator=( node );
 		this -> value = node.value;
 		return *this;
 	}
 
-	template<typename T>
-	NodeTextT<T> & NodeTextT<T>::operator=( NodeTextT<T> && node ) {
-		NodeT<T>::operator=( Utility::toRValue( node ) );
+	template<typename S>
+	NodeTextT<S> & NodeTextT<S>::operator=( NodeTextT<S> && node ) {
+		NodeT<S>::operator=( Utility::toRValue( node ) );
 		this -> value = Utility::toRValue( node.value );
 		return *this;
 	}
 
-	template<typename T>
-	const T & NodeTextT<T>::getValue() const {
+	template<typename S>
+	const S & NodeTextT<S>::getValue() const {
 		return this -> value;
 	}
 
-	template<typename T>
-	T & NodeTextT<T>::getValue() {
+	template<typename S>
+	S & NodeTextT<S>::getValue() {
 		return this -> value;
 	}
 
-	template<typename T>
-	void NodeTextT<T>::setValue( const T & value ) {
+	template<typename S>
+	void NodeTextT<S>::setValue( const S & value ) {
 		this -> value = value;
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename Elem>
-	void NodeTextT<T>::_writeXML( C & o, unsigned int tabs ) const {
+	void NodeTextT<S>::_writeXML( C & o, unsigned int tabs ) const {
 		for ( unsigned int i( 0 ); i < tabs; i++ )
 			o << Elem( '\t' );
 		o << this -> value;
 	}
 
-	template<typename T>
 	template<typename S>
-	S NodeTextT<T>::toString( unsigned int indent ) const {
-		S newString;
+	template<typename S2>
+	S2 NodeTextT<S>::toString( unsigned int indent ) const {
+		S2 newString;
 		newString.reserve( 128 );
 
-		_writeXML<S, S::ElemType>( newString, indent );
+		_writeXML<S2, S2::ElemType>( newString, indent );
 		return newString;
 	}
 

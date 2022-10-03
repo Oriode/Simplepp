@@ -11,7 +11,7 @@
 
 namespace XML {
 
-	template<typename T>
+	template<typename S>
 	class DocumentT : public IO::BasicIO {
 	public:
 		///@brief Empty constructor
@@ -19,7 +19,7 @@ namespace XML {
 
 		///@brief Constructor from a buffer
 		///@param str StringASCII buffer to be parsed
-		DocumentT( const T & str );
+		DocumentT( const S & str );
 
 		///@brief Constructor from an XML file
 		///@param filePath File to be opened and parsed
@@ -29,37 +29,37 @@ namespace XML {
 		~DocumentT();
 
 		///@brief Copy Constructor
-		///@param document DocumentT<T> to be copied
-		DocumentT( const DocumentT<T> & document );
+		///@param document DocumentT<S> to be copied
+		DocumentT( const DocumentT<S> & document );
 
 		///@brief Move Constructor
-		///@param document DocumentT<T> to be moved
-		DocumentT( DocumentT<T> && document );
+		///@param document DocumentT<S> to be moved
+		DocumentT( DocumentT<S> && document );
 
 		///@brief Copy operator
-		///@param document DocumentT<T> to be copied
+		///@param document DocumentT<S> to be copied
 		///@return Reference to THIS
-		DocumentT<T> & operator=( const DocumentT<T> & document );
+		DocumentT<S> & operator=( const DocumentT<S> & document );
 
 		///@brief Move operator
-		///@param document DocumentT<T> to be moved
+		///@param document DocumentT<S> to be moved
 		///@return Reference to THIS
-		DocumentT<T> & operator=( DocumentT<T> && document );
+		DocumentT<S> & operator=( DocumentT<S> && document );
 
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the id searched in this sub tree.
 		///@param id Id to look for
-		///@return Vector of NodeT<T>'s pointers with the searched id
-		Vector< NodeT<T> * > getElementsById( const T & id ) const;
+		///@return Vector of NodeT<S>'s pointers with the searched id
+		Vector< NodeT<S> * > getElementsById( const S & id ) const;
 
 		///@brief Get a vector filled by pointer to all the node corresponding to the name searched in this sub tree.
 		///@param name Name to look for
-		///@return Vector of NodeT<T>'s pointers with the searched name
-		Vector< NodeT<T> * > getElementsByName( const T & name ) const;
+		///@return Vector of NodeT<S>'s pointers with the searched name
+		Vector< NodeT<S> * > getElementsByName( const S & name ) const;
 
 		///@brief Get the root node of this document
 		///@return Pointer to the root document node (will never be NULL)
-		NodeT<T> * getRoot();
+		NodeT<S> * getRoot();
 
 		///@brief Get the version of this document
 		///@return Version
@@ -75,7 +75,7 @@ namespace XML {
 
 		///@brief Set the encoding of this document
 		///@param encoding Encoding to be set
-		void setEncoding( const T & encoding );
+		void setEncoding( const S & encoding );
 
 		///@brief Write this object as an XML file
 		///@param filePath Where to write
@@ -102,10 +102,10 @@ namespace XML {
 		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
 		bool readXML( const C * buffer, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
-		///@brief read this object using a type T.
+		///@brief read this object using a type S.
 		///@param str String to read from.
 		///@return bool True if success, False otherwise.
-		bool readXML( const T & str );
+		bool readXML( const S & str );
 
 		///@brief read from a file stream ( Data has to be wrote by write() )
 		///@param stream stream used to read load this object
@@ -121,22 +121,22 @@ namespace XML {
 
 		///@brief Create an human-readable string of this param.
 		///@return Human-readable string of this param.
-		template<typename S = T>
-		S toString() const;
+		template<typename S2 = S>
+		S2 toString() const;
 
 		///@brief Create an human-readable string of this document.
 		///@return Human-readable string of this document.
-		T toStringDebug() const;
+		S toStringDebug() const;
 
 		///@brief Write this object to an Object that support opperator '<<'.
 		///@param o Object to write to.
-		template<typename C = T, typename Elem = C::ElemType>
+		template<typename C = S, typename Elem = C::ElemType>
 		void _writeXML( C & o ) const;
 
 	private:
 		
 		template<typename C, typename EndFunc = BasicString<C>::IsEndSentinel>
-		bool _parseParameterSpecial( const C ** buffer, T * name, T * value, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
+		bool _parseParameterSpecial( const C ** buffer, S * name, S * value, const EndFunc & endFunc = BasicString<C>::IS_END_SENTINEL );
 
 		void _clear();
 		void _unload();
@@ -148,7 +148,7 @@ namespace XML {
 		float version;
 		StringASCII encoding;
 
-		NodeT<T> * rootNode;
+		NodeT<S> * rootNode;
 	};
 
 	using Document = DocumentT<UTF8String>;

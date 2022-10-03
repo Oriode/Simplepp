@@ -10,7 +10,7 @@ namespace Math {
 	///@brief Representing an Interval between two values.
 	///			This class is "unsigned" safe.
 	template<typename T>
-	class Interval : public Vec2<T>, public IO::BasicIO {
+	class Interval : public Vec2<T> {
 	public:
 		Interval();
 		Interval(const T begin, const T end);
@@ -67,18 +67,6 @@ namespace Math {
 
 		template<typename S = String>
 		S toString() const;
-
-		///@brief read from a file stream
-		///@param stream stream used to read load this object
-		///@return boolean to know if the operation is a success of not.
-		template<typename Stream>
-		bool read(Stream* stream);
-
-		///@brief write this object as binary into a file stream
-		///@param stream stream used to write this object
-		///@return boolean to know if the operation is a success of not.
-		template<typename Stream>
-		bool write(Stream* stream) const;
 
 	};
 

@@ -171,30 +171,6 @@ namespace Math {
 	}
 
 	template<typename T>
-	template<typename Stream>
-	bool Interval<T>::read(Stream* stream) {
-		if ( !IO::read(stream, &this->begin) ) {
-			return false;
-		}
-		if ( !IO::read(stream, &this->end) ) {
-			return false;
-		}
-		return true;
-	}
-
-	template<typename T>
-	template<typename Stream>
-	bool Interval<T>::write(Stream* stream) const {
-		if ( !IO::write(stream, &this->begin) ) {
-			return false;
-		}
-		if ( !IO::write(stream, &this->end) ) {
-			return false;
-		}
-		return true;
-	}
-
-	template<typename T>
 	T Interval<T>::getSize() const {
 		return this->end - this->begin;
 	}

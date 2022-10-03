@@ -3,12 +3,13 @@
 #include "Logical.h"
 #include "Operations.h"
 #include "../String.h"
+#include "../JSON/Node.h"
 
 namespace Math {
 
 
 	template<typename T = float>
-	class Vec2 {
+	class Vec2 : public IO::BasicIO, public JSON::Jsonable {
 	public:
 		typedef T Type;
 
@@ -97,6 +98,29 @@ namespace Math {
 		Vec2<T>& ones();
 		Vec2<T>& randomF();
 		Vec2<T>& random(const T& min, const T& max);
+
+		///@brief Read a JSON object and set this to the read values.
+		///@param nodeArray Pointer to the JSON object to be read.
+		///@return true if success, false otherwise.
+		template<typename S = UTF8String>
+		bool fromJSON(const JSON::BasicNodeT<S>* node);
+
+		///@brief Write this object to a Json object
+		///@param o Json node to write to.
+		template<typename S = UTF8String>
+		JSON::BasicNodeT<S>* toJSON() const;
+
+		///@brief read from a file stream
+		///@param stream stream used to read load this object
+		///@return boolean to know if the operation is a success of not.
+		template<typename Stream>
+		bool read(Stream* stream);
+
+		///@brief write this object as binary into a file stream
+		///@param stream stream used to write this object
+		///@return boolean to know if the operation is a success of not.
+		template<typename Stream>
+		bool write(Stream* stream) const;
 
 
 		union {
