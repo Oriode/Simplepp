@@ -39,7 +39,7 @@ namespace Math {
 
 			void setNbData(const Size nbData);
 
-			const StaticTable<T, NbFeatures>& getIns(const Size dataI) const;
+			const StaticTable<T, NbFeatures>& getFeatures(const Size dataI) const;
 			const StaticTable<T, NbFeatures + Size(1)>& getParams(const Size neuronI) const;
 			StaticTable<T, NbFeatures + Size(1)>& getParams(const Size neuronI);
 			const StaticTable<T, NbFeatures + Size(1)>& getGrads(const Size neuronI) const;
@@ -256,7 +256,7 @@ namespace Math {
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
-		inline const StaticTable<T, NbFeatures>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getIns(const Size dataI) const {
+		inline const StaticTable<T, NbFeatures>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::getFeatures(const Size dataI) const {
 			return this->inTableVector->getValueI(dataI);
 		}
 
@@ -335,7 +335,7 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		template<typename ActivationFunc>
 		inline T NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeY(const Size neuronI, const Size dataI, const ActivationFunc& activationFunc) const {
-			return computeY(neuronI, getIns(dataI), activationFunc);
+			return computeY(neuronI, getFeatures(dataI), activationFunc);
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
@@ -485,7 +485,7 @@ namespace Math {
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		template<typename ActivationFunc>
 		inline const StaticTable<T, NbNeurons>& NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::computeForwardPropagation(const Size dataI, const ActivationFunc& activationFunc) {
-			computeForwardPropagation(getIns(dataI), getOuts(dataI), activationFunc);
+			computeForwardPropagation(getFeatures(dataI), getOuts(dataI), activationFunc);
 
 			return getOuts(dataI);
 		}
@@ -543,7 +543,7 @@ namespace Math {
 
 					T dotSum(0);
 					for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
-						dotSum += getIns(dataI)[ featureI ] * getDeltas(dataI)[ neuronI ];
+						dotSum += getFeatures(dataI)[ featureI ] * getDeltas(dataI)[ neuronI ];
 					}
 
 					dotSum *= sizeInverse;

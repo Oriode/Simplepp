@@ -33,9 +33,6 @@ namespace Math {
 				const Size nbIterations;
 			};
 
-			static constexpr Size NbFeatures = M::m[ 0 ][ 0 ];
-			static constexpr Size NbOut = M::m[ M::nbLayers - Size(1) ][ 1 ];
-
 			DeepNeuralNetwork(const OptimizerFunc & optimizerFunc = OptimizerFunc(), const OS::Path& filePath = OS::Path());
 			~DeepNeuralNetwork();
 
@@ -44,6 +41,9 @@ namespace Math {
 			void addData(const Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>& data);
 			void addData(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			void clearData();
+
+			const StaticTable<T, M::m[ 0 ][ 0 ]>& getFeatures(const Size dataI) const;
+			const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& getOuts(const Size dataI) const;
 
 			void normalizeFeature();
 			void normalizeFeature(const Math::Interval<Size>& dataIInterval);
@@ -60,6 +60,9 @@ namespace Math {
 
 			static Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> createFeatureVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
+
+			template<typename S = UTF8String>
+			bool exportDataSetJSON(const OS::Path& filePath) const;
 
 			const Size getNbData() const;
 
@@ -386,6 +389,16 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline const StaticTable<T, M::m[ 0 ][ 0 ]>& DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getFeatures(const Size dataI) const {
+			return this->featureVector.getValueI(dataI);
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		inline const StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>& DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::getOuts(const Size dataI) const {
+			return this->expectedYVector.getValueI(dataI);
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature() {
 			normalizeFeature(Math::Interval<Size>(Size(0), getNbData()));
 		}
@@ -609,6 +622,26 @@ namespace Math {
 			}
 
 			return outVector;
+		}
+
+		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
+		template<typename S>
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::exportDataSetJSON(const OS::Path& filePath) const {
+			JSON::NodeArrayT<S>* rootNode(new JSON::NodeArrayT<S>());
+
+			JSON::DocumentT<S> document(rootNode);
+
+			for ( Size dataI(0); dataI < getNbData(); dataI++ ) {
+				const StaticTable<T, getNbFeatures()> & featureTable(getFeatures(dataI));
+				const StaticTable<T, getNbOuts()> & outTable(getOuts(dataI));
+
+				JSON::NodeArrayT<S>* nodeArray(new JSON::NodeArrayT<S>());
+				nodeArray->addChild(JSON::toJSON<S>(featureTable));
+				nodeArray->addChild(JSON::toJSON<S>(outTable));
+				rootNode->addChild(nodeArray);
+			}
+
+			return document.writeFileJSON(filePath);
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>

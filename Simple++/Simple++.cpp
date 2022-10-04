@@ -55,11 +55,11 @@
 //#define DEBUG_DATE
 //#define DEBUG_PATH
 //#define DEBUG_STREAM
-#define DEBUG_VEC
+//#define DEBUG_VEC
 //#define DEBUG_MAT
 //#define DEBUG_TENSOR
 //#define DEBUG_LINEAR_REGRESSION
-//#define DEBUG_DEEP_NEURAL_NETWORK
+#define DEBUG_DEEP_NEURAL_NETWORK
 //#define DEBUG_INTERVAL
 //#define DEBUG_STATS
 
@@ -1703,6 +1703,10 @@ int main(int argc, char* argv[]) {
 		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
 			deepNeuralNetwork.clearData();
 			deepNeuralNetwork.addData(dataVector);
+
+			OS::Path dataSetFilePath(OS::Path::format("%.json", deepNeuralNetwork.getFilePath()));
+			deepNeuralNetwork.exportDataSetJSON(dataSetFilePath);
+
 			deepNeuralNetwork.normalizeFeature();
 		}
 
