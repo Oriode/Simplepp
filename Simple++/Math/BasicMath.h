@@ -315,6 +315,18 @@ namespace Math {
 	struct Abs {
 		template<typename T> inline constexpr T operator()(const T& v) { return Math::abs(v); }
 	};
+	struct LogFunc {
+		template<typename T> inline constexpr T operator()(const T& v) { return Math::log(v); }
+	};
+	struct Constant {
+		template<typename T> inline constexpr T operator()(const T& v) { return T(1.0); }
+	};
+	struct Exp {
+		template<typename T> inline constexpr T operator()(const T& v) { return Math::exp(v); }
+	};
+	struct Linear {
+		template<typename T> inline constexpr T operator()(const T& v) { return v; }
+	};
 	struct Min {
 		template<typename T> inline constexpr T operator()(const T& x, const T& y) { return Math::min(x, y); }
 	};
