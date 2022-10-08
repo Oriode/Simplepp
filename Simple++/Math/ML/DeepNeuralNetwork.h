@@ -62,7 +62,7 @@ namespace Math {
 			static Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>> createOutVector(const Vector<Data<T, M::m[ 0 ][ 0 ], M::m[ M::nbLayers - Size(1) ][ 1 ]>>& dataVector);
 
 			template<typename S = UTF8String>
-			bool exportDataSetJSON(const OS::Path& filePath) const;
+			bool exportDataSetJSON(const OS::Path& filePath, int verbose = 1) const;
 
 			const Size getNbData() const;
 
@@ -626,7 +626,7 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<typename S>
-		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::exportDataSetJSON(const OS::Path& filePath) const {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::exportDataSetJSON(const OS::Path& filePath, int verbose) const {
 			JSON::NodeArrayT<S>* rootNode(new JSON::NodeArrayT<S>());
 
 			JSON::DocumentT<S> document(rootNode);
@@ -641,7 +641,14 @@ namespace Math {
 				rootNode->addChild(nodeArray);
 			}
 
-			return document.writeFileJSON(filePath);
+			bool bSuccess(document.writeFileJSON(filePath));
+
+			if ( bSuccess ) {
+				if ( verbose > 1 ) { Log::displayLog(String::format("Successfully exported % entries to the file \"%\".", getNbData(), filePath)); }
+			} else {
+				if ( verbose > 0 ) { Log::displayError(String::format("Failed to export data to \"%\".", filePath)); }
+			}
+			return bSuccess;
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
