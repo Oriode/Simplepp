@@ -129,9 +129,9 @@ namespace Math {
 			static Vector<Math::Interval<Size>> createDataIntervalVector(const Math::Interval<Size>& dataIInterval);
 
 			void optimize(const Math::Interval<Size>& dataIInterval);
-			void optimizeStochastic(const Vector<Math::Interval<Size>>& dataIIntervalVector);
-			void optimizeStochastic(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), const Math::Interval<Size>& statsDataIInterval = Math::Interval<Size>(Size(0), Size(1000)), int verbose = 2);
-			void optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(30000), const Math::Interval<Size>& statsDataIInterval = Math::Interval<Size>(Size(0), Size(10000)), int verbose = 2);
+			void optimizeStochastic(const Vector<Math::Interval<Size>>& trainIntervalVector);
+			void optimizeStochastic(const Math::Interval<Size>& trainInterval, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(1000), const Math::Interval<Size>& testInterval = Math::Interval<Size>(Size(0), Size(1000)), int verbose = 2);
+			void optimizeCluster(const Math::Interval<Size>& trainInterval, const Size nbIterations, const Size nbSearchThreads = Size(16), const Time::Duration<Time::MilliSecond>& saveDuration = Time::Duration<Time::MilliSecond>(30000), const Math::Interval<Size>& testInterval = Math::Interval<Size>(Size(0), Size(10000)), int verbose = 2);
 
 			void updateModel(const T& learningRateFactor = T(1.0));
 			void updateModel(const Vector<DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>*>& deepNeuralNetworkVector, const T& learningRateFactor = T(1.0));
@@ -845,9 +845,9 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Vector<Math::Interval<Size>>& dataIIntervalVector) {
-			for ( Size i(0); i < dataIIntervalVector.getSize(); i++ ) {
-				const Math::Interval<Size>& dataIInterval(dataIIntervalVector.getValueI(i));
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Vector<Math::Interval<Size>>& trainIntervalVector) {
+			for ( Size i(0); i < trainIntervalVector.getSize(); i++ ) {
+				const Math::Interval<Size>& dataIInterval(trainIntervalVector.getValueI(i));
 				assert(dataIInterval.getSize() == M::dataChunkSize);
 				computeGradS(dataIInterval.getBegin());
 				updateModel(getLearningRateFactor());
@@ -856,13 +856,13 @@ namespace Math {
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, const Math::Interval<Size>& statsDataIInterval, int verbose) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Math::Interval<Size>& trainInterval, const Size nbIterations, const Time::Duration<Time::MilliSecond>& saveDuration, const Math::Interval<Size>& testInterval, int verbose) {
 
 			const GetPercent getPercent(nbIterations);
 
-			if ( verbose > 0 ) { Log::startStep(String::format("Starting stochastic optimisation with % iterations over % data...", nbIterations, dataIInterval.toString())); }
+			if ( verbose > 0 ) { Log::startStep(String::format("Starting stochastic optimisation with % iterations over % data...", nbIterations, trainInterval.toString())); }
 
-			checkNbDataNbParamsRatio(dataIInterval, verbose);
+			checkNbDataNbParamsRatio(trainInterval, verbose);
 
 			if ( getEpoch() == Size(0) ) {
 				if ( verbose > 0 ) { Log::startStep("Starting from epochNum #0, reseting params..."); }
@@ -872,13 +872,14 @@ namespace Math {
 				if ( verbose > 0 ) { Log::displayLog(String::format("Resuming from epoch #%.", getEpoch())); }
 			}
 
-			const Math::Interval<Size> statsDataIIntervalSafe(statsDataIInterval.getBegin(), Math::min(statsDataIInterval.getEnd(), getNbData()));
-			T lastMSE(computeMeanSquaredError(statsDataIIntervalSafe));
-			T lastCOD(computeCoefficientOfDetermination(statsDataIIntervalSafe) * T(100));
-			if ( verbose > 0 ) { Log::displayLog(String::format("Initial MSE of % and coeficient of determination of %%.", lastMSE, lastCOD)); }
+			const Math::Interval<Size> testIntervalSafe(testInterval.getBegin(), Math::min(testInterval.getEnd(), getNbData()));
+			T lastMSETrain(computeMeanSquaredError(trainInterval));
+			T lastMSETest(computeMeanSquaredError(testIntervalSafe));
+			T lastCOD(computeCoefficientOfDetermination(testIntervalSafe) * T(100));
+			if ( verbose > 0 ) { Log::displayLog(String::format("Initial MSE of % and coeficient of determination of %%.", lastMSETest, lastCOD)); }
 
 			// Compute the interval sizes.
-			Vector<Math::Interval<Size>> dataIIntervalVector(DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createDataIntervalVector(dataIInterval));
+			Vector<Math::Interval<Size>> trainIntervalVector(DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createDataIntervalVector(trainInterval));
 
 			Time::TimePointMS timePointBegin(Time::getTime<Time::MilliSecond>());
 			Time::TimePointMS timePointLast(timePointBegin.getValue());
@@ -891,7 +892,7 @@ namespace Math {
 			for ( Size iterationI(0); iterationI < nbIterations; iterationI++ ) {
 
 				// Optimize !
-				optimizeStochastic(dataIIntervalVector);
+				optimizeStochastic(trainIntervalVector);
 
 				// Saving
 				Time::TimePointMS timePointNow(Time::getTime<Time::MilliSecond>());
@@ -900,10 +901,13 @@ namespace Math {
 
 					saveToFile(verbose);
 
-					const T newMSE(computeMeanSquaredError(statsDataIIntervalSafe));
-					const T deltaMSE(newMSE - lastMSE);
-					lastMSE = newMSE;
-					const T newCOD(computeCoefficientOfDetermination(statsDataIIntervalSafe) * T(100));
+					const T newMSETrain(computeMeanSquaredError(trainInterval));
+					const T deltaMSETrain(newMSETrain - lastMSETrain);
+					lastMSETrain = newMSETrain;
+					const T newMSETest(computeMeanSquaredError(testIntervalSafe));
+					const T deltaMSETest(newMSETest - lastMSETest);
+					lastMSETest = newMSETest;
+					const T newCOD(computeCoefficientOfDetermination(testIntervalSafe) * T(100));
 					const T deltaCOD(newCOD - lastCOD);
 					lastCOD = newCOD;
 
@@ -911,12 +915,14 @@ namespace Math {
 						break;
 					}*/
 
-					if ( verbose > 1 ) { Log::displayLog(String::format("[%/%][ElapsedTime: %s][epochNum #%] : Finished loop with a MSE of % (%) and a coeficient of determination of %/% (%%).",
+					if ( verbose > 1 ) { Log::displayLog(String::format("[%/%][ElapsedTime: %s][epochNum #%] : MSE(train) = % (%), MSE(test) = % (%), COD(test) = %/% (%%).",
 														 getPercent(iterationI),
 														 float(elapsedDuration.getValue()) * float(0.001),
 														 getEpoch(),
-														 lastMSE,
-														 deltaMSE,
+														 lastMSETrain,
+														 deltaMSETrain,
+														 lastMSETest,
+														 deltaMSETest,
 														 lastCOD,
 														 deltaCOD), Log::MessageColor::DarkWhite); }
 
@@ -931,11 +937,11 @@ namespace Math {
 
 			saveToFile(verbose);
 
-			if ( verbose > 0 ) { Log::endStepSuccess(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(statsDataIIntervalSafe), computeCoefficientOfDetermination(statsDataIIntervalSafe) * T(100))); }
+			if ( verbose > 0 ) { Log::endStepSuccess(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(testIntervalSafe), computeCoefficientOfDetermination(testIntervalSafe) * T(100))); }
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
-		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeCluster(const Math::Interval<Size>& dataIInterval, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, const Math::Interval<Size>& statsDataIInterval, int verbose) {
+		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeCluster(const Math::Interval<Size>& trainInterval, const Size nbIterations, const Size nbSearchThreads, const Time::Duration<Time::MilliSecond>& saveDuration, const Math::Interval<Size>& testInterval, int verbose) {
 
 			class SearchThread : public DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>, public Thread {
 			public:
@@ -944,15 +950,15 @@ namespace Math {
 				{}
 
 				void init() {
-					this->dataIIntervalVector = DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createDataIntervalVector(Math::Interval<Size>(Size(0), getNbData()));
+					this->trainIntervalVector = DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::createDataIntervalVector(Math::Interval<Size>(Size(0), getNbData()));
 				}
 
 				void run() override {
-					for ( Size i(0); i < this->dataIIntervalVector.getSize(); i++ ) {
-						const Math::Interval<Size>& dataIInterval(this->dataIIntervalVector.getValueI(i));
+					for ( Size i(0); i < this->trainIntervalVector.getSize(); i++ ) {
+						const Math::Interval<Size>& dataIInterval(this->trainIntervalVector.getValueI(i));
 
 						{
-							assert(dataIInterval.getSize() == M::dataChunkSize);
+							assert(trainInterval.getSize() == M::dataChunkSize);
 							computeGradS(dataIInterval.getBegin());
 							updateModel(getLearningRateFactor());
 						}
@@ -961,16 +967,16 @@ namespace Math {
 				}
 
 			private:
-				Vector<Math::Interval<Size>> dataIIntervalVector;
+				Vector<Math::Interval<Size>> trainIntervalVector;
 				Size intervalI;
 			};
 
 			// using SearchThread = SearchThread<T, M, OptimizerFunc, NbThreads>;
 			const GetPercent getPercent(nbIterations);
 
-			if ( verbose > 0 ) { Log::startStep(String::format("Starting clustered gradient descent with % iterations over % data...", nbIterations, dataIInterval.toString())); }
+			if ( verbose > 0 ) { Log::startStep(String::format("Starting clustered gradient descent with % iterations over % data...", nbIterations, trainInterval.toString())); }
 
-			checkNbDataNbParamsRatio(dataIInterval, verbose);
+			checkNbDataNbParamsRatio(trainInterval, verbose);
 
 			// Creating the threads
 			Vector<SearchThread*> searchThreadVector(nbSearchThreads);
@@ -989,10 +995,10 @@ namespace Math {
 				Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector(featureTableVectorVector.getValueI(i));
 				Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector(outTableVectorVector.getValueI(i));
 
-				featureTableVector.reserve(dataIInterval.getSize() / searchThreadVector.getSize() + Size(1));
-				outTableVector.reserve(dataIInterval.getSize() / searchThreadVector.getSize() + Size(1));
+				featureTableVector.reserve(trainInterval.getSize() / searchThreadVector.getSize() + Size(1));
+				outTableVector.reserve(trainInterval.getSize() / searchThreadVector.getSize() + Size(1));
 			}
-			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
+			for ( Size dataI(trainInterval.getBegin()); dataI < trainInterval.getEnd(); dataI++ ) {
 				const Size searchThreadI(dataI% searchThreadVector.getSize());
 				SearchThread* searchThread(searchThreadVector.getValueI(searchThreadI));
 
@@ -1039,10 +1045,11 @@ namespace Math {
 				searchThread->init();
 			}
 
-			const Math::Interval<Size> statsDataIIntervalSafe(statsDataIInterval.getBegin(), Math::min(statsDataIInterval.getEnd(), getNbData()));
-			T lastMSE(computeMeanSquaredError(statsDataIIntervalSafe));
-			T lastCOD(computeCoefficientOfDetermination(statsDataIIntervalSafe)* T(100));
-			if ( verbose > 0 ) { Log::displayLog(String::format("Initial MSE of % and coeficient of determination of %%.", lastMSE, lastCOD)); }
+			const Math::Interval<Size> testIntervalSafe(testInterval.getBegin(), Math::min(testInterval.getEnd(), getNbData()));
+			T lastMSETrain(computeMeanSquaredError(trainInterval));
+			T lastMSETest(computeMeanSquaredError(testIntervalSafe));
+			T lastCOD(computeCoefficientOfDetermination(testIntervalSafe)* T(100));
+			if ( verbose > 0 ) { Log::displayLog(String::format("Initial MSE of % and coeficient of determination of %%.", lastMSETest, lastCOD)); }
 
 			if ( verbose > 0 ) { Log::startStep(String::format("Starting gradient descent loop with % iterations and a break every % ms...", nbIterations, float(saveDuration.getValue()) * float(0.001))); }
 
@@ -1075,14 +1082,17 @@ namespace Math {
 				if ( elapsedDuration > saveDuration ) {
 					saveToFile(verbose);
 
-					const T newMSE(computeMeanSquaredError(statsDataIIntervalSafe));
-					const T deltaMSE(newMSE - lastMSE);
-					lastMSE = newMSE;
-					const T newCOD(computeCoefficientOfDetermination(statsDataIIntervalSafe) * T(100));
+					const T newMSETrain(computeMeanSquaredError(trainInterval));
+					const T deltaMSETrain(newMSETrain - lastMSETrain);
+					lastMSETrain = newMSETrain;
+					const T newMSETest(computeMeanSquaredError(testIntervalSafe));
+					const T deltaMSETest(newMSETest - lastMSETest);
+					lastMSETest = newMSETest;
+					const T newCOD(computeCoefficientOfDetermination(testIntervalSafe) * T(100));
 					const T deltaCOD(newCOD - lastCOD);
 					lastCOD = newCOD;
 
-					if ( deltaMSE > T(0) ) {
+					if ( deltaMSETest > T(0) ) {
 						// setLearningRateFactor(getLearningRateFactor() * T(0.5));
 						for ( Size i(0); i < searchThreadVector.getSize(); i++ ) {
 							SearchThread* searchThread(searchThreadVector.getValueI(i));
@@ -1091,13 +1101,15 @@ namespace Math {
 					}
 
 					if ( verbose > 1 ) {
-						Log::displayLog(String::format("[%/%][ElapsedTime: %s][epochNum #%][LearningRateFactor: %] : Finished loop with a MSE of % (%) and a coeficient of determination of %/% (%%).",
+						Log::displayLog(String::format("[%/%][ElapsedTime: %s][epochNum #%][LearningRateFactor: %] : MSE(train) = % (%), MSE(test) = % (%), COD(test) = %/% (%%).",
 										getPercent(iterationI),
 										float(elapsedDuration.getValue()) * float(0.001),
 										getEpoch(),
 										getLearningRateFactor(),
-										lastMSE,
-										deltaMSE,
+										lastMSETrain,
+										deltaMSETrain,
+										lastMSETest,
+										deltaMSETest,
 										lastCOD,
 										deltaCOD), Log::MessageColor::DarkWhite);
 					}
@@ -1116,7 +1128,7 @@ namespace Math {
 				delete searchThreadVector.getValueI(i);
 			}
 
-			if ( verbose > 0 ) { Log::endStepSuccess(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(statsDataIIntervalSafe), computeCoefficientOfDetermination(statsDataIIntervalSafe) * T(100))); }
+			if ( verbose > 0 ) { Log::endStepSuccess(String::format("Finished with a cost of % and a coeficient of determination of %%.", computeMeanSquaredError(testIntervalSafe), computeCoefficientOfDetermination(testIntervalSafe) * T(100))); }
 		}
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
