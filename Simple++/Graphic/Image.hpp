@@ -2031,8 +2031,8 @@ namespace Graphic {
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
 	ImageT<T2> ImageT<T>::_applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		assert( size.x % 2 == 1 );
-		assert( size.y % 2 == 1 );
+		ASSERT( size.x % 2 == 1 );
+		ASSERT( size.y % 2 == 1 );
 
 		Math::Vec2<typename Size> NHalfed( size.x / 2, size.y / 2 );
 		Math::Vec2<typename Size> NEven( NHalfed * 2 );
@@ -2151,8 +2151,8 @@ namespace Graphic {
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
 	ImageT<T2> ImageT<T>::_applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		assert( size.x % 2 == 1 );
-		assert( size.y % 2 == 1 );
+		ASSERT( size.x % 2 == 1 );
+		ASSERT( size.y % 2 == 1 );
 
 		Math::Vec2<typename Size> NHalfed( size.x / 2, size.y / 2 );
 		Math::Vec2<typename Size> NEven( NHalfed * 2 );
@@ -2271,7 +2271,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
 	ImageT<T2> ImageT<T>::_applyFilter( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		assert( kernelSize % 2 == 1 );
+		ASSERT( kernelSize % 2 == 1 );
 
 		typename Size NHalfed( kernelSize / 2 );
 		typename Size NEven( NHalfed * 2 );
@@ -2467,8 +2467,8 @@ namespace Graphic {
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
 	ImageT<T2> ImageT<T>::_applyFilterf( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
-		assert( size % 2 == 1 );
-		assert( ( Utility::isSame<T, F>::value ) );
+		ASSERT( size % 2 == 1 );
+		ASSERT( ( Utility::isSame<T, F>::value ) );
 
 		typename Size NHalfed( kernelSize / 2 );
 		typename Size NEven( NHalfed * 2 );
@@ -2658,7 +2658,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename K>
 	constexpr K ImageT<T>::getKernelSumNbBits() {
-		assert( Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() > 6 );
+		ASSERT( Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() > 6 );
 		return Utility::TypesInfos<K>::getNbBits() - Utility::TypesInfos<T>::getNbBits() - 6;
 	}
 
@@ -3241,7 +3241,7 @@ namespace Graphic {
 	void ImageT<T>::_drawLineFunctor( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc, ... ) {
 		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
 
-		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
+		ASSERT( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
 
 		if ( thickness == 0 ) return;
 
@@ -3327,7 +3327,7 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p1i.y, p0i.x );
 
 				Math::Rectangle<Size> rectangle( p1i.y, p0i.x, p0i.y + Size( thickness ) + 1, p1i.x );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3342,19 +3342,19 @@ namespace Graphic {
 				it0 = p0It + i.x;
 
 				if ( i.x >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				it0++;
 				i.x++;
 				auto max = i.x + thicknessMinusOne;
 				while ( i.x < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0++;
 					i.x++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 				intery += gradientI;
@@ -3366,18 +3366,18 @@ namespace Graphic {
 					interyFPart = T( intery );
 
 					it0 = p0It + i.x;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0++;
 					i.x++;
 					max = i.x + thicknessMinusOne;
 					while ( i.x < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0++;
 						i.x++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientI;
@@ -3391,7 +3391,7 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p0i.y, p0i.x );
 
 				Math::Rectangle<Size> rectangle( p0i.y, p0i.x, p1i.y + Size( thickness ) + 1, p1i.x );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3406,19 +3406,19 @@ namespace Graphic {
 				it0 = p0It + i.x;
 
 				if ( i.x >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				it0++;
 				i.x++;
 				auto max = i.x + thicknessMinusOne;
 				while ( i.x < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0++;
 					i.x++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 				intery += gradientI;
@@ -3430,18 +3430,18 @@ namespace Graphic {
 					interyFPart = T( intery );
 
 					it0 = p0It + i.x;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0++;
 					i.x++;
 					max = i.x + thicknessMinusOne;
 					while ( i.x < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0++;
 						i.x++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientI;
@@ -3457,7 +3457,7 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p0i.x, p1i.y );
 
 				Math::Rectangle<Size> rectangle( p0i.x, p1i.y, p1i.x, p0i.y + Size( thickness ) + 1 );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3472,19 +3472,19 @@ namespace Graphic {
 
 				auto it0 = p0It + i.y * thisRow;
 				if ( i.y >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				i.y++;
 				it0 += thisRow;
 				auto max = i.y + thicknessMinusOne;
 				while ( i.y < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0 += thisRow;
 					i.y++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 				intery += gradientI;
@@ -3496,18 +3496,18 @@ namespace Graphic {
 					interyFPart = T( intery );
 
 					it0 = p0It + i.y * thisRow;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0 += thisRow;
 					i.y++;
 					max = i.y + thicknessMinusOne;
 					while ( i.y < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0 += thisRow;
 						i.y++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientI;
@@ -3522,7 +3522,7 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p0i.x, p0i.y );
 
 				Math::Rectangle<Size> rectangle( p0i.x, p0i.y, p1i.x, p1i.y + Size( thickness ) + 1 );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3536,19 +3536,19 @@ namespace Graphic {
 
 				auto it0 = p0It + i.y * thisRow;
 				if ( i.y >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 				}
 				i.y++;
 				it0 += thisRow;
 				auto max = i.y + thicknessMinusOne;
 				while ( i.y < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0 += thisRow;
 					i.y++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 				intery += gradientI;
@@ -3560,18 +3560,18 @@ namespace Graphic {
 					interyFPart = T( intery );
 
 					it0 = p0It + i.y * thisRow;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), Color<T>::getMax() - interyFPart );
 					it0 += thisRow;
 					i.y++;
 					max = i.y + thicknessMinusOne;
 					while ( i.y < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0 += thisRow;
 						i.y++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientI;
@@ -3601,7 +3601,7 @@ namespace Graphic {
 	void ImageT<T>::_drawLineFunctorf( const LineF & l, ColorFunc & colorFunc, unsigned int thickness, const BlendFunc & blendFunc ) {
 		//see https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
 
-		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
+		ASSERT( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
 
 		if ( thickness == 0 ) return;
 
@@ -3686,7 +3686,7 @@ namespace Graphic {
 
 
 				Math::Rectangle<Size> rectangle( p1i.y, p0i.x, p0i.y + Size( thickness ) + 1, p1i.x );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3697,26 +3697,26 @@ namespace Graphic {
 				i.y = 0;
 				i.x = int( intery );
 				T interyFPart = intery - float( i.x );
-				assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+				ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 
 				auto it0 = p0It;
 				it0 = p0It + i.x;
 
 				if ( i.x >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 				}
 				it0++;
 				i.x++;
 				auto max = i.x + thicknessMinusOne;
 				while ( i.x < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0++;
 					i.x++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 				intery += gradientF;
@@ -3726,21 +3726,21 @@ namespace Graphic {
 				for ( ; i.y < size.y; i.y++ ) {
 					i.x = int( intery );
 					T interyFPart = intery - float( i.x );
-					assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+					ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 					it0 = p0It + i.x;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 					it0++;
 					i.x++;
 					max = i.x + thicknessMinusOne;
 					while ( i.x < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0++;
 						i.x++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientF;
@@ -3755,7 +3755,7 @@ namespace Graphic {
 
 
 				Math::Rectangle<Size> rectangle( p0i.y, p0i.x, p1i.y + Size( thickness ) + 1, p1i.x );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3766,25 +3766,25 @@ namespace Graphic {
 				i.y = 0;
 				i.x = int( intery );
 				T interyFPart = intery - float( i.x );
-				assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+				ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 				auto it0 = p0It;
 				it0 = p0It + i.x;
 
 				if ( i.x >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 				}
 				it0++;
 				i.x++;
 				auto max = i.x + thicknessMinusOne;
 				while ( i.x < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0++;
 					i.x++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 				intery += gradientF;
@@ -3794,21 +3794,21 @@ namespace Graphic {
 				for ( ; i.y < size.y; i.y++ ) {
 					i.x = int( intery );
 					T interyFPart = intery - float( i.x );
-					assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+					ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 					it0 = p0It + i.x;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 					it0++;
 					i.x++;
 					max = i.x + thicknessMinusOne;
 					while ( i.x < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0++;
 						i.x++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientF;
@@ -3825,7 +3825,7 @@ namespace Graphic {
 
 
 				Math::Rectangle<Size> rectangle( p0i.x, p1i.y, p1i.x, p0i.y + Size( thickness ) + 1 );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 
@@ -3836,23 +3836,23 @@ namespace Graphic {
 				i.x = 0;
 				i.y = int( intery );
 				T interyFPart = intery - float( i.y );
-				assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+				ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 				auto it0 = p0It + i.y * thisRow;
 				if ( i.y >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 				}
 				i.y++;
 				it0 += thisRow;
 				auto max = i.y + thicknessMinusOne;
 				while ( i.y < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0 += thisRow;
 					i.y++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 
@@ -3864,21 +3864,21 @@ namespace Graphic {
 				for ( ; i.x < size.x; i.x++ ) {
 					i.y = int( intery );
 					T interyFPart = intery - float( i.y );
-					assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+					ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 					auto it0 = p0It + i.y * thisRow;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 					it0 += thisRow;
 					i.y++;
 					auto max = i.y + thicknessMinusOne;
 					while ( i.y < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0 += thisRow;
 						i.y++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientF;
@@ -3893,7 +3893,7 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p0i.x, p0i.y );
 
 				Math::Rectangle<Size> rectangle( p0i.x, p0i.y, p1i.x, p1i.y + Size( thickness ) + 1 );
-				assert( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
+				ASSERT( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
 				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
@@ -3906,24 +3906,24 @@ namespace Graphic {
 				i.x = 0;
 				i.y = int( intery );
 				T interyFPart = intery - float( i.y );
-				assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+				ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 
 				auto it0 = p0It + i.y * thisRow;
 				if ( i.y >= 0 ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 				}
 				i.y++;
 				it0 += thisRow;
 				auto max = i.y + thicknessMinusOne;
 				while ( i.y < max ) {
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ) );
 					it0 += thisRow;
 					i.y++;
 				}
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *it0, colorFunc( i ), interyFPart );
 
 
@@ -3934,22 +3934,22 @@ namespace Graphic {
 				for ( ; i.x < size.x; i.x++ ) {
 					i.y = int( intery );
 					T interyFPart = intery - float( i.y );
-					assert( interyFPart >= 0.0f && interyFPart <= 1.0f );
+					ASSERT( interyFPart >= 0.0f && interyFPart <= 1.0f );
 
 
 					auto it0 = p0It + i.y * thisRow;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), 1.0f - interyFPart );
 					it0 += thisRow;
 					i.y++;
 					auto max = i.y + thicknessMinusOne;
 					while ( i.y < max ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it0, colorFunc( i ) );
 						it0 += thisRow;
 						i.y++;
 					}
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it0, colorFunc( i ), interyFPart );
 
 					intery += gradientF;
@@ -3973,8 +3973,8 @@ namespace Graphic {
 	void ImageT<T>::_drawLineFunctorFilledBottom( const LineF & l, ColorFunc & colorFunc, const Rectangle & rectangle, const BlendFunc & blendFunc ) {
 		typedef Utility::TypesInfos<SumType>::Signed Bigger;
 
-		assert( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
-		debug( Math::Vec2<typename Rectangle::Type> size( rectangle.getRightTop() - rectangle.getLeftBottom() ););
+		ASSERT( ( Utility::isBase<Graphic::BlendingFunc::Template, BlendFunc>::value ) );
+		DEBUG( Math::Vec2<typename Rectangle::Type> size( rectangle.getRightTop() - rectangle.getLeftBottom() ););
 
 		Math::Vec2<float> p0;
 		Math::Vec2<float> p1;
@@ -4012,7 +4012,7 @@ namespace Graphic {
 					int newX;
 					do {
 						unsigned char opacity = unsigned char( intery );
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it, colorFunc( i ), opacity );
 
 						intery += gradientI;
@@ -4025,7 +4025,7 @@ namespace Graphic {
 					auto it2 = it;
 					auto tmp = i.y;
 					while ( i.y >= 0 ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it2, colorFunc( i ) );
 
 						it2 -= thisRow;
@@ -4047,7 +4047,7 @@ namespace Graphic {
 					while ( i.y > 0 ) {
 						it2 -= thisRow;
 						i.y--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it2, colorFunc( i ) );
 					}
 					i.y = tmp;
@@ -4056,7 +4056,7 @@ namespace Graphic {
 					int newX;
 					do {
 						unsigned char opacity = unsigned char( intery );
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it, colorFunc( i ), opacity );
 
 						intery += gradientI;
@@ -4080,13 +4080,13 @@ namespace Graphic {
 					auto it = p0It + thisRow * i.y + i.x;
 
 					unsigned char opacity = unsigned char( intery );
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it, colorFunc( i ), opacity );
 
 					while ( i.y > 0 ) {
 						it -= thisRow;
 						i.y--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it, colorFunc( i ) );
 					}
 
@@ -4105,13 +4105,13 @@ namespace Graphic {
 					while ( i.y > 0 ) {
 						it2 -= thisRow;
 						i.y--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *it2, colorFunc( i ) );
 					}
 					i.y = tmp;
 
 					unsigned char opacity = unsigned char( intery );
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *it, colorFunc( i ), opacity );
 
 					intery += gradientI;
@@ -4728,7 +4728,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void ImageT<T>::_drawGraphValuesFunctor( const Vector<Math::Vec2<float>> & values, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
-		warn( "Deprecated function" );
+		WARNING( "Deprecated function" );
 		return;
 		if ( values.getSize() <= 2 ) {
 			return;
@@ -4917,14 +4917,14 @@ namespace Graphic {
 				Math::Vec2<Size> i( p + rightTopOffset );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 				if ( p.y != lastY ) {
 					while ( i.x > xMid ) {
 						it--;
 						i.x--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 					}
 				}
@@ -4933,7 +4933,7 @@ namespace Graphic {
 				Math::Vec2<Size> i( leftTopOffset.x - p.y, leftTopOffset.y + p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 				it++;
@@ -4941,7 +4941,7 @@ namespace Graphic {
 				while ( i.x < xMid ) {
 
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ) );
 					it++;
 					i.x++;
@@ -4952,7 +4952,7 @@ namespace Graphic {
 				Math::Vec2<Size> i( rightBottomOffset.x + p.y, rightBottomOffset.y - p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -4960,7 +4960,7 @@ namespace Graphic {
 					it--;
 					i.x--;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ) );
 				}
 
@@ -4969,7 +4969,7 @@ namespace Graphic {
 				Math::Vec2<Size> i( leftBottomOffset.x - p.x, leftBottomOffset.y - p.y );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -4978,7 +4978,7 @@ namespace Graphic {
 					it++;
 					i.x++;
 					while ( i.x < xMid ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 						it++;
 						i.x++;
@@ -4992,14 +4992,14 @@ namespace Graphic {
 					Math::Vec2<Size> i( p.y + rightTopOffset.y, p.x + rightTopOffset.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 					while ( i.x > xMid ) {
 
 						it--;
 						i.x--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 					}
 
@@ -5008,7 +5008,7 @@ namespace Graphic {
 					Math::Vec2<Size> i( leftTopOffset.x - p.x, leftTopOffset.y + p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -5017,7 +5017,7 @@ namespace Graphic {
 						it++;
 						i.x++;
 						while ( i.x < xMid ) {
-							assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+							ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 							blendFunc( *( it ), colorFunc( i ) );
 							it++;
 							i.x++;
@@ -5028,7 +5028,7 @@ namespace Graphic {
 					Math::Vec2<Size> i( rightBottomOffset.x + p.x, rightBottomOffset.y - p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -5038,7 +5038,7 @@ namespace Graphic {
 						while ( i.x > xMid ) {
 							it--;
 							i.x--;
-							assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+							ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 							blendFunc( *( it ), colorFunc( i ) );
 
 						}
@@ -5048,13 +5048,13 @@ namespace Graphic {
 					Math::Vec2<Size> i( leftBottomOffset.x - p.y, leftBottomOffset.y - p.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 					it++;
 					i.x++;
 					while ( i.x < xMid ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 						it++;
 						i.x++;
@@ -5076,7 +5076,7 @@ namespace Graphic {
 			auto p1it = p0it;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *p1it, colorFunc( i ) );
 
 				p1it++;
@@ -5168,14 +5168,14 @@ namespace Graphic {
 				Math::Vec2<Size> i( p + rightTopOffset );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 				if ( p.y != lastY ) {
 					while ( i.x > xMid ) {
 						it--;
 						i.x--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 					}
 				}
@@ -5184,7 +5184,7 @@ namespace Graphic {
 				Math::Vec2<Size> i( leftTopOffset.x - p.y, leftTopOffset.y + p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 				it++;
@@ -5192,7 +5192,7 @@ namespace Graphic {
 				while ( i.x < xMid ) {
 
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ) );
 					it++;
 					i.x++;
@@ -5203,7 +5203,7 @@ namespace Graphic {
 				Math::Vec2<Size> i( rightBottomOffset.x + p.y, rightBottomOffset.y - p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -5211,7 +5211,7 @@ namespace Graphic {
 					it--;
 					i.x--;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ) );
 				}
 
@@ -5220,7 +5220,7 @@ namespace Graphic {
 				Math::Vec2<Size> i( leftBottomOffset.x - p.x, leftBottomOffset.y - p.y );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
-				assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+				ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 				blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -5229,7 +5229,7 @@ namespace Graphic {
 					it++;
 					i.x++;
 					while ( i.x < xMid ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 						it++;
 						i.x++;
@@ -5243,14 +5243,14 @@ namespace Graphic {
 					Math::Vec2<Size> i( p.y + rightTopOffset.y, p.x + rightTopOffset.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 					while ( i.x > xMid ) {
 
 						it--;
 						i.x--;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 					}
 
@@ -5259,7 +5259,7 @@ namespace Graphic {
 					Math::Vec2<Size> i( leftTopOffset.x - p.x, leftTopOffset.y + p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -5268,7 +5268,7 @@ namespace Graphic {
 						it++;
 						i.x++;
 						while ( i.x < xMid ) {
-							assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+							ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 							blendFunc( *( it ), colorFunc( i ) );
 							it++;
 							i.x++;
@@ -5279,7 +5279,7 @@ namespace Graphic {
 					Math::Vec2<Size> i( rightBottomOffset.x + p.x, rightBottomOffset.y - p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 
@@ -5289,7 +5289,7 @@ namespace Graphic {
 						while ( i.x > xMid ) {
 							it--;
 							i.x--;
-							assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+							ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 							blendFunc( *( it ), colorFunc( i ) );
 
 						}
@@ -5299,13 +5299,13 @@ namespace Graphic {
 					Math::Vec2<Size> i( leftBottomOffset.x - p.y, leftBottomOffset.y - p.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *( it ), colorFunc( i ), interyFPart );
 
 					it++;
 					i.x++;
 					while ( i.x < xMid ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *( it ), colorFunc( i ) );
 						it++;
 						i.x++;
@@ -5435,7 +5435,7 @@ namespace Graphic {
 									auto newImageIt3 = newImageIt2;
 									for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
 
-										assert( k.x >= 0 && k.y >= 0 && k.x < newSize.x && k.y < newSize.y );
+										ASSERT( k.x >= 0 && k.y >= 0 && k.x < newSize.x && k.y < newSize.y );
 										C & newImagePixel = *newImageIt3;
 										newImagePixel = thisImagePixel;
 
@@ -5471,7 +5471,7 @@ namespace Graphic {
 
 								auto newImageIt2 = newImageIt1;
 								for ( k.y = j0.y; k.y < j1.y; k.y++ ) {
-									assert( i.x >= 0 && k.y >= 0 && i.x < newSize.x && k.y < newSize.y );
+									ASSERT( i.x >= 0 && k.y >= 0 && i.x < newSize.x && k.y < newSize.y );
 									C & newImagePixel = *newImageIt2;
 									newImagePixel = thisImagePixel;
 
@@ -5504,7 +5504,7 @@ namespace Graphic {
 
 								auto newImageIt2 = newImageIt1 + j0.x;
 								for ( k.x = j0.x; k.x < j1.x; k.x++ ) {
-									assert( k.x >= 0 && i.y >= 0 && k.x < newSize.x && i.y < newSize.y );
+									ASSERT( k.x >= 0 && i.y >= 0 && k.x < newSize.x && i.y < newSize.y );
 									C & newImagePixel = *newImageIt2;
 									newImagePixel = thisImagePixel;
 									newImageIt2++;
@@ -5855,7 +5855,7 @@ namespace Graphic {
 							}
 						}
 						Float operator()( int i ) {
-							assert( i >= 0 && i < 100 );
+							ASSERT( i >= 0 && i < 100 );
 							return lanczosValues[i];
 						}
 
@@ -5881,7 +5881,7 @@ namespace Graphic {
 							j0.y = Math::max<int>( int( j0f.y ), int( 0 ) );
 							j1.y = Math::min<int>( int( j0.y ) + kernelSize.y, int( this -> size.y ) );
 
-							assert( j1.y <= this -> size.y && j0.y >= 0 );
+							ASSERT( j1.y <= this -> size.y && j0.y >= 0 );
 							if ( true ) {
 								auto thisImageIt1 = ( ( C * ) ( thisImageIt0 ) ) + j0.y * this -> size.x;
 
@@ -5894,7 +5894,7 @@ namespace Graphic {
 									j0.x = Math::max<int>( int( j0f.x ), int( 0 ) );
 									j1.x = Math::min<int>( int( j0.x ) + kernelSize.x, int( this -> size.x ) );
 
-									assert( j1.x <= this -> size.x && j1.x >= 0 );
+									ASSERT( j1.x <= this -> size.x && j1.x >= 0 );
 									if ( true ) {
 										auto thisImageIt2 = thisImageIt1 + j0.x;
 
@@ -6064,7 +6064,7 @@ namespace Graphic {
 					i.x = Size( ( intersection0 + intersection1 ) / 2 );
 
 					C1 * p1it = p0it + i.x;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *p1it, colorFunc( i ), opacity );
 
 				} else {
@@ -6092,7 +6092,7 @@ namespace Graphic {
 						Float opacity = ( intersection0 ) -Float( intersection0i );
 
 						C1 * p1it = p0it + i.x;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *p1it, colorFunc( i ), 1.0f - opacity );
 
 						xMin = i.x + 1;
@@ -6116,7 +6116,7 @@ namespace Graphic {
 							C1 * p1it = p0it + i.x;
 							for ( ; i.x < intersection0i; i.x++ ) {
 
-								assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+								ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 								blendFunc( *p1it, colorFunc( i ), opacity );
 
 								opacity += incr;
@@ -6136,7 +6136,7 @@ namespace Graphic {
 							C1 * p1it = p0it + i.x;
 							for ( ; i.x < intersection0i; i.x++ ) {
 
-								assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+								ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 								blendFunc( *p1it, colorFunc( i ), opacity );
 
 								opacity += incr;
@@ -6163,7 +6163,7 @@ namespace Graphic {
 						Float opacity = ( intersection1 ) -Float( intersection1i );
 
 						C1 * p1it = p0it + i.x;
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *p1it, colorFunc( i ), opacity );
 
 						xMax = i.x;
@@ -6183,7 +6183,7 @@ namespace Graphic {
 							C1 * p1it = p0it + i.x;
 							for ( ; i.x < intersection1Afteri; i.x++ ) {
 
-								assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+								ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 								blendFunc( *p1it, colorFunc( i ), opacity );
 
 								opacity -= incr;
@@ -6204,7 +6204,7 @@ namespace Graphic {
 							C1 * p1it = p0it + i.x;
 							for ( ; i.x < intersection1Beforei; i.x++ ) {
 
-								assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+								ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 								blendFunc( *p1it, colorFunc( i ), opacity );
 
 								opacity -= incr;
@@ -6219,7 +6219,7 @@ namespace Graphic {
 					C1 * p1it = p0it + i.x;
 
 					for ( ; i.x < xMax; i.x++ ) {
-						assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+						ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 						blendFunc( *p1it, colorFunc( i ) );
 						p1it++;
 					}
@@ -6230,7 +6230,7 @@ namespace Graphic {
 
 				for ( ; i.x < int( intersection1 ); i.x++ ) {
 					C1 * p1it = p0it + i.y * this -> size.x + i.x;
-					assert( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
+					ASSERT( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
 					blendFunc( *p1it, colorFunc( i ) );
 				}*/
 			}
@@ -6349,7 +6349,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename K>
 	K ImageT<T>::_computeGaussianKernelf( K * kernel, size_t size, const K & sigma ) {
-		assert( size % 2 == 1 );
+		ASSERT( size % 2 == 1 );
 		const size_t NHalfed = size / 2;
 
 		K sigma2Square = K( 2 ) * ( sigma * sigma );

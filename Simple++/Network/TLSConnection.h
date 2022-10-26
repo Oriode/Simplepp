@@ -319,7 +319,7 @@ namespace Network {
 
 		if ( isConnected() ) {
 			close();
-			warn("The connection was already open. Closing the old one.");
+			WARNING("The connection was already open. Closing the old one.");
 		}
 
 		return true;
@@ -368,7 +368,7 @@ namespace Network {
 			return false;
 		}
 
-		verbose(StringASCII::format("Success creating the SSL cypher %.", StringASCII(SSL_get_cipher(this->ssl))));
+		VERBOSE(StringASCII::format("Success creating the SSL cypher %.", StringASCII(SSL_get_cipher(this->ssl))));
 
 		return true;
 	}

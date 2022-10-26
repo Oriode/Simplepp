@@ -113,7 +113,7 @@ template<typename T, Size N>
 inline void StaticTable<T, N>::setValueI(const Size i, const T& data) {
 #ifdef DEBUG
 	if ( i >= getSize() ) {
-		_error("StaticTable::setValueI Out of bounds.");
+		_ERROR("StaticTable::setValueI Out of bounds.");
 	}
 #endif
 	this -> dataTable[ i ] = data;
@@ -255,7 +255,7 @@ template<typename T, Size N>
 inline T& StaticTable<T, N>::getValueI(const Size i) {
 #ifdef DEBUG
 	if ( i >= getSize() ) {
-		_error("StaticTable::getValueI Out of bounds.");
+		_ERROR("StaticTable::getValueI Out of bounds.");
 	}
 #endif
 	return this -> dataTable[ i ];

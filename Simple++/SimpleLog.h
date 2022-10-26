@@ -8,7 +8,7 @@
 /// @version	1.0
 ///
 /// Logging functions.
-/// use info(""); warning(""); error(""); macros to write inside the stdout.
+/// use INFO(""); warning(""); ERROR(""); macros to write inside the stdout.
 ///
 
 
@@ -72,20 +72,20 @@
 #define _windowsDebug(msg);
 #endif
 
-#define debug(code); code
-#define _error(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
-#define _info(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
-#define _warn(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
-#define _assert(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed "TEXT(__FILE__)"@"__LINE__" : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
+#define DEBUG(code); code
+#define _ERROR(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
+#define _INFO(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
+#define _WARNING(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
+#define _ASSERT(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed "TEXT(__FILE__)"@"__LINE__" : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
 
 #else
 #undef debug
-#define debug(code);
-#define _info(msg);
-#define _warn(msg);
-#define _error(msg);
+#define DEBUG(code);
+#define _INFO(msg);
+#define _WARNING(msg);
+#define _ERROR(msg);
 #define _windowsDebug(msg);
-#define _assert(condition);
+#define _ASSERT(condition);
 #endif
 
 template<typename T>

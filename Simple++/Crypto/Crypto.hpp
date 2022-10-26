@@ -24,7 +24,7 @@ namespace Crypto {
 
 		/*HMAC_CTX * context(HMAC_CTX_new());
 		if ( !context ) {
-			error("Error while initializing the HMAC context.");
+			ERROR("Error while initializing the HMAC context.");
 			return false;
 		}*/
 

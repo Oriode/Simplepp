@@ -134,7 +134,7 @@ namespace Math {
 	template<typename FakeType>
 	template<typename T>
 	MATH_FUNC_QUALIFIER T BasicMathT<FakeType>::clamp( const T & v, const T & min, const T & max ) {
-		_assert( min <= max );
+		_ASSERT( min <= max );
 		if ( v > max ) return max;
 		else if ( v < min ) return min;
 		else return v;

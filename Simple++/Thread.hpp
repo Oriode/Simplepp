@@ -21,7 +21,7 @@ void ThreadT<T>::start() {
 	this -> thread = new std::thread( ThreadT<T>::_staticRun, this );
 	this -> mutex.unlock();
 
-	// info( "ThreadT started !" );
+	// INFO( "ThreadT started !" );
 }
 
 template<typename T>
@@ -51,7 +51,7 @@ void ThreadT<T>::join() {
 
 	this -> mutex.unlock();
 
-	// info( "ThreadT stopped." );
+	// INFO( "ThreadT stopped." );
 
 }
 

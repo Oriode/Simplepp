@@ -165,10 +165,10 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbOut>
 		inline T LinearRegression<T, NbFeatures, NbOut>::computeGrad(const Mat<T>& outMat, const Size paramI, const Size outI) const {
-			assert(outMat.getSizeM() == getNbData());
-			assert(outMat.getSizeN() == getNbOut());
-			assert(getNbNeuronParams() > paramI);
-			assert(getNbOut() > outI);
+			ASSERT(outMat.getSizeM() == getNbData());
+			ASSERT(outMat.getSizeN() == getNbOut());
+			ASSERT(getNbNeuronParams() > paramI);
+			ASSERT(getNbOut() > outI);
 
 			const T nbDataT(getNbData());
 
@@ -195,8 +195,8 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbOut>
 		inline void LinearRegression<T, NbFeatures, NbOut>::computeGradM(const Mat<T>& outMat, Mat<T>& m) const {
-			assert(this->nbParam == m.getSizeM());
-			assert(this->NbOut == m.getSizeN());
+			ASSERT(this->nbParam == m.getSizeM());
+			ASSERT(this->NbOut == m.getSizeN());
 
 			for ( Size i(0); i < m.getSizeM(); i++ ) {
 				for ( Size j(0); j < m.getSizeN(); j++ ) {
@@ -284,8 +284,8 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbOut>
 		inline T LinearRegression<T, NbFeatures, NbOut>::computeY(const Vector<Data<T, NbFeatures, NbOut>>& dataVector, const Mat<T>& paramMat, const Size dataI, const Size outI) {
-			assert(dataVector.getSize() > dataI);
-			assert(paramMat.getSizeN() > outI);
+			ASSERT(dataVector.getSize() > dataI);
+			ASSERT(paramMat.getSizeN() > outI);
 
 			const StaticTable<T, NbFeatures>& featureTable(dataVector.getValueI(dataI).getFeatures());
 

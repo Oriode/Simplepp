@@ -113,7 +113,7 @@ namespace Graphic {
 
 					// If still unknown, return failure.  
 					if ( imageFormat == FIF_UNKNOWN ) {
-						error( String( TEXT( "Free Image was unable to detect the file format : " ) ) << filePath );
+						ERROR( String( TEXT( "Free Image was unable to detect the file format : " ) ) << filePath );
 						return false;
 					}
 
@@ -127,7 +127,7 @@ namespace Graphic {
 					}
 
 					if ( this -> freeImage == NULL ) {
-						error( String( TEXT( "Free Image was unable to load the picture : " ) ) << filePath );
+						ERROR( String( TEXT( "Free Image was unable to load the picture : " ) ) << filePath );
 						return false;
 					}
 					if ( this -> size.x == 0 || this -> size.y == 0 ) {
@@ -150,7 +150,7 @@ namespace Graphic {
 						}
 					}
 
-					info( this -> filePath << this -> size << " has been loaded successfully !" );
+					INFO( this -> filePath << this -> size << " has been loaded successfully !" );
 					break;
 				}
 
@@ -247,10 +247,10 @@ namespace Graphic {
 		#endif
 
 		if ( r ) {
-			info( String( TEXT( "Success writing file : " ) ) << filePath );
+			INFO( String( TEXT( "Success writing file : " ) ) << filePath );
 			return true;
 		} else {
-			error( String( TEXT( "Error writing file : " ) ) << filePath );
+			ERROR( String( TEXT( "Error writing file : " ) ) << filePath );
 			return false;
 		}
 	}
@@ -416,7 +416,7 @@ namespace Graphic {
 		} else if ( this -> BPP == 32 ) {
 			newBPPImage = FreeImage_ConvertTo32Bits( this -> freeImage );
 		} else {
-			error( TEXT( "Wrong format for an image loading" ) );
+			ERROR( TEXT( "Wrong format for an image loading" ) );
 			return;
 		}
 		//free this image, not needed now

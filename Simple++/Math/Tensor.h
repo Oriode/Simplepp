@@ -211,7 +211,7 @@ namespace Math {
 
 	template<typename T>
 	inline T& Tensor<T>::operator[](const BasicVector<T>& indexes) {
-		assert(indexes.getSize() <= this->sizes.getSize());
+		ASSERT(indexes.getSize() <= this->sizes.getSize());
 
 		Size finalIndex(0);
 
@@ -219,7 +219,7 @@ namespace Math {
 			const Size& index(indexes[ i ]);
 			const Size& size(this->sizes[ i ]);
 
-			assert(index < size);
+			ASSERT(index < size);
 
 			if ( i > Size(0) ) {
 				finalIndex *= this->sizes[ i - Size(1) ];

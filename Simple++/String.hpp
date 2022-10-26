@@ -1132,7 +1132,7 @@ BasicString<T> & BasicString<T>::_concatWOS( C * const & buffer, const Size & bu
 template<typename T>
 template<typename Type, unsigned int Base>
 Size BasicString<T>::_convertUI2StringWOS( Type number, T * buffer ) {
-	_assert( Base <= 16 && Base > 0 );
+	_ASSERT( Base <= 16 && Base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
 	T * bufferInit( buffer );
@@ -1163,7 +1163,7 @@ Size BasicString<T>::_convertUI2StringWOS( Type number, T ** bufferP, unsigned i
 template<typename T>
 template<typename Type>
 typename void BasicString<T>::__convertUI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
-	_assert( base <= 16 && base > 0 );
+	_ASSERT( base <= 16 && base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
 	T *& buffer( *bufferP );
@@ -1184,7 +1184,7 @@ typename void BasicString<T>::__convertUI2StringWOS( Type number, T ** bufferP, 
 template<typename T>
 template<typename Type, unsigned int Base>
 Size BasicString<T>::_convertI2StringWOS( Type number, T * buffer ) {
-	_assert( Base <= 16 && Base > 0 );
+	_ASSERT( Base <= 16 && Base > 0 );
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
@@ -1223,7 +1223,7 @@ Size BasicString<T>::_convertI2StringWOS( Type number, T ** bufferP, unsigned in
 template<typename T>
 template<typename Type>
 typename void BasicString<T>::__convertI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
-	_assert( base <= 16 && base > 0 );
+	_ASSERT( base <= 16 && base > 0 );
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
@@ -1252,7 +1252,7 @@ typename void BasicString<T>::__convertI2StringWOS( Type number, T ** bufferP, u
 template<typename T>
 template<typename Type, unsigned int Precision, unsigned int Base>
 Size BasicString<T>::_convertFloat2StringWOS( Type number, T * buffer ) {
-	_assert( Base <= 16 && Precision < 50 );
+	_ASSERT( Base <= 16 && Precision < 50 );
 
 	if ( number == INFINITY ) {
 		buffer[ 0 ] = T( 'I' );
@@ -1323,7 +1323,7 @@ Size BasicString<T>::_convertFloat2StringWOS( Type number, T ** bufferP, unsigne
 template<typename T>
 template<typename Type>
 typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
-	_assert( base <= 16 && base > 0 );
+	_ASSERT( base <= 16 && base > 0 );
 
 	T *& buffer( *bufferP );
 
@@ -1450,7 +1450,7 @@ static Size BasicString<T>::_convertUI2StringWOSFill( Type number, T ** bufferP,
 template<typename T>
 template<typename Type, unsigned int Base>
 Size BasicString<T>::_convertUI2String( Type number, T * buffer ) {
-	_assert( Base <= 16 && Base > 0 );
+	_ASSERT( Base <= 16 && Base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
 	auto bufferInit = buffer;
@@ -1484,7 +1484,7 @@ Size BasicString<T>::_convertUI2String( Type number, T ** bufferP, unsigned int 
 template<typename T>
 template<typename Type, unsigned int Base>
 Size BasicString<T>::_convertI2String( Type number, T * buffer ) {
-	_assert( Base <= 16 && Base > 0 );
+	_ASSERT( Base <= 16 && Base > 0 );
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
@@ -1526,7 +1526,7 @@ Size BasicString<T>::_convertI2String( Type number, T ** bufferP, unsigned int b
 template<typename T>
 template<typename Type, unsigned int Precision, unsigned int Base>
 Size BasicString<T>::_convertFloat2String( Type number, T * buffer ) {
-	_assert( Base <= 16 && Precision < 50 );
+	_ASSERT( Base <= 16 && Precision < 50 );
 
 	if ( number == INFINITY ) {
 		buffer[ 0 ] = T( 'I' );
@@ -2225,7 +2225,7 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** itParam, const EndFun
 	if ( endFunc( it ) )
 		return 0;
 
-	_assert( *it != T( '-' ) );
+	_ASSERT( *it != T( '-' ) );
 
 	Type result;
 	if ( !endFunc( it ) ) {
@@ -2329,7 +2329,7 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** itP, unsigned int bas
 	if ( endFunc( it ) )
 		return 0;
 
-	_assert( *it != T( '-' ) );
+	_ASSERT( *it != T( '-' ) );
 
 	Type result;
 	if ( !endFunc( it ) ) {

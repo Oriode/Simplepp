@@ -65,37 +65,37 @@ namespace JSON {
 
 	template<typename S>
 	const NodeValueT<S>* BasicNodeT<S>::toValue() const {
-		assert(this -> getType() == Type::Value);
+		ASSERT(this -> getType() == Type::Value);
 		return reinterpret_cast< const NodeValueT<S> * >( this );
 	}
 
 	template<typename S>
 	NodeValueT<S>* BasicNodeT<S>::toValue() {
-		assert(this -> getType() == Type::Value);
+		ASSERT(this -> getType() == Type::Value);
 		return reinterpret_cast< NodeValueT<S> * >( this );
 	}
 
 	template<typename S>
 	const NodeArrayT<S>* BasicNodeT<S>::toArray() const {
-		assert(this -> getType() == Type::Array);
+		ASSERT(this -> getType() == Type::Array);
 		return reinterpret_cast< const NodeArrayT<S> * >( this );
 	}
 
 	template<typename S>
 	NodeArrayT<S>* BasicNodeT<S>::toArray() {
-		assert(this -> getType() == Type::Array);
+		ASSERT(this -> getType() == Type::Array);
 		return reinterpret_cast< NodeArrayT<S> * >( this );
 	}
 
 	template<typename S>
 	inline const NodeMapT<S>* BasicNodeT<S>::toMap() const {
-		assert(this -> getType() == Type::Map);
+		ASSERT(this -> getType() == Type::Map);
 		return reinterpret_cast< const NodeMapT<S> * >( this );
 	}
 
 	template<typename S>
 	inline NodeMapT<S>* BasicNodeT<S>::toMap() {
-		assert(this -> getType() == Type::Map);
+		ASSERT(this -> getType() == Type::Map);
 		return reinterpret_cast< NodeMapT<S> * >( this );
 	}
 
@@ -111,43 +111,43 @@ namespace JSON {
 
 	template<typename S>
 	const S& BasicNodeT<S>::getValue() const {
-		error(TEXT("Trying to retrieve a value on a non-value node."));
+		ERROR(TEXT("Trying to retrieve a value on a non-value node."));
 		return S::null;
 	}
 
 	template<typename S>
 	void BasicNodeT<S>::setValue(const S& value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::setValue(int value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::setValue(unsigned int value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::setValue(long long int value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::setValue(unsigned long long int value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::setValue(double value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::setValue(bool value) {
-		error(TEXT("Trying to set a value on a non-value node."));
+		ERROR(TEXT("Trying to set a value on a non-value node."));
 	}
 
 	template<typename S>
@@ -180,12 +180,12 @@ namespace JSON {
 
 	template<typename S>
 	void BasicNodeT<S>::addChild(BasicNodeT<S>* child) {
-		error(TEXT("Trying to add a child on a non Map/Array NodeMap."));
+		ERROR(TEXT("Trying to add a child on a non Map/Array NodeMap."));
 	}
 
 	template<typename S>
 	inline void BasicNodeT<S>::addChild(const S& name, BasicNodeT<S>* child) {
-		error(TEXT("Trying to add a child on a non Map/Array NodeMap."));
+		ERROR(TEXT("Trying to add a child on a non Map/Array NodeMap."));
 	}
 
 	template<typename S>
@@ -372,7 +372,7 @@ namespace JSON {
 			it++;
 			return true;
 		} else {
-			error(String::format(TEXT("[JSON ERROR] : Expected '%'."), c));
+			ERROR(String::format(TEXT("[JSON ERROR] : Expected '%'."), c));
 			return false;
 		}
 	}
@@ -990,7 +990,7 @@ namespace JSON {
 				const C* beginIt(it);
 				while ( true ) {
 					if ( endFunc(it) ) {
-						error(TEXT("[JSON Error] : Unexpected buffer end."));
+						ERROR(TEXT("[JSON Error] : Unexpected buffer end."));
 						return false;
 					}
 					if ( !functorNodeName(*it) )
@@ -1013,12 +1013,12 @@ namespace JSON {
 						newNode -> setName(nodeName);
 						this -> addChild(newNode);
 					} else {
-						error(String::format(TEXT("[JSON Error] : Unable to parse the property \"%\"."), nodeName));
+						ERROR(String::format(TEXT("[JSON Error] : Unable to parse the property \"%\"."), nodeName));
 						return false;
 					}
 
 				} else {
-					error(TEXT("Expected property name."));
+					ERROR(TEXT("Expected property name."));
 					return false;
 				}
 
@@ -1072,7 +1072,7 @@ namespace JSON {
 			const C * beginIt( it );
 			while ( true ) {
 				if ( endFunc( it ) ) {
-					error( TEXT( "[JSON Error] : Unexpected buffer end." ) );
+					ERROR( TEXT( "[JSON Error] : Unexpected buffer end." ) );
 					return false;
 				}
 				if ( !functorContentQuote( *it ) ) {
@@ -1094,7 +1094,7 @@ namespace JSON {
 			const C * beginIt( it );
 			while ( true ) {
 				if ( endFunc( it ) ) {
-					error( TEXT( "[JSON Error] : Unexpected buffer end." ) );
+					ERROR( TEXT( "[JSON Error] : Unexpected buffer end." ) );
 					return false;
 				}
 				if ( !functorContent( *it ) )
@@ -1332,7 +1332,7 @@ namespace JSON {
 			const C* beginIt(it);
 			while ( true ) {
 				if ( endFunc(it) ) {
-					error(TEXT("[JSON Error] : Unexpected buffer end."));
+					ERROR(TEXT("[JSON Error] : Unexpected buffer end."));
 					return false;
 				}
 				if ( !functorContentQuote(*it) ) {
@@ -1356,7 +1356,7 @@ namespace JSON {
 			const C* beginIt(it);
 			while ( true ) {
 				if ( endFunc(it) ) {
-					error(TEXT("[JSON Error] : Unexpected buffer end."));
+					ERROR(TEXT("[JSON Error] : Unexpected buffer end."));
 					return false;
 				}
 				if ( !functorContent(*it) )
@@ -2017,13 +2017,13 @@ namespace JSON {
 
 	template<typename S>
 	inline bool Jsonable::fromJSON(const JSON::BasicNodeT<S>* node) {
-		error("Jsonable not overloaded the fromJSON method.");
+		ERROR("Jsonable not overloaded the fromJSON method.");
 		return false;
 	}
 
 	template<typename S>
 	inline JSON::BasicNodeT<S>* Jsonable::toJSON() const {
-		error("Jsonable not overloaded the toJSON method.");
+		ERROR("Jsonable not overloaded the toJSON method.");
 		return NULL;
 	}
 

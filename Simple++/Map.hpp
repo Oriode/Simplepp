@@ -428,14 +428,14 @@ RBNode<T> * RBNode<T>::getUncle( const RBNode<T> & n ) {
 
 template<typename T>
 void RBNode<T>::insertNodeLeft( RBNode<T> * parentNode, RBNode<T> * node, RBNode<T> ** root ) {
-	assert( parentNode -> getLeft() == NULL );
+	ASSERT( parentNode -> getLeft() == NULL );
 	parentNode -> setLeft( node );
 	RBNode<T>::insertNode( node, root );
 }
 
 template<typename T>
 void RBNode<T>::insertNodeRight( RBNode<T> * parentNode, RBNode<T> * node, RBNode<T> ** root ) {
-	assert( parentNode -> getRight() == NULL );
+	ASSERT( parentNode -> getRight() == NULL );
 	parentNode -> setRight( node );
 	RBNode<T>::insertNode( node, root );
 }
@@ -706,7 +706,7 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 			S -> setColor( Color::Black );
 
 			if ( NisLeft ) {
-				//assert( S -> getLeft() );
+				//ASSERT( S -> getLeft() );
 
 				// Rotate Left on P
 				RBNode<T> * _P( P );
@@ -736,7 +736,7 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 				S = _L;
 
 			} else {
-				//assert( S -> getRight() );
+				//ASSERT( S -> getRight() );
 				// Rotate Right on P
 				RBNode<T> * _P( P );
 				RBNode<T> * _G( _P -> getParent() );
@@ -793,13 +793,13 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 			} else {
 				// Case 5
 
-				assert( S -> getColor() == Color::Black );
+				ASSERT( S -> getColor() == Color::Black );
 
 				// TMP
 				// N is Left && Color(S.right) ==  Black && Color(S.left) == Red 
 				if ( NisLeft && ( !S -> getRight() || S -> getRight() -> getColor() == Color::Black ) && S -> getLeft() && S -> getLeft() -> getColor() == Color::Red ) {
 
-					assert( S -> getLeft() -> getColor() == Color::Red ); // Trivial due to case 2-4
+					ASSERT( S -> getLeft() -> getColor() == Color::Red ); // Trivial due to case 2-4
 
 					S -> setColor( Color::Red );
 					S -> getLeft() -> setColor( Color::Black );
@@ -826,7 +826,7 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 					// N is right && Color(S.left) == Black && Color(S.right) == Red 
 				} else if ( !NisLeft && ( !S -> getLeft() || S -> getLeft() -> getColor() == Color::Black ) && S -> getRight() && S -> getRight() -> getColor() == Color::Red ) {
 
-					assert( S -> getRight() -> getColor() == Color::Red ); // Trivial due to case 2-4
+					ASSERT( S -> getRight() -> getColor() == Color::Red ); // Trivial due to case 2-4
 
 
 					S -> setColor( Color::Red );
@@ -852,14 +852,14 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 				}
 				// Case 6	
 
-				assert( S );
-				assert( S && S -> getColor() == Color::Black );
+				ASSERT( S );
+				ASSERT( S && S -> getColor() == Color::Black );
 
 				S -> setColor( P -> getColor() );
 				P -> setColor( Color::Black );
 
 				if ( NisLeft ) {
-					assert( S -> getRight() -> getColor() == Color::Red );
+					ASSERT( S -> getRight() -> getColor() == Color::Red );
 					S -> getRight() -> setColor( Color::Black );
 
 					// Rotate Left on P
@@ -886,7 +886,7 @@ void RBNode<T>::_deleteFixUp( RBNode<T> * N, RBNode<T> ** root, RBNode<T> * P, b
 					}
 
 				} else {
-					assert( S -> getLeft() -> getColor() == Color::Red );
+					ASSERT( S -> getLeft() -> getColor() == Color::Red );
 					S -> getLeft() -> setColor( Color::Black );
 
 
@@ -996,7 +996,7 @@ unsigned int RBNode<T>::_checkNbBlackNode( RBNode<T> * node, unsigned int nbBlac
 	if ( node ) {
 		if ( node -> getColor() == Color::Red ) {
 			// Tree has a Red node with red child :/
-			assert( ( !node -> getLeft() || node -> getLeft() -> getColor() == Color::Black ) && ( !node -> getRight() || node -> getRight() -> getColor() == Color::Black ) );
+			ASSERT( ( !node -> getLeft() || node -> getLeft() -> getColor() == Color::Black ) && ( !node -> getRight() || node -> getRight() -> getColor() == Color::Black ) );
 		}
 
 		if ( node -> getColor() == Color::Black )
@@ -1005,7 +1005,7 @@ unsigned int RBNode<T>::_checkNbBlackNode( RBNode<T> * node, unsigned int nbBlac
 		unsigned int nbBlacksLeft( _checkNbBlackNode( node -> getLeft(), nbBlackNodes ) );
 		unsigned int nbBlacksRight( _checkNbBlackNode( node -> getRight(), nbBlackNodes ) );
 		// Tree has not the same number of black nodes for every path :/
-		assert( nbBlacksLeft == nbBlacksRight );
+		ASSERT( nbBlacksLeft == nbBlacksRight );
 
 
 		return nbBlacksLeft;
@@ -1299,12 +1299,12 @@ void RBTree<I, T, Compare>::_checkTreeSorted( RBNode< MapObject<I, T> > * node, 
 		const MapObject<I, T> & v( node -> getValue() );
 		if ( node -> getLeft() ) {
 			Math::Compare::Value compareValue( func( node -> getLeft() -> getValue().getIndex(), v.getIndex() ) );
-			assert( compareValue == Math::Compare::Value::Less );
+			ASSERT( compareValue == Math::Compare::Value::Less );
 			_checkTree( node -> getLeft(), func );
 		}
 		if ( node -> getRight() ) {
 			Math::Compare::Value compareValue( func( node -> getRight() -> getValue().getIndex(), v.getIndex() ) );
-			assert( compareValue == Math::Compare::Value::Greater );
+			ASSERT( compareValue == Math::Compare::Value::Greater );
 			_checkTree( node -> getRight(), func );
 		}
 	}

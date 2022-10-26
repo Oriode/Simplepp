@@ -337,13 +337,13 @@ namespace Math {
 
 	template<typename T>
 	inline void Mat<T>::setValueM(const Size m, const Table<T>& v) {
-		assert(getSizeN() == v.getSize());
+		ASSERT(getSizeN() == v.getSize());
 		Utility::copy(this->dataTable + m * getSizeN(), v.getData(), getSizeN());
 	}
 
 	template<typename T>
 	inline void Mat<T>::setValueN(const Size n, const Table<T>& v) {
-		assert(getSizeM() == v.getSize());
+		ASSERT(getSizeM() == v.getSize());
 		for ( Size i(0); i < getSizeM(); i++ ) {
 			setValueI(i, n, v[ i ]);
 		}
@@ -601,7 +601,7 @@ namespace Math {
 	template<typename T>
 	template<typename Functor, typename C>
 	inline Mat<T>& Mat<T>::apply(Functor& functor, const Mat<C>& m) {
-		assert(getSizeM() == m.getSizeM() && getSizeN() == m.getSizeN());
+		ASSERT(getSizeM() == m.getSizeM() && getSizeN() == m.getSizeN());
 		Table<T>::apply(functor, m);
 
 		return *this;
@@ -907,7 +907,7 @@ namespace Math {
 
 	template<typename T, typename Functor>
 	Mat<T> apply(Functor& functor, const Mat<T>& m1, const Mat<T>& m2) {
-		assert(m1.getSizeM() == m2.getSizeM() && m1.getSizeN() == m2.getSizeN());
+		ASSERT(m1.getSizeM() == m2.getSizeM() && m1.getSizeN() == m2.getSizeN());
 		Mat<T> r(m1.getSizeM(), m1.getSizeN());
 		for ( Size i(0); i < m1.getSize(); i++ ) {
 			r.setValueI(i, functor(m1.getValueI(i), m2.getValueI(i)));
@@ -935,7 +935,7 @@ namespace Math {
 
 	template<typename T, typename Functor, typename C>
 	Mat<T> apply(Functor& functor, const Mat<T>& m, const Table<C>& v) {
-		assert(m.getSizeN() == v.getSize());
+		ASSERT(m.getSizeN() == v.getSize());
 		Mat<T> r(m.getSizeM(), m.getSizeN());
 		for ( Size i(0); i < m.getSizeM(); i++ ) {
 			for ( Size j(0); j < m.getSizeN(); j++ ) {
@@ -948,7 +948,7 @@ namespace Math {
 
 	template<typename T, typename Functor, typename C>
 	Mat<T> apply(Functor& functor, const Table<C>& v1, const Mat<T>& v2) {
-		assert(m.getSizeM() == v.getSize());
+		ASSERT(m.getSizeM() == v.getSize());
 		Mat<T> r(m.getSizeM(), m.getSizeN());
 		for ( Size i(0); i < m.getSizeM(); i++ ) {
 			for ( Size j(0); j < m.getSizeN(); j++ ) {
@@ -1020,7 +1020,7 @@ namespace Math {
 
 	template<typename T>
 	Mat<T> operator*(const Mat<T>& m1, const Mat<T>& m2) {
-		assert(m1.getSizeN() == m2.getSizeM());
+		ASSERT(m1.getSizeN() == m2.getSizeM());
 		Mat<T> r(m1.getSizeM(), m2.getSizeN());
 		for ( Size i(0); i < r.getSizeM(); i++ ) {
 			for ( Size j(0); j < r.getSizeN(); j++ ) {
@@ -1038,7 +1038,7 @@ namespace Math {
 
 	template<typename T>
 	Mat<T> operator*(const Mat<T>& m, const Table<T>& v) {
-		assert(m.getSizeN() == v.getSize() || m.getSizeN() == Size(1));
+		ASSERT(m.getSizeN() == v.getSize() || m.getSizeN() == Size(1));
 
 		if ( m.getSizeN() == v.getSize() ) {
 			// Vector is set vertically.
@@ -1067,7 +1067,7 @@ namespace Math {
 
 	template<typename T>
 	Mat<T> operator*(const Table<T>& v, const Mat<T>& m) {
-		assert(v.getSize() == m.getSizeM() || Size(1) == m.getSizeM());
+		ASSERT(v.getSize() == m.getSizeM() || Size(1) == m.getSizeM());
 
 		if ( v.getSize() == m.getSizeM() ) {
 			// Vector is set horizontally.

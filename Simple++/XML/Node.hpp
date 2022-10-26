@@ -468,7 +468,7 @@ namespace XML {
 			auto beginIt( it );
 			while ( true ) {
 				if ( endFunc( it ) ) {
-					error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+					ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 					return false;
 				}
 				if ( !functorNodeName( *it ) ) break;
@@ -490,7 +490,7 @@ namespace XML {
 			} else {
 				while ( functorSpace( *it ) ) it++;
 				if ( ( *it ) != C( '>' ) ) {
-					error( TEXT( "[XML ERROR] : Expecting '>'." ) );
+					ERROR( TEXT( "[XML ERROR] : Expecting '>'." ) );
 					return false;
 				}
 				it++;
@@ -507,7 +507,7 @@ namespace XML {
 			auto beginIt( it );
 			while ( true ) {
 				if ( endFunc( it ) ) {
-					error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+					ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 					return false;
 				}
 				if ( !functorNodeName( *it ) ) break;
@@ -520,7 +520,7 @@ namespace XML {
 			while ( functorSpace( *it ) ) it++;
 
 			if ( nodeName != this -> getName() ) {
-				error( String::format( TEXT( "[XML ERROR] : Closing node do not match. \"%\" != \"%\"." ), this -> getName(), nodeName ) );
+				ERROR( String::format( TEXT( "[XML ERROR] : Closing node do not match. \"%\" != \"%\"." ), this -> getName(), nodeName ) );
 				// SYNTAX ERROR
 				return false;
 			} else {
@@ -583,7 +583,7 @@ namespace XML {
 						return false;
 				}
 			} else {
-				error( TEXT( "[XML ERROR] : Expected '<'." ) );
+				ERROR( TEXT( "[XML ERROR] : Expected '<'." ) );
 				return false;
 			}
 		}
@@ -628,7 +628,7 @@ namespace XML {
 		auto iteratorBegin( it );
 		while ( true ) {
 			if ( endFunc( it ) ) {
-				error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+				ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 				return false;
 			}
 			if ( !functorName( *it ) )
@@ -650,7 +650,7 @@ namespace XML {
 					iteratorBegin = it;
 					while ( true ) {
 						if ( endFunc( it ) ) {
-							error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 							return false;
 						}
 						if ( !functorValue( *it ) )
@@ -664,7 +664,7 @@ namespace XML {
 					iteratorBegin = it;
 					while ( true ) {
 						if ( endFunc( it ) ) {
-							error( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 							return false;
 						}
 						if ( !functorName( *it ) )
@@ -971,7 +971,7 @@ namespace XML {
 			it++;
 			return true;
 		} else {
-			error( String::format(TEXT( "[XML ERROR] : Expected '%'." ), c) );
+			ERROR( String::format(TEXT( "[XML ERROR] : Expected '%'." ), c) );
 			return false;
 		}
 

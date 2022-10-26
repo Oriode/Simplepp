@@ -131,7 +131,7 @@ namespace Math {
 		MATH_FUNC_QUALIFIER static constexpr T pow(const T& v, unsigned int e);
 
 		/**
-		 * @brief 	Clamp a number between to others (assert(min <= max))
+		 * @brief 	Clamp a number between to others (ASSERT(min <= max))
 		 * @param 	v  	Value to be clamped.
 		 * @param 	min	minimal value.
 		 * @param 	max	maximal value.

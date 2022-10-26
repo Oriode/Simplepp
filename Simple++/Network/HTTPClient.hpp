@@ -222,7 +222,7 @@ namespace Network {
 			const StringASCII::ElemType* paramValueEndIt(it);
 
 			if ( paramNameBeginIt == paramNameEndIt || paramValueBeginIt == paramValueEndIt ) {
-				error("HTTP header syntax error.");
+				ERROR("HTTP header syntax error.");
 				return false;
 			}
 
@@ -390,7 +390,7 @@ namespace Network {
 		}
 
 		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			error("HTTP response syntax error.");
+			ERROR("HTTP response syntax error.");
 			return false;
 		}
 
@@ -507,7 +507,7 @@ namespace Network {
 		const StringASCII::ElemType* methodStrEndIt(it);
 
 		if ( methodStrBeginIt == methodStrEndIt ) {
-			error("HTTP request syntax error : no method.");
+			ERROR("HTTP request syntax error : no method.");
 			return false;
 		}
 
@@ -515,7 +515,7 @@ namespace Network {
 		typename HTTPRequestT<T>::Method method(HTTPRequestT<T>::getMethod(methodStr));
 
 		if ( method == Method::Unknown ) {
-			error("HTTP request syntax error : Unkown method.");
+			ERROR("HTTP request syntax error : Unkown method.");
 			return false;
 		}
 
@@ -534,7 +534,7 @@ namespace Network {
 		const StringASCII::ElemType* protocolStrEndIt(it);
 
 		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			error("HTTP request syntax error : no protocol.");
+			ERROR("HTTP request syntax error : no protocol.");
 			return false;
 		}
 
@@ -783,7 +783,7 @@ namespace Network {
 				totalReceivedLength += receivedLength;
 			}
 
-			debug(*( this->receiveBuffer + totalReceivedLength ) = StringASCII::ElemType('\n'));
+			DEBUG(*( this->receiveBuffer + totalReceivedLength ) = StringASCII::ElemType('\n'));
 
 			if ( !this->response.parseQueryContent(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
 				return NULL;
@@ -791,7 +791,7 @@ namespace Network {
 
 			return &this->response;
 		} else {
-			error(String::format("Unsuported query type %.", UrlT<T>::getTypeString(request.getEndPoint().getType())));
+			ERROR(String::format("Unsuported query type %.", UrlT<T>::getTypeString(request.getEndPoint().getType())));
 			return NULL;
 		}
 

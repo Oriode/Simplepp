@@ -36,7 +36,7 @@ namespace Network {
 	inline bool ConnectionT<T>::_connect() {
 
 		if ( !_tryConnect(this) ) {
-			error(StringASCII("Unable to connect to host ") << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS());
+			ERROR(StringASCII("Unable to connect to host ") << getIpFamilyS() << " : " + getNameInfo() << " on port " + getPort() << " with protocol " << getSockTypeS());
 			return false;
 		}
 
@@ -99,7 +99,7 @@ namespace Network {
 		}
 
 		if ( !_tryListen( this, maxClients ) ) {
-			error( StringASCII( "Unable to bind ip " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " << getPort() << " with protocol " << getSockTypeS() );
+			ERROR( StringASCII( "Unable to bind ip " ) << getIpFamilyS() << " : " + getNameInfo() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 			return false;
 		}
 
@@ -128,7 +128,7 @@ namespace Network {
 			}
 		}
 
-		verbose(StringASCII("New Socket ") << newSocket << " listening on " << addrInfo.getIpFamilyS() + " : " << addrInfo.getIp() << " on port " << addrInfo.getPort() << " with protocol " << addrInfo.getSockTypeS());
+		VERBOSE(StringASCII("New Socket ") << newSocket << " listening on " << addrInfo.getIpFamilyS() + " : " << addrInfo.getIp() << " on port " << addrInfo.getPort() << " with protocol " << addrInfo.getSockTypeS());
 
 		return newSocket;
 	}
@@ -169,17 +169,17 @@ namespace Network {
 			if ( addrResults ) {
 				freeaddrinfo(addrResults);
 			}
-			error( StringASCII( "SOCKET error " ) << addrErr << " : Unable to retrieve address info on address " << ip << "@" << service );
+			ERROR( StringASCII( "SOCKET error " ) << addrErr << " : Unable to retrieve address info on address " << ip << "@" << service );
 			return false;
 		}
 
 		if ( !_tryListen( addrResults, maxClients ) ) {
-			error( StringASCII( "Unable to bind on " ) << getIpFamilyS() + " : " << ip << " on port " << service << " with Protocol " << getSockTypeS() );
+			ERROR( StringASCII( "Unable to bind on " ) << getIpFamilyS() + " : " << ip << " on port " << service << " with Protocol " << getSockTypeS() );
 			freeaddrinfo( addrResults );
 			return false;
 		}
 		freeaddrinfo( addrResults );
-		verbose( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
+		VERBOSE( StringASCII( "Socket " ) << this -> mSocket << " listening on " << getIpFamilyS() << " : " << getIp() << " on port " << getPort() << " with " << getSockTypeS() );
 
 		this -> mIsListening = ( getSockType() == SockType::TCP );
 		return true;
@@ -245,7 +245,7 @@ namespace Network {
 			}
 		}
 
-		verbose(StringASCII("New Socket ") << newSocket << " connected to " << addrInfo.getIpFamilyS() + " : " << addrInfo.getIp() << " on port " << addrInfo.getPort() << " with protocol " << addrInfo.getSockTypeS());
+		VERBOSE(StringASCII("New Socket ") << newSocket << " connected to " << addrInfo.getIpFamilyS() + " : " << addrInfo.getIp() << " on port " << addrInfo.getPort() << " with protocol " << addrInfo.getSockTypeS());
 
 		return newSocket;
 	}
@@ -280,12 +280,12 @@ namespace Network {
 			if ( addrResults ) {
 				freeaddrinfo(addrResults);
 			}
-			error(StringASCII("SOCKET error ") << addrErr << " : Unable to retrieve address info on address " << ip << "@" << service);
+			ERROR(StringASCII("SOCKET error ") << addrErr << " : Unable to retrieve address info on address " << ip << "@" << service);
 			return false;
 		}
 
 		if ( !_tryConnect( addrResults ) ) {
-			error( StringASCII( "Unable to connect to host " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
+			ERROR( StringASCII( "Unable to connect to host " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
 			freeaddrinfo( addrResults );
 			return false;
 		}
@@ -293,7 +293,7 @@ namespace Network {
 		//freeing the automatically allocated AddrInfos
 		freeaddrinfo( addrResults );
 
-		verbose( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
+		VERBOSE( StringASCII( "Socket " ) << this -> mSocket << " connected to " << getIpFamilyS() + " : " << getIp() << " on port " << getPort() << " with protocol " << getSockTypeS() );
 
 		return true;
 	}
@@ -315,7 +315,7 @@ namespace Network {
 
 		if ( isConnected() ) {
 			close();
-			warn("The connection was already open. Closing the old one.");
+			WARNING("The connection was already open. Closing the old one.");
 		}
 
 		return true;
@@ -422,7 +422,7 @@ namespace Network {
 	void ConnectionT<T>::close() {
 		if ( isConnected() ) {
 			closesocket(this -> mSocket);
-			verbose(StringASCII::format("Closed socket %.", this->mSocket));
+			VERBOSE(StringASCII::format("Closed socket %.", this->mSocket));
 			this -> mSocket = SOCKET(-1);
 		}
 
@@ -436,12 +436,12 @@ namespace Network {
 	bool ConnectionT<T>::send( const char * buffer, int size ) {
 		if ( getSockType() == SockType::TCP ) {
 			if ( ::send( this -> mSocket, buffer, size, 0 ) == SOCKET_ERROR ) {
-				error( "Unable to send TCP data." );
+				ERROR( "Unable to send TCP data." );
 				return false;
 			}
 		} else if ( getSockType() == SockType::UDP ) {
 			if ( ::sendto( this -> mSocket, buffer, size, 0, getSockAddr(), ( int ) getSockAddrLen() ) == SOCKET_ERROR ) {
-				error( "Unable to send UDP data." );
+				ERROR( "Unable to send UDP data." );
 				return false;
 			}
 		}
@@ -451,12 +451,12 @@ namespace Network {
 	template<typename T>
 	bool ConnectionT<T>::accept( ConnectionT<T> * clientSocket ) {
 		if ( !isConnected() ) {
-			error( "Socket not binded." );
+			ERROR( "Socket not binded." );
 			return false;
 		}
 
 		if ( !this -> mIsListening ) {
-			error( "This socket is not able to accept anything, he is not listening." );
+			ERROR( "This socket is not able to accept anything, he is not listening." );
 			return false;
 		}
 
@@ -469,7 +469,7 @@ namespace Network {
 		clientSocket -> ai_addrlen = sockLen;
 
 		if ( clientSock == INVALID_SOCKET ) {
-			error( "Unable to accept new client" );
+			ERROR( "Unable to accept new client" );
 			return false;
 		}
 
@@ -479,7 +479,7 @@ namespace Network {
 		clientSocket -> setPort( getSockAddr() );
 		clientSocket -> _update();
 
-		verbose( StringASCII( "Socket " ) << this -> mSocket << " has accepted a new client " << clientSocket -> getIpFamilyS() << " : " << clientSocket -> getIp() );
+		VERBOSE( StringASCII( "Socket " ) << this -> mSocket << " has accepted a new client " << clientSocket -> getIpFamilyS() << " : " << clientSocket -> getIp() );
 
 
 		return true;
@@ -495,7 +495,7 @@ namespace Network {
 		int amountRead = ::recv( this -> mSocket, buffer, maxSize, 0 );
 		if ( amountRead < 0 ) {
 			if ( amountRead == SOCKET_ERROR ) {
-				error( "Error while receiving !" );
+				ERROR( "Error while receiving !" );
 				return amountRead;
 			}
 			return 0;
@@ -511,7 +511,7 @@ namespace Network {
 		int amountRead = ::recvfrom( this -> mSocket, buffer, maxSize, 0, castedAddress -> ai_addr, ( int * ) &castedAddress -> ai_addrlen );
 		if ( amountRead <= 0 ) {
 			if ( amountRead == SOCKET_ERROR ) {
-				error( "Error while ReceiveFrom." );
+				ERROR( "Error while ReceiveFrom." );
 			}
 			return 0;
 		}
@@ -532,7 +532,7 @@ namespace Network {
 		//cast in order to resolve access problem
 		const ConnectionT<T> * castedAddress = ( const ConnectionT<T> * ) & addressTo;
 		if ( ::sendto( this -> mSocket, buffer, size, 0, castedAddress -> getSockAddr(), ( int ) castedAddress  -> getSockAddrLen() ) == SOCKET_ERROR ) {
-			error( "Unable to send UDP data." );
+			ERROR( "Unable to send UDP data." );
 			return false;
 		}
 		return true;

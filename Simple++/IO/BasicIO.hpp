@@ -4,14 +4,14 @@ namespace IO {
 	template<typename T>
 	template<typename Stream>
 	bool BasicIOT<T>::read(Stream* stream) {
-		_assert(stream->isOpen());
+		_ASSERT(stream->isOpen());
 		return true;
 	}
 
 	template<typename T>
 	template<typename Stream>
 	bool BasicIOT<T>::write(Stream* stream) const {
-		_assert(stream->isOpen());
+		_ASSERT(stream->isOpen());
 		return true;
 	}
 
@@ -22,10 +22,10 @@ namespace IO {
 
 	template<typename Stream, typename C>
 	bool _writeObject(Stream* stream, const C* buffer, ...) {
-		debug(Size expectedSize(sizeof(C)); Size beginPos(stream->getPosition()););
+		DEBUG(Size expectedSize(sizeof(C)); Size beginPos(stream->getPosition()););
 		bool r(stream->write(( char* ) buffer, sizeof(C)));
-		debug(Size charWrote(stream->getPosition() - beginPos););
-		assert(charWrote == expectedSize);
+		DEBUG(Size charWrote(stream->getPosition() - beginPos););
+		ASSERT(charWrote == expectedSize);
 		return r;
 	}
 
@@ -43,10 +43,10 @@ namespace IO {
 
 	template<typename Stream, typename C>
 	bool _readObject(Stream* stream, C* buffer, ...) {
-		debug(Size expectedSize(sizeof(C)); Size beginPos(stream->getPosition()););
+		DEBUG(Size expectedSize(sizeof(C)); Size beginPos(stream->getPosition()););
 		bool r(stream->read(( char* ) buffer, sizeof(C)));
-		debug(Size charRead(stream->getPosition() - beginPos););
-		assert(charRead == expectedSize);
+		DEBUG(Size charRead(stream->getPosition() - beginPos););
+		ASSERT(charRead == expectedSize);
 		return r;
 	}
 
@@ -85,10 +85,10 @@ namespace IO {
 
 	template<typename Stream, typename C>
 	bool _writeBuffer(Stream* stream, const C* buffer, Size size, ...) {
-		debug(Size expectedSize(sizeof(C) * size); Size beginPos(stream->getPosition()););
+		DEBUG(Size expectedSize(sizeof(C) * size); Size beginPos(stream->getPosition()););
 		bool r(stream->write(( char* ) buffer, sizeof(C) * size));
-		debug(Size charWrote(stream->getPosition() - beginPos););
-		assert(charWrote == expectedSize);
+		DEBUG(Size charWrote(stream->getPosition() - beginPos););
+		ASSERT(charWrote == expectedSize);
 		return r;
 	}
 
@@ -105,10 +105,10 @@ namespace IO {
 
 	template<typename Stream, typename C>
 	bool _readBuffer(Stream* stream, C* buffer, Size size, ...) {
-		debug(Size expectedSize(sizeof(C) * size); Size beginPos(stream->getPosition()););
+		DEBUG(Size expectedSize(sizeof(C) * size); Size beginPos(stream->getPosition()););
 		bool r(stream->read(( char* ) buffer, sizeof(C) * size));
-		debug(Size charRead(stream->getPosition() - beginPos););
-		assert(charRead == expectedSize);
+		DEBUG(Size charRead(stream->getPosition() - beginPos););
+		ASSERT(charRead == expectedSize);
 		return r;
 	}
 
