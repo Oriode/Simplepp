@@ -26,7 +26,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER T dot(const Vec<T>& v1, const Vec<T>& v2) {
-		ASSERT(v1.getSize() == v2.getSize());
+		ASSERT_SPP(v1.getSize() == v2.getSize());
 		return dot(v1.getData(), v2.getData(), v1.getSize());
 	}
 
@@ -213,7 +213,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER Vec<T> cross(const Vec<T>& v1, const Vec<T>& v2) {
-		ASSERT(v1.getSize() == v2.getSize());
+		ASSERT_SPP(v1.getSize() == v2.getSize());
 		Vec<T> crossProduct(v1.getSize());
 		for ( Size i(0); i < v1.getSize(); i++ ) {
 			crossProduct[ i ] = v1[ ( i + Size(1) ) % v1.getSize() ] * v2[ ( i + Size(2) ) % v2.getSize() ] - v2[ ( i + Size(1) ) % v2.getSize() ] * v1[ ( i + Size(2) ) % v1.getSize() ];

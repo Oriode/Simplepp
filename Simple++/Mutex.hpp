@@ -28,14 +28,14 @@ MutexT<T> & MutexT<T>::operator=( const MutexT & mutex ) {
 template<typename T>
 void MutexT<T>::lock() {
 	this->mMutex.lock();
-	_ASSERT(!this->bLocked);
+	_ASSERT_SPP(!this->bLocked);
 	//this -> lockingThreadId = Thread::getCurrentThreadId();
 	this->bLocked = true;
 }
 
 template<typename T>
 void MutexT<T>::unlock() {
-	_ASSERT( this->bLocked );
+	_ASSERT_SPP( this->bLocked );
 	this->bLocked = false;
 	this->mMutex.unlock();
 }

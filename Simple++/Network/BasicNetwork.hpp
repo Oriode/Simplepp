@@ -11,7 +11,7 @@ namespace Network {
 		WSADATA wsaData;
 
 		if ( WSAStartup( MAKEWORD( 2, 2 ), &wsaData ) != 0 ) {
-			ERROR( "WSAStartup failed !" );
+			ERROR_SPP( "WSAStartup failed !" );
 			WSACleanup();
 			return false;
 		}

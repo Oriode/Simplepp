@@ -93,7 +93,7 @@ namespace XML {
 		auto iteratorBegin( it );
 		while ( true ) {
 			if ( endFunc( it ) ) {
-				ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+				ERROR_SPP( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 				return false;
 			}
 			if ( !functorName( *it ) )
@@ -116,7 +116,7 @@ namespace XML {
 					iteratorBegin = it;
 					while ( true ) {
 						if ( endFunc( it ) ) {
-							ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							ERROR_SPP( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 							return false;
 						}
 						if ( !functorValue( *it ) )
@@ -130,7 +130,7 @@ namespace XML {
 					iteratorBegin = it;
 					while ( true ) {
 						if ( endFunc( it ) ) {
-							ERROR( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
+							ERROR_SPP( TEXT( "[XML ERROR] : Unexpected buffer end." ) );
 							return false;
 						}
 						if ( !functorName( *it ) )
@@ -252,7 +252,7 @@ namespace XML {
 				}
 			}
 		} else {
-			ERROR( TEXT( "[XML ERROR] : expecting \"<xml...\"." ) );
+			ERROR_SPP( TEXT( "[XML ERROR] : expecting \"<xml...\"." ) );
 			return false;
 		}
 

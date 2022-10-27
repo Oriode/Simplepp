@@ -320,7 +320,7 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::addData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
-			ASSERT(featureTableVector.getSize() == outTableVector.getSize());
+			ASSERT_SPP(featureTableVector.getSize() == outTableVector.getSize());
 			this->optimizeMutex.lock();
 			{
 				Vector<StaticTable<T, M::m[ 0 ][ 0 ]>> featureTableVectorCpy(featureTableVector);
@@ -339,7 +339,7 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::setData(const Vector<StaticTable<T, M::m[ 0 ][ 0 ]>>& featureTableVector, const Vector<StaticTable<T, M::m[ M::nbLayers - Size(1) ][ 1 ]>>& outTableVector) {
-			ASSERT(featureTableVector.getSize() == outTableVector.getSize());
+			ASSERT_SPP(featureTableVector.getSize() == outTableVector.getSize());
 			this->optimizeMutex.lock();
 			{
 				this->featureVector = featureTableVector;
@@ -406,7 +406,7 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeFeature(const Math::Interval<Size>& dataIInterval) {
 
-			ASSERT(this->featureVector.getSize());
+			ASSERT_SPP(this->featureVector.getSize());
 
 			// unnormalize first.
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
@@ -493,7 +493,7 @@ namespace Math {
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::normalizeOut(const Math::Interval<Size>& dataIInterval) {
 
-			ASSERT(this->expectedYVector.getSize());
+			ASSERT_SPP(this->expectedYVector.getSize());
 
 			// unnormalize first.
 			for ( Size dataI(dataIInterval.getBegin()); dataI < dataIInterval.getEnd(); dataI++ ) {
@@ -848,7 +848,7 @@ namespace Math {
 		inline void DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::optimizeStochastic(const Vector<Math::Interval<Size>>& trainIntervalVector) {
 			for ( Size i(0); i < trainIntervalVector.getSize(); i++ ) {
 				const Math::Interval<Size>& dataIInterval(trainIntervalVector.getValueI(i));
-				ASSERT(dataIInterval.getSize() == M::dataChunkSize);
+				ASSERT_SPP(dataIInterval.getSize() == M::dataChunkSize);
 				computeGradS(dataIInterval.getBegin());
 				updateModel(getLearningRateFactor());
 			}
@@ -958,7 +958,7 @@ namespace Math {
 						const Math::Interval<Size>& dataIInterval(this->trainIntervalVector.getValueI(i));
 
 						{
-							ASSERT(trainInterval.getSize() == M::dataChunkSize);
+							ASSERT_SPP(trainInterval.getSize() == M::dataChunkSize);
 							computeGradS(dataIInterval.getBegin());
 							updateModel(getLearningRateFactor());
 						}

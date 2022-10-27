@@ -65,7 +65,7 @@ Vector<T>::Vector( const Size size, const Size maxSize ) :
 	maxSize( maxSize ),
 	iteratorEnd( dataTable + maxSize )
 {
-	_ASSERT(maxSize);
+	_ASSERT_SPP(maxSize);
 	this->size = size;
 	this->dataTable = new T[ maxSize ];
 	_updateIterators();
@@ -125,8 +125,8 @@ Vector<T>::Vector( const C * data, const Size size, const Size maxSize ) :
 	BasicVector<T>(BasicVector<T>::protectedCtor::null),
 	maxSize( maxSize )
 {
-	_ASSERT( maxSize );
-	_ASSERT( maxSize >= size );
+	_ASSERT_SPP( maxSize );
+	_ASSERT_SPP( maxSize >= size );
 
 	this->size = size;
 	this->dataTable = new T[ maxSize ];
@@ -444,7 +444,7 @@ template<typename T>
 void Vector<T>::setValueI(const Size i, const T& data) {
 #ifdef DEBUG
 	if ( i >= this->maxSize ) {
-		_ERROR("Vector::setValueI Out of bounds.");
+		_ERROR_SPP("Vector::setValueI Out of bounds.");
 	}
 #endif
 	this -> dataTable[ i ] = data;
@@ -454,7 +454,7 @@ template<typename T>
 void Vector<T>::setValueIt(typename Vector<T>::Iterator i, const T& data) {
 #ifdef DEBUG
 	if ( i < this->dataTable || i >= this->iteratorEnd ) {
-		_ERROR("Vector::setValueIt Out of bounds.");
+		_ERROR_SPP("Vector::setValueIt Out of bounds.");
 	}
 #endif
 	* i = data;
@@ -469,7 +469,7 @@ template<typename T>
 T& Vector<T>::getValueI(const Size i) {
 #ifdef DEBUG
 	if ( i >= this->maxSize ) {
-		_ERROR("Vector::getValueI Out of bounds.");
+		_ERROR_SPP("Vector::getValueI Out of bounds.");
 	}
 #endif
 	return this -> dataTable[ i ];
@@ -484,7 +484,7 @@ template<typename T>
 T& Vector<T>::getValueIt(typename Vector<T>::Iterator it) {
 #ifdef DEBUG
 	if ( it < this->dataTable || it >= this->iteratorEnd ) {
-		_ERROR("Vector::getValueIt Out of bounds.");
+		_ERROR_SPP("Vector::getValueIt Out of bounds.");
 	}
 #endif
 	return *it;
@@ -725,7 +725,7 @@ template<typename T>
 void Vector<T>::_eraseit( typename Vector<T>::Iterator it ) {
 #ifdef DEBUG
 	if ( it < this->dataTable || it >= this->iteratorEnd ) {
-		_ERROR("Vector::_eraseit Out of bounds.");
+		_ERROR_SPP("Vector::_eraseit Out of bounds.");
 	}
 #endif
 	this -> size--;

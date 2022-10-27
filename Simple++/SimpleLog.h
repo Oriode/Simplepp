@@ -8,7 +8,7 @@
 /// @version	1.0
 ///
 /// Logging functions.
-/// use INFO(""); warning(""); ERROR(""); macros to write inside the stdout.
+/// use INFO_SPP(""); warning(""); ERROR_SPP(""); macros to write inside the stdout.
 ///
 
 
@@ -64,28 +64,28 @@
 #endif
 
 #if defined DEBUG
-#undef debug
+#undef DEBUG_SPP
 
 #if defined WIN32 && defined ENABLE_WIN32
-#define _windowsDebug(msg); SimpleLog::displayWindowsDebug(msg, TEXT(__FILE__), __LINE__);
+#define _WINDOWS_INFO_SPP(msg); SimpleLog::displayWindowsDebug(msg, TEXT(__FILE__), __LINE__);
 #else
-#define _windowsDebug(msg);
+#define _WINDOWS_INFO_SPP(msg);
 #endif
 
-#define DEBUG(code); code
-#define _ERROR(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
-#define _INFO(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
-#define _WARNING(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
-#define _ASSERT(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed "TEXT(__FILE__)"@"__LINE__" : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
+#define DEBUG_SPP(code); code
+#define _ERROR_SPP(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
+#define _INFO_SPP(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Info, SimpleLog::MessageColor::White, TEXT(__FILE__), __LINE__);
+#define _WARNING_SPP(msg); SimpleLog::callErrorHandler(msg, SimpleLog::MessageSeverity::Warning, SimpleLog::MessageColor::Yellow, TEXT(__FILE__), __LINE__);
+#define _ASSERT_SPP(condition); if (!(condition)) SimpleLog::callErrorHandler(TEXT( "Assertion failed "TEXT(__FILE__)"@"__LINE__" : "#condition ), SimpleLog::MessageSeverity::Error, SimpleLog::MessageColor::Red, TEXT(__FILE__), __LINE__);
 
 #else
-#undef debug
-#define DEBUG(code);
-#define _INFO(msg);
-#define _WARNING(msg);
-#define _ERROR(msg);
-#define _windowsDebug(msg);
-#define _ASSERT(condition);
+#undef DEBUG_SPP
+#define DEBUG_SPP(code);
+#define _INFO_SPP(msg);
+#define _WARNING_SPP(msg);
+#define _ERROR_SPP(msg);
+#define _WINDOWS_INFO_SPP(msg);
+#define _ASSERT_SPP(condition);
 #endif
 
 template<typename T>

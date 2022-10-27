@@ -40,35 +40,35 @@
 #endif
 
 #if defined DEBUG
-#undef debug
+#undef DEBUG_SPP
 
 
 #if defined WIN32 && defined ENABLE_WIN32
-#define windowsDebug(msg); Log::displayWindowsDebug(msg, TEXT( __FILE__ ), __LINE__);
+#define WINDOWS_INFO_SPP(msg); Log::displayWindowsDebug(msg, TEXT( __FILE__ ), __LINE__);
 #else
-#define windowsDebug(msg);
+#define WINDOWS_INFO_SPP(msg);
 #endif
 
 
-#define DEBUG(code); code
-#define ERROR(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__ );
-#define WARNING(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, Log::MessageColor::Yellow, TEXT( __FILE__ ), __LINE__ );
-#define INFO(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
-#define VERBOSE(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Verbose, Log::MessageColor::Gray, TEXT( __FILE__ ), __LINE__ );
+#define DEBUG_SPP(code); code
+#define ERROR_SPP(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__ );
+#define WARNING_SPP(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Warning, Log::MessageColor::Yellow, TEXT( __FILE__ ), __LINE__ );
+#define INFO_SPP(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Info, Log::MessageColor::White, TEXT( __FILE__ ), __LINE__ );
+#define VERBOSE_SPP(msg); Log::callErrorHandler( StringASCII(msg), Log::MessageSeverity::Verbose, Log::MessageColor::Gray, TEXT( __FILE__ ), __LINE__ );
 
-#define ASSERT(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
-#define assertstr(condition,msg); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : "#msg ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
+#define ASSERT_SPP(condition); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : ("#condition") => false" ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
+#define ASSERT_STR_SPP(condition,msg); if (!(condition)) Log::callErrorHandler(TEXT( "Assertion Failed! : "#msg ), Log::MessageSeverity::Error, Log::MessageColor::Red, TEXT( __FILE__ ), __LINE__);
 
 #else
-#undef debug
-#define DEBUG( ... );
-#define INFO( ... );
-#define VERBOSE( ... );
-#define WARNING( ... );
-#define ERROR( ... );
-#define windowsDebug( ... );
-#define ASSERT( ... );
-#define assertstr( ... );
+#undef DEBUG_SPP
+#define DEBUG_SPP( ... );
+#define INFO_SPP( ... );
+#define VERBOSE_SPP( ... );
+#define WARNING_SPP( ... );
+#define ERROR_SPP( ... );
+#define WINDOWS_INFO_SPP( ... );
+#define ASSERT_SPP( ... );
+#define ASSERT_STR_SPP( ... );
 
 #endif
 

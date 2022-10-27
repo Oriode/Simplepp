@@ -17,7 +17,7 @@ namespace Graphic {
 		unsigned int glyphindex = FT_Get_Char_Index( ftFace, this -> uCodePoint );
 
 		if ( glyphindex == 0 ) {
-			ERROR( StringASCII( "No glyph founded for character " ) << this -> uCodePoint );
+			ERROR_SPP( StringASCII( "No glyph founded for character " ) << this -> uCodePoint );
 			return;
 		}
 		FT_Load_Glyph( ftFace, glyphindex, FT_LOAD_DEFAULT );
@@ -25,7 +25,7 @@ namespace Graphic {
 
 		if ( ftGlyph -> format != FT_GLYPH_FORMAT_BITMAP ) {
 			if ( FT_Render_Glyph( ftFace -> glyph, FT_RENDER_MODE_NORMAL ) ) {
-				ERROR( StringASCII( "Error while rendering the Unicode character " ) << codePoint );
+				ERROR_SPP( StringASCII( "Error while rendering the Unicode character " ) << codePoint );
 			}
 		}
 

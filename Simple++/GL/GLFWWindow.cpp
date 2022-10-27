@@ -113,7 +113,7 @@ namespace GLFW {
 	}
 
 	void Window::setCursor( const Graphic::ImageT<unsigned char> * cursor, const Math::Vec2<unsigned int> & pos ) {
-		ASSERT( GLFW::isLoaded() );
+		ASSERT_SPP( GLFW::isLoaded() );
 
 		GLFWimage image;
 		image.width = cursor -> getSize().x;
@@ -216,13 +216,13 @@ namespace GLFW {
 	
 
 	String Window::getClipboardString() const {
-		ASSERT( isLoaded() );
+		ASSERT_SPP( isLoaded() );
 		return String( glfwGetClipboardString( this -> glwfWindow ) );
 	}
 
 
 	void Window::setClipboardString( const String & string ) {
-		ASSERT( isLoaded() );
+		ASSERT_SPP( isLoaded() );
 		//glfwSetClipboardString( this -> glwfWindow , string.getData() );
 	}
 
@@ -402,7 +402,7 @@ namespace GLFW {
 
 	bool Window::createContext() {
 
-		ASSERT( GLFW::isLoaded() );
+		ASSERT_SPP( GLFW::isLoaded() );
 
 		glfwWindowHint( GLFW_RESIZABLE, (this -> resizable ) ? GLFW_TRUE : GLFW_FALSE );
 		glfwWindowHint( GLFW_VISIBLE, (this -> visible ) ? GLFW_TRUE : GLFW_FALSE );
@@ -512,7 +512,7 @@ namespace GLFW {
 					GLuint unusedIds = 0;
 					glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true );
 
-					INFO( "glDebugMessageCallback registered !" );
+					INFO_SPP( "glDebugMessageCallback registered !" );
 				} else {
 					glfwError( GLFW::Error::NotInitialized, "glDebugMessageCallback not available" );
 				}
@@ -784,12 +784,12 @@ namespace GLFW {
 
 	void Window::onMouseButton( MouseButton mouseButton, EventAction action, unsigned int mods ) {
 		// Virtual function to be overloaded
-		INFO( mouseButton2String( mouseButton ) );
+		INFO_SPP( mouseButton2String( mouseButton ) );
 	}
 
 	void Window::onText( UTF8String::CodePoint unicodeCodePoint ) {
 		// Virtual function to be overloaded
-		INFO( getClipboardString() );
+		INFO_SPP( getClipboardString() );
 	}
 
 	void Window::onDrop( Vector<String> filePathsVector ) {
@@ -958,7 +958,7 @@ namespace GLFW {
 	}
 
 	void Window::_key_callback( GLFWwindow * glfwWindow, int key, int scancode, int action, int mods ) {
-		//ASSERT( GLFW::Window::actuallyOnFocusWindow );
+		//ASSERT_SPP( GLFW::Window::actuallyOnFocusWindow );
 		//GLFW::Window::actuallyOnFocusWindow -> onKey( Key( key ), EventKeyAction( action ), mods );
 
 		if ( GLFW::Window::actuallyOnFocusWindow ) {
@@ -969,7 +969,7 @@ namespace GLFW {
 	}
 
 	void Window::_character_callback( GLFWwindow * glfwWindow, unsigned int codepoint ) {
-		//ASSERT( GLFW::Window::actuallyOnFocusWindow );
+		//ASSERT_SPP( GLFW::Window::actuallyOnFocusWindow );
 		//GLFW::Window::actuallyOnFocusWindow -> onText( UTF8String::CodePoint( codepoint ) );
 		if ( GLFW::Window::actuallyOnFocusWindow ) {
 			GLFW::Window::actuallyOnFocusWindow -> onText( UTF8String::CodePoint( codepoint ) );
@@ -1030,7 +1030,7 @@ namespace GLFW {
 
 
 	void Window::_mouse_button_callback( GLFWwindow * glfwWindow, int button, int action, int mods ) {
-		ASSERT( GLFW::Window::actuallyOnMouseOver );
+		ASSERT_SPP( GLFW::Window::actuallyOnMouseOver );
 		GLFW::Window::actuallyOnMouseOver -> onMouseButton( MouseButton(button), EventAction(action), mods);
 	}
 

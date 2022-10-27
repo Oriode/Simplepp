@@ -55,7 +55,7 @@ namespace GLFW {
 	}
 
 	void errorCallbackDefault( Error errorCode, const StringASCII & description ) {
-		ERROR( String( TEXT( "[GLFW] " ) ) << TCHAR( '[' ) << String( errorToString( errorCode ) ) << TCHAR( ']' ) << TCHAR( ' ' ) << description );
+		ERROR_SPP( String( TEXT( "[GLFW] " ) ) << TCHAR( '[' ) << String( errorToString( errorCode ) ) << TCHAR( ']' ) << TCHAR( ' ' ) << description );
 	}
 
 	void _error_callback( int error, const char * description ) {

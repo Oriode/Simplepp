@@ -49,7 +49,7 @@ namespace Network {
 
 		addrinfo * addrResults;
 		if ( getaddrinfo( ip.getData(), service.getData(), this, &addrResults ) ) {
-			ERROR( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
+			ERROR_SPP( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 		}
 
 		*this = *addrResults;
@@ -60,7 +60,7 @@ namespace Network {
 	AddrInfoT<T>::AddrInfoT( const StringASCII & ip, const StringASCII & service, const AddrInfoT<T> & hints ) {
 		addrinfo * addrResults;
 		if ( getaddrinfo( ip.getData(), service.getData(), &hints, &addrResults ) ) {
-			ERROR( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
+			ERROR_SPP( StringASCII( "Unable to retrieve address info on address  " ) << ip << "@" << service );
 		}
 
 		*this = *addrResults;

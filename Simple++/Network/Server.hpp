@@ -33,7 +33,7 @@ namespace Network {
 
 		AddrInfo thisAddrInfo( *( ( AddrInfo * ) &address ) );
 		if ( ( ( int ) _tryListen( &thisAddrInfo, maxClients ) ) == SOCKET_ERROR ) {
-			ERROR( StringASCII( "Unable to bind ip " ) << thisAddrInfo.getIpFamilyS() << " : " << thisAddrInfo.getNameInfo() << " on port " << thisAddrInfo.getPort() << " with protocol " << thisAddrInfo.getSockTypeS() );
+			ERROR_SPP( StringASCII( "Unable to bind ip " ) << thisAddrInfo.getIpFamilyS() << " : " << thisAddrInfo.getNameInfo() << " on port " << thisAddrInfo.getPort() << " with protocol " << thisAddrInfo.getSockTypeS() );
 			return false;
 		}
 		updateFdSet();
@@ -52,12 +52,12 @@ namespace Network {
 
 		addrinfo * addrResults;
 		if ( ::getaddrinfo( ip, service, hints.getAddrInfoStruct(), &addrResults ) ) {
-			ERROR( StringASCII( "Unable to retreive address info on address  " ) << ip << "@" << service );
+			ERROR_SPP( StringASCII( "Unable to retreive address info on address  " ) << ip << "@" << service );
 			return false;
 		}
 
 		if ( _tryListen( addrResults, maxClients ) == false ) {
-			ERROR( StringASCII( "Unable to bind on " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
+			ERROR_SPP( StringASCII( "Unable to bind on " ) << ( ( AddrInfo ) ( *addrResults ) ).getIpFamilyS() << " : " << ip << " on port " << service << " with Protocol " << ( ( AddrInfo ) ( *addrResults ) ).getSockTypeS() );
 			freeaddrinfo( addrResults );
 			return false;
 		}
@@ -79,7 +79,7 @@ namespace Network {
 			addrInfoVector.push( addrInfo );
 
 			if ( this -> mSocketVector.getSize() >= FD_SETSIZE ) {
-				WARNING( "getaddrinfo returned more addresses than we could use.\n" );
+				WARNING_SPP( "getaddrinfo returned more addresses than we could use.\n" );
 				break;
 			}
 
@@ -111,7 +111,7 @@ namespace Network {
 	template<typename T>
 	bool ServerT<T>::_tryListen( Connection * socket, int maxClients ) {
 		if ( this -> mSocketVector.getSize() >= FD_SETSIZE ) {
-			WARNING( "getaddrinfo returned more addresses than we could use.\n" );
+			WARNING_SPP( "getaddrinfo returned more addresses than we could use.\n" );
 			return false;
 		}
 
@@ -178,7 +178,7 @@ namespace Network {
 		if ( this -> mFdSet.fd_count > 0 ) {
 			memcpy( &this -> mFdSetTmp, &this -> mFdSet, sizeof( fd_set ) );
 			if ( ::select( ( int ) getNumConnections(), &this -> mFdSetTmp, 0, 0, 0 ) == SOCKET_ERROR ) {
-				ERROR( "Select failed !" );
+				ERROR_SPP( "Select failed !" );
 				return NULL;
 			}
 

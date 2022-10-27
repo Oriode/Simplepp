@@ -359,7 +359,7 @@ namespace Network {
 		const StringASCII::ElemType* protocolStrEndIt(it);
 
 		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			ERROR("EndPoint syntax error : no protocol.");
+			ERROR_SPP("EndPoint syntax error : no protocol.");
 			return false;
 		}
 
@@ -369,7 +369,7 @@ namespace Network {
 			type = getType(protocolStr.toLower());
 
 			if ( type == Type::Unknown ) {
-				ERROR("EndPoint syntax error : unknown protocol.");
+				ERROR_SPP("EndPoint syntax error : unknown protocol.");
 				return false;
 			}
 
@@ -393,7 +393,7 @@ namespace Network {
 		const StringASCII::ElemType* endPointStrEndIt(it);
 
 		if ( endPointStrBeginIt == endPointStrEndIt ) {
-			ERROR("EndPoint syntax error : no end point.");
+			ERROR_SPP("EndPoint syntax error : no end point.");
 			return false;
 		}
 
@@ -453,7 +453,7 @@ namespace Network {
 			const StringASCII::ElemType* paramNameEndIt(it);
 
 			if ( paramNameBeginIt == paramNameEndIt ) {
-				ERROR("EndPoint syntax error : param name missing.");
+				ERROR_SPP("EndPoint syntax error : param name missing.");
 				return false;
 			}
 

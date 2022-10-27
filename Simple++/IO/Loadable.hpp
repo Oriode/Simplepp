@@ -19,7 +19,7 @@ namespace IO {
 		lock();
 		setLoading( true );
 
-		_ASSERT( !this->object );
+		_ASSERT_SPP( !this->object );
 		this->object = new DataType();
 
 		if ( IO::read( stream, this->object ) ) {
@@ -53,7 +53,7 @@ namespace IO {
 
 	template<typename DataType>
 	bool Loadable<DataType>::onUnload() {
-		_ASSERT( this->object );
+		_ASSERT_SPP( this->object );
 		delete this->object;
 		this->object = NULL;
 		return true;
@@ -61,7 +61,7 @@ namespace IO {
 
 	template<typename DataType>
 	bool Loadable<DataType>::onLoad() {
-		_ASSERT( !this->object );
+		_ASSERT_SPP( !this->object );
 		this->object = new DataType();
 		return IO::read( this->filePath, this->object );
 	}

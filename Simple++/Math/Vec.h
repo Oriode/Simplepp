@@ -453,7 +453,7 @@ namespace Math {
 
 	template<typename T, typename Functor>
 	Vec<T> apply(Functor& functor, const Vec<T>& v1, const Vec<T>& v2) {
-		_ASSERT(v1.getSize() == v2.getSize());
+		_ASSERT_SPP(v1.getSize() == v2.getSize());
 		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
 		for ( Size i(0); i < r.getSize(); i++ ) {
 			r[ i ] = functor(v1[ i ], v2[ i ]);
@@ -481,7 +481,7 @@ namespace Math {
 
 	template<typename T, typename Functor, typename C>
 	Vec<T> apply(Functor& functor, const Vec<T>& v1, const Table<C>& v2) {
-		_ASSERT(v1.getSize() == v2.getSize());
+		_ASSERT_SPP(v1.getSize() == v2.getSize());
 		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
 		for ( Size i(0); i < r.getSize(); i++ ) {
 			r[ i ] = functor(v1[ i ], v2[ i ]);
@@ -491,7 +491,7 @@ namespace Math {
 
 	template<typename T, typename Functor, typename C>
 	Vec<T> apply(Functor& functor, const Table<C>& v1, const Vec<T>& v2) {
-		_ASSERT(v1.getSize() == v2.getSize());
+		_ASSERT_SPP(v1.getSize() == v2.getSize());
 		Vec<T> r(Math::min(v1.getSize(), v2.getSize()));
 		for ( Size i(0); i < r.getSize(); i++ ) {
 			r[ i ] = functor(v1[ i ], v2[ i ]);

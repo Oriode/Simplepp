@@ -411,7 +411,7 @@ template<typename T>
 void Table<T>::setValueI(const Size i, const T& data) {
 #ifdef DEBUG
 	if ( i >= this->size ) {
-		_ERROR("Table::setValueI Out of bounds.");
+		_ERROR_SPP("Table::setValueI Out of bounds.");
 	}
 #endif
 	this -> dataTable[ i ] = data;
@@ -441,7 +441,7 @@ template<typename T>
 T& Table<T>::getValueI(const Size i) {
 #ifdef DEBUG
 	if ( i >= this->size ) {
-		_ERROR("Table::getValueI Out of bounds.");
+		_ERROR_SPP("Table::getValueI Out of bounds.");
 	}
 #endif
 	return this -> dataTable[ i ];
@@ -594,7 +594,7 @@ Table<T>::Table(const Table<T>& v) :
 template<typename T>
 template<typename Functor, typename C>
 Table<T>& Table<T>::apply(Functor& functor, const Table<C>& v) {
-	ASSERT(getSize() == v.getSize());
+	ASSERT_SPP(getSize() == v.getSize());
 	for ( Size i(0); i < getSize(); i++ ) {
 		functor(this->dataTable[ i ], v[ i ]);
 	}
@@ -625,7 +625,7 @@ Table<T>& Table<T>::apply(Functor& functor) {
 template<typename T>
 template<typename Functor, typename C>
 Table<T>& Table<T>::set(Functor& functor, const Table<C>& v) {
-	ASSERT(getSize() == v.getSize());
+	ASSERT_SPP(getSize() == v.getSize());
 	for ( Size i(0); i < getSize(); i++ ) {
 		T& value(this->dataTable[ i ]);
 		value = functor(v[ i ]);

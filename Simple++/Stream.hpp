@@ -12,7 +12,7 @@ template<typename C>
 StreamT<T>::StreamT( const C * data, const Size size ) :
 	Vector<T>( Vector<T>::protectedCtor::null ),
 	position( 0 ) {
-	_ASSERT( size );
+	_ASSERT_SPP( size );
 	Size sizeBytes( size * Vector<C>::elementSize );
 	this->size = sizeBytes / Vector<T>::elementSize;
 	this->_allocateNoNullDelete( this -> size );
@@ -26,8 +26,8 @@ template<typename T>
 StreamT<T>::StreamT( const T * data, const Size size, const Size maxSize ) :
 	Vector<T>( Vector<T>::protectedCtor::null ),
 	position( 0 ) {
-	_ASSERT( size );
-	_ASSERT( maxSize >= size );
+	_ASSERT_SPP( size );
+	_ASSERT_SPP( maxSize >= size );
 	Size sizeBytes( size * Vector<T>::elementSize );
 	this->size = size;
 	this->_allocateNoNullDelete( maxSize );
@@ -77,13 +77,13 @@ typename Vector<T>::Iterator StreamT<T>::getPositionIt() {
 
 template<typename T>
 void StreamT<T>::setPosition( Size pos ) {
-	_ASSERT( pos >= 0 && pos <= this->size );
+	_ASSERT_SPP( pos >= 0 && pos <= this->size );
 	this->position = pos;
 }
 
 template<typename T>
 void StreamT<T>::setPosition( typename Vector<T>::Iterator pos ) {
-	_ASSERT( pos >= getBegin() && pos <= getEnd() );
+	_ASSERT_SPP( pos >= getBegin() && pos <= getEnd() );
 	this->position = pos - getBegin();
 }
 
@@ -178,7 +178,7 @@ bool StreamT<T>::read( T * data, Size size ) {
 	Size sizeInBytes( size * Vector<T>::elementSize );
 	Size positionAfter( this->position + size );
 
-	_ASSERT( positionAfter <= this->size );
+	_ASSERT_SPP( positionAfter <= this->size );
 
 	// Copy bytes directly.
 	Vector<unsigned char>::copy( reinterpret_cast< unsigned char * >( data ), reinterpret_cast< const unsigned char * >( this->dataTable + this->position ), sizeInBytes );
@@ -256,11 +256,11 @@ S StreamT<T>::toStringHexa() const {
 		if ( nbCharWritten != Vector<T>::elementSize * Size( 2 ) ) {
 			int i = 42;
 		}
-		ASSERT( nbCharWritten == Vector<T>::elementSize * Size( 2 ) );
+		ASSERT_SPP( nbCharWritten == Vector<T>::elementSize * Size( 2 ) );
 		*( newStringData++ ) = S::ElemType( ' ' );
 	}
 
-	ASSERT( stringSize == newStringData - newString.getData() );
+	ASSERT_SPP( stringSize == newStringData - newString.getData() );
 
 	return newString;
 }

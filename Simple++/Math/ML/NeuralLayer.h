@@ -225,16 +225,16 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::setParamMat(const Mat<T>& paramMat) {
-			ASSERT(paramMat.getSizeM() == getNbNeurons());
-			ASSERT(paramMat.getSizeN() == getNbFeatures() + Size(1));
+			ASSERT_SPP(paramMat.getSizeM() == getNbNeurons());
+			ASSERT_SPP(paramMat.getSizeN() == getNbFeatures() + Size(1));
 
 			this->paramMat = paramMat;
 		}
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		inline void NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::setGradMat(const Mat<T>& gradMat) {
-			ASSERT(paramMat.getSizeM() == getNbNeurons());
-			ASSERT(paramMat.getSizeN() == getNbFeatures() + Size(1));
+			ASSERT_SPP(paramMat.getSizeM() == getNbNeurons());
+			ASSERT_SPP(paramMat.getSizeN() == getNbFeatures() + Size(1));
 
 			this->gradMat = gradMat;
 		}

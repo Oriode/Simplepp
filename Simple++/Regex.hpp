@@ -40,7 +40,7 @@ namespace Regex {
 
 		//Now Start the loop.
 		while ( true ) {
-			//INFO(StringASCII(*currentItem.regIt) + " " + *currentItem.strIt );
+			//INFO_SPP(StringASCII(*currentItem.regIt) + " " + *currentItem.strIt );
 
 
 
