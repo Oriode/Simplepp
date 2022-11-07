@@ -118,6 +118,7 @@ public:
 	 * @param 	newSize	New size to be set for the vector.
 	 */
 	void resize( const Size newSize );
+	void resize( const Size newSize, const T & fillValue );
 	void resizeNoCopy(const Size newSize);
 
 	/**
@@ -125,12 +126,14 @@ public:
 	 * @param	increasedSize Size to be added to the left.
 	 */
 	void extendLeft( const Size increasedSize );
+	void extendLeft( const Size increasedSize, const T& fillValue);
 
 	/**
 	 * @brief	Extend the size to the right. resize(this -> size + increasedSize)
 	 * @param	increasedSize Size to be added to the right.
 	 */
 	void extendRight( const Size increasedSize );
+	void extendRight( const Size increasedSize, const T& fillValue);
 
 	/************************************************************************/
 	/* LOGICAL                                                              */

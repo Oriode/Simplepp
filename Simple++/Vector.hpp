@@ -333,6 +333,15 @@ void Vector<T>::resize( const Size newSize ) {
 }
 
 template<typename T>
+inline void Vector<T>::resize(const Size newSize, const T& fillValue) {
+	Size oldSize(this->size);
+	resize(newSize);
+	for ( Size i(oldSize); i < newSize; i++ ) {
+		this->dataTable[ i ] = fillValue;
+	}
+}
+
+template<typename T>
 inline void Vector<T>::resizeNoCopy(const Size newSize) {
 	if ( newSize > this -> maxSize )
 		allocate(newSize);
@@ -355,8 +364,21 @@ void Vector<T>::extendLeft( const Size increasedSize ) {
 }
 
 template<typename T>
+inline void Vector<T>::extendLeft(const Size increasedSize, const T& fillValue) {
+	extendLeft(increasedSize);
+	for ( Size i(0); i < increasedSize; i++ ) {
+		this->dataTable[ i ] = fillValue;
+	}
+}
+
+template<typename T>
 void Vector<T>::extendRight( const Size increasedSize ) {
 	resize( this -> size + increasedSize );
+}
+
+template<typename T>
+inline void Vector<T>::extendRight(const Size increasedSize, const T& fillValue) {
+	resize(this->size + increasedSize, fillValue);
 }
 
 
