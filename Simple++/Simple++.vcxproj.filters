@@ -621,6 +621,9 @@
     <ClInclude Include="Math\Stats\Stats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\ML\Torch\DataSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">
