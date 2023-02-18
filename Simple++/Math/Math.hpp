@@ -587,7 +587,7 @@ namespace Math {
 
 	template<typename T>
 	MATH_FUNC_QUALIFIER void setRandomF( T * v ) {
-		v = Math::randomF();
+		*v = Math::randomF();
 	}
 
 	template<typename T>

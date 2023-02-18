@@ -84,7 +84,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64/;$(SolutionDir)libtorch\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;freetype.lib;glew32.lib;glfw3.lib;opengl32.lib;libssl.lib;libcrypto.lib;torch.lib;torch_cpu.lib;pthreadpool.lib;libprotoc.lib;libprotobuf-lite.lib;libprotobuf.lib;kineto.lib;fbgemm.lib;dnnl.lib;cpuinfo.lib;clog.lib;c10.lib;asmjit.lib;XNNPACK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;freetype.lib;glew32.lib;glfw3.lib;opengl32.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>

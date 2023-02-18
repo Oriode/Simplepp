@@ -13,9 +13,11 @@ namespace Math {
 		template<typename T>
 		class BasicRngInit {
 		public:
-			BasicRngInit(){}
+			BasicRngInit() {}
 
-			void init(const Vector<T>& vector) {
+			typedef T Type;
+
+			void init( const Vector<T>& vector ) {
 				static_assert( true, "BasicRngInit::init() should be overriden." );
 			}
 
@@ -29,7 +31,7 @@ namespace Math {
 		public:
 			RngInit();
 
-			void init(const Vector<T>& vector);
+			void init( const Vector<T>& vector );
 
 			T operator()();
 
@@ -42,18 +44,19 @@ namespace Math {
 		class Cluster {
 		public:
 			Cluster();
+			~Cluster();
 
-			void setMean(const T& mean);
+			void setMean( const T& mean );
 			const T& getMean() const;
 			T& getMean();
 
 			template<typename DistanceFunc = Math::Compare::DistanceFunc>
-			Math::Compare::Distance getDistance(const T & v, const DistanceFunc& distanceFunc = DistanceFunc()) const;
+			Math::Compare::Distance getDistance( const T& v, const DistanceFunc& distanceFunc = DistanceFunc() ) const;
 
-			void addData(const T& data, const Math::Compare::Distance distance);
+			void addData( const T& data, const Math::Compare::Distance distance );
 
-			const Vector<T> & getData() const;
-			Vector<T> & getData();
+			const Vector<T>& getData() const;
+			Vector<T>& getData();
 
 			Math::Compare::Distance getDistanceMean() const;
 
@@ -67,12 +70,27 @@ namespace Math {
 
 		template<typename T>
 		inline Cluster<T>::Cluster() :
-			distanceSum(0)
-		{
+			distanceSum( 0 ) {}
+
+		template<typename T>
+		inline Cluster<T>::~Cluster() {
+			if constexpr ( Utility::isPointer<T>::value ) {
+				if ( this->mean ) {
+					delete this->mean;
+				}
+			}
 		}
 
 		template<typename T>
-		inline void Cluster<T>::setMean(const T& mean) {
+		inline void Cluster<T>::setMean( const T& mean ) {
+			if constexpr ( Utility::isPointer<T>::value ) {
+				if ( this->mean == mean ) {
+					return;
+				}
+				if ( this->mean ) {
+					delete this->mean;
+				}
+			}
 			this->mean = mean;
 		}
 
@@ -88,13 +106,13 @@ namespace Math {
 
 		template<typename T>
 		template<typename DistanceFunc>
-		inline Math::Compare::Distance Cluster<T>::getDistance(const T& v, const DistanceFunc& distanceFunc) const {
-			return distanceFunc(v, this->mean);
+		inline Math::Compare::Distance Cluster<T>::getDistance( const T& v, const DistanceFunc& distanceFunc ) const {
+			return distanceFunc( v, this->mean );
 		}
 
 		template<typename T>
-		inline void Cluster<T>::addData(const T& data, const Math::Compare::Distance distance) {
-			this->dataVector.push(data);
+		inline void Cluster<T>::addData( const T& data, const Math::Compare::Distance distance ) {
+			this->dataVector.push( data );
 			this->distanceSum += distance;
 		}
 
@@ -110,8 +128,8 @@ namespace Math {
 
 		template<typename T>
 		inline Math::Compare::Distance Cluster<T>::getDistanceMean() const {
-			if ( this->dataVector.getSize() > Size(0) ) {
-				return this->distanceSum / Math::Compare::Distance(this->dataVector.getSize());
+			if ( this->dataVector.getSize() > Size( 0 ) ) {
+				return this->distanceSum / Math::Compare::Distance( this->dataVector.getSize() );
 			} else {
 				return Utility::TypesInfos<Math::Compare::Distance>::getMax();
 			}
@@ -120,39 +138,40 @@ namespace Math {
 		template<typename T>
 		inline void Cluster<T>::clear() {
 			this->dataVector.clear();
-			this->distanceSum = Math::Compare::Distance(0);
+			this->distanceSum = Math::Compare::Distance( 0 );
 		}
 
 		template<typename T, typename CompareFunc = Math::Logical::Less>
-		static Math::Interval<T> getMinMax(const Vector<T>& vector, const CompareFunc& compareFunc = CompareFunc());
+		static Math::Interval<T> getMinMax( const Vector<T>& vector, const CompareFunc& compareFunc = CompareFunc() );
 
 		///@brief Use the KMeans algorithm to compute k clusters on a vector.
+		///			Works with pointers, memory will be auto managed if having Clusters of pointer type.
 		///			In addition to the functors, type T should have the next operators :
 		///				T(const T &);
 		///				T & operator+=(const T &);
 		///				T & operator/=(double);
 		template<typename T, typename DistanceFunc = Math::Compare::DistanceFunc, typename InitFunc = RngInit<T>>
-		static Vector<Cluster<T>> computeKMeans(const Vector<T> & vector, const Size k, const Size nbLoops = Size(10), const Size nbRngLoops = Size(10), const DistanceFunc& distanceFunc = DistanceFunc(), InitFunc& initFunc = InitFunc());
+		static Vector<Cluster<T>> computeKMeans( const Vector<T>& vector, const Size k, const Size nbLoops = Size( 10 ), const Size nbRngLoops = Size( 10 ), const DistanceFunc& distanceFunc = DistanceFunc(), InitFunc& initFunc = InitFunc() );
 
 		template<typename T, typename CompareFunc>
-		Math::Interval<T> getMinMax(const Vector<T>& vector, const CompareFunc& compareFunc) {
+		Math::Interval<T> getMinMax( const Vector<T>& vector, const CompareFunc& compareFunc ) {
 			Math::Interval<T> minMaxInterval;
 
-			if ( vector.getSize() == Size(0) ) {
-				minMaxInterval.setBegin(T());
-				minMaxInterval.setEnd(T());
+			if ( vector.getSize() == Size( 0 ) ) {
+				minMaxInterval.setBegin( T() );
+				minMaxInterval.setEnd( T() );
 			}
 
-			minMaxInterval.setBegin(vector.getValueI(Size(0)));
-			minMaxInterval.setEnd(vector.getValueI(Size(0)));
+			minMaxInterval.setBegin( vector.getValueI( Size( 0 ) ) );
+			minMaxInterval.setEnd( vector.getValueI( Size( 0 ) ) );
 
-			for ( Size i(1); i < vector.getSize(); i++ ) {
-				const T& v(vector.getValueI(i));
+			for ( Size i( 1 ); i < vector.getSize(); i++ ) {
+				const T& v( vector.getValueI( i ) );
 
-				if ( compareFunc(v, minMaxInterval.getBegin()) ) {
-					minMaxInterval.setBegin(v);
-				} else if ( compareFunc(minMaxInterval.getEnd(), v) ) {
-					minMaxInterval.setEnd(v);
+				if ( compareFunc( v, minMaxInterval.getBegin() ) ) {
+					minMaxInterval.setBegin( v );
+				} else if ( compareFunc( minMaxInterval.getEnd(), v ) ) {
+					minMaxInterval.setEnd( v );
 				}
 			}
 
@@ -160,45 +179,45 @@ namespace Math {
 		}
 
 		template<typename T, typename DistanceFunc, typename InitFunc>
-		Vector<Cluster<T>> computeKMeans(const Vector<T>& vector, const Size k, const Size nbLoops, const Size nbRngLoops, const DistanceFunc& distanceFunc, InitFunc& initFunc) {
+		Vector<Cluster<T>> computeKMeans( const Vector<T>& vector, const Size k, const Size nbLoops, const Size nbRngLoops, const DistanceFunc& distanceFunc, InitFunc& initFunc ) {
 			static_assert( Utility::isBase<Math::Stats::BasicRngInit<T>, InitFunc>::value, "InitFunc type should be a derived of Math::Stats::BasicRngInit<T>." );
 
-			Vector<Vector<Cluster<T>>> clusterVectorVector(nbRngLoops);
+			Vector<Vector<Cluster<T>>> clusterVectorVector( nbRngLoops );
 
-			if ( vector.getSize() == Size(0) ) {
+			if ( vector.getSize() == Size( 0 ) ) {
 				return clusterVectorVector.getFirst();
 			}
 
-			initFunc.init(vector);
+			initFunc.init( vector );
 
-			for ( Size rngLoopI(0); rngLoopI < clusterVectorVector.getSize(); rngLoopI++ ) {
-				Vector<Cluster<T>> & clusterVector(clusterVectorVector.getValueI(rngLoopI));
+			for ( Size rngLoopI( 0 ); rngLoopI < clusterVectorVector.getSize(); rngLoopI++ ) {
+				Vector<Cluster<T>>& clusterVector( clusterVectorVector.getValueI( rngLoopI ) );
 
-				clusterVector.resize(k);
+				clusterVector.resize( k );
 
 				// Set the mean randomly.
-				for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
-					Cluster<T>& cluster(clusterVector.getValueI(clusterI));
+				for ( Size clusterI( 0 ); clusterI < clusterVector.getSize(); clusterI++ ) {
+					Cluster<T>& cluster( clusterVector.getValueI( clusterI ) );
 
-					cluster.setMean(initFunc());
+					cluster.setMean( initFunc() );
 				}
 
-				for ( Size loopI(0); loopI < nbLoops; loopI++ ) {
+				for ( Size loopI( 0 ); loopI < nbLoops; loopI++ ) {
 
-					if ( loopI > Size(0) ) {
+					if ( loopI > Size( 0 ) ) {
 						// Re-compute the mean for every cluster.
-						for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
-							Cluster<T>& cluster(clusterVector.getValueI(clusterI));
+						for ( Size clusterI( 0 ); clusterI < clusterVector.getSize(); clusterI++ ) {
+							Cluster<T>& cluster( clusterVector.getValueI( clusterI ) );
 
-							T clusterNewMean(0);
+							T clusterNewMean( 0 );
 
-							for ( Size i(0); i < cluster.getData().getSize(); i++ ) {
-								const T& v(cluster.getData().getValueI(i));
+							for ( Size i( 0 ); i < cluster.getData().getSize(); i++ ) {
+								const T& v( cluster.getData().getValueI( i ) );
 
-								clusterNewMean += v;
+								Utility::removePointer( clusterNewMean ) += Utility::removePointer( v );
 							}
-							clusterNewMean /= double(cluster.getData().getSize());
-							cluster.setMean(clusterNewMean);
+							Utility::removePointer( clusterNewMean ) /= double( cluster.getData().getSize() );
+							cluster.setMean( clusterNewMean );
 
 							// Clear the cluster.
 							cluster.clear();
@@ -206,43 +225,43 @@ namespace Math {
 					}
 
 					// Get the distance for every cluster mean and dispatch values acordingly.
-					for ( Size i(0); i < vector.getSize(); i++ ) {
-						const T& v(vector.getValueI(i));
+					for ( Size i( 0 ); i < vector.getSize(); i++ ) {
+						const T& v( vector.getValueI( i ) );
 
-						Math::Compare::Distance distanceMin(Utility::TypesInfos<Math::Compare::Distance>::getMax());
-						Size clusterMinI(0);
+						Math::Compare::Distance distanceMin( Utility::TypesInfos<Math::Compare::Distance>::getMax() );
+						Size clusterMinI( 0 );
 
-						for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
-							Cluster<T>& cluster(clusterVector.getValueI(clusterI));
+						for ( Size clusterI( 0 ); clusterI < clusterVector.getSize(); clusterI++ ) {
+							Cluster<T>& cluster( clusterVector.getValueI( clusterI ) );
 
-							const Math::Compare::Distance distance(cluster.getDistance(v, distanceFunc));
+							const Math::Compare::Distance distance( cluster.getDistance( v, distanceFunc ) );
 							if ( distance < distanceMin ) {
 								distanceMin = distance;
 								clusterMinI = clusterI;
 							}
 						}
 
-						clusterVector.getValueI(clusterMinI).addData(v, distanceMin);
+						clusterVector.getValueI( clusterMinI ).addData( v, distanceMin );
 					}
 
 				}
 
 			}
 
-			Size bestClusterVectorI(0);
-			Math::Compare::Distance bestClusterVectorDistance(Utility::TypesInfos<Math::Compare::Distance>::getMax());
-			for ( Size clusterVectorI(0); clusterVectorI < clusterVectorVector.getSize(); clusterVectorI++ ) {
-				Vector<Cluster<T>>& clusterVector(clusterVectorVector.getValueI(clusterVectorI));
+			Size bestClusterVectorI( 0 );
+			Math::Compare::Distance bestClusterVectorDistance( Utility::TypesInfos<Math::Compare::Distance>::getMax() );
+			for ( Size clusterVectorI( 0 ); clusterVectorI < clusterVectorVector.getSize(); clusterVectorI++ ) {
+				Vector<Cluster<T>>& clusterVector( clusterVectorVector.getValueI( clusterVectorI ) );
 
-				Math::Compare::Distance clusterVectorDistance(0);
+				Math::Compare::Distance clusterVectorDistance( 0 );
 
-				for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
-					Cluster<T>& cluster(clusterVector.getValueI(clusterI));
+				for ( Size clusterI( 0 ); clusterI < clusterVector.getSize(); clusterI++ ) {
+					Cluster<T>& cluster( clusterVector.getValueI( clusterI ) );
 
 					clusterVectorDistance += cluster.getDistanceMean();
 				}
 
-				clusterVectorDistance /= Math::Compare::Distance(clusterVector.getSize());
+				clusterVectorDistance /= Math::Compare::Distance( clusterVector.getSize() );
 
 				if ( clusterVectorDistance < bestClusterVectorDistance ) {
 					bestClusterVectorDistance = clusterVectorDistance;
@@ -251,7 +270,7 @@ namespace Math {
 
 			}
 
-			return clusterVectorVector.getValueI(bestClusterVectorI);
+			return clusterVectorVector.getValueI( bestClusterVectorI );
 
 		}
 
@@ -259,19 +278,19 @@ namespace Math {
 		inline RngInit<T>::RngInit() {}
 
 		template<typename T>
-		inline void RngInit<T>::init(const Vector<T>& vector) {
-			if ( vector.getSize() == Size(0) ) {
+		inline void RngInit<T>::init( const Vector<T>& vector ) {
+			if ( vector.getSize() == Size( 0 ) ) {
 				return;
 			}
 
-			T minV(vector.getFirst());
-			T maxV(vector.getFirst());
+			T minV( vector.getFirst() );
+			T maxV( vector.getFirst() );
 
-			for ( Size i(1); i < vector.getSize(); i++ ) {
-				const T& v(vector.getValueI(i));
+			for ( Size i( 1 ); i < vector.getSize(); i++ ) {
+				const T& v( vector.getValueI( i ) );
 
-				minV = Math::min(minV, v);
-				maxV = Math::max(maxV, v);
+				minV = Math::min( minV, v );
+				maxV = Math::max( maxV, v );
 			}
 
 			this->min = minV;
@@ -281,16 +300,16 @@ namespace Math {
 		template<typename T>
 		inline T RngInit<T>::operator()() {
 			T rngValues;
-			Math::setRandomF(rngValues);
+			Math::setRandomF( &rngValues );
 
 			rngValues *= this->range;
 
-			T newValues(this->min);
+			T newValues( this->min );
 			newValues += rngValues;
 
 			return newValues;
 		}
 
-}
+	}
 
 }

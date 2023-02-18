@@ -31,7 +31,7 @@ namespace Utility {
 	 * @tparam	T	Generic type parameter.
 	 */
 	template<class T>
-	struct removeReference<T &> {
+	struct removeReference<T&> {
 		typedef T Type;
 	};
 
@@ -41,7 +41,7 @@ namespace Utility {
 	 * @tparam	T	Generic type parameter.
 	 */
 	template<class T>
-	struct removeReference<T &&> {
+	struct removeReference<T&&> {
 		typedef T Type;
 	};
 
@@ -53,7 +53,7 @@ namespace Utility {
 	 * @param [in,out]	v2	The second value.
 	 */
 	template<typename T>
-	void swap( T & v1, T & v2 );
+	void swap( T& v1, T& v2 );
 
 	/**
 	 * @brief		Simple method for swapping two elements.
@@ -63,7 +63,7 @@ namespace Utility {
 	 * @param [in,out]	v2	The second value.
 	 */
 	template<typename T>
-	void swap( T * v1, T * v2 );
+	void swap( T* v1, T* v2 );
 
 	/**
 	 * @brief		Convert a reference to a R-Value.
@@ -75,7 +75,7 @@ namespace Utility {
 	 * @sa		https://en.cppreference.com/w/cpp/language/value_category
 	 */
 	template<typename T>
-	constexpr typename removeReference<T>::Type && toRValue( T && t );
+	constexpr typename removeReference<T>::Type&& toRValue( T&& t );
 
 	/**
 	 * @brief		Template Struct used to get compile-time informations if a template type is derived from one another.
@@ -90,12 +90,49 @@ namespace Utility {
 		typedef char( &no )[ 1 ];
 		typedef char( &yes )[ 2 ];
 
-		static yes checkType( Base * );
+		static yes checkType( Base* );
 		static no  checkType( ... );
 		enum : bool {
-			value = sizeof( checkType( static_cast< PotentialDerived * >( 0 ) ) ) == sizeof( yes )
+			value = sizeof( checkType( static_cast< PotentialDerived* >( 0 ) ) ) == sizeof( yes )
 		};
 	};
+
+	/**
+	 * @brief		Get if a type is a pointer or not.
+	 *
+	 * @tparam	T	Generic type parameter.
+	 */
+	template < typename T >
+	class isPointer {
+	public:
+
+		typedef char( &no )[ 1 ];
+		typedef char( &yes )[ 2 ];
+
+		template<typename C>
+		static yes checkType( C** );
+		static no  checkType( ... );
+		enum : bool {
+			value = sizeof( checkType( static_cast< T* >( 0 ) ) ) == sizeof( yes )
+		};
+	};
+
+	template<typename T>
+	T& removePointer( T* v ) {
+		return *v;
+	}
+	template<typename T>
+	T& removePointer( T & v ) {
+		return v;
+	}
+	template<typename T>
+	const T& removePointer( const T* v ) {
+		return *v;
+	}
+	template<typename T>
+	const T& removePointer( const T& v ) {
+		return v;
+	}
 
 	/**
 	 * @brief		Template Struct used to get compile-time informations if two template types are the same.
@@ -119,10 +156,10 @@ namespace Utility {
 	};
 
 	template<typename T>
-	bool isInf(const T& x);
+	bool isInf( const T& x );
 
 	template<typename T>
-	bool isNan(const T& x);
+	bool isNan( const T& x );
 
 	/**
 	 * @brief		Template Struct used to get compile-time informations of a number type.
@@ -485,7 +522,7 @@ namespace Utility {
 		 * @param 		  	size			 	Number of elements to copy.
 		 */
 		template<typename C, typename D>
-		static void copy(C* destinationBuffer, const D* sourceBuffer, const Size size);
+		static void copy( C* destinationBuffer, const D* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -496,7 +533,7 @@ namespace Utility {
 		 * @param 		  	size			 	The size.
 		 */
 		template<typename C, typename D>
-		static void copy(C** destinationBuffer, D* const* sourceBuffer, const Size size);
+		static void copy( C** destinationBuffer, D* const* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -504,7 +541,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(char* destinationBuffer, const char* sourceBuffer, const Size size);
+		static void copy( char* destinationBuffer, const char* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -512,7 +549,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(unsigned char* destinationBuffer, const unsigned char* sourceBuffer, const Size size);
+		static void copy( unsigned char* destinationBuffer, const unsigned char* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -520,7 +557,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(short* destinationBuffer, const short* sourceBuffer, const Size size);
+		static void copy( short* destinationBuffer, const short* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -528,7 +565,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(unsigned short* destinationBuffer, const unsigned short* sourceBuffer, const Size size);
+		static void copy( unsigned short* destinationBuffer, const unsigned short* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -536,7 +573,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(int* destinationBuffer, const int* sourceBuffer, const Size size);
+		static void copy( int* destinationBuffer, const int* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -544,7 +581,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(unsigned int* destinationBuffer, const unsigned int* sourceBuffer, const Size size);
+		static void copy( unsigned int* destinationBuffer, const unsigned int* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -552,7 +589,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(long int* destinationBuffer, const long int* sourceBuffer, const Size size);
+		static void copy( long int* destinationBuffer, const long int* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -560,7 +597,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(unsigned long int* destinationBuffer, const unsigned long int* sourceBuffer, const Size size);
+		static void copy( unsigned long int* destinationBuffer, const unsigned long int* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -568,7 +605,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(long long int* destinationBuffer, const long long int* sourceBuffer, const Size size);
+		static void copy( long long int* destinationBuffer, const long long int* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -576,7 +613,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(unsigned long long int* destinationBuffer, const unsigned long long int* sourceBuffer, const Size size);
+		static void copy( unsigned long long int* destinationBuffer, const unsigned long long int* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -584,7 +621,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(float* destinationBuffer, const float* sourceBuffer, const Size size);
+		static void copy( float* destinationBuffer, const float* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -592,7 +629,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(double* destinationBuffer, const double* sourceBuffer, const Size size);
+		static void copy( double* destinationBuffer, const double* sourceBuffer, const Size size );
 		/**
 		 * @brief 	Copies this object
 		 *
@@ -600,7 +637,7 @@ namespace Utility {
 		 * @param 		  	sourceBuffer	 	Buffer for source data.
 		 * @param 		  	size			 	The size.
 		 */
-		static void copy(wchar_t* destinationBuffer, const wchar_t* sourceBuffer, const Size size);
+		static void copy( wchar_t* destinationBuffer, const wchar_t* sourceBuffer, const Size size );
 	};
 
 	using Utility = UtilityT<int>;
@@ -615,7 +652,9 @@ namespace Utility {
 	* @param 		  	size			 	Number of elements to copy.
 	*/
 	template<typename C, typename D>
-	static void copy(C* destinationBuffer, const D* sourceBuffer, const Size size) { return Utility::copy(destinationBuffer, sourceBuffer, size); }
+	static void copy( C* destinationBuffer, const D* sourceBuffer, const Size size ) {
+		return Utility::copy( destinationBuffer, sourceBuffer, size );
+	}
 	/**
 	 * @brief 	Copies this object
 	 *
@@ -626,7 +665,9 @@ namespace Utility {
 	 * @param 		  	size			 	The size.
 	 */
 	template<typename C, typename D>
-	static void copy(C** destinationBuffer, D* const* sourceBuffer, const Size size) { return Utility::copy(destinationBuffer, sourceBuffer, size); }
+	static void copy( C** destinationBuffer, D* const* sourceBuffer, const Size size ) {
+		return Utility::copy( destinationBuffer, sourceBuffer, size );
+	}
 }
 
 

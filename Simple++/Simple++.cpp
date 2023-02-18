@@ -6,63 +6,63 @@
  * @date		26/05/2016 (DMY)
  */
 
-//#define SPEEDTEST_MATH
-//#define SPEEDTEST_DRAWLINE
-//#define SPEEDTEST_DRAWLINE_FLOAT
-//#define SPEEDTEST_GRAPH
-//#define SPEEDTEST_ROUNDEDRECTANGLE
-//#define SPEEDTEST_DISK
-//#define SPEEDTEST_POLYGON
-//#define SPEEDTEST_STROKE
-//#define SPEEDTEST_RESAMPLE
-//#define SPEEDTEST_DRAWTEXT
-//#define SPEEDTEST_FILTER
-//#define SPEEDTEST_ARRAYACCESS
-//#define SPEEDTEST_LOGICAL
-//#define SPEEDTEST_BLENDING
-//#define SPEEDTEST_DATE
-//#define SPEEDTEST_DATE_PARSE
-//#define SPEEDTEST_STRING_CONCAT_STRING
-//#define SPEEDTEST_STRING_CONCAT_NUMBER
-//#define SPEEDTEST_STRING_FORMAT
-//#define SPEEDTEST_STRING_CAST
-//#define SPEEDTEST_REGEX
-//#define SPEEDTEST_VECTOR
-//#define SPEEDTEST_MAP
-//#define SPEEDTEST_CAST
-//#define SPEEDTEST_ARITHMETIC
-//#define SPEEDTEST_PATH
-//#define SPEEDTEST_BASE64
-//#define SPEEDTEST_LINEAR_REGRESSION
-//#define SPEEDTEST_DEEP_NEURAL_NETWORK
+ //#define SPEEDTEST_MATH
+ //#define SPEEDTEST_DRAWLINE
+ //#define SPEEDTEST_DRAWLINE_FLOAT
+ //#define SPEEDTEST_GRAPH
+ //#define SPEEDTEST_ROUNDEDRECTANGLE
+ //#define SPEEDTEST_DISK
+ //#define SPEEDTEST_POLYGON
+ //#define SPEEDTEST_STROKE
+ //#define SPEEDTEST_RESAMPLE
+ //#define SPEEDTEST_DRAWTEXT
+ //#define SPEEDTEST_FILTER
+ //#define SPEEDTEST_ARRAYACCESS
+ //#define SPEEDTEST_LOGICAL
+ //#define SPEEDTEST_BLENDING
+ //#define SPEEDTEST_DATE
+ //#define SPEEDTEST_DATE_PARSE
+ //#define SPEEDTEST_STRING_CONCAT_STRING
+ //#define SPEEDTEST_STRING_CONCAT_NUMBER
+ //#define SPEEDTEST_STRING_FORMAT
+ //#define SPEEDTEST_STRING_CAST
+ //#define SPEEDTEST_REGEX
+ //#define SPEEDTEST_VECTOR
+ //#define SPEEDTEST_MAP
+ //#define SPEEDTEST_CAST
+ //#define SPEEDTEST_ARITHMETIC
+ //#define SPEEDTEST_PATH
+ //#define SPEEDTEST_BASE64
+ //#define SPEEDTEST_LINEAR_REGRESSION
+ //#define SPEEDTEST_DEEP_NEURAL_NETWORK
 
-
-//#define DEBUG_GRAPHIC
-//#define DEBUG_XML
-//#define DEBUG_JSON
-//#define DEBUG_LIST
-//#define DEBUG_MAP
-//#define DEBUG_UI
-//#define DEBUG_IO
-//#define DEBUG_NETWORK
-//#define DEBUG_SSL
-//#define DEBUG_HTTP
-//#define DEBUG_CRYPTO
-//#define DEBUG_BASE64
-//#define DEBUG_HEXADECIMAL
-//#define DEBUG_STRING
-//#define DEBUG_TIME
-//#define DEBUG_DATE
-//#define DEBUG_PATH
-//#define DEBUG_STREAM
-//#define DEBUG_VEC
-//#define DEBUG_MAT
-//#define DEBUG_TENSOR
-//#define DEBUG_LINEAR_REGRESSION
-// #define DEBUG_DEEP_NEURAL_NETWORK
-#define DEBUG_TORCH
-//#define DEBUG_INTERVAL
-//#define DEBUG_STATS
+ //#define DEBUG_UTILITY
+ //#define DEBUG_GRAPHIC
+ //#define DEBUG_XML
+ //#define DEBUG_JSON
+ //#define DEBUG_LIST
+ //#define DEBUG_MAP
+ //#define DEBUG_UI
+ //#define DEBUG_IO
+ //#define DEBUG_NETWORK
+ //#define DEBUG_SSL
+ //#define DEBUG_HTTP
+ //#define DEBUG_CRYPTO
+ //#define DEBUG_BASE64
+ //#define DEBUG_HEXADECIMAL
+ //#define DEBUG_STRING
+ //#define DEBUG_TIME
+ //#define DEBUG_DATE
+ //#define DEBUG_PATH
+ //#define DEBUG_STREAM
+ //#define DEBUG_VEC
+ //#define DEBUG_MAT
+ //#define DEBUG_TENSOR
+ //#define DEBUG_LINEAR_REGRESSION
+ //#define DEBUG_DEEP_NEURAL_NETWORK
+ //#define DEBUG_TORCH
+ //#define DEBUG_INTERVAL
+#define DEBUG_STATS
 
 
 #ifndef _LIB
@@ -110,7 +110,6 @@
 #include "Stream.h"
 #include "Crypto/Crypto.h"
 #include "Math/Stats/Stats.h"
-#include "Math/ML/Torch/DataSet.h"
 
 namespace Math::ML {
 
@@ -118,7 +117,7 @@ namespace Math::ML {
 	public:
 		constexpr MyModel() {}
 		static constexpr Size nbLayers = 5;
-		static constexpr Size m[5][2] = {
+		static constexpr Size m[ 5 ][ 2 ] = {
 			{64,64},
 			{64,64},
 			{64,64},
@@ -154,19 +153,19 @@ namespace AI {
 		typedef InputT Input;
 		typedef OutputT Output;
 
-		BasicData(const Input& input) :
-			_input(input),
-			_distance(1) {}
+		BasicData( const Input& input ) :
+			_input( input ),
+			_distance( 1 ) {}
 
 		const typename Distance& getDistance() const {
 			return this->_distance;
 		}
 
-		const typename Distance getDistance(const typename Input& input) const {
+		const typename Distance getDistance( const typename Input& input ) const {
 			return this->_distance;
 		}
 
-		void setDistance(const typename Distance& distance) {
+		void setDistance( const typename Distance& distance ) {
 			this->_distance = distance;
 		}
 
@@ -201,7 +200,7 @@ namespace AI {
 		 * @returns	Null if no data has been founded ( or empty Vector )
 		 * @sa		this.getDataMap();
 		 */
-		const Vector< typename Data* >* getSubData(const Input& inputData) const {
+		const Vector< typename Data* >* getSubData( const Input& inputData ) const {
 			/** to be overloaded */
 			return NULL;
 		}
@@ -220,29 +219,29 @@ namespace AI {
 		 * @param		distanceable	Object to be compared.
 		 * @param		resultMap [in, out]	Map to be edited.
 		 */
-		void updateResultMap(const Input& inputData, Map< const typename Data*, typename Data::Distance >& resultMap) const {
+		void updateResultMap( const Input& inputData, Map< const typename Data*, typename Data::Distance >& resultMap ) const {
 			// Retrieve the sub data for this neurode.
-			const Vector< Data* >* nearestData = getSubData(inputData);
+			const Vector< Data* >* nearestData = getSubData( inputData );
 
 			// Check if we have founded something.
 			if ( nearestData ) {
-				for ( auto it(nearestData->getBegin()); it != nearestData->getEnd(); nearestData->iterate(&it) ) {
-					const typename Data* data = nearestData->getValueIt(it);
-					const typename Map< const typename Data*, typename Data::Distance >::Iterator distanceNodeIt(resultMap.getNodeI(data));
+				for ( auto it( nearestData->getBegin() ); it != nearestData->getEnd(); nearestData->iterate( &it ) ) {
+					const typename Data* data = nearestData->getValueIt( it );
+					const typename Map< const typename Data*, typename Data::Distance >::Iterator distanceNodeIt( resultMap.getNodeI( data ) );
 
 					// If the Value has already been founded.
 					if ( distanceNodeIt ) {
-						const typename Data::Distance oldDistance(resultMap.getValueIt(distanceNodeIt));
-						const typename Data::Distance newDistance(oldDistance + data.getDistance(inputData));
+						const typename Data::Distance oldDistance( resultMap.getValueIt( distanceNodeIt ) );
+						const typename Data::Distance newDistance( oldDistance + data.getDistance( inputData ) );
 
 						// Update the old Value.
-						resultMap.setValueIt(distanceNodeIt, newDistance);
+						resultMap.setValueIt( distanceNodeIt, newDistance );
 					} else {
 						// The value does'nt exists actually.
-						const typename Data::Distance newDistance(data.getDistance(inputData));
+						const typename Data::Distance newDistance( data.getDistance( inputData ) );
 
 						// Insert into the Map.
-						resultMap.insert(data, newDistance);
+						resultMap.insert( data, newDistance );
 					}
 				}
 			}
@@ -254,7 +253,7 @@ namespace AI {
 		 *
 		 * @param		inputData Data used to learn.
 		 */
-		void learn(const Input& inputData) {
+		void learn( const Input& inputData ) {
 
 		}
 
@@ -280,17 +279,17 @@ template<typename T>
 class ImageFunctor {
 public:
 	ImageFunctor() {};
-	ImageFunctor& operator()(const Math::Vec2<Graphic::Size>& p, Graphic::ColorR<T>& color) {
+	ImageFunctor& operator()( const Math::Vec2<Graphic::Size>& p, Graphic::ColorR<T>& color ) {
 		return *this;
 	}
-	ImageFunctor& operator()(const Math::Vec2<Graphic::Size>& p, Graphic::ColorRGB<T>& color) {
-		unsigned int len = Math::length(p);
+	ImageFunctor& operator()( const Math::Vec2<Graphic::Size>& p, Graphic::ColorRGB<T>& color ) {
+		unsigned int len = Math::length( p );
 		color.r += len;
 		color.g -= len;
 		color.b += color.r + color.g;
 		return *this;
 	}
-	ImageFunctor& operator()(const Math::Vec2<Graphic::Size>& p, Graphic::ColorRGBA<T>& color) {
+	ImageFunctor& operator()( const Math::Vec2<Graphic::Size>& p, Graphic::ColorRGBA<T>& color ) {
 		return *this;
 	}
 };
@@ -299,12 +298,12 @@ public:
 // In case of Size error : (typename )?(Size
 
 
-int main(int argc, char* argv[]) {
+int main( int argc, char* argv[] ) {
 #ifdef DEBUG 
 	/************************************************************************/
 	/* DEBUG PART														*/
 	/************************************************************************/
-	Application<char> app(argc, argv);
+	Application<char> app( argc, argv );
 
 
 	/************************************************************************/
@@ -315,67 +314,67 @@ int main(int argc, char* argv[]) {
 
 		{
 			IO::Manager<Graphic::Texture<unsigned char>> textureManager;
-			IO::Resource<Graphic::Texture<unsigned char>> textureResource(&textureManager);
-			OS::Path filePath("sanctum.ctexture");
+			IO::Resource<Graphic::Texture<unsigned char>> textureResource( &textureManager );
+			OS::Path filePath( "sanctum.ctexture" );
 
 			//ASSERT( IO::write( "TextureManager.cmanager", &textureManager ) );
 			//ASSERT( IO::read( "TextureManager.cmanager", &textureManager ) );
-			displayInfo(StringASCII("Resource counter : (expected : 0) : ") << textureManager.getNbUses(filePath));
+			displayInfo( StringASCII( "Resource counter : (expected : 0) : " ) << textureManager.getNbUses( filePath ) );
 
 			// Adding one resource with the Resource
-			ASSERT(textureResource.setObject(filePath));
-			displayInfo(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
+			ASSERT( textureResource.setObject( filePath ) );
+			displayInfo( StringASCII( "Resource counter : (expected : 1) : " ) << textureManager.getNbUses( filePath ) );
 
-			displayInfo(StringASCII("Texture Height : (expected : 500) : ") << textureResource.getObject()->getHeight());
+			displayInfo( StringASCII( "Texture Height : (expected : 500) : " ) << textureResource.getObject()->getHeight() );
 
 			// Adding a texture directly to the manager.
-			ASSERT(textureManager.addObject(filePath));
-			displayInfo(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
+			ASSERT( textureManager.addObject( filePath ) );
+			displayInfo( StringASCII( "Resource counter : (expected : 2) : " ) << textureManager.getNbUses( filePath ) );
 
 			// Changing resource to something external.
 			Graphic::Texture<unsigned char> textureTest;
-			ASSERT(textureResource.setObject(&textureTest));
+			ASSERT( textureResource.setObject( &textureTest ) );
 			// One Resource has been deleted, the counter should be 1.
-			displayInfo(StringASCII("Resource counter : (expected : 1) : ") << textureManager.getNbUses(filePath));
+			displayInfo( StringASCII( "Resource counter : (expected : 1) : " ) << textureManager.getNbUses( filePath ) );
 
 			// Set back an internaly texture.
-			ASSERT(textureResource.setObject(filePath));
-			displayInfo(StringASCII("Resource counter : (expected : 2) : ") << textureManager.getNbUses(filePath));
+			ASSERT( textureResource.setObject( filePath ) );
+			displayInfo( StringASCII( "Resource counter : (expected : 2) : " ) << textureManager.getNbUses( filePath ) );
 			// Now the texture should be managed by the textureManager.
 
 			// Add a texture directly to the manager.
-			ASSERT(textureManager.addObject(filePath));
-			displayInfo(StringASCII("Resource counter : (expected : 3) : ") << textureManager.getNbUses(filePath));
+			ASSERT( textureManager.addObject( filePath ) );
+			displayInfo( StringASCII( "Resource counter : (expected : 3) : " ) << textureManager.getNbUses( filePath ) );
 
-			IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable(filePath);
+			IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable( filePath );
 
-			ASSERT(textureLoadable.load());
-			displayInfo(StringASCII("Texture Loaded as a Loadable, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
+			ASSERT( textureLoadable.load() );
+			displayInfo( StringASCII( "Texture Loaded as a Loadable, Height : (expected : 500) : " ) << textureLoadable.getObject()->getHeight() );
 
 			// Now try to write the loadable as a BasicIO.
-			ASSERT(IO::write(filePath, &textureLoadable));
+			ASSERT( IO::write( filePath, &textureLoadable ) );
 
 			// And now read it again.
-			ASSERT(IO::read(filePath, &textureLoadable));
-			displayInfo(StringASCII("Texture Loaded as a BasicIO, Height : (expected : 500) : ") << textureLoadable.getObject()->getHeight());
+			ASSERT( IO::read( filePath, &textureLoadable ) );
+			displayInfo( StringASCII( "Texture Loaded as a BasicIO, Height : (expected : 500) : " ) << textureLoadable.getObject()->getHeight() );
 
-			Math::Vec2<double> vIn(1.0, 42.0);
-			Math::Vec2<double> vOut(0.0, 0.0);
-			ASSERT(IO::write(OS::Path("v.test"), &vIn));
-			ASSERT(IO::read(OS::Path("v.test"), &vOut));
-			ASSERT(vIn == vOut);
+			Math::Vec2<double> vIn( 1.0, 42.0 );
+			Math::Vec2<double> vOut( 0.0, 0.0 );
+			ASSERT( IO::write( OS::Path( "v.test" ), &vIn ) );
+			ASSERT( IO::read( OS::Path( "v.test" ), &vOut ) );
+			ASSERT( vIn == vOut );
 
-			StaticTable<Math::Vec2<double>, Size(1)> vec2TableIn;
-			StaticTable<Math::Vec2<double>, Size(1)> vec2TableOut;
+			StaticTable<Math::Vec2<double>, Size( 1 )> vec2TableIn;
+			StaticTable<Math::Vec2<double>, Size( 1 )> vec2TableOut;
 
 			vec2TableIn[ 0 ] = vIn;
 
-			ASSERT(IO::write(OS::Path("v.test"), &vec2TableIn));
-			ASSERT(IO::read(OS::Path("v.test"), &vec2TableOut));
-			ASSERT(vec2TableIn[0] == vec2TableOut[0]);
+			ASSERT( IO::write( OS::Path( "v.test" ), &vec2TableIn ) );
+			ASSERT( IO::read( OS::Path( "v.test" ), &vec2TableOut ) );
+			ASSERT( vec2TableIn[ 0 ] == vec2TableOut[ 0 ] );
 
 
-			displayInfo("Every IO Tests passed.");
+			displayInfo( "Every IO Tests passed." );
 		}
 		/*
 		{
@@ -420,14 +419,14 @@ int main(int argc, char* argv[]) {
 	/************************************************************************/
 #ifdef DEBUG_UI
 	{
-		Graphic::FreeImage freeImage("sanctum.png", Graphic::FreeImage::Format::RGB, true);
+		Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB, true );
 		freeImage.load();
 
-		Graphic::Image imageTmp(( unsigned char* ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR);
+		Graphic::Image imageTmp( ( unsigned char* ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR );
 
 		Graphic::TextureLoadable<unsigned char> texture;
 
-		texture.setDatas(imageTmp.toFormat(Graphic::Format::RGBA));
+		texture.setDatas( imageTmp.toFormat( Graphic::Format::RGBA ) );
 		texture.generateMipmaps();
 
 
@@ -438,7 +437,7 @@ int main(int argc, char* argv[]) {
 
 
 		UI::Window window;
-		window.setCursorMode(GLFW::Window::CursorMode::Disabled);
+		window.setCursorMode( GLFW::Window::CursorMode::Disabled );
 
 		//window.setCursor( &( texture[0] ) );
 
@@ -446,7 +445,7 @@ int main(int argc, char* argv[]) {
 
 
 
-		window.setIcon(&texture);
+		window.setIcon( &texture );
 
 
 		//window.setFullscreen(NULL, Math::Vec2<unsigned int>(800,600), 60);
@@ -464,31 +463,31 @@ int main(int argc, char* argv[]) {
 	/************************************************************************/
 #ifdef DEBUG_XML
 	{
-		UTF8String testStr("Hello world");
-		UTF8String testDocumentStr("<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>");
-		XML::Document testDocument(OS::Path("test.xml"));
+		UTF8String testStr( "Hello world" );
+		UTF8String testDocumentStr( "<?xml version=\"1.0\" encoding=\"UTF - 8\"?><class testParam=\"xD\">test</class>" );
+		XML::Document testDocument( OS::Path( "test.xml" ) );
 
-		auto nodeTest(testDocument.getElementsById("test"));
+		auto nodeTest( testDocument.getElementsById( "test" ) );
 
 		UTF8String TEST = UTF8String::null;
 
 		if ( nodeTest.getSize() ) {
-			nodeTest[ 0 ]->appendXML(WString("<span id=\"new\"><child>New Value 1 !</child><child>New Value 2 !</child></span>"));
+			nodeTest[ 0 ]->appendXML( WString( "<span id=\"new\"><child>New Value 1 !</child><child>New Value 2 !</child></span>" ) );
 
-			nodeTest[ 0 ]->getChild(0)->addChild(new XML::NodeText(" Hello World!"));
-			UTF8String value(nodeTest[ 0 ]->getValue());
-			displayInfo(value);
+			nodeTest[ 0 ]->getChild( 0 )->addChild( new XML::NodeText( " Hello World!" ) );
+			UTF8String value( nodeTest[ 0 ]->getValue() );
+			displayInfo( value );
 		}
 
-		ASSERT(IO::write(WString("testXML.cxml"), &testDocument));
-		ASSERT(IO::read(WString("testXML.cxml"), &testDocument));
+		ASSERT( IO::write( WString( "testXML.cxml" ), &testDocument ) );
+		ASSERT( IO::read( WString( "testXML.cxml" ), &testDocument ) );
 
 
 
 
 
-		Log::displayLog(testDocument.toString<WString>());
-		testDocument.writeFileXML(OS::Path("testOut.xml"));
+		Log::displayLog( testDocument.toString<WString>() );
+		testDocument.writeFileXML( OS::Path( "testOut.xml" ) );
 
 
 
@@ -507,193 +506,207 @@ int main(int argc, char* argv[]) {
 	{
 		{
 			JSON::Document jsonDocument;
-			JSON::NodeMap* rootNode(new JSON::NodeMap());
-			JSON::NodeMap* childNode(new JSON::NodeMap("childNode"));
-			JSON::NodeMap* arrayNode(new JSON::NodeArray("arrayNode"));
+			JSON::NodeMap* rootNode( new JSON::NodeMap() );
+			JSON::NodeMap* childNode( new JSON::NodeMap( "childNode" ) );
+			JSON::NodeMap* arrayNode( new JSON::NodeArray( "arrayNode" ) );
 
-			arrayNode->addChild(new JSON::NodeValue(1));
-			arrayNode->addChild(new JSON::NodeValue(2));
-			arrayNode->addChild(new JSON::NodeValue(3));
-			arrayNode->addChild(new JSON::NodeValue(4));
+			arrayNode->addChild( new JSON::NodeValue( 1 ) );
+			arrayNode->addChild( new JSON::NodeValue( 2 ) );
+			arrayNode->addChild( new JSON::NodeValue( 3 ) );
+			arrayNode->addChild( new JSON::NodeValue( 4 ) );
 
-			rootNode->addChild(childNode);
-			rootNode->addChild(arrayNode);
+			rootNode->addChild( childNode );
+			rootNode->addChild( arrayNode );
 
-			childNode->addChild(new JSON::NodeValue("test", 43));
-			childNode->addChild(NULL);
+			childNode->addChild( new JSON::NodeValue( "test", 43 ) );
+			childNode->addChild( NULL );
 
-			Log::displayLog(rootNode->toString());
+			Log::displayLog( rootNode->toString() );
 		}
 		{
 			JSON::Document jsonDocument;
-			jsonDocument.readJSON("{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }");
+			jsonDocument.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }" );
 
-			Vector<JSON::NodeMap*> searchNode = jsonDocument.getElementsByName("test2");
+			Vector<JSON::NodeMap*> searchNode = jsonDocument.getElementsByName( "test2" );
 
 			if ( searchNode.getSize() ) {
 				// Should display "Hello World !"
-				Log::displayLog(searchNode[ 0 ]->getValue());
+				Log::displayLog( searchNode[ 0 ]->getValue() );
 			}
 
-			Log::displayLog(jsonDocument.getRoot()->getName());
-			Log::displayLog(jsonDocument.toString());
+			Log::displayLog( jsonDocument.getRoot()->getName() );
+			Log::displayLog( jsonDocument.toString() );
 		}
 		{
 			JSON::Document jsonDocument;
-			jsonDocument.readFileJSON("test.json");
+			jsonDocument.readFileJSON( "test.json" );
 
-			Log::displayLog(jsonDocument.toString());
+			Log::displayLog( jsonDocument.toString() );
 
 
-			ASSERT(IO::write(WString("testJSON.cjson"), &jsonDocument));
-			ASSERT(IO::read(WString("testJSON.cjson"), &jsonDocument));
+			ASSERT( IO::write( WString( "testJSON.cjson" ), &jsonDocument ) );
+			ASSERT( IO::read( WString( "testJSON.cjson" ), &jsonDocument ) );
 
-			Log::displayLog(jsonDocument.toString());
+			Log::displayLog( jsonDocument.toString() );
 		}
 		{
-			StringASCII jsonStr("{\"futuresType\":\"\",\"rateLimits\":[{\"rateLimitType\":\"\",\"interval\":\"\",\"intervalNum\":1,\"limit\":2400}],\"exchangeFilters\":[],\"assets\":\"\"}");
+			StringASCII jsonStr( "{\"futuresType\":\"\",\"rateLimits\":[{\"rateLimitType\":\"\",\"interval\":\"\",\"intervalNum\":1,\"limit\":2400}],\"exchangeFilters\":[],\"assets\":\"\"}" );
 
 			JSON::Document jsonDocument;
-			jsonDocument.readJSON(jsonStr);
-			Log::displayLog(jsonDocument.toString());
+			jsonDocument.readJSON( jsonStr );
+			Log::displayLog( jsonDocument.toString() );
 		}
 		{
-			StringASCII jsonStr("[1,2,3,4,5,6,7,8,9]");
+			StringASCII jsonStr( "[1,2,3,4,5,6,7,8,9]" );
 
 			JSON::Document jsonDocument;
-			jsonDocument.readJSON(jsonStr);
+			jsonDocument.readJSON( jsonStr );
 
-			ASSERT(IO::write(WString("testJSONArray.cjson"), &jsonDocument));
-			ASSERT(IO::read(WString("testJSONArray.cjson"), &jsonDocument));
+			ASSERT( IO::write( WString( "testJSONArray.cjson" ), &jsonDocument ) );
+			ASSERT( IO::read( WString( "testJSONArray.cjson" ), &jsonDocument ) );
 
-			Log::displayLog(jsonDocument.toString());
+			Log::displayLog( jsonDocument.toString() );
 		}
 		{
-			StringASCII jsonStr("");
+			StringASCII jsonStr( "" );
 
 			JSON::Document jsonDocument;
-			jsonDocument.readJSON(jsonStr);
-			Log::displayLog(jsonDocument.toString());
+			jsonDocument.readJSON( jsonStr );
+			Log::displayLog( jsonDocument.toString() );
 		}
 	}
 #endif
 #ifdef DEBUG_LIST
 	{
-		displayInfo("Debugging Lists...");
+		displayInfo( "Debugging Lists..." );
 
 		List<float> floatList;
-		floatList.push(42.0f);
-		floatList.push(1.0f);
-		floatList.push(2.0f);
-		floatList.push(3.0f);
-		typename List<float>::Iterator it4(floatList.push(4.0f));
-		typename List<float>::Iterator it5(floatList.push(5.0f));
-		floatList.push(6.0f);
+		floatList.push( 42.0f );
+		floatList.push( 1.0f );
+		floatList.push( 2.0f );
+		floatList.push( 3.0f );
+		typename List<float>::Iterator it4( floatList.push( 4.0f ) );
+		typename List<float>::Iterator it5( floatList.push( 5.0f ) );
+		floatList.push( 6.0f );
 
-		floatList.insert(7.0f, it4);
-		floatList.eraseIt(it5);
+		floatList.insert( 7.0f, it4 );
+		floatList.eraseIt( it5 );
 		floatList.popBegin();
 		floatList.pop();
-		floatList.pushBegin(42.0f);
-		floatList.pushBegin(42.0f);
-		floatList.eraseAll(42.0f);
-		floatList.replaceFirst(1.0f, 42.0f);
+		floatList.pushBegin( 42.0f );
+		floatList.pushBegin( 42.0f );
+		floatList.eraseAll( 42.0f );
+		floatList.replaceFirst( 1.0f, 42.0f );
 
 		List<float> floatListCopy = floatList;
 
-		IO::write(OS::Path("floatList.cl"), &floatListCopy);
-		IO::read(OS::Path("floatList.cl"), &floatListCopy);
+		IO::write( OS::Path( "floatList.cl" ), &floatListCopy );
+		IO::read( OS::Path( "floatList.cl" ), &floatListCopy );
 
-		displayInfo(floatListCopy.toString());
+		displayInfo( floatListCopy.toString() );
 	}
 #endif // DEBUG_LIST
 #ifdef DEBUG_MAP
 	{
-		displayInfo("Debuging Maps...");
+		displayInfo( "Debuging Maps..." );
 
 		// Test if the compare is working fine.
-		auto r = Math::Compare::compare(UTF8String("Hello"), UTF8String("World"));
+		auto r = Math::Compare::compare( UTF8String( "Hello" ), UTF8String( "World" ) );
 
 		// Test if the convertion to String is working.
-		displayInfo(String(r));
+		displayInfo( String( r ) );
 
 		Map<unsigned long int, unsigned long int> testMap;
 
-		testMap.insert(0, 0);
-		testMap.insert(1, 1);
-		testMap.insert(2, 2);
-		testMap.insert(3, 3);
-		testMap.insert(4, 4);
-		testMap.insert(5, 5);
-		testMap.insert(6, 6);
-		testMap.insert(7, 7);
-		testMap.insert(8, 8);
-		testMap.insert(9, 9);
+		testMap.insert( 0, 0 );
+		testMap.insert( 1, 1 );
+		testMap.insert( 2, 2 );
+		testMap.insert( 3, 3 );
+		testMap.insert( 4, 4 );
+		testMap.insert( 5, 5 );
+		testMap.insert( 6, 6 );
+		testMap.insert( 7, 7 );
+		testMap.insert( 8, 8 );
+		testMap.insert( 9, 9 );
 
-		displayInfo("Map : ");
-		for ( auto it(testMap.getBegin()); it != testMap.getEnd(); testMap.iterate(&it) ) {
-			displayInfo(testMap.getValueIt(it));
+		displayInfo( "Map : " );
+		for ( auto it( testMap.getBegin() ); it != testMap.getEnd(); testMap.iterate( &it ) ) {
+			displayInfo( testMap.getValueIt( it ) );
 		}
 
-		displayInfo("Map Ascending : ");
-		for ( auto it(testMap.getSmallest()); it != testMap.getEnd(); testMap.iterateAscending(&it) ) {
-			displayInfo(testMap.getValueIt(it));
+		displayInfo( "Map Ascending : " );
+		for ( auto it( testMap.getSmallest() ); it != testMap.getEnd(); testMap.iterateAscending( &it ) ) {
+			displayInfo( testMap.getValueIt( it ) );
 		}
 
-		displayInfo(StringASCII(testMap));
+		displayInfo( StringASCII( testMap ) );
 
 
 		{
 			// Testing IN/OUT
-			ASSERT(IO::write(WString("myMap.font"), &testMap));
+			ASSERT( IO::write( WString( "myMap.font" ), &testMap ) );
 
 			Map<unsigned long int, unsigned long int> mapLoaded;
-			ASSERT(IO::read(WString("myMap.font"), &mapLoaded));
+			ASSERT( IO::read( WString( "myMap.font" ), &mapLoaded ) );
 
-			displayInfo(StringASCII(mapLoaded));
+			displayInfo( StringASCII( mapLoaded ) );
 		}
 
 		{
 			// Testing Copy
 			Map<unsigned long int, unsigned long int> mapCopied = testMap;
 
-			displayInfo(StringASCII(mapCopied));
+			displayInfo( StringASCII( mapCopied ) );
 
 		}
 
-		for ( unsigned long int j(0); j < 100; j++ ) {
+		for ( unsigned long int j( 0 ); j < 100; j++ ) {
 			Map<unsigned long int, unsigned long int> testMap;
-			for ( unsigned long int i(0); i < 100; i++ ) {
-				testMap.insert(i, i);
+			for ( unsigned long int i( 0 ); i < 100; i++ ) {
+				testMap.insert( i, i );
 			}
-			testMap.eraseI(j);
+			testMap.eraseI( j );
 		}
 
-		for ( unsigned long int i(0); i < 1000; i++ ) {
-			testMap.insert(Math::random(0, 1000), i);
+		for ( unsigned long int i( 0 ); i < 1000; i++ ) {
+			testMap.insert( Math::random( 0, 1000 ), i );
 		}
 
 
-		for ( unsigned long int i(0); i < 1000; i++ ) {
-			testMap.eraseI(Math::random(0, 1000));
+		for ( unsigned long int i( 0 ); i < 1000; i++ ) {
+			testMap.eraseI( Math::random( 0, 1000 ) );
 		}
 		//displayInfo( StringASCII( testMap ) );
 
 		Map<int, String> mapTest;
-		mapTest.insert(42, "Hello World !");
+		mapTest.insert( 42, "Hello World !" );
 
-		String* nodeResult(mapTest[ 42 ]);
+		String* nodeResult( mapTest[ 42 ] );
 		if ( nodeResult ) {
-			displayInfo(StringASCII("Node 42 (expected : Hello World !) : ") << *nodeResult);
+			displayInfo( StringASCII( "Node 42 (expected : Hello World !) : " ) << *nodeResult );
 		} else {
-			displayError("Index 42 not founded.");
+			displayError( "Index 42 not founded." );
 		}
 
 	}
 #endif
 
 
+#ifdef DEBUG_UTILITY
+	/************************************************************************/
+	/* UTILITY PART									                        */
+	/************************************************************************/
+	{
+		Log::displayLog( String::format( "int is a pointer : %.", Utility::isPointer<int>::value ? "yes" : "no" ) );
+		Log::displayLog( String::format( "int * is a pointer : %.", Utility::isPointer<int*>::value ? "yes" : "no" ) );
 
+		const int i( 42 );
+		const int* iP( &i );
+		const int** iPP( &iP );
+
+		Log::displayLog( Utility::removePointer( iP ) );
+	}
+#endif
 
 
 #ifdef DEBUG_GRAPHIC
@@ -701,85 +714,85 @@ int main(int argc, char* argv[]) {
 	/* GRAPHIC PART									                        */
 	/************************************************************************/
 
-	Graphic::ColorRGB<unsigned char> colorUC(6, 0, 8);
-	Graphic::ColorRGB<float> colorF(0.33, 0.86, 0.96);
+	Graphic::ColorRGB<unsigned char> colorUC( 6, 0, 8 );
+	Graphic::ColorRGB<float> colorF( 0.33, 0.86, 0.96 );
 
-	displayInfo(StringASCII(colorF.HSLtoRGB()));
+	displayInfo( StringASCII( colorF.HSLtoRGB() ) );
 
 
 
-	Graphic::TrueTypeFont<unsigned char> font(L"consola.ttf", 40);
+	Graphic::TrueTypeFont<unsigned char> font( L"consola.ttf", 40 );
 	font.load();
-	font.loadGlyph(Graphic::Font<unsigned char>::Template::Ascii);
-	IO::write(L"consola.cfont", &font);
+	font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
+	IO::write( L"consola.cfont", &font );
 
 
 	Graphic::Font<unsigned char> font2;
-	IO::read(L"consola.cfont", &font2);
+	IO::read( L"consola.cfont", &font2 );
 
-	IO::write(L"consola2.cfont", &font2);
+	IO::write( L"consola2.cfont", &font2 );
 
 	Graphic::FreeImage glyphFreeImage;
-	glyphFreeImage.loadFromDatas(( unsigned char* ) font2[ 'A' ]->getDatas(), font2[ 'A' ]->getSize(), Graphic::FreeImage::Format::R);
-	glyphFreeImage.saveToFile("glyph_A.png", Graphic::FreeImage::SavingFormat::PNG);
+	glyphFreeImage.loadFromDatas( ( unsigned char* ) font2[ 'A' ]->getDatas(), font2[ 'A' ]->getSize(), Graphic::FreeImage::Format::R );
+	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
 
 
-	Graphic::FreeImage freeImage("sanctum.png", Graphic::FreeImage::Format::RGB);
+	Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB );
 	freeImage.load();
 
 	Graphic::Texture<unsigned char> texture;
-	texture.setDatas(( unsigned char* ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR);
+	texture.setDatas( ( unsigned char* ) freeImage.getDatas(), freeImage.getSize(), Graphic::LoadingFormat::BGR );
 	texture.generateMipmaps();
-	IO::write("sanctum.ctexture", &texture);
+	IO::write( "sanctum.ctexture", &texture );
 
 
-	IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable("sanctum.ctexture");
-	ASSERT(textureLoadable.load());
-	Graphic::Texture<unsigned char>& textureLoaded(*textureLoadable.getObject());
+	IO::Loadable<Graphic::Texture<unsigned char>> textureLoadable( "sanctum.ctexture" );
+	ASSERT( textureLoadable.load() );
+	Graphic::Texture<unsigned char>& textureLoaded( *textureLoadable.getObject() );
 
 
-	IO::write("sanctum2.ctexture", &textureLoadable);
+	IO::write( "sanctum2.ctexture", &textureLoadable );
 
 	/************************************************************************/
 	/* DOING SOME TEST IN imageTest2                                        */
 	/************************************************************************/
 
-	Graphic::ColorRGBA<unsigned char> colorWhite(255, 255, 255, 100);
-	Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 255);
-	Graphic::ColorRGB<unsigned char> colorMagenta(255, 0, 150);
-	Graphic::ColorRGBA<unsigned char> colorBlack(0, 0, 0, 150);
-	Graphic::ColorRGBA<unsigned char> colorTransluscient(0, 0, 0, 0);
+	Graphic::ColorRGBA<unsigned char> colorWhite( 255, 255, 255, 100 );
+	Graphic::ColorRGBA<unsigned char> colorRed( 255, 0, 0, 255 );
+	Graphic::ColorRGB<unsigned char> colorMagenta( 255, 0, 150 );
+	Graphic::ColorRGBA<unsigned char> colorBlack( 0, 0, 0, 150 );
+	Graphic::ColorRGBA<unsigned char> colorTransluscient( 0, 0, 0, 0 );
 
 
 	Graphic::Gradient::Vertical<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientVertical;
-	gradientVertical.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
-	gradientVertical.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(100, 100, 100, 255));
+	gradientVertical.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
+	gradientVertical.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 100, 100, 100, 255 ) );
 
 
 
 	Graphic::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Linear> gradientHorizontal;
-	gradientHorizontal.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
-	gradientHorizontal.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
+	gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+	gradientHorizontal.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
 
 
-	Graphic::Gradient::Linear<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientLinear(45);
-	gradientLinear.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
-	gradientLinear.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
-	gradientLinear.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
-	gradientLinear.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-	gradientLinear.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
-	gradientLinear.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	Graphic::Gradient::Linear<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientLinear( 45 );
+	gradientLinear.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+	gradientLinear.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
+	gradientLinear.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
+	gradientLinear.addPoint( 0.6f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
+	gradientLinear.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
+	gradientLinear.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
 
-	Graphic::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientRadial(Math::Vec2<float>(0.5, 0.5), Math::Vec2<float>(0.5, 0.5));
-	gradientRadial.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
-	gradientRadial.addPoint(0.2f, Graphic::ColorRGBA<unsigned char>(255, 0, 0, 255));
-	gradientRadial.addPoint(0.4f, Graphic::ColorRGBA<unsigned char>(0, 255, 0, 255));
-	gradientRadial.addPoint(0.6f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
-	gradientRadial.addPoint(0.8f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
-	gradientRadial.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(0, 255, 255, 255));
+	Graphic::Gradient::Radial<Graphic::ColorRGBA<unsigned char>, Math::InterpolationFunc::Cubic> gradientRadial( Math::Vec2<float>( 0.5, 0.5 ), Math::Vec2<float>( 0.5, 0.5 ) );
+	gradientRadial.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+	gradientRadial.addPoint( 0.2f, Graphic::ColorRGBA<unsigned char>( 255, 0, 0, 255 ) );
+	gradientRadial.addPoint( 0.4f, Graphic::ColorRGBA<unsigned char>( 0, 255, 0, 255 ) );
+	gradientRadial.addPoint( 0.6f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
+	gradientRadial.addPoint( 0.8f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
+	gradientRadial.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 0, 255, 255, 255 ) );
 
-	Graphic::Image image(textureLoaded[ 0 ]);
+	Graphic::Image image( textureLoaded[ 0 ] );
 
 
 	/*{
@@ -991,32 +1004,32 @@ int main(int argc, char* argv[]) {
 
 
 		//image.fillImage( Graphic::ColorRGB<unsigned char>( 255 ) );
-		UTF8String testStr("Hello World\nThis Lib is Awesome !");
+		UTF8String testStr( "Hello World\nThis Lib is Awesome !" );
 
 		typedef Graphic::FontEffect<unsigned char, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>> FontType;
-		FontType myFont(L"consola.ttf", 30);
+		FontType myFont( L"consola.ttf", 30 );
 
-		myFont.setOverlayColorFunc(Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255)));
-		myFont.setShadowActivated(false);
-		myFont.setShadowColorFunc(Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 0, 0, 250)));
-		myFont.setShadowRadius(2);
-		myFont.setShadowBias(Math::Vec2<float>(1, -1));
+		myFont.setOverlayColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) ) );
+		myFont.setShadowActivated( false );
+		myFont.setShadowColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 250 ) ) );
+		myFont.setShadowRadius( 2 );
+		myFont.setShadowBias( Math::Vec2<float>( 1, -1 ) );
 
 
-		myFont.setStrokeActivated(true);
-		myFont.setStrokeSize(1.9f);
-		myFont.setStrokeColorFunc(Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>(Graphic::ColorRGBA<unsigned char>(0, 0, 0, 150)));
+		myFont.setStrokeActivated( true );
+		myFont.setStrokeSize( 1.9f );
+		myFont.setStrokeColorFunc( Graphic::ColorFunc::SimpleColor<Graphic::ColorRGBA<unsigned char>>( Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 150 ) ) );
 
 		FontType myFontCOPY = myFont;
-		myFontCOPY.loadGlyph(Graphic::FontEffect<unsigned char>::Template::Ascii);
+		myFontCOPY.loadGlyph( Graphic::FontEffect<unsigned char>::Template::Ascii );
 
-		ASSERT(IO::write(WString("myFontCustomdeOUF.font"), &myFontCOPY));
+		ASSERT( IO::write( WString( "myFontCustomdeOUF.font" ), &myFontCOPY ) );
 
 
 		FontType myFontCp;
 
 
-		ASSERT(IO::read(WString("myFontCustomdeOUF.font"), &myFontCp));
+		ASSERT( IO::read( WString( "myFontCustomdeOUF.font" ), &myFontCp ) );
 
 
 
@@ -1024,16 +1037,16 @@ int main(int argc, char* argv[]) {
 		//image.drawImage(Graphic::Point(300, 300), *maskTest);
 
 		Graphic::Text<unsigned char> myText;
-		myText.setText(myFontCp, testStr, Math::Vec2<bool>(true, true));
+		myText.setText( myFontCp, testStr, Math::Vec2<bool>( true, true ) );
 
 		//Graphic::drawText( &image, myFontCp, Graphic::Point(250,250), testStr,  Math::Vec2<bool>( true, true ) );
 
-		ASSERT(IO::write(WString("myText.cimg"), &myText));
+		ASSERT( IO::write( WString( "myText.cimg" ), &myText ) );
 		Graphic::Text<unsigned char> myTextCp;
-		ASSERT(IO::read(WString("myText.cimg"), &myTextCp));
+		ASSERT( IO::read( WString( "myText.cimg" ), &myTextCp ) );
 
-		auto mipmap = myTextCp.resample(Math::Vec2<Graphic::Size>(myTextCp.getSize() / 2), Graphic::Image::ResamplingMode::Lanczos);
-		image.drawImage(Graphic::Point(myTextCp.getBias() / 2.0f) + Graphic::Point(250, 250), mipmap);
+		auto mipmap = myTextCp.resample( Math::Vec2<Graphic::Size>( myTextCp.getSize() / 2 ), Graphic::Image::ResamplingMode::Lanczos );
+		image.drawImage( Graphic::Point( myTextCp.getBias() / 2.0f ) + Graphic::Point( 250, 250 ), mipmap );
 
 	}
 
@@ -1204,8 +1217,8 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// Saving to file										//
 	Graphic::FreeImage freeImage2;
-	freeImage2.loadFromDatas(( unsigned char* ) textureLoaded.getDatas(0), textureLoaded.getSize(0), Graphic::FreeImage::Format::RGB);
-	freeImage2.saveToFile("sanctum3.png", Graphic::FreeImage::SavingFormat::PNG);
+	freeImage2.loadFromDatas( ( unsigned char* ) textureLoaded.getDatas( 0 ), textureLoaded.getSize( 0 ), Graphic::FreeImage::Format::RGB );
+	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
 #endif
 
 #ifdef DEBUG_NETWORK
@@ -1214,7 +1227,7 @@ int main(int argc, char* argv[]) {
 	{
 		int result;
 		std::cout << "0 : Client, 1 : Server, Google Test : 2" << std::endl;
-		scanf_s("%d", &result);
+		scanf_s( "%d", &result );
 
 		char messageToSend[] = "Hello World !\xE2\x9C\xAD";
 		char buffer[ 50 ] = "";
@@ -1222,32 +1235,32 @@ int main(int argc, char* argv[]) {
 		if ( result == 0 ) {
 			/////CLIENT
 			Network::Server myUDPServer;
-			myUDPServer.listen(5001, Network::SockType::UDP, Network::IpFamily::Undefined);
+			myUDPServer.listen( 5001, Network::SockType::UDP, Network::IpFamily::Undefined );
 
 			Network::Connection myTCPConnection;
-			myTCPConnection.connect("::1", 5001, Network::SockType::TCP);
-			myTCPConnection.receive(buffer, sizeof(buffer));
-			Log::displayLog(StringASCII() << "We are connected to the server and received the message : " << buffer);
+			myTCPConnection.connect( "::1", 5001, Network::SockType::TCP );
+			myTCPConnection.receive( buffer, sizeof( buffer ) );
+			Log::displayLog( StringASCII() << "We are connected to the server and received the message : " << buffer );
 
 			Network::Address addressFrom;
-			if ( myUDPServer.receive(buffer, sizeof(buffer), &addressFrom) )
-				Log::displayLog(StringASCII() << "We got an UDP message from the server " << buffer);
+			if ( myUDPServer.receive( buffer, sizeof( buffer ), &addressFrom ) )
+				Log::displayLog( StringASCII() << "We got an UDP message from the server " << buffer );
 
 		} else if ( result == 1 ) {
 			//SERVER
 			Network::Server myTCPServer;
-			myTCPServer.listen(5001, Network::SockType::TCP, Network::IpFamily::Undefined);
+			myTCPServer.listen( 5001, Network::SockType::TCP, Network::IpFamily::Undefined );
 			// myTCPServer.listen( 5002, Network::SockType::TCP, Network::IpFamily::Undefined );
 
 			Network::Connection clientConnection;
-			while ( myTCPServer.accept(&clientConnection) ) {
+			while ( myTCPServer.accept( &clientConnection ) ) {
 
 
 				while ( true ) {
-					if ( !clientConnection.receive(buffer, sizeof(buffer)) ) {
+					if ( !clientConnection.receive( buffer, sizeof( buffer ) ) ) {
 						break;
 					}
-					Log::displayLog(StringASCII::format("Received String \"%\" from client.", buffer));
+					Log::displayLog( StringASCII::format( "Received String \"%\" from client.", buffer ) );
 				}
 
 				/*
@@ -1263,8 +1276,8 @@ int main(int argc, char* argv[]) {
 			/////GOOGLE TEST
 			Network::Connection myTCPConnection;
 
-			if ( myTCPConnection.connect("www.google.fr", 80, Network::SockType::TCP) ) {
-				Log::displayLog(StringASCII("Connected to Google ! IP:") << myTCPConnection.getIp());
+			if ( myTCPConnection.connect( "www.google.fr", 80, Network::SockType::TCP ) ) {
+				Log::displayLog( StringASCII( "Connected to Google ! IP:" ) << myTCPConnection.getIp() );
 			}
 		}
 	}
@@ -1277,18 +1290,18 @@ int main(int argc, char* argv[]) {
 	{
 		Network::TLSConnection myTCPConnection;
 
-		if ( myTCPConnection.connect("google.com", 443, Network::SockType::TCP) ) {
-			Log::displayLog(StringASCII("Connected to Google ! IP:") << myTCPConnection.getIp());
+		if ( myTCPConnection.connect( "google.com", 443, Network::SockType::TCP ) ) {
+			Log::displayLog( StringASCII( "Connected to Google ! IP:" ) << myTCPConnection.getIp() );
 
 			char query[] = "GET https://about.google HTTP/1.1\r\nAccept: */*\r\nConnection: close\r\n\r\n";
-			if ( !myTCPConnection.send(query, sizeof(query)) ) {
-				Log::displayError("Unable to send the query.");
+			if ( !myTCPConnection.send( query, sizeof( query ) ) ) {
+				Log::displayError( "Unable to send the query." );
 			}
 
 			char receiveBuffer[ 1000000 ];
-			int receivedLength(myTCPConnection.receive(receiveBuffer, sizeof(receiveBuffer)));
+			int receivedLength( myTCPConnection.receive( receiveBuffer, sizeof( receiveBuffer ) ) );
 
-			Log::displayLog(StringASCII(receiveBuffer, receivedLength));
+			Log::displayLog( StringASCII( receiveBuffer, receivedLength ) );
 		}
 	}
 #endif
@@ -1296,66 +1309,66 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : HTTP									//
 	{
-		Network::HTTPClient client(Network::HTTPRequest::Type::HTTPS, StringASCII("fapi.binance.com"));
-		client.setHeaderParam(StringASCII("X-MBX-APIKEY"), StringASCII("q4Uuz9yQUUrj5zA3PGRROFeq03Binump7hkytN19qCBlitr8NCWICT2Wvqybn8Y8"));
-		StringASCII secretKey("qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW");
+		Network::HTTPClient client( Network::HTTPRequest::Type::HTTPS, StringASCII( "fapi.binance.com" ) );
+		client.setHeaderParam( StringASCII( "X-MBX-APIKEY" ), StringASCII( "q4Uuz9yQUUrj5zA3PGRROFeq03Binump7hkytN19qCBlitr8NCWICT2Wvqybn8Y8" ) );
+		StringASCII secretKey( "qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW" );
 
 		Vector<Network::HTTPParam> paramVector;
 		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
-		Time::TimeT timestamp(Time::getTime<Time::MilliSecond>().getValue());
-		paramVector.push(Param(StringASCII("timestamp"), StringASCII(timestamp)));
-		paramVector.push(Param(StringASCII("recvWindow"), StringASCII(20000)));
+		Time::TimeT timestamp( Time::getTime<Time::MilliSecond>().getValue() );
+		paramVector.push( Param( StringASCII( "timestamp" ), StringASCII( timestamp ) ) );
+		paramVector.push( Param( StringASCII( "recvWindow" ), StringASCII( 20000 ) ) );
 
-		StringASCII paramsStr(Network::Url::formatParams(paramVector));
+		StringASCII paramsStr( Network::Url::formatParams( paramVector ) );
 
-		Vector<unsigned char> hashBinary(Crypto::HMACSha256<char>(secretKey, paramsStr));
-		StringASCII signatureStr(StringASCII::encodeHexadecimal(hashBinary));
+		Vector<unsigned char> hashBinary( Crypto::HMACSha256<char>( secretKey, paramsStr ) );
+		StringASCII signatureStr( StringASCII::encodeHexadecimal( hashBinary ) );
 
-		paramVector.push(Param(StringASCII("signature"), signatureStr));
+		paramVector.push( Param( StringASCII( "signature" ), signatureStr ) );
 
-		Network::HTTPResponse* response1(client.query(Network::HTTPRequest::Method::GET, StringASCII("/fapi/v2/account"), paramVector));
+		Network::HTTPResponse* response1( client.query( Network::HTTPRequest::Method::GET, StringASCII( "/fapi/v2/account" ), paramVector ) );
 
-		Time::sleep(10000);
+		Time::sleep( 10000 );
 
-		Network::HTTPResponse* response2(client.query(Network::HTTPRequest::Method::GET, StringASCII("/fapi/v2/account"), paramVector));
+		Network::HTTPResponse* response2( client.query( Network::HTTPRequest::Method::GET, StringASCII( "/fapi/v2/account" ), paramVector ) );
 
 		if ( response1 && response2 ) {
-			Log::displayLog(response2->getContent());
+			Log::displayLog( response2->getContent() );
 		} else {
-			Log::displayError("Query failed.");
+			Log::displayError( "Query failed." );
 		}
 
 		paramVector.clear();
-		paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
+		paramVector.push( Param( StringASCII( "symbol" ), StringASCII( "BTCUSDT" ) ) );
 
-		for ( Size i(0); i < Size(10); i++ ) {
-			if ( !client.query(Network::HTTPRequest::Method::GET, StringASCII("/fapi/v1/premiumIndex"), paramVector) ) {
-				Log::displayError("Query failed.");
+		for ( Size i( 0 ); i < Size( 10 ); i++ ) {
+			if ( !client.query( Network::HTTPRequest::Method::GET, StringASCII( "/fapi/v1/premiumIndex" ), paramVector ) ) {
+				Log::displayError( "Query failed." );
 				break;
 			}
-			Log::displayLog(response1->getContent());
+			Log::displayLog( response1->getContent() );
 		}
 
-		Log::displaySuccess("Success.");
+		Log::displaySuccess( "Success." );
 	}
 #endif
 #ifdef DEBUG_CRYPTO
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : CRYPTO									//
 	{
-		StringASCII keyStr("NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j");
-		StringASCII dataStr("symbol=LTCBTC&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.1&recvWindow=5000&timestamp=1499827319559");
+		StringASCII keyStr( "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j" );
+		StringASCII dataStr( "symbol=LTCBTC&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.1&recvWindow=5000&timestamp=1499827319559" );
 
-		Vector<unsigned char> keyBinary(keyStr);
-		Vector<unsigned char> dataBinary(dataStr);
+		Vector<unsigned char> keyBinary( keyStr );
+		Vector<unsigned char> dataBinary( dataStr );
 
-		Vector<unsigned char> digestBinary(Crypto::digestSha256<char>(dataBinary));
+		Vector<unsigned char> digestBinary( Crypto::digestSha256<char>( dataBinary ) );
 
-		Vector<unsigned char> hashBinary(Crypto::HMACSha256<char>(keyBinary, dataBinary));
+		Vector<unsigned char> hashBinary( Crypto::HMACSha256<char>( keyBinary, dataBinary ) );
 
-		StringASCII hashStr(StringASCII::encodeHexadecimal(hashBinary));
+		StringASCII hashStr( StringASCII::encodeHexadecimal( hashBinary ) );
 
-		displayInfo(hashStr);
+		displayInfo( hashStr );
 	}
 #endif
 #ifdef DEBUG_BASE64
@@ -1363,17 +1376,17 @@ int main(int argc, char* argv[]) {
 	// DEBUG : BASE64									//
 	{
 		struct GenerateVectorFunctor {
-			GenerateVectorFunctor(Size sizeMin, Size sizeMax) :
-				sizeMin(sizeMin),
-				sizeMax(sizeMax) {}
+			GenerateVectorFunctor( Size sizeMin, Size sizeMax ) :
+				sizeMin( sizeMin ),
+				sizeMax( sizeMax ) {}
 
 			Vector<unsigned char> operator()() const {
 				Vector<unsigned char> outputVector;
-				Size newSize(Math::random(this->sizeMin, this->sizeMax));
-				outputVector.resize(newSize);
+				Size newSize( Math::random( this->sizeMin, this->sizeMax ) );
+				outputVector.resize( newSize );
 
-				for ( Size i(0); i < outputVector.getSize(); i++ ) {
-					outputVector.setValueI(i, unsigned char(Math::random(unsigned char(0), unsigned char(255))));
+				for ( Size i( 0 ); i < outputVector.getSize(); i++ ) {
+					outputVector.setValueI( i, unsigned char( Math::random( unsigned char( 0 ), unsigned char( 255 ) ) ) );
 				}
 
 				return outputVector;
@@ -1383,24 +1396,24 @@ int main(int argc, char* argv[]) {
 			Size sizeMax;
 		};
 
-		GenerateVectorFunctor generateVectorFunctor(Size(128), Size(256));
-		Size nbTests(10000);
+		GenerateVectorFunctor generateVectorFunctor( Size( 128 ), Size( 256 ) );
+		Size nbTests( 10000 );
 
-		for ( Size i(0); i < nbTests; i++ ) {
-			Vector<unsigned char> dataVector(generateVectorFunctor());
+		for ( Size i( 0 ); i < nbTests; i++ ) {
+			Vector<unsigned char> dataVector( generateVectorFunctor() );
 
-			StringASCII outputStr(StringASCII::encodeBase64(dataVector));
-			Vector<unsigned char> outputVector(StringASCII::decodeBase64(outputStr));
+			StringASCII outputStr( StringASCII::encodeBase64( dataVector ) );
+			Vector<unsigned char> outputVector( StringASCII::decodeBase64( outputStr ) );
 
-			displayInfo(outputStr);
+			displayInfo( outputStr );
 
 			if ( dataVector != outputVector ) {
-				displayError("Error.");
+				displayError( "Error." );
 				break;
 			}
 		}
 
-		displayInfo("Success !");
+		displayInfo( "Success !" );
 	}
 #endif
 #ifdef DEBUG_HEXADECIMAL
@@ -1408,17 +1421,17 @@ int main(int argc, char* argv[]) {
 	// DEBUG : HEXADECIMAL									//
 	{
 		struct GenerateVectorFunctor {
-			GenerateVectorFunctor(Size sizeMin, Size sizeMax) :
-				sizeMin(sizeMin),
-				sizeMax(sizeMax) {}
+			GenerateVectorFunctor( Size sizeMin, Size sizeMax ) :
+				sizeMin( sizeMin ),
+				sizeMax( sizeMax ) {}
 
 			Vector<unsigned char> operator()() const {
 				Vector<unsigned char> outputVector;
-				Size newSize(Math::random(this->sizeMin, this->sizeMax));
-				outputVector.resize(newSize);
+				Size newSize( Math::random( this->sizeMin, this->sizeMax ) );
+				outputVector.resize( newSize );
 
-				for ( Size i(0); i < outputVector.getSize(); i++ ) {
-					outputVector.setValueI(i, unsigned char(Math::random(unsigned char(0), unsigned char(255))));
+				for ( Size i( 0 ); i < outputVector.getSize(); i++ ) {
+					outputVector.setValueI( i, unsigned char( Math::random( unsigned char( 0 ), unsigned char( 255 ) ) ) );
 				}
 
 				return outputVector;
@@ -1428,65 +1441,65 @@ int main(int argc, char* argv[]) {
 			Size sizeMax;
 		};
 
-		GenerateVectorFunctor generateVectorFunctor(Size(128), Size(256));
-		Size nbTests(10000);
+		GenerateVectorFunctor generateVectorFunctor( Size( 128 ), Size( 256 ) );
+		Size nbTests( 10000 );
 
-		for ( Size i(0); i < nbTests; i++ ) {
-			Vector<unsigned char> dataVector(generateVectorFunctor());
+		for ( Size i( 0 ); i < nbTests; i++ ) {
+			Vector<unsigned char> dataVector( generateVectorFunctor() );
 
-			StringASCII outputStr(StringASCII::encodeHexadecimal(dataVector));
-			Vector<unsigned char> outputVector(StringASCII::decodeHexadecimal(outputStr));
+			StringASCII outputStr( StringASCII::encodeHexadecimal( dataVector ) );
+			Vector<unsigned char> outputVector( StringASCII::decodeHexadecimal( outputStr ) );
 
-			displayInfo(outputStr);
+			displayInfo( outputStr );
 
 			if ( dataVector != outputVector ) {
-				displayError("Error.");
+				displayError( "Error." );
 				break;
 			}
 		}
 
-		displayInfo("Success !");
+		displayInfo( "Success !" );
 	}
 #endif
 #ifdef DEBUG_STRING
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Strings											//
 	{
-		displayInfo("Hello World !");
-		displayInfo(StringASCII("hElLo WoRlD !").toUpper());
-		displayInfo(StringASCII("hElLo WoRlD !").toLower());
-		StringASCII testStr("STRING 1 : ");
-		StringASCII strConcat("Hello World!");
-		Log::displayLog(StringASCII("10 in binary : ") << StringASCII(10, 2));
-		Log::displayLog(StringASCII("test:").concatFill(255, StringASCII::Size(5), '-', 16));
-		Log::displayLog(StringASCII(100.0f));
-		Log::displayLog(StringASCII(0.2f));
-		Log::displayLog(StringASCII(0.02f));
-		Log::displayLog(StringASCII(0.002f));
-		Log::displayLog(StringASCII(0.0002f));
-		Log::displayLog(StringASCII(0.00002f));
+		displayInfo( "Hello World !" );
+		displayInfo( StringASCII( "hElLo WoRlD !" ).toUpper() );
+		displayInfo( StringASCII( "hElLo WoRlD !" ).toLower() );
+		StringASCII testStr( "STRING 1 : " );
+		StringASCII strConcat( "Hello World!" );
+		Log::displayLog( StringASCII( "10 in binary : " ) << StringASCII( 10, 2 ) );
+		Log::displayLog( StringASCII( "test:" ).concatFill( 255, StringASCII::Size( 5 ), '-', 16 ) );
+		Log::displayLog( StringASCII( 100.0f ) );
+		Log::displayLog( StringASCII( 0.2f ) );
+		Log::displayLog( StringASCII( 0.02f ) );
+		Log::displayLog( StringASCII( 0.002f ) );
+		Log::displayLog( StringASCII( 0.0002f ) );
+		Log::displayLog( StringASCII( 0.00002f ) );
 
 
 
-		for ( size_t i(0); i < 2; i++ ) {
-			testStr += StringASCII(testStr);
+		for ( size_t i( 0 ); i < 2; i++ ) {
+			testStr += StringASCII( testStr );
 		}
-		Log::displayLog(testStr.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
+		Log::displayLog( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
-		Log::displayLog(StringASCII::format("__/%__%__%__%__", "Hello World !", 50, 2.5f));
+		Log::displayLog( StringASCII::format( "__/%__%__%__%__", "Hello World !", 50, 2.5f ) );
 
 		class EndFunc {
 		public:
-			bool operator()(const char* it) const {
-				return ( *it == char(' ') );
+			bool operator()( const char* it ) const {
+				return ( *it == char( ' ' ) );
 			}
 		};
 
 		const char* testParse = "42784.27 18";
-		const char** iterable(&testParse);
-		float parsedValue(StringASCII::toFloat(iterable, 10, EndFunc()));
-		Log::displayLog(parsedValue);
-		Log::displayLog(StringASCII::toInt(iterable));
+		const char** iterable( &testParse );
+		float parsedValue( StringASCII::toFloat( iterable, 10, EndFunc() ) );
+		Log::displayLog( parsedValue );
+		Log::displayLog( StringASCII::toInt( iterable ) );
 
 	}
 #endif
@@ -1494,29 +1507,29 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : TIME															//
 	{
-		Time::TimePointMS tpS(Time::getTime<Time::Second>());
-		Time::TimePointMS tpMS(Time::getTime<Time::MilliSecond>());
-		Time::TimePoint<Time::Day> tpD(Time::getTime<Time::Day>());
-		Time::Duration<Time::MilliSecond> d(tpMS - tpS);
-		displayInfo(d.getValue());
-		displayInfo(tpD.getValue());
-		displayInfo(Time::Duration<Time::Second>(12).toValue<Time::MilliSecond>());
+		Time::TimePointMS tpS( Time::getTime<Time::Second>() );
+		Time::TimePointMS tpMS( Time::getTime<Time::MilliSecond>() );
+		Time::TimePoint<Time::Day> tpD( Time::getTime<Time::Day>() );
+		Time::Duration<Time::MilliSecond> d( tpMS - tpS );
+		displayInfo( d.getValue() );
+		displayInfo( tpD.getValue() );
+		displayInfo( Time::Duration<Time::Second>( 12 ).toValue<Time::MilliSecond>() );
 	}
 #endif
 #ifdef DEBUG_DATE
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Date															//
 	{
-		displayInfo("Debuging Date...");
+		displayInfo( "Debuging Date..." );
 		Time::Date nowDate = Time::getDate();
-		displayInfo(nowDate.toString(StringASCII("HHH")));
-		displayInfo(nowDate.toString());
-		displayInfo(nowDate.toStringISO(Time::Date::ISOFormat::DateOnly));
-		displayInfo(Time::Date::getLocalUTCBias());
-		displayInfo(StringASCII("This is the date ! ") << Time::getDate() << " YES !");
-		displayInfo(Time::Date::parse("2000-03-05T10:35:18-01:00").toStringISO());
-		displayInfo(Time::Date::parse("2000-03-05").toStringISO());
-		displayInfo(Time::Date::parse("T10:35:18.54547221Z").toStringISO());
+		displayInfo( nowDate.toString( StringASCII( "HHH" ) ) );
+		displayInfo( nowDate.toString() );
+		displayInfo( nowDate.toStringISO( Time::Date::ISOFormat::DateOnly ) );
+		displayInfo( Time::Date::getLocalUTCBias() );
+		displayInfo( StringASCII( "This is the date ! " ) << Time::getDate() << " YES !" );
+		displayInfo( Time::Date::parse( "2000-03-05T10:35:18-01:00" ).toStringISO() );
+		displayInfo( Time::Date::parse( "2000-03-05" ).toStringISO() );
+		displayInfo( Time::Date::parse( "T10:35:18.54547221Z" ).toStringISO() );
 		// int n = StringASCII::charToNumber<int, 4>( "2242" );
 		// displayInfo( StringASCII( n ) );
 	}
@@ -1525,45 +1538,45 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Path															//
 	{
-		displayInfo("Debuging Pathes...");
-		OS::Path path("C:\\testfolder");
+		displayInfo( "Debuging Pathes..." );
+		OS::Path path( "C:\\testfolder" );
 
-		displayInfo(path.exists());
-		displayInfo(path.toString());
+		displayInfo( path.exists() );
+		displayInfo( path.toString() );
 
-		path.join("folder2", "HelloWorld.txt");
-		displayInfo(path.toString());
+		path.join( "folder2", "HelloWorld.txt" );
+		displayInfo( path.toString() );
 
-		displayInfo(path.basename());
+		displayInfo( path.basename() );
 	}
 #endif
 #ifdef DEBUG_STREAM
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Stream														//
 	{
-		displayInfo(StringASCII("Hello World !").concatFill(-42, 4, '0'));
-		displayInfo(42);
-		Stream streamTest = WString("Hello World !");
+		displayInfo( StringASCII( "Hello World !" ).concatFill( -42, 4, '0' ) );
+		displayInfo( 42 );
+		Stream streamTest = WString( "Hello World !" );
 		streamTest << 'H';
 		streamTest << 42;
 		streamTest << L"TEST Wide.";
-		StringASCII strRaw(streamTest.toStringRaw());
-		displayInfo(strRaw);
-		StringASCII strHexa(streamTest.toStringHexa());
-		displayInfo(streamTest.toStringHexa());
+		StringASCII strRaw( streamTest.toStringRaw() );
+		displayInfo( strRaw );
+		StringASCII strHexa( streamTest.toStringHexa() );
+		displayInfo( streamTest.toStringHexa() );
 	}
 #endif
 #ifdef DEBUG_VEC
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Vec															//
 	{
-		Math::Vec<double> v1({ 1,1,1,1 });
-		Math::Vec<double> v2({ 3,3,3,3 });
-		Math::Vec<double> v3(v1 + v2);
-		Math::Vec<double> v4({ 1,2,3,4 });
-		Math::Vec<double> v5(v1 + v4);
-		Math::Vec<double> v6(v1 + 2.0);
-		Table<double> t1(v6);
+		Math::Vec<double> v1( { 1,1,1,1 } );
+		Math::Vec<double> v2( { 3,3,3,3 } );
+		Math::Vec<double> v3( v1 + v2 );
+		Math::Vec<double> v4( { 1,2,3,4 } );
+		Math::Vec<double> v5( v1 + v4 );
+		Math::Vec<double> v6( v1 + 2.0 );
+		Table<double> t1( v6 );
 
 		// v6 = Math::Vec2<double>(5, 5);
 
@@ -1573,36 +1586,36 @@ int main(int argc, char* argv[]) {
 
 		v5 = -v5;
 
-		v5 = abs(v5);
+		v5 = abs( v5 );
 
 		v5 += t1;
 
-		displayInfo(v5.toString());
+		displayInfo( v5.toString() );
 
-		displayInfo(Math::length(Math::normalize(v5)));
+		displayInfo( Math::length( Math::normalize( v5 ) ) );
 
 		v1 = { 2,2,2,2 };
 
-		ASSERT(IO::write(OS::Path("testV1.vec"), &v1));
-		ASSERT(IO::read(OS::Path("testV1.vec"), &v1));
+		ASSERT( IO::write( OS::Path( "testV1.vec" ), &v1 ) );
+		ASSERT( IO::read( OS::Path( "testV1.vec" ), &v1 ) );
 
-		displayInfo(v1.toJSON()->toString());
+		displayInfo( v1.toJSON()->toString() );
 
 		Math::Vec<double> v7;
-		JSON::fromJSON(JSON::toJSON<UTF8String>(v1), &v7);
+		JSON::fromJSON( JSON::toJSON<UTF8String>( v1 ), &v7 );
 
-		displayInfo(v7.toJSON()->toString());
+		displayInfo( v7.toJSON()->toString() );
 
 		Vector<float> v8;
-		v8.push(1.0f);
-		v8.push(2.0f);
-		v8.push(3.0f);
+		v8.push( 1.0f );
+		v8.push( 2.0f );
+		v8.push( 3.0f );
 
-		displayInfo(v8.toString());
+		displayInfo( v8.toString() );
 
-		StaticTable<float, 3> v9({1.0f, 2.0f, 3.0f});
+		StaticTable<float, 3> v9( { 1.0f, 2.0f, 3.0f } );
 
-		displayInfo(v9.toString());
+		displayInfo( v9.toString() );
 
 		int i;
 	}
@@ -1611,13 +1624,13 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Mat															//
 	{
-		Math::Mat<double> m1(Size(100), Size(100));
-		Math::Mat<double> m2({ {1,2}, {3,4} });
-		Math::Mat<double> m3(m2);
+		Math::Mat<double> m1( Size( 100 ), Size( 100 ) );
+		Math::Mat<double> m2( { {1,2}, {3,4} } );
+		Math::Mat<double> m3( m2 );
 		m2.transpose();
-		Math::Mat<double> m4(m2);
-		Math::Mat<double> m5({ {1,2,3}, {4,5,6} });
-		Math::Mat<double> m6({ {10,11}, {20,21}, {30,31} });
+		Math::Mat<double> m4( m2 );
+		Math::Mat<double> m5( { {1,2,3}, {4,5,6} } );
+		Math::Mat<double> m6( { {10,11}, {20,21}, {30,31} } );
 
 		m3 = { {1,0}, {0,1} };
 
@@ -1625,28 +1638,28 @@ int main(int argc, char* argv[]) {
 		m3 *= 2.0;
 
 		m3 = m3 + 100.0;
-		Math::Mat<double> m8(2, 2);
+		Math::Mat<double> m8( 2, 2 );
 		m8.identity();
 		m3 = m3 + m8;
-		Math::Vec<double> v1(2);
-		v1.fill(10);
+		Math::Vec<double> v1( 2 );
+		v1.fill( 10 );
 		m3 = m3 * v1;
-		v1.fill(0.1);
+		v1.fill( 0.1 );
 		m3 *= v1;
 		m3 *= m8;
 
 		m1.identity();
 
-		displayInfo((m5 * m6).toString());
-		displayInfo(m5 == m6);
-		displayInfo(JSON::toJSON(m5)->toString());
+		displayInfo( ( m5 * m6 ).toString() );
+		displayInfo( m5 == m6 );
+		displayInfo( JSON::toJSON( m5 )->toString() );
 
 		Math::Mat<double> m7;
-		JSON::fromJSON(JSON::toJSON(m5), &m7);
+		JSON::fromJSON( JSON::toJSON( m5 ), &m7 );
 
-		displayInfo(m7.toString());
+		displayInfo( m7.toString() );
 
-		displayInfo(Math::sum(m7));
+		displayInfo( Math::sum( m7 ) );
 
 	}
 #endif
@@ -1654,25 +1667,25 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : Tensor														//
 	{
-		Math::Tensor<double> t1({ 1,2,3,4 });
-		Math::Tensor<double> t2({ {1,2}, {3,4} });
-		Math::Tensor<double> t3({ {{1,0},{2,0}}, {{3,0},{4,0}} });
+		Math::Tensor<double> t1( { 1,2,3,4 } );
+		Math::Tensor<double> t2( { {1,2}, {3,4} } );
+		Math::Tensor<double> t3( { {{1,0},{2,0}}, {{3,0},{4,0}} } );
 
-		Math::Tensor<double> t4(t3[ 0 ]);
+		Math::Tensor<double> t4( t3[ 0 ] );
 
-		displayInfo(t3[ 0 ][ 1 ][ 0 ]);	// 2.0
-		displayInfo(t4.toString());
+		displayInfo( t3[ 0 ][ 1 ][ 0 ] );	// 2.0
+		displayInfo( t4.toString() );
 		// displayInfo(t2[ 0 ].toString());
-		displayInfo(t1.toString());
-		displayInfo(t2.toString());
-		displayInfo(t3.toString());
+		displayInfo( t1.toString() );
+		displayInfo( t2.toString() );
+		displayInfo( t3.toString() );
 
-		displayInfo(JSON::toJSON(t3)->toString());
+		displayInfo( JSON::toJSON( t3 )->toString() );
 
 		Math::Tensor<double> t5;
-		JSON::fromJSON(JSON::toJSON(t3), &t5);
+		JSON::fromJSON( JSON::toJSON( t3 ), &t5 );
 
-		displayInfo(t5.toString());
+		displayInfo( t5.toString() );
 	}
 #endif
 #ifdef DEBUG_LINEAR_REGRESSION
@@ -1681,10 +1694,10 @@ int main(int argc, char* argv[]) {
 	{
 		Math::ML::LinearRegression<double, 10, 10> linearRegression;
 
-		Vector<Math::ML::Data<double, 10, 10>> dataVector(Math::ML::generateData<double, 10, 10>(Size(1000), 0.2));
+		Vector<Math::ML::Data<double, 10, 10>> dataVector( Math::ML::generateData<double, 10, 10>( Size( 1000 ), 0.2 ) );
 
-		linearRegression.addData(dataVector);
-		linearRegression.gradientDescent(0.01, Size(2000));
+		linearRegression.addData( dataVector );
+		linearRegression.gradientDescent( 0.01, Size( 2000 ) );
 	}
 #endif
 #ifdef DEBUG_DEEP_NEURAL_NETWORK
@@ -1693,34 +1706,34 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double F;
 
-		constexpr Size nbFeatures(Math::ML::getNbFeatures<Math::ML::MyModel>());
-		constexpr Size nbOut(Math::ML::getNbOut<Math::ML::MyModel>());
+		constexpr Size nbFeatures( Math::ML::getNbFeatures<Math::ML::MyModel>() );
+		constexpr Size nbOut( Math::ML::getNbOut<Math::ML::MyModel>() );
 
-		Math::ML::Optimizer::Adam<F> optimizerFunc(0.01);
-		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel, Math::ML::Optimizer::Adam<F>> deepNeuralNetwork(optimizerFunc, "debug.dnn");
+		Math::ML::Optimizer::Adam<F> optimizerFunc( 0.01 );
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel, Math::ML::Optimizer::Adam<F>> deepNeuralNetwork( optimizerFunc, "debug.dnn" );
 
 		deepNeuralNetwork.resetParams();
 
-		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector(Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>(Size(10000), 0.0));
-		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
+		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector( Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>( Size( 10000 ), 0.0 ) );
+		if ( deepNeuralNetwork.getEpoch() == Size( 0 ) ) {
 			deepNeuralNetwork.clearData();
-			deepNeuralNetwork.addData(dataVector);
+			deepNeuralNetwork.addData( dataVector );
 
-			OS::Path dataSetFilePath(OS::Path::format("%.json", deepNeuralNetwork.getFilePath()));
-			deepNeuralNetwork.exportDataSetJSON(dataSetFilePath);
+			OS::Path dataSetFilePath( OS::Path::format( "%.json", deepNeuralNetwork.getFilePath() ) );
+			deepNeuralNetwork.exportDataSetJSON( dataSetFilePath );
 
 			deepNeuralNetwork.normalizeFeature();
 		}
 
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(8), Time::Duration<Time::MilliSecond>(100));
-		deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(1000));
+		deepNeuralNetwork.optimizeStochastic( Math::Interval<Size>( 0, dataVector.getSize() ), Size( 100 ), Time::Duration<Time::MilliSecond>( 1000 ) );
 
-		F coefficientOfDetermination(deepNeuralNetwork.computeCoefficientOfDeterminationF(Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector(dataVector), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector(dataVector)));
+		F coefficientOfDetermination( deepNeuralNetwork.computeCoefficientOfDeterminationF( Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createFeatureVector( dataVector ), Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel>::createOutVector( dataVector ) ) );
 
-		Log::displayLog(String::format("Coefficient of determination : %.", coefficientOfDetermination));
+		Log::displayLog( String::format( "Coefficient of determination : %.", coefficientOfDetermination ) );
 
-		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance());
-		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
+		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable( deepNeuralNetwork.computeFeatureImportance() );
+		Log::displayLog( String::format( "Feature importance table : %.", featureImportanceTable.toString() ) );
 	}
 #endif
 #ifdef DEBUG_TORCH
@@ -1731,24 +1744,24 @@ int main(int argc, char* argv[]) {
 		struct Net : torch::nn::Module {
 			Net() {
 				// Construct and register two Linear submodules.
-				fc1 = register_module("fc1", torch::nn::Linear(784, 64));
-				fc2 = register_module("fc2", torch::nn::Linear(64, 32));
-				fc3 = register_module("fc3", torch::nn::Linear(32, 10));
+				fc1 = register_module( "fc1", torch::nn::Linear( 784, 64 ) );
+				fc2 = register_module( "fc2", torch::nn::Linear( 64, 32 ) );
+				fc3 = register_module( "fc3", torch::nn::Linear( 32, 10 ) );
 			}
 
 			// Implement the Net's algorithm.
-			torch::Tensor forward(torch::Tensor x) {
+			torch::Tensor forward( torch::Tensor x ) {
 				// Use one of many tensor manipulation functions.
-				x = torch::relu(fc1->forward(x.reshape({ x.size(0), 784 })));
-				x = torch::dropout(x, /*p=*/0.5, /*train=*/is_training());
-				x = torch::relu(fc2->forward(x));
-				x = torch::log_softmax(fc3->forward(x), /*dim=*/1);
+				x = torch::relu( fc1->forward( x.reshape( { x.size( 0 ), 784 } ) ) );
+				x = torch::dropout( x, /*p=*/0.5, /*train=*/is_training() );
+				x = torch::relu( fc2->forward( x ) );
+				x = torch::log_softmax( fc3->forward( x ), /*dim=*/1 );
 				return x;
 			}
 
 			// Use one of many "standard library" modules.
 			torch::nn::Linear fc1{ nullptr }, fc2{ nullptr }, fc3{ nullptr };
-};
+		};
 	}
 #endif
 #ifdef DEBUG_INTERVAL
@@ -1757,13 +1770,13 @@ int main(int argc, char* argv[]) {
 	{
 		typedef double T;
 
-		Math::Interval<T> interval(Math::random(Size(0), Size(100)), Math::random(Size(100), Size(200)));
+		Math::Interval<T> interval( Math::random( Size( 0 ), Size( 100 ) ), Math::random( Size( 100 ), Size( 200 ) ) );
 		// Math::Interval<T> interval(3,42);
-		Vector<Math::Interval<T>> intervalVector(interval.split(7));
+		Vector<Math::Interval<T>> intervalVector( interval.split( 7 ) );
 
-		Log::displayLog(String::format("Interval : %.", interval.toString()));
-		for ( Size i(0); i < intervalVector.getSize(); i++ ) {
-			Log::displayLog(String::format("%", intervalVector.getValueI(i).toString()));
+		Log::displayLog( String::format( "Interval : %.", interval.toString() ) );
+		for ( Size i( 0 ); i < intervalVector.getSize(); i++ ) {
+			Log::displayLog( String::format( "%", intervalVector.getValueI( i ).toString() ) );
 		}
 	}
 #endif
@@ -1775,84 +1788,84 @@ int main(int argc, char* argv[]) {
 
 		Vector<T> testVector;
 
-		testVector.push(T(1.0));
-		testVector.push(T(2.0));
-		testVector.push(T(3.0));
+		testVector.push( T( 1.0 ) );
+		testVector.push( T( 2.0 ) );
+		testVector.push( T( 3.0 ) );
 
-		testVector.push(T(5.0));
-		testVector.push(T(6.0));
-		testVector.push(T(7.0));
-		testVector.push(T(8.0));
-		testVector.push(T(9.0));
-		testVector.push(T(10.0));
+		testVector.push( T( 5.0 ) );
+		testVector.push( T( 6.0 ) );
+		testVector.push( T( 7.0 ) );
+		testVector.push( T( 8.0 ) );
+		testVector.push( T( 9.0 ) );
+		testVector.push( T( 10.0 ) );
 
-		testVector.push(T(14.0));
-		testVector.push(T(15.0));
+		testVector.push( T( 14.0 ) );
+		testVector.push( T( 15.0 ) );
 
-		Vector<Math::Stats::Cluster<T>> clusterVector(Math::Stats::computeKMeans(testVector, Size(3), Size(10), Size(10)));
+		Vector<Math::Stats::Cluster<T>> clusterVector( Math::Stats::computeKMeans( testVector, Size( 3 ), Size( 10 ), Size( 10 ) ) );
 
-		for ( Size clusterI(0); clusterI < clusterVector.getSize(); clusterI++ ) {
-			Math::Stats::Cluster<T>& cluster(clusterVector.getValueI(clusterI));
+		for ( Size clusterI( 0 ); clusterI < clusterVector.getSize(); clusterI++ ) {
+			Math::Stats::Cluster<T>& cluster( clusterVector.getValueI( clusterI ) );
 
 			Log::displayNewLine();
-			Log::displayLog(cluster.getData().toString());
+			Log::displayLog( cluster.getData().toString() );
 		}
 	}
 #endif
 
 #else		//DEBUG
-	constexpr unsigned long long int G10(10000000000);
-	constexpr unsigned long long int G1(1000000000);
-	constexpr unsigned long long int M100(100000000);
-	constexpr unsigned long long int M10(10000000);
-	constexpr unsigned long long int M1(1000000);
-	constexpr unsigned long long int K100(100000);
-	constexpr unsigned long long int K10(10000);
-	constexpr unsigned long long int K1(1000);
+	constexpr unsigned long long int G10( 10000000000 );
+	constexpr unsigned long long int G1( 1000000000 );
+	constexpr unsigned long long int M100( 100000000 );
+	constexpr unsigned long long int M10( 10000000 );
+	constexpr unsigned long long int M1( 1000000 );
+	constexpr unsigned long long int K100( 100000 );
+	constexpr unsigned long long int K10( 10000 );
+	constexpr unsigned long long int K1( 1000 );
 #ifdef SPEEDTEST_MATH
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Math								//
 		{
-			Math::Vec4<float> v1(Math::randomF());
-			Math::Vec4<float> v2(Math::randomF());
+			Math::Vec4<float> v1( Math::randomF() );
+			Math::Vec4<float> v2( Math::randomF() );
 
 			Log::startChrono();
-			for ( Size i(0); i < M10; i++ ) {
-				v1[ 0 ] = Math::dot(v1, v2);
+			for ( Size i( 0 ); i < M10; i++ ) {
+				v1[ 0 ] = Math::dot( v1, v2 );
 			}
 			Log::stopChrono();
-			Log::displayChrono(String::format("Vec4 dot product : %.", v1.toString()));
+			Log::displayChrono( String::format( "Vec4 dot product : %.", v1.toString() ) );
 		}
 		{
-			constexpr Size vSize(M10 * 16);
+			constexpr Size vSize( M10 * 16 );
 			typedef float F;
 			F* v1;
 			F* v2;
 			if constexpr ( true ) {
-				v1 = (reinterpret_cast<F*>(_aligned_malloc(sizeof(F) * vSize, 512) ) );
-				v2 = (reinterpret_cast<F*>(_aligned_malloc(sizeof(F) * vSize, 512)));
+				v1 = ( reinterpret_cast< F* >( _aligned_malloc( sizeof( F ) * vSize, 512 ) ) );
+				v2 = ( reinterpret_cast< F* >( _aligned_malloc( sizeof( F ) * vSize, 512 ) ) );
 			} else {
-				v1 = (new F[ vSize ]);
-				v2 = (new F[ vSize ]);
+				v1 = ( new F[ vSize ] );
+				v2 = ( new F[ vSize ] );
 			}
 
-			for ( Size i(0); i < vSize >> Size(4); i++ ) {
-				F r(Math::randomF());
-				for ( Size j(0); j < Size(1) << Size(4); j++ ) {
+			for ( Size i( 0 ); i < vSize >> Size( 4 ); i++ ) {
+				F r( Math::randomF() );
+				for ( Size j( 0 ); j < Size( 1 ) << Size( 4 ); j++ ) {
 					v1[ i ] = r;
 					v2[ i ] = r;
 				}
 			}
 
-			F dotSum(0.0f);
+			F dotSum( 0.0f );
 
 			Log::startChrono();
-			for ( Size i(0); i < Size(1); i++ ) {
-				Math::mul(v1, v2, v1, vSize);
+			for ( Size i( 0 ); i < Size( 1 ); i++ ) {
+				Math::mul( v1, v2, v1, vSize );
 			}
 			Log::stopChrono();
-			Log::displayChrono(String::format("Vec4 dot product : %.", v1[0]));
+			Log::displayChrono( String::format( "Vec4 dot product : %.", v1[ 0 ] ) );
 		}
 	}
 #endif
@@ -1861,28 +1874,28 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 		Graphic::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> gradientHorizontal;
-		gradientHorizontal.addPoint(0.0f, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 255));
-		gradientHorizontal.addPoint(1.0f, Graphic::ColorRGBA<unsigned char>(255, 255, 255, 255));
-		Graphic::ColorFunc::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor(gradientHorizontal);
+		gradientHorizontal.addPoint( 0.0f, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 255 ) );
+		gradientHorizontal.addPoint( 1.0f, Graphic::ColorRGBA<unsigned char>( 255, 255, 255, 255 ) );
+		Graphic::ColorFunc::Gradient::Horizontal<Graphic::ColorRGBA<unsigned char>, Graphic::InterpolationFunc::Cubic> colorFunctor( gradientHorizontal );
 
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M1; i++ ) {
 			//image.drawLine(Graphic::LineF(0, 20, 500, 480), Graphic::ColorR<unsigned char>(255), 5);
-			image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(255)), 1);
+			image.drawLineFunctor( Graphic::LineF( 0, 20, 500, 480 ), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>( Graphic::ColorR<unsigned char>( 255 ) ), 1 );
 
 			//image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), colorFunctor, 5);
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.581s for M1)");
+		Log::displayChrono( "DRAW LINES R -> R (Last Result: 1.581s for M1)" );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
-		freeImage.saveToFile("drawline.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "drawline.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -1891,20 +1904,20 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Lines								//
 
-		Graphic::ImageT<float> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+		Graphic::ImageT<float> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M1; i++ ) {
-			image.drawLineFunctor(Graphic::LineF(0, 20, 500, 480), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<float>>(Graphic::ColorR<float>(1)), 1);
+			image.drawLineFunctor( Graphic::LineF( 0, 20, 500, 480 ), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<float>>( Graphic::ColorR<float>( 1 ) ), 1 );
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW LINES R -> R (Last Result: 1.6s for M1)");
+		Log::displayChrono( "DRAW LINES R -> R (Last Result: 1.6s for M1)" );
 
 
-		Graphic::ImageT<unsigned char> imageUC(image);
+		Graphic::ImageT<unsigned char> imageUC( image );
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) imageUC.getDatas(), imageUC.getSize(), Graphic::FreeImage::Format::R);
-		freeImage.saveToFile("drawline_float.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) imageUC.getDatas(), imageUC.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 
 #endif
@@ -1914,22 +1927,22 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Graph									//
 
-		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 
-		Math::Vec2<float> vStatic[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.25f, 0.2f), Math::Vec2<float>(0.5f, 0.1f), Math::Vec2<float>(0.6f, 0.8f), Math::Vec2<float>(0.7f, 0.1f), Math::Vec2<float>(1.0f, 0.8f) };
-		Vector<Math::Vec2<float>> v(vStatic);
+		Math::Vec2<float> vStatic[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.25f, 0.2f ), Math::Vec2<float>( 0.5f, 0.1f ), Math::Vec2<float>( 0.6f, 0.8f ), Math::Vec2<float>( 0.7f, 0.1f ), Math::Vec2<float>( 1.0f, 0.8f ) };
+		Vector<Math::Vec2<float>> v( vStatic );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			image.drawGraphValuesFunctor(v, Graphic::Rectangle(0, 0, 500, 500), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>(Graphic::ColorR<unsigned char>(128)));
+			image.drawGraphValuesFunctor( v, Graphic::Rectangle( 0, 0, 500, 500 ), Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>( Graphic::ColorR<unsigned char>( 128 ) ) );
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW GRAPH R -> R (Last Result: 6.0s for K100)");
+		Log::displayChrono( "DRAW GRAPH R -> R (Last Result: 6.0s for K100)" );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
-		freeImage.saveToFile("graph.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "graph.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -1939,20 +1952,20 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
 
-		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			image.drawRectangleRounded(Graphic::Rectangle(0, 0, 500, 500), 100, Graphic::ColorR<unsigned char>(255));
+			image.drawRectangleRounded( Graphic::Rectangle( 0, 0, 500, 500 ), 100, Graphic::ColorR<unsigned char>( 255 ) );
 
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.883s for K10)");
+		Log::displayChrono( "DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.883s for K10)" );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
-		freeImage.saveToFile("rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -1961,30 +1974,30 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Rounded Rectangle							//
 
-		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
-		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc(Graphic::ColorR<unsigned char>(255));
+		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc( Graphic::ColorR<unsigned char>( 255 ) );
 
-
-		Log::startChrono();
-		for ( size_t i = 0; i < K10; i++ ) {
-			image.drawRectangleRounded(Graphic::Rectangle(0, 0, 500, 500), 250, Graphic::ColorR<unsigned char>(255));
-
-		}
-		Log::stopChrono();
-		Log::displayChrono("DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.779s for K10)");
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			image._drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorR<unsigned char>>(Graphic::Point(250, 250), 250, colorFunc);
+			image.drawRectangleRounded( Graphic::Rectangle( 0, 0, 500, 500 ), 250, Graphic::ColorR<unsigned char>( 255 ) );
 
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW DISK RECTANGLE R -> R (Last Result: 0.778s for K10)");
+		Log::displayChrono( "DRAW ROUNDED RECTANGLE R -> R (Last Result: 0.779s for K10)" );
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K10; i++ ) {
+			image._drawDiskFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>, Graphic::BlendingFunc::Normal, Graphic::ColorR<unsigned char>>( Graphic::Point( 250, 250 ), 250, colorFunc );
+
+		}
+		Log::stopChrono();
+		Log::displayChrono( "DRAW DISK RECTANGLE R -> R (Last Result: 0.778s for K10)" );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
-		freeImage.saveToFile("rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -1992,25 +2005,25 @@ int main(int argc, char* argv[]) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Draw Text											//
-		Graphic::TrueTypeFont<unsigned char> font(L"consola.ttf", 15);
+		Graphic::TrueTypeFont<unsigned char> font( L"consola.ttf", 15 );
 		font.load();
-		font.loadGlyph(Graphic::Font<unsigned char>::Template::Ascii);
+		font.loadGlyph( Graphic::Font<unsigned char>::Template::Ascii );
 
-		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::RGB);
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::RGB );
 
-		UTF8String testStr("Hello World");
+		UTF8String testStr( "Hello World" );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M1; i++ ) {
-			Graphic::drawText(&image, font, Graphic::Rectangle(0, 0, 250, 250), testStr, Graphic::ColorRGB<unsigned char>(255, 100, 200), Math::Vec2<bool>(true, true));
+			Graphic::drawText( &image, font, Graphic::Rectangle( 0, 0, 250, 250 ), testStr, Graphic::ColorRGB<unsigned char>( 255, 100, 200 ), Math::Vec2<bool>( true, true ) );
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW \"Hello World\" (Last Result: 1.629s for M1)");
+		Log::displayChrono( "DRAW \"Hello World\" (Last Result: 1.629s for M1)" );
 
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
-		freeImage.saveToFile("drawText.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -2020,58 +2033,58 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Re sample												//
 
-		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
-		Graphic::FreeImage freeImageOriginal("sanctum.png", Graphic::FreeImage::Format::RGB);
+		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
+		Graphic::FreeImage freeImageOriginal( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
 		freeImageOriginal.load();
-		Graphic::ImageT<unsigned char> imageOriginal(freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false);
-		Graphic::ImageT<unsigned char> image(imageOriginal);
-		Graphic::ImageT<unsigned char> image2(imageOriginal.getSize(), Graphic::Format::RGB);
+		Graphic::ImageT<unsigned char> imageOriginal( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::BGR, false );
+		Graphic::ImageT<unsigned char> image( imageOriginal );
+		Graphic::ImageT<unsigned char> image2( imageOriginal.getSize(), Graphic::Format::RGB );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			image2 = image.resample(Math::Vec2<Graphic::Size>(100, 400), Graphic::Image::ResamplingMode::Nearest);
-			image = image2.resample(Math::Vec2<Graphic::Size>(500, 100), Graphic::Image::ResamplingMode::Nearest);
+			image2 = image.resample( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Nearest );
+			image = image2.resample( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Nearest );
 
 			image2 = image;
 			image = image2;
 
 		}
 		Log::stopChrono();
-		Log::displayChrono("RESAMPLE NEAREST RGB (Last Result: 8.1s for K10)");
+		Log::displayChrono( "RESAMPLE NEAREST RGB (Last Result: 8.1s for K10)" );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image2 = image.resample(Math::Vec2<Graphic::Size>(100, 400), Graphic::Image::ResamplingMode::Bilinear);
-			image = image2.resample(Math::Vec2<Graphic::Size>(500, 100), Graphic::Image::ResamplingMode::Bilinear);
+			image2 = image.resample( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::Image::ResamplingMode::Bilinear );
+			image = image2.resample( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::Image::ResamplingMode::Bilinear );
 		}
 
 		Log::stopChrono();
-		Log::displayChrono("RESAMPLE LINEAR RGB (Last Result: 780ms for K1)");
+		Log::displayChrono( "RESAMPLE LINEAR RGB (Last Result: 780ms for K1)" );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
 			image = imageOriginal;
-			image = image.resample(Math::Vec2<Graphic::Size>(200, 200), Graphic::Image::ResamplingMode::Lanczos);
+			image = image.resample( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Image::ResamplingMode::Lanczos );
 			//image = image2.resample( Math::Vec2<Graphic::Size>( 500, 500 ), Graphic::Image::ResamplingMode::Linear );
 		}
 
 		Log::stopChrono();
-		Log::displayChrono("RESAMPLE LANCZOS RGB (Last Result: 3450ms for K1)");
+		Log::displayChrono( "RESAMPLE LANCZOS RGB (Last Result: 3450ms for K1)" );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			freeImageIn.resize(Math::Vec2<Graphic::Size>(100, 400), Graphic::FreeImage::Filter::Bilinear);
-			freeImageIn.resize(Math::Vec2<Graphic::Size>(500, 100), Graphic::FreeImage::Filter::Bilinear);
+			freeImageIn.resize( Math::Vec2<Graphic::Size>( 100, 400 ), Graphic::FreeImage::Filter::Bilinear );
+			freeImageIn.resize( Math::Vec2<Graphic::Size>( 500, 100 ), Graphic::FreeImage::Filter::Bilinear );
 
 		}
 		Log::stopChrono();
-		Log::displayChrono("RESAMPLE FreeImage LINEAR RGB (Last Result: 1900ms for K1)");
+		Log::displayChrono( "RESAMPLE FreeImage LINEAR RGB (Last Result: 1900ms for K1)" );
 
 
 		Graphic::FreeImage freeImageOut;
-		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
-		freeImageOut.saveToFile("resample.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImageOut.saveToFile( "resample.png", Graphic::FreeImage::SavingFormat::PNG );
 
 	}
 #endif
@@ -2082,22 +2095,22 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////////////////////////////////
 		// SPEED TEST : Polygon									//
 
-		Graphic::ImageT<unsigned char> image(Math::Vec2<Graphic::Size>(500), Graphic::Format::R);
+		Graphic::ImageT<unsigned char> image( Math::Vec2<Graphic::Size>( 500 ), Graphic::Format::R );
 
-		Math::Vec2<float> vertices[] = { Math::Vec2<float>(0.0f, 0.2f), Math::Vec2<float>(0.2f, 0.5f), Math::Vec2<float>(0.0f, 0.8f), Math::Vec2<float>(1.0f, 0.5f) };
-		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc(Graphic::ColorR<unsigned char>(128));
+		Math::Vec2<float> vertices[] = { Math::Vec2<float>( 0.0f, 0.2f ), Math::Vec2<float>( 0.2f, 0.5f ), Math::Vec2<float>( 0.0f, 0.8f ), Math::Vec2<float>( 1.0f, 0.5f ) };
+		Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>> colorFunc( Graphic::ColorR<unsigned char>( 128 ) );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K100; i++ ) {
-			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>>(vertices, 4, Graphic::Rectangle(100, 100, 400, 400), colorFunc);
+			image.drawPolygonFunctor<Graphic::ColorFunc::SimpleColor<Graphic::ColorR<unsigned char>>>( vertices, 4, Graphic::Rectangle( 100, 100, 400, 400 ), colorFunc );
 
 		}
 		Log::stopChrono();
-		Log::displayChrono("DRAW POLYGON R -> R (Last Result: 1.4s for K100)");
+		Log::displayChrono( "DRAW POLYGON R -> R (Last Result: 1.4s for K100)" );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R);
-		freeImage.saveToFile("polygon.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
+		freeImage.saveToFile( "polygon.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -2105,38 +2118,38 @@ int main(int argc, char* argv[]) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Filter											//
-		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
+		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
-		Graphic::ImageT<unsigned char> image(freeImageIn.getDatas(), Math::Vec2<Graphic::Size>(500), Graphic::LoadingFormat::BGR, false);
-		Graphic::ImageT<float> imagef(image);
+		Graphic::ImageT<unsigned char> image( freeImageIn.getDatas(), Math::Vec2<Graphic::Size>( 500 ), Graphic::LoadingFormat::BGR, false );
+		Graphic::ImageT<float> imagef( image );
 
 
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image = image.applyGaussianBlur(5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>(0, 0, 0, 0));
+			image = image.applyGaussianBlur( 5, Graphic::Image::ConvolutionMode::NormalSize, Graphic::ColorRGBA<unsigned char>( 0, 0, 0, 0 ) );
 		}
 		Log::stopChrono();
-		Log::displayChrono("FILTER RGB UCHAR (Last Result: 9.5s for K1)");
+		Log::displayChrono( "FILTER RGB UCHAR (Last Result: 9.5s for K1)" );
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			imagef = imagef.applyGaussianBlur(5, Graphic::ImageT<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>(0, 0, 0, 0));
+			imagef = imagef.applyGaussianBlur( 5, Graphic::ImageT<float>::ConvolutionMode::NormalSize, Graphic::ColorRGBA<float>( 0, 0, 0, 0 ) );
 		}
 		Log::stopChrono();
-		Log::displayChrono("FILTER RGB FLOAT (Last Result: 15.1s for K1)");
+		Log::displayChrono( "FILTER RGB FLOAT (Last Result: 15.1s for K1)" );
 
 
 		Graphic::FreeImage freeImageOut;
-		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
-		freeImageOut.saveToFile("filterUCHAR.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImageOut.saveToFile( "filterUCHAR.png", Graphic::FreeImage::SavingFormat::PNG );
 
 
 		image = imagef;
-		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
-		freeImageOut.saveToFile("filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImageOut.saveToFile( "filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -2145,21 +2158,21 @@ int main(int argc, char* argv[]) {
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Stroke											//
-		Graphic::FreeImage freeImageIn("sanctum.png", Graphic::FreeImage::Format::RGB);
+		Graphic::FreeImage freeImageIn( "sanctum.png", Graphic::FreeImage::Format::RGB );
 		freeImageIn.load();
-		Graphic::ImageT<unsigned char> image(freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::RGB, false);
-		image.threshold(Graphic::ColorRGBA<unsigned char>(255), Graphic::ColorRGBA<unsigned char>(0), Graphic::ColorRGBA<unsigned char>(128, 0, 0, 0));
+		Graphic::ImageT<unsigned char> image( freeImageIn.getDatas(), freeImageIn.getSize(), Graphic::LoadingFormat::RGB, false );
+		image.threshold( Graphic::ColorRGBA<unsigned char>( 255 ), Graphic::ColorRGBA<unsigned char>( 0 ), Graphic::ColorRGBA<unsigned char>( 128, 0, 0, 0 ) );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K1; i++ ) {
-			image.drawStrokeFunctor(Graphic::Point(0, 0), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>(Graphic::ColorRGB<unsigned char>(0, 255, 0)), Graphic::Image::StrokeType::Outside);
+			image.drawStrokeFunctor( Graphic::Point( 0, 0 ), image, 2, Graphic::ColorFunc::SimpleColor<Graphic::ColorRGB<unsigned char>>( Graphic::ColorRGB<unsigned char>( 0, 255, 0 ) ), Graphic::Image::StrokeType::Outside );
 		}
 		Log::stopChrono();
-		Log::displayChrono("STROKE THICKNESS 2 RGB UCHAR (Last Result: 11000ms for K1)");
+		Log::displayChrono( "STROKE THICKNESS 2 RGB UCHAR (Last Result: 11000ms for K1)" );
 
 		Graphic::FreeImage freeImageOut;
-		freeImageOut.loadFromDatas(( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB);
-		freeImageOut.saveToFile("stroke.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
+		freeImageOut.saveToFile( "stroke.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -2174,7 +2187,7 @@ int main(int argc, char* argv[]) {
 			sum += ( i < i + 2 ) ? 1 : 0;
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("LOGICAL < (Last : 5914ms) ") + sum);
+		Log::displayChrono( StringASCII( "LOGICAL < (Last : 5914ms) " ) + sum );
 
 		sum = 0;
 		Log::startChrono();
@@ -2182,7 +2195,7 @@ int main(int argc, char* argv[]) {
 			sum += ( i <= i + 2 ) ? 1 : 0;
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("LOGICAL <= (Last : 8281ms) ") + sum);
+		Log::displayChrono( StringASCII( "LOGICAL <= (Last : 8281ms) " ) + sum );
 	}
 #endif
 
@@ -2193,7 +2206,7 @@ int main(int argc, char* argv[]) {
 		int* testArray = new int[ 10000000 ];
 		int sum = 0;
 		int iteratorInt;
-		int iteratorAdd = Math::random(0, 100);
+		int iteratorAdd = Math::random( 0, 100 );
 		size_t j;
 		Log::startChrono();
 		for ( j = 0; j < M10; j++ ) {
@@ -2202,7 +2215,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		Log::stopChrono();
-		Log::displayChrono("INT ARRAY ACCESS" + sum);
+		Log::displayChrono( "INT ARRAY ACCESS" + sum );
 
 		sum = 0;
 		unsigned int iteratorUInt;
@@ -2213,7 +2226,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		Log::stopChrono();
-		Log::displayChrono("UINT ARRAY ACCESS" + sum);
+		Log::displayChrono( "UINT ARRAY ACCESS" + sum );
 
 		sum = 0;
 		size_t iteratorSizeT;
@@ -2224,7 +2237,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		Log::stopChrono();
-		Log::displayChrono("SIZE_T ARRAY ACCESS" + sum);
+		Log::displayChrono( "SIZE_T ARRAY ACCESS" + sum );
 
 		//RESULT : UINT is the faster nearly followed by SIZET, INT is a bit slower.
 		delete[] testArray;
@@ -2235,61 +2248,61 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// Speed Test : Testing RGBA Blending times float VS unsigned char	//
 	{
-		Graphic::ColorRGBA<unsigned char> colorWhite(255, 255, 255, 10);
-		Graphic::ColorRGBA<unsigned char> colorRed(255, 0, 0, 10);
+		Graphic::ColorRGBA<unsigned char> colorWhite( 255, 255, 255, 10 );
+		Graphic::ColorRGBA<unsigned char> colorRed( 255, 0, 0, 10 );
 
-		Graphic::Image testBlendRGBA1(Math::Vec2<Graphic::Size>(200, 200), Graphic::Format::RGBA);
-		Graphic::Image testBlendRGBA2(Math::Vec2<Graphic::Size>(200, 200), Graphic::Format::RGBA);
+		Graphic::Image testBlendRGBA1( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Format::RGBA );
+		Graphic::Image testBlendRGBA2( Math::Vec2<Graphic::Size>( 200, 200 ), Graphic::Format::RGBA );
 
-		testBlendRGBA1.fillImage(colorRed);
-		testBlendRGBA2.fillImage(colorWhite);
+		testBlendRGBA1.fillImage( colorRed );
+		testBlendRGBA2.fillImage( colorWhite );
 
-		Graphic::ImageT<float> testBlendRGBAFloat1(Math::Vec2<Graphic::Size>(100, 100), Graphic::Format::RGBA);
-		Graphic::ImageT<float> testBlendRGBAFloat2(Math::Vec2<Graphic::Size>(100, 100), Graphic::Format::RGBA);
+		Graphic::ImageT<float> testBlendRGBAFloat1( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
+		Graphic::ImageT<float> testBlendRGBAFloat2( Math::Vec2<Graphic::Size>( 100, 100 ), Graphic::Format::RGBA );
 
-		Graphic::ColorRGBA<float> colorWhiteF(1.0f, 1.0f, 1.0f, float(127) / float(255));
-		Graphic::ColorRGBA<float> colorRedF(1.0f, 0.0f, 0.0f, float(127) / float(255));
+		Graphic::ColorRGBA<float> colorWhiteF( 1.0f, 1.0f, 1.0f, float( 127 ) / float( 255 ) );
+		Graphic::ColorRGBA<float> colorRedF( 1.0f, 0.0f, 0.0f, float( 127 ) / float( 255 ) );
 
-		testBlendRGBAFloat1.fillImage(colorRedF);
-		testBlendRGBAFloat2.fillImage(colorWhiteF);
+		testBlendRGBAFloat1.fillImage( colorRedF );
+		testBlendRGBAFloat2.fillImage( colorWhiteF );
 
-		Graphic::Rectangle rectangle(testBlendRGBA2.getSize());
-
-		Log::startChrono();
-		for ( size_t i = 0; i < K10; i++ ) {
-			testBlendRGBA2.drawImage(Graphic::Point(0, 0), testBlendRGBA1);
-		}
-		Log::stopChrono();
-		Log::displayChrono("INT BLENDING RGBA -> RGB (last 1215ms)");
-
+		Graphic::Rectangle rectangle( testBlendRGBA2.getSize() );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			testBlendRGBAFloat2.drawImage(Graphic::Point(0, 0), testBlendRGBAFloat1);
+			testBlendRGBA2.drawImage( Graphic::Point( 0, 0 ), testBlendRGBA1 );
 		}
 		Log::stopChrono();
-		Log::displayChrono("FLOAT BLENDING RGBA -> RGB (last 205ms)");
-
-		Log::startChrono();
-		for ( size_t i = 0; i < K10; i++ ) {
-			testBlendRGBA2.drawImage(Graphic::Point(0, 0), rectangle, testBlendRGBA1, Graphic::BlendingFunc::Normal());
-		}
-		Log::stopChrono();
-		Log::displayChrono("INT BLENDING FUNCTOR RGBA -> RGB (last 1200ms)");
+		Log::displayChrono( "INT BLENDING RGBA -> RGB (last 1215ms)" );
 
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K10; i++ ) {
-			testBlendRGBAFloat2.drawImage(Graphic::Point(0, 0), rectangle, testBlendRGBAFloat1, Graphic::BlendingFunc::Normal());
+			testBlendRGBAFloat2.drawImage( Graphic::Point( 0, 0 ), testBlendRGBAFloat1 );
 		}
 		Log::stopChrono();
-		Log::displayChrono("FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)");
+		Log::displayChrono( "FLOAT BLENDING RGBA -> RGB (last 205ms)" );
 
-		Graphic::Image testblendCasted(testBlendRGBAFloat2);
+		Log::startChrono();
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBA2.drawImage( Graphic::Point( 0, 0 ), rectangle, testBlendRGBA1, Graphic::BlendingFunc::Normal() );
+		}
+		Log::stopChrono();
+		Log::displayChrono( "INT BLENDING FUNCTOR RGBA -> RGB (last 1200ms)" );
+
+
+		Log::startChrono();
+		for ( size_t i = 0; i < K10; i++ ) {
+			testBlendRGBAFloat2.drawImage( Graphic::Point( 0, 0 ), rectangle, testBlendRGBAFloat1, Graphic::BlendingFunc::Normal() );
+		}
+		Log::stopChrono();
+		Log::displayChrono( "FLOAT BLENDING FUNCTOR RGBA -> RGB (last 206ms)" );
+
+		Graphic::Image testblendCasted( testBlendRGBAFloat2 );
 
 		Graphic::FreeImage freeImage;
-		freeImage.loadFromDatas(( unsigned char* ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA);
-		freeImage.saveToFile("blending.png", Graphic::FreeImage::SavingFormat::PNG);
+		freeImage.loadFromDatas( ( unsigned char* ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA );
+		freeImage.saveToFile( "blending.png", Graphic::FreeImage::SavingFormat::PNG );
 	}
 #endif
 
@@ -2301,26 +2314,26 @@ int main(int argc, char* argv[]) {
 		Time::Date date;
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M10; i++ ) {
-			date = Time::Date(Time::getValue());
+			date = Time::Date( Time::getValue() );
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII() << "Date");
+		Log::displayChrono( StringASCII() << "Date" );
 
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M10; i++ ) {
-			time_t now = time(NULL);
-			localtime_s(&timeinfo, &now);
+			time_t now = time( NULL );
+			localtime_s( &timeinfo, &now );
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII() << "localtime_s");
+		Log::displayChrono( StringASCII() << "localtime_s" );
 	}
 #endif
 #ifdef  SPEEDTEST_DATE_PARSE
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Dates Parse									//
 	{
-		StringASCII dateStr("2020-11-11T16:17:00.00+01:00");
-		std::string dateStrStd("2020-11-11T16:17:00.00+01:00");
+		StringASCII dateStr( "2020-11-11T16:17:00.00+01:00" );
+		std::string dateStrStd( "2020-11-11T16:17:00.00+01:00" );
 
 		Time::Date date;
 		tm dateStd;
@@ -2329,10 +2342,10 @@ int main(int argc, char* argv[]) {
 
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M10; i++ ) {
-			tmpVar += Time::Date::parse(dateStr).getMinutes();
+			tmpVar += Time::Date::parse( dateStr ).getMinutes();
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII(tmpVar));
+		Log::displayChrono( StringASCII( tmpVar ) );
 	}
 #endif //  SPEEDTEST_DATE_PARSE
 
@@ -2341,11 +2354,11 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings with Strings							//
 	{
-		StringASCII testStr1("STRING 1 : ");
-		std::string testStr2("STRING 2 : ");
+		StringASCII testStr1( "STRING 1 : " );
+		std::string testStr2( "STRING 2 : " );
 
-		StringASCII strConcat1("Hello World!");
-		std::string strConcat2("Hello World!");
+		StringASCII strConcat1( "Hello World!" );
+		std::string strConcat2( "Hello World!" );
 
 
 		Log::startChrono();
@@ -2353,14 +2366,14 @@ int main(int argc, char* argv[]) {
 			testStr1 += strConcat1;
 		}
 		Log::stopChrono();
-		Log::displayChrono(testStr1.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
+		Log::displayChrono( testStr1.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M100; i++ ) {
 			testStr2 += strConcat2;
 		}
 		Log::stopChrono();
-		Log::displayChrono(testStr2.substr(0, 30).c_str());
+		Log::displayChrono( testStr2.substr( 0, 30 ).c_str() );
 	}
 #endif
 
@@ -2368,33 +2381,33 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings with numbers							//
 	{
-		StringASCII testMyStr1("STRING 1 : ");
-		StringASCII testMyStr2("STRING 1 : ");
-		std::string testStdStr1("STRING 2 : ");
+		StringASCII testMyStr1( "STRING 1 : " );
+		StringASCII testMyStr2( "STRING 1 : " );
+		std::string testStdStr1( "STRING 2 : " );
 
 		int numberInt = Math::random();
 		double numberFloat = 0.123456789123456789;
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M10; i++ ) {
-			testMyStr1.concat(numberFloat, 7, 2);
+			testMyStr1.concat( numberFloat, 7, 2 );
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("Simple++ concat float.") << testMyStr1.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
+		Log::displayChrono( StringASCII( "Simple++ concat float." ) << testMyStr1.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M10; i++ ) {
-			testMyStr2.concat(numberInt, 2);
+			testMyStr2.concat( numberInt, 2 );
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("Simple++ concat int.") << testMyStr2.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
+		Log::displayChrono( StringASCII( "Simple++ concat int." ) << testMyStr2.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < M10; i++ ) {
-			testStdStr1 += std::to_string(numberFloat);
+			testStdStr1 += std::to_string( numberFloat );
 		}
 		Log::stopChrono();
-		Log::displayChrono(( std::string("std concat float.") + testStdStr1.substr(0, 30).c_str() ).data());
+		Log::displayChrono( ( std::string( "std concat float." ) + testStdStr1.substr( 0, 30 ).c_str() ).data() );
 	}
 #endif
 
@@ -2402,15 +2415,15 @@ int main(int argc, char* argv[]) {
 	//////////////////////////////////////////////////////////////////////////
 	// SPEED TEST : Concat Strings							//
 	{
-		StringASCII testStr("STRING 1 : (%)");
-		StringASCII strConcat("STR %");
+		StringASCII testStr( "STRING 1 : (%)" );
+		StringASCII strConcat( "STR %" );
 
 		Log::startChrono();
 		for ( size_t i = 0; i < K100; i++ ) {
-			testStr = StringASCII::format(testStr, strConcat);
+			testStr = StringASCII::format( testStr, strConcat );
 		}
 		Log::stopChrono();
-		Log::displayChrono(testStr.getSubStr(StringASCII::Size(0), StringASCII::Size(30)));
+		Log::displayChrono( testStr.getSubStr( StringASCII::Size( 0 ), StringASCII::Size( 30 ) ) );
 	}
 #endif
 
@@ -2423,18 +2436,18 @@ int main(int argc, char* argv[]) {
 		float sum = 0.0f;
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < 10000000; i++ ) {
-			sum += atof("42.054217");
+			sum += atof( "42.054217" );
 		}
 		Log::stopChrono();
-		Log::displayChrono("ATOF : " + StringASCII(sum));
+		Log::displayChrono( "ATOF : " + StringASCII( sum ) );
 
 		sum = 0.0f;
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < 10000000; i++ ) {
-			sum += StringASCII::toFloat("42.054217");
+			sum += StringASCII::toFloat( "42.054217" );
 		}
 		Log::stopChrono();
-		Log::displayChrono("toFloat : " + StringASCII(sum));
+		Log::displayChrono( "toFloat : " + StringASCII( sum ) );
 	}
 #endif
 
@@ -2443,24 +2456,24 @@ int main(int argc, char* argv[]) {
 	// SPEED TEST : Regex									//
 	{
 		for ( unsigned int i = 0; i < 260; i++ ) {
-			displayInfo(StringASCII(i) + " : " + Regex::match(i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$"));
+			displayInfo( StringASCII( i ) + " : " + Regex::match( i, "^2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" ) );
 		}
 		for ( unsigned int i = 0; i < 260; i++ ) {
-			displayInfo(StringASCII(i) + " : " + Regex::match(i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$"));
+			displayInfo( StringASCII( i ) + " : " + Regex::match( i, "^2([0-4][0-9]?|5[0-5]?|[6-9])?|([3-9]|1)[0-9]?[0-9]?|0$" ) );
 		}
 
 		std::string stdString = "________255";
 
 		bool stdResult = true;
 
-		std::string txt_regex("2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$");
-		std::regex stdRegex(txt_regex, std::regex_constants::optimize);
+		std::string txt_regex( "2([0-4][0-9]|5[0-5])|1[0-9][0-9]?|[0-9]$" );
+		std::regex stdRegex( txt_regex, std::regex_constants::optimize );
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M1; i++ ) {
-			stdResult &= std::regex_search(stdString, stdRegex);
+			stdResult &= std::regex_search( stdString, stdRegex );
 		}
 		Log::stopChrono();
-		Log::displayChrono("Regex .regex_match(); STD : " + StringASCII(stdResult));
+		Log::displayChrono( "Regex .regex_match(); STD : " + StringASCII( stdResult ) );
 
 
 		bool mineResult = true;
@@ -2469,10 +2482,10 @@ int main(int argc, char* argv[]) {
 
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M1; i++ ) {
-			mineResult &= Regex::match(mineString, mineRegex);
+			mineResult &= Regex::match( mineString, mineRegex );
 		}
 		Log::stopChrono();
-		Log::displayChrono("Vector .regex_match(); Mine : " + StringASCII(mineResult));
+		Log::displayChrono( "Vector .regex_match(); Mine : " + StringASCII( mineResult ) );
 	}
 #endif
 
@@ -2485,17 +2498,17 @@ int main(int argc, char* argv[]) {
 
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < 10000000; i++ ) {
-			vectorMine.push(i);
+			vectorMine.push( i );
 		}
 		Log::stopChrono();
-		Log::displayChrono("Vector .push_back(); Mine");
+		Log::displayChrono( "Vector .push_back(); Mine" );
 
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < 10000000; i++ ) {
-			vectorSTD.push_back(i);
+			vectorSTD.push_back( i );
 		}
 		Log::stopChrono();
-		Log::displayChrono("Vector .push_back(); STD");
+		Log::displayChrono( "Vector .push_back(); STD" );
 	}
 #endif
 
@@ -2509,34 +2522,34 @@ int main(int argc, char* argv[]) {
 
 			Log::startChrono();
 			for ( unsigned long int i = 0; i < M1; i++ ) {
-				mapSTD.insert(std::pair<unsigned long int, unsigned long int>(Math::random(0, 1000000), i));
+				mapSTD.insert( std::pair<unsigned long int, unsigned long int>( Math::random( 0, 1000000 ), i ) );
 			}
 			Log::stopChrono();
-			Log::displayChrono("Map .insert(); STD");
+			Log::displayChrono( "Map .insert(); STD" );
 
 
 			Log::startChrono();
 			for ( unsigned long int i = 0; i < M1; i++ ) {
-				mapRedBlackTree.insert(Math::random(0, 1000000), i);
+				mapRedBlackTree.insert( Math::random( 0, 1000000 ), i );
 			}
 			Log::stopChrono();
-			Log::displayChrono(StringASCII("Map Red Black Tree .insert(); Mine "));
+			Log::displayChrono( StringASCII( "Map Red Black Tree .insert(); Mine " ) );
 		}
 		{
 			Map<unsigned long int, unsigned long int> mapRedBlackTree;
 			std::map<unsigned long int, unsigned long int> mapSTD;
 
 			for ( unsigned long int i = 0; i < M1; i++ ) {
-				mapSTD.insert(std::pair<unsigned long int, unsigned long int>(i, i));
-				mapRedBlackTree.insert(i, i);
+				mapSTD.insert( std::pair<unsigned long int, unsigned long int>( i, i ) );
+				mapRedBlackTree.insert( i, i );
 			}
-			volatile unsigned long int tmp(0);
+			volatile unsigned long int tmp( 0 );
 			Log::startChrono();
 			for ( unsigned long int i = 0; i < M1; i++ ) {
 				tmp += mapSTD[ i ];
 			}
 			Log::stopChrono();
-			Log::displayChrono("Map .operator[] STD");
+			Log::displayChrono( "Map .operator[] STD" );
 
 
 			Log::startChrono();
@@ -2544,7 +2557,7 @@ int main(int argc, char* argv[]) {
 				tmp += *( mapRedBlackTree[ i ] );
 			}
 			Log::stopChrono();
-			Log::displayChrono(StringASCII("Map Red Black Tree .operator[] Mine "));
+			Log::displayChrono( StringASCII( "Map Red Black Tree .operator[] Mine " ) );
 
 		}
 
@@ -2556,37 +2569,37 @@ int main(int argc, char* argv[]) {
 	// SPEED TEST : Arithmetic												//
 	{
 
-		volatile float f0(1);
+		volatile float f0( 1 );
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M100; i++ ) {
 			f0 += f0;
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("Float ADD ( Last 284ms ) : ") << f0);
+		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " ) << f0 );
 
-		volatile float f1(1);
+		volatile float f1( 1 );
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M100; i++ ) {
 			f1 *= f1;
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("Float MULT ( Last 331ms ) : ") << f1);
+		Log::displayChrono( StringASCII( "Float MULT ( Last 331ms ) : " ) << f1 );
 
-		volatile int i0(1);
+		volatile int i0( 1 );
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M100; i++ ) {
 			i0 += i0;
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("Float ADD ( Last 284ms ) : ") << StringASCII(int(i0)));
+		Log::displayChrono( StringASCII( "Float ADD ( Last 284ms ) : " ) << StringASCII( int( i0 ) ) );
 
-		volatile int i1(1);
+		volatile int i1( 1 );
 		Log::startChrono();
 		for ( unsigned long int i = 0; i < M100; i++ ) {
 			i1 *= i1;
 		}
 		Log::stopChrono();
-		Log::displayChrono(StringASCII("Float MULT ( Last 331ms ) : ") << StringASCII(int(i1)));
+		Log::displayChrono( StringASCII( "Float MULT ( Last 331ms ) : " ) << StringASCII( int( i1 ) ) );
 
 
 
@@ -2616,7 +2629,7 @@ int main(int argc, char* argv[]) {
 				c3 += ( i3 );
 			}
 			Log::stopChrono();
-			Log::displayChrono(StringASCII("EXPLICIT CAST (Last Result : ???)") << c1.v << c2.v1 << c3.v);
+			Log::displayChrono( StringASCII( "EXPLICIT CAST (Last Result : ???)" ) << c1.v << c2.v1 << c3.v );
 		}
 
 		{
@@ -2634,18 +2647,18 @@ int main(int argc, char* argv[]) {
 				c3 += ( i3 );
 			}
 			Log::stopChrono();
-			Log::displayChrono(StringASCII("IMPLICIT CAST (Last Result : ???)") << c1.v << c2.v1 << c3.v);
+			Log::displayChrono( StringASCII( "IMPLICIT CAST (Last Result : ???)" ) << c1.v << c2.v1 << c3.v );
 		}
 
 	}
 #endif
 #if defined SPEEDTEST_PATH
 	{
-		OS::Path path("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
-		StringASCII pathStrASCII("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
-		WString pathStringW("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
-		std::string pathStrStdASCII("C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
-		std::wstring pathStrStdW(L"C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox");
+		OS::Path path( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		StringASCII pathStrASCII( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		WString pathStringW( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		std::string pathStrStdASCII( "C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
+		std::wstring pathStrStdW( L"C:\\Users\\Clement\\VirtualBox VMs\\Debian64\\Debian64.vbox" );
 
 		std::error_code ec;
 
@@ -2653,23 +2666,23 @@ int main(int argc, char* argv[]) {
 		struct _stat64 s;
 
 		Log::startChrono();
-		for ( unsigned long int i(0); i < K100; i++ ) {
+		for ( unsigned long int i( 0 ); i < K100; i++ ) {
 			// tmp += ( int ) OS::Path::exists( pathStrASCII );
-			tmp += ( int ) ( _wstat64(pathStringW.toCString(), &s) == 0 );
+			tmp += ( int ) ( _wstat64( pathStringW.toCString(), &s ) == 0 );
 		}
 		Log::stopChrono();
-		Log::displayChrono(String::format("My Path.exists() : %", tmp));
+		Log::displayChrono( String::format( "My Path.exists() : %", tmp ) );
 
 		Log::startChrono();
-		for ( unsigned long int i(0); i < K100; i++ ) {
-			tmp += ( int ) std::filesystem::exists(pathStrStdASCII.c_str(), ec);
+		for ( unsigned long int i( 0 ); i < K100; i++ ) {
+			tmp += ( int ) std::filesystem::exists( pathStrStdASCII.c_str(), ec );
 		}
 		Log::stopChrono();
-		Log::displayChrono(String::format("Std Path.exists(ASCII) : %", tmp));
+		Log::displayChrono( String::format( "Std Path.exists(ASCII) : %", tmp ) );
 
 		Log::startChrono();
-		for ( unsigned long int i(0); i < K100; i++ ) {
-			tmp += ( int ) std::filesystem::exists(pathStrStdW.c_str());
+		for ( unsigned long int i( 0 ); i < K100; i++ ) {
+			tmp += ( int ) std::filesystem::exists( pathStrStdW.c_str() );
 			/*
 			__std_fs_stats _Stats;
 
@@ -2679,55 +2692,55 @@ int main(int argc, char* argv[]) {
 			*/
 		}
 		Log::stopChrono();
-		Log::displayChrono(String::format("Std Path.exists(WString) : %", tmp));
+		Log::displayChrono( String::format( "Std Path.exists(WString) : %", tmp ) );
 	}
 #endif
 #ifdef SPEEDTEST_BASE64
 	{
 		Vector<unsigned int> dataVector;
-		dataVector.resize(32000000);
+		dataVector.resize( 32000000 );
 
 		Log::startChrono();
-		StringASCII outputStr(StringASCII::encodeBase64(dataVector));
+		StringASCII outputStr( StringASCII::encodeBase64( dataVector ) );
 		Log::stopChrono();
-		Log::displayChrono(String::format("Base64 encoding : %", outputStr.getSubStr(Size(0), Size(10))));
+		Log::displayChrono( String::format( "Base64 encoding : %", outputStr.getSubStr( Size( 0 ), Size( 10 ) ) ) );
 	}
 #endif
 #ifdef SPEEDTEST_LINEAR_REGRESSION
 	{
-		constexpr Size NbFeatures(500);
-		constexpr Size NbOut(500);
+		constexpr Size NbFeatures( 500 );
+		constexpr Size NbOut( 500 );
 		Math::ML::LinearRegression<double, NbFeatures, NbOut> linearRegression;
 
-		Vector<Math::ML::Data<double, NbFeatures, NbOut>> dataVector(Math::ML::generateData<double, NbFeatures, NbOut>(Size(1000), 0.0, 0));
+		Vector<Math::ML::Data<double, NbFeatures, NbOut>> dataVector( Math::ML::generateData<double, NbFeatures, NbOut>( Size( 1000 ), 0.0, 0 ) );
 
-		linearRegression.addData(dataVector);
+		linearRegression.addData( dataVector );
 
 		// Log::displayLog(String::format("Current cost : %.", linearRegression.computeCoefficientOfDetermination() * 100.0));
 
 		Log::startChrono();
-		linearRegression.gradientDescent(0.01, Size(1), 0);
+		linearRegression.gradientDescent( 0.01, Size( 1 ), 0 );
 		Log::stopChrono();
-		Log::displayChrono(String::format("Linear regression : %%", linearRegression.computeCoefficientOfDetermination() * 100.0));
+		Log::displayChrono( String::format( "Linear regression : %%", linearRegression.computeCoefficientOfDetermination() * 100.0 ) );
 	}
 #endif
 #ifdef SPEEDTEST_DEEP_NEURAL_NETWORK
 	{
 		typedef double F;
 
-		constexpr Size nbFeatures(Math::ML::getNbFeatures<Math::ML::MyModel>());
-		constexpr Size nbOut(Math::ML::getNbOut<Math::ML::MyModel>());
+		constexpr Size nbFeatures( Math::ML::getNbFeatures<Math::ML::MyModel>() );
+		constexpr Size nbOut( Math::ML::getNbOut<Math::ML::MyModel>() );
 
 		Math::ML::Optimizer::Adam<F> optimizerFunc;
-		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork(optimizerFunc, "release.dnn");
+		Math::ML::DeepNeuralNetwork<F, Math::ML::MyModel> deepNeuralNetwork( optimizerFunc, "release.dnn" );
 
-		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector(Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>(Size(50000), 0.0));
+		Vector<Math::ML::Data<F, nbFeatures, nbOut>> dataVector( Math::ML::generateData<F, nbFeatures, nbOut, 2, Math::ML::ActivationFunc::Linear>( Size( 50000 ), 0.0 ) );
 
 		// deepNeuralNetwork.resetParams();
 
-		if ( deepNeuralNetwork.getEpoch() == Size(0) ) {
+		if ( deepNeuralNetwork.getEpoch() == Size( 0 ) ) {
 			deepNeuralNetwork.clearData();
-			deepNeuralNetwork.addData(dataVector);
+			deepNeuralNetwork.addData( dataVector );
 			deepNeuralNetwork.normalizeFeature();
 		}
 
@@ -2737,10 +2750,10 @@ int main(int argc, char* argv[]) {
 		// deepNeuralNetwork.optimizeCluster(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Size(16), Time::Duration<Time::MilliSecond>(2500));
 		// deepNeuralNetwork.optimizeStochastic(Math::Interval<Size>(0, dataVector.getSize()), Size(100), Time::Duration<Time::MilliSecond>(100));
 		Log::stopChrono();
-		Log::displayChrono(String::format("Deep Neural Network : %%", String::toString(deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u)));
+		Log::displayChrono( String::format( "Deep Neural Network : %%", String::toString( deepNeuralNetwork.computeCoefficientOfDetermination() * 100.0, 10u ) ) );
 
-		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable(deepNeuralNetwork.computeFeatureImportance(Math::Interval<Size>(Size(0), Size(1000))));
-		Log::displayLog(String::format("Feature importance table : %.", featureImportanceTable.toString()));
+		StaticTable<F, Math::ML::MyModel::m[ 0 ][ 0 ]> featureImportanceTable( deepNeuralNetwork.computeFeatureImportance( Math::Interval<Size>( Size( 0 ), Size( 1000 ) ) ) );
+		Log::displayLog( String::format( "Feature importance table : %.", featureImportanceTable.toString() ) );
 	}
 #endif
 
