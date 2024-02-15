@@ -381,6 +381,28 @@ inline void Vector<T>::extendRight(const Size increasedSize, const T& fillValue)
 	resize(this->size + increasedSize, fillValue);
 }
 
+template<typename T>
+void Vector<T>::shrinkLeft( const Size shrinkSize ) {
+
+	if ( shrinkSize > getSize() ) {
+		resize( 0 );
+	} else {
+		resize( getSize() - shrinkSize );
+	}
+
+}
+
+template<typename T>
+void Vector<T>::shrinkRight( const Size shrinkSize ) {
+
+	if ( shrinkSize > getSize() ) {
+		resize( 0 );
+	} else {
+		resize( getSize() - shrinkSize );
+	}
+
+}
+
 
 
 template<typename T>

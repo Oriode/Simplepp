@@ -957,7 +957,7 @@ namespace JSON {
 			bool operator()(const C& c) { return c != C(',') && c != C('}') && c != C(']') && c != C(' '); }
 		};
 		struct FunctorSpace {
-			bool operator()(const C& c) { return c == C('\n') || c == C('\t') || c == C(' '); }
+			bool operator()(const C& c) { return c == C('\n') || c == C( '\r' ) || c == C('\t') || c == C(' '); }
 		};
 		struct FunctorNoSpace {
 			bool operator()(const C& c) { return c != C('<') && c != C('\n') && c != C('\t') && c != C(' '); }
@@ -1314,7 +1314,7 @@ namespace JSON {
 			bool operator()(const C& c) { return c != C(',') && c != C('}') && c != C(']') && c != C(' '); }
 		};
 		struct FunctorSpace {
-			bool operator()(const C& c) { return c == C('\n') || c == C('\t') || c == C(' '); }
+			bool operator()(const C& c) { return c == C('\n') || c == C( '\r' ) || c == C('\t') || c == C(' '); }
 		};
 
 		static FunctorContentQuote functorContentQuote;
@@ -1483,7 +1483,7 @@ namespace JSON {
 	template<typename C, typename EndFunc>
 	bool NodeArrayT<S>::readJSON(const C** buffer, const EndFunc& endFunc) {
 		struct FunctorSpace {
-			bool operator()(const C& c) { return c == C('\n') || c == C('\t') || c == C(' '); }
+			bool operator()(const C& c) { return c == C('\n') || c == C( '\r' ) || c == C('\t') || c == C(' '); }
 		};
 
 		static FunctorSpace functorSpace;
@@ -1837,7 +1837,7 @@ namespace JSON {
 	template<typename S, typename C, typename EndFunc>
 	BasicNodeT<S>* parseT(const C** buffer, const EndFunc& endFunc) {
 		struct FunctorSpace {
-			bool operator()(const C& c) { return c == C('\n') || c == C('\t') || c == C(' '); }
+			bool operator()(const C& c) { return c == C('\n') || c == C( '\r' ) || c == C('\t') || c == C(' '); }
 		};
 		static FunctorSpace functorSpace;
 

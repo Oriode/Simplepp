@@ -135,6 +135,9 @@ public:
 	void extendRight( const Size increasedSize );
 	void extendRight( const Size increasedSize, const T& fillValue);
 
+	void shrinkLeft( const Size shrinkSize );
+	void shrinkRight( const Size shrinkSize );
+
 	/************************************************************************/
 	/* LOGICAL                                                              */
 
