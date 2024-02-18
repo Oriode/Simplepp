@@ -3436,11 +3436,10 @@ BasicString<T> & BasicString<T>::operator=( const float & d ) {
 template<typename T>
 template<typename C, size_t N>
 BasicString<T> & BasicString<T>::operator=( const C( &str )[ N ] ) {
-	auto sizePlusOne( N + 1 );
-	if ( getMaxSize() < sizePlusOne )
-		reserve( sizePlusOne );
-	Utility::copy( this -> dataTable, str, sizePlusOne );
-	this -> size = N;
+	if ( getMaxSize() < N )
+		reserve( N );
+	Utility::copy( this -> dataTable, str, N );
+	this -> size = N - 1;
 	_updateIterators();
 	return *this;
 }
