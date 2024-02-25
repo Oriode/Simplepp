@@ -735,4 +735,10 @@ namespace Math {
 		}
 	}
 
+
+	template<typename T>
+	MATH_FUNC_QUALIFIER T linearInterpolate( const T& a, const T& b, const T& alpha ) {
+		return a * ( T( 1 ) - alpha ) + b * alpha;
+	}
+
 }

@@ -276,6 +276,8 @@ namespace Math {
 	template<typename T>
 	MATH_FUNC_QUALIFIER T correlationCoefficient( const Table<T>& X, const Table<T>& Y );
 
+	template<typename T>
+	MATH_FUNC_QUALIFIER T linearInterpolate( const T& a, const T& b, const T& alpha );
 }
 
 

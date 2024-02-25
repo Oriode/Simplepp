@@ -56,8 +56,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Runable|x64'">
-    <OutDir>$(SolutionDir)../$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)../$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Lib|x64'">
     <LinkIncremental>false</LinkIncremental>
