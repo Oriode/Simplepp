@@ -18,7 +18,7 @@ void ThreadT<T>::start() {
 
 	this -> mutex.lock();
 	this -> bIsRunning = true;
-	this -> thread = new std::thread( ThreadT<T>::_staticRun, this );
+	this -> thread = new std::thread( &Thread::run, this );
 	this -> mutex.unlock();
 
 	// INFO_SPP( "ThreadT started !" );
@@ -53,11 +53,6 @@ void ThreadT<T>::join() {
 
 	// INFO_SPP( "ThreadT stopped." );
 
-}
-
-template<typename T>
-void ThreadT<T>::_staticRun( ThreadT * t ) {
-	t -> _run();
 }
 
 template<typename T>

@@ -62,8 +62,6 @@ public:
 
 
 	void _run();
-	static void _staticRun( ThreadT * t );
-
 
 private:
 	Mutex mutex;

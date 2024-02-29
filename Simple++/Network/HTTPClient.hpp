@@ -1,718 +1,48 @@
 #include "HTTPClient.h"
 namespace Network {
 
-	template<typename T>
-	inline HTTPQueryT<T>::HTTPQueryT() :
-		bHeaderNeedFormat(false),
-		contentType(ContentType::None)
-	{}
 
 	template<typename T>
-	inline HTTPQueryT<T>::~HTTPQueryT() {
-
+	inline HTTPClientT<T>::HTTPClientT( typename UrlT<T>::Type type, const StringASCII& hostname ) :
+		request( type, hostname ),
+		bWasConnected( false ) {
 	}
 
 	template<typename T>
-	inline void HTTPQueryT<T>::formatQueryContent(StringASCII* outputStr) const {
-		StringASCII& str(*outputStr);
-
-		str << this->contentStr;
+	inline HTTPClientT<T>::HTTPClientT( const UrlT<T>& url ) :
+		request( url ),
+		bWasConnected( false ) {
 	}
 
 	template<typename T>
-	inline HTTPParam* HTTPQueryT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
-		this->bHeaderNeedFormat = true;
-		return ParamContainerT<StringASCII, StringASCII>::setParam(paramName, paramValue);
+	inline HTTPParam* HTTPClientT<T>::setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue ) {
+		return this->request.setHeaderParam( paramName, paramValue );
 	}
 
 	template<typename T>
-	inline const HTTPParam* HTTPQueryT<T>::getHeaderParam(const StringASCII& paramName) const {
-		return ParamContainerT<StringASCII, StringASCII>::getParam(paramName);
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams ) {
+		this->request.setMethod( method );
+		this->request.setEndPoint( endPointStr, urlParams );
+
+		return _query( this->request );
 	}
 
 	template<typename T>
-	inline HTTPParam* HTTPQueryT<T>::getHeaderParam(const StringASCII& paramName) {
-		return ParamContainerT<StringASCII, StringASCII>::getParam(paramName);
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Method method, const UrlT<T>& url, const Vector<HTTPParam>& urlParams ) {
+		this->request.setMethod( method );
+		this->request.setEndPoint( url );
+
+		return _query( this->request );
 	}
 
 	template<typename T>
-	inline void HTTPQueryT<T>::setProtocol(const StringASCII& protocol) {
-		this->protocolStr = protocol;
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( const HTTPRequestT<T> & request ) {
+		return _query( request );
 	}
 
 	template<typename T>
-	inline void HTTPQueryT<T>::setContent(const StringASCII& content) {
-		if ( content.getSize() != this->contentStr.getSize() ) {
-			// Header need to be recomputed as the Content-Size has changed.
-			this->bHeaderNeedFormat = true;
-		}
-
-		this->contentStr = content;
-	}
-
-	template<typename T>
-	inline void HTTPQueryT<T>::clearContent() {
-		if ( this->contentStr.getSize() ) {
-			this->contentStr.clear();
-
-			// Header need to be recomputed as the Content-Size has changed.
-			this->bHeaderNeedFormat = true;
-		}
-	}
-
-	template<typename T>
-	inline typename HTTPQueryT<T>::ContentType HTTPQueryT<T>::getContentType() const {
-		return this->contentType;
-	}
-
-	template<typename T>
-	inline void HTTPQueryT<T>::setContentType(typename HTTPQueryT<T>::ContentType contentType) {
-		this->bHeaderNeedFormat = true;
-		this->contentType = contentType;
-	}
-
-	template<typename T>
-	inline const StringASCII& HTTPQueryT<T>::getProtocol() const {
-		return this->protocolStr;
-	}
-
-	template<typename T>
-	inline const StringASCII& HTTPQueryT<T>::getContent() const {
-		return this->contentStr;
-	}
-
-	template<typename T>
-	inline const StringASCII& HTTPQueryT<T>::getContentTypeString(typename ContentType contentType) {
-		return HTTPQueryT<T>::contentTypeStrTable[ static_cast< unsigned char >( contentType ) ];
-	}
-
-	template<typename T>
-	inline typename HTTPQueryT<T>::ContentType HTTPQueryT<T>::getContentType(const StringASCII& contentTypeStr) {
-		constexpr Size enumSize(sizeof(HTTPQueryT<T>::contentTypeStrTable));
-		for ( Size i(0); i < enumSize; i++ ) {
-			if ( contentTypeStr == HTTPQueryT<T>::contentTypeStrTable[ i ] ) {
-				return static_cast< typename HTTPQueryT<T>::ContentType >( i );
-			}
-		}
-		return HTTPQueryT<T>::ContentType::None;
-	}
-
-	template<typename T>
-	const StringASCII HTTPQueryT<T>::contentTypeStrTable[] = {
-			StringASCII("none"),
-			StringASCII("text/plain"),
-			StringASCII("text/html"),
-			StringASCII("application/x-www-form-urlencoded"),
-			StringASCII("application/json"),
-			StringASCII("application/xml")
-	};
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPQueryT<T>::parseQuery(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		if ( !parseQueryHeader(itP, endFunc) ) {
-			return false;
-		}
-		if ( !parseQueryContent(itP, endFunc) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	template<typename T>
-	inline void HTTPQueryT<T>::formatQuery(StringASCII* outputStr) const {
-		StringASCII& str(*outputStr);
-
-		const_cast< HTTPQueryT<T>* >( this )->formatQueryHeader();
-
-		str << this->headerStr;
-		formatQueryContent(outputStr);
-	}
-
-	template<typename T>
-	inline void HTTPQueryT<T>::formatHeaderParam(StringASCII* outputStr, const ParamT<StringASCII, StringASCII>& param) const {
-		StringASCII& str(*outputStr);
-
-		str << param.getName();
-		str << StringASCII::ElemType(':');
-		str << StringASCII::ElemType(' ');
-		str << param.getValue();
-		str << StringASCII::ElemType('\r');
-		str << StringASCII::ElemType('\n');
-	}
-
-	template<typename T>
-	inline void HTTPQueryT<T>::formatQueryHeader() {
-		if ( this->bHeaderNeedFormat ) {
-
-			this->headerStr.clear();
-
-			for ( typename Vector<HTTPParam*>::Iterator it(this->paramVector.getBegin()); it != this->paramVector.getEnd(); this->paramVector.iterate(&it) ) {
-				const HTTPParam* param(this->paramVector.getValueIt(it));
-
-				formatHeaderParam(&this->headerStr, *param);
-			}
-
-			if ( this->contentType != HTTPQueryT<T>::ContentType::None && this->contentStr.getSize() ) {
-				static const StringASCII contentTypeName("Content-Type");
-				static const StringASCII contentLengthParamName("Content-Length");
-
-				formatHeaderParam(&this->headerStr, ParamT<StringASCII, StringASCII>(contentTypeName, HTTPQueryT<T>::getContentTypeString(this->contentType)));
-				formatHeaderParam(&this->headerStr, ParamT<StringASCII, StringASCII>(contentLengthParamName, StringASCII::toString(this->contentStr.getSize())));
-			}
-
-			this->headerStr << StringASCII::ElemType('\r');
-			this->headerStr << StringASCII::ElemType('\n');
-
-			this->bHeaderNeedFormat = false;
-		}
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPQueryT<T>::parseQueryHeader(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		struct FunctorNewLine {
-			FunctorNewLine(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-		struct FunctorParamName {
-			FunctorParamName(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType(':') || *it == StringASCII::ElemType(' ') || *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-		struct FunctorSpace {
-			FunctorSpace(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it != StringASCII::ElemType(' ') || *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-
-		FunctorNewLine functorNewLine(endFunc);
-		FunctorParamName functorParamName(endFunc);
-		FunctorSpace functorSpace(endFunc);
-
-		clearParams();
-		this->contentType = HTTPQueryT<T>::ContentType::None;
-
-		const StringASCII::ElemType*& it(*itP);
-		while ( true ) {
-			// Skip spaces.
-			for ( ; !functorSpace(it); it++ );
-
-			const StringASCII::ElemType* paramNameBeginIt(it);
-			for ( ; !functorParamName(it); it++ );
-			const StringASCII::ElemType* paramNameEndIt(it);
-
-			if ( *it == StringASCII::ElemType(':') ) {
-				it++;
-			}
-
-			// Skip spaces.
-			for ( ; !functorSpace(it); it++ );
-
-			const StringASCII::ElemType* paramValueBeginIt(it);
-			for ( ; !functorNewLine(it); it++ );
-			const StringASCII::ElemType* paramValueEndIt(it);
-
-			if ( paramNameBeginIt == paramNameEndIt || paramValueBeginIt == paramValueEndIt ) {
-				ERROR_SPP("HTTP header syntax error.");
-				return false;
-			}
-
-			StringASCII newParamName(paramNameBeginIt, Size(paramNameEndIt - paramNameBeginIt));
-			StringASCII newParamValue(paramValueBeginIt, Size(paramValueEndIt - paramValueBeginIt));
-
-			HTTPParam* newParam(new HTTPParam(newParamName, newParamValue));
-
-			const StringASCII contentTypeName("Content-Type");
-			if ( newParam->getName() == contentTypeName ) {
-				this->contentType = getContentType(newParam->getValue());
-				delete newParam;
-			} else {
-				addParam(newParam);
-			}
-
-			// End condition.
-			if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
-				it++;
-				if ( *it == StringASCII::ElemType('\n') && !endFunc(it) ) {
-					it++;
-				}
-				if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
-					it++;
-					if ( *it == StringASCII::ElemType('\n') && !endFunc(it) ) {
-						it++;
-					}
-					break;
-				}
-				continue;
-			}
-
-			break;
-		}
-
-		return true;
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPQueryT<T>::parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		const StringASCII::ElemType*& it(*itP);
-		for ( ; ( *it == StringASCII::ElemType('\n') || *it == StringASCII::ElemType('\r') ) && !endFunc(it); it++ );
-
-		const StringASCII::ElemType* contentStrBeginIt(it);
-		for ( ; !endFunc(it); it++ );
-		this->contentStr = StringASCII(contentStrBeginIt, Size(it - contentStrBeginIt));
-
-		return true;
-	}
-
-	template<typename T>
-	inline HTTPResponseT<T>::HTTPResponseT() {}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline HTTPResponseT<T>::HTTPResponseT(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		parseQuery(itP, endFunc);
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPResponseT<T>::parseQuery(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		if ( !parseQueryTitle(itP, endFunc) ) {
-			return false;
-		}
-		if ( !HTTPQueryT<T>::parseQuery(itP, endFunc) ) {
-			return false;
-		}
-		return true;
-	}
-
-	template<typename T>
-	inline StringASCII HTTPResponseT<T>::formatQuery() const {
-		StringASCII outputStr;
-		outputStr.reserve(10000);
-
-		formatQuery(&outputStr);
-	}
-
-	template<typename T>
-	inline void HTTPResponseT<T>::formatQuery(StringASCII* outputStr) const {
-		formatQueryTitle(outputStr);
-		HTTPQueryT<T>::formatQuery(outputStr);
-	}
-
-	template<typename T>
-	inline void HTTPResponseT<T>::setStatusCode(Size statusCode) {
-		this->statusCode = statusCode;
-	}
-
-	template<typename T>
-	inline void HTTPResponseT<T>::setStatusMessage(const StringASCII& statusMessage) {
-		this->statusMessage = statusMessage;
-	}
-
-	template<typename T>
-	inline const Size HTTPResponseT<T>::getStatusCode() const {
-		return this->statusCode;
-	}
-
-	template<typename T>
-	inline const StringASCII& HTTPResponseT<T>::getStatusMessage() const {
-		return this->statusMessage;
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPResponseT<T>::parseQueryTitle(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		struct FunctorNewLine {
-			FunctorNewLine(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-		struct FunctorWord {
-			FunctorWord(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType(' ') || *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-		struct FunctorSpace {
-			FunctorSpace(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it != StringASCII::ElemType(' ') || *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-
-		FunctorNewLine functorNewLine(endFunc);
-		FunctorWord functorWord(endFunc);
-		FunctorSpace functorSpace(endFunc);
-
-		const StringASCII::ElemType*& it(*itP);
-		// Skip spaces.
-		for ( ; !functorSpace(it); it++ );
-
-		const StringASCII::ElemType* protocolStrBeginIt(it);
-		for ( ; !functorWord(it); it++ );
-		const StringASCII::ElemType* protocolStrEndIt(it);
-
-		// Skip spaces.
-		for ( ; !functorSpace(it); it++ );
-
-		Size statusCode(StringASCII::toULongLong(&it, 10, functorWord));
-
-		// Skip spaces.
-		for ( ; !functorSpace(it); it++ );
-
-		const StringASCII::ElemType* statusMessageBeginIt(it);
-		for ( ; !functorNewLine(it); it++ );
-		const StringASCII::ElemType* statusMessageEndIt(it);
-
-		// Skip up to end line.
-		for ( ; !functorNewLine(it); it++ );
-
-		// End condition.
-		if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
-			it++;
-			if ( *it == StringASCII::ElemType('\n') && !endFunc(it) ) {
-				it++;
-			}
-		}
-
-		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			ERROR_SPP("HTTP response syntax error.");
-			return false;
-		}
-
-		StringASCII protocolStr(protocolStrBeginIt, Size(protocolStrEndIt - protocolStrBeginIt));
-		StringASCII statusMessage(statusMessageBeginIt, Size(statusMessageEndIt - statusMessageBeginIt));
-
-		this->protocolStr = protocolStr;
-		this->statusCode = statusCode;
-		this->statusMessage = statusMessage;
-
-		return true;
-	}
-
-	template<typename T>
-	inline void HTTPResponseT<T>::formatQueryTitle(StringASCII* outputStr) const {
-		StringASCII& str(*outputStr);
-
-		str << this->protocolStr;
-		str << StringASCII::ElemType(' ');
-		str << this->statusCode;
-		str << StringASCII::ElemType(' ');
-		str << this->statusMessage;
-		str << StringASCII::ElemType('\r');
-		str << StringASCII::ElemType('\n');
-	}
-
-	template<typename T>
-	const StringASCII HTTPRequestT<T>::methodStrTable[] = { StringASCII("GET"), StringASCII("POST"), StringASCII("DELETE") };
-
-	template<typename T>
-	inline HTTPRequestT<T>::HTTPRequestT() :
-		method(Method::Unknown)
-	{
-		HTTPParam* hostParam(new HTTPParam(StringASCII("Host")));
-		addParam(hostParam);
-
-		this->contentType = HTTPQueryT<T>::ContentType::Text;
-		this->hostParam = hostParam;
-	}
-
-	template<typename T>
-	inline HTTPRequestT<T>::HTTPRequestT(typename UrlT<T>::Type type, const StringASCII& hostname) :
-		url(type, hostname)
-	{
-		HTTPParam* hostParam(new HTTPParam(StringASCII("Host"), hostname));
-		addParam(hostParam);
-
-		if ( this->method == HTTPRequestT<T>::Method::POST ) {
-			setContentType(HTTPQueryT<T>::ContentType::Params);
-		}
-
-		this->hostParam = hostParam;
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline HTTPRequestT<T>::HTTPRequestT(const StringASCII::ElemType** itP, const EndFunc& endFunc) :
-		hostParam(NULL)
-	{
-		parseQuery(itP, endFunc);
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPRequestT<T>::parseQuery(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		if ( !parseQueryTitle(itP, endFunc) ) {
-			return false;
-		}
-		if ( !parseQueryHeader(itP, endFunc) ) {
-			return false;
-		}
-		if ( !parseQueryContent(itP, endFunc) ) {
-			return false;
-		}
-		return true;
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPRequestT<T>::parseQueryTitle(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		struct FunctorNewLine {
-			FunctorNewLine(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-		struct FunctorWord {
-			FunctorWord(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it == StringASCII::ElemType(' ') || *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-		struct FunctorSpace {
-			FunctorSpace(const EndFunc& endFunc) :
-				endFunc(endFunc) {}
-			bool operator()(const typename StringASCII::ElemType* it) const { return *it != StringASCII::ElemType(' ') || *it == StringASCII::ElemType('\r') || *it == StringASCII::ElemType('\n') || endFunc(it); }
-
-			const EndFunc& endFunc;
-		};
-
-		FunctorNewLine functorNewLine(endFunc);
-		FunctorWord functorWord(endFunc);
-		FunctorSpace functorSpace(endFunc);
-
-		const StringASCII::ElemType*& it(*itP);
-
-		// Skip spaces.
-		for ( ; !functorSpace(it); it++ );
-
-		const StringASCII::ElemType* methodStrBeginIt(it);
-		for ( ; !functorWord(it); it++ );
-		const StringASCII::ElemType* methodStrEndIt(it);
-
-		if ( methodStrBeginIt == methodStrEndIt ) {
-			ERROR_SPP("HTTP request syntax error : no method.");
-			return false;
-		}
-
-		StringASCII methodStr(methodStrBeginIt, Size(methodStrEndIt - methodStrBeginIt));
-		typename HTTPRequestT<T>::Method method(HTTPRequestT<T>::getMethod(methodStr));
-
-		if ( method == Method::Unknown ) {
-			ERROR_SPP("HTTP request syntax error : Unkown method.");
-			return false;
-		}
-
-		// Skip spaces.
-		for ( ; !functorSpace(it); it++ );
-
-		if ( !this->url.parse(&it, functorWord) ) {
-			return false;
-		}
-
-		// Skip spaces.
-		for ( ; !functorSpace(it); it++ );
-
-		const StringASCII::ElemType* protocolStrBeginIt(it);
-		for ( ; !functorWord(it); it++ );
-		const StringASCII::ElemType* protocolStrEndIt(it);
-
-		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			ERROR_SPP("HTTP request syntax error : no protocol.");
-			return false;
-		}
-
-		// Skip up to end line.
-		for ( ; !functorNewLine(it); it++ );
-
-		// End condition.
-		if ( *it == StringASCII::ElemType('\r') && !endFunc(it) ) {
-			it++;
-			if ( *it == StringASCII::ElemType('\n') && !endFunc(it) ) {
-				it++;
-			}
-		}
-
-		StringASCII protocolStr(protocolStrBeginIt, Size(protocolStrEndIt - protocolStrBeginIt));
-
-		this->method = method;
-		this->protocolStr = protocolStr;
-
-		return true;
-	}
-
-	template<typename T>
-	template<typename EndFunc>
-	inline bool HTTPRequestT<T>::parseQueryContent(const StringASCII::ElemType** itP, const EndFunc& endFunc) {
-		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			if ( !this->url.parseParams(itP, endFunc) ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	template<typename T>
-	inline StringASCII HTTPRequestT<T>::formatQuery() const {
-		StringASCII outputStr;
-		outputStr.reserve(10000);
-
-		formatQuery(&outputStr);
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::formatQuery(StringASCII* outputStr) const {
-		formatQueryTitle(outputStr);
-
-		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			StringASCII paramStr;
-			this->url.formatParams(&paramStr);
-			const_cast<HTTPRequestT<T> *>(this)->setContent(paramStr);
-		}
-
-		HTTPQueryT<T>::formatQuery(outputStr);
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::setMethod(typename HTTPRequestT<T>::Method method) {
-		this->method = method;
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint(const UrlT<T>& url) {
-		this->url = url;
-
-		updateHostParamValue();
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint(const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) {
-		this->url.setEndPoint(endPointStr);
-		this->url.setParams(paramVector);
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector) {
-		this->url.setType(type);
-		this->url.setHostname(hostname);
-		this->url.setEndPoint(endPointStr);
-		this->url.setParams(paramVector);
-
-		updateHostParamValue();
-	}
-
-	template<typename T>
-	inline bool HTTPRequestT<T>::setEndPoint(const StringASCII& url) {
-		if ( !this->url.parse(url) ) {
-			return false;
-		}
-
-		updateHostParamValue();
-
-		return true;
-	}
-
-	template<typename T>
-	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod() const {
-		return this->method;
-	}
-
-	template<typename T>
-	inline const UrlT<T>& HTTPRequestT<T>::getEndPoint() const {
-		return this->url;
-	}
-
-	template<typename T>
-	inline const StringASCII& HTTPRequestT<T>::getMethodString(typename HTTPRequestT<T>::Method method) {
-		unsigned char methodIndex(static_cast< unsigned char >( method ));
-		if ( methodIndex < sizeof(HTTPRequestT<T>::methodStrTable) ) {
-			return HTTPRequestT<T>::methodStrTable[ methodIndex ];
-		} else {
-			return StringASCII::null;
-		}
-	}
-
-	template<typename T>
-	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod(const StringASCII& methodStr) {
-		constexpr Size enumSize(sizeof(HTTPRequestT<T>::methodStrTable));
-		for ( Size i(0); i < enumSize; i++ ) {
-			if ( methodStr == HTTPRequestT<T>::methodStrTable[ i ] ) {
-				return static_cast< typename HTTPRequestT<T>::Method >( i );
-			}
-		}
-		return HTTPRequestT<T>::Method::Unknown;
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::formatQueryTitle(StringASCII* outputStr) const {
-		StringASCII& str(*outputStr);
-
-		str << HTTPRequestT<T>::getMethodString(this->method);
-		str << StringASCII::ElemType(' ');
-		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			this->url.formatEndPointWOParams(&str);
-		} else {
-			this->url.formatEndPoint(&str);
-		}
-		str << StringASCII::ElemType(' ');
-		str << this->protocolStr;
-		str << StringASCII::ElemType('\r');
-		str << StringASCII::ElemType('\n');
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::updateHostParamValue() {
-		if ( this->hostParam ) {
-			this->hostParam->setValue(this->url.getHostname());
-		} else {
-			this->hostParam = setHeaderParam(StringASCII("Host"), this->url.getHostname());
-		}
-	}
-
-	template<typename T>
-	inline HTTPClientT<T>::HTTPClientT(typename UrlT<T>::Type type, const StringASCII& hostname) :
-		request(type, hostname),
-		bWasConnected(false)
-	{
-		this->request.setProtocol(StringASCII("HTTP/1.1"));
-		this->request.setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
-	}
-
-	template<typename T>
-	inline HTTPParam* HTTPClientT<T>::setHeaderParam(const StringASCII& paramName, const StringASCII& paramValue) {
-		return this->request.setHeaderParam(paramName, paramValue);
-	}
-
-	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams) {
-		this->request.setMethod(method);
-		this->request.setEndPoint(endPointStr, urlParams);
-
-		return _query(this->request);
-	}
-
-	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query(typename HTTPRequestT<T> * request) {
-		request->setProtocol(StringASCII("HTTP/1.1"));
-		request->setHeaderParam(StringASCII("Connection"), StringASCII("Keep-Alive"));
-
-		return _query(*request);
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( const HTTPRequestT<T>* request ) {
+		return _query( &request );
 	}
 
 	template<typename T>
@@ -721,77 +51,77 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::_query(const typename HTTPRequestT<T>& request) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::_query( const typename HTTPRequestT<T>& request ) {
 		if ( request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
 
 			this->sendBuffer.clear();
-			request.formatQuery(&this->sendBuffer);
+			request.formatQuery( &this->sendBuffer );
 
 			// Try sending directly as we are in keep alive.
 			if ( !this->bWasConnected ) {
-				if ( !this->connection.connect(request.getEndPoint().getHostname(), unsigned short(443), Network::SockType::TCP) ) {
+				if ( !this->connection.connect( request.getEndPoint().getHostname(), unsigned short( 443 ), Network::SockType::TCP ) ) {
 					return NULL;
 				}
 				this->bWasConnected = true;
 			}
 
-			if ( !this->connection.isConnected() || !this->connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
+			if ( !this->connection.isConnected() || !this->connection.send( this->sendBuffer.toCString(), int( this->sendBuffer.getSize() ) ) ) {
 				if ( !this->connection.reconnect() ) {
 					return NULL;
 				}
-				if ( !this->connection.send(this->sendBuffer.toCString(), int(this->sendBuffer.getSize())) ) {
+				if ( !this->connection.send( this->sendBuffer.toCString(), int( this->sendBuffer.getSize() ) ) ) {
 					return NULL;
 				}
 			}
 
-			int maxSizeReceive(sizeof(this->receiveBuffer));
-			const StringASCII::ElemType* parseIt(this->receiveBuffer);
-			int totalReceivedLength(connection.receive(this->receiveBuffer, maxSizeReceive));
+			int maxSizeReceive( sizeof( this->receiveBuffer ) );
+			const StringASCII::ElemType* parseIt( this->receiveBuffer );
+			int totalReceivedLength( connection.receive( this->receiveBuffer, maxSizeReceive ) );
 
-			if ( totalReceivedLength <= int(0) ) {
+			if ( totalReceivedLength <= int( 0 ) ) {
 				return NULL;
 			}
 
 			// We receive something, let's try parse the title and the header.
-			if ( !this->response.parseQueryTitle(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
+			if ( !this->response.parseQueryTitle( &parseIt, StringASCII::IsEndIterator( this->receiveBuffer + totalReceivedLength ) ) ) {
 				return NULL;
 			}
-			if ( !this->response.parseQueryHeader(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
+			if ( !this->response.parseQueryHeader( &parseIt, StringASCII::IsEndIterator( this->receiveBuffer + totalReceivedLength ) ) ) {
 				return NULL;
 			}
 
 			// Now we have the title and the header. Let's check for the Content-Length.
-			static const StringASCII contentLengthParamName("Content-Length");
-			HTTPParam* contentSizeParam(this->response.getHeaderParam(contentLengthParamName));
+			static const StringASCII contentLengthParamName( "Content-Length" );
+			HTTPParam* contentSizeParam( this->response.getHeaderParam( contentLengthParamName ) );
 
 			int contentLength;
 			if ( contentSizeParam ) {
 				contentLength = contentSizeParam->getValue().toInt();
 			} else {
-				contentLength = Size(0);
+				contentLength = Size( 0 );
 			}
 
-			maxSizeReceive = contentLength + static_cast<int>( parseIt - this->receiveBuffer );
+			maxSizeReceive = contentLength + static_cast< int >( parseIt - this->receiveBuffer );
 
 			while ( totalReceivedLength < maxSizeReceive ) {
-				int receivedLength(connection.receive(this->receiveBuffer + totalReceivedLength, maxSizeReceive - totalReceivedLength));
+				int receivedLength( connection.receive( this->receiveBuffer + totalReceivedLength, maxSizeReceive - totalReceivedLength ) );
 
-				if ( receivedLength <= int(0) ) {
+				if ( receivedLength <= int( 0 ) ) {
 					return NULL;
 				}
 
 				totalReceivedLength += receivedLength;
 			}
 
-			DEBUG_SPP(*( this->receiveBuffer + totalReceivedLength ) = StringASCII::ElemType('\n'));
+			DEBUG_SPP( *( this->receiveBuffer + totalReceivedLength ) = StringASCII::ElemType( '\n' ) );
 
-			if ( !this->response.parseQueryContent(&parseIt, StringASCII::IsEndIterator(this->receiveBuffer + totalReceivedLength)) ) {
+			if ( !this->response.parseQueryContent( &parseIt, StringASCII::IsEndIterator( this->receiveBuffer + totalReceivedLength ) ) ) {
 				return NULL;
 			}
 
 			return &this->response;
 		} else {
-			ERROR_SPP(String::format("Unsuported query type %.", UrlT<T>::getTypeString(request.getEndPoint().getType())));
+			ERROR_SPP( String::format( "Unsuported query type %.", UrlT<T>::getTypeString( request.getEndPoint().getType() ) ) );
 			return NULL;
 		}
 

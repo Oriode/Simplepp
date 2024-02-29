@@ -277,6 +277,13 @@
     <ClInclude Include="Network\AddrInfo.hpp" />
     <ClInclude Include="Network\BasicNetwork.hpp" />
     <ClInclude Include="Network\Connection.hpp" />
+    <ClInclude Include="Network\HTTPMessage.h" />
+    <ClInclude Include="Network\HTTPQuery.h" />
+    <ClInclude Include="Network\HTTPQuery.hpp" />
+    <ClInclude Include="Network\HTTPRequest.h" />
+    <ClInclude Include="Network\HTTPRequest.hpp" />
+    <ClInclude Include="Network\HTTPResponse.h" />
+    <ClInclude Include="Network\HTTPResponse.hpp" />
     <ClInclude Include="Network\Server.hpp" />
     <ClInclude Include="Crypto\SSL.h" />
     <ClInclude Include="Crypto\SSL.hpp" />

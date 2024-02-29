@@ -15,69 +15,70 @@ namespace Network {
 		};
 
 		UrlT();
-		UrlT(typename UrlT<T>::Type type, const StringASCII& hostname);
-		UrlT(typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector);
+		UrlT( const StringASCII & url );
+		UrlT( typename UrlT<T>::Type type, const StringASCII& hostname );
+		UrlT( typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector );
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		UrlT(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+		UrlT( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
 
-		UrlT(const UrlT<T>& url);
-		UrlT(const UrlT<T>&& url);
+		UrlT( const UrlT<T>& url );
+		UrlT( const UrlT<T>&& url );
 
 		~UrlT();
 
-		UrlT<T>& operator=(const UrlT<T>& url);
-		UrlT<T>& operator=(const UrlT<T>&& url);
+		UrlT<T>& operator=( const UrlT<T>& url );
+		UrlT<T>& operator=( const UrlT<T>&& url );
 
-		bool parse(const StringASCII& str);
+		bool parse( const StringASCII& str );
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parse(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+		bool parse( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
 
-		bool parseParams(const StringASCII& str);
+		bool parseParams( const StringASCII& str );
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseParams(const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL);
+		bool parseParams( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
 
 		StringASCII format() const;
-		void format(StringASCII* outputStr) const;
+		void format( StringASCII* outputStr ) const;
 
 		StringASCII formatWOParams() const;
-		void formatWOParams(StringASCII* outputStr) const;
+		void formatWOParams( StringASCII* outputStr ) const;
 
 		StringASCII formatEndPointWOParams() const;
-		void formatEndPointWOParams(StringASCII* outputStr) const;
+		void formatEndPointWOParams( StringASCII* outputStr ) const;
 
 		StringASCII formatEndPoint() const;
-		void formatEndPoint(StringASCII* outputStr) const;
+		void formatEndPoint( StringASCII* outputStr ) const;
 
 		StringASCII formatParams() const;
-		static StringASCII formatParams(const Vector<HTTPParam *>& paramVector);
-		static StringASCII formatParams(const Vector<HTTPParam>& paramVector);
-		void formatParams(StringASCII* outputStr) const;
-		static void formatParams(StringASCII* outputStr, const Vector<HTTPParam *>& paramVector);
-		static void formatParams(StringASCII* outputStr, const Vector<HTTPParam>& paramVector);
+		static StringASCII formatParams( const Vector<HTTPParam*>& paramVector );
+		static StringASCII formatParams( const Vector<HTTPParam>& paramVector );
+		void formatParams( StringASCII* outputStr ) const;
+		static void formatParams( StringASCII* outputStr, const Vector<HTTPParam*>& paramVector );
+		static void formatParams( StringASCII* outputStr, const Vector<HTTPParam>& paramVector );
 
-		void setType(const typename UrlT<T>::Type type);
-		void setHostname(const StringASCII& hostname);
-		void setEndPoint(const StringASCII& endPoint);
+		void setType( const typename UrlT<T>::Type type );
+		void setHostname( const StringASCII& hostname );
+		void setEndPoint( const StringASCII& endPoint );
 
 		typename UrlT<T>::Type getType() const;
 		const StringASCII& getHostname() const;
 		const StringASCII& getEndPoint() const;
 
-		static const StringASCII& getTypeString(typename UrlT<T>::Type type);
-		static typename UrlT<T>::Type getType(const StringASCII& typeStr);
+		static const StringASCII& getTypeString( typename UrlT<T>::Type type );
+		static typename UrlT<T>::Type getType( const StringASCII& typeStr );
 
 		///@brief read from a file stream
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream* stream );
 
 		///@brief write this object as binary into a file stream (@see writeXML for writing non binary)
 		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool write(Stream* stream) const;
+		bool write( Stream* stream ) const;
 
 		static const StringASCII typeStrTable[];
 
