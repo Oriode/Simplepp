@@ -40,7 +40,7 @@ namespace Network {
 
 	template<typename T>
 	inline void HTTPQueryT<T>::setContent( const StringASCII& content ) {
-		if ( content.getSize() != this->contentStr.getSize() ) {
+		if ( content.getSize() > Size( 0 ) || content.getSize() != this->contentStr.getSize() ) {
 			// Header need to be recomputed as the Content-Size has changed.
 			this->bHeaderNeedFormat = true;
 		}

@@ -3,16 +3,14 @@ namespace Network {
 
 
 	template<typename T>
-	inline HTTPClientT<T>::HTTPClientT( typename UrlT<T>::Type type, const StringASCII& hostname ) :
-		request( type, hostname ),
-		bWasConnected( false ) {
-	}
+	inline HTTPClientT<T>::HTTPClientT( typename UrlT<T>::Sheme sheme, const StringASCII& hostname ) :
+		request( HTTPRequestT<T>::Verb::Unknown, sheme, hostname ),
+		bWasConnected( false ) { }
 
 	template<typename T>
 	inline HTTPClientT<T>::HTTPClientT( const UrlT<T>& url ) :
-		request( url ),
-		bWasConnected( false ) {
-	}
+		request( HTTPRequestT<T>::Verb::Unknown, url ),
+		bWasConnected( false ) { }
 
 	template<typename T>
 	inline HTTPParam* HTTPClientT<T>::setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue ) {
@@ -20,23 +18,15 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams ) {
-		this->request.setMethod( method );
-		this->request.setEndPoint( endPointStr, urlParams );
-
-		return _query( this->request );
-	}
-
-	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Method method, const UrlT<T>& url, const Vector<HTTPParam>& urlParams ) {
-		this->request.setMethod( method );
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Verb method, const UrlT<T>& url ) {
+		this->request.setVerb( method );
 		this->request.setEndPoint( url );
 
 		return _query( this->request );
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query( const HTTPRequestT<T> & request ) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( const HTTPRequestT<T>& request ) {
 		return _query( request );
 	}
 
@@ -46,13 +36,32 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::GET( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector ) {
+		this->request.setVerb( HTTPRequestT<T>::Verb::GET );
+		this->request.setUri( Uri );
+		this->request.setUrlParams( urlParamVector );
+		
+		return _query( this->request );
+	}
+
+	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::POST( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr ) {
+		this->request.setVerb( HTTPRequestT<T>::Verb::POST );
+		this->request.setUri( Uri );
+		this->request.setUrlParams( urlParamVector );
+		this->request.setContent( contentStr );
+
+		return _query( this->request );
+	}
+
+	template<typename T>
 	inline const HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() const {
 		return &this->response;
 	}
 
 	template<typename T>
 	inline HTTPResponseT<T>* HTTPClientT<T>::_query( const typename HTTPRequestT<T>& request ) {
-		if ( request.getEndPoint().getType() == UrlT<T>::Type::HTTPS ) {
+		if ( request.getEndPoint().getSheme() == UrlT<T>::Sheme::HTTPS ) {
 
 			this->sendBuffer.clear();
 			request.formatQuery( &this->sendBuffer );
@@ -121,7 +130,7 @@ namespace Network {
 
 			return &this->response;
 		} else {
-			ERROR_SPP( String::format( "Unsuported query type %.", UrlT<T>::getTypeString( request.getEndPoint().getType() ) ) );
+			ERROR_SPP( String::format( "Unsuported query type %.", UrlT<T>::getShemeStr( request.getEndPoint().getSheme() ) ) );
 			return NULL;
 		}
 

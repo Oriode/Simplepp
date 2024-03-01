@@ -11,9 +11,9 @@ namespace Network {
 	template<typename T>
 	class HTTPRequestT : public HTTPQueryT<T> {
 	public:
-		typedef typename UrlT<T>::Type Type;
+		typedef typename UrlT<T>::Sheme Type;
 
-		enum class Method : unsigned char {
+		enum class Verb : unsigned char {
 			GET,
 			POST,
 			DEL,
@@ -21,8 +21,8 @@ namespace Network {
 		};
 
 		HTTPRequestT();
-		HTTPRequestT( const UrlT<T>& url );
-		HTTPRequestT( typename UrlT<T>::Type type, const StringASCII& hostname );
+		HTTPRequestT( typename HTTPRequestT<T>::Verb verb, const UrlT<T>& url );
+		HTTPRequestT( typename HTTPRequestT<T>::Verb verb, typename UrlT<T>::Sheme type, const StringASCII& hostname );
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		HTTPRequestT( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
 
@@ -40,17 +40,19 @@ namespace Network {
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		bool parseQueryContent( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
 
-		void setMethod( typename HTTPRequestT<T>::Method method );
-		void setEndPoint( const UrlT<T>& url );
-		void setEndPoint( const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector );
-		void setEndPoint( typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector );
-		void setEndPoint( const StringASCII& endPointStr );
+		void setVerb( typename HTTPRequestT<T>::Verb method );
+		void setUrl( const UrlT<T>& url );
 
-		typename HTTPRequestT<T>::Method getMethod() const;
+		///@brief	Set the URI of this request. (The part right of the hostname and before the params).
+		void setUri( const StringASCII& uriStr );
+
+		void setUrlParams( const Vector<HTTPParam>& paramVector );
+		
+		typename HTTPRequestT<T>::Verb getVerb() const;
 		const UrlT<T>& getEndPoint() const;
 
-		static const StringASCII& getMethodString( typename HTTPRequestT<T>::Method method );
-		static typename HTTPRequestT<T>::Method getMethod( const StringASCII& methodStr );
+		static const StringASCII& getVerbStr( typename HTTPRequestT<T>::Verb verb );
+		static typename HTTPRequestT<T>::Verb getVerb( const StringASCII& verbStr );
 
 		static const StringASCII methodStrTable[];
 
@@ -59,7 +61,7 @@ namespace Network {
 		void initParams();
 		void updateHostParamValue();
 
-		Method method;
+		Verb verb;
 		UrlT<T> url;
 
 		HTTPParam* hostParam;

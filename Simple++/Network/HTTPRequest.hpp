@@ -6,34 +6,28 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPRequestT<T>::HTTPRequestT() :
-		method( Method::Unknown ) {
+		verb( Verb::Unknown ) {
 		initHostParam();
 		initParams();
 
-		this->contentType = HTTPQueryT<T>::ContentType::Text;
 	}
 
 	template<typename T>
-	inline HTTPRequestT<T>::HTTPRequestT( const UrlT<T>& url ) :
+	inline HTTPRequestT<T>::HTTPRequestT( typename HTTPRequestT<T>::Verb verb, const UrlT<T>& url ) :
+		verb( verb ),
 		url( url ) {
 		initHostParam();
 		initParams();
 
-		if ( this->method == HTTPRequestT<T>::Method::POST ) {
-			setContentType( HTTPQueryT<T>::ContentType::Params );
-		}
 
 	}
 
 	template<typename T>
-	inline HTTPRequestT<T>::HTTPRequestT( typename UrlT<T>::Type type, const StringASCII& hostname ) :
+	inline HTTPRequestT<T>::HTTPRequestT( typename HTTPRequestT<T>::Verb verb, typename UrlT<T>::Sheme type, const StringASCII& hostname ) :
+		verb( verb ),
 		url( type, hostname ) {
 		initHostParam();
 		initParams();
-
-		if ( this->method == HTTPRequestT<T>::Method::POST ) {
-			setContentType( HTTPQueryT<T>::ContentType::Params );
-		}
 
 	}
 
@@ -98,15 +92,15 @@ namespace Network {
 		const StringASCII::ElemType* methodStrEndIt( it );
 
 		if ( methodStrBeginIt == methodStrEndIt ) {
-			ERROR_SPP( "HTTP request syntax error : no method." );
+			ERROR_SPP( "HTTP request syntax error : no verb." );
 			return false;
 		}
 
 		StringASCII methodStr( methodStrBeginIt, Size( methodStrEndIt - methodStrBeginIt ) );
-		typename HTTPRequestT<T>::Method method( HTTPRequestT<T>::getMethod( methodStr ) );
+		typename HTTPRequestT<T>::Verb verb( HTTPRequestT<T>::getVerb( methodStr ) );
 
-		if ( method == Method::Unknown ) {
-			ERROR_SPP( "HTTP request syntax error : Unkown method." );
+		if ( verb == Verb::Unknown ) {
+			ERROR_SPP( "HTTP request syntax error : Unkown verb." );
 			return false;
 		}
 
@@ -142,7 +136,7 @@ namespace Network {
 
 		StringASCII protocolStr( protocolStrBeginIt, Size( protocolStrEndIt - protocolStrBeginIt ) );
 
-		this->method = method;
+		this->verb = verb;
 		this->protocolStr = protocolStr;
 
 		return true;
@@ -181,42 +175,32 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setMethod( typename HTTPRequestT<T>::Method method ) {
-		this->method = method;
+	inline void HTTPRequestT<T>::setVerb( typename HTTPRequestT<T>::Verb verb ) {
+		this->verb = verb;
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint( const UrlT<T>& url ) {
+	inline void HTTPRequestT<T>::setUrl( const UrlT<T>& url ) {
 		this->url = url;
 
 		updateHostParamValue();
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint( const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector ) {
-		this->url.setEndPoint( endPointStr );
-		this->url.setParams( paramVector );
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint( typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector ) {
-		this->url.setType( type );
-		this->url.setHostname( hostname );
-		this->url.setEndPoint( endPointStr );
-		this->url.setParams( paramVector );
-
-		updateHostParamValue();
-	}
-
-	template<typename T>
-	inline void HTTPRequestT<T>::setEndPoint( const StringASCII& endPointStr ) {
-		this->url.setEndPoint( endPointStr );
+	inline void HTTPRequestT<T>::setUri( const StringASCII& uriStr ) {
+		this->url.setUri( uri );
 		this->url.clearParams();
 	}
 
 	template<typename T>
-	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod() const {
-		return this->method;
+	inline void HTTPRequestT<T>::setUrlParams( const Vector<HTTPParam>& paramVector ) {
+		this->url.setParams( paramVector );
+	}
+
+
+	template<typename T>
+	inline typename HTTPRequestT<T>::Verb HTTPRequestT<T>::getVerb() const {
+		return this->verb;
 	}
 
 	template<typename T>
@@ -225,8 +209,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline const StringASCII& HTTPRequestT<T>::getMethodString( typename HTTPRequestT<T>::Method method ) {
-		unsigned char methodIndex( static_cast< unsigned char >( method ) );
+	inline const StringASCII& HTTPRequestT<T>::getVerbStr( typename HTTPRequestT<T>::Verb verb ) {
+		unsigned char methodIndex( static_cast< unsigned char >( verb ) );
 		if ( methodIndex < sizeof( HTTPRequestT<T>::methodStrTable ) ) {
 			return HTTPRequestT<T>::methodStrTable[ methodIndex ];
 		} else {
@@ -235,21 +219,21 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline typename HTTPRequestT<T>::Method HTTPRequestT<T>::getMethod( const StringASCII& methodStr ) {
+	inline typename HTTPRequestT<T>::Verb HTTPRequestT<T>::getVerb( const StringASCII& verbStr ) {
 		constexpr Size enumSize( sizeof( HTTPRequestT<T>::methodStrTable ) );
 		for ( Size i( 0 ); i < enumSize; i++ ) {
-			if ( methodStr == HTTPRequestT<T>::methodStrTable[ i ] ) {
-				return static_cast< typename HTTPRequestT<T>::Method >( i );
+			if ( verbStr == HTTPRequestT<T>::methodStrTable[ i ] ) {
+				return static_cast< typename HTTPRequestT<T>::Verb >( i );
 			}
 		}
-		return HTTPRequestT<T>::Method::Unknown;
+		return HTTPRequestT<T>::Verb::Unknown;
 	}
 
 	template<typename T>
 	inline void HTTPRequestT<T>::formatQueryTitle( StringASCII* outputStr ) const {
 		StringASCII& str( *outputStr );
 
-		str << HTTPRequestT<T>::getMethodString( this->method );
+		str << HTTPRequestT<T>::getVerbStr( this->verb );
 		str << StringASCII::ElemType( ' ' );
 		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
 			this->url.formatEndPointWOParams( &str );

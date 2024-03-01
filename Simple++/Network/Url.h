@@ -8,7 +8,7 @@ namespace Network {
 	template<typename T>
 	class UrlT : public ParamContainerT<StringASCII, StringASCII> {
 	public:
-		enum class Type : unsigned char {
+		enum class Sheme : unsigned char {
 			HTTP,
 			HTTPS,
 			Unknown
@@ -16,8 +16,8 @@ namespace Network {
 
 		UrlT();
 		UrlT( const StringASCII & url );
-		UrlT( typename UrlT<T>::Type type, const StringASCII& hostname );
-		UrlT( typename UrlT<T>::Type type, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector );
+		UrlT( typename UrlT<T>::Sheme sheme, const StringASCII& hostname );
+		UrlT( typename UrlT<T>::Sheme sheme, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector );
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
 		UrlT( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
@@ -57,16 +57,16 @@ namespace Network {
 		static void formatParams( StringASCII* outputStr, const Vector<HTTPParam*>& paramVector );
 		static void formatParams( StringASCII* outputStr, const Vector<HTTPParam>& paramVector );
 
-		void setType( const typename UrlT<T>::Type type );
+		void setType( const typename UrlT<T>::Sheme sheme );
 		void setHostname( const StringASCII& hostname );
-		void setEndPoint( const StringASCII& endPoint );
+		void setUri( const StringASCII& endPoint );
 
-		typename UrlT<T>::Type getType() const;
+		typename UrlT<T>::Sheme getSheme() const;
 		const StringASCII& getHostname() const;
-		const StringASCII& getEndPoint() const;
+		const StringASCII& getUri() const;
 
-		static const StringASCII& getTypeString( typename UrlT<T>::Type type );
-		static typename UrlT<T>::Type getType( const StringASCII& typeStr );
+		static const StringASCII& getShemeStr( typename UrlT<T>::Sheme sheme );
+		static typename UrlT<T>::Sheme getSheme( const StringASCII& typeStr );
 
 		///@brief read from a file stream
 		///@param stream stream used to read load this object
@@ -83,9 +83,9 @@ namespace Network {
 		static const StringASCII typeStrTable[];
 
 	private:
-		Type type;
+		Sheme sheme;
 		StringASCII hostname;
-		StringASCII endPointStr;
+		StringASCII uriStr;
 
 	};
 

@@ -115,7 +115,7 @@ namespace Math::ML {
 
 	class MyModel : public Math::ML::Model::BasicModel {
 	public:
-		constexpr MyModel() {}
+		constexpr MyModel() { }
 		static constexpr Size nbLayers = 5;
 		static constexpr Size m[ 5 ][ 2 ] = {
 			{64,64},
@@ -135,7 +135,7 @@ namespace AI {
 
 	class BasicInput {
 	public:
-		BasicInput() {}
+		BasicInput() { }
 	};
 
 
@@ -155,7 +155,7 @@ namespace AI {
 
 		BasicData( const Input& input ) :
 			_input( input ),
-			_distance( 1 ) {}
+			_distance( 1 ) { }
 
 		const typename Distance& getDistance() const {
 			return this->_distance;
@@ -278,7 +278,7 @@ namespace AI {
 template<typename T>
 class ImageFunctor {
 public:
-	ImageFunctor() {};
+	ImageFunctor() { };
 	ImageFunctor& operator()( const Math::Vec2<Graphic::Size>& p, Graphic::ColorR<T>& color ) {
 		return *this;
 	}
@@ -1309,9 +1309,9 @@ int main( int argc, char* argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : HTTP									//
 	{
-		Network::HTTPClient client( Network::HTTPRequest::Type::HTTPS, StringASCII( "fapi.binance.com" ) );
-		client.setHeaderParam( StringASCII( "X-MBX-APIKEY" ), StringASCII( "q4Uuz9yQUUrj5zA3PGRROFeq03Binump7hkytN19qCBlitr8NCWICT2Wvqybn8Y8" ) );
-		StringASCII secretKey( "qi3IiH87ajbcxfEzQeBSAPf9dlHhnSzUYAE75pCdeETi3VN7iJHq0q0RrR4a1ZKW" );
+		Network::HTTPClient client( Network::HTTPRequest::Sheme::HTTPS, StringASCII( "fapi.binance.com" ) );
+		client.setHeaderParam( StringASCII( "X-MBX-APIKEY" ), StringASCII( "" ) );
+		StringASCII secretKey( "" );
 
 		Vector<Network::HTTPParam> paramVector;
 		// paramVector.push(Param(StringASCII("symbol"), StringASCII("BTCUSDT")));
@@ -1326,11 +1326,11 @@ int main( int argc, char* argv[] ) {
 
 		paramVector.push( Param( StringASCII( "signature" ), signatureStr ) );
 
-		Network::HTTPResponse* response1( client.query( Network::HTTPRequest::Method::GET, StringASCII( "/fapi/v2/account" ), paramVector ) );
+		Network::HTTPResponse* response1( client.GET( StringASCII( "/fapi/v2/account" ), paramVector ) );
 
 		Time::sleep( 10000 );
 
-		Network::HTTPResponse* response2( client.query( Network::HTTPRequest::Method::GET, StringASCII( "/fapi/v2/account" ), paramVector ) );
+		Network::HTTPResponse* response2( client.GET( StringASCII( "/fapi/v2/account" ), paramVector ) );
 
 		if ( response1 && response2 ) {
 			Log::displayLog( response2->getContent() );
@@ -1342,7 +1342,7 @@ int main( int argc, char* argv[] ) {
 		paramVector.push( Param( StringASCII( "symbol" ), StringASCII( "BTCUSDT" ) ) );
 
 		for ( Size i( 0 ); i < Size( 10 ); i++ ) {
-			if ( !client.query( Network::HTTPRequest::Method::GET, StringASCII( "/fapi/v1/premiumIndex" ), paramVector ) ) {
+			if ( !client.GET( StringASCII( "/fapi/v1/premiumIndex" ), paramVector ) ) {
 				Log::displayError( "Query failed." );
 				break;
 			}
@@ -1356,8 +1356,8 @@ int main( int argc, char* argv[] ) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG : CRYPTO									//
 	{
-		StringASCII keyStr( "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j" );
-		StringASCII dataStr( "symbol=LTCBTC&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.1&recvWindow=5000&timestamp=1499827319559" );
+		StringASCII keyStr( "" );
+		StringASCII dataStr( "" );
 
 		Vector<unsigned char> keyBinary( keyStr );
 		Vector<unsigned char> dataBinary( dataStr );
@@ -1378,7 +1378,7 @@ int main( int argc, char* argv[] ) {
 		struct GenerateVectorFunctor {
 			GenerateVectorFunctor( Size sizeMin, Size sizeMax ) :
 				sizeMin( sizeMin ),
-				sizeMax( sizeMax ) {}
+				sizeMax( sizeMax ) { }
 
 			Vector<unsigned char> operator()() const {
 				Vector<unsigned char> outputVector;
@@ -1423,7 +1423,7 @@ int main( int argc, char* argv[] ) {
 		struct GenerateVectorFunctor {
 			GenerateVectorFunctor( Size sizeMin, Size sizeMax ) :
 				sizeMin( sizeMin ),
-				sizeMax( sizeMax ) {}
+				sizeMax( sizeMax ) { }
 
 			Vector<unsigned char> operator()() const {
 				Vector<unsigned char> outputVector;

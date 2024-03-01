@@ -12,14 +12,16 @@ namespace Network {
 	class HTTPClientT {
 	public:
 		HTTPClientT( const UrlT<T>& url );
-		HTTPClientT( typename UrlT<T>::Type type, const StringASCII& hostname );
+		HTTPClientT( typename UrlT<T>::Sheme type, const StringASCII& hostname );
 
 		HTTPParam* setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue );
 
-		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Method method, const StringASCII& endPointStr, const Vector<HTTPParam>& urlParams );
-		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Method method, const UrlT<T>& url, const Vector<HTTPParam>& urlParams );
+		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const UrlT<T>& url );
 		HTTPResponseT<T>* query( const HTTPRequestT<T>& request );
 		HTTPResponseT<T>* query( const HTTPRequestT<T>* request );
+
+		HTTPResponseT<T>* GET( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector );
+		HTTPResponseT<T>* POST( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr );
 
 		const HTTPResponseT<T>* getLastResponse() const;
 
