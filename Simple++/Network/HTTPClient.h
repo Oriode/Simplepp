@@ -17,11 +17,12 @@ namespace Network {
 		HTTPParam* setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue );
 
 		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const UrlT<T>& url );
+		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const StringASCII& uri, const Vector<HTTPParam>& urlParamVector );
 		HTTPResponseT<T>* query( const HTTPRequestT<T>& request );
 		HTTPResponseT<T>* query( const HTTPRequestT<T>* request );
 
-		HTTPResponseT<T>* GET( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector );
-		HTTPResponseT<T>* POST( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr );
+		HTTPResponseT<T>* GET( const StringASCII& uri, const Vector<HTTPParam>& urlParamVector );
+		HTTPResponseT<T>* POST( const StringASCII& uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr );
 
 		const HTTPResponseT<T>* getLastResponse() const;
 

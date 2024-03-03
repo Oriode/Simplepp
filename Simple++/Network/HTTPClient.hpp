@@ -18,9 +18,18 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Verb method, const UrlT<T>& url ) {
-		this->request.setVerb( method );
-		this->request.setEndPoint( url );
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Verb verb, const UrlT<T>& url ) {
+		this->request.setVerb( verb );
+		this->request.setUrl( url );
+
+		return _query( this->request );
+	}
+
+	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::query( typename HTTPRequestT<T>::Verb verb, const StringASCII& uri, const Vector<HTTPParam>& urlParamVector ) {
+		this->request.setVerb( verb );
+		this->request.setUri( uri );
+		this->request.setUrlParams( urlParamVector );
 
 		return _query( this->request );
 	}
@@ -32,22 +41,22 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPResponseT<T>* HTTPClientT<T>::query( const HTTPRequestT<T>* request ) {
-		return _query( &request );
+		return _query( *request );
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::GET( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector ) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::GET( const StringASCII& uri, const Vector<HTTPParam>& urlParamVector ) {
 		this->request.setVerb( HTTPRequestT<T>::Verb::GET );
-		this->request.setUri( Uri );
+		this->request.setUri( uri );
 		this->request.setUrlParams( urlParamVector );
 		
 		return _query( this->request );
 	}
 
 	template<typename T>
-	inline HTTPResponseT<T>* HTTPClientT<T>::POST( const StringASCII& Uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr ) {
+	inline HTTPResponseT<T>* HTTPClientT<T>::POST( const StringASCII& uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr ) {
 		this->request.setVerb( HTTPRequestT<T>::Verb::POST );
-		this->request.setUri( Uri );
+		this->request.setUri( uri );
 		this->request.setUrlParams( urlParamVector );
 		this->request.setContent( contentStr );
 

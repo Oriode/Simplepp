@@ -17,6 +17,7 @@ namespace Network {
 		verb( verb ),
 		url( url ) {
 		initHostParam();
+		updateHostParamValue();
 		initParams();
 
 
@@ -27,6 +28,7 @@ namespace Network {
 		verb( verb ),
 		url( type, hostname ) {
 		initHostParam();
+		updateHostParamValue();
 		initParams();
 
 	}
@@ -188,8 +190,7 @@ namespace Network {
 
 	template<typename T>
 	inline void HTTPRequestT<T>::setUri( const StringASCII& uriStr ) {
-		this->url.setUri( uri );
-		this->url.clearParams();
+		this->url.setUri( uriStr );
 	}
 
 	template<typename T>
