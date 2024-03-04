@@ -40,26 +40,6 @@ void SimpleLogT<T>::getTimeStr( wchar_t * strBuffer, size_t bufferSize ) {
 
 template<typename T>
 void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color, unsigned char indent, const TCHAR * fileName, unsigned int lineNumber ) {
-	switch ( severity ) {
-		case typename SimpleLogT<T>::MessageSeverity::Error:
-	#if LOG_SEVERITY <= 3 || !defined LOG_SEVERITY
-	#else
-		return;
-	#endif
-		break;
-		case typename SimpleLogT<T>::MessageSeverity::Warning:
-	#if LOG_SEVERITY <= 2 || !defined LOG_SEVERITY
-	#else
-		return;
-	#endif
-		break;
-		case typename SimpleLogT<T>::MessageSeverity::Info:
-	#if LOG_SEVERITY <= 1 || !defined LOG_SEVERITY
-	#else
-		return;
-	#endif
-		break;
-	}
 
 	if ( message == NULL ) {
 		endLine(reinterpret_cast< T* >( NULL ));
@@ -79,8 +59,6 @@ void SimpleLogT<T>::errorHandler( const T * message, typename SimpleLogT<T>::Mes
 		T fileNameBuffer[ FILENAME_MAX_SIZE ];
 
 		convertFileName<T, TCHAR>( fileNameBuffer, fileName, 50 );
-		//fileNameBuffer[ 10 ] = T( '\0' );
-
 
 		parseMessage( prefixBuffer, 2048, timeBuffer, fileNameBuffer, lineNumber );
 	} else {
@@ -157,7 +135,7 @@ void SimpleLogT<T>::callErrorHandler( const T * message, typename SimpleLogT<T>:
 }
 
 template<typename T>
-void SimpleLogT<T>::setConsoleColor( typename SimpleLogT<T>::MessageColor color /*= typename SimpleLogT<T>::MessageColor::White*/ ) {
+void SimpleLogT<T>::setConsoleColor( typename SimpleLogT<T>::MessageColor color ) {
 #if defined WIN32
 #if defined ENABLE_WIN32
 	static HANDLE consoleHandle( GetStdHandle( STD_OUTPUT_HANDLE ) );

@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "Log.h"
+#include "SimpleLog.h"
 #include "IO/IO.h"
 #include "String.h"
 #include "Utility.h"

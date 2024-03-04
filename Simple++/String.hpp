@@ -11,7 +11,7 @@
 
 
 template<typename T>
-const T BasicString<T>::base64CharTable[ 64 ] = { T('A'), T('B'), T('C'), T('D'), T('E'), T('F'), T('G'), T('H'), T('I'), T('J'), T('K'), T('L'), T('M'), T('N'), T('O'), T('P'), T('Q'), T('R'), T('S'), T('T'), T('U'), T('V'), T('W'), T('X'), T('Y'), T('Z'), T('a'), T('b'), T('c'), T('d'), T('e'), T('f'), T('g'), T('h'), T('i'), T('j'), T('k'), T('l'), T('m'), T('n'), T('o'), T('p'), T('q'), T('r'), T('s'), T('t'), T('u'), T('v'), T('w'), T('x'), T('y'), T('z'), T('0'), T('1'), T('2'), T('3'), T('4'), T('5'), T('6'), T('7'), T('8'), T('9'), T('+'), T('/') };
+const T BasicString<T>::base64CharTable[ 64 ] = { T( 'A' ), T( 'B' ), T( 'C' ), T( 'D' ), T( 'E' ), T( 'F' ), T( 'G' ), T( 'H' ), T( 'I' ), T( 'J' ), T( 'K' ), T( 'L' ), T( 'M' ), T( 'N' ), T( 'O' ), T( 'P' ), T( 'Q' ), T( 'R' ), T( 'S' ), T( 'T' ), T( 'U' ), T( 'V' ), T( 'W' ), T( 'X' ), T( 'Y' ), T( 'Z' ), T( 'a' ), T( 'b' ), T( 'c' ), T( 'd' ), T( 'e' ), T( 'f' ), T( 'g' ), T( 'h' ), T( 'i' ), T( 'j' ), T( 'k' ), T( 'l' ), T( 'm' ), T( 'n' ), T( 'o' ), T( 'p' ), T( 'q' ), T( 'r' ), T( 's' ), T( 't' ), T( 'u' ), T( 'v' ), T( 'w' ), T( 'x' ), T( 'y' ), T( 'z' ), T( '0' ), T( '1' ), T( '2' ), T( '3' ), T( '4' ), T( '5' ), T( '6' ), T( '7' ), T( '8' ), T( '9' ), T( '+' ), T( '/' ) };
 
 template<typename T>
 const T BasicString<T>::numbers[ 16 ] = { T( '0' ), T( '1' ), T( '2' ), T( '3' ), T( '4' ), T( '5' ), T( '6' ), T( '7' ), T( '8' ), T( '9' ), T( 'a' ), T( 'b' ), T( 'c' ), T( 'd' ), T( 'e' ), T( 'f' ) };
@@ -45,7 +45,7 @@ const typename BasicString<T>::IsEndSentinel BasicString<T>::IS_END_SENTINEL;
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( C * const & str ) :
+BasicString<T>::BasicString( C* const& str ) :
 	Vector( Vector<T>::protectedCtor::null ) {
 	this -> size = BasicString<C>::getSize( str );
 	this -> maxSize = this -> size + 1;
@@ -71,7 +71,7 @@ Vector<T>(ctor::null)
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( const C * str, Size size ) :
+BasicString<T>::BasicString( const C* str, Size size ) :
 	Vector( str, size, size + 1 ) {
 	this -> dataTable[ this -> size ] = T( '\0' );
 }
@@ -93,7 +93,7 @@ BasicString<T>::BasicString() :
 
 
 template<typename T>
-BasicString<T>::BasicString( const unsigned char & ui, unsigned int base ) :
+BasicString<T>::BasicString( const unsigned char& ui, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 5;
 	this -> dataTable = new T[ 5 ];
@@ -103,7 +103,7 @@ BasicString<T>::BasicString( const unsigned char & ui, unsigned int base ) :
 
 
 template<typename T>
-BasicString<T>::BasicString( const unsigned short & ui, unsigned int base ) :
+BasicString<T>::BasicString( const unsigned short& ui, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 7;
 	this -> dataTable = new T[ 7 ];
@@ -113,7 +113,7 @@ BasicString<T>::BasicString( const unsigned short & ui, unsigned int base ) :
 
 
 template<typename T>
-BasicString<T>::BasicString( const int & i, unsigned int base ) :
+BasicString<T>::BasicString( const int& i, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 12;
 	this -> dataTable = new T[ 12 ];
@@ -122,7 +122,7 @@ BasicString<T>::BasicString( const int & i, unsigned int base ) :
 }
 
 template<typename T>
-BasicString<T>::BasicString( const unsigned int & ui, unsigned int base ) :
+BasicString<T>::BasicString( const unsigned int& ui, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 11;
 	this -> dataTable = new T[ 11 ];
@@ -131,7 +131,7 @@ BasicString<T>::BasicString( const unsigned int & ui, unsigned int base ) :
 }
 
 template<typename T>
-BasicString<T>::BasicString( const long int & l, unsigned int base ) :
+BasicString<T>::BasicString( const long int& l, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
@@ -140,7 +140,7 @@ BasicString<T>::BasicString( const long int & l, unsigned int base ) :
 }
 
 template<typename T>
-BasicString<T>::BasicString( const unsigned long int & ul, unsigned int base ) :
+BasicString<T>::BasicString( const unsigned long int& ul, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
@@ -149,7 +149,7 @@ BasicString<T>::BasicString( const unsigned long int & ul, unsigned int base ) :
 }
 
 template<typename T>
-BasicString<T>::BasicString( const long long int & ll, unsigned int base ) :
+BasicString<T>::BasicString( const long long int& ll, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
@@ -158,7 +158,7 @@ BasicString<T>::BasicString( const long long int & ll, unsigned int base ) :
 }
 
 template<typename T>
-BasicString<T>::BasicString( const unsigned long long int & ull, unsigned int base ) :
+BasicString<T>::BasicString( const unsigned long long int& ull, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 21;
 	this -> dataTable = new T[ 21 ];
@@ -167,7 +167,7 @@ BasicString<T>::BasicString( const unsigned long long int & ull, unsigned int ba
 }
 
 template<typename T>
-BasicString<T>::BasicString( const double & d, unsigned int precision, unsigned int base ) :
+BasicString<T>::BasicString( const double& d, unsigned int precision, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 50;
 	this -> dataTable = new T[ 50 ];
@@ -176,7 +176,7 @@ BasicString<T>::BasicString( const double & d, unsigned int precision, unsigned 
 }
 
 template<typename T>
-BasicString<T>::BasicString( const float & f, unsigned int precision, unsigned int base ) :
+BasicString<T>::BasicString( const float& f, unsigned int precision, unsigned int base ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 30;
 	this -> dataTable = new T[ 30 ];
@@ -185,7 +185,7 @@ BasicString<T>::BasicString( const float & f, unsigned int precision, unsigned i
 }
 
 template<typename T>
-BasicString<T>::BasicString( const bool & b ) :
+BasicString<T>::BasicString( const bool& b ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this -> maxSize = 6;
 	this -> dataTable = new T[ 6 ];
@@ -194,7 +194,7 @@ BasicString<T>::BasicString( const bool & b ) :
 }
 
 template<typename T>
-BasicString<T>::BasicString( const T & c ) :
+BasicString<T>::BasicString( const T& c ) :
 	Vector<T>( 1, 2 ) {
 	this -> dataTable[ 0 ] = T( c );
 	this -> dataTable[ 1 ] = T( '\0' );
@@ -211,38 +211,38 @@ BasicString<T>::BasicString( const C( &str )[ N ] ) :
 
 template<typename T>
 template<typename C>
-BasicString<T>::BasicString( const BasicString<C> & str ) :
+BasicString<T>::BasicString( const BasicString<C>& str ) :
 	Vector<T>( str.getSize(), str.getSize() + 1 ) {
 	Utility::copy( this -> dataTable, str.getData(), Vector<T>::getMaxSize() );
 }
 
 template<typename T>
-BasicString<T>::BasicString( const BasicString<T> & str ) :
-	Vector<T>(Vector<T>::protectedCtor::null) {
-	if ( str.getSize() > Size(0) ) {
+BasicString<T>::BasicString( const BasicString<T>& str ) :
+	Vector<T>( Vector<T>::protectedCtor::null ) {
+	if ( str.getSize() > Size( 0 ) ) {
 		this->size = str.getSize();
 		this->maxSize = str.getMaxSize();
 		this->dataTable = new T[ this->maxSize ];
-		Utility::copy(this -> dataTable, str.dataTable, Vector<T>::getMaxSize());
+		Utility::copy( this -> dataTable, str.dataTable, Vector<T>::getMaxSize() );
 	} else {
-		this->size = Size(0);
-		this->maxSize = Size(1);
+		this->size = Size( 0 );
+		this->maxSize = Size( 1 );
 		this->dataTable = new T[ this->maxSize ];
-		this->dataTable[ 0 ] = T('\0');
+		this->dataTable[ 0 ] = T( '\0' );
 	}
 }
 
 template<typename T>
-BasicString<T>::BasicString( BasicString<T> && str ) :
-	Vector<T>( Utility::toRValue( str ) ) {}
+BasicString<T>::BasicString( BasicString<T>&& str ) :
+	Vector<T>( Utility::toRValue( str ) ) { }
 
 template<typename T>
-BasicString<T>::BasicString(typename BasicString<T>::protectedCtor) : Vector<T>( Vector<T>::protectedCtor::null ) {
+BasicString<T>::BasicString( typename BasicString<T>::protectedCtor ) : Vector<T>( Vector<T>::protectedCtor::null ) {
 
 }
 
 template<typename T>
-inline BasicString<T>::BasicString( const typename Math::Compare::Value & compareValue ) :
+inline BasicString<T>::BasicString( const typename Math::Compare::Value& compareValue ) :
 	Vector<T>( Vector<T>::protectedCtor::null ) {
 	this->maxSize = 8;
 	this->dataTable = new T[ 8 ];
@@ -255,7 +255,7 @@ inline BasicString<T>::BasicString( const typename Math::Compare::Value & compar
 }
 
 template<typename T>
-BasicString<T>::~BasicString() {}
+BasicString<T>::~BasicString() { }
 
 
 
@@ -269,7 +269,7 @@ BasicString<T>::~BasicString() {}
 /************************************************************************/
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str1, const BasicString<T> & str2 ) {
+BasicString<T> operator+( const BasicString<T>& str1, const BasicString<T>& str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -277,7 +277,7 @@ BasicString<T> operator+( const BasicString<T> & str1, const BasicString<T> & st
 
 
 template<typename T, typename C>
-BasicString<T> operator+( const BasicString<T> & str1, const BasicString<C> & str2 ) {
+BasicString<T> operator+( const BasicString<T>& str1, const BasicString<C>& str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -286,14 +286,14 @@ BasicString<T> operator+( const BasicString<T> & str1, const BasicString<C> & st
 
 
 template<typename T, typename C>
-BasicString<T> operator+( const BasicString<T> & str1, C * const & str2 ) {
+BasicString<T> operator+( const BasicString<T>& str1, C* const& str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
 }
 
 template<typename T, typename C>
-BasicString<T> operator+( C * const & str1, const BasicString<T> & str2 ) {
+BasicString<T> operator+( C* const& str1, const BasicString<T>& str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -301,14 +301,14 @@ BasicString<T> operator+( C * const & str1, const BasicString<T> & str2 ) {
 
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str1, const int & i ) {
+BasicString<T> operator+( const BasicString<T>& str1, const int& i ) {
 	BasicString<T> newStr( str1 );
 	newStr += i;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const int & i, const BasicString<T> & str ) {
+BasicString<T> operator+( const int& i, const BasicString<T>& str ) {
 	BasicString<T> newStr( i );
 	newStr += str;
 	return newStr;
@@ -316,28 +316,28 @@ BasicString<T> operator+( const int & i, const BasicString<T> & str ) {
 
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned char & ui ) {
+BasicString<T> operator+( const BasicString<T>& str, const unsigned char& ui ) {
 	BasicString<T> newStr( str );
 	newStr += ui;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const unsigned char & ui, const BasicString<T> & str ) {
+BasicString<T> operator+( const unsigned char& ui, const BasicString<T>& str ) {
 	BasicString<T> newStr( ui );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned short & ui ) {
+BasicString<T> operator+( const BasicString<T>& str, const unsigned short& ui ) {
 	BasicString<T> newStr( str );
 	newStr += ui;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const unsigned short & ui, const BasicString<T> & str ) {
+BasicString<T> operator+( const unsigned short& ui, const BasicString<T>& str ) {
 	BasicString<T> newStr( ui );
 	newStr += str;
 	return newStr;
@@ -345,42 +345,42 @@ BasicString<T> operator+( const unsigned short & ui, const BasicString<T> & str 
 
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned int & ui ) {
+BasicString<T> operator+( const BasicString<T>& str, const unsigned int& ui ) {
 	BasicString<T> newStr( str );
 	newStr += ui;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const unsigned int & ui, const BasicString<T> & str ) {
+BasicString<T> operator+( const unsigned int& ui, const BasicString<T>& str ) {
 	BasicString<T> newStr( ui );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const long int & l ) {
+BasicString<T> operator+( const BasicString<T>& str, const long int& l ) {
 	BasicString<T> newStr( str );
 	newStr += l;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const long int & l, const BasicString<T> & str ) {
+BasicString<T> operator+( const long int& l, const BasicString<T>& str ) {
 	BasicString<T> newStr( l );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned long int & ul ) {
+BasicString<T> operator+( const BasicString<T>& str, const unsigned long int& ul ) {
 	BasicString<T> newStr( str );
 	newStr += ul;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const unsigned long int & ul, const BasicString<T> & str ) {
+BasicString<T> operator+( const unsigned long int& ul, const BasicString<T>& str ) {
 	BasicString<T> newStr( ul );
 	newStr += str;
 	return newStr;
@@ -388,91 +388,91 @@ BasicString<T> operator+( const unsigned long int & ul, const BasicString<T> & s
 
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const long long int & ll ) {
+BasicString<T> operator+( const BasicString<T>& str, const long long int& ll ) {
 	BasicString<T> newStr( str );
 	newStr += ll;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const long long int & ll, const BasicString<T> & str ) {
+BasicString<T> operator+( const long long int& ll, const BasicString<T>& str ) {
 	BasicString<T> newStr( ll );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const unsigned long long int & ull ) {
+BasicString<T> operator+( const BasicString<T>& str, const unsigned long long int& ull ) {
 	BasicString<T> newStr( str );
 	newStr += ull;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const unsigned long long int & ull, const BasicString<T> & str ) {
+BasicString<T> operator+( const unsigned long long int& ull, const BasicString<T>& str ) {
 	BasicString<T> newStr( ull );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const float & f ) {
+BasicString<T> operator+( const BasicString<T>& str, const float& f ) {
 	BasicString<T> newStr( str );
 	newStr += f;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const float & f, const BasicString<T> & str ) {
+BasicString<T> operator+( const float& f, const BasicString<T>& str ) {
 	BasicString<T> newStr( f );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const bool & b ) {
+BasicString<T> operator+( const BasicString<T>& str, const bool& b ) {
 	BasicString<T> newStr( str );
 	newStr += b;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const bool & b, const BasicString<T> & str ) {
+BasicString<T> operator+( const bool& b, const BasicString<T>& str ) {
 	BasicString<T> newStr( b );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const double & d ) {
+BasicString<T> operator+( const BasicString<T>& str, const double& d ) {
 	BasicString<T> newStr( str );
 	newStr += d;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const double & d, const BasicString<T> & str ) {
+BasicString<T> operator+( const double& d, const BasicString<T>& str ) {
 	BasicString<T> newStr( d );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const BasicString<T> & str, const T & c ) {
+BasicString<T> operator+( const BasicString<T>& str, const T& c ) {
 	BasicString<T> newStr( str );
 	newStr += c;
 	return newStr;
 }
 
 template<typename T>
-BasicString<T> operator+( const T & c, const BasicString<T> & str ) {
+BasicString<T> operator+( const T& c, const BasicString<T>& str ) {
 	BasicString<T> newStr( c );
 	newStr += str;
 	return newStr;
 }
 
 template<typename T, typename C, size_t N>
-BasicString<T> operator+( const C( &str1 )[ N ], const BasicString<T> & str2 ) {
+BasicString<T> operator+( const C( &str1 )[ N ], const BasicString<T>& str2 ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -480,7 +480,7 @@ BasicString<T> operator+( const C( &str1 )[ N ], const BasicString<T> & str2 ) {
 
 
 template<typename T, typename C, size_t N>
-BasicString<T> operator+( const BasicString<T> & str1, const C( &str2 )[ N ] ) {
+BasicString<T> operator+( const BasicString<T>& str1, const C( &str2 )[ N ] ) {
 	BasicString<T> newStr( str1 );
 	newStr += str2;
 	return newStr;
@@ -499,7 +499,7 @@ BasicString<T> operator+( const BasicString<T> & str1, const C( &str2 )[ N ] ) {
 
 template<typename T>
 template<typename C, size_t N>
-BasicString<T> & BasicString<T>::concat( const C( &str )[ N ] ) {
+BasicString<T>& BasicString<T>::concat( const C( &str )[ N ] ) {
 	this -> concat( str, N - 1 );
 	return *this;
 }
@@ -508,7 +508,7 @@ BasicString<T> & BasicString<T>::concat( const C( &str )[ N ] ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::concat( C * const & str ) {
+BasicString<T>& BasicString<T>::concat( C* const& str ) {
 	_concatWOS( str );
 
 	*this -> iteratorEnd = T( '\0' );
@@ -517,96 +517,40 @@ BasicString<T> & BasicString<T>::concat( C * const & str ) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const bool & b ) {
-	auto newMaxSize = this -> size + 6;
-	if ( newMaxSize > this -> maxSize ) {
-		_extendBuffer( newMaxSize );
-		_updateIterators();
-	}
-
-	this -> size += toCString( b, this -> iteratorEnd );
-	Vector<T>::_updateIterators();
+BasicString<T>& BasicString<T>::concat( const bool& b ) {
+	_concatWOS( c );
+	*this->iteratorEnd = T( '\0' );
 	return *this;
 }
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const char & c ) {
-	Size newSize( this -> size + 1 );
-	if ( newSize >= this -> maxSize ) {
-		_extendBuffer( newSize );
-		_updateIterators();
-	}
-
-	this -> size = newSize;
-	toCString( c, this -> iteratorEnd );
-	Vector<T>::_updateIterators();
+BasicString<T>& BasicString<T>::concat( const char& c ) {
+	_concatWOS( c );
+	*this->iteratorEnd = T( '\0' );
 	return *this;
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const wchar_t & c ) {
-	Size newSize( this -> size + 1 );
-	if ( newSize >= this -> maxSize ) {
-		_extendBuffer( this -> size );
-		_updateIterators();
-	}
-
-	this -> size = newSize;
-	toCString( c, this -> iteratorEnd );
-	Vector<T>::_updateIterators();
+BasicString<T>& BasicString<T>::concat( const wchar_t& c ) {
+	_concatWOS( c );
+	*this->iteratorEnd = T( '\0' );
 	return *this;
 }
 
 
-
-/*
-template<typename T>
-template<typename Type, unsigned int Base>
-BasicString<T> & BasicString<T>::_concatInteger( const Type & i ) {
-	auto newSize = this -> size + 21;
-	if ( newSize > this -> maxSize ){
-		_extendBuffer( newSize );
-		_updateIterators();
-	}
-
-	this -> size += toCString<Base>( i, this -> iteratorEnd );
-	Vector<T>::_updateIterators();
-	return *this;
-}
-
-template<typename T>
-template<typename Type, unsigned int Precision, unsigned int Base>
-BasicString<T> & BasicString<T>::_concatFloat( const Type & f ) {
-	auto newSize = this -> size + 50;
-	if ( newSize > this -> maxSize ){
-		_extendBuffer( newSize );
-		_updateIterators();
-	}
-
-	this -> size += toCString<Precision, Base>( f, this -> iteratorEnd );
-	Vector<T>::_updateIterators();
-	return *this;
-}
-*/
 
 template<typename T>
 template<typename Type>
-BasicString<T> & BasicString<T>::_concatInteger( const Type & i, unsigned int base ) {
-	auto newSize = this -> size + 64;
-	if ( newSize > this -> maxSize ) {
-		_extendBuffer( newSize );
-		_updateIterators();
-	}
-
-	this -> size += toCString( i, this -> iteratorEnd, base );
-	Vector<T>::_updateIterators();
+BasicString<T>& BasicString<T>::_concatInteger( const Type& i, unsigned int base ) {
+	_concatIntegerWOS( i, base );
+	*this->iteratorEnd = T( '\0' );
 	return *this;
 }
 
 template<typename T>
 template<typename Type>
-BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const Size & fillNb, const T & fillChar, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatFillIntegerWOS( const Type& i, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	Size nbChar( _getIntegerLength( i, base ) );
 
 	// Compute the new buffer size.
@@ -615,6 +559,7 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const Size 
 		Size nbCharToFill( fillNb - nbChar );
 
 		newSize = this -> size + fillNb;
+		this -> size = newSize;
 		if ( newSize > this -> maxSize ) {
 			_extendBuffer( newSize );
 			_updateIterators();
@@ -624,19 +569,19 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const Size 
 			*this -> iteratorEnd = T( '-' );
 			this -> iteratorEnd++;
 
-			T * itEnd( this -> iteratorEnd + nbCharToFill );
+			T* itEnd( this -> iteratorEnd + nbCharToFill );
 			for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
 				*this -> iteratorEnd = fillChar;
 			}
 
-			toCString( -i, this -> iteratorEnd, base );
+			toCStringWOS( -i, this -> iteratorEnd, base );
 		} else {
-			T * itEnd( this -> iteratorEnd + nbCharToFill );
+			T* itEnd( this -> iteratorEnd + nbCharToFill );
 			for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
 				*this -> iteratorEnd = fillChar;
 			}
 
-			toCString( i, this -> iteratorEnd, base );
+			toCStringWOS( i, this -> iteratorEnd, base );
 		}
 	} else {
 		newSize = this -> size + nbChar;
@@ -644,59 +589,27 @@ BasicString<T> & BasicString<T>::_concatFillInteger( const Type & i, const Size 
 			_extendBuffer( newSize );
 			_updateIterators();
 		}
-		toCString( i, this -> iteratorEnd, base );
+		toCStringWOS( i, this -> iteratorEnd, base );
 	}
 	this -> size = newSize;
 	Vector<T>::_updateIterators();
 	return *this;
+}
 
+template<typename T>
+template<typename C>
+inline BasicString<T>& BasicString<T>::_concatFillStringWOS( const C * buffer, const Size bufferSize, const Size& fillNb, const T& fillChar ) {
 
-	/*
-	// ------------
-	Size nbChar( _getIntegerLength( i, base ) );
-	
-	// Compute the new buffer size.
-	Size newSize;
-	if ( fillNb > nbChar ) {
-		Size nbCharToFill( fillNb - nbChar );
-
-		newSize = this -> size + fillNb;
-		if ( newSize > this -> maxSize ){
-			_extendBuffer( newSize );
-			_updateIterators();
-		}
-
-		T * itEnd( this -> iteratorEnd + nbCharToFill );
-		for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
-			*this -> iteratorEnd = fillChar;
-		}
-	} else {
-		newSize = this -> size + nbChar;
-		if ( newSize > this -> maxSize ){
-			_extendBuffer( newSize );
-			_updateIterators();
-		}
-	}
-	toCString( i, this -> iteratorEnd, base );
-	this -> size = newSize;
-	Vector<T>::_updateIterators();
-	return *this;
-	*/
+	// TODO:
 }
 
 
 
 template<typename T>
 template<typename Type>
-BasicString<T> & BasicString<T>::_concatFloat( const Type & f, unsigned int precision, unsigned int base ) {
-	auto newSize = this -> size + 50;
-	if ( newSize > this -> maxSize ) {
-		_extendBuffer( newSize );
-		_updateIterators();
-	}
-
-	this -> size += toCString( f, this -> iteratorEnd, precision, base );
-	Vector<T>::_updateIterators();
+BasicString<T>& BasicString<T>::_concatFloat( const Type& f, unsigned int precision, unsigned int base ) {
+	_concatFloatWOS( f, precision, base );
+	*this->iteratorEnd = T( '\0' );
 	return *this;
 }
 
@@ -763,78 +676,146 @@ BasicString<T> & BasicString<T>::concat( const float & f ) {
 */
 
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const unsigned char & uc, unsigned int base ) {
-	return _concatInteger<unsigned char>( uc, base );
+BasicString<T>& BasicString<T>::concat( const unsigned char& uc, unsigned int base ) {
+	_concatWOS( uc, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const unsigned short & us, unsigned int base ) {
-	return _concatInteger<unsigned short>( us, base );
+BasicString<T>& BasicString<T>::concat( const unsigned short& us, unsigned int base ) {
+	_concatWOS( us, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const int & i, unsigned int base ) {
-	return _concatInteger<int>( i, base );
+BasicString<T>& BasicString<T>::concat( const int& i, unsigned int base ) {
+	_concatWOS( i, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const unsigned int & ui, unsigned int base ) {
-	return _concatInteger<unsigned int>( ui, base );
+BasicString<T>& BasicString<T>::concat( const unsigned int& ui, unsigned int base ) {
+	_concatWOS( ui, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const long int & l, unsigned int base ) {
-	return _concatInteger<long int>( l, base );
+BasicString<T>& BasicString<T>::concat( const long int& l, unsigned int base ) {
+	_concatWOS( l, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const unsigned long int & ul, unsigned int base ) {
-	return _concatInteger<unsigned long int>( ul, base );
+BasicString<T>& BasicString<T>::concat( const unsigned long int& ul, unsigned int base ) {
+	_concatWOS( ul, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const long long int & ll, unsigned int base ) {
-	return _concatInteger<long long int>( ll, base );
+BasicString<T>& BasicString<T>::concat( const long long int& ll, unsigned int base ) {
+	_concatWOS( ll, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const unsigned long long int & ull, unsigned int base ) {
-	return _concatInteger<unsigned long long int>( ull, base );
+BasicString<T>& BasicString<T>::concat( const unsigned long long int& ull, unsigned int base ) {
+	_concatWOS( ull, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const double & d, unsigned int precision, unsigned int base ) {
-	return _concatFloat<double>( d, precision, base );
+BasicString<T>& BasicString<T>::concat( const double& d, unsigned int precision, unsigned int base ) {
+	_concatWOS( d, precision, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const float & f, unsigned int precision, unsigned int base ) {
-	return _concatFloat<float>( f, precision, base );
+BasicString<T>& BasicString<T>::concat( const float& f, unsigned int precision, unsigned int base ) {
+	_concatWOS( f, precision, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const unsigned char & uc, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<unsigned char>( uc, fillNb, fillChar, base );
+inline BasicString<T> & BasicString<T>::concatFill( const BasicString<T>& str, const Size& fillNb, const T& fillChar ) {
+	return concatFill( str.getData(), str.getSize(), fillNb, fillChar );
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T>& BasicString<T>::concatFill( const BasicString<C>& str, const Size& fillNb, const T& fillChar ) {
+	return concatFill( str.getData(), str.getSize(), fillNb, fillChar );
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T> & BasicString<T>::concatFill( const C* buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar ) {
+	_concatFillWOS( buffer, bufferSize, fillNb, fillChar );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T> & BasicString<T>::concatFill( C* const& buffer, const Size& fillNb, const T& fillChar ) {
+	return concatFill( buffer, BasicString<C>::getSize( buffer ), fillNb, fillChar );
+}
+
+template<typename T>
+template<typename C, size_t N>
+inline BasicString<T> & BasicString<T>::concatFill( const C( &str )[ N ], const Size& fillNb, const T& fillChar ) {
+	return concatFill( str, N, fillNb, fillChar );
+}
+
+template<typename T>
+BasicString<T>& BasicString<T>::concatFill( const unsigned char& uc, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( uc, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const unsigned short & us, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<unsigned short>( us, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const unsigned short& us, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( us, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const int & i, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<int>( i, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const int& i, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( i, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const unsigned int & ui, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<unsigned int>( ui, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const unsigned int& ui, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( ui, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const long int & l, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<long int>( l, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const long int& l, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( l, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const unsigned long int & ul, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<unsigned long int>( ul, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const unsigned long int& ul, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( ul, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const long long int & ll, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<long long int>( ll, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const long long int& ll, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( ll, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
 template<typename T>
-BasicString<T> & BasicString<T>::concatFill( const unsigned long long int & ull, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	return _concatFillInteger<unsigned long long int>( ull, fillNb, fillChar, base );
+BasicString<T>& BasicString<T>::concatFill( const unsigned long long int& ull, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	_concatFillWOS( ull, fillNb, fillChar, base );
+	*this->iteratorEnd = T( '\0' );
+	return *this;
 }
+
 /*
 template<typename T>
 BasicString<T> & BasicString<T>::concatFill( const double & d, const Size & fillNb, const T & fillChar, unsigned int precision, unsigned int base ) {
@@ -848,12 +829,12 @@ BasicString<T> & BasicString<T>::concatFill( const float & f, const Size & fillN
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::concat( const BasicString<C> & str ) {
+BasicString<T>& BasicString<T>::concat( const BasicString<C>& str ) {
 	return concat( str.getData(), str.getSize() );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::concat( const BasicString<T> & str ) {
+BasicString<T>& BasicString<T>::concat( const BasicString<T>& str ) {
 	return concat( str.getData(), str.getSize() );
 }
 
@@ -862,7 +843,7 @@ BasicString<T> & BasicString<T>::concat( const BasicString<T> & str ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::concat( const C * buffer, const Size & bufferSize ) {
+BasicString<T>& BasicString<T>::concat( const C* buffer, const Size& bufferSize ) {
 	_concatWOS( buffer, bufferSize );
 
 	*this -> iteratorEnd = T( '\0' );
@@ -877,16 +858,107 @@ BasicString<T> & BasicString<T>::concat( const C * buffer, const Size & bufferSi
 /************************************************************************/
 template<typename T>
 template<typename C, size_t N>
-BasicString<T> & BasicString<T>::_concatWOS( const C( &str )[ N ] ) {
+BasicString<T>& BasicString<T>::_concatWOS( const C( &str )[ N ] ) {
 	this -> concat( str );
 	return *this;
 }
 
+template<typename T>
+template<typename C>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const BasicString<C>& str, const Size& fillNb, const T& fillChar ) {
+	return _concatFillWOS( str.getData(), str.getSize(), fillNb, fillChar );
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( C* const& buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar ) {
+	Size newSize;
+	if ( fillNb > bufferSize ) {
+		Size nbCharToFill( fillNb - bufferSize );
+
+		newSize = this -> size + fillNb;
+		if ( newSize > this -> maxSize ) {
+			_extendBuffer( newSize );
+			_updateIterators();
+		}
+
+		T* itEnd( this -> iteratorEnd + nbCharToFill );
+		for ( ; this -> iteratorEnd < itEnd; this -> iteratorEnd++ ) {
+			*this -> iteratorEnd = fillChar;
+		}
+
+	} else {
+		newSize = this -> size + bufferSize;
+		if ( newSize > this -> maxSize ) {
+			_extendBuffer( newSize );
+			_updateIterators();
+		}
+	}
+
+	Utility::copy( this -> iteratorEnd, buffer, bufferSize );
+
+	this->size = newSize;
+	_updateIterators();
+
+	return *this;
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( C* const& buffer, const Size& fillNb, const T& fillChar ) {
+	return _concatFillWOS( buffer, BasicString<T>::getSize( str ), fillNb, fillChar );
+}
+
+template<typename T>
+template<typename C, size_t N>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const C( &str )[ N ], const Size& fillNb, const T& fillChar ) {
+	return _concatFillWOS( buffer, N, fillNb, fillChar );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned char& uc, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<unsigned char>( uc, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned short& us, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<unsigned short>( us, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const int& i, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<int>( i, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned int& ui, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<unsigned int>( ui, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const long int& l, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<long int>( l, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned long int& ul, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<unsigned long int>( ul, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const long long int& ll, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<long long int>( ll, fillNb, fillChar, base );
+}
+
+template<typename T>
+inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned long long int& ull, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	return _concatFillIntegerWOS<unsigned long long int>( ull, fillNb, fillChar, base );
+}
 
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( C * const & str ) {
+BasicString<T>& BasicString<T>::_concatWOS( C* const& str ) {
 	_concatWOS( str, BasicString<T>::getSize( str ) );
 
 	return *this;
@@ -894,7 +966,7 @@ BasicString<T> & BasicString<T>::_concatWOS( C * const & str ) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const bool & b ) {
+BasicString<T>& BasicString<T>::_concatWOS( const bool& b ) {
 	auto newMaxSize = this -> size + 6;
 	if ( newMaxSize > this -> maxSize ) {
 		_extendBuffer( newMaxSize );
@@ -908,7 +980,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const bool & b ) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const char & c ) {
+BasicString<T>& BasicString<T>::_concatWOS( const char& c ) {
 	Size newSize( this -> size + 1 );
 	if ( newSize >= this -> maxSize ) {
 		_extendBuffer( newSize );
@@ -922,7 +994,7 @@ BasicString<T> & BasicString<T>::_concatWOS( const char & c ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const wchar_t & c ) {
+BasicString<T>& BasicString<T>::_concatWOS( const wchar_t& c ) {
 	Size newSize( this -> size + 1 );
 	if ( newSize >= this -> maxSize ) {
 		_extendBuffer( newSize );
@@ -969,7 +1041,7 @@ BasicString<T> & BasicString<T>::_concatFloatWOS( const Type & f ) {
 
 template<typename T>
 template<typename Type>
-BasicString<T> & BasicString<T>::_concatIntegerWOS( const Type & i, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatIntegerWOS( const Type& i, unsigned int base ) {
 	auto newSize = this -> size + 21;
 	if ( newSize > this -> maxSize ) {
 		_extendBuffer( newSize );
@@ -983,7 +1055,7 @@ BasicString<T> & BasicString<T>::_concatIntegerWOS( const Type & i, unsigned int
 
 template<typename T>
 template<typename Type>
-BasicString<T> & BasicString<T>::_concatFloatWOS( const Type & f, unsigned int precision, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatFloatWOS( const Type& f, unsigned int precision, unsigned int base ) {
 	auto newSize = this -> size + 50;
 	if ( newSize > this -> maxSize ) {
 		_extendBuffer( newSize );
@@ -1058,60 +1130,60 @@ BasicString<T> & BasicString<T>::_concatWOS( const float & f ) {
 */
 
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const unsigned char & uc, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const unsigned char& uc, unsigned int base ) {
 	return _concatIntegerWOS<unsigned char>( uc, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const unsigned short & us, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const unsigned short& us, unsigned int base ) {
 	return _concatIntegerWOS<unsigned short>( us, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const int & i, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const int& i, unsigned int base ) {
 	return _concatIntegerWOS<int>( i, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const unsigned int & ui, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const unsigned int& ui, unsigned int base ) {
 	return _concatIntegerWOS<unsigned int>( ui, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const long int & l, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const long int& l, unsigned int base ) {
 	return _concatIntegerWOS<long int>( l, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const unsigned long int & ul, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const unsigned long int& ul, unsigned int base ) {
 	return _concatIntegerWOS<unsigned long int>( ul, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const long long int & ll, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const long long int& ll, unsigned int base ) {
 	return _concatIntegerWOS<long long int>( ll, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const unsigned long long int & ull, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const unsigned long long int& ull, unsigned int base ) {
 	return _concatIntegerWOS<unsigned long long int>( ull, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const double & d, unsigned int precision, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const double& d, unsigned int precision, unsigned int base ) {
 	return _concatFloatWOS<double>( d, precision, base );
 }
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const float & f, unsigned int precision, unsigned int base ) {
+BasicString<T>& BasicString<T>::_concatWOS( const float& f, unsigned int precision, unsigned int base ) {
 	return _concatFloatWOS<float>( f, precision, base );
 }
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( const BasicString<C> & str ) {
+BasicString<T>& BasicString<T>::_concatWOS( const BasicString<C>& str ) {
 	return _concatWOS( str.getData(), str.getSize() );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::_concatWOS( const BasicString<T> & str ) {
+BasicString<T>& BasicString<T>::_concatWOS( const BasicString<T>& str ) {
 	return _concatWOS( str.getData(), str.getSize() );
 }
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::_concatWOS( C * const & buffer, const Size & bufferSize ) {
+BasicString<T>& BasicString<T>::_concatWOS( C* const& buffer, const Size& bufferSize ) {
 	Size newSize = getSize() + bufferSize;
 
 	if ( newSize >= this -> maxSize ) {
@@ -1153,20 +1225,20 @@ Size BasicString<T>::_convertUI2StringWOS( Type number, T * buffer ) {
 
 template<typename T>
 template<typename Type>
-Size BasicString<T>::_convertUI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
-	T * bufferInit( *bufferP );
+Size BasicString<T>::_convertUI2StringWOS( Type number, T** bufferP, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	__convertUI2StringWOS( number, bufferP, base );
 
-	return static_cast<Size>( *bufferP - bufferInit );
+	return static_cast< Size >( *bufferP - bufferInit );
 }
 
 template<typename T>
 template<typename Type>
-typename void BasicString<T>::__convertUI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
+typename void BasicString<T>::__convertUI2StringWOS( Type number, T** bufferP, unsigned int base ) {
 	_ASSERT_SPP( base <= 16 && base > 0 );
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	T *& buffer( *bufferP );
+	T*& buffer( *bufferP );
 	auto tmpP = tmpBuffer;
 	while ( true ) {
 		*tmpP = number % Type( base );
@@ -1213,8 +1285,8 @@ Size BasicString<T>::_convertI2StringWOS( Type number, T * buffer ) {
 
 template<typename T>
 template<typename Type>
-Size BasicString<T>::_convertI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
-	T * bufferInit( *bufferP );
+Size BasicString<T>::_convertI2StringWOS( Type number, T** bufferP, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	__convertI2StringWOS( number, bufferP, base );
 
 	return static_cast< Size >( *bufferP - bufferInit );
@@ -1222,12 +1294,12 @@ Size BasicString<T>::_convertI2StringWOS( Type number, T ** bufferP, unsigned in
 
 template<typename T>
 template<typename Type>
-typename void BasicString<T>::__convertI2StringWOS( Type number, T ** bufferP, unsigned int base ) {
+typename void BasicString<T>::__convertI2StringWOS( Type number, T** bufferP, unsigned int base ) {
 	_ASSERT_SPP( base <= 16 && base > 0 );
 
 	static Type tmpBuffer[ sizeof( Type ) * 8 ];
 
-	T *& buffer( *bufferP );
+	T*& buffer( *bufferP );
 	if ( number < Type( 0 ) ) {
 		( *buffer ) = T( '-' );
 		buffer++;
@@ -1313,8 +1385,8 @@ Size BasicString<T>::_convertFloat2StringWOS( Type number, T * buffer ) {
 
 template<typename T>
 template<typename Type>
-Size BasicString<T>::_convertFloat2StringWOS( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
-	T * bufferInit( *bufferP );
+Size BasicString<T>::_convertFloat2StringWOS( Type number, T** bufferP, unsigned int precision, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	__convertFloat2StringWOS( number, bufferP, precision, base );
 
 	return static_cast< Size >( *bufferP - bufferInit );
@@ -1322,26 +1394,26 @@ Size BasicString<T>::_convertFloat2StringWOS( Type number, T ** bufferP, unsigne
 
 template<typename T>
 template<typename Type>
-typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
+typename void BasicString<T>::__convertFloat2StringWOS( Type number, T** bufferP, unsigned int precision, unsigned int base ) {
 	_ASSERT_SPP( base <= 16 && base > 0 );
 
-	T *& buffer( *bufferP );
+	T*& buffer( *bufferP );
 
 	// Check if inf.
-	if ( Utility::isInf<Type>(number) ) {
-		( *buffer++ ) = T('#');
-		( *buffer++ ) = T('i');
-		( *buffer++ ) = T('n');
-		( *buffer++ ) = T('f');
+	if ( Utility::isInf<Type>( number ) ) {
+		( *buffer++ ) = T( '#' );
+		( *buffer++ ) = T( 'i' );
+		( *buffer++ ) = T( 'n' );
+		( *buffer++ ) = T( 'f' );
 		return;
 	}
 
 	// Check if nan.
-	if ( Utility::isNan<Type>(number) ) {
-		( *buffer++ ) = T('#');
-		( *buffer++ ) = T('n');
-		( *buffer++ ) = T('a');
-		( *buffer++ ) = T('n');
+	if ( Utility::isNan<Type>( number ) ) {
+		( *buffer++ ) = T( '#' );
+		( *buffer++ ) = T( 'n' );
+		( *buffer++ ) = T( 'a' );
+		( *buffer++ ) = T( 'n' );
 		return;
 	}
 
@@ -1362,22 +1434,22 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 		number /= Type( base );
 		comma++;
 	}
-	if ( comma < int(10) ) {
-		for (int i(0); i < comma; i++, buffer++ ) {
-			int castedNumber = static_cast<int>(number);
+	if ( comma < int( 10 ) ) {
+		for ( int i( 0 ); i < comma; i++, buffer++ ) {
+			int castedNumber = static_cast< int >( number );
 			*buffer = BasicString<T>::numbers[ castedNumber % base ];
-			number *= Type(base);
+			number *= Type( base );
 		}
 
-		*buffer = T('.');
+		*buffer = T( '.' );
 		buffer++;
 
 		int precisionI = ( int ) precision;
 
-		for (int i(0); i < precisionI; i++, buffer++ ) {
+		for ( int i( 0 ); i < precisionI; i++, buffer++ ) {
 			int castedNumber = static_cast< int >( number );
 			*buffer = BasicString<T>::numbers[ castedNumber % base ];
-			number *= Type(base);
+			number *= Type( base );
 		}
 	} else {
 		comma--;
@@ -1385,36 +1457,36 @@ typename void BasicString<T>::__convertFloat2StringWOS( Type number, T ** buffer
 			int castedNumber = static_cast< int >( number );
 			*buffer = BasicString<T>::numbers[ castedNumber % base ];
 			buffer++;
-			number *= Type(base);
+			number *= Type( base );
 		}
-		*buffer = T('.');
+		*buffer = T( '.' );
 		buffer++;
 
 		int precisionI = ( int ) precision;
 
-		for (int i(1); i < precisionI; i++, buffer++ ) {
+		for ( int i( 1 ); i < precisionI; i++, buffer++ ) {
 			int castedNumber = static_cast< int >( number );
 			*buffer = BasicString<T>::numbers[ castedNumber % base ];
-			number *= Type(base);
+			number *= Type( base );
 		}
-		*buffer = T('E');
+		*buffer = T( 'E' );
 		buffer++;
 
-		__convertUI2StringWOS<int>(comma, &buffer, base);
+		__convertUI2StringWOS<int>( comma, &buffer, base );
 	}
 }
 
 template<typename T>
 template<typename Type>
-static Size BasicString<T>::_convertI2StringWOSFill( Type number, T ** bufferP, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	T * bufferInit( *bufferP );
+static Size BasicString<T>::_convertI2StringWOSFill( Type number, T** bufferP, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	Size nbChar( _getIntegerLength( number, base ) );
 
 	if ( nbChar < fillNb ) {
 		// The output will have less characters than expected, we will have to fill.
 		Size nbCharToAdd( fillNb - nbChar );
-		T *& buffer( *bufferP );
-		T * endIt( buffer + nbCharToAdd );
+		T*& buffer( *bufferP );
+		T* endIt( buffer + nbCharToAdd );
 		for ( ; buffer != endIt; buffer++ ) {
 			( *buffer ) = fillChar;
 		}
@@ -1427,8 +1499,8 @@ static Size BasicString<T>::_convertI2StringWOSFill( Type number, T ** bufferP, 
 
 template<typename T>
 template<typename Type>
-static Size BasicString<T>::_convertUI2StringWOSFill( Type number, T ** bufferP, const Size & fillNb, const T & fillChar, unsigned int base ) {
-	T * bufferInit( *bufferP );
+static Size BasicString<T>::_convertUI2StringWOSFill( Type number, T** bufferP, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	Size nbChar( _getIntegerLength( number, base ) );
 
 	if ( nbChar < fillNb ) {
@@ -1472,8 +1544,8 @@ Size BasicString<T>::_convertUI2String( Type number, T * buffer ) {
 
 template<typename T>
 template<typename Type>
-Size BasicString<T>::_convertUI2String( Type number, T ** bufferP, unsigned int base ) {
-	T * bufferInit( *bufferP );
+Size BasicString<T>::_convertUI2String( Type number, T** bufferP, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	__convertUI2StringWOS( number, bufferP, base );
 	( **bufferP ) = T( '\0' );
 
@@ -1514,8 +1586,8 @@ Size BasicString<T>::_convertI2String( Type number, T * buffer ) {
 
 template<typename T>
 template<typename Type>
-Size BasicString<T>::_convertI2String( Type number, T ** bufferP, unsigned int base ) {
-	T * bufferInit( *bufferP );
+Size BasicString<T>::_convertI2String( Type number, T** bufferP, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	__convertI2StringWOS( number, bufferP, base );
 	( **bufferP ) = T( '\0' );
 
@@ -1586,8 +1658,8 @@ Size BasicString<T>::_convertFloat2String( Type number, T * buffer ) {
 
 template<typename T>
 template<typename Type>
-Size BasicString<T>::_convertFloat2String( Type number, T ** bufferP, unsigned int precision, unsigned int base ) {
-	T * bufferInit( *bufferP );
+Size BasicString<T>::_convertFloat2String( Type number, T** bufferP, unsigned int precision, unsigned int base ) {
+	T* bufferInit( *bufferP );
 	__convertFloat2StringWOS( number, bufferP, precision, base );
 	( **bufferP ) = T( '\0' );
 
@@ -1604,40 +1676,40 @@ Size BasicString<T>::_convertFloat2String( Type number, T ** bufferP, unsigned i
 
 template<typename T>
 template<typename EndFunc>
-inline void BasicString<T>::copy(const BasicString<T>::Iterator* itP, const EndFunc& endFunc) {
-	const BasicString<T>::Iterator & it(*itP);
+inline void BasicString<T>::copy( const BasicString<T>::Iterator* itP, const EndFunc& endFunc ) {
+	const BasicString<T>::Iterator& it( *itP );
 
-	const typename BasicString<T>::Iterator beginIt(it);
-	for ( ; !endFunc(it); it++ );
-	const typename BasicString<T>::Iterator endIt(it);
+	const typename BasicString<T>::Iterator beginIt( it );
+	for ( ; !endFunc( it ); it++ );
+	const typename BasicString<T>::Iterator endIt( it );
 
-	Size copySize(endIt - beginIt);
-	Size bufferSize(copySize + Size(1));
+	Size copySize( endIt - beginIt );
+	Size bufferSize( copySize + Size( 1 ) );
 
-	resize(bufferSize);
+	resize( bufferSize );
 
-	Utility::copy(beginIt, copySize);
+	Utility::copy( beginIt, copySize );
 
-	this->dataTable[ copySize ] = BasicString<T>::ElemType('\0');
+	this->dataTable[ copySize ] = BasicString<T>::ElemType( '\0' );
 }
 
 template<typename T>
 template<typename C>
-Size BasicString<T>::toCString( const C & c, T * buffer ) {
+Size BasicString<T>::toCString( const C& c, T* buffer ) {
 	buffer[ 0 ] = c;
 	buffer[ 1 ] = T( '\0' );
 	return Size( 1 );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( const char & c, T * buffer ) {
+Size BasicString<T>::toCString( const char& c, T* buffer ) {
 	buffer[ 0 ] = c;
 	buffer[ 1 ] = T( '\0' );
 	return Size( 1 );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( const wchar_t & c, T * buffer ) {
+Size BasicString<T>::toCString( const wchar_t& c, T* buffer ) {
 	buffer[ 0 ] = c;
 	buffer[ 1 ] = T( '\0' );
 	return Size( 1 );
@@ -1706,117 +1778,117 @@ Size BasicString<T>::toCString( float number, T * buffer ) {
 */
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned char number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned char number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned short number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned short number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned int number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( int number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned long long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned long long int number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( long long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( long long int number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned long int number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCString( long int number, T* buffer, unsigned int base ) {
 	return toCString( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( double number, T * buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCString( double number, T* buffer, unsigned int precision, unsigned int base ) {
 	return toCString( number, &buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( float number, T * buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCString( float number, T* buffer, unsigned int precision, unsigned int base ) {
 	return toCString( number, &buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( bool b, T * buffer ) {
+Size BasicString<T>::toCString( bool b, T* buffer ) {
 	return toCString( b, &buffer );
 }
 
 template<typename T>
-inline Size BasicString<T>::toCString( const typename Math::Compare::Value & compareValue, T * buffer ) {
+inline Size BasicString<T>::toCString( const typename Math::Compare::Value& compareValue, T* buffer ) {
 	return toCString( compareValue, &buffer );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned char number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned char number, T** buffer, unsigned int base ) {
 	return _convertUI2String<unsigned char>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned short number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned short number, T** buffer, unsigned int base ) {
 	return _convertUI2String<unsigned short>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned int number, T** buffer, unsigned int base ) {
 	return _convertUI2String<unsigned int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( int number, T** buffer, unsigned int base ) {
 	return _convertI2String<int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned long long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned long long int number, T** buffer, unsigned int base ) {
 	return _convertUI2String<unsigned long long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( long long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( long long int number, T** buffer, unsigned int base ) {
 	return _convertI2String<long long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( unsigned long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( unsigned long int number, T** buffer, unsigned int base ) {
 	return _convertUI2String<unsigned long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCString( long int number, T** buffer, unsigned int base ) {
 	return _convertI2String<long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( double number, T ** buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCString( double number, T** buffer, unsigned int precision, unsigned int base ) {
 	return _convertFloat2String<double>( number, buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( float number, T ** buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCString( float number, T** buffer, unsigned int precision, unsigned int base ) {
 	return _convertFloat2String<float>( number, buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCString( bool b, T ** buffer ) {
+Size BasicString<T>::toCString( bool b, T** buffer ) {
 	if ( b ) {
 		static const T staticValues[] = { T( 't' ), T( 'r' ), T( 'u' ), T( 'e' ), T( '\0' ) };
 		return BasicString<T>::copy( buffer, staticValues ) - Size( 1 );
@@ -1827,7 +1899,7 @@ Size BasicString<T>::toCString( bool b, T ** buffer ) {
 }
 
 template<typename T>
-inline Size BasicString<T>::toCString( const typename Math::Compare::Value & compareValue, T ** buffer ) {
+inline Size BasicString<T>::toCString( const typename Math::Compare::Value& compareValue, T** buffer ) {
 	switch ( compareValue ) {
 		case Math::Compare::Value::Equal:
 			{
@@ -1858,19 +1930,19 @@ inline Size BasicString<T>::toCString( const typename Math::Compare::Value & com
 
 template<typename T>
 template<typename C>
-Size BasicString<T>::toCStringWOS( const C & c, T * buffer ) {
+Size BasicString<T>::toCStringWOS( const C& c, T* buffer ) {
 	buffer[ 0 ] = c;
 	return Size( 1 );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( const char & c, T * buffer ) {
+Size BasicString<T>::toCStringWOS( const char& c, T* buffer ) {
 	buffer[ 0 ] = c;
 	return Size( 1 );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( const wchar_t & c, T * buffer ) {
+Size BasicString<T>::toCStringWOS( const wchar_t& c, T* buffer ) {
 	buffer[ 0 ] = c;
 	return Size( 1 );
 }
@@ -1938,117 +2010,117 @@ Size BasicString<T>::toCStringWOS( float number, T * buffer ) {
 */
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned char number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned char number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned short number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned short number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned int number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( int number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned long long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned long long int number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( long long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( long long int number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned long int number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( long int number, T * buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( long int number, T* buffer, unsigned int base ) {
 	return toCStringWOS( number, &buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( double number, T * buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( double number, T* buffer, unsigned int precision, unsigned int base ) {
 	return toCStringWOS( number, &buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( float number, T * buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( float number, T* buffer, unsigned int precision, unsigned int base ) {
 	return toCStringWOS( number, &buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( bool b, T * buffer ) {
+Size BasicString<T>::toCStringWOS( bool b, T* buffer ) {
 	return toCStringWOS( b, &buffer );
 }
 
 template<typename T>
-inline Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value & compareValue, T * buffer ) {
+inline Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value& compareValue, T* buffer ) {
 	return toCStringWOS( compareValue, &buffer );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned char number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned char number, T** buffer, unsigned int base ) {
 	return _convertUI2StringWOS<unsigned char>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned short number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned short number, T** buffer, unsigned int base ) {
 	return _convertUI2StringWOS<unsigned short>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned int number, T** buffer, unsigned int base ) {
 	return _convertUI2StringWOS<unsigned int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( int number, T** buffer, unsigned int base ) {
 	return _convertI2StringWOS<int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned long long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned long long int number, T** buffer, unsigned int base ) {
 	return _convertUI2StringWOS<unsigned long long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( long long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( long long int number, T** buffer, unsigned int base ) {
 	return _convertI2StringWOS<long long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( unsigned long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( unsigned long int number, T** buffer, unsigned int base ) {
 	return _convertUI2StringWOS<unsigned long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( long int number, T ** buffer, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( long int number, T** buffer, unsigned int base ) {
 	return _convertI2StringWOS<long int>( number, buffer, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( double number, T ** buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( double number, T** buffer, unsigned int precision, unsigned int base ) {
 	return _convertFloat2StringWOS<double>( number, buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( float number, T ** buffer, unsigned int precision, unsigned int base ) {
+Size BasicString<T>::toCStringWOS( float number, T** buffer, unsigned int precision, unsigned int base ) {
 	return _convertFloat2StringWOS<float>( number, buffer, precision, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOS( bool b, T ** bufferP ) {
+Size BasicString<T>::toCStringWOS( bool b, T** bufferP ) {
 	if ( b ) {
 		static const T staticValues[] = { T( 'T' ), T( 'R' ), T( 'U' ), T( 'E' ) };
 		return BasicString<T>::copy( bufferP, staticValues );
@@ -2059,7 +2131,7 @@ Size BasicString<T>::toCStringWOS( bool b, T ** bufferP ) {
 }
 
 template<typename T>
-inline Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value & compareValue, T ** bufferP ) {
+inline Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value& compareValue, T** bufferP ) {
 	switch ( compareValue ) {
 		case Math::Compare::Value::Equal:
 			{
@@ -2085,92 +2157,92 @@ inline Size BasicString<T>::toCStringWOS( const typename Math::Compare::Value & 
 /************************************************************************/
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned char number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned char number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned short number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned short number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned int number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned int number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( int number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( int number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned long long int number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned long long int number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( long long int number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( long long int number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned long int number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned long int number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( long int number, T * buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( long int number, T* buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return toCStringWOSFill( number, &buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned char number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned char number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertUI2StringWOSFill<unsigned char>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned short number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned short number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertUI2StringWOSFill<unsigned short>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned int number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned int number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertUI2StringWOSFill<unsigned int>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( int number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( int number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertI2StringWOSFill<int>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned long long int number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned long long int number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertUI2StringWOSFill<unsigned long long int>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( long long int number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( long long int number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertI2StringWOSFill<long int>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( unsigned long int number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( unsigned long int number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertUI2StringWOSFill<unsigned long int>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-Size BasicString<T>::toCStringWOSFill( long int number, T ** buffer, const Size & fillNb, const T & fillChar, unsigned int base ) {
+Size BasicString<T>::toCStringWOSFill( long int number, T** buffer, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _convertI2StringWOSFill<long int>( number, buffer, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline void BasicString<T>::toCStringHexadecimal(unsigned char uc, T** itP) {
-	T*& it(*itP);
+inline void BasicString<T>::toCStringHexadecimal( unsigned char uc, T** itP ) {
+	T*& it( *itP );
 
-	unsigned char c0(uc >> 4);
-	unsigned char c1(uc & 0xF);
+	unsigned char c0( uc >> 4 );
+	unsigned char c1( uc & 0xF );
 
 	it[ 0 ] = BasicString<T>::numbers[ c0 ];
 	it[ 1 ] = BasicString<T>::numbers[ c1 ];
@@ -2283,8 +2355,8 @@ static Type BasicString<T>::_toFloat( const T ** itParam, const EndFunc & endFun
 
 template<typename T>
 template<typename Type, typename EndFunc>
-static Type BasicString<T>::_toSignedInteger( const T ** itP, unsigned int base, const EndFunc & endFunc ) {
-	const T *& it( *itP);
+static Type BasicString<T>::_toSignedInteger( const T** itP, unsigned int base, const EndFunc& endFunc ) {
+	const T*& it( *itP );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -2297,8 +2369,8 @@ static Type BasicString<T>::_toSignedInteger( const T ** itP, unsigned int base,
 			result = -( *it - 48 );
 			it++;
 
-			for ( ; !endFunc(it); it++ ) {	//Start the computation
-				result = result * base - ( *it - T('0') );
+			for ( ; !endFunc( it ); it++ ) {	//Start the computation
+				result = result * base - ( *it - T( '0' ) );
 			}
 
 		} else
@@ -2308,8 +2380,8 @@ static Type BasicString<T>::_toSignedInteger( const T ** itP, unsigned int base,
 			result = *it - 48;
 			it++;
 
-			for ( ; !endFunc(it); it++ ) {	//Start the computation
-				result = result * base + ( *it - T('0') );
+			for ( ; !endFunc( it ); it++ ) {	//Start the computation
+				result = result * base + ( *it - T( '0' ) );
 			}
 
 		} else
@@ -2322,8 +2394,8 @@ static Type BasicString<T>::_toSignedInteger( const T ** itP, unsigned int base,
 
 template<typename T>
 template<typename Type, typename EndFunc>
-static Type BasicString<T>::_toUnsignedInteger( const T ** itP, unsigned int base, const EndFunc & endFunc ) {
-	const T *& it( *itP);
+static Type BasicString<T>::_toUnsignedInteger( const T** itP, unsigned int base, const EndFunc& endFunc ) {
+	const T*& it( *itP );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -2338,7 +2410,7 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** itP, unsigned int bas
 	} else
 		return 0;
 
-	for ( ; !endFunc( it ) ; it++ ) {	//Start the computation
+	for ( ; !endFunc( it ); it++ ) {	//Start the computation
 		result = result * base + ( *it - T( '0' ) );
 	}
 
@@ -2347,10 +2419,10 @@ static Type BasicString<T>::_toUnsignedInteger( const T ** itP, unsigned int bas
 
 template<typename T>
 template<typename EndFunc>
-inline bool BasicString<T>::_toBool(const T** itP, const EndFunc& endFunc) {
-	const T*& it(*itP);
+inline bool BasicString<T>::_toBool( const T** itP, const EndFunc& endFunc ) {
+	const T*& it( *itP );
 
-	if ( *it == T('t') || *it == T('1') ) {
+	if ( *it == T( 't' ) || *it == T( '1' ) ) {
 		return true;
 	} else {
 		return false;
@@ -2359,20 +2431,20 @@ inline bool BasicString<T>::_toBool(const T** itP, const EndFunc& endFunc) {
 
 template<typename T>
 template<typename EndFunc>
-inline BasicString<T> BasicString<T>::_toString(const T** itP, const EndFunc& endFunc) {
-	const T*& it(*itP);
+inline BasicString<T> BasicString<T>::_toString( const T** itP, const EndFunc& endFunc ) {
+	const T*& it( *itP );
 
-	const typename BasicString<T>::Iterator beginIt(it);
-	for ( ; !endFunc(it); it++ );
-	const typename BasicString<T>::Iterator endIt(it);
+	const typename BasicString<T>::Iterator beginIt( it );
+	for ( ; !endFunc( it ); it++ );
+	const typename BasicString<T>::Iterator endIt( it );
 
-	return BasicString<T>(beginIt, Size(endIt - beginIt));
+	return BasicString<T>( beginIt, Size( endIt - beginIt ) );
 }
 
 template<typename T>
 template<typename Type, typename EndFunc>
-static Type BasicString<T>::_toFloat( const T ** itP, unsigned int base, const EndFunc & endFunc ) {
-	const T *& it( *itP);
+static Type BasicString<T>::_toFloat( const T** itP, unsigned int base, const EndFunc& endFunc ) {
+	const T*& it( *itP );
 	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
 
 	if ( endFunc( it ) )
@@ -2387,7 +2459,7 @@ static Type BasicString<T>::_toFloat( const T ** itP, unsigned int base, const E
 		negative = false;
 	}
 
-	const Type baseType(static_cast<Type>(base) );
+	const Type baseType( static_cast< Type >( base ) );
 	for ( ; !endFunc( it ) && *it != T( '.' ); it++ ) {			//Start the computation
 		result *= baseType;
 		result += Type( *it - T( '0' ) );
@@ -2398,7 +2470,7 @@ static Type BasicString<T>::_toFloat( const T ** itP, unsigned int base, const E
 
 	Type oneOnBase( Type( 1.0 ) / baseType );
 	Type exp( oneOnBase );
-	for ( ; !endFunc( it ) ; it++ ) {
+	for ( ; !endFunc( it ); it++ ) {
 		result += Type( *it - T( '0' ) ) * ( exp );
 		exp *= oneOnBase;
 	}
@@ -2497,105 +2569,105 @@ double BasicString<T>::toDouble( const T * buffer, const EndFunc & endFunc ) {
 template<typename T>
 template<typename C>
 inline C BasicString<T>::fromString() const {
-	return _fromString(reinterpret_cast< const C* >( NULL ));
+	return _fromString( reinterpret_cast< const C* >( NULL ) );
 }
 
 template<typename T>
 template<typename EndFunc>
-inline BasicString<T> BasicString<T>::toString(const T* it, const EndFunc& endFunc) {
-	const T** itP(&it);
-	return _toString<EndFunc>(itP, endFunc);
+inline BasicString<T> BasicString<T>::toString( const T* it, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toString<EndFunc>( itP, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-char BasicString<T>::toChar( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toSignedInteger<char, EndFunc>(itP, base, endFunc );
+char BasicString<T>::toChar( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toSignedInteger<char, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-short BasicString<T>::toShort( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toSignedInteger<short, EndFunc>(itP, base, endFunc );
+short BasicString<T>::toShort( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toSignedInteger<short, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-int BasicString<T>::toInt( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toSignedInteger<int, EndFunc>(itP, base, endFunc );
+int BasicString<T>::toInt( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toSignedInteger<int, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-long int BasicString<T>::toLong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toSignedInteger<long int, EndFunc>(itP, base, endFunc );
+long int BasicString<T>::toLong( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toSignedInteger<long int, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-long long int BasicString<T>::toLongLong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
+long long int BasicString<T>::toLongLong( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
 	return _toSignedInteger<long long int, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned char BasicString<T>::toUChar( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toUnsignedInteger<unsigned char, EndFunc>(itP, base, endFunc );
+unsigned char BasicString<T>::toUChar( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toUnsignedInteger<unsigned char, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned short BasicString<T>::toUShort( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toUnsignedInteger<unsigned short, EndFunc>(itP, base, endFunc );
+unsigned short BasicString<T>::toUShort( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toUnsignedInteger<unsigned short, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned int BasicString<T>::toUInt( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toUnsignedInteger<unsigned int, EndFunc>(itP, base, endFunc );
+unsigned int BasicString<T>::toUInt( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toUnsignedInteger<unsigned int, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned long int BasicString<T>::toULong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toUnsignedInteger<unsigned long int, EndFunc>(itP, base, endFunc );
+unsigned long int BasicString<T>::toULong( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toUnsignedInteger<unsigned long int, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned long long int BasicString<T>::toULongLong( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toUnsignedInteger<unsigned long long int, EndFunc>(itP, base, endFunc );
+unsigned long long int BasicString<T>::toULongLong( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toUnsignedInteger<unsigned long long int, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-float BasicString<T>::toFloat( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toFloat<float, EndFunc>(itP, base, endFunc );
+float BasicString<T>::toFloat( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toFloat<float, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-double BasicString<T>::toDouble( const T * it, unsigned int base, const EndFunc & endFunc ) {
-	const T ** itP( &it );
-	return _toFloat<double, EndFunc>(itP, base, endFunc );
+double BasicString<T>::toDouble( const T* it, unsigned int base, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toFloat<double, EndFunc>( itP, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-inline double BasicString<T>::toBool(const T* it, const EndFunc& endFunc) {
-	const T** itP(&it);
-	return _toBool<EndFunc>(itP, endFunc);
+inline double BasicString<T>::toBool( const T* it, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return _toBool<EndFunc>( itP, endFunc );
 }
 
 
@@ -2688,182 +2760,182 @@ double BasicString<T>::toDouble( const T ** it, const EndFunc & endFunc ) {
 
 template<typename T>
 template<typename EndFunc>
-inline BasicString<T> BasicString<T>::toString(const T** it, const EndFunc& endFunc) {
-	return _toString<EndFunc>(it, endFunc);
+inline BasicString<T> BasicString<T>::toString( const T** it, const EndFunc& endFunc ) {
+	return _toString<EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-char BasicString<T>::toChar( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+char BasicString<T>::toChar( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toSignedInteger<char, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-short BasicString<T>::toShort( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+short BasicString<T>::toShort( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toSignedInteger<short, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-int BasicString<T>::toInt( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+int BasicString<T>::toInt( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toSignedInteger<int, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-long int BasicString<T>::toLong( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+long int BasicString<T>::toLong( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toSignedInteger<long int, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-long long int BasicString<T>::toLongLong( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+long long int BasicString<T>::toLongLong( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toSignedInteger<long long int, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned char BasicString<T>::toUChar( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+unsigned char BasicString<T>::toUChar( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toUnsignedInteger<unsigned char, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned short BasicString<T>::toUShort( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+unsigned short BasicString<T>::toUShort( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toUnsignedInteger<unsigned short, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned int BasicString<T>::toUInt( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+unsigned int BasicString<T>::toUInt( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toUnsignedInteger<unsigned int, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned long int BasicString<T>::toULong( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+unsigned long int BasicString<T>::toULong( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toUnsignedInteger<unsigned long int, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-unsigned long long int BasicString<T>::toULongLong( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+unsigned long long int BasicString<T>::toULongLong( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toUnsignedInteger<unsigned long long int, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-float BasicString<T>::toFloat( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+float BasicString<T>::toFloat( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toFloat<float, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-double BasicString<T>::toDouble( const T ** it, unsigned int base, const EndFunc & endFunc ) {
+double BasicString<T>::toDouble( const T** it, unsigned int base, const EndFunc& endFunc ) {
 	return _toFloat<double, EndFunc>( it, base, endFunc );
 }
 
 template<typename T>
 template<typename EndFunc>
-inline double BasicString<T>::toBool(const T** it, const EndFunc& endFunc) {
-	return _toBool<EndFunc>(it, endFunc);
+inline double BasicString<T>::toBool( const T** it, const EndFunc& endFunc ) {
+	return _toBool<EndFunc>( it, endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline C BasicString<T>::fromString(const T* it, const EndFunc& endFunc) {
-	const T** itP(&it);
-	return fromString(itP, endFunc);
+inline C BasicString<T>::fromString( const T* it, const EndFunc& endFunc ) {
+	const T** itP( &it );
+	return fromString( itP, endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline C BasicString<T>::fromString(const T** it, const EndFunc& endFunc) {
-	return _fromString(it, endFunc, reinterpret_cast< const C* >( NULL ));
+inline C BasicString<T>::fromString( const T** it, const EndFunc& endFunc ) {
+	return _fromString( it, endFunc, reinterpret_cast< const C* >( NULL ) );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline char BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const char*) {
-	return toChar(it, unsigned int(10), endFunc);
+inline char BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const char* ) {
+	return toChar( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const int*) {
-	return toInt(it, unsigned int(10), endFunc);
+inline int BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const int* ) {
+	return toInt( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline short BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const short*) {
-	return toShort(it, unsigned int(10), endFunc);
+inline short BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const short* ) {
+	return toShort( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const long int*) {
-	return toLong(it, unsigned int(10), endFunc);
+inline long int BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const long int* ) {
+	return toLong( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline long long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const long long int*) {
-	return toLongLong(it, unsigned int(10), endFunc);
+inline long long int BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const long long int* ) {
+	return toLongLong( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline unsigned char BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned char*) {
-	return toUChar(it, unsigned int(10), endFunc);
+inline unsigned char BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const unsigned char* ) {
+	return toUChar( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline unsigned int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned int*) {
-	return toUInt(it, unsigned int(10), endFunc);
+inline unsigned int BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const unsigned int* ) {
+	return toUInt( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline unsigned short BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned short*) {
-	return toShort(it, unsigned int(10), endFunc);
+inline unsigned short BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const unsigned short* ) {
+	return toShort( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline unsigned long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned long int*) {
-	return toULong(it, unsigned int(10), endFunc);
+inline unsigned long int BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const unsigned long int* ) {
+	return toULong( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline unsigned long long int BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const unsigned long long int*) {
-	return toULongLong(it, unsigned int(10), endFunc);
+inline unsigned long long int BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const unsigned long long int* ) {
+	return toULongLong( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline float BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const float*) {
-	return toFloat(it, unsigned int(10), endFunc);
+inline float BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const float* ) {
+	return toFloat( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline double BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const double*) {
-	return toDouble(it, unsigned int(10), endFunc);
+inline double BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const double* ) {
+	return toDouble( it, unsigned int( 10 ), endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline bool BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, const bool*) {
-	return toBool(it, endFunc);
+inline bool BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, const bool* ) {
+	return toBool( it, endFunc );
 }
 
 template<typename T>
 template<typename C, typename EndFunc>
-inline T* BasicString<T>::_fromString(const T** it, const EndFunc& endFunc, ...) {
+inline T* BasicString<T>::_fromString( const T** it, const EndFunc& endFunc, ... ) {
 	return *it;
 }
 
@@ -2959,151 +3031,153 @@ double BasicString<T>::toDouble() const {
 
 template<typename T>
 char BasicString<T>::toChar( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toSignedInteger<char>( &tmpBuffer, base );
 }
 
 template<typename T>
 short BasicString<T>::toShort( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toSignedInteger<short>( &tmpBuffer, base );
 }
 
 template<typename T>
 int BasicString<T>::toInt( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toSignedInteger<int>( &tmpBuffer, base );
 }
 
 template<typename T>
 long int BasicString<T>::toLong( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toSignedInteger<long int>( &tmpBuffer, base );
 }
 
 template<typename T>
 long long int BasicString<T>::toLongLong( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toSignedInteger<long long int>( &tmpBuffer, base );
 }
 
 template<typename T>
 unsigned char BasicString<T>::toUChar( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toUnsignedInteger<unsigned char>( &tmpBuffer, base );
 }
 
 template<typename T>
 unsigned short BasicString<T>::toUShort( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toUnsignedInteger<unsigned short>( &tmpBuffer, base );
 }
 
 template<typename T>
 unsigned int BasicString<T>::toUInt( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toUnsignedInteger<unsigned int>( &tmpBuffer, base );
 }
 
 template<typename T>
 unsigned long int BasicString<T>::toULong( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toUnsignedInteger<unsigned long int>( &tmpBuffer, base );
 }
 
 template<typename T>
 unsigned long long int BasicString<T>::toULongLong( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toUnsignedInteger<unsigned long long int>( &tmpBuffer, base );
 }
 
 template<typename T>
 float BasicString<T>::toFloat( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toFloat<float>( &tmpBuffer, base );
 }
 
 template<typename T>
 double BasicString<T>::toDouble( unsigned int base ) const {
-	const T * tmpBuffer( this -> dataTable );
+	const T* tmpBuffer( this -> dataTable );
 	return _toFloat<double>( &tmpBuffer, base );
 }
 
 template<typename T>
 inline bool BasicString<T>::toBool() const {
-	const T* tmpBuffer(this -> dataTable);
-	return _toBool(&tmpBuffer);
+	const T* tmpBuffer( this -> dataTable );
+	return _toBool( &tmpBuffer );
 }
 
 template<typename T>
-inline char BasicString<T>::_fromString(const char*) const {
+inline char BasicString<T>::_fromString( const char* ) const {
 	return toChar();
 }
 
 template<typename T>
-inline int BasicString<T>::_fromString(const int*) const {
+inline int BasicString<T>::_fromString( const int* ) const {
 	return toInt();
 }
 
 template<typename T>
-inline short BasicString<T>::_fromString(const short*) const {
+inline short BasicString<T>::_fromString( const short* ) const {
 	return toShort();
 }
 
 template<typename T>
-inline long int BasicString<T>::_fromString(const long int*) const {
+inline long int BasicString<T>::_fromString( const long int* ) const {
 	return toLong();
 }
 
 template<typename T>
-inline long long int BasicString<T>::_fromString(const long long int*) const {
+inline long long int BasicString<T>::_fromString( const long long int* ) const {
 	return toLongLong();
 }
 
 template<typename T>
-inline unsigned char BasicString<T>::_fromString(const unsigned char*) const {
+inline unsigned char BasicString<T>::_fromString( const unsigned char* ) const {
 	return toUChar();
 }
 
 template<typename T>
-inline unsigned int BasicString<T>::_fromString(const unsigned int*) const {
+inline unsigned int BasicString<T>::_fromString( const unsigned int* ) const {
 	return toUInt();
 }
 
 template<typename T>
-inline unsigned short BasicString<T>::_fromString(const unsigned short*) const {
+inline unsigned short BasicString<T>::_fromString( const unsigned short* ) const {
 	return toUShort();
 }
 
 template<typename T>
-inline unsigned long int BasicString<T>::_fromString(const unsigned long int*) const {
+inline unsigned long int BasicString<T>::_fromString( const unsigned long int* ) const {
 	return toULong();
 }
 
 template<typename T>
-inline unsigned long long int BasicString<T>::_fromString(const unsigned long long int*) const {
+inline unsigned long long int BasicString<T>::_fromString( const unsigned long long int* ) const {
 	return toULongLong();
 }
 
 template<typename T>
-inline float BasicString<T>::_fromString(const float*) const {
+inline float BasicString<T>::_fromString( const float* ) const {
 	return toFloat();
 }
 
 template<typename T>
-inline double BasicString<T>::_fromString(const double*) const {
+inline double BasicString<T>::_fromString( const double* ) const {
 	return toDouble();
 }
 
 template<typename T>
-inline bool BasicString<T>::_fromString(const bool*) const {
+inline bool BasicString<T>::_fromString( const bool* ) const {
 	return toBool();
 }
 
 template<typename T>
-inline BasicString<T>& BasicString<T>::_fromString(...) const {
+inline BasicString<T>& BasicString<T>::_fromString( ... ) const {
 	return *this;
 }
+
+
 
 
 
@@ -3120,12 +3194,12 @@ inline BasicString<T>& BasicString<T>::_fromString(...) const {
 
 
 template<typename T>
-inline const BasicString<T>& BasicString<T>::toString(const BasicString<T>& str) {
+inline const BasicString<T>& BasicString<T>::toString( const BasicString<T>& str ) {
 	return str;
 }
 
 template<typename T>
-BasicString<T> BasicString<T>::toString( const T & c ) {
+BasicString<T> BasicString<T>::toString( const T& c ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
 	newStr._allocateNoNullDelete( 2 );
 	newStr.size = toCString( c, newStr.dataTable );
@@ -3343,7 +3417,7 @@ BasicString<T> BasicString<T>::toString( bool b ) {
 /************************************************************************/
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const unsigned short & ui ) {
+BasicString<T>& BasicString<T>::operator=( const unsigned short& ui ) {
 	if ( Vector<T>::getMaxSize() < 7 )
 		Vector<T>::_allocateNoNull( 7 );
 	this -> size = toCString( ui, this -> dataTable );
@@ -3353,7 +3427,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned short & ui ) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const unsigned char & ui ) {
+BasicString<T>& BasicString<T>::operator=( const unsigned char& ui ) {
 	if ( Vector<T>::getMaxSize() < 5 )
 		Vector<T>::_allocateNoNull( 5 );
 	this -> size = toCString( ui, this -> dataTable );
@@ -3362,7 +3436,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned char & ui ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const int & i ) {
+BasicString<T>& BasicString<T>::operator=( const int& i ) {
 	if ( Vector<T>::getMaxSize() < 10 )
 		Vector<T>::_allocateNoNull( 10 );
 	this -> size = toCString( i, this -> dataTable );
@@ -3371,7 +3445,7 @@ BasicString<T> & BasicString<T>::operator=( const int & i ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const unsigned int & ui ) {
+BasicString<T>& BasicString<T>::operator=( const unsigned int& ui ) {
 	if ( Vector<T>::getMaxSize() < 10 )
 		Vector<T>::_allocateNoNull( 10 );
 	this -> size = toCString( ui, this -> dataTable );
@@ -3380,7 +3454,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned int & ui ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const long int & l ) {
+BasicString<T>& BasicString<T>::operator=( const long int& l ) {
 	if ( Vector<T>::getMaxSize() < 21 )
 		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( l, this -> dataTable );
@@ -3389,7 +3463,7 @@ BasicString<T> & BasicString<T>::operator=( const long int & l ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const unsigned long int & ul ) {
+BasicString<T>& BasicString<T>::operator=( const unsigned long int& ul ) {
 	if ( Vector<T>::getMaxSize() < 21 )
 		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( ul, this -> dataTable );
@@ -3398,7 +3472,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned long int & ul ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const long long int & ll ) {
+BasicString<T>& BasicString<T>::operator=( const long long int& ll ) {
 	if ( Vector<T>::getMaxSize() < 21 )
 		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( ll, this -> dataTable );
@@ -3407,7 +3481,7 @@ BasicString<T> & BasicString<T>::operator=( const long long int & ll ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const unsigned long long int & ull ) {
+BasicString<T>& BasicString<T>::operator=( const unsigned long long int& ull ) {
 	if ( Vector<T>::getMaxSize() < 21 )
 		Vector<T>::_allocateNoNull( 21 );
 	this -> size = toCString( ull, this -> dataTable );
@@ -3416,7 +3490,7 @@ BasicString<T> & BasicString<T>::operator=( const unsigned long long int & ull )
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const double & d ) {
+BasicString<T>& BasicString<T>::operator=( const double& d ) {
 	if ( Vector<T>::getMaxSize() < 11 )
 		Vector<T>::_allocateNoNull( 11 );
 	this -> size = toCString( d, this -> dataTable );
@@ -3425,7 +3499,7 @@ BasicString<T> & BasicString<T>::operator=( const double & d ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const float & d ) {
+BasicString<T>& BasicString<T>::operator=( const float& d ) {
 	if ( Vector<T>::getMaxSize() < 6 )
 		Vector<T>::_allocateNoNull( 6 );
 	this -> size = toCString( d, this -> dataTable );
@@ -3435,7 +3509,7 @@ BasicString<T> & BasicString<T>::operator=( const float & d ) {
 
 template<typename T>
 template<typename C, size_t N>
-BasicString<T> & BasicString<T>::operator=( const C( &str )[ N ] ) {
+BasicString<T>& BasicString<T>::operator=( const C( &str )[ N ] ) {
 	if ( getMaxSize() < N )
 		reserve( N );
 	Utility::copy( this -> dataTable, str, N );
@@ -3446,7 +3520,7 @@ BasicString<T> & BasicString<T>::operator=( const C( &str )[ N ] ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator=( const BasicString<C> & str ) {
+BasicString<T>& BasicString<T>::operator=( const BasicString<C>& str ) {
 	auto sizePlusOne( str.getSize() + 1 );
 	if ( getMaxSize() < sizePlusOne )
 		reserve( sizePlusOne );
@@ -3457,21 +3531,21 @@ BasicString<T> & BasicString<T>::operator=( const BasicString<C> & str ) {
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const BasicString<T> & str ) {
+BasicString<T>& BasicString<T>::operator=( const BasicString<T>& str ) {
 	return operator=<T>( str );
 }
 
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( BasicString<T> && str ) {
+BasicString<T>& BasicString<T>::operator=( BasicString<T>&& str ) {
 	Vector<T>::operator=( Utility::toRValue( str ) );
 	return *this;
 }
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator=( C * const & str ) {
+BasicString<T>& BasicString<T>::operator=( C* const& str ) {
 	this -> size = BasicString<C>::getSize( str );
 	if ( getMaxSize() < this -> size + 1 ) {
 		_allocateNoNull( this -> size + 1 );
@@ -3485,7 +3559,7 @@ BasicString<T> & BasicString<T>::operator=( C * const & str ) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const T & c ) {
+BasicString<T>& BasicString<T>::operator=( const T& c ) {
 	this -> size = 1;
 	if ( getMaxSize() < 2 ) {
 		_allocateNoNull( 2 );
@@ -3500,7 +3574,7 @@ BasicString<T> & BasicString<T>::operator=( const T & c ) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator=( const bool & b ) {
+BasicString<T>& BasicString<T>::operator=( const bool& b ) {
 	if ( getMaxSize() < 6 ) {
 		_allocateNoNull( 6 );
 	}
@@ -3519,10 +3593,10 @@ BasicString<T> & BasicString<T>::operator=( const bool & b ) {
 /* LOGICALS                                                             */
 /************************************************************************/
 template<typename T>
-bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
+bool BasicString<T>::operator<=( const BasicString<T>& text ) const {
 	for ( Size i = 0; i < this -> size; i++ ) {
-		const T & t1 = this -> dataTable[ i ];
-		const T & t2 = text.dataTable[ i ];
+		const T& t1 = this -> dataTable[ i ];
+		const T& t2 = text.dataTable[ i ];
 
 		if ( t1 == t2 ) continue;
 		else if ( t1 < t2 ) return true;
@@ -3532,10 +3606,10 @@ bool BasicString<T>::operator<=( const BasicString<T> & text ) const {
 }
 
 template<typename T>
-bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
+bool BasicString<T>::operator>=( const BasicString<T>& text ) const {
 	for ( Size i = 0; i < this -> size; i++ ) {
-		const T & t1 = this -> dataTable[ i ];
-		const T & t2 = text.dataTable[ i ];
+		const T& t1 = this -> dataTable[ i ];
+		const T& t2 = text.dataTable[ i ];
 
 		if ( t1 == t2 ) continue;
 		else if ( t1 > t2 ) return true;
@@ -3545,10 +3619,10 @@ bool BasicString<T>::operator>=( const BasicString<T> & text ) const {
 }
 
 template<typename T>
-bool BasicString<T>::operator<( const BasicString<T> & text ) const {
+bool BasicString<T>::operator<( const BasicString<T>& text ) const {
 	for ( Size i = 0; i < this -> size; i++ ) {
-		const T & t1 = this -> dataTable[ i ];
-		const T & t2 = text.dataTable[ i ];
+		const T& t1 = this -> dataTable[ i ];
+		const T& t2 = text.dataTable[ i ];
 
 		if ( t1 == t2 ) continue;
 		else if ( t1 < t2 ) return true;
@@ -3558,10 +3632,10 @@ bool BasicString<T>::operator<( const BasicString<T> & text ) const {
 }
 
 template<typename T>
-bool BasicString<T>::operator>( const BasicString<T> & text ) const {
+bool BasicString<T>::operator>( const BasicString<T>& text ) const {
 	for ( Size i = 0; i < this -> size; i++ ) {
-		const T & t1 = this -> dataTable[ i ];
-		const T & t2 = text.dataTable[ i ];
+		const T& t1 = this -> dataTable[ i ];
+		const T& t2 = text.dataTable[ i ];
 
 		if ( t1 == t2 ) continue;
 		else if ( t1 > t2 ) return true;
@@ -3571,43 +3645,43 @@ bool BasicString<T>::operator>( const BasicString<T> & text ) const {
 }
 
 template<typename T>
-bool BasicString<T>::operator==( const BasicString<T> & text ) const {
+bool BasicString<T>::operator==( const BasicString<T>& text ) const {
 	return Vector<T>::operator==( text );
 }
 
 template<typename T>
-bool BasicString<T>::operator!=( const BasicString<T> & text ) const {
+bool BasicString<T>::operator!=( const BasicString<T>& text ) const {
 	return Vector<T>::operator!=( text );
 }
 
 
 
 template<typename T>
-bool BasicString<T>::operator==( const T & c ) const {
+bool BasicString<T>::operator==( const T& c ) const {
 	return Vector<T>::operator==( c );
 }
 
 template<typename T>
-bool BasicString<T>::operator!=( const T & c ) const {
+bool BasicString<T>::operator!=( const T& c ) const {
 	return Vector<T>::operator!=( c );
 }
 
 
 template<typename T>
-bool BasicString<T>::operator<( const T & c ) const {
+bool BasicString<T>::operator<( const T& c ) const {
 	return Vector<T>::operator<( c );
 }
 template<typename T>
-bool BasicString<T>::operator>( const T & c ) const {
+bool BasicString<T>::operator>( const T& c ) const {
 	return Vector<T>::operator>( c );
 }
 
 template<typename T>
-bool BasicString<T>::operator<=( const T & c ) const {
+bool BasicString<T>::operator<=( const T& c ) const {
 	return Vector<T>::operator<=( c );
 }
 template<typename T>
-bool BasicString<T>::operator>=( const T & c ) const {
+bool BasicString<T>::operator>=( const T& c ) const {
 	return Vector<T>::operator>=( c );
 }
 
@@ -3623,7 +3697,7 @@ bool BasicString<T>::operator>=( const T & c ) const {
 
 template<typename T>
 template<typename C>
-Size BasicString<T>::getSize( C * const & str ) {
+Size BasicString<T>::getSize( C* const& str ) {
 	Size size( 0 );
 	constexpr const C end( '\0' );
 	for ( size; str[ size ] != end; size++ );
@@ -3638,7 +3712,7 @@ Size BasicString<T>::getSize( const C( &str )[ N ] ) {
 
 
 template<typename T>
-typename BasicString<T>::Iterator BasicString<T>::getLastIt( const BasicString<T> & str ) const {
+typename BasicString<T>::Iterator BasicString<T>::getLastIt( const BasicString<T>& str ) const {
 	if ( !str.getSize() || this -> size < str.getSize() )
 		goto getLastItNOTFOUND;
 
@@ -3656,7 +3730,7 @@ getLastItNOTFOUND:return getEnd();
 }
 
 template<typename T>
-typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const BasicString<T> & str ) const {
+typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const BasicString<T>& str ) const {
 	if ( !str.getSize() || this -> size < str.getSize() )
 		goto getFirstItNOTFOUND;
 
@@ -3674,7 +3748,7 @@ getFirstItNOTFOUND:return getEnd();
 }
 
 template<typename T>
-typename BasicString<T>::Iterator BasicString<T>::getLastIt( const T & c ) const {
+typename BasicString<T>::Iterator BasicString<T>::getLastIt( const T& c ) const {
 	for ( auto it = getEnd() - 1; it >= getBegin(); it-- ) {
 		if ( *it == c )
 			return it;
@@ -3683,7 +3757,7 @@ typename BasicString<T>::Iterator BasicString<T>::getLastIt( const T & c ) const
 }
 
 template<typename T>
-typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const T & c ) const {
+typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const T& c ) const {
 	for ( auto it = getBegin(); it < getEnd(); it++ ) {
 		if ( *it == c ) {
 			return it;
@@ -3694,29 +3768,29 @@ typename BasicString<T>::Iterator BasicString<T>::getFirstIt( const T & c ) cons
 
 
 template<typename T>
-Size BasicString<T>::getLast( const BasicString<T> & str ) const {
+Size BasicString<T>::getLast( const BasicString<T>& str ) const {
 	return BasicString<T>::getLast( this -> dataTable, this -> size, str.getData(), str.getSize() );
 }
 
 template<typename T>
-Size BasicString<T>::getFirst( const BasicString<T> & str ) const {
+Size BasicString<T>::getFirst( const BasicString<T>& str ) const {
 	return BasicString<T>::getFirst( this -> dataTable, this -> size, str.getData(), str.getSize() );
 }
 
 template<typename T>
-Size BasicString<T>::getLast( const T & c ) const {
+Size BasicString<T>::getLast( const T& c ) const {
 	return BasicString<T>::getLast( this -> dataTable, getSize(), c );
 }
 
 template<typename T>
-Size BasicString<T>::getFirst( const T & c ) const {
+Size BasicString<T>::getFirst( const T& c ) const {
 	return BasicString<T>::getFirst( this -> dataTable, getSize(), c );
 }
 
 
 
 template<typename T>
-Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
+Size BasicString<T>::getLast( const T* buffer, Size bufferSize, const T* toSearch, Size toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
@@ -3735,7 +3809,7 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T * toSearch, Size toSearchSize ) {
+Size BasicString<T>::getFirst( const T* buffer, Size bufferSize, const T* toSearch, Size toSearchSize ) {
 	if ( !toSearchSize || bufferSize < toSearchSize )
 		goto NOTFOUND;
 
@@ -3754,7 +3828,7 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T & c ) {
+Size BasicString<T>::getLast( const T* buffer, Size bufferSize, const T& c ) {
 	for ( Size i = bufferSize - 1; i >= 0; i-- ) {
 		if ( buffer[ i ] == c ) {
 			return i;
@@ -3764,7 +3838,7 @@ Size BasicString<T>::getLast( const T * buffer, Size bufferSize, const T & c ) {
 }
 
 template<typename T>
-Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T & c ) {
+Size BasicString<T>::getFirst( const T* buffer, Size bufferSize, const T& c ) {
 	for ( Size i = 0; i < bufferSize; i++ ) {
 		if ( buffer[ i ] == c ) {
 			return i;
@@ -3775,21 +3849,21 @@ Size BasicString<T>::getFirst( const T * buffer, Size bufferSize, const T & c ) 
 
 
 template<typename T>
-Size BasicString<T>::getLast( const T * buffer, const T * toSearch ) {
+Size BasicString<T>::getLast( const T* buffer, const T* toSearch ) {
 	return BasicString<T>::getLast( buffer, BasicString<T>::getSize( buffer ), toSearch, BasicString<T>::getSize( toSearch ) );
 }
 
 template<typename T>
-inline bool BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector, T** itP) {
+inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVector, T** itP ) {
 
 	struct EncodeFunctor {
-		EncodeFunctor(const T* encodingTable) : encodingTable(encodingTable) {}
+		EncodeFunctor( const T* encodingTable ) : encodingTable( encodingTable ) { }
 
-		void encode(T* outputIt, const unsigned char* inputIt) const {
-			unsigned char c0(( inputIt[ 0 ] & 0xFC ) >> 2);
-			unsigned char c1(( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4);
-			unsigned char c2(( inputIt[ 1 ] & 0xF ) << 2 | ( inputIt[ 2 ] & 0xC0 ) >> 6);
-			unsigned char c3(inputIt[ 2 ] & 0x3F);
+		void encode( T* outputIt, const unsigned char* inputIt ) const {
+			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
+			unsigned char c1( ( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4 );
+			unsigned char c2( ( inputIt[ 1 ] & 0xF ) << 2 | ( inputIt[ 2 ] & 0xC0 ) >> 6 );
+			unsigned char c3( inputIt[ 2 ] & 0x3F );
 
 			outputIt[ 0 ] = this->encodingTable[ c0 ];
 			outputIt[ 1 ] = this->encodingTable[ c1 ];
@@ -3797,53 +3871,53 @@ inline bool BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector
 			outputIt[ 3 ] = this->encodingTable[ c3 ];
 		}
 
-		void encode1(T* outputIt, const unsigned char* inputIt) const {
-			unsigned char c0(( inputIt[ 0 ] & 0xFC ) >> 2);
-			unsigned char c1(( inputIt[ 0 ] & 0x3 ) << 4);
+		void encode1( T* outputIt, const unsigned char* inputIt ) const {
+			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
+			unsigned char c1( ( inputIt[ 0 ] & 0x3 ) << 4 );
 
 			outputIt[ 0 ] = this->encodingTable[ c0 ];
 			outputIt[ 1 ] = this->encodingTable[ c1 ];
-			outputIt[ 2 ] = T('=');
-			outputIt[ 3 ] = T('=');
+			outputIt[ 2 ] = T( '=' );
+			outputIt[ 3 ] = T( '=' );
 		}
 
-		void encode2(T* outputIt, const unsigned char* inputIt) const {
-			unsigned char c0(( inputIt[ 0 ] & 0xFC ) >> 2);
-			unsigned char c1(( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4);
-			unsigned char c2(( inputIt[ 1 ] & 0xF ) << 2);
+		void encode2( T* outputIt, const unsigned char* inputIt ) const {
+			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
+			unsigned char c1( ( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4 );
+			unsigned char c2( ( inputIt[ 1 ] & 0xF ) << 2 );
 
 			outputIt[ 0 ] = this->encodingTable[ c0 ];
 			outputIt[ 1 ] = this->encodingTable[ c1 ];
 			outputIt[ 2 ] = this->encodingTable[ c2 ];
-			outputIt[ 3 ] = T('=');
+			outputIt[ 3 ] = T( '=' );
 		}
 
 		const T* encodingTable;
 	};
 
-	static EncodeFunctor encodeFunctor(BasicString<T>::base64CharTable);
+	static EncodeFunctor encodeFunctor( BasicString<T>::base64CharTable );
 
-	T*& it(*itP);
+	T*& it( *itP );
 
-	const unsigned char* inputIt(dataVector.getBegin());
-	const unsigned char* inputEndIt(dataVector.getEnd());
-	const unsigned char* inputEndItFloor(dataVector.getBegin() + dataVector.getSize() / Size(3) * Size(3));
-	for ( ; inputIt < inputEndItFloor; it += 4, inputIt+=3 ) {
-		encodeFunctor.encode(it, inputIt);
+	const unsigned char* inputIt( dataVector.getBegin() );
+	const unsigned char* inputEndIt( dataVector.getEnd() );
+	const unsigned char* inputEndItFloor( dataVector.getBegin() + dataVector.getSize() / Size( 3 ) * Size( 3 ) );
+	for ( ; inputIt < inputEndItFloor; it += 4, inputIt += 3 ) {
+		encodeFunctor.encode( it, inputIt );
 	}
 
-	Size remainingBytes(inputEndIt - inputEndItFloor);
+	Size remainingBytes( inputEndIt - inputEndItFloor );
 
 	switch ( remainingBytes ) {
-		case Size(1):
+		case Size( 1 ):
 			{
-				encodeFunctor.encode1(it, inputIt);
+				encodeFunctor.encode1( it, inputIt );
 				it += 4;
 				break;
 			}
-		case Size(2):
+		case Size( 2 ):
 			{
-				encodeFunctor.encode2(it, inputIt);
+				encodeFunctor.encode2( it, inputIt );
 				it += 4;
 				break;
 			}
@@ -3853,103 +3927,103 @@ inline bool BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector
 }
 
 template<typename T>
-inline BasicString<T> BasicString<T>::encodeBase64(const Vector<unsigned char>& dataVector) {
+inline BasicString<T> BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVector ) {
 	BasicString<T> outputStr;
-	Size newSize(BasicString<T>::getBase64EncodeSize(dataVector));
-	outputStr.resize(newSize);
+	Size newSize( BasicString<T>::getBase64EncodeSize( dataVector ) );
+	outputStr.resize( newSize );
 
-	T* it(outputStr.dataTable);
-	encodeBase64(dataVector, &it);
+	T* it( outputStr.dataTable );
+	encodeBase64( dataVector, &it );
 
 	return outputStr;
 }
 
 template<typename T>
-inline bool BasicString<T>::decodeBase64(const BasicString<T>& inputStr, unsigned char** itP) {
+inline bool BasicString<T>::decodeBase64( const BasicString<T>& inputStr, unsigned char** itP ) {
 	struct DecodeFunctor {
-		DecodeFunctor(const T * encodingTable){
-			for ( Size i(0); i < Size(256); i++ ) {
+		DecodeFunctor( const T* encodingTable ) {
+			for ( Size i( 0 ); i < Size( 256 ); i++ ) {
 				// Use the value 0 as an error.
-				this->decodingTable[ i ] = unsigned char(0);
+				this->decodingTable[ i ] = unsigned char( 0 );
 			}
 
-			for ( unsigned char i(0); i < Size(64); i++ ) {
-				this->decodingTable[ unsigned char(encodingTable[ i ]) ] = i;
+			for ( unsigned char i( 0 ); i < Size( 64 ); i++ ) {
+				this->decodingTable[ unsigned char( encodingTable[ i ] ) ] = i;
 			}
-			this->decodingTable[ unsigned char(T('=')) ] = unsigned char(0);
+			this->decodingTable[ unsigned char( T( '=' ) ) ] = unsigned char( 0 );
 		}
 
-		void decode(unsigned char* outputIt, const T* inputIt) {
-			unsigned char c0(this->decodingTable[inputIt[ 0 ]]);
-			unsigned char c1(this->decodingTable[ inputIt[ 1 ] ]);
-			unsigned char c2(this->decodingTable[ inputIt[ 2 ] ]);
-			unsigned char c3(this->decodingTable[ inputIt[ 3 ] ]);
+		void decode( unsigned char* outputIt, const T* inputIt ) {
+			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
+			unsigned char c2( this->decodingTable[ inputIt[ 2 ] ] );
+			unsigned char c3( this->decodingTable[ inputIt[ 3 ] ] );
 
-			unsigned char b0(c0 << 2 | c1 >> 4);
-			unsigned char b1(c1 << 4 | c2 >> 2);
-			unsigned char b2(c2 << 6 | c3);
+			unsigned char b0( c0 << 2 | c1 >> 4 );
+			unsigned char b1( c1 << 4 | c2 >> 2 );
+			unsigned char b2( c2 << 6 | c3 );
 
 			outputIt[ 0 ] = b0;
 			outputIt[ 1 ] = b1;
 			outputIt[ 2 ] = b2;
 		}
 
-		void decode2(unsigned char* outputIt, const T* inputIt) {
-			unsigned char c0(this->decodingTable[ inputIt[ 0 ] ]);
-			unsigned char c1(this->decodingTable[ inputIt[ 1 ] ]);
+		void decode2( unsigned char* outputIt, const T* inputIt ) {
+			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
 
-			unsigned char b0(c0 << 2 | c1 >> 4);
+			unsigned char b0( c0 << 2 | c1 >> 4 );
 
 			outputIt[ 0 ] = b0;
 		}
 
-		void decode3(unsigned char* outputIt, const T* inputIt) {
-			unsigned char c0(this->decodingTable[ inputIt[ 0 ] ]);
-			unsigned char c1(this->decodingTable[ inputIt[ 1 ] ]);
-			unsigned char c2(this->decodingTable[ inputIt[ 2 ] ]);
+		void decode3( unsigned char* outputIt, const T* inputIt ) {
+			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
+			unsigned char c2( this->decodingTable[ inputIt[ 2 ] ] );
 
-			unsigned char b0(c0 << 2 | c1 >> 4);
-			unsigned char b1(c1 << 4 | c2 >> 2);
+			unsigned char b0( c0 << 2 | c1 >> 4 );
+			unsigned char b1( c1 << 4 | c2 >> 2 );
 
 			outputIt[ 0 ] = b0;
 			outputIt[ 1 ] = b1;
 		}
 
-		unsigned char decodingTable[256];
+		unsigned char decodingTable[ 256 ];
 	};
 
-	static DecodeFunctor decodeFunctor(BasicString<T>::base64CharTable);
+	static DecodeFunctor decodeFunctor( BasicString<T>::base64CharTable );
 
-	unsigned char*& it(*itP);
+	unsigned char*& it( *itP );
 
-	const T* inputIt(inputStr.getBegin());
-	const T* inputEndIt(inputStr.getEnd());
+	const T* inputIt( inputStr.getBegin() );
+	const T* inputEndIt( inputStr.getEnd() );
 
 	// Remove the padding characters.
-	for ( ; inputEndIt > inputStr.getBegin() && *( inputEndIt - Size(1) ) == T('='); inputEndIt-- );
+	for ( ; inputEndIt > inputStr.getBegin() && *( inputEndIt - Size( 1 ) ) == T( '=' ); inputEndIt-- );
 
-	const T* inputEndItFloor(inputStr.getBegin() + (inputEndIt - inputStr.getBegin() ) / Size(4) * Size(4));
+	const T* inputEndItFloor( inputStr.getBegin() + ( inputEndIt - inputStr.getBegin() ) / Size( 4 ) * Size( 4 ) );
 
 	for ( ; inputIt < inputEndItFloor; inputIt += 4, it += 3 ) {
-		decodeFunctor.decode(it, inputIt);
+		decodeFunctor.decode( it, inputIt );
 	}
 
-	Size remainingChars(inputEndIt - inputIt);
+	Size remainingChars( inputEndIt - inputIt );
 
 	switch ( remainingChars ) {
-		case Size(1):
+		case Size( 1 ):
 			{
 				return false;
 			}
-		case Size(2):
+		case Size( 2 ):
 			{
-				decodeFunctor.decode2(it, inputIt);
+				decodeFunctor.decode2( it, inputIt );
 				it += 1;
 				break;
 			}
-		case Size(3):
+		case Size( 3 ):
 			{
-				decodeFunctor.decode3(it, inputIt);
+				decodeFunctor.decode3( it, inputIt );
 				it += 2;
 				break;
 			}
@@ -3959,55 +4033,55 @@ inline bool BasicString<T>::decodeBase64(const BasicString<T>& inputStr, unsigne
 }
 
 template<typename T>
-inline Vector<unsigned char> BasicString<T>::decodeBase64(const BasicString<T>& inputStr) {
+inline Vector<unsigned char> BasicString<T>::decodeBase64( const BasicString<T>& inputStr ) {
 	Vector<unsigned char> outputVector;
-	Size reserveSize(BasicString<T>::getBase64DecodeReserveSize(inputStr));
-	outputVector.reserve(reserveSize);
+	Size reserveSize( BasicString<T>::getBase64DecodeReserveSize( inputStr ) );
+	outputVector.reserve( reserveSize );
 
-	unsigned char* it(outputVector.dataTable);
-	if ( !decodeBase64(inputStr, &it) ) {
+	unsigned char* it( outputVector.dataTable );
+	if ( !decodeBase64( inputStr, &it ) ) {
 		outputVector.clear();
 		return outputVector;
 	}
 
-	Size newSize(it - outputVector.getBegin());
-	outputVector.resize(newSize);
+	Size newSize( it - outputVector.getBegin() );
+	outputVector.resize( newSize );
 
 	return outputVector;
 }
 
 template<typename T>
-inline Size BasicString<T>::getBase64EncodeSize(const Vector<unsigned char>& dataVector) {
-	return ( dataVector.getSize() + Size(2) ) / Size(3) * Size(4);
+inline Size BasicString<T>::getBase64EncodeSize( const Vector<unsigned char>& dataVector ) {
+	return ( dataVector.getSize() + Size( 2 ) ) / Size( 3 ) * Size( 4 );
 }
 
 template<typename T>
-inline Size BasicString<T>::getBase64DecodeReserveSize(const BasicString<T>& inputStr) {
-	return ( inputStr.getSize() * Size(3) + Size(3) ) / Size(4);
+inline Size BasicString<T>::getBase64DecodeReserveSize( const BasicString<T>& inputStr ) {
+	return ( inputStr.getSize() * Size( 3 ) + Size( 3 ) ) / Size( 4 );
 }
 
 template<typename T>
-inline bool BasicString<T>::encodeHexadecimal(const Vector<unsigned char>& dataVector, T** itP) {
-	
-	T*& it(*itP);
+inline bool BasicString<T>::encodeHexadecimal( const Vector<unsigned char>& dataVector, T** itP ) {
 
-	unsigned char* inputIt(dataVector.getBegin());
-	const unsigned char* inputEndIt(dataVector.getEnd());
+	T*& it( *itP );
+
+	unsigned char* inputIt( dataVector.getBegin() );
+	const unsigned char* inputEndIt( dataVector.getEnd() );
 
 	for ( ; inputIt < inputEndIt; inputIt++ ) {
-		BasicString<T>::toCStringHexadecimal(dataVector.getValueIt(inputIt), &it);
+		BasicString<T>::toCStringHexadecimal( dataVector.getValueIt( inputIt ), &it );
 	}
 
 	return true;
 }
 
 template<typename T>
-inline BasicString<T> BasicString<T>::encodeHexadecimal(const Vector<unsigned char>& dataVector) {
+inline BasicString<T> BasicString<T>::encodeHexadecimal( const Vector<unsigned char>& dataVector ) {
 	BasicString<T> outputStr;
-	outputStr.resize(dataVector.getSize() << 1);
+	outputStr.resize( dataVector.getSize() << 1 );
 
-	T* it(outputStr.dataTable);
-	if ( !encodeHexadecimal(dataVector, &it) ) {
+	T* it( outputStr.dataTable );
+	if ( !encodeHexadecimal( dataVector, &it ) ) {
 		outputStr.clear();
 	}
 
@@ -4015,24 +4089,24 @@ inline BasicString<T> BasicString<T>::encodeHexadecimal(const Vector<unsigned ch
 }
 
 template<typename T>
-inline bool BasicString<T>::decodeHexadecimal(const BasicString<T>& inputStr, unsigned char** itP) {
+inline bool BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr, unsigned char** itP ) {
 	struct DecodeFunctor {
-		DecodeFunctor(const T* encodingTable) {
-			for ( Size i(0); i < Size(256); i++ ) {
+		DecodeFunctor( const T* encodingTable ) {
+			for ( Size i( 0 ); i < Size( 256 ); i++ ) {
 				// Use the value 0 as an error.
-				this->decodingTable[ i ] = unsigned char(0);
+				this->decodingTable[ i ] = unsigned char( 0 );
 			}
 
-			for ( unsigned char i(0); i < Size(16); i++ ) {
-				this->decodingTable[ unsigned char(encodingTable[ i ]) ] = i;
+			for ( unsigned char i( 0 ); i < Size( 16 ); i++ ) {
+				this->decodingTable[ unsigned char( encodingTable[ i ] ) ] = i;
 			}
 		}
 
-		void decode(unsigned char* outputIt, const T* inputIt) {
-			unsigned char c0(this->decodingTable[ inputIt[ 0 ] ]);
-			unsigned char c1(this->decodingTable[ inputIt[ 1 ] ]);
+		void decode( unsigned char* outputIt, const T* inputIt ) {
+			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
 
-			unsigned char b0(c0 << 4 | c1);
+			unsigned char b0( c0 << 4 | c1 );
 
 			outputIt[ 0 ] = b0;
 		}
@@ -4040,27 +4114,27 @@ inline bool BasicString<T>::decodeHexadecimal(const BasicString<T>& inputStr, un
 		unsigned char decodingTable[ 256 ];
 	};
 
-	static DecodeFunctor decodeFunctor(BasicString<T>::numbers);
+	static DecodeFunctor decodeFunctor( BasicString<T>::numbers );
 
-	unsigned char*& it(*itP);
+	unsigned char*& it( *itP );
 
-	const unsigned char* endIt(it + (inputStr.getSize() >> 1));
-	const T* inputIt(inputStr.getBegin());
+	const unsigned char* endIt( it + ( inputStr.getSize() >> 1 ) );
+	const T* inputIt( inputStr.getBegin() );
 
 	for ( ; it < endIt; inputIt += 2, it++ ) {
-		decodeFunctor.decode(it, inputIt);
+		decodeFunctor.decode( it, inputIt );
 	}
 
 	return true;
 }
 
 template<typename T>
-inline Vector<unsigned char> BasicString<T>::decodeHexadecimal(const BasicString<T>& inputStr) {
+inline Vector<unsigned char> BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr ) {
 	Vector<unsigned char> outputVector;
-	outputVector.resize(inputStr.getSize() >> 1);
+	outputVector.resize( inputStr.getSize() >> 1 );
 
-	unsigned char* it(outputVector.dataTable);
-	if ( !BasicString<T>::decodeHexadecimal(inputStr, &it) ) {
+	unsigned char* it( outputVector.dataTable );
+	if ( !BasicString<T>::decodeHexadecimal( inputStr, &it ) ) {
 		outputVector.clear();
 	}
 
@@ -4068,11 +4142,11 @@ inline Vector<unsigned char> BasicString<T>::decodeHexadecimal(const BasicString
 }
 
 template<typename T>
-Size BasicString<T>::getFirst( const T * buffer, const T * toSearch ) {
+Size BasicString<T>::getFirst( const T* buffer, const T* toSearch ) {
 	T c( buffer[ 0 ] );
 	for ( Size i = 0; c != T( '\0' );) {
 
-		const T * d = &( toSearch[ 0 ] );
+		const T* d = &( toSearch[ 0 ] );
 		for ( Size j = 0; *d != T( '\0' ); j++, d = &( toSearch[ j ] ) ) {
 			if ( buffer[ i + j ] != *d ) {
 				goto ENDLOOP;
@@ -4088,13 +4162,13 @@ NOTFOUND:return BasicString<T>::overflow;
 }
 
 template<typename T>
-Size BasicString<T>::getLast( const T * buffer, const T & c ) {
+Size BasicString<T>::getLast( const T* buffer, const T& c ) {
 	return BasicString<T>::getLast( buffer, BasicString<T>::getSize( buffer ), c );
 }
 
 template<typename T>
-Size BasicString<T>::getFirst( const T * buffer, const T & c ) {
-	const T * d = &( buffer[ 0 ] );
+Size BasicString<T>::getFirst( const T* buffer, const T& c ) {
+	const T* d = &( buffer[ 0 ] );
 	for ( Size i = 0; *d != T( '\0' ); i++, d = &( buffer[ i ] ) ) {
 		if ( buffer[ i ] == c )
 			return i;
@@ -4113,17 +4187,17 @@ void BasicString<T>::clear() {
 }
 
 template<typename T>
-Vector<BasicString<T>> BasicString<T>::split( const T & delimiter ) const {
+Vector<BasicString<T>> BasicString<T>::split( const T& delimiter ) const {
 	return BasicString<T>::split( *this, delimiter );
 }
 
 template<typename T>
-Vector<BasicString<T>> BasicString<T>::split( const BasicString<T> & s, const T & delimiter ) {
+Vector<BasicString<T>> BasicString<T>::split( const BasicString<T>& s, const T& delimiter ) {
 	Vector<BasicString<T>> v;
 	Size lastIndex = 0;
 	Size i;
 	for ( i = 0; i < s.getSize(); i++ ) {
-		const T & c = s[ i ];
+		const T& c = s[ i ];
 		if ( c == delimiter && i != lastIndex ) {
 			v.push( BasicString<T>( s.getData() + lastIndex, i - lastIndex ) );
 			lastIndex = i + 1;
@@ -4136,9 +4210,9 @@ Vector<BasicString<T>> BasicString<T>::split( const BasicString<T> & s, const T 
 
 
 template<typename T>
-bool BasicString<T>::isNumeric( const BasicString<T> & v ) {
-	for ( Size i( 0 ); i < v.getSize() ; i++ ) {
-		const T & c = v[ i ];
+bool BasicString<T>::isNumeric( const BasicString<T>& v ) {
+	for ( Size i( 0 ); i < v.getSize(); i++ ) {
+		const T& c = v[ i ];
 		if ( c < 40 || c > 57 )
 			return false;
 	}
@@ -4152,7 +4226,7 @@ bool BasicString<T>::isNumeric() const {
 
 
 template<typename T>
-const T * BasicString<T>::toCString() const {
+const T* BasicString<T>::toCString() const {
 	return this -> dataTable;
 }
 
@@ -4200,8 +4274,8 @@ BasicString<T> BasicString<T>::toLower() const {
 
 	// Iterate
 	typename BasicString<T>::Iterator itLower( lowerString.getBegin() );
-	for ( typename BasicString<T>::Iterator it( this -> getBegin() ) ; it != this -> getEnd() ; it++, itLower++ ) {
-		const T & e( *it );
+	for ( typename BasicString<T>::Iterator it( this -> getBegin() ); it != this -> getEnd(); it++, itLower++ ) {
+		const T& e( *it );
 		if ( e >= BasicString<T>::ElemType( 'A' ) && e <= BasicString<T>::ElemType( 'Z' ) ) {
 			*itLower = e + offset;
 		} else {
@@ -4224,8 +4298,8 @@ BasicString<T> BasicString<T>::toUpper() const {
 
 	// Iterate
 	typename BasicString<T>::Iterator itLower( lowerString.getBegin() );
-	for ( typename BasicString<T>::Iterator it( this -> getBegin() ) ; it != this -> getEnd() ; it++, itLower++ ) {
-		const T & e( *it );
+	for ( typename BasicString<T>::Iterator it( this -> getBegin() ); it != this -> getEnd(); it++, itLower++ ) {
+		const T& e( *it );
 		if ( e >= BasicString<T>::ElemType( 'a' ) && e <= BasicString<T>::ElemType( 'z' ) ) {
 			*itLower = e - offset;
 		} else {
@@ -4278,7 +4352,7 @@ BasicString<T> BasicString<T>::getDirectory() const {
 
 
 template<typename T>
-void BasicString<T>::replace( const BasicString<T> & toReplace, const BasicString<T> & byThis ) {
+void BasicString<T>::replace( const BasicString<T>& toReplace, const BasicString<T>& byThis ) {
 	BasicString<T> newString;
 	newString.allocate( this -> getMaxSize() + byThis.getSize() );
 
@@ -4313,7 +4387,7 @@ void BasicString<T>::replace( const BasicString<T> & toReplace, const BasicStrin
 
 
 template<typename T>
-void BasicString<T>::replace( const T & toReplace, const BasicString<T> & byThis ) {
+void BasicString<T>::replace( const T& toReplace, const BasicString<T>& byThis ) {
 	BasicString<T> newString;
 	newString.allocate( this -> getMaxSize() + byThis.getSize() );
 
@@ -4342,7 +4416,7 @@ void BasicString<T>::replace( const T & toReplace, const BasicString<T> & byThis
 }
 
 template<typename T>
-void BasicString<T>::replace( const T & toReplace, const T & byThis ) {
+void BasicString<T>::replace( const T& toReplace, const T& byThis ) {
 	for ( auto it = getBegin(); it < getEnd(); it++ ) {
 		if ( *it == toReplace )
 			*it = byThis;
@@ -4354,13 +4428,13 @@ void BasicString<T>::replace( const T & toReplace, const T & byThis ) {
 
 
 template<typename T>
-std::ostream & operator<<( std::ostream & stream, const BasicString<T> & str ) {
+std::ostream& operator<<( std::ostream& stream, const BasicString<T>& str ) {
 	stream << str.toCString();
 	return stream;
 }
 
 template<typename Stream, typename T>
-Stream& operator<<(Stream& stream, const BasicString<T>& str) {
+Stream& operator<<( Stream& stream, const BasicString<T>& str ) {
 	stream << str.toCString();
 	return stream;
 }
@@ -4381,75 +4455,75 @@ Stream& operator<<(Stream& stream, const BasicString<T>& str) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator<<( C * const & str ) {
+BasicString<T>& BasicString<T>::operator<<( C* const& str ) {
 	return concat( str );
 }
 
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator<<( const BasicString<C> & str ) {
+BasicString<T>& BasicString<T>::operator<<( const BasicString<C>& str ) {
 	return concat( str );
 }
 
 template<typename T>
 template<typename C, size_t N>
-BasicString<T> & BasicString<T>::operator<<( const C( &str )[ N ] ) {
+BasicString<T>& BasicString<T>::operator<<( const C( &str )[ N ] ) {
 	return concat( str );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const unsigned char & uc ) {
+BasicString<T>& BasicString<T>::operator<<( const unsigned char& uc ) {
 	return concat( uc );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const unsigned short & us ) {
+BasicString<T>& BasicString<T>::operator<<( const unsigned short& us ) {
 	return concat( us );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const int & i ) {
+BasicString<T>& BasicString<T>::operator<<( const int& i ) {
 	return concat( i );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const unsigned int & ui ) {
+BasicString<T>& BasicString<T>::operator<<( const unsigned int& ui ) {
 	return concat( ui );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const long int & l ) {
+BasicString<T>& BasicString<T>::operator<<( const long int& l ) {
 	return concat( l );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const unsigned long int & ul ) {
+BasicString<T>& BasicString<T>::operator<<( const unsigned long int& ul ) {
 	return concat( ul );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const long long int & ll ) {
+BasicString<T>& BasicString<T>::operator<<( const long long int& ll ) {
 	return concat( ll );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const unsigned long long int & ull ) {
+BasicString<T>& BasicString<T>::operator<<( const unsigned long long int& ull ) {
 	return concat( ull );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const double & d ) {
+BasicString<T>& BasicString<T>::operator<<( const double& d ) {
 	return concat( d );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const float & f ) {
+BasicString<T>& BasicString<T>::operator<<( const float& f ) {
 	return concat( f );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const bool & b ) {
+BasicString<T>& BasicString<T>::operator<<( const bool& b ) {
 	return concat( b );
 }
 
@@ -4463,19 +4537,19 @@ BasicString<T> & BasicString<T>::operator<<(const C & c) {
 
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const char & c ) {
+BasicString<T>& BasicString<T>::operator<<( const char& c ) {
 	return concat( c );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator<<( const wchar_t & c ) {
+BasicString<T>& BasicString<T>::operator<<( const wchar_t& c ) {
 	return concat( c );
 }
 
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator<<( const Vector<C> & v ) {
+BasicString<T>& BasicString<T>::operator<<( const Vector<C>& v ) {
 	concat( "[ " );
 	for ( Size i = 0; i < v.getSize(); i++ ) {
 		if ( i ) concat( " | " );
@@ -4493,18 +4567,18 @@ BasicString<T> & BasicString<T>::operator<<( const Vector<C> & v ) {
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator+=( C * const & str ) {
+BasicString<T>& BasicString<T>::operator+=( C* const& str ) {
 	return concat( str );
 }
 
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator+=( const BasicString<C> & str ) {
+BasicString<T>& BasicString<T>::operator+=( const BasicString<C>& str ) {
 	Size newSize = getSize() + str.getSize();
 
 	if ( newSize >= this -> maxSize ) {
-		_extendBuffer(newSize);
+		_extendBuffer( newSize );
 		_updateIterators();
 	}
 
@@ -4516,78 +4590,78 @@ BasicString<T> & BasicString<T>::operator+=( const BasicString<C> & str ) {
 
 template<typename T>
 template<typename C, size_t N>
-BasicString<T> & BasicString<T>::operator+=( const C( &str )[ N ] ) {
+BasicString<T>& BasicString<T>::operator+=( const C( &str )[ N ] ) {
 	return concat( str );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const unsigned char & uc ) {
+BasicString<T>& BasicString<T>::operator+=( const unsigned char& uc ) {
 	return concat( uc );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const unsigned short & us ) {
+BasicString<T>& BasicString<T>::operator+=( const unsigned short& us ) {
 	return concat( us );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const int & i ) {
+BasicString<T>& BasicString<T>::operator+=( const int& i ) {
 	return concat( i );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const unsigned int & ui ) {
+BasicString<T>& BasicString<T>::operator+=( const unsigned int& ui ) {
 	return concat( ui );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const long int & l ) {
+BasicString<T>& BasicString<T>::operator+=( const long int& l ) {
 	return concat( l );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const unsigned long int & ul ) {
+BasicString<T>& BasicString<T>::operator+=( const unsigned long int& ul ) {
 	return concat( ul );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const long long int & ll ) {
+BasicString<T>& BasicString<T>::operator+=( const long long int& ll ) {
 	return concat( ll );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const unsigned long long int & ull ) {
+BasicString<T>& BasicString<T>::operator+=( const unsigned long long int& ull ) {
 	return concat( ull );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const double & d ) {
+BasicString<T>& BasicString<T>::operator+=( const double& d ) {
 	return concat( d );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const float & f ) {
+BasicString<T>& BasicString<T>::operator+=( const float& f ) {
 	return concat( f );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const bool & b ) {
+BasicString<T>& BasicString<T>::operator+=( const bool& b ) {
 	return concat( b );
 }
 
 template<typename T>
 template<typename C>
-BasicString<T> & BasicString<T>::operator+=( const C & c ) {
+BasicString<T>& BasicString<T>::operator+=( const C& c ) {
 	return concat( c );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const char & c ) {
+BasicString<T>& BasicString<T>::operator+=( const char& c ) {
 	return concat( c );
 }
 
 template<typename T>
-BasicString<T> & BasicString<T>::operator+=( const wchar_t & c ) {
+BasicString<T>& BasicString<T>::operator+=( const wchar_t& c ) {
 	return concat( c );
 }
 
@@ -4606,7 +4680,7 @@ void BasicString<T>::resize( Size newSize ) {
 
 template<typename T>
 template<typename Stream>
-bool BasicString<T>::read( Stream * stream ) {
+bool BasicString<T>::read( Stream* stream ) {
 	if ( !IO::read( stream, &this -> size ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
@@ -4619,7 +4693,7 @@ bool BasicString<T>::read( Stream * stream ) {
 
 template<typename T>
 template<typename Stream>
-bool BasicString<T>::read(Stream* stream, Size size ) {
+bool BasicString<T>::read( Stream* stream, Size size ) {
 	this -> size = size;
 	this -> maxSize = this -> size + 1;
 	_allocateNoNull( this -> maxSize );
@@ -4640,7 +4714,7 @@ bool BasicString<T>::read(Stream* stream, Size size ) {
 
 template<typename T>
 template<typename Stream>
-bool BasicString<T>::writeReadable(Stream* stream ) const {
+bool BasicString<T>::writeReadable( Stream* stream ) const {
 	if ( !IO::writeBuffer( stream, getData(), getSize() ) )
 		return false;
 	return true;
@@ -4652,20 +4726,20 @@ bool BasicString<T>::writeReadable(Stream* stream ) const {
 /************************************************************************/
 template<typename T>
 template<typename C>
-void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString ) {
+void BasicString<T>::__format( const C* referenceStringBegin, const C* referenceStringEnd, BasicString<T>* newString ) {
 	newString -> _concatWOS( referenceStringBegin, Size( referenceStringEnd - referenceStringBegin ) );
 }
 
 template<typename T>
 template<typename C, typename T1, typename... Types>
-void BasicString<T>::__format( const C * referenceStringBegin, const C * referenceStringEnd, BasicString<T> * newString, const T1 & arg1, Types ... args ) {
+void BasicString<T>::__format( const C* referenceStringBegin, const C* referenceStringEnd, BasicString<T>* newString, const T1& arg1, Types ... args ) {
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
 		if ( *it == T( '/' ) && it + 1 < referenceStringEnd ) {
-			if ( *( it + 1 ) == T('/') ) {
-				newString -> _concatWOS(T('/'));
+			if ( *( it + 1 ) == T( '/' ) ) {
+				newString -> _concatWOS( T( '/' ) );
 				it++;
-			} else if ( *( it + 1 ) == T('%') ) {
-				newString -> _concatWOS(T('%'));
+			} else if ( *( it + 1 ) == T( '%' ) ) {
+				newString -> _concatWOS( T( '%' ) );
 				it++;
 			}
 		} else if ( *it == T( '%' ) ) {
@@ -4682,14 +4756,14 @@ void BasicString<T>::__format( const C * referenceStringBegin, const C * referen
 
 template<typename T>
 template<typename T1, typename... Types>
-BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, const T1 & arg1, Types ... args ) {
+BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, const T1& arg1, Types ... args ) {
 	return _format( referenceString.getBegin(), referenceString.getEnd(), arg1, args... );
 }
 
 template<typename T>
 template<typename C, typename T1, typename... Types>
-BasicString<T> BasicString<T>::_format( const C * referenceStringBegin, const C * referenceStringEnd, const T1 & arg1, Types ... args ) {
-	BasicString<T> newString(Vector<T>::protectedCtor::null);
+BasicString<T> BasicString<T>::_format( const C* referenceStringBegin, const C* referenceStringEnd, const T1& arg1, Types ... args ) {
+	BasicString<T> newString( Vector<T>::protectedCtor::null );
 
 	Size referenceStringSize( referenceStringEnd - referenceStringBegin );
 
@@ -4709,29 +4783,29 @@ BasicString<T> BasicString<T>::_format( const C * referenceStringBegin, const C 
 
 template<typename T>
 template<typename C, typename T1, typename... Types>
-BasicString<T> BasicString<T>::format( C * const & str, const T1 & arg1, Types ... args ) {
-	const C * referenceStringIteratorBegin( str );
-	const C * referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
+BasicString<T> BasicString<T>::format( C* const& str, const T1& arg1, Types ... args ) {
+	const C* referenceStringIteratorBegin( str );
+	const C* referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
 
 	return _format( referenceStringIteratorBegin, referenceStringIteratorEnd, arg1, args... );
 }
 
 template<typename T>
 template<typename C, size_t N, typename T1, typename... Types>
-BasicString<T> BasicString<T>::format( const C( &str )[ N ], const T1 & arg1, Types ... args ) {
-	const C * referenceStringIteratorBegin( str );
-	const C * referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
+BasicString<T> BasicString<T>::format( const C( &str )[ N ], const T1& arg1, Types ... args ) {
+	const C* referenceStringIteratorBegin( str );
+	const C* referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
 
 	return _format( referenceStringIteratorBegin, referenceStringIteratorEnd, arg1, args... );
 }
 
 
 template<typename T>
-Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const BasicString<T> & y ) {
-	const Size minSize(Math::min(x.getSize(), y.getSize()));
+Math::Compare::Value BasicString<T>::compare( const BasicString<T>& x, const BasicString<T>& y ) {
+	const Size minSize( Math::min( x.getSize(), y.getSize() ) );
 	for ( Size i( 0 ); i < minSize; i++ ) {
-		const T & t1 = x[ i ];
-		const T & t2 = y[ i ];
+		const T& t1 = x[ i ];
+		const T& t2 = y[ i ];
 
 		if ( t1 == t2 ) continue;
 		else if ( t1 > t2 ) return Math::Compare::Value::Greater;
@@ -4748,29 +4822,28 @@ Math::Compare::Value BasicString<T>::compare( const BasicString<T> & x, const Ba
 
 
 template<typename T>
-bool BasicString<T>::IsEndSentinel::operator()( const T * it ) const {
+bool BasicString<T>::IsEndSentinel::operator()( const T* it ) const {
 	return ( *it == T( '\0' ) );
 }
 
 template<typename T>
-BasicString<T>::IsEndIterator::IsEndIterator( const T * endIt ) :
-	endIt( endIt ) {
-}
+BasicString<T>::IsEndIterator::IsEndIterator( const T* endIt ) :
+	endIt( endIt ) { }
 
 template<typename T>
-bool BasicString<T>::IsEndIterator::operator()( const T * it ) const {
+bool BasicString<T>::IsEndIterator::operator()( const T* it ) const {
 	return ( it == this -> endIt );
 }
 
 template<typename T>
 template<typename N, int nbChars, int base>
-N BasicString<T>::parseNumber( const T ** c ) {
+N BasicString<T>::parseNumber( const T** c ) {
 	return __ParseNumber<N, nbChars, base>::compute( c );
 }
 
 template<typename T>
 template<size_t N>
-Size BasicString<T>::copy( T ** destinationBuffer, const T( &sourceBuffer )[ N ] ) {
+Size BasicString<T>::copy( T** destinationBuffer, const T( &sourceBuffer )[ N ] ) {
 	Utility::copy( *destinationBuffer, sourceBuffer, N );
 	destinationBuffer += N;
 	return static_cast< Size >( N );
@@ -4781,16 +4854,16 @@ template<typename Type>
 static Size BasicString<T>::_getIntegerLength( Type i, unsigned int base ) {
 	Size nbChar;
 
-	if ( i > Type(0) ) {
-		nbChar = Size(1);
+	if ( i > Type( 0 ) ) {
+		nbChar = Size( 1 );
 		Type tmpI( base );
 		while ( tmpI <= i && tmpI >= Type( base ) ) {
 			nbChar++;
 			tmpI *= base;
 		}
-	} else if ( i < Type(0) ) {
-		nbChar = Size(2);
-		Type tmpI( -Type(base) );
+	} else if ( i < Type( 0 ) ) {
+		nbChar = Size( 2 );
+		Type tmpI( -Type( base ) );
 		while ( tmpI >= i ) {
 			nbChar++;
 			tmpI *= base;
@@ -4807,8 +4880,8 @@ template<typename Type>
 static Size BasicString<T>::_getIntegerPositiveLength( Type i, unsigned int base ) {
 	Size nbChar;
 
-	if ( i > Type(0) ) {
-		nbChar = Size(0);
+	if ( i > Type( 0 ) ) {
+		nbChar = Size( 0 );
 		Type tmpI( 1 );
 		while ( tmpI <= i ) {
 			nbChar++;
@@ -4816,7 +4889,7 @@ static Size BasicString<T>::_getIntegerPositiveLength( Type i, unsigned int base
 		}
 	} else {
 		// i == 0 as i is positive.
-		nbChar = Size(1);
+		nbChar = Size( 1 );
 	}
 	return nbChar;
 }

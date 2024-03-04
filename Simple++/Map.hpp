@@ -428,14 +428,14 @@ RBNode<T> * RBNode<T>::getUncle( const RBNode<T> & n ) {
 
 template<typename T>
 void RBNode<T>::insertNodeLeft( RBNode<T> * parentNode, RBNode<T> * node, RBNode<T> ** root ) {
-	ASSERT_SPP( parentNode -> getLeft() == NULL );
+	_ASSERT_SPP( parentNode -> getLeft() == NULL );
 	parentNode -> setLeft( node );
 	RBNode<T>::insertNode( node, root );
 }
 
 template<typename T>
 void RBNode<T>::insertNodeRight( RBNode<T> * parentNode, RBNode<T> * node, RBNode<T> ** root ) {
-	ASSERT_SPP( parentNode -> getRight() == NULL );
+	_ASSERT_SPP( parentNode -> getRight() == NULL );
 	parentNode -> setRight( node );
 	RBNode<T>::insertNode( node, root );
 }
@@ -996,7 +996,7 @@ unsigned int RBNode<T>::_checkNbBlackNode( RBNode<T> * node, unsigned int nbBlac
 	if ( node ) {
 		if ( node -> getColor() == Color::Red ) {
 			// Tree has a Red node with red child :/
-			ASSERT_SPP( ( !node -> getLeft() || node -> getLeft() -> getColor() == Color::Black ) && ( !node -> getRight() || node -> getRight() -> getColor() == Color::Black ) );
+			_ASSERT_SPP( ( !node -> getLeft() || node -> getLeft() -> getColor() == Color::Black ) && ( !node -> getRight() || node -> getRight() -> getColor() == Color::Black ) );
 		}
 
 		if ( node -> getColor() == Color::Black )
@@ -1005,7 +1005,7 @@ unsigned int RBNode<T>::_checkNbBlackNode( RBNode<T> * node, unsigned int nbBlac
 		unsigned int nbBlacksLeft( _checkNbBlackNode( node -> getLeft(), nbBlackNodes ) );
 		unsigned int nbBlacksRight( _checkNbBlackNode( node -> getRight(), nbBlackNodes ) );
 		// Tree has not the same number of black nodes for every path :/
-		ASSERT_SPP( nbBlacksLeft == nbBlacksRight );
+		_ASSERT_SPP( nbBlacksLeft == nbBlacksRight );
 
 
 		return nbBlacksLeft;
@@ -1299,12 +1299,12 @@ void RBTree<I, T, Compare>::_checkTreeSorted( RBNode< MapObject<I, T> > * node, 
 		const MapObject<I, T> & v( node -> getValue() );
 		if ( node -> getLeft() ) {
 			Math::Compare::Value compareValue( func( node -> getLeft() -> getValue().getIndex(), v.getIndex() ) );
-			ASSERT_SPP( compareValue == Math::Compare::Value::Less );
+			_ASSERT_SPP( compareValue == Math::Compare::Value::Less );
 			_checkTree( node -> getLeft(), func );
 		}
 		if ( node -> getRight() ) {
 			Math::Compare::Value compareValue( func( node -> getRight() -> getValue().getIndex(), v.getIndex() ) );
-			ASSERT_SPP( compareValue == Math::Compare::Value::Greater );
+			_ASSERT_SPP( compareValue == Math::Compare::Value::Greater );
 			_checkTree( node -> getRight(), func );
 		}
 	}

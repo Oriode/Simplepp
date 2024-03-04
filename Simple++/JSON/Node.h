@@ -4,6 +4,7 @@
 ///@date (DMY) 23-05-2020
 #pragma once
 
+#include "../Log.h"
 #include "../UTF8String.h"
 #include "../IO/IO.h"
 #include "../Vector.h"

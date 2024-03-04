@@ -287,121 +287,22 @@ public:
 	///@returns	A reference to a BasicString.
 
 	BasicString & concat( const BasicString<T> & str );
-	///@brief		Concatenates the given string
-	///@tparam	C	Type of the c.
-	///@param	str	The string.
-	///@returns	A reference to a BasicString.
+
 	template<typename C>
 	BasicString & concat( const BasicString<C> & str );
 
-	///@brief		Concats
-	///@tparam	C	Type of the c.
-	///@param	buffer	  	The buffer.
-	///@param	bufferSize	Size of the buffer.
-	///@returns	A reference to a BasicString.
 	template<typename C>
 	BasicString & concat( const C * buffer, const Size & bufferSize );
 
-	///@brief		Concatenates the given buffer
-	///@tparam	C	Type of the c.
-	///@param	buffer	The buffer.
-	///@returns	A reference to a BasicString.
 	template<typename C>
 	BasicString & concat( C * const & buffer );
 
-	///@brief		Concatenates the given string
-	///@tparam	C	Type of the c.
-	///@param	str	The string.
-	///@returns	A reference to a BasicString.
 	template<typename C, size_t N>
 	BasicString & concat( const C (& str)[N] );
 
-	///@brief		Concatenates the given b
-	///@param	b	True to b.
-	///@returns	A reference to a BasicString.
 	BasicString & concat( const bool & b );
-
-
-	///@brief		Concatenates the given c
-	///@param	c	A char to process.
-	///@returns	A reference to a BasicString.
 	BasicString & concat( const char & c );
-	///@brief		Concatenates the given c
-	///@param	c	A wchar_t to process.
-	///@returns	A reference to a BasicString.
 	BasicString & concat( const wchar_t & c );
-
-	///@brief		Concatenates the given uc
-	///@tparam	Base	Type of the base.
-	///@param	uc	The uc.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned char & uc );
-
-	///@brief		Concatenates the given us
-	///@tparam	Base	Type of the base.
-	///@param	us	The us.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned short & us );
-
-	///@brief		Concatenates the given i
-	///@tparam	Base	Type of the base.
-	///@param	i	Zero-based index of the.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const int & i );
-
-	///@brief		Concatenates the given user interface
-	///@tparam	Base	Type of the base.
-	///@param	ui	The user interface.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned int & ui );
-
-	///@brief		Concatenates the given l
-	///@tparam	Base	Type of the base.
-	///@param	l	A long int to process.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const long int & l );
-
-	///@brief		Concatenates the given ul
-	///@tparam	Base	Type of the base.
-	///@param	ul	The ul.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned long int & ul );
-
-	///@brief		Concatenates the given ll
-	///@tparam	Base	Type of the base.
-	///@param	ll	The ll.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const long long int & ll );
-
-	///@brief		Concatenates the given ull
-	///@tparam	Base	Type of the base.
-	///@param	ull	The ull.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & concat( const unsigned long long int & ull );
-
-	///@brief		Concatenates the given d
-	///@tparam	Precision	Type of the precision.
-	///@tparam	Base	 	Type of the base.
-	///@param	d	A double to process.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Precision = 10, unsigned int Base = 10>
-	// BasicString & concat( const double & d );
-
-	///@brief		Concatenates the given f
-	///@tparam	Precision	Type of the precision.
-	///@tparam	Base	 	Type of the base.
-	///@param	f	A float to process.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
-	// BasicString & concat( const float & f );
 
 
 	///@brief			Concat an Integer to this String.
@@ -425,6 +326,21 @@ public:
 	BasicString & concat( const double & d, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
 	BasicString & concat( const float & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
+
+
+	BasicString& concatFill( const BasicString<T>& str, const Size& fillNb, const T& fillChar = T( ' ' ) );
+
+	template<typename C>
+	BasicString& concatFill( const BasicString<C>& str, const Size& fillNb, const T& fillChar = T( ' ' ) );
+
+	template<typename C>
+	BasicString& concatFill( const C* buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar = T( ' ' ) );
+
+	template<typename C>
+	BasicString& concatFill( C* const& buffer, const Size& fillNb, const T& fillChar = T( ' ' ) );
+
+	template<typename C, size_t N>
+	BasicString& concatFill( const C( &str )[ N ], const Size& fillNb, const T& fillChar = T( ' ' ) );
 
 	///@brief	Concatenate the number and fill the first characters to have at least the specified number.
 	///@param 	uc			Number.
@@ -1592,183 +1508,52 @@ protected:
 
 	/************************************************************************/
 	/* concat() without adding sentinel                                     */
-	///@brief		Concatenate whithout \0
-	///@param	str	The string.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const BasicString<T> & str );
-	///@brief		Concatenate whithout \0
-	///@tparam	C	Type of the c.
-	///@param	str	The string.
-	///@returns	A reference to a BasicString.
+
 	template<typename C>
 	BasicString & _concatWOS( const BasicString<C> & str );
 
-	///@brief		Concatenate whithout \0
-	///@tparam	C	Type of the c.
-	///@param	buffer	  	The buffer.
-	///@param	bufferSize	Size of the buffer.
-	///@returns	A reference to a BasicString.
 	template<typename C>
 	BasicString & _concatWOS( C * const & buffer, const Size & bufferSize );
 
-	///@brief		Concatenate whithout \0
-	///@tparam	C	Type of the c.
-	///@param	buffer	The buffer.
-	///@returns	A reference to a BasicString.
 	template<typename C>
 	BasicString & _concatWOS( C * const & buffer);
 
-	///@brief		Concatenate whithout \0
-	///@tparam	C	Type of the c.
-	///@param	str	The string.
-	///@returns	A reference to a BasicString.
 	template<typename C, size_t N>
 	BasicString & _concatWOS( const C (& str)[N] );
 
-	///@brief		Concatenate whithout \0
-	///@param	b	True to b.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const bool & b );
-
-
-	///@brief		Concatenate whithout \0
-	///@param	c	A char to process.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const char & c );
-	///@brief		Concatenate whithout \0
-	///@param	c	A wchar_t to process.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const wchar_t & c );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	uc	The uc.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned char & uc );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	us	The us.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned short & us );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	i	Zero-based index of the.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const int & i );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	ui	The user interface.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned int & ui );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	l	A long int to process.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const long int & l );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	ul	The ul.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned long int & ul );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	ll	The ll.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const long long int & ll );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Base	Type of the base.
-	///@param	ull	The ull.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Base = 10>
-	// BasicString & _concatWOS( const unsigned long long int & ull );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Precision	Type of the precision.
-	///@tparam	Base	 	Type of the base.
-	///@param	d	A double to process.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Precision = 10, unsigned int Base = 10>
-	// BasicString & _concatWOS( const double & d );
-
-	///@brief		Concatenate whithout \0
-	///@tparam	Precision	Type of the precision.
-	///@tparam	Base	 	Type of the base.
-	///@param	f	A float to process.
-	///@returns	A reference to a BasicString.
-	// template<unsigned int Precision = DefaultPrecisionFloat, unsigned int Base = 10>
-	// BasicString & _concatWOS( const float & f );
-
-
-	///@brief		Concatenate whithout \0
-	///@param	uc  	The uc.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const unsigned char & uc, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	us  	The us.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const unsigned short & us, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	i   	Zero-based index of the.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const int & i, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	ui  	The user interface.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const unsigned int & ui, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	l   	A long int to process.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const long int & l, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	ul  	The ul.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const unsigned long int & ul, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	ll  	The ll.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const long long int & ll, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	ull 	The ull.
-	///@param	base	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const unsigned long long int & ull, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	d		 	A double to process.
-	///@param	precision	The precision.
-	///@param	base	 	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const double & d, unsigned int precision = DefaultPrecisionDouble, unsigned int base = 10 );
-	///@brief		Concatenate whithout \0
-	///@param	f		 	A float to process.
-	///@param	precision	The precision.
-	///@param	base	 	The base.
-	///@returns	A reference to a BasicString.
 	BasicString & _concatWOS( const float & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
 
 
+	template<typename C>
+	BasicString& _concatFillWOS( const BasicString<C> & str, const Size& fillNb, const T& fillChar = T( ' ' ) );
+	template<typename C>
+	BasicString& _concatFillWOS( C* const& buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar = T( ' ' ) );
+	template<typename C>
+	BasicString& _concatFillWOS( C* const& buffer, const Size& fillNb, const T& fillChar = T( ' ' ) );
+	template<typename C, size_t N>
+	BasicString& _concatFillWOS( const C( &str )[ N ], const Size& fillNb, const T& fillChar = T( ' ' ) );
 
-
+	BasicString& _concatFillWOS( const unsigned char& uc, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const unsigned short& us, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const int& i, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const unsigned int& ui, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const long int& l, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const unsigned long int& ul, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const long long int& ll, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	BasicString& _concatFillWOS( const unsigned long long int& ull, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
 
 
 private:
@@ -1871,7 +1656,11 @@ private:
 	///@param	base	The base.
 	///@returns	A reference to a BasicString.
 	template<typename Type>
-	BasicString & _concatFillInteger( const Type & i, const Size & fillNb, const T & fillChar, unsigned int base = 10 );
+	BasicString & _concatFillIntegerWOS( const Type & i, const Size & fillNb, const T & fillChar, unsigned int base = 10 );
+
+	template<typename C>
+	BasicString& _concatFillStringWOS( const C* buffer, const Size bufferSize, const Size& fillNb, const T& fillChar );
+
 
 	///@brief		Concatenate float
 	///@tparam	Type	 	Type of the type.
@@ -1926,6 +1715,7 @@ private:
 	///@returns	A reference to a BasicString.
 	template<typename Type>
 	BasicString & _concatFloatWOS( const Type & f, unsigned int precision = DefaultPrecisionFloat, unsigned int base = 10 );
+
 
 
 
@@ -2503,3 +2293,4 @@ public:
 
 
 #include "String.hpp"
+

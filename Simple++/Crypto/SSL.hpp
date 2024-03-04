@@ -33,7 +33,7 @@ namespace Crypto {
 	inline void SSLObjectT<T>::displayErrors(const TCHAR* fileName, unsigned int lineNumber) {
 		int errorCode;
 		while ( errorCode = SSLObjectT<T>::getError() ) {
-			Log::callErrorHandler(getErrorStr(errorCode), Log::MessageSeverity::Error, Log::MessageColor::Red, fileName, lineNumber);
+			Log::displayError(getErrorStr(errorCode));
 		}
 	}
 

@@ -27,40 +27,40 @@
 
 
 #if defined TEXT
-	#undef TEXT
-	#undef __TEXT
+#undef TEXT
+#undef __TEXT
 #endif
 
 #if defined WIN32
-	#if defined WIN32_WSTRING
-		#if !defined TEXT
-			#define __TEXT(str) L##str
-			#define TEXT(str) __TEXT(str)
-		#endif
+#if defined WIN32_WSTRING
+#if !defined TEXT
+#define __TEXT(str) L##str
+#define TEXT(str) __TEXT(str)
+#endif
 
-		#ifndef TCHAR
-			#define TCHAR wchar_t
-		#endif
-	#else
-		#if !defined TEXT
-			#define __TEXT(str) #str
-			#define TEXT(str) __TEXT(str)
-		#endif
-
-		#ifndef TCHAR
-			#define TCHAR char
-		#endif
-	#endif
+#ifndef TCHAR
+#define TCHAR wchar_t
+#endif
 #else
-	#ifndef TEXT
-		#define TEXT(str) str
-	#endif
-	#ifndef TEXT2
-		#define TEXT2(str) str
-	#endif
-	#ifndef TCHAR
-		#define TCHAR char
-	#endif
+#if !defined TEXT
+#define __TEXT(str) #str
+#define TEXT(str) __TEXT(str)
+#endif
+
+#ifndef TCHAR
+#define TCHAR char
+#endif
+#endif
+#else
+#ifndef TEXT
+#define TEXT(str) str
+#endif
+#ifndef TEXT2
+#define TEXT2(str) str
+#endif
+#ifndef TCHAR
+#define TCHAR char
+#endif
 #endif
 
 #if defined DEBUG
@@ -124,13 +124,13 @@ public:
 	};
 
 
-	static void errorHandler( const T * message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red, unsigned char indent = 0, const TCHAR * fileName = NULL, unsigned int lineNumber = 0 );
+	static void errorHandler( const T* message, typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red, unsigned char indent = 0, const TCHAR* fileName = NULL, unsigned int lineNumber = 0 );
 
 	static void callErrorHandler(
-		const T * message,
+		const T* message,
 		typename SimpleLogT<T>::MessageSeverity severity = typename SimpleLogT<T>::MessageSeverity::Error,
 		typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::Red,
-		const TCHAR * fileName = NULL,
+		const TCHAR* fileName = NULL,
 		unsigned int lineNumber = 0
 	);
 
@@ -140,35 +140,35 @@ public:
 	///@param msg Message to be displayed
 	///@param 
 	static void setErrorHandler( void( *errorHandlerFn ) (
-		const T * msg,
+		const T* msg,
 		typename SimpleLogT<T>::MessageSeverity severity,
 		typename SimpleLogT<T>::MessageColor color,
 		unsigned char indent,
-		const TCHAR * file,
+		const TCHAR* file,
 		unsigned int line ) );
 
 	static void setConsoleColor( typename SimpleLogT<T>::MessageColor color = typename SimpleLogT<T>::MessageColor::White );
 
 #if defined WIN32 && defined ENABLE_WIN32
-	static void displayWindowsDebug( const T * message, const TCHAR * fileName, unsigned int lineNumber );
-	static size_t getWindowsLastError( T * messageBuffer, size_t bufferSize );
+	static void displayWindowsDebug( const T* message, const TCHAR* fileName, unsigned int lineNumber );
+	static size_t getWindowsLastError( T* messageBuffer, size_t bufferSize );
 #endif
 
 	///@brief Fill a char * buffer with the current time
 	///@param strBuffer Buffer to be filled
 	///@param bufferSize size of the buffer
 	template<typename C>
-	static void getTimeStr( C * strBuffer, size_t bufferSize );
-	static void getTimeStr( char * strBuffer, size_t bufferSize );
-	static void getTimeStr( wchar_t * strBuffer, size_t bufferSize );
+	static void getTimeStr( C* strBuffer, size_t bufferSize );
+	static void getTimeStr( char* strBuffer, size_t bufferSize );
+	static void getTimeStr( wchar_t* strBuffer, size_t bufferSize );
 
 
 	///@brief Print a message to the Console.
 	///@param messageBuffer Message to be printed.
 	template<typename C>
-	static void printMessage( const C * messageBuffer );
-	static void printMessage( const char * messageBuffer );
-	static void printMessage( const wchar_t * messageBuffer );
+	static void printMessage( const C* messageBuffer );
+	static void printMessage( const char* messageBuffer );
+	static void printMessage( const wchar_t* messageBuffer );
 
 	///@brief Print a char to the Console.
 	///@param c Char to be printed.
@@ -178,39 +178,39 @@ public:
 	static void printChar( const wchar_t c );
 
 	template<typename C>
-	static void endLine(const C* c);
-	static void endLine(const char* c);
-	static void endLine(const wchar_t* c);
+	static void endLine( const C* c );
+	static void endLine( const char* c );
+	static void endLine( const wchar_t* c );
 
 	static void increaseIndent();
 	static void lowerIndent();
 
 protected:
 	static void( *mErrorHandlerFn ) (
-		const T *,
+		const T*,
 		MessageSeverity,
 		MessageColor,
 		unsigned char,
-		const TCHAR *,
+		const TCHAR*,
 		unsigned int );
 
 private:
 	template<typename C>
-	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer, const C * fileName, unsigned int lineNumber );
-	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer, const char * fileName, unsigned int lineNumber );
-	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer, const wchar_t * fileName, unsigned int lineNumber );
+	static void parseMessage( C* buffer, int bufferSize, C* timeBuffer, const C* fileName, unsigned int lineNumber );
+	static void parseMessage( char* buffer, int bufferSize, char* timeBuffer, const char* fileName, unsigned int lineNumber );
+	static void parseMessage( wchar_t* buffer, int bufferSize, wchar_t* timeBuffer, const wchar_t* fileName, unsigned int lineNumber );
 
 	template<typename C>
-	static void parseMessage( C * buffer, int bufferSize, C * timeBuffer );
-	static void parseMessage( char * buffer, int bufferSize, char * timeBuffer );
-	static void parseMessage( wchar_t * buffer, int bufferSize, wchar_t * timeBuffer );
+	static void parseMessage( C* buffer, int bufferSize, C* timeBuffer );
+	static void parseMessage( char* buffer, int bufferSize, char* timeBuffer );
+	static void parseMessage( wchar_t* buffer, int bufferSize, wchar_t* timeBuffer );
 
 
 	template<typename O, typename I>
-	static void convertMessage( O * outputBuffer, const I * inputBuffer, size_t bufferSize );
+	static void convertMessage( O* outputBuffer, const I* inputBuffer, size_t bufferSize );
 
 	template<typename O, typename I>
-	static void convertFileName( O * outputBuffer, const I * inputBuffer, size_t bufferSize );
+	static void convertFileName( O* outputBuffer, const I* inputBuffer, size_t bufferSize );
 
 	static unsigned char indent;
 };
