@@ -11,8 +11,9 @@ namespace Network {
 	template<typename T>
 	class HTTPClientT {
 	public:
-		HTTPClientT( const UrlT<T>& url );
-		HTTPClientT( typename UrlT<T>::Sheme type, const StringASCII& hostname );
+		HTTPClientT( const UrlT<T>& url, const Size bufferSize = Size( 8388608 ) );
+		HTTPClientT( typename UrlT<T>::Sheme type, const StringASCII& hostname, const Size bufferSize = Size( 8388608 ) );
+		~HTTPClientT();
 
 		HTTPParam* setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue );
 
@@ -36,7 +37,8 @@ namespace Network {
 		bool bWasConnected;
 
 		StringASCII sendBuffer;
-		char receiveBuffer[ 1000000 ];
+		char * receiveBuffer { NULL };
+		Size bufferSize;
 	};
 
 	using HTTPClient = HTTPClientT<int>;

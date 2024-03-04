@@ -3,14 +3,23 @@ namespace Network {
 
 
 	template<typename T>
-	inline HTTPClientT<T>::HTTPClientT( typename UrlT<T>::Sheme sheme, const StringASCII& hostname ) :
+	inline HTTPClientT<T>::HTTPClientT( typename UrlT<T>::Sheme sheme, const StringASCII& hostname, const Size bufferSize ) :
 		request( HTTPRequestT<T>::Verb::Unknown, sheme, hostname ),
-		bWasConnected( false ) { }
+		bWasConnected( false ),
+		receiveBuffer( new char[ bufferSize ] ),
+		bufferSize( bufferSize ) { }
 
 	template<typename T>
-	inline HTTPClientT<T>::HTTPClientT( const UrlT<T>& url ) :
+	inline HTTPClientT<T>::HTTPClientT( const UrlT<T>& url, const Size bufferSize ) :
 		request( HTTPRequestT<T>::Verb::Unknown, url ),
-		bWasConnected( false ) { }
+		bWasConnected( false ),
+		receiveBuffer( new char[ bufferSize ] ),
+		bufferSize( bufferSize ) { }
+
+	template<typename T>
+	inline HTTPClientT<T>::~HTTPClientT() {
+		delete[] this->receiveBuffer;
+	}
 
 	template<typename T>
 	inline HTTPParam* HTTPClientT<T>::setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue ) {
@@ -49,7 +58,7 @@ namespace Network {
 		this->request.setVerb( HTTPRequestT<T>::Verb::GET );
 		this->request.setUri( uri );
 		this->request.setUrlParams( urlParamVector );
-		
+
 		return _query( this->request );
 	}
 
@@ -92,7 +101,7 @@ namespace Network {
 				}
 			}
 
-			int maxSizeReceive( sizeof( this->receiveBuffer ) );
+			int maxSizeReceive( int( this->bufferSize ) );
 			const StringASCII::ElemType* parseIt( this->receiveBuffer );
 			int totalReceivedLength( connection.receive( this->receiveBuffer, maxSizeReceive ) );
 
@@ -117,6 +126,10 @@ namespace Network {
 				contentLength = contentSizeParam->getValue().toInt();
 			} else {
 				contentLength = Size( 0 );
+			}
+
+			if ( contentLength > this->bufferSize ) {
+				return NULL;
 			}
 
 			maxSizeReceive = contentLength + static_cast< int >( parseIt - this->receiveBuffer );

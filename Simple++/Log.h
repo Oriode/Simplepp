@@ -276,7 +276,7 @@ using Log = LogT<char>;
 
 template<typename T>
 inline void LogDefaultHandlerT<T>::message( const BasicString<T>& logTitle, const BasicString<T>& logMessage, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color ) {
-	static const BasicString<T> severityStrTable[] = { "Error", "Warning", "Info", "Verbose" };
+	static const BasicString<T> severityStrTable[] = { "Error  ", "Warning", "Info   ", "Verbose" };
 
 	if ( logTitle.getSize() == Size( 0 ) && logMessage.getSize() == Size( 0 ) ) {
 		std::cout << std::endl;
