@@ -276,7 +276,7 @@ using Log = LogT<char>;
 
 template<typename T>
 inline void LogDefaultHandlerT<T>::message( const BasicString<T>& logTitle, const BasicString<T>& logMessage, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color ) {
-	static const BasicString<T> severityStrTable[] = { "Error  ", "Warning", "Info   ", "Verbose" };
+	static const BasicString<T> severityStrTable[] = { "  ERROR", "WARNING", "   INFO", "VERBOSE" };
 
 	if ( logTitle.getSize() == Size( 0 ) && logMessage.getSize() == Size( 0 ) ) {
 		std::cout << std::endl;
@@ -346,12 +346,12 @@ inline void LogDefaultHandlerT<T>::endStep( const BasicString<T>& logTitle, cons
 
 	BasicString<T> logTitleWTime;
 
-	logTitleWTime << BasicString<T>::toString( float( elapsedTime.getValue() ) / 1000.0f, 3 );
-	logTitleWTime << BasicString<T>::ElemType( 's' );
+	logTitleWTime << logTitle;
 	logTitleWTime << BasicString<T>::ElemType( ' ' );
 	logTitleWTime << BasicString<T>::ElemType( '-' );
 	logTitleWTime << BasicString<T>::ElemType( ' ' );
-	logTitleWTime << logTitle;
+	logTitleWTime << BasicString<T>::toString( float( elapsedTime.getValue() ) / 1000.0f, 3 );
+	logTitleWTime << BasicString<T>::ElemType( 's' );
 
 
 	message( logTitleWTime, logMessage, SimpleLogT<T>::MessageSeverity::Info, color );

@@ -598,7 +598,7 @@ BasicString<T>& BasicString<T>::_concatFillIntegerWOS( const Type& i, const Size
 
 template<typename T>
 template<typename C>
-inline BasicString<T>& BasicString<T>::_concatFillStringWOS( const C * buffer, const Size bufferSize, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::_concatFillStringWOS( const C* buffer, const Size bufferSize, const Size& fillNb, const T& fillChar ) {
 
 	// TODO:
 }
@@ -737,7 +737,7 @@ BasicString<T>& BasicString<T>::concat( const float& f, unsigned int precision, 
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::concatFill( const BasicString<T>& str, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::concatFill( const BasicString<T>& str, const Size& fillNb, const T& fillChar ) {
 	return concatFill( str.getData(), str.getSize(), fillNb, fillChar );
 }
 
@@ -749,7 +749,7 @@ inline BasicString<T>& BasicString<T>::concatFill( const BasicString<C>& str, co
 
 template<typename T>
 template<typename C>
-inline BasicString<T> & BasicString<T>::concatFill( const C* buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::concatFill( const C* buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar ) {
 	_concatFillWOS( buffer, bufferSize, fillNb, fillChar );
 	*this->iteratorEnd = T( '\0' );
 	return *this;
@@ -757,13 +757,13 @@ inline BasicString<T> & BasicString<T>::concatFill( const C* buffer, const Size&
 
 template<typename T>
 template<typename C>
-inline BasicString<T> & BasicString<T>::concatFill( C* const& buffer, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::concatFill( C* const& buffer, const Size& fillNb, const T& fillChar ) {
 	return concatFill( buffer, BasicString<C>::getSize( buffer ), fillNb, fillChar );
 }
 
 template<typename T>
 template<typename C, size_t N>
-inline BasicString<T> & BasicString<T>::concatFill( const C( &str )[ N ], const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::concatFill( const C( &str )[ N ], const Size& fillNb, const T& fillChar ) {
 	return concatFill( str, N, fillNb, fillChar );
 }
 
@@ -865,13 +865,13 @@ BasicString<T>& BasicString<T>::_concatWOS( const C( &str )[ N ] ) {
 
 template<typename T>
 template<typename C>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const BasicString<C>& str, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const BasicString<C>& str, const Size& fillNb, const T& fillChar ) {
 	return _concatFillWOS( str.getData(), str.getSize(), fillNb, fillChar );
 }
 
 template<typename T>
 template<typename C>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( C* const& buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( C* const& buffer, const Size& bufferSize, const Size& fillNb, const T& fillChar ) {
 	Size newSize;
 	if ( fillNb > bufferSize ) {
 		Size nbCharToFill( fillNb - bufferSize );
@@ -905,53 +905,53 @@ inline BasicString<T> & BasicString<T>::_concatFillWOS( C* const& buffer, const 
 
 template<typename T>
 template<typename C>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( C* const& buffer, const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( C* const& buffer, const Size& fillNb, const T& fillChar ) {
 	return _concatFillWOS( buffer, BasicString<T>::getSize( str ), fillNb, fillChar );
 }
 
 template<typename T>
 template<typename C, size_t N>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const C( &str )[ N ], const Size& fillNb, const T& fillChar ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const C( &str )[ N ], const Size& fillNb, const T& fillChar ) {
 	return _concatFillWOS( buffer, N, fillNb, fillChar );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned char& uc, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const unsigned char& uc, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<unsigned char>( uc, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned short& us, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const unsigned short& us, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<unsigned short>( us, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const int& i, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const int& i, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<int>( i, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned int& ui, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const unsigned int& ui, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<unsigned int>( ui, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const long int& l, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const long int& l, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<long int>( l, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned long int& ul, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const unsigned long int& ul, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<unsigned long int>( ul, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const long long int& ll, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const long long int& ll, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<long long int>( ll, fillNb, fillChar, base );
 }
 
 template<typename T>
-inline BasicString<T> & BasicString<T>::_concatFillWOS( const unsigned long long int& ull, const Size& fillNb, const T& fillChar, unsigned int base ) {
+inline BasicString<T>& BasicString<T>::_concatFillWOS( const unsigned long long int& ull, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	return _concatFillIntegerWOS<unsigned long long int>( ull, fillNb, fillChar, base );
 }
 
@@ -4208,6 +4208,11 @@ Vector<BasicString<T>> BasicString<T>::split( const BasicString<T>& s, const T& 
 	return v;
 }
 
+template<typename T>
+inline BasicString<T> BasicString<T>::format( const BasicString<T> & referenceString ) {
+	return referenceString;
+}
+
 
 template<typename T>
 bool BasicString<T>::isNumeric( const BasicString<T>& v ) {
@@ -4756,7 +4761,7 @@ void BasicString<T>::__format( const C* referenceStringBegin, const C* reference
 
 template<typename T>
 template<typename T1, typename... Types>
-BasicString<T> BasicString<T>::format( const BasicString<T> referenceString, const T1& arg1, Types ... args ) {
+BasicString<T> BasicString<T>::format( const BasicString<T> & referenceString, const T1& arg1, Types ... args ) {
 	return _format( referenceString.getBegin(), referenceString.getEnd(), arg1, args... );
 }
 
@@ -4791,12 +4796,24 @@ BasicString<T> BasicString<T>::format( C* const& str, const T1& arg1, Types ... 
 }
 
 template<typename T>
+template<typename C>
+inline BasicString<T> BasicString<T>::format( C* const& str ) {
+	return BasicString<T>( str );
+}
+
+template<typename T>
 template<typename C, size_t N, typename T1, typename... Types>
 BasicString<T> BasicString<T>::format( const C( &str )[ N ], const T1& arg1, Types ... args ) {
 	const C* referenceStringIteratorBegin( str );
 	const C* referenceStringIteratorEnd( referenceStringIteratorBegin + BasicString<C>::getSize( str ) );
 
 	return _format( referenceStringIteratorBegin, referenceStringIteratorEnd, arg1, args... );
+}
+
+template<typename T>
+template<typename C, size_t N>
+inline BasicString<T> BasicString<T>::format( const C( &str )[ N ] ) {
+	return BasicString<T>( str, Size( N ) );
 }
 
 

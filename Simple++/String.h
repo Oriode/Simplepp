@@ -1343,7 +1343,8 @@ public:
 	///@param	args		   	Variable arguments providing the variables.
 	///@returns	The formatted String.
 	template<typename T1, typename... Types>
-	static BasicString<T> format( const BasicString<T> referenceString, const T1 & arg1, Types ... args );
+	static BasicString<T> format( const BasicString<T> & referenceString, const T1 & arg1, Types ... args );
+	static BasicString<T> format( const BasicString<T> & referenceString );
 
 	///@brief		Format a reference String with values. To place a variable use the character '%'. To place a '%' use the '/''%' characters.
 	///@tparam	C		Reference string type.
@@ -1355,6 +1356,8 @@ public:
 	///@returns	The formatted String.
 	template<typename C, typename T1, typename... Types>
 	static BasicString<T> format( C * const & str, const T1 & arg1, Types ... args );
+	template<typename C>
+	static BasicString<T> format( C* const& str);
 
 	///@brief		Format a reference String with values. To place a variable use the character '%'. To place a '%' use the '/''%' characters.
 	///@tparam	C		Reference string type.
@@ -1367,6 +1370,8 @@ public:
 	///@returns	The formatted String.
 	template<typename C, size_t N, typename T1, typename... Types>
 	static BasicString<T> format( const C( &str )[ N ], const T1 & arg1, Types ... args );
+	template<typename C, size_t N>
+	static BasicString<T> format( const C( &str )[ N ] );
 
 
 	///@brief		Gets a first
