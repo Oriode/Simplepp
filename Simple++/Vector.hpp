@@ -326,7 +326,7 @@ bool Vector<T>::eraseAll( const T & value ) {
 template<typename T>
 void Vector<T>::resize( const Size newSize ) {
 	if ( newSize > this -> maxSize )
-		reserve( newSize );
+		reserve( newSize * Size(2)  );
 
 	this -> size = newSize;
 	_updateIterators();
