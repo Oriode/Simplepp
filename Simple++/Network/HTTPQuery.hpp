@@ -107,11 +107,11 @@ namespace Network {
 
 	template<typename T>
 	template<typename EndFunc>
-	inline bool HTTPQueryT<T>::parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
-		if ( !parseQueryHeader( itP, endFunc ) ) {
+	inline bool HTTPQueryT<T>::parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc, int verbose ) {
+		if ( !parseQueryHeader( itP, endFunc, verbose ) ) {
 			return false;
 		}
-		if ( !parseQueryContent( itP, endFunc ) ) {
+		if ( !parseQueryContent( itP, endFunc, verbose ) ) {
 			return false;
 		}
 
@@ -169,7 +169,7 @@ namespace Network {
 
 	template<typename T>
 	template<typename EndFunc>
-	inline bool HTTPQueryT<T>::parseQueryHeader( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
+	inline bool HTTPQueryT<T>::parseQueryHeader( const StringASCII::ElemType** itP, const EndFunc& endFunc, int verbose ) {
 		struct FunctorNewLine {
 			FunctorNewLine( const EndFunc& endFunc ) :
 				endFunc( endFunc ) { }
@@ -196,6 +196,8 @@ namespace Network {
 		FunctorParamName functorParamName( endFunc );
 		FunctorSpace functorSpace( endFunc );
 
+		if ( verbose > 0 ) { Log::startStep( __func__, "Parsing header..." ); }
+
 		clearParams();
 		this->contentType = HTTPQueryT<T>::ContentType::None;
 
@@ -220,7 +222,7 @@ namespace Network {
 			const StringASCII::ElemType* paramValueEndIt( it );
 
 			if ( paramNameBeginIt == paramNameEndIt || paramValueBeginIt == paramValueEndIt ) {
-				ERROR_SPP( "HTTP header syntax error." );
+				if ( verbose > 0 ) { Log::endStep( __func__, "HTTP header syntax error." ); }
 				return false;
 			}
 
@@ -228,6 +230,8 @@ namespace Network {
 			StringASCII newParamValue( paramValueBeginIt, Size( paramValueEndIt - paramValueBeginIt ) );
 
 			HTTPParam* newParam( new HTTPParam( newParamName, newParamValue ) );
+
+			if ( verbose > 1 ) { Log::displayLog( __func__, StringASCII::format( "%: %", newParam->getName(), newParam->getValue() ) ); }
 
 			const StringASCII contentTypeName( "Content-Type" );
 			if ( newParam->getName() == contentTypeName ) {
@@ -256,18 +260,25 @@ namespace Network {
 			break;
 		}
 
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, "Success." ); }
+
 		return true;
 	}
 
 	template<typename T>
 	template<typename EndFunc>
-	inline bool HTTPQueryT<T>::parseQueryContent( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
+	inline bool HTTPQueryT<T>::parseQueryContent( const StringASCII::ElemType** itP, const EndFunc& endFunc, int verbose ) {
+
+		if ( verbose > 0 ) { Log::startStep( __func__, "Parsing content..." ); }
+
 		const StringASCII::ElemType*& it( *itP );
 		for ( ; ( *it == StringASCII::ElemType( '\n' ) || *it == StringASCII::ElemType( '\r' ) ) && !endFunc( it ); it++ );
 
 		const StringASCII::ElemType* contentStrBeginIt( it );
 		for ( ; !endFunc( it ); it++ );
 		this->contentStr = StringASCII( contentStrBeginIt, Size( it - contentStrBeginIt ) );
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success parsed % bytes.", this->contentStr.getSize() ) ); }
 
 		return true;
 	}

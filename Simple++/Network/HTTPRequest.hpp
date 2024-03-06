@@ -189,8 +189,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline void HTTPRequestT<T>::setUri( const StringASCII& uriStr ) {
-		this->url.setUri( uriStr );
+	inline void HTTPRequestT<T>::setPath( const StringASCII& pathStr ) {
+		this->url.setPath( pathStr );
 	}
 
 	template<typename T>
@@ -205,7 +205,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline const UrlT<T>& HTTPRequestT<T>::getEndPoint() const {
+	inline const UrlT<T>& HTTPRequestT<T>::getUrl() const {
 		return this->url;
 	}
 
@@ -237,9 +237,9 @@ namespace Network {
 		str << HTTPRequestT<T>::getVerbStr( this->verb );
 		str << StringASCII::ElemType( ' ' );
 		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			this->url.formatEndPointWOParams( &str );
+			this->url.formatPathWOParams( &str );
 		} else {
-			this->url.formatEndPoint( &str );
+			this->url.formatPathAndParams( &str );
 		}
 		str << StringASCII::ElemType( ' ' );
 		str << this->protocolStr;

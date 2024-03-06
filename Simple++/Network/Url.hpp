@@ -21,7 +21,7 @@ namespace Network {
 	inline UrlT<T>::UrlT( typename UrlT<T>::Sheme sheme, const StringASCII& hostname, const StringASCII& endPointStr, const Vector<HTTPParam>& paramVector ) :
 		sheme( sheme ),
 		hostname( hostname ),
-		uriStr( endPointStr ) {
+		pathStr( endPointStr ) {
 		setParams( paramVector );
 	}
 
@@ -30,14 +30,14 @@ namespace Network {
 		ParamContainerT<StringASCII, StringASCII>( url ),
 		sheme( url.sheme ),
 		hostname( url.hostname ),
-		uriStr( url.uriStr ) { }
+		pathStr( url.pathStr ) { }
 
 	template<typename T>
 	inline UrlT<T>::UrlT( const UrlT<T>&& url ) :
 		ParamContainerT<StringASCII, StringASCII>( Utility::toRValue( url ) ),
 		sheme( Utility::toRValue( url.sheme ) ),
 		hostname( Utility::toRValue( url.hostname ) ),
-		uriStr( Utility::toRValue( url.uriStr ) ) { }
+		pathStr( Utility::toRValue( url.pathStr ) ) { }
 
 	template<typename T>
 	inline UrlT<T>::~UrlT() {
@@ -49,7 +49,7 @@ namespace Network {
 		ParamContainerT<StringASCII, StringASCII>::operator=( url );
 		this->sheme = url.sheme;
 		this->hostname = url.hostname;
-		this->uriStr = url.uriStr;
+		this->pathStr = url.pathStr;
 
 		return *this;
 	}
@@ -59,7 +59,7 @@ namespace Network {
 		ParamContainerT<StringASCII, StringASCII>::operator=( Utility::toRValue( url ) );
 		this->sheme = Utility::toRValue( url.sheme );
 		this->hostname = Utility::toRValue( url.hostname );
-		this->uriStr = Utility::toRValue( url.uriStr );
+		this->pathStr = Utility::toRValue( url.pathStr );
 
 		return *this;
 	}
@@ -81,151 +81,165 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::format() const {
-		StringASCII outputStr;
+	template<typename S>
+	inline S UrlT<T>::format() const {
+		S outputStr;
 		outputStr.reserve( 1024 );
 
-		format( &outputStr );
+		format<S>( &outputStr );
 
 		return outputStr;
 	}
 
 	template<typename T>
-	inline void UrlT<T>::format( StringASCII* outputStr ) const {
-		StringASCII& str( *outputStr );
+	template<typename S>
+	inline void UrlT<T>::format( S* outputStr ) const {
+		S& str( *outputStr );
 
-		formatWOParams( &str );
+		formatWOParams<S>( &str );
 
 		if ( this->paramVector.getSize() > Size( 0 ) ) {
 			str << StringASCII::ElemType( '?' );
-			formatParams( &str );
+			formatParams<S>( &str );
 		}
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::formatWOParams() const {
-		StringASCII outputStr;
+	template<typename S>
+	inline S UrlT<T>::formatWOParams() const {
+		S outputStr;
 		outputStr.reserve( 512 );
 
-		formatWOParams( &outputStr );
+		formatWOParams<S>( &outputStr );
 
 		return outputStr;
 	}
 
 	template<typename T>
-	inline void UrlT<T>::formatWOParams( StringASCII* outputStr ) const {
-		StringASCII& str( *outputStr );
+	template<typename S>
+	inline void UrlT<T>::formatWOParams( S * outputStr ) const {
+		S& str( *outputStr );
 
 		str << getShemeStr( this->sheme );
-		str << StringASCII::ElemType( ':' );
-		str << StringASCII::ElemType( '/' );
-		str << StringASCII::ElemType( '/' );
+		str << S::ElemType( ':' );
+		str << S::ElemType( '/' );
+		str << S::ElemType( '/' );
 		str << this->hostname;
-		str << this->uriStr;
+		str << this->pathStr;
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::formatEndPointWOParams() const {
-		StringASCII outputStr;
+	template<typename S>
+	inline S UrlT<T>::formatPathWOParams() const {
+		S outputStr;
 		outputStr.reserve( 512 );
 
-		formatEndPointWOParams( &outputStr );
+		formatPathWOParams<S>( &outputStr );
 
 		return outputStr;
 	}
 
 	template<typename T>
-	inline void UrlT<T>::formatEndPointWOParams( StringASCII* outputStr ) const {
-		StringASCII& str( *outputStr );
+	template<typename S>
+	inline void UrlT<T>::formatPathWOParams( S* outputStr ) const {
+		S& str( *outputStr );
 
-		str << this->uriStr;
+		str << this->pathStr;
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::formatEndPoint() const {
-		StringASCII outputStr;
+	template<typename S>
+	inline S UrlT<T>::formatPathAndParams() const {
+		S outputStr;
 		outputStr.reserve( 512 );
 
-		formatEndPoint( &outputStr );
+		formatPathAndParams<S>( &outputStr );
 
 		return outputStr;
 	}
 
 	template<typename T>
-	inline void UrlT<T>::formatEndPoint( StringASCII* outputStr ) const {
-		StringASCII& str( *outputStr );
+	template<typename S>
+	inline void UrlT<T>::formatPathAndParams( S* outputStr ) const {
+		S& str( *outputStr );
 
-		formatEndPointWOParams( &str );
+		formatPathWOParams<S>( &str );
 
 		if ( this->paramVector.getSize() > Size( 0 ) ) {
-			str << StringASCII::ElemType( '?' );
-			formatParams( &str );
+			str << S::ElemType( '?' );
+			formatParams<S>( &str );
 		}
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::formatParams() const {
-		return formatParams( this->paramVector );
+	template<typename S>
+	inline S UrlT<T>::formatParams() const {
+		return formatParams<S>( this->paramVector );
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::formatParams( const Vector<HTTPParam*>& paramVector ) {
+	template<typename S>
+	inline S UrlT<T>::formatParams( const Vector<HTTPParam*>& paramVector ) {
 		StringASCII outputStr;
 		outputStr.reserve( 512 );
 
-		formatParams( &outputStr, paramVector );
+		formatParams<S>( &outputStr, paramVector );
 
 		return outputStr;
 	}
 
 	template<typename T>
-	inline StringASCII UrlT<T>::formatParams( const Vector<HTTPParam>& paramVector ) {
-		StringASCII outputStr;
+	template<typename S>
+	inline S UrlT<T>::formatParams( const Vector<HTTPParam>& paramVector ) {
+		S outputStr;
 		outputStr.reserve( 512 );
 
-		formatParams( &outputStr, paramVector );
+		formatParams<S>( &outputStr, paramVector );
 
 		return outputStr;
 	}
 
 	template<typename T>
-	inline void UrlT<T>::formatParams( StringASCII* outputStr ) const {
-		formatParams( outputStr, this->paramVector );
+	template<typename S>
+	inline void UrlT<T>::formatParams( S* outputStr ) const {
+		formatParams<S>( outputStr, this->paramVector );
 	}
 
 	template<typename T>
-	inline void UrlT<T>::formatParams( StringASCII* outputStr, const Vector<HTTPParam*>& paramVector ) {
-		StringASCII& str( *outputStr );
+	template<typename S>
+	inline void UrlT<T>::formatParams( S* outputStr, const Vector<HTTPParam*>& paramVector ) {
+		S& str( *outputStr );
 
 		for ( typename Vector<HTTPParam*>::Iterator it( paramVector.getBegin() ); it < paramVector.getEnd(); paramVector.iterate( &it ) ) {
 			const HTTPParam* param( paramVector.getValueIt( it ) );
 
 			if ( it != paramVector.getBegin() ) {
-				str << StringASCII::ElemType( '&' );
+				str << S::ElemType( '&' );
 			}
 
 			str << param->getName();
 			if ( param->getValue().getSize() > Size( 0 ) ) {
-				str << StringASCII::ElemType( '=' );
+				str << S::ElemType( '=' );
 				str << param->getValue();
 			}
 		}
 	}
 
 	template<typename T>
-	inline void UrlT<T>::formatParams( StringASCII* outputStr, const Vector<HTTPParam>& paramVector ) {
-		StringASCII& str( *outputStr );
+	template<typename S>
+	inline void UrlT<T>::formatParams( S* outputStr, const Vector<HTTPParam>& paramVector ) {
+		S& str( *outputStr );
 
 		for ( typename Vector<HTTPParam>::Iterator it( paramVector.getBegin() ); it < paramVector.getEnd(); paramVector.iterate( &it ) ) {
 			const HTTPParam& param( paramVector.getValueIt( it ) );
 
 			if ( it != paramVector.getBegin() ) {
-				str << StringASCII::ElemType( '&' );
+				str << S::ElemType( '&' );
 			}
 
 			str << param.getName();
 			if ( param.getValue().getSize() > Size( 0 ) ) {
-				str << StringASCII::ElemType( '=' );
+				str << S::ElemType( '=' );
 				str << param.getValue();
 			}
 		}
@@ -242,8 +256,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline void UrlT<T>::setUri( const StringASCII& endPoint ) {
-		this->uriStr = endPoint;
+	inline void UrlT<T>::setPath( const StringASCII& pathStr ) {
+		this->pathStr = pathStr;
 	}
 
 	template<typename T>
@@ -257,8 +271,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline const StringASCII& UrlT<T>::getUri() const {
-		return this->uriStr;
+	inline const StringASCII& UrlT<T>::getPath() const {
+		return this->pathStr;
 	}
 
 	template<typename T>
@@ -272,7 +286,7 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline typename UrlT<T>::Sheme UrlT<T>::getSheme( const StringASCII& typeStr ) {
+	inline typename UrlT<T>::Sheme UrlT<T>::getSheme( const StringASCII& shemeStr ) {
 		constexpr Size enumSize( sizeof( UrlT<T>::typeStrTable ) );
 		for ( Size i( 0 ); i < enumSize; i++ ) {
 			if ( typeStr == UrlT<T>::typeStrTable[ i ] ) {
@@ -296,7 +310,7 @@ namespace Network {
 		if ( !IO::read( stream, &this->hostname ) ) {
 			return false;
 		}
-		if ( !IO::read( stream, &this->uriStr ) ) {
+		if ( !IO::read( stream, &this->pathStr ) ) {
 			return false;
 		}
 		return true;
@@ -315,10 +329,16 @@ namespace Network {
 		if ( !IO::write( stream, &this->hostname ) ) {
 			return false;
 		}
-		if ( !IO::write( stream, &this->uriStr ) ) {
+		if ( !IO::write( stream, &this->pathStr ) ) {
 			return false;
 		}
 		return true;
+	}
+
+	template<typename T>
+	template<typename S>
+	inline S UrlT<T>::toString() const {
+		return formatWOParams<S>();
 	}
 
 	template<typename T>
@@ -344,8 +364,8 @@ namespace Network {
 
 			const EndFunc& endFunc;
 		};
-		struct FunctorEndPoint {
-			FunctorEndPoint( const EndFunc& endFunc ) :
+		struct FunctorPath {
+			FunctorPath( const EndFunc& endFunc ) :
 				endFunc( endFunc ) { }
 			bool operator()( const typename StringASCII::ElemType* it ) const { return *it == StringASCII::ElemType( '?' ) || endFunc( it ); }
 
@@ -354,7 +374,7 @@ namespace Network {
 
 		FunctorProtocol functorProtocol( endFunc );
 		FunctorHostname functorHostname( endFunc );
-		FunctorEndPoint functorEndPoint( endFunc );
+		FunctorPath functorPath( endFunc );
 
 		const StringASCII::ElemType*& it( *itP );
 
@@ -363,7 +383,7 @@ namespace Network {
 		const StringASCII::ElemType* protocolStrEndIt( it );
 
 		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			ERROR_SPP( "EndPoint syntax error : no protocol." );
+			ERROR_SPP( "Path syntax error : no protocol." );
 			return false;
 		}
 
@@ -373,7 +393,7 @@ namespace Network {
 			sheme = getSheme( protocolStr.toLower() );
 
 			if ( sheme == UrlT<T>::Sheme::Unknown ) {
-				ERROR_SPP( "EndPoint syntax error : unknown protocol." );
+				ERROR_SPP( "Path syntax error : unknown protocol." );
 				return false;
 			}
 
@@ -393,11 +413,11 @@ namespace Network {
 		const StringASCII::ElemType* hostnameStrEndIt( it );
 
 		const StringASCII::ElemType* endPointStrBeginIt( it );
-		for ( ; !functorEndPoint( it ); it++ );
+		for ( ; !functorPath( it ); it++ );
 		const StringASCII::ElemType* endPointStrEndIt( it );
 
 		if ( endPointStrBeginIt == endPointStrEndIt ) {
-			ERROR_SPP( "EndPoint syntax error : no end point." );
+			ERROR_SPP( "Path syntax error : no end point." );
 			return false;
 		}
 
@@ -406,7 +426,7 @@ namespace Network {
 
 		this->sheme = sheme;
 		this->hostname = hostnameStr;
-		this->uriStr = endPointStr;
+		this->pathStr = endPointStr;
 		this->paramVector.clear();
 		this->paramMap.clear();
 
@@ -459,7 +479,7 @@ namespace Network {
 			const StringASCII::ElemType* paramNameEndIt( it );
 
 			if ( paramNameBeginIt == paramNameEndIt ) {
-				ERROR_SPP( "EndPoint syntax error : param name missing." );
+				ERROR_SPP( "Path syntax error : param name missing." );
 				return false;
 			}
 

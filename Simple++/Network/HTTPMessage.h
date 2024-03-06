@@ -22,24 +22,36 @@ namespace Network {
 
 		///@brief	Construct a HTTPRequest from the message.
 		///@return	true if the message was successfully converted to a HTTPRequest.
-		virtual bool toRequest( HTTPRequest* httpRequest ) const;
+		virtual HTTPResponse * send( HTTPClient * httpClient, int verbose = 0 ) const;
 
 		///@brief	Read the message from a HTTPResponse.
 		///@return	true if the message was successfully read from the HTTPResponse.
-		virtual bool fromResponse( const HTTPResponse* httpResponse );
+		virtual bool fromResponse( const HTTPResponse* httpResponse, int verbose = 0 );
 
+		virtual String toString() const;
+		virtual const String & getName() const;
 	};
 
 	using HTTPMessage = HTTPMessageT<int>;
 
 	template<typename T>
-	inline bool HTTPMessageT<T>::toRequest( HTTPRequest* httpRequest ) const {
+	inline HTTPResponse * HTTPMessageT<T>::send( HTTPClient* httpClient, int verbose ) const {
+		return NULL;
+	}
+
+	template<typename T>
+	inline bool HTTPMessageT<T>::fromResponse( const HTTPResponse* httpResponse, int verbose ) {
 		return false;
 	}
 
 	template<typename T>
-	inline bool HTTPMessageT<T>::fromResponse( const HTTPResponse* httpResponse ) {
-		return false;
+	inline String HTTPMessageT<T>::toString() const {
+		return String::null;
+	}
+
+	template<typename T>
+	inline const String& HTTPMessageT<T>::getName() const {
+		return String::null;
 	}
 
 }

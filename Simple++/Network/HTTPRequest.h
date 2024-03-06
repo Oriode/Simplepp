@@ -44,12 +44,12 @@ namespace Network {
 		void setUrl( const UrlT<T>& url );
 
 		///@brief	Set the URI of this request. (The part right of the hostname and before the params).
-		void setUri( const StringASCII& uriStr );
+		void setPath( const StringASCII& pathStr );
 
 		void setUrlParams( const Vector<HTTPParam>& paramVector );
 		
 		typename HTTPRequestT<T>::Verb getVerb() const;
-		const UrlT<T>& getEndPoint() const;
+		const UrlT<T>& getUrl() const;
 
 		static const StringASCII& getVerbStr( typename HTTPRequestT<T>::Verb verb );
 		static typename HTTPRequestT<T>::Verb getVerb( const StringASCII& verbStr );

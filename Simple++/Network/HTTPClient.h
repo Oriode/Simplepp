@@ -17,18 +17,18 @@ namespace Network {
 
 		HTTPParam* setHeaderParam( const StringASCII& paramName, const StringASCII& paramValue );
 
-		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const UrlT<T>& url );
-		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const StringASCII& uri, const Vector<HTTPParam>& urlParamVector );
-		HTTPResponseT<T>* query( const HTTPRequestT<T>& request );
-		HTTPResponseT<T>* query( const HTTPRequestT<T>* request );
+		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const UrlT<T>& url, int verbose = 0 );
+		HTTPResponseT<T>* query( typename HTTPRequestT<T>::Verb method, const StringASCII& path, const Vector<HTTPParam>& urlParamVector, int verbose = 0 );
+		HTTPResponseT<T>* query( const HTTPRequestT<T>& request, int verbose = 0 );
+		HTTPResponseT<T>* query( const HTTPRequestT<T>* request, int verbose = 0 );
 
-		HTTPResponseT<T>* GET( const StringASCII& uri, const Vector<HTTPParam>& urlParamVector );
-		HTTPResponseT<T>* POST( const StringASCII& uri, const Vector<HTTPParam>& urlParamVector, const StringASCII& contentStr );
+		HTTPResponseT<T>* GET( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, int verbose = 0 );
+		HTTPResponseT<T>* POST( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, typename HTTPQueryT<T>::ContentType contentType, const StringASCII& contentStr, int verbose = 0 );
 
 		const HTTPResponseT<T>* getLastResponse() const;
 
 	private:
-		HTTPResponseT<T>* _query( const typename HTTPRequestT<T>& request );
+		HTTPResponseT<T>* _query( const typename HTTPRequestT<T>& request, int verbose = 0 );
 
 		HTTPRequestT<T> request;
 		HTTPResponseT<T> response;

@@ -5,17 +5,17 @@ namespace Network {
 
 	template<typename T>
 	template<typename EndFunc>
-	inline HTTPResponseT<T>::HTTPResponseT( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
-		parseQuery( itP, endFunc );
+	inline HTTPResponseT<T>::HTTPResponseT( const StringASCII::ElemType** itP, const EndFunc& endFunc, int verbose ) {
+		parseQuery( itP, endFunc, verbose );
 	}
 
 	template<typename T>
 	template<typename EndFunc>
-	inline bool HTTPResponseT<T>::parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
-		if ( !parseQueryTitle( itP, endFunc ) ) {
+	inline bool HTTPResponseT<T>::parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc, int verbose ) {
+		if ( !parseQueryTitle( itP, endFunc, verbose ) ) {
 			return false;
 		}
-		if ( !HTTPQueryT<T>::parseQuery( itP, endFunc ) ) {
+		if ( !HTTPQueryT<T>::parseQuery( itP, endFunc, verbose ) ) {
 			return false;
 		}
 		return true;
@@ -57,7 +57,7 @@ namespace Network {
 
 	template<typename T>
 	template<typename EndFunc>
-	inline bool HTTPResponseT<T>::parseQueryTitle( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
+	inline bool HTTPResponseT<T>::parseQueryTitle( const StringASCII::ElemType** itP, const EndFunc& endFunc, int verbose ) {
 		struct FunctorNewLine {
 			FunctorNewLine( const EndFunc& endFunc ) :
 				endFunc( endFunc ) { }
@@ -79,6 +79,8 @@ namespace Network {
 
 			const EndFunc& endFunc;
 		};
+
+		if ( verbose > 0 ) { Log::startStep( __func__, "Parsing title..." ); }
 
 		FunctorNewLine functorNewLine( endFunc );
 		FunctorWord functorWord( endFunc );
@@ -116,7 +118,7 @@ namespace Network {
 		}
 
 		if ( protocolStrBeginIt == protocolStrEndIt ) {
-			ERROR_SPP( "HTTP response syntax error." );
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, "HTTP response syntax error : no protocol." ); }
 			return false;
 		}
 
@@ -126,6 +128,8 @@ namespace Network {
 		this->protocolStr = protocolStr;
 		this->statusCode = statusCode;
 		this->statusMessage = statusMessage;
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success. Code:% Message:%", this->statusCode, this->statusMessage ) ); }
 
 		return true;
 	}

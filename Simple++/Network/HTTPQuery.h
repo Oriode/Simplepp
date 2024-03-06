@@ -25,17 +25,17 @@ namespace Network {
 		~HTTPQueryT();
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
+		bool parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL, int verbose = 0 );
 
 		void formatQuery( StringASCII* outputStr ) const;
 		void formatHeaderParam( StringASCII* outputStr, const ParamT<StringASCII, StringASCII>& param ) const;
 
 		///@brief Parse the query String and update the header params Vector.
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQueryHeader( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
+		bool parseQueryHeader( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL, int verbose = 0 );
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQueryContent( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
+		bool parseQueryContent( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL, int verbose = 0 );
 
 		void formatQueryContent( StringASCII* outputStr ) const;
 

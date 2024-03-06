@@ -5,6 +5,7 @@
 #include "Url.h"
 #include "Network.h"
 #include "HTTPQuery.h"
+#include "../Log.h"
 
 namespace Network {
 
@@ -13,16 +14,16 @@ namespace Network {
 	public:
 		HTTPResponseT();
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		HTTPResponseT( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
+		HTTPResponseT( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL, int verbose = 0 );
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
+		bool parseQuery( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL, int verbose = 0 );
 
 		StringASCII formatQuery() const;
 		void formatQuery( StringASCII* outputStr ) const;
 
 		template<typename EndFunc = StringASCII::IsEndIterator>
-		bool parseQueryTitle( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL );
+		bool parseQueryTitle( const StringASCII::ElemType** itP, const EndFunc& endFunc = StringASCII::IS_END_SENTINEL, int verbose = 0 );
 
 		void formatQueryTitle( StringASCII* outputStr ) const;
 
