@@ -117,9 +117,7 @@ inline void LogT<T>::_endStep( const BasicString<T>& logTitle, const BasicString
 
 template<typename T>
 inline void LogT<T>::displayVerbose( const BasicString<T>& logTitle, const BasicString<T>& logMessage, typename LogT<T>::MessageColor messageColor ) {
-	if ( this->bDisplayVerbose ) {
-		callOnMessage( logTitle, logMessage, SimpleLogT<T>::MessageSeverity::Verbose, messageColor );
-	}
+	LogT<T>::getInstance()->_displayMessage( logTitle, logMessage, SimpleLogT<T>::MessageSeverity::Verbose, messageColor );
 }
 
 template<typename T>

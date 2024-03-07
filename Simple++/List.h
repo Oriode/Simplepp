@@ -94,14 +94,14 @@ public:
 	T& getFirst();
 
 	typename List<T>::Iterator push(const T& data);
-	T& pop();
+	T pop();
 
 	typename List<T>::Iterator insert(const T& data, typename List<T>::Iterator previousIt);
 
 	typename List<T>::Iterator pushNode(ListNode<T> * newNode);
 
 	typename List<T>::Iterator pushBegin(const T& data);
-	T& popBegin();
+	T popBegin();
 
 	const Size getSize() const;
 

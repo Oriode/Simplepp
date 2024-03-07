@@ -26,7 +26,7 @@ namespace Network {
 
 		///@brief	Read the message from a HTTPResponse.
 		///@return	true if the message was successfully read from the HTTPResponse.
-		virtual bool fromResponse( const HTTPResponse* httpResponse, int verbose = 0 );
+		virtual typename HTTPError fromResponse( const HTTPResponse* httpResponse, int verbose = 0 );
 
 		virtual String toString() const;
 		virtual const String & getName() const;
@@ -40,8 +40,8 @@ namespace Network {
 	}
 
 	template<typename T>
-	inline bool HTTPMessageT<T>::fromResponse( const HTTPResponse* httpResponse, int verbose ) {
-		return false;
+	inline typename HTTPError HTTPMessageT<T>::fromResponse( const HTTPResponse* httpResponse, int verbose ) {
+		return HTTPError::Undefined;
 	}
 
 	template<typename T>

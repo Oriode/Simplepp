@@ -204,7 +204,7 @@ inline typename List<T>::Iterator List<T>::push(const T& data) {
 }
 
 template<typename T>
-inline T& List<T>::pop() {
+inline T List<T>::pop() {
 	ListNode<T>* node(this->lastNode);
 	T data(node->getData());
 	if ( node->getPrevious() ) {
@@ -283,7 +283,7 @@ inline typename List<T>::Iterator List<T>::pushBegin(const T& data) {
 }
 
 template<typename T>
-inline T& List<T>::popBegin() {
+inline T List<T>::popBegin() {
 	ListNode<T>* node(this->firstNode);
 	T data(node->getData());
 	if ( node->getNext() ) {
