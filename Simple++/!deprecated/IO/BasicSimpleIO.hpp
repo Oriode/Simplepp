@@ -3,7 +3,7 @@ namespace IO {
 
 	template<typename T>
 	template<typename Stream>
-	bool BasicSimpleIOT<T>::read(Stream* stream) {
+	bool BasicSimpleIOT<T>::read( Stream * stream, int verbose ) {
 		_assert(stream->isOpen());
 		return true;
 	}

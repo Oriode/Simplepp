@@ -1314,7 +1314,7 @@ public:
 	///@param [in,out]	stream	stream used to read load this object.
 	///@returns	boolean to know if the operation is a success of not.
 	template<typename Stream>
-	bool read( Stream * stream );
+	bool read( Stream * stream, int verbose = 0 );
 
 	///@brief		read from a file stream
 	///@param [in,out]	stream	stream used to read load this object.

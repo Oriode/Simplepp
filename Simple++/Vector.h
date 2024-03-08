@@ -2,7 +2,7 @@
  * @file	Vector.h.
  *
  * @brief 	Declares the vector class
- * @author	Clément Gerber
+ * @author	Clï¿½ment Gerber
  * @date		???
  */
 #pragma once
@@ -446,7 +446,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read( Stream * stream );
+	bool read( Stream * stream, int verbose = 0 );
 
 
 protected:

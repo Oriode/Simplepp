@@ -298,19 +298,19 @@ namespace Network {
 
 	template<typename T>
 	template<typename Stream>
-	bool UrlT<T>::read( Stream* stream ) {
+	bool UrlT<T>::read( Stream * stream, int verbose ) {
 		if ( !ParamContainerT<StringASCII, StringASCII>::read( stream ) ) {
 			return false;
 		}
 		unsigned char typeChar;
-		if ( !IO::read( stream, &typeChar ) ) {
+		if ( !IO::read( stream, &typeChar, verbose -1 ) ) {
 			return false;
 		}
 		this->sheme = static_cast< UrlT<T>::Sheme >( typeChar );
-		if ( !IO::read( stream, &this->hostname ) ) {
+		if ( !IO::read( stream, &this->hostname , verbose - 1 ) ) {
 			return false;
 		}
-		if ( !IO::read( stream, &this->pathStr ) ) {
+		if ( !IO::read( stream, &this->pathStr , verbose - 1 ) ) {
 			return false;
 		}
 		return true;

@@ -205,7 +205,7 @@ namespace Math {
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream * stream, int verbose = 0 );
 
 		/**
 		 * @brief 	write this object as binary into a file stream
@@ -789,15 +789,15 @@ namespace Math {
 
 	template<typename T>
 	template<typename Stream>
-	inline bool Mat<T>::read(Stream* stream) {
+	inline bool Mat<T>::read( Stream * stream, int verbose ) {
 		if ( !BasicVector<T>::read(stream) ) {
 			return false;
 		}
 
-		if ( !IO::read(stream, &this->m) ) {
+		if ( !IO::read( stream, &this->m, verbose - 1 ) ) {
 			return false;
 		}
-		if ( !IO::read(stream, &this->n) ) {
+		if ( !IO::read( stream, &this->n, verbose - 1 ) ) {
 			return false;
 		}
 

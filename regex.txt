@@ -1,0 +1,9 @@
+bool +read\( *([a-zA-Z]*) +\* *([a-zA-Z]*) *\);
+
+
+bool +(([^:]+::)+)*read\( *([a-zA-Z]+) *\* *([a-zA-Z]+) *\)
+    bool $1read( $3 * $4, int verbose )
+
+IO::read\( *([\*&a-zA-Z]+) *, *([\*&a-zA-Z \->1-9]+) *\)
+    IO::read( $1, $2, verbose - 1 )
+

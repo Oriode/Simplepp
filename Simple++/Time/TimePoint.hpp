@@ -85,8 +85,8 @@ namespace Time {
 
 	template<typename Ratio>
 	template<typename Stream>
-	bool TimePoint<Ratio>::read( Stream * stream ) {
-		if ( !IO::read( stream, &this->t ) ) {
+	bool TimePoint<Ratio>::read( Stream * stream, int verbose ) {
+		if ( !IO::read( stream, &this->t , verbose - 1 ) ) {
 			return false;
 		}
 		return true;

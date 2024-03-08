@@ -131,11 +131,11 @@ namespace Math {
 
 	template<typename T>
 	template<typename Stream>
-	bool Vec2<T>::read(Stream* stream) {
-		if ( !IO::read(stream, &this->x) ) {
+	bool Vec2<T>::read( Stream * stream, int verbose ) {
+		if ( !IO::read( stream, &this->x, verbose - 1 ) ) {
 			return false;
 		}
-		if ( !IO::read(stream, &this->y) ) {
+		if ( !IO::read( stream, &this->y, verbose - 1 ) ) {
 			return false;
 		}
 		return true;

@@ -101,7 +101,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename Stream>
-	bool Texture<T>::read( Stream * stream ) {
+	bool Texture<T>::read( Stream * stream, int verbose ) {
 		_unload();
 		return _read( stream );
 	}
@@ -118,7 +118,7 @@ namespace Graphic {
 	template<typename Stream>
 	bool Texture<T>::_read( Stream * stream ) {
 		::Size nbDatas;
-		if ( !IO::read( stream, &nbDatas ) )
+		if ( !IO::read( stream, &nbDatas, verbose -1 ) )
 			return false;
 
 		// Clamp the number of datas with a big number just in case of file corruption.

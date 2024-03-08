@@ -330,7 +330,7 @@ bool OrderedMap<I, T, Compare>::read( IO::SimpleFileStream * stream ) {
 	this -> isOrdered = true;
 	if ( !Map::read( stream ) )
 		return false;
-	if ( !IO::read( stream, &this -> sortFunction ) )
+	if ( !IO::read( stream, &this -> sortFunction , verbose - 1 ) )
 		return false;
 	return true;
 }

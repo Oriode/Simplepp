@@ -286,7 +286,7 @@ namespace JSON {
 
 	template<typename S>
 	template<typename Stream>
-	bool BasicNodeT<S>::read(Stream* stream) {
+	bool BasicNodeT<S>::read( Stream * stream, int verbose ) {
 		switch ( this->type ) {
 			case Type::Array:
 				return this->toArray()->read(stream);
@@ -388,7 +388,7 @@ namespace JSON {
 	template<typename S>
 	template<typename Stream>
 	inline bool BasicNodeT<S>::_read(Stream* stream) {
-		if ( !IO::read(stream, &this -> name) ) {
+		if ( !IO::read( stream, &this -> name, verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
@@ -692,7 +692,7 @@ namespace JSON {
 
 	template<typename S>
 	template<typename Stream>
-	bool NodeMapT<S>::read(Stream* stream) {
+	bool NodeMapT<S>::read( Stream * stream, int verbose ) {
 		_unload();
 
 		this -> childrenMap.clear();
@@ -706,14 +706,14 @@ namespace JSON {
 
 		// Read the children
 		Size nbChilds;
-		if ( !IO::read(stream, &nbChilds) ) {
+		if ( !IO::read( stream, &nbChilds, verbose -1 ) ) {
 			_clear();
 			return false;
 		}
 		nbChilds = Math::min(nbChilds, Size(1000));
 		for ( Size i(0); i < nbChilds; i++ ) {
 			bool isNull;
-			if ( !IO::read(stream, &isNull) ) {
+			if ( !IO::read( stream, &isNull, verbose -1 ) ) {
 				_clear();
 				return false;
 			}
@@ -721,7 +721,7 @@ namespace JSON {
 				this -> childrenVector.push(NULL);
 			} else {
 				Type newNodeType;
-				if ( !IO::read(stream, &newNodeType) ) {
+				if ( !IO::read( stream, &newNodeType, verbose -1 ) ) {
 					_clear();
 					return false;
 				}
@@ -732,7 +732,7 @@ namespace JSON {
 						{
 							NodeMapT<S>* newNode(new NodeMapT<S>());
 							newNode -> parent = this;
-							if ( !IO::read(stream, newNode) ) {
+							if ( !IO::read( stream, newNode, verbose -1 ) ) {
 								delete newNode;
 								_clear();
 								return false;
@@ -746,7 +746,7 @@ namespace JSON {
 						{
 							NodeValueT<S>* newNode(new NodeValueT<S>());
 							newNode -> parent = this;
-							if ( !IO::read(stream, newNode) ) {
+							if ( !IO::read( stream, newNode, verbose -1 ) ) {
 								delete newNode;
 								_clear();
 								return false;
@@ -760,7 +760,7 @@ namespace JSON {
 						{
 							NodeArrayT<S>* newNode(new NodeArrayT<S>());
 							newNode -> parent = this;
-							if ( !IO::read(stream, newNode) ) {
+							if ( !IO::read( stream, newNode, verbose -1 ) ) {
 								delete newNode;
 								_clear();
 								return false;
@@ -774,7 +774,7 @@ namespace JSON {
 						{
 							BasicNodeT<S>* newNode(new BasicNodeT<S>(newNodeType));
 							newNode -> parent = this;
-							if ( !IO::read(stream, newNode) ) {
+							if ( !IO::read( stream, newNode, verbose -1 ) ) {
 								delete newNode;
 								_clear();
 								return false;
@@ -1414,16 +1414,16 @@ namespace JSON {
 
 	template<typename S>
 	template<typename Stream>
-	bool NodeValueT<S>::read(Stream* stream) {
+	bool NodeValueT<S>::read( Stream * stream, int verbose ) {
 		if ( !BasicNodeT<S>::_read(stream) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read(stream, &this -> value) ) {
+		if ( !IO::read( stream, &this -> value, verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read(stream, &this -> bAddQuotes) ) {
+		if ( !IO::read( stream, &this -> bAddQuotes, verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
@@ -1660,16 +1660,16 @@ namespace JSON {
 
 	template<typename S>
 	template<typename Stream>
-	bool DocumentT<S>::read(Stream* stream) {
+	bool DocumentT<S>::read( Stream * stream, int verbose ) {
 		_unload();
 
 		bool bIsRootNode;
-		if ( !IO::read(stream, &bIsRootNode) ) {
+		if ( !IO::read( stream, &bIsRootNode, verbose -1 ) ) {
 			return false;
 		}
 		if ( bIsRootNode ) {
 			unsigned char rootNodeTypeUC;
-			if ( !IO::read(stream, &rootNodeTypeUC) ) {
+			if ( !IO::read( stream, &rootNodeTypeUC, verbose -1 ) ) {
 				return false;
 			}
 			BasicNodeT<S>::Type rootNodeType(static_cast< BasicNodeT<S>::Type >( rootNodeTypeUC ));
@@ -1677,7 +1677,7 @@ namespace JSON {
 				case BasicNodeT<S>::Type::Map:
 					{
 						NodeMapT<S>* newRootNode(new NodeMapT<S>());
-						if ( !IO::read(stream, newRootNode) ) {
+						if ( !IO::read( stream, newRootNode, verbose -1 ) ) {
 							delete newRootNode;
 							return false;
 						}
@@ -1687,7 +1687,7 @@ namespace JSON {
 				case BasicNodeT<S>::Type::Value:
 					{
 						NodeValueT<S>* newRootNode(new NodeValueT<S>());
-						if ( !IO::read(stream, newRootNode) ) {
+						if ( !IO::read( stream, newRootNode, verbose -1 ) ) {
 							delete newRootNode;
 							return false;
 						}
@@ -1697,7 +1697,7 @@ namespace JSON {
 				case BasicNodeT<S>::Type::Array:
 					{
 						NodeArrayT<S>* newRootNode(new NodeArrayT<S>());
-						if ( !IO::read(stream, newRootNode) ) {
+						if ( !IO::read( stream, newRootNode, verbose -1 ) ) {
 							delete newRootNode;
 							return false;
 						}
@@ -1886,12 +1886,12 @@ namespace JSON {
 	}
 
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, C* v) {
-		return _fromJSON<S>(node, v, reinterpret_cast< const C* >( NULL ));
+	bool fromJSON(const BasicNodeT<S>* node, C* v, int verbose) {
+		return _fromJSON<S>(node, v, reinterpret_cast< const C* >( NULL ), verbose);
 	}
 
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, Table<C>* t) {
+	bool fromJSON(const BasicNodeT<S>* node, Table<C>* t, int verbose ) {
 		if ( node->getType() != JSON::BasicNodeT<S>::Type::Array ) {
 			return false;
 		}
@@ -1899,7 +1899,7 @@ namespace JSON {
 		Size minSize(Math::min(node->getNbChildren(), t->getSize()));
 		for ( Size i(0); i < minSize; i++ ) {
 			const JSON::BasicNodeT<S>* nodeChild(node->getChild(i));
-			if ( !JSON::fromJSON<S>(nodeChild, &t->getValueI(i)) ) {
+			if ( !JSON::fromJSON<S>(nodeChild, &t->getValueI(i), verbose - 1) ) {
 				return false;
 			}
 		}
@@ -1908,7 +1908,7 @@ namespace JSON {
 	}
 
 	template<typename S, typename C, Size N>
-	bool fromJSON(const BasicNodeT<S>* node, StaticTable<C, N>* t) {
+	bool fromJSON(const BasicNodeT<S>* node, StaticTable<C, N>* t, int verbose ) {
 		if ( node->getType() != JSON::BasicNodeT<S>::Type::Array ) {
 			return false;
 		}
@@ -1916,7 +1916,7 @@ namespace JSON {
 		Size minSize(Math::min(node->getNbChildren(), t->getSize()));
 		for ( Size i(0); i < minSize; i++ ) {
 			const JSON::BasicNodeT<S>* nodeChild(node->getChild(i));
-			if ( !JSON::fromJSON<S>(nodeChild, &t->getValueI(i)) ) {
+			if ( !JSON::fromJSON<S>(nodeChild, &t->getValueI(i), verbose - 1) ) {
 				return false;
 			}
 		}
@@ -1925,7 +1925,7 @@ namespace JSON {
 	}
 
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, BasicVector<C>* v) {
+	bool fromJSON(const BasicNodeT<S>* node, BasicVector<C>* v, int verbose ) {
 		if ( node->getType() != JSON::BasicNodeT<S>::Type::Array ) {
 			return false;
 		}
@@ -1934,7 +1934,7 @@ namespace JSON {
 
 		for ( Size i(0); i < node->getNbChildren(); i++ ) {
 			const JSON::BasicNodeT<S>* nodeChild(node->getChild(i));
-			if ( !JSON::fromJSON(nodeChild, &v->getValueI(i)) ) {
+			if ( !JSON::fromJSON(nodeChild, &v->getValueI(i), verbose - 1) ) {
 				return false;
 			}
 		}
@@ -1943,13 +1943,13 @@ namespace JSON {
 	}
 
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, Vector<C>* v) {
-		return _fromJSON<S>(node, v, reinterpret_cast< Table<C> * >( v ));
+	bool fromJSON(const BasicNodeT<S>* node, Vector<C>* v, int verbose ) {
+		return _fromJSON<S>(node, v, reinterpret_cast< Table<C> * >( v ), verbose);
 	}
 
 	template<typename S, typename C>
-	bool _fromJSON(const BasicNodeT<S>* node, C* v, const Jsonable*) {
-		return v->fromJSON<S>(node);
+	bool _fromJSON(const BasicNodeT<S>* node, C* v, const Jsonable*, int verbose ) {
+		return v->fromJSON<S>(node, verbose);
 	}
 
 	template<typename S, typename C>
@@ -2016,7 +2016,7 @@ namespace JSON {
 	}
 
 	template<typename S>
-	inline bool Jsonable::fromJSON(const JSON::BasicNodeT<S>* node) {
+	inline bool Jsonable::fromJSON(const JSON::BasicNodeT<S>* node, int verbose ) {
 		ERROR_SPP("Jsonable not overloaded the fromJSON method.");
 		return false;
 	}

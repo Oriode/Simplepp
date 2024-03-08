@@ -222,14 +222,14 @@ bool OrderedVector<T, Compare>::write(Stream* stream ) const {
 
 template<typename T, typename Compare>
 template<typename Stream>
-bool OrderedVector<T, Compare>::read(Stream* stream ) {
+bool OrderedVector<T, Compare>::read( Stream * stream, int verbose ) {
 	this -> isOrdered = true;
 
 	// In this case already clear
 	if ( !Vector<T>::read( stream ) ) 
 		return false;
 	
-	if ( !IO::read( stream, &this -> sortFunction ) ) {
+	if ( !IO::read( stream, &this -> sortFunction , verbose - 1 ) ) {
 		_clear();
 		return false;
 	}

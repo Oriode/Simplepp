@@ -283,8 +283,8 @@ namespace Time {
 
 	template<class Ratio>
 	template<typename Stream>
-	bool Time::Duration<Ratio>::read( Stream * stream ) {
-		if ( !IO::read( stream, &this->d ) ) {
+	bool Time::Duration<Ratio>::read( Stream * stream, int verbose ) {
+		if ( !IO::read( stream, &this->d , verbose - 1 ) ) {
 			return false;
 		}
 		return true;

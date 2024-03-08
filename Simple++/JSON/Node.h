@@ -1,6 +1,6 @@
 ///@file NodeMap.h
 ///@brief Representing an JSON NodeMap.
-///@author Clément Gerber.
+///@author Clï¿½ment Gerber.
 ///@date (DMY) 23-05-2020
 #pragma once
 
@@ -211,7 +211,7 @@ namespace JSON {
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream * stream, int verbose = 0 );
 
 		///@brief write this object as binary into a file stream
 		///@param stream stream used to write this object
@@ -379,7 +379,7 @@ namespace JSON {
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream * stream, int verbose = 0 );
 
 		///@brief write this object as binary into a file stream
 		///@param stream stream used to write this object
@@ -473,7 +473,7 @@ namespace JSON {
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream * stream, int verbose = 0 );
 
 		///@brief write this object as binary into a file stream
 		///@param stream stream used to write this object
@@ -608,7 +608,7 @@ namespace JSON {
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream * stream, int verbose = 0 );
 
 		///@brief write this object as binary into a file stream
 		///@param stream stream used to write this object
@@ -634,7 +634,7 @@ namespace JSON {
 		///@param nodeArray Pointer to the JSON object to be read.
 		///@return true if success, false otherwise.
 		template<typename S = UTF8String>
-		bool fromJSON(const JSON::BasicNodeT<S>* node);
+		bool fromJSON(const JSON::BasicNodeT<S>* node, int verbose = 0);
 
 		///@brief Write this object to a Json object
 		///@param o Json node to write to.
@@ -665,16 +665,16 @@ namespace JSON {
 	BasicNodeT<S>* parseT(const S& str);
 
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, C* v);
+	bool fromJSON(const BasicNodeT<S>* node, C* v, int verbose = 0);
 
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, Table<C>* t);
+	bool fromJSON(const BasicNodeT<S>* node, Table<C>* t, int verbose = 0 );
 	template<typename S, typename C, Size N>
-	bool fromJSON(const BasicNodeT<S>* node, StaticTable<C, N>* t);
+	bool fromJSON(const BasicNodeT<S>* node, StaticTable<C, N>* t, int verbose = 0 );
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, BasicVector<C>* v);
+	bool fromJSON(const BasicNodeT<S>* node, BasicVector<C>* v, int verbose = 0 );
 	template<typename S, typename C>
-	bool fromJSON(const BasicNodeT<S>* node, Vector<C>* v);
+	bool fromJSON(const BasicNodeT<S>* node, Vector<C>* v, int verbose = 0 );
 
 	template<typename S, typename C>
 	bool _fromJSON(const BasicNodeT<S>* node, C* v, const Jsonable*);

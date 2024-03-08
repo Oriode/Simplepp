@@ -204,11 +204,11 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool Template<C, InterFunc>::read(Stream* stream ) {
+		bool Template<C, InterFunc>::read( Stream * stream, int verbose ) {
 			_unload();
 
 			Size nbPoints;
-			if ( !IO::read( stream, &nbPoints ) ) {
+			if ( !IO::read( stream, &nbPoints, verbose -1 ) ) {
 				_clear();
 				return false;
 			}
@@ -218,7 +218,7 @@ namespace Graphic {
 
 			for ( Size i( 0 ); i < nbPoints; i++ ) {
 				Point<C> * gradientPoint = new Point<C>();
-				if ( !IO::read( stream, gradientPoint ) ) {
+				if ( !IO::read( stream, gradientPoint, verbose -1 ) ) {
 					delete gradientPoint;
 					_clear();
 					return false;
@@ -226,7 +226,7 @@ namespace Graphic {
 					this -> pointsVector.push( gradientPoint );
 			}
 
-			if ( !IO::read( stream, &this -> functor ) ) {
+			if ( !IO::read( stream, &this -> functor , verbose - 1 ) ) {
 				_clear();
 				return false;
 			}
@@ -511,14 +511,14 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool Linear<C, InterFunc>::read(Stream* stream ) {
+		bool Linear<C, InterFunc>::read( Stream * stream, int verbose ) {
 			if ( !Template<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( stream, &this -> length ) )
+			if ( !IO::read( stream, &this -> length , verbose - 1 ) )
 				return false;
-			if ( !IO::read( stream, &this -> p ) )
+			if ( !IO::read( stream, &this -> p , verbose - 1 ) )
 				return false;
-			if ( !IO::read( stream, &this -> angle ) )
+			if ( !IO::read( stream, &this -> angle , verbose - 1 ) )
 				return false;
 			this -> angleRad = Math::radians( this -> angle );
 			this -> v.x = Math::cos( this -> angleRad );
@@ -618,12 +618,12 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool Radial<C, InterFunc>::read(Stream* stream ) {
+		bool Radial<C, InterFunc>::read( Stream * stream, int verbose ) {
 			if ( !Template<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( stream, &this -> center ) )
+			if ( !IO::read( stream, &this -> center , verbose - 1 ) )
 				return false;
-			if ( !IO::read( stream, &this -> radius ) )
+			if ( !IO::read( stream, &this -> radius , verbose - 1 ) )
 				return false;
 
 			return true;

@@ -88,9 +88,9 @@ bool MapObject<I, T>::write( IO::SimpleFileStream * stream ) const {
 
 template<typename I, typename T>
 bool MapObject<I, T>::read( IO::SimpleFileStream * stream ) {
-	if ( !IO::read( stream, &this -> index ) )
+	if ( !IO::read( stream, &this -> index , verbose - 1 ) )
 		return false;
-	if ( !IO::read( stream, &this -> value ) )
+	if ( !IO::read( stream, &this -> value , verbose - 1 ) )
 		return false;
 	return true;
 }
@@ -454,7 +454,7 @@ void Map<I, T>::_clear() {
 
 template<typename I, typename T>
 bool Map<I, T>::read( IO::SimpleFileStream * stream ) {
-	if ( !IO::read( stream, &this -> size ) ) {
+	if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
 		_clear();
 		return false;
 	}

@@ -2,7 +2,7 @@
  * @file	Map.h.
  *
  * @brief 	Declares the map class
- * @author	Clément Gerber
+ * @author	Clï¿½ment Gerber
  * @date		26/10/16 (D/M/Y)
  */
 #pragma once
@@ -139,7 +139,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read( Stream * stream );
+	bool read( Stream * stream, int verbose = 0 );
 
 	/**
 	 * @brief 	write this object as binary into a file stream
@@ -312,7 +312,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read( Stream * stream );
+	bool read( Stream * stream, int verbose = 0 );
 
 	/**
 	 * @brief 	write this object as binary into a file stream (children will be wrote recursively)
@@ -867,7 +867,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read( Stream * stream );
+	bool read( Stream * stream, int verbose = 0 );
 
 	/**
 	 * @brief 	Write this object as binary into a file stream (children will be wrote recursively)

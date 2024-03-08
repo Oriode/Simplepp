@@ -2,7 +2,7 @@
  * @file		Time\TimePoint.h.
  *
  * @brief		Declares the time point class
- * @author	Clément Gerber
+ * @author	Clï¿½ment Gerber
  * @date		11/07/2016 (DMY)
  */
 #pragma once
@@ -101,7 +101,7 @@ namespace Time {
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read( Stream * stream );
+		bool read( Stream * stream, int verbose = 0 );
 
 		///@brief write this object as binary into a file stream
 		///@param stream stream used to write this object

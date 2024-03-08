@@ -33,11 +33,11 @@ namespace IO {
 
 	template<typename DataType>
 	template<typename Stream>
-	bool Manager<DataType>::read(Stream* stream ) {
+	bool Manager<DataType>::read( Stream * stream, int verbose ) {
 		clear();
 
 		Size nbDatas;
-		if ( !IO::read( stream, &nbDatas ) ) {
+		if ( !IO::read( stream, &nbDatas, verbose -1 ) ) {
 			clear();
 			return false;
 		}
@@ -45,7 +45,7 @@ namespace IO {
 
 		for ( Size i( 0 ); i<nbDatas; i++ ) {
 			OS::Path filePath;
-			if ( !IO::read( stream, &filePath ) ) {
+			if ( !IO::read( stream, &filePath, verbose -1 ) ) {
 				clear();
 				return false;
 			}
@@ -81,7 +81,7 @@ namespace IO {
 		} else {
 			// Object doesn't exists, we have to add it
 			DataType * newData( new DataType() );
-			if ( IO::read( filePath, newData ) ) {
+			if ( IO::read( filePath, newData, verbose -1 ) ) {
 
 				MemoryObject newContainer;
 				newContainer.nbUses = 1;

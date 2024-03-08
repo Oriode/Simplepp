@@ -68,7 +68,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read(Stream* stream);
+	bool read( Stream * stream, int verbose = 0 );
 
 protected:
 	BasicVector(BasicVector<T>::protectedCtor);
@@ -175,9 +175,9 @@ inline BasicVector<T>& BasicVector<T>::concat(const Table<C>& t) {
 
 template<typename T>
 template<typename Stream>
-inline bool BasicVector<T>::read(Stream* stream) {
+inline bool BasicVector<T>::read( Stream * stream, int verbose ) {
 	Size readSize;
-	if ( !IO::read(stream, &readSize) ) {
+	if ( !IO::read( stream, &readSize, verbose -1 ) ) {
 		return false;
 	}
 

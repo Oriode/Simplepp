@@ -492,16 +492,16 @@ inline C List<T>::toString() const {
 
 template<typename T>
 template<typename Stream>
-inline bool List<T>::read(Stream* stream) {
+inline bool List<T>::read( Stream * stream, int verbose ) {
 	clear();
 
 	Size newSize;
-	if ( !IO::read(stream, &newSize) ) {
+	if ( !IO::read( stream, &newSize, verbose -1 ) ) {
 		return false;
 	}
 	for ( Size i(0); i < newSize; i++ ) {
 		ListNode<T>* newNode(new ListNode<T>());
-		if ( !IO::read(stream, newNode) ) {
+		if ( !IO::read( stream, newNode, verbose -1 ) ) {
 			delete newNode;
 			return false;
 		}
@@ -530,8 +530,8 @@ inline bool List<T>::write(Stream* stream) const {
 
 template<typename T>
 template<typename Stream>
-inline bool ListNode<T>::read(Stream* stream) {
-	if ( !IO::read(stream, &this->data) ) {
+inline bool ListNode<T>::read( Stream * stream, int verbose ) {
+	if ( !IO::read( stream, &this->data, verbose - 1 ) ) {
 		return false;
 	}
 	return true;

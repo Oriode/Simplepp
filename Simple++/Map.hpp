@@ -280,7 +280,7 @@ bool RBNode<T>::write( Stream * stream ) const {
 
 template<typename T>
 template<typename Stream>
-bool RBNode<T>::read( Stream * stream ) {
+bool RBNode<T>::read( Stream * stream, int verbose ) {
 	// Using an explicit stack for high performances and be sure to never crash with a stack overflow exception
 	Vector<RBNode<T> *> stack;
 	stack.reserve( 10 );
@@ -291,18 +291,18 @@ bool RBNode<T>::read( Stream * stream ) {
 	while ( stack.getSize() ) {
 		RBNode<T> * node( stack.pop() );
 
-		if ( !IO::read( stream, &node -> value ) ) {
+		if ( !IO::read( stream, &node -> value , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &node -> color ) ) {
+		if ( !IO::read( stream, &node -> color , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
 
 		bool isLeft, isRight;
 
-		if ( !IO::read( stream, &isRight ) ) {
+		if ( !IO::read( stream, &isRight, verbose -1 ) ) {
 			_clear();
 			return false;
 		}
@@ -314,7 +314,7 @@ bool RBNode<T>::read( Stream * stream ) {
 			node -> right = NULL;
 		}
 
-		if ( !IO::read( stream, &isLeft ) ) {
+		if ( !IO::read( stream, &isLeft, verbose -1 ) ) {
 			_clear();
 			return false;
 		}
@@ -1315,23 +1315,23 @@ void RBTree<I, T, Compare>::_checkTreeSorted( RBNode< MapObject<I, T> > * node, 
 
 template<typename I, typename T, typename Compare>
 template<typename Stream>
-bool RBTree<I, T, Compare>::read(Stream* stream ) {
+bool RBTree<I, T, Compare>::read( Stream * stream, int verbose ) {
 	_clear();
 
-	if ( !IO::read( stream, &this -> compareFunc ) ) {
+	if ( !IO::read( stream, &this -> compareFunc , verbose - 1 ) ) {
 		_clear();
 		return false;
 	}
 
 	bool isRootNode;
-	if ( !IO::read( stream, &isRootNode ) ) {
+	if ( !IO::read( stream, &isRootNode, verbose -1 ) ) {
 		_clear();
 		return false;
 	}
 	if ( isRootNode ) {
 		this -> rootNode = new RBNode<MapObject<I, T>>();
 
-		if ( !IO::read( stream, this -> rootNode ) ) {
+		if ( !IO::read( stream, this -> rootNode , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}

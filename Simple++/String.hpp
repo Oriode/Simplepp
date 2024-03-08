@@ -4685,8 +4685,8 @@ void BasicString<T>::resize( Size newSize ) {
 
 template<typename T>
 template<typename Stream>
-bool BasicString<T>::read( Stream* stream ) {
-	if ( !IO::read( stream, &this -> size ) ) {
+bool BasicString<T>::read( Stream * stream, int verbose ) {
+	if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
 		_updateIterators();

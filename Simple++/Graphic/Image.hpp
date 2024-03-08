@@ -475,14 +475,14 @@ namespace Graphic {
 	template<typename T>
 	template<typename Stream>
 	bool ImageT<T>::_read(Stream* stream ) {
-		if ( !IO::read( stream, &this -> size ) ) {
+		if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
 			this -> size.x = 0;
 			this -> size.y = 0;
 			this -> nbPixels = 0;
 			this -> buffer = NULL;
 			return false;
 		}
-		if ( !IO::read( stream, &this -> format ) ) {
+		if ( !IO::read( stream, &this -> format , verbose - 1 ) ) {
 			this -> size.x = 0;
 			this -> size.y = 0;
 			this -> nbPixels = 0;
@@ -508,7 +508,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename Stream>
-	bool ImageT<T>::read( Stream * stream ) {
+	bool ImageT<T>::read( Stream * stream, int verbose ) {
 		delete[] this -> buffer;
 		return _read( stream );
 	}

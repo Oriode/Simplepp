@@ -265,7 +265,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read(Stream* stream);
+	bool read( Stream * stream, int verbose = 0 );
 
 	/**
 	 * @brief 	write this object as binary into a file stream
@@ -811,9 +811,9 @@ bool Table<T>::write(Stream* stream) const {
 
 template<typename T>
 template<typename Stream>
-bool Table<T>::read(Stream* stream) {
+bool Table<T>::read( Stream * stream, int verbose ) {
 	Size readSize;
-	if ( !IO::read(stream, &readSize) ) {
+	if ( !IO::read( stream, &readSize, verbose -1 ) ) {
 		return false;
 	}
 

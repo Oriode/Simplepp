@@ -14,7 +14,7 @@ namespace IO {
 
 	template<typename DataType>
 	template<typename Stream>
-	bool Loadable<DataType>::read(Stream* stream ) {
+	bool Loadable<DataType>::read( Stream * stream, int verbose ) {
 		unload();
 		lock();
 		setLoading( true );
@@ -22,7 +22,7 @@ namespace IO {
 		_ASSERT_SPP( !this->object );
 		this->object = new DataType();
 
-		if ( IO::read( stream, this->object ) ) {
+		if ( IO::read( stream, this->object , verbose - 1 ) ) {
 			setLoading( false );
 			setLoaded( true );
 			unlock();

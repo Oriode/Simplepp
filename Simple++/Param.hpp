@@ -67,11 +67,11 @@ inline const V& ParamT<I, V>::getValue() const {
 
 template<typename I, typename V>
 template<typename Stream>
-bool ParamT<I, V>::read(Stream* stream) {
-	if ( !IO::read(stream, &this -> name) ) {
+bool ParamT<I, V>::read( Stream * stream, int verbose ) {
+	if ( !IO::read( stream, &this -> name, verbose - 1 ) ) {
 		return false;
 	}
-	if ( !IO::read(stream, &this -> value) ) {
+	if ( !IO::read( stream, &this -> value, verbose - 1 ) ) {
 		return false;
 	}
 	return true;

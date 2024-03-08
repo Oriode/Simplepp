@@ -551,144 +551,144 @@ namespace GLFW {
 
 
 	template<typename Stream>
-	bool Window::read( Stream * stream ) {
-		if ( !IO::read( stream, &this -> size ) ) {
+	bool Window::read( Stream * stream, int verbose ) {
+		if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> title ) ) {
+		if ( !IO::read( stream, &this -> title , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> resizable ) ) {
+		if ( !IO::read( stream, &this -> resizable , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> visible ) ) {
+		if ( !IO::read( stream, &this -> visible , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> decorated ) ) {
+		if ( !IO::read( stream, &this -> decorated , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> focused ) ) {
+		if ( !IO::read( stream, &this -> focused , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> autoIconify ) ) {
+		if ( !IO::read( stream, &this -> autoIconify , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> alwaysOnTop ) ) {
+		if ( !IO::read( stream, &this -> alwaysOnTop , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> maximized ) ) {
+		if ( !IO::read( stream, &this -> maximized , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> redBits ) ) {
+		if ( !IO::read( stream, &this -> redBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> greenBits ) ) {
+		if ( !IO::read( stream, &this -> greenBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> blueBits ) ) {
+		if ( !IO::read( stream, &this -> blueBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> alphaBits ) ) {
+		if ( !IO::read( stream, &this -> alphaBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> depthBits ) ) {
+		if ( !IO::read( stream, &this -> depthBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> stencilBits ) ) {
+		if ( !IO::read( stream, &this -> stencilBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> accumulationRedBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationRedBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> accumulationGreenBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationGreenBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> accumulationBlueBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationBlueBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> accumulationAlphaBits ) ) {
+		if ( !IO::read( stream, &this -> accumulationAlphaBits , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> nbAuxiliaryBuffers ) ) {
+		if ( !IO::read( stream, &this -> nbAuxiliaryBuffers , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> nbSamples ) ) {
+		if ( !IO::read( stream, &this -> nbSamples , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> refreshRate ) ) {
+		if ( !IO::read( stream, &this -> refreshRate , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> stereo ) ) {
+		if ( !IO::read( stream, &this -> stereo , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> SRGBCapable ) ) {
+		if ( !IO::read( stream, &this -> SRGBCapable , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> doubleBuffer ) ) {
+		if ( !IO::read( stream, &this -> doubleBuffer , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> clientAPI ) ) {
+		if ( !IO::read( stream, &this -> clientAPI , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> contextAPI ) ) {
+		if ( !IO::read( stream, &this -> contextAPI , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> contextMajorVersion ) ) {
+		if ( !IO::read( stream, &this -> contextMajorVersion , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> contextMinorVersion ) ) {
+		if ( !IO::read( stream, &this -> contextMinorVersion , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> robustness ) ) {
+		if ( !IO::read( stream, &this -> robustness , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> contextReleaseBehavior ) ) {
+		if ( !IO::read( stream, &this -> contextReleaseBehavior , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> openGLFowardCompatible ) ) {
+		if ( !IO::read( stream, &this -> openGLFowardCompatible , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> openGLDebug ) ) {
+		if ( !IO::read( stream, &this -> openGLDebug , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> openGLProfile ) ) {
+		if ( !IO::read( stream, &this -> openGLProfile , verbose - 1 ) ) {
 			reset();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> cursorMode ) ) {
+		if ( !IO::read( stream, &this -> cursorMode , verbose - 1 ) ) {
 			reset();
 			return false;
 		}

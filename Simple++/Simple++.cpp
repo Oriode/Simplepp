@@ -2,7 +2,7 @@
  * @file		Simple++.cpp.
  *
  * @brief		Main file used for doing some test. ( Will be ignored in release )
- * @author	Clément Gerber
+ * @author	Clï¿½ment Gerber
  * @date		26/05/2016 (DMY)
  */
 
@@ -355,7 +355,7 @@ int main( int argc, char* argv[] ) {
 			ASSERT( IO::write( filePath, &textureLoadable ) );
 
 			// And now read it again.
-			ASSERT( IO::read( filePath, &textureLoadable ) );
+			ASSERT( IO::read( filePath, &textureLoadable, verbose -1 ) );
 			displayInfo( StringASCII( "Texture Loaded as a BasicIO, Height : (expected : 500) : " ) << textureLoadable.getObject()->getHeight() );
 
 			Math::Vec2<double> vIn( 1.0, 42.0 );

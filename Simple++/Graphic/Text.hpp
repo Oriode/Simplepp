@@ -30,24 +30,24 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename Stream>
-	bool Text<T>::read( Stream * stream ) {
+	bool Text<T>::read( Stream * stream, int verbose ) {
 		if ( !IO::read( stream, ( ImageT<T> * ) this ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> centering ) ) {
+		if ( !IO::read( stream, &this -> centering , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> margins ) ) {
+		if ( !IO::read( stream, &this -> margins , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> bias ) ) {
+		if ( !IO::read( stream, &this -> bias , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> str ) ) {
+		if ( !IO::read( stream, &this -> str , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}

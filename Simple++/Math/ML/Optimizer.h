@@ -135,23 +135,23 @@ namespace Math {
 				 * @returns	boolean to know if the operation is a success of not.
 				 */
 				template<typename Stream>
-				bool read(Stream* stream) {
-					if ( !IO::read(stream, &this->learningRate) ) {
+				bool read( Stream * stream, int verbose ) {
+					if ( !IO::read( stream, &this->learningRate, verbose - 1 ) ) {
 						return false;
 					}
-					if ( !IO::read(stream, &this->beta1) ) {
+					if ( !IO::read( stream, &this->beta1, verbose - 1 ) ) {
 						return false;
 					}
-					if ( !IO::read(stream, &this->beta2) ) {
+					if ( !IO::read( stream, &this->beta2, verbose - 1 ) ) {
 						return false;
 					}
-					if ( !IO::read(stream, &this->epsilon) ) {
+					if ( !IO::read( stream, &this->epsilon, verbose - 1 ) ) {
 						return false;
 					}
-					if ( !IO::read(stream, &this->gradAggregadeMat) ) {
+					if ( !IO::read( stream, &this->gradAggregadeMat, verbose - 1 ) ) {
 						return false;
 					}
-					if ( !IO::read(stream, &this->gradSumMat) ) {
+					if ( !IO::read( stream, &this->gradSumMat, verbose - 1 ) ) {
 						return false;
 					}
 					return true;

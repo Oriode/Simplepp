@@ -160,7 +160,7 @@ namespace Math {
 			 * @returns	boolean to know if the operation is a success of not.
 			 */
 			template<typename Stream>
-			bool read(Stream* stream);
+			bool read( Stream * stream, int verbose = 0 );
 
 			/**
 			 * @brief 	write this object as binary into a file stream
@@ -683,7 +683,7 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::loadFromFile(const OS::Path& filePath, int verbose) {
-			if ( !IO::read(filePath, this) ) {
+			if ( !IO::read( filePath, this, verbose -1 ) ) {
 				if ( verbose > -1 ) { Log::displayWarning(String::format("Unable to load the DeepNeuralNetwork from the file \"%\".", filePath)); }
 				return false;
 			}
@@ -1360,9 +1360,9 @@ namespace Math {
 
 		template<typename T, typename M, typename OptimizerFunc, Size NbThreads>
 		template<typename Stream>
-		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::read(Stream* stream) {
+		inline bool DeepNeuralNetwork<T, M, OptimizerFunc, NbThreads>::read( Stream * stream, int verbose ) {
 			Size nbLayers;
-			if ( !IO::read(stream, &nbLayers) ) {
+			if ( !IO::read( stream, &nbLayers, verbose -1 ) ) {
 				return false;
 			}
 			if ( nbLayers != getNbLayers() ) {
@@ -1373,35 +1373,35 @@ namespace Math {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->featureVector) ) {
+			if ( !IO::read( stream, &this->featureVector, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->expectedYVector) ) {
+			if ( !IO::read( stream, &this->expectedYVector, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->hiddenActivationFunc) ) {
+			if ( !IO::read( stream, &this->hiddenActivationFunc, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->activationFunc) ) {
+			if ( !IO::read( stream, &this->activationFunc, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->epochNum) ) {
+			if ( !IO::read( stream, &this->epochNum, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->learningRateFactor) ) {
+			if ( !IO::read( stream, &this->learningRateFactor, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->normalizeFeatureTable) ) {
+			if ( !IO::read( stream, &this->normalizeFeatureTable, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}
-			if ( !IO::read(stream, &this->normalizeOutTable) ) {
+			if ( !IO::read( stream, &this->normalizeOutTable, verbose - 1 ) ) {
 				resetAll();
 				return false;
 			}

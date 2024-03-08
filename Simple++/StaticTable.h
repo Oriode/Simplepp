@@ -82,7 +82,7 @@ public:
 	 * @returns	boolean to know if the operation is a success of not.
 	 */
 	template<typename Stream>
-	bool read(Stream* stream);
+	bool read( Stream * stream, int verbose = 0 );
 
 	/**
 	 * @brief 	write this object as binary into a file stream
@@ -174,9 +174,9 @@ inline StaticTable<T, N>& StaticTable<T, N>::operator=(const C(&t)[ N ]) {
 
 template<typename T, Size N>
 template<typename Stream>
-inline bool StaticTable<T, N>::read(Stream* stream) {
+inline bool StaticTable<T, N>::read( Stream * stream, int verbose ) {
 	Size readSize;
-	if ( !IO::read(stream, &readSize) ) {
+	if ( !IO::read( stream, &readSize, verbose -1 ) ) {
 		return false;
 	}
 

@@ -11,13 +11,13 @@ namespace IO {
 		///@param stream stream used to read load this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream* stream, int verbose = 0 );
 
 		///@brief write this object as binary into a file stream
 		///@param stream stream used to write this object
 		///@return boolean to know if the operation is a success of not.
 		template<typename Stream>
-		bool write(Stream* stream) const;
+		bool write( Stream* stream ) const;
 
 
 	};
@@ -29,14 +29,14 @@ namespace IO {
 	///@param object pointer to the object we wanna write.
 	///@return Boolean if the result is a success or not.
 	template<typename Stream, typename C>
-	static bool write(Stream* stream, const C* object);
+	static bool write( Stream* stream, const C* object );
 
 	///@brief read from a file stream to an object, this function will automatically test if the sent object (by pointer) inherit from BasicIO himself and then call his own read method.
 	///@param stream file stream where to read.
 	///@param object pointer to the object we wanna read.
 	///@return Boolean if the result is a success or not.
 	template<typename Stream, typename C>
-	static bool read(Stream* stream, C* object);
+	static bool read( Stream* stream, C* object, int verbose = 0 );
 
 
 	///@brief write a table of objects inside the file stream, this function will automatically test for each object inherit from BasicIO themselves and then call there own write method.
@@ -45,7 +45,7 @@ namespace IO {
 	///@param size number of elements in the table.
 	///@return Boolean if the result is a success or not.
 	template<typename Stream, typename C>
-	static bool write(Stream* stream, const C* buffer, Size size);
+	static bool write( Stream* stream, const C* buffer, Size size );
 
 	///@brief read from a file stream to a table of objects, this function will automatically test for each object inherit from BasicIO themselves and then call there own write method.
 	///@param stream file stream where to read.
@@ -53,7 +53,7 @@ namespace IO {
 	///@param size number of elements in the table.
 	///@return Boolean if the result is a success or not.
 	template<typename Stream, typename C>
-	static bool read(Stream* stream, C* buffer, Size size);
+	static bool read( Stream* stream, C* buffer, Size size, int verbose = 0 );
 
 
 
@@ -66,33 +66,33 @@ namespace IO {
 
 
 	template<typename Stream, typename C>
-	static bool _writeObject(Stream* stream, const C* buffer, const BasicIO* b);
+	static bool _writeObject( Stream* stream, const C* buffer, const BasicIO* b );
 
 	template<typename Stream, typename C>
-	static bool _writeObject(Stream* stream, const C* buffer, ...);
-
-
-	template<typename Stream, typename C>
-	static bool _writeBuffer(Stream* stream, const C* buffer, Size size, const BasicIO* b);
-
-	template<typename Stream, typename C>
-	static bool _writeBuffer(Stream* stream, const C* buffer, Size size, ...);
-
-
-
+	static bool _writeObject( Stream* stream, const C* buffer, ... );
 
 
 	template<typename Stream, typename C>
-	static bool _readObject(Stream* stream, C* buffer, BasicIO* b);
+	static bool _writeBuffer( Stream* stream, const C* buffer, Size size, const BasicIO* b );
 
 	template<typename Stream, typename C>
-	static bool _readObject(Stream* stream, C* buffer, ...);
+	static bool _writeBuffer( Stream* stream, const C* buffer, Size size, ... );
+
+
+
+
 
 	template<typename Stream, typename C>
-	static bool _readBuffer(Stream* stream, C* buffer, Size size, BasicIO* b);
+	static bool _readObject( Stream* stream, C* buffer, int verbose, BasicIO* b );
 
 	template<typename Stream, typename C>
-	static bool _readBuffer(Stream* stream, C* buffer, Size size, ...);
+	static bool _readObject( Stream* stream, C* buffer, int verbose, ... );
+
+	template<typename Stream, typename C>
+	static bool _readBuffer( Stream* stream, C* buffer, Size size, int verbose, BasicIO* b );
+
+	template<typename Stream, typename C>
+	static bool _readBuffer( Stream* stream, C* buffer, Size size, int verbose, ... );
 
 }
 

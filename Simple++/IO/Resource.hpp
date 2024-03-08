@@ -124,10 +124,10 @@ namespace IO {
 
 	template<typename DataType>
 	template<typename Stream>
-	bool Resource<DataType>::read(Stream* stream ) {
+	bool Resource<DataType>::read( Stream * stream, int verbose ) {
 		if ( this->object==NULL )
 			return true;
-		return IO::read( stream, this->object );
+		return IO::read( stream, this->object , verbose - 1 );
 	}
 
 	template<typename DataType>
@@ -155,7 +155,7 @@ namespace IO {
 		} else {
 			// No Manager, just create the object internally
 			DataType * newResource( new DataType() );
-			if ( !IO::read( filePath, newResource ) ) {
+			if ( !IO::read( filePath, newResource, verbose -1 ) ) {
 				delete newResource;
 				this->object = NULL;
 				this->loadingType = LoadingType::None;

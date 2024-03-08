@@ -149,41 +149,41 @@ namespace Graphic {
 
 		template<typename OverlayColorFunc, typename StrokeColorFunc, typename ShadowColorFunc>
 		template<typename Stream>
-		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read(Stream* stream ) {
+		bool Effect<OverlayColorFunc, StrokeColorFunc, ShadowColorFunc>::read( Stream * stream, int verbose ) {
 			if ( !IO::read( stream, (Template *) this ) ) {
 				clear();
 				return false;
 			}
 
-			if ( !IO::read( stream, &this -> bShadowActivated ) ) {
+			if ( !IO::read( stream, &this -> bShadowActivated , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> shadowRadius ) ) {
+			if ( !IO::read( stream, &this -> shadowRadius , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> shadowBias ) ) {
+			if ( !IO::read( stream, &this -> shadowBias , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> bStrokeActivated ) ) {
+			if ( !IO::read( stream, &this -> bStrokeActivated , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> strokeSize ) ) {
+			if ( !IO::read( stream, &this -> strokeSize , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> shadowColorFunc ) ) {
+			if ( !IO::read( stream, &this -> shadowColorFunc , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> strokeColorFunc ) ) {
+			if ( !IO::read( stream, &this -> strokeColorFunc , verbose - 1 ) ) {
 				clear();
 				return false;
 			}
-			if ( !IO::read( stream, &this -> overlayColorFunc ) ) {
+			if ( !IO::read( stream, &this -> overlayColorFunc , verbose - 1 ) ) {
 				clear();
 				return false;
 			}

@@ -124,7 +124,7 @@ namespace Math {
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
 		template<typename Stream>
-		bool read(Stream* stream);
+		bool read( Stream * stream, int verbose = 0 );
 
 		/**
 		 * @brief 	write this object as binary into a file stream
@@ -421,12 +421,12 @@ namespace Math {
 
 	template<typename T>
 	template<typename Stream>
-	inline bool Tensor<T>::read(Stream* stream) {
+	inline bool Tensor<T>::read( Stream * stream, int verbose ) {
 		if ( !BasicVector<T>::read(stream) ) {
 			return false;
 		}
 
-		if ( !IO::read(stream, &this->size) ) {
+		if ( !IO::read( stream, &this->size, verbose - 1 ) ) {
 			return false;
 		}
 

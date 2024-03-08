@@ -2,7 +2,7 @@
  * @file	Graphic\Image.h.
  *
  * @brief	Image Class with some drawing methods.
- * @author	Clément Gerber
+ * @author	Clï¿½ment Gerber
  * @date date 19/04/2016 (DMY)
  */
 #pragma once
@@ -378,7 +378,7 @@ namespace Graphic {
 		 * @returns	boolean to know if the operation is a success of not.
 		 */
 		template<typename Stream>
-		bool read( Stream * stream );
+		bool read( Stream * stream, int verbose = 0 );
 
 		/**
 		 * @brief	write this object as binary into a file stream

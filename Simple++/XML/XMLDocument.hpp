@@ -280,20 +280,20 @@ namespace XML {
 
 	template<typename S>
 	template<typename Stream>
-	bool DocumentT<S>::read( Stream * stream ) {
+	bool DocumentT<S>::read( Stream * stream, int verbose ) {
 		_unload();
 		this -> rootNode = NULL;
 
-		if ( !IO::read( stream, &this -> version ) ) {
+		if ( !IO::read( stream, &this -> version , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> encoding ) ) {
+		if ( !IO::read( stream, &this -> encoding , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
 		this -> rootNode = new NodeT<S>( S( "#document" ), NodeT<S>::Type::Document );
-		if ( !IO::read( stream, this -> rootNode ) ) {
+		if ( !IO::read( stream, this -> rootNode , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}

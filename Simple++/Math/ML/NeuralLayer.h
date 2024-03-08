@@ -159,7 +159,7 @@ namespace Math {
 			 * @returns	boolean to know if the operation is a success of not.
 			 */
 			template<typename Stream>
-			bool read( Stream* stream );
+			bool read( Stream * stream, int verbose = 0 );
 
 			/**
 			 * @brief 	write this object as binary into a file stream
@@ -584,23 +584,23 @@ namespace Math {
 
 		template<typename T, Size NbFeatures, Size NbNeurons, typename OptimizerFunc>
 		template<typename Stream>
-		inline bool NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::read( Stream* stream ) {
+		inline bool NeuralLayer<T, NbFeatures, NbNeurons, OptimizerFunc>::read( Stream * stream, int verbose ) {
 			Size nbFeatures;
 			Size nbNeurons;
-			if ( !IO::read( stream, &nbFeatures ) ) {
+			if ( !IO::read( stream, &nbFeatures, verbose -1 ) ) {
 				return false;
 			}
-			if ( !IO::read( stream, &nbNeurons ) ) {
+			if ( !IO::read( stream, &nbNeurons, verbose -1 ) ) {
 				return false;
 			}
 			if ( nbFeatures != getNbFeatures() || nbNeurons != getNbNeurons() ) {
 				Log::displayError( String::format( "Trying to read a NeuralLayer of the wrong size : this[ % x % ] != read[ % x % ].", getNbFeatures(), getNbNeurons(), nbFeatures, nbNeurons ) );
 				return false;
 			}
-			if ( !IO::read( stream, &this->paramMat ) ) {
+			if ( !IO::read( stream, &this->paramMat , verbose - 1 ) ) {
 				return false;
 			}
-			if ( !IO::read( stream, &this->optimizerFunc ) ) {
+			if ( !IO::read( stream, &this->optimizerFunc , verbose - 1 ) ) {
 				return false;
 			}
 			return true;

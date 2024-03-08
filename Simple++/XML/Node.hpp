@@ -693,7 +693,7 @@ namespace XML {
 
 	template<typename S>
 	template<typename Stream>
-	bool NodeT<S>::read( Stream * stream ) {
+	bool NodeT<S>::read( Stream * stream, int verbose ) {
 		if ( getType() == Type::Text )
 			return this -> toText() -> read( stream );
 		else
@@ -710,26 +710,26 @@ namespace XML {
 		this -> childrenMap.clear();
 		this -> childrenVector.clear();
 
-		if ( !IO::read( stream, &this -> name ) ) {
+		if ( !IO::read( stream, &this -> name , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
 
-		if ( !IO::read( stream, &this -> id ) ) {
+		if ( !IO::read( stream, &this -> id , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
 
 		// Read the Params
 		Size nbParams;
-		if ( !IO::read( stream, &nbParams ) ) {
+		if ( !IO::read( stream, &nbParams, verbose -1 ) ) {
 			_clear();
 			return false;
 		}
 		nbParams = Math::min( nbParams, Size( 1000 ) );
 		for ( Size i( 0 ); i < nbParams; i++ ) {
 			ParamT<S> * newParam( new ParamT<S>() );
-			if ( !IO::read( stream, newParam ) ) {
+			if ( !IO::read( stream, newParam, verbose -1 ) ) {
 				delete newParam;
 				_clear();
 				return false;
@@ -739,21 +739,21 @@ namespace XML {
 
 		// Read the children
 		Size nbChilds;
-		if ( !IO::read( stream, &nbChilds ) ) {
+		if ( !IO::read( stream, &nbChilds, verbose -1 ) ) {
 			_clear();
 			return false;
 		}
 		nbChilds = Math::min( nbChilds, Size( 1000 ) );
 		for ( Size i( 0 ); i < nbChilds; i++ ) {
 			Type newNodeType;
-			if ( !IO::read( stream, &newNodeType ) ) {
+			if ( !IO::read( stream, &newNodeType, verbose -1 ) ) {
 				_clear();
 				return false;
 			}
 			if ( newNodeType == Type::Text ) {
 				NodeTextT<S> * newNode( new NodeTextT<S>() );
 				newNode -> parent = this;
-				if ( !IO::read( stream, newNode ) ) {
+				if ( !IO::read( stream, newNode, verbose -1 ) ) {
 					delete newNode;
 					_clear();
 					return false;
@@ -763,7 +763,7 @@ namespace XML {
 			} else {
 				NodeT<S> * newNode( new NodeT() );
 				newNode -> parent = this;
-				if ( !IO::read( stream, newNode ) ) {
+				if ( !IO::read( stream, newNode, verbose -1 ) ) {
 					delete newNode;
 					_clear();
 					return false;
@@ -998,7 +998,7 @@ namespace XML {
 
 	template<typename S>
 	template<typename Stream>
-	bool NodeTextT<S>::read( Stream * stream ) {
+	bool NodeTextT<S>::read( Stream * stream, int verbose ) {
 		this -> value.clear();
 
 		/*
@@ -1006,7 +1006,7 @@ namespace XML {
 			return false;
 		}
 		*/
-		if ( !IO::read( stream, &this -> value ) ) {
+		if ( !IO::read( stream, &this -> value , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}

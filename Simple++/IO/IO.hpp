@@ -14,10 +14,10 @@ namespace IO {
 
 
 	template<typename C>
-	bool read(const OS::Path & filePath, C* object) {
+	bool read(const OS::Path & filePath, C* object, int verbose) {
 		FileStream stream(filePath, IO::OpenMode::Read);
 		if (stream.isOpen()) {
-			bool result(IO::read(&stream, object));
+			bool result(IO::read(&stream, object, verbose));
 			return result;
 		}
 		else
@@ -25,10 +25,10 @@ namespace IO {
 	}
 
 	template<typename T>
-	size_t readToBuffer(const OS::Path & filePath, char** data) {
+	size_t readToBuffer(const OS::Path & filePath, char** data, int verbose) {
 		FileStream stream(filePath, IO::OpenMode::Read);
 		if (stream.isOpen()) {
-			return stream.readToBuffer(data);
+			return stream.readToBuffer(data, verbose);
 		}
 		else {
 			*data = NULL;
@@ -37,7 +37,7 @@ namespace IO {
 	}
 
 	template<typename C>
-	size_t readToString(const OS::Path& filePath, BasicString<C>* stringP) {
+	size_t readToString(const OS::Path& filePath, BasicString<C>* stringP, int verbose) {
 		FileStream stream(filePath, IO::OpenMode::Read);
 		if (stream.isOpen()) {
 			return stream.readToString(stringP);

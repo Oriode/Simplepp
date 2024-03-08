@@ -74,11 +74,11 @@ namespace Graphic {
 	template<typename Stream>
 	FreeTypeChar<T>::FreeTypeChar( Stream * stream ) :
 		ImageT<T>( stream ) {
-		IO::read( stream, &this -> uCodePoint );
-		IO::read( stream, &this -> size );
-		IO::read( stream, &this -> horiBearing );
-		IO::read( stream, &this -> horiOffsetY );
-		IO::read( stream, &this -> horiAdvance );
+		IO::read( stream, &this -> uCodePoint , verbose - 1 );
+		IO::read( stream, &this -> size , verbose - 1 );
+		IO::read( stream, &this -> horiBearing , verbose - 1 );
+		IO::read( stream, &this -> horiOffsetY , verbose - 1 );
+		IO::read( stream, &this -> horiAdvance , verbose - 1 );
 	}
 
 
@@ -158,28 +158,28 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename Stream>
-	bool FreeTypeChar<T>::read( Stream * stream ) {
+	bool FreeTypeChar<T>::read( Stream * stream, int verbose ) {
 		if ( !Image::read( stream ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> uCodePoint ) ) {
+		if ( !IO::read( stream, &this -> uCodePoint , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> size ) ) {
+		if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> horiBearing ) ) {
+		if ( !IO::read( stream, &this -> horiBearing , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> horiOffsetY ) ) {
+		if ( !IO::read( stream, &this -> horiOffsetY , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}
-		if ( !IO::read( stream, &this -> horiAdvance ) ) {
+		if ( !IO::read( stream, &this -> horiAdvance , verbose - 1 ) ) {
 			_clear();
 			return false;
 		}

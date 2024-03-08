@@ -277,7 +277,7 @@ namespace Graphic {
 
 	template<typename T, typename LoadingFunc>
 	template<typename Stream>
-	bool FontT<T, LoadingFunc>::read(Stream* stream ) {
+	bool FontT<T, LoadingFunc>::read( Stream * stream, int verbose ) {
 		_unload();
 		_nullify();
 		if ( !_read( stream ) ) {
@@ -292,7 +292,7 @@ namespace Graphic {
 	bool FontT<T, LoadingFunc>::_read( Stream * stream ) {
 
 
-		if ( !IO::read( stream, &this -> memorySize ) ) 
+		if ( !IO::read( stream, &this -> memorySize , verbose - 1 ) ) 
 			return false;
 		
 
@@ -305,19 +305,19 @@ namespace Graphic {
 		if ( !IO::read( stream, this -> memoryFontObject, this -> memorySize ) )
 			return false;
 		
-		if ( !IO::read( stream, &this -> pixSize ) ) 
+		if ( !IO::read( stream, &this -> pixSize , verbose - 1 ) ) 
 			return false;
-		if ( !IO::read( stream, &this -> lineHeight ) ) 
+		if ( !IO::read( stream, &this -> lineHeight , verbose - 1 ) ) 
 			return false;
-		if ( !IO::read( stream, &this -> wordSpace ) ) 
+		if ( !IO::read( stream, &this -> wordSpace , verbose - 1 ) ) 
 			return false;
-		if ( !IO::read( stream, &this -> loadingFunctor ) ) 
+		if ( !IO::read( stream, &this -> loadingFunctor , verbose - 1 ) ) 
 			return false;
 		
 		_loadFreeType( this -> memoryFontObject, this -> memorySize, this -> pixSize );
 
 		size_t nbCharsLoaded;
-		if ( !IO::read( stream, &nbCharsLoaded ) )
+		if ( !IO::read( stream, &nbCharsLoaded, verbose -1 ) )
 			return false;
 
 		nbCharsLoaded = Math::min( nbCharsLoaded, size_t( 100000 ) );

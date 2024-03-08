@@ -20,14 +20,14 @@ namespace IO {
 	///@param object pointer to the object we wanna read.
 	///@return Boolean if the result is a success or not.
 	template<typename C>
-	static bool read( const OS::Path & filePath, C * object );
+	static bool read( const OS::Path & filePath, C * object, int verbose = 0 );
 
 	///@brief open the file and read the complete file (from begin to end) and allocate a new data and copy data inside.
 	///@param filePath file to read.
 	///@param data [out] data buffer to be allocated and filled with the content of the file.
 	///@return number of char read (-1) if an error has occurred. (Pointer will be set to NULL if failed, allocated otherwise.)
 	template<typename T = int>
-	static size_t readToBuffer( const OS::Path & filePath, char ** data );
+	static size_t readToBuffer( const OS::Path & filePath, char ** data, int verbose = 0 );
 
 	///@brief Read the whole file and convert it to a String Object.
 	///@template C Should be a BasicStringT.
@@ -35,7 +35,7 @@ namespace IO {
 	///@param [out] stringP String to be modified.
 	///@return number of char read (-1) if an error has occurred.
 	template<typename C>
-	size_t readToString(const OS::Path& filePath, BasicString<C> * stringP );
+	size_t readToString(const OS::Path& filePath, BasicString<C> * stringP, int verbose = 0 );
 }
 
 

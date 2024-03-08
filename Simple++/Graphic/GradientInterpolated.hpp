@@ -75,7 +75,7 @@ namespace Graphic {
 
 	template<typename C, typename InterFunc>
 	template<typename Stream>
-	bool GradientInterpolation<C, InterFunc>::read(Stream* stream ) {
+	bool GradientInterpolation<C, InterFunc>::read( Stream * stream, int verbose ) {
 		delete[] this -> interpolatedArray;
 		this -> interpolatedArray = NULL;
 		return true;
@@ -137,10 +137,10 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool GradientHorizontal<C, InterFunc>::read(Stream* stream ) {
+		bool GradientHorizontal<C, InterFunc>::read( Stream * stream, int verbose ) {
 			if ( !GradientInterpolation<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( stream, &this -> gradient ) )
+			if ( !IO::read( stream, &this -> gradient , verbose - 1 ) )
 				return false;
 
 			return true;
@@ -205,10 +205,10 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool GradientVertical<C, InterFunc>::read(Stream* stream ) {
+		bool GradientVertical<C, InterFunc>::read( Stream * stream, int verbose ) {
 			if ( !GradientInterpolation<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( stream, &this -> gradient ) )
+			if ( !IO::read( stream, &this -> gradient , verbose - 1 ) )
 				return false;
 
 			return true;
@@ -294,10 +294,10 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool GradientLinear<C, InterFunc>::read(Stream* stream ) {
+		bool GradientLinear<C, InterFunc>::read( Stream * stream, int verbose ) {
 			if ( !GradientInterpolation<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( stream, &this -> gradient ) )
+			if ( !IO::read( stream, &this -> gradient , verbose - 1 ) )
 				return false;
 
 			return true;
@@ -379,10 +379,10 @@ namespace Graphic {
 
 		template<typename C, typename InterFunc>
 		template<typename Stream>
-		bool GradientRadial<C, InterFunc>::read(Stream* stream ) {
+		bool GradientRadial<C, InterFunc>::read( Stream * stream, int verbose ) {
 			if ( !GradientInterpolation<C, InterFunc>::read( stream ) )
 				return false;
-			if ( !IO::read( stream, &this -> gradient ) )
+			if ( !IO::read( stream, &this -> gradient , verbose - 1 ) )
 				return false;
 
 			return true;

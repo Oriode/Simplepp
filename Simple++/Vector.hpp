@@ -798,9 +798,9 @@ void Vector<T>::_eraseit( typename Vector<T>::Iterator it ) {
 
 template<typename T>
 template<typename Stream>
-bool Vector<T>::read( Stream * stream ) {
+bool Vector<T>::read( Stream * stream, int verbose ) {
 
-	if ( !IO::read( stream, &this -> size ) ) {
+	if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
 		_clear();
 		return false;
 	}

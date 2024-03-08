@@ -88,10 +88,10 @@ bool MapObject<I, T>::write(Stream* stream ) const {
 
 template<typename I, typename T>
 template<typename Stream>
-bool MapObject<I, T>::read(Stream* stream ) {
-	if ( !IO::read( stream, &this -> index ) )
+bool MapObject<I, T>::read( Stream * stream, int verbose ) {
+	if ( !IO::read( stream, &this -> index , verbose - 1 ) )
 		return false;
-	if ( !IO::read( stream, &this -> value ) )
+	if ( !IO::read( stream, &this -> value , verbose - 1 ) )
 		return false;
 	return true;
 }

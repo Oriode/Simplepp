@@ -122,16 +122,16 @@ inline const Map<I, ParamT<I, V>*>& ParamContainerT<I, V>::getParamMap() const {
 
 template<typename I, typename V>
 template<typename Stream>
-inline bool ParamContainerT<I, V>::read( Stream* stream ) {
+inline bool ParamContainerT<I, V>::read( Stream * stream, int verbose ) {
 	Size nbParams;
 
-	if ( !IO::read( stream, &nbParams ) ) {
+	if ( !IO::read( stream, &nbParams, verbose -1 ) ) {
 		return false;
 	}
 	for ( Size i( 0 ); i < nbParams; i++ ) {
 		ParamT<I, V>* newParam( new ParamT<I, V>() );
 
-		if ( !IO::read( stream, newParam ) ) {
+		if ( !IO::read( stream, newParam, verbose -1 ) ) {
 			return false;
 		}
 	}
