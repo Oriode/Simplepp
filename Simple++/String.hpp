@@ -234,7 +234,7 @@ BasicString<T>::BasicString( const BasicString<T>& str ) :
 
 template<typename T>
 BasicString<T>::BasicString( BasicString<T>&& str ) :
-	Vector<T>( Utility::toRValue( str ) ) { }
+	Vector<T>( Utility::toRValue( str ) ) {}
 
 template<typename T>
 BasicString<T>::BasicString( typename BasicString<T>::protectedCtor ) : Vector<T>( Vector<T>::protectedCtor::null ) {
@@ -255,7 +255,7 @@ inline BasicString<T>::BasicString( const typename Math::Compare::Value& compare
 }
 
 template<typename T>
-BasicString<T>::~BasicString() { }
+BasicString<T>::~BasicString() {}
 
 
 
@@ -3412,6 +3412,88 @@ BasicString<T> BasicString<T>::toString( bool b ) {
 
 
 
+
+
+
+
+
+
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( unsigned char number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( unsigned short number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( unsigned int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( unsigned long long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( long long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( unsigned long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+template<typename T>
+BasicString<T> BasicString<T>::toStringFill( long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
+	BasicString<T> newStr( Vector<T>::protectedCtor::null );
+	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
+	newStr._updateIterators();
+	return newStr;
+}
+
+
+
 /************************************************************************/
 /* OPERATOR =                                                           */
 /************************************************************************/
@@ -3857,7 +3939,7 @@ template<typename T>
 inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVector, T** itP ) {
 
 	struct EncodeFunctor {
-		EncodeFunctor( const T* encodingTable ) : encodingTable( encodingTable ) { }
+		EncodeFunctor( const T* encodingTable ) : encodingTable( encodingTable ) {}
 
 		void encode( T* outputIt, const unsigned char* inputIt ) const {
 			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
@@ -4209,7 +4291,7 @@ Vector<BasicString<T>> BasicString<T>::split( const BasicString<T>& s, const T& 
 }
 
 template<typename T>
-inline BasicString<T> BasicString<T>::format( const BasicString<T> & referenceString ) {
+inline BasicString<T> BasicString<T>::format( const BasicString<T>& referenceString ) {
 	return referenceString;
 }
 
@@ -4685,8 +4767,8 @@ void BasicString<T>::resize( Size newSize ) {
 
 template<typename T>
 template<typename Stream>
-bool BasicString<T>::read( Stream * stream, int verbose ) {
-	if ( !IO::read( stream, &this -> size , verbose - 1 ) ) {
+bool BasicString<T>::read( Stream* stream, int verbose ) {
+	if ( !IO::read( stream, &this -> size, verbose - 1 ) ) {
 		this -> size = 0;
 		_allocateNoNull( 1 );
 		_updateIterators();
@@ -4761,7 +4843,7 @@ void BasicString<T>::__format( const C* referenceStringBegin, const C* reference
 
 template<typename T>
 template<typename T1, typename... Types>
-BasicString<T> BasicString<T>::format( const BasicString<T> & referenceString, const T1& arg1, Types ... args ) {
+BasicString<T> BasicString<T>::format( const BasicString<T>& referenceString, const T1& arg1, Types ... args ) {
 	return _format( referenceString.getBegin(), referenceString.getEnd(), arg1, args... );
 }
 
@@ -4845,7 +4927,7 @@ bool BasicString<T>::IsEndSentinel::operator()( const T* it ) const {
 
 template<typename T>
 BasicString<T>::IsEndIterator::IsEndIterator( const T* endIt ) :
-	endIt( endIt ) { }
+	endIt( endIt ) {}
 
 template<typename T>
 bool BasicString<T>::IsEndIterator::operator()( const T* it ) const {

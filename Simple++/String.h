@@ -1186,6 +1186,17 @@ public:
 	///@returns	A BasicString<T> that represents this object.
 	static BasicString<T> toString( bool b );
 
+
+
+	static BasicString<T> toStringFill( unsigned char number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( unsigned short number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( unsigned int number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( int number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( unsigned long int number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( long long int number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( unsigned long long int number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+	static BasicString<T> toStringFill( long int number, const Size& fillNb, const T& fillChar = T( ' ' ), unsigned int base = 10 );
+
 	/************************************************************************/
 	/* Others                                                               */
 	///@brief		Splits the given delimiter

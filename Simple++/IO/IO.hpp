@@ -2,49 +2,92 @@
 namespace IO {
 
 	template<typename C>
-	bool write(const OS::Path& filePath, const C* object) {
-		FileStream stream(filePath, IO::OpenMode::Write);
-		if (stream.isOpen()) {
-			bool result(IO::write(&stream, object));
-			return result;
-		}
-		else
+	bool write( const OS::Path& filePath, const C* object, int verbose ) {
+
+		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Writting to file \"%\"...", filePath ) ); }
+
+		FileStream stream( filePath, IO::OpenMode::Write );
+		if ( !stream.isOpen() ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Unable to open the file." ) ); }
 			return false;
+		}
+
+		if ( !result( IO::write( &stream, object ) ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to write." ) ); }
+			return false;
+		}
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success." ) ); }
+
+		return true;
 	}
 
 
 	template<typename C>
-	bool read(const OS::Path & filePath, C* object, int verbose) {
-		FileStream stream(filePath, IO::OpenMode::Read);
-		if (stream.isOpen()) {
-			bool result(IO::read(&stream, object, verbose));
-			return result;
-		}
-		else
+	bool read( const OS::Path& filePath, C* object, int verbose ) {
+
+		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading a new file \"%\"...", filePath ) ); }
+
+		FileStream stream( filePath, IO::OpenMode::Read );
+		if ( !stream.isOpen() ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Unable to open the file." ) ); }
 			return false;
+		}
+
+		if ( !IO::read( &stream, object, verbose ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to read." ) ); }
+			return false;
+		}
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success." ) ); }
+
+		return true;
 	}
 
 	template<typename T>
-	size_t readToBuffer(const OS::Path & filePath, char** data, int verbose) {
-		FileStream stream(filePath, IO::OpenMode::Read);
-		if (stream.isOpen()) {
-			return stream.readToBuffer(data, verbose);
-		}
-		else {
+	Size readToBuffer( const OS::Path& filePath, char** data, int verbose ) {
+
+		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading a new file \"%\"...", filePath ) ); }
+
+		FileStream stream( filePath, IO::OpenMode::Read );
+		if ( !stream.isOpen() ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Unable to open the file." ) ); }
+
 			*data = NULL;
-			return size_t(-1);
+			return Size( -1 );
 		}
+
+		if ( !stream.readToBuffer( data, verbose ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to read." ) ); }
+			return false;
+		}
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success." ) ); }
+
+		return true;
 	}
 
 	template<typename C>
-	size_t readToString(const OS::Path& filePath, BasicString<C>* stringP, int verbose) {
-		FileStream stream(filePath, IO::OpenMode::Read);
-		if (stream.isOpen()) {
-			return stream.readToString(stringP);
+	Size readToString( const OS::Path& filePath, BasicString<C>* stringP, int verbose ) {
+
+		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading a new file \"%\"...", filePath ) ); }
+
+		FileStream stream( filePath, IO::OpenMode::Read );
+		if ( stream.isOpen() ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Unable to open the file." ) ); }
+
+			return Size( -1 );
 		}
-		else {
-			return size_t(-1);
+
+		if ( !stream.readToString( stringP ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to read." ) ); }
+
+			return false;
 		}
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success." ) ); }
+
+		return true;
 	}
 
 }
