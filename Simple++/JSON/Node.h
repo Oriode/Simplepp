@@ -699,6 +699,20 @@ namespace JSON {
 	template<typename S, typename C>
 	BasicNodeT<S>* _toJSON( const C& v, ... );
 
+	///@brief write an object to the file, this function will automatically test if the sent object (by pointer) inherit from BasicIO JSON::Jsonable and then call his own fromJSON method.
+	///@param filePath file where to write.
+	///@param object pointer to the object we wanna write.
+	///@return Boolean if the result is a success or not.
+	template<typename S = UTF8String, typename C>
+	static bool write( const OS::Path& filePath, const C* object, int verbose = 0 );
+
+	///@brief read from a file to an object, this function will automatically test if the sent object (by pointer) inherit from JSON::Jsonable himself and then call his own toJSON method.
+	///@param filePath file where to read.
+	///@param object pointer to the object we wanna read.
+	///@return Boolean if the result is a success or not.
+	template<typename S = UTF8String, typename C>
+	bool read( const OS::Path& filePath, C* object, int verbose = 0 );
+
 }
 
 #include "Node.hpp"

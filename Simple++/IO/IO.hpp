@@ -12,7 +12,7 @@ namespace IO {
 			return false;
 		}
 
-		if ( !result( IO::write( &stream, object ) ) ) {
+		if ( !IO::write( &stream, object ) ) {
 			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to write." ) ); }
 			return false;
 		}

@@ -123,8 +123,8 @@ namespace Math {
 	inline JSON::BasicNodeT<S>* Vec2<T>::toJSON() const {
 		JSON::NodeArrayT<S>* nodeArray(new JSON::NodeArrayT<S>());
 
-		nodeArray->addChild(JSON::fromJSON<S>(this->x));
-		nodeArray->addChild(JSON::fromJSON<S>(this->y));
+		nodeArray->addChild(JSON::toJSON<S>(this->x));
+		nodeArray->addChild(JSON::toJSON<S>(this->y));
 
 		return nodeArray;
 	}

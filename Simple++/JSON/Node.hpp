@@ -345,7 +345,7 @@ namespace JSON {
 		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading new JSON file \"%\"...", filePath ) ); }
 
 		S strOut;
-		if ( !IO::readToString( filePath, &strOut, verbose ) != Size( -1 ) ) {
+		if ( IO::readToString( filePath, &strOut, verbose ) == Size( -1 ) ) {
 			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed.", filePath ) ); }
 
 			_clear();
@@ -2037,6 +2037,51 @@ namespace JSON {
 	template<typename S, typename C>
 	BasicNodeT<S>* _toJSON( const C& v, ... ) {
 		return new NodeValueT<S>( S::toString( v ) );
+	}
+
+	template<typename S, typename C>
+	bool write( const OS::Path& filePath, const C* object, int verbose ) {
+		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Writting a JSON file \"%\"...", filePath ) ); }
+
+		JSON::BasicNodeT<S> * rootNode( toJSON<S, C>( *object ) );
+		if ( !rootNode ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to create the JSON::Node \"%\".", filePath ) ); }
+			return false;
+		}
+
+		if ( !rootNode -> writeFileJSON( filePath ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to write the file \"%\".", filePath ) ); }
+			delete rootNode;
+			return false;
+		}
+
+		// The Json node is not more usefull.
+		delete rootNode;
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success.", filePath ) ); }
+
+		return true;
+	}
+
+	template<typename S, typename C>
+	bool read( const OS::Path& filePath, C* object, int verbose ) {
+
+		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading a JSON objet." ) ); }
+
+		JSON::BasicNodeT<S> rootNode;
+		if ( !rootNode.readFileJSON( filePath, verbose - 1 ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to read the file \"%\".", filePath ) ); }
+			return false;
+		}
+
+		if ( !fromJSON( &rootNode, object, verbose - 1 ) ) {
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to read the JSON::Node \"%\".", filePath ) ); }
+			return false;
+		}
+
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, String::format( "Success.", filePath ) ); }
+
+		return true;
 	}
 
 	template<typename S>

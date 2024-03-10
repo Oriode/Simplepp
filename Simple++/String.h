@@ -1961,7 +1961,7 @@ private:
 	///@param base The base used for the conversion to String.
 	///@return Number of characters.
 	template<typename Type>
-	static Size _getIntegerLength(Type i, unsigned int base);
+	static Size _getILength(Type i, unsigned int base);
 
 	///@brief Get the size of an positive integer as a number of characters
 	///@template Type Integer type.
@@ -1969,7 +1969,7 @@ private:
 	///@param base The base used for the conversion to String.
 	///@return Number of characters.
 	template<typename Type>
-	static Size _getIntegerPositiveLength( Type i, unsigned int base );
+	static Size _getUILength( Type i, unsigned int base );
 
 	
 };

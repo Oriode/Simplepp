@@ -551,7 +551,7 @@ BasicString<T>& BasicString<T>::_concatInteger( const Type& i, unsigned int base
 template<typename T>
 template<typename Type>
 BasicString<T>& BasicString<T>::_concatFillIntegerWOS( const Type& i, const Size& fillNb, const T& fillChar, unsigned int base ) {
-	Size nbChar( _getIntegerLength( i, base ) );
+	Size nbChar( _getILength( i, base ) );
 
 	// Compute the new buffer size.
 	Size newSize;
@@ -1480,7 +1480,7 @@ template<typename T>
 template<typename Type>
 static Size BasicString<T>::_convertI2StringWOSFill( Type number, T** bufferP, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	T* bufferInit( *bufferP );
-	Size nbChar( _getIntegerLength( number, base ) );
+	Size nbChar( _getILength( number, base ) );
 
 	if ( nbChar < fillNb ) {
 		// The output will have less characters than expected, we will have to fill.
@@ -1501,7 +1501,7 @@ template<typename T>
 template<typename Type>
 static Size BasicString<T>::_convertUI2StringWOSFill( Type number, T** bufferP, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	T* bufferInit( *bufferP );
-	Size nbChar( _getIntegerLength( number, base ) );
+	Size nbChar( _getUILength( number, base ) );
 
 	if ( nbChar < fillNb ) {
 		// The output will have less characters than expected, we will have to fill.
@@ -3422,7 +3422,7 @@ BasicString<T> BasicString<T>::toString( bool b ) {
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( unsigned char number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3431,7 +3431,7 @@ BasicString<T> BasicString<T>::toStringFill( unsigned char number, const Size& f
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( unsigned short number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3441,7 +3441,7 @@ BasicString<T> BasicString<T>::toStringFill( unsigned short number, const Size& 
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( unsigned int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3450,7 +3450,7 @@ BasicString<T> BasicString<T>::toStringFill( unsigned int number, const Size& fi
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3459,7 +3459,7 @@ BasicString<T> BasicString<T>::toStringFill( int number, const Size& fillNb, con
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( unsigned long long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3468,7 +3468,7 @@ BasicString<T> BasicString<T>::toStringFill( unsigned long long int number, cons
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( long long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3477,7 +3477,7 @@ BasicString<T> BasicString<T>::toStringFill( long long int number, const Size& f
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( unsigned long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -3486,7 +3486,7 @@ BasicString<T> BasicString<T>::toStringFill( unsigned long int number, const Siz
 template<typename T>
 BasicString<T> BasicString<T>::toStringFill( long int number, const Size& fillNb, const T& fillChar, unsigned int base ) {
 	BasicString<T> newStr( Vector<T>::protectedCtor::null );
-	newStr._allocateNoNullDelete( Math::max( 64, fillNb ) );
+	newStr._allocateNoNullDelete( Math::max( Size( 64 ), fillNb ) );
 	newStr.size = toCStringWOSFill( number, newStr.dataTable, fillNb, fillChar, base );
 	newStr._updateIterators();
 	return newStr;
@@ -4950,7 +4950,7 @@ Size BasicString<T>::copy( T** destinationBuffer, const T( &sourceBuffer )[ N ] 
 
 template<typename T>
 template<typename Type>
-static Size BasicString<T>::_getIntegerLength( Type i, unsigned int base ) {
+static Size BasicString<T>::_getILength( Type i, unsigned int base ) {
 	Size nbChar;
 
 	if ( i > Type( 0 ) ) {
@@ -4976,7 +4976,7 @@ static Size BasicString<T>::_getIntegerLength( Type i, unsigned int base ) {
 
 template<typename T>
 template<typename Type>
-static Size BasicString<T>::_getIntegerPositiveLength( Type i, unsigned int base ) {
+static Size BasicString<T>::_getUILength( Type i, unsigned int base ) {
 	Size nbChar;
 
 	if ( i > Type( 0 ) ) {
