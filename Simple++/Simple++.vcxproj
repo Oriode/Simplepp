@@ -299,6 +299,7 @@
     <ClInclude Include="ParamContainer.h" />
     <ClInclude Include="ParamContainer.hpp" />
     <ClInclude Include="SimpleLog.hpp" />
+    <ClInclude Include="SmartPointer.h" />
     <ClInclude Include="StaticTable.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="Stream.h" />
