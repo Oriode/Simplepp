@@ -8,15 +8,15 @@
 namespace OS {
 
 	///@brief Represent a Path in the current OS.
-	///@template T String Type.
-	template<typename T>
-	class PathT : public T {
+	///@template S String Type.
+	template<typename S>
+	class PathT : public S {
 	public:
 
-		typedef T StringType;
+		typedef S StringType;
 
 		PathT();
-		PathT( const T & str );
+		PathT( const S & str );
 
 		/**
 		 * @brief		Constructor
@@ -27,30 +27,30 @@ namespace OS {
 		PathT(const C(&str)[N]);
 
 		bool exists() const;
-		PathT<T> & join( const T & str );
-		PathT<T> & join( const PathT<T> & path );
+		PathT<S> & join( const S & str );
+		PathT<S> & join( const PathT<S> & path );
 		template<typename C, typename ...Args>
-		PathT<T> & join( const C & c, Args ... args );
-		PathT<T> & join();
+		PathT<S> & join( const C & c, Args ... args );
+		PathT<S> & join();
 
 		bool remove() const;
 
-		T basename() const;
+		S basename() const;
 
-		const T & toString() const;
+		const S & toString() const;
 
-		static bool exists( const T & str );
-		static bool remove(const T& str);
+		static bool exists( const S & str );
+		static bool remove(const S& str);
 
 	#if defined WIN32
-		static constexpr typename T::ElemType separatorChar = T::ElemType( '\\' );
+		static constexpr typename S::ElemType separatorChar = S::ElemType( '\\' );
 	#else
-		static constexpr typename T::ElemType separatorChar = T::ElemType( '/' );
+		static constexpr typename S::ElemType separatorChar = S::ElemType( '/' );
 	#endif
 
-		// static constexpr typename T::ElemType separatorChar;
+		// static constexpr typename S::ElemType separatorChar;
 	private:
-		PathT<T> & _join( const BasicString<T> & str );
+		PathT<S> & _join( const S & str );
 	};
 
 

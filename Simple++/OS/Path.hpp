@@ -3,21 +3,21 @@ namespace OS {
 
 
 
-	template<typename T>
-	PathT<T>::PathT() {
-		// Ensure T is a derived of BasicString.
-		static_assert( Utility::isBase<BasicString<T::ElemType>, T>::value );
+	template<typename S>
+	PathT<S>::PathT() {
+		// Ensure S is a derived of BasicString.
+		static_assert( Utility::isBase<BasicString<S::ElemType>, S>::value );
 	}
 
-	template<typename T>
-	PathT<T>::PathT( const T & str ) : T(str) {
+	template<typename S>
+	PathT<S>::PathT( const S & str ) : S(str) {
 
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, size_t N>
-	PathT<T>::PathT(const C(&str)[N]) :
-		T(str)
+	PathT<S>::PathT(const C(&str)[N]) :
+		S(str)
 	{
 
 	}
@@ -29,42 +29,42 @@ namespace OS {
 
 
 
-	template<typename T>
-	inline bool PathT<T>::exists() const {
-		return PathT<T>::exists( *this );
+	template<typename S>
+	inline bool PathT<S>::exists() const {
+		return PathT<S>::exists( *this );
 	}
 
-	template<typename T>
-	PathT<T> & PathT<T>::join( const T & str ) {
+	template<typename S>
+	PathT<S> & PathT<S>::join( const S & str ) {
 		return _join( str );
 	}
 
-	template<typename T>
-	PathT<T> & PathT<T>::join( const PathT<T> & path ) {
+	template<typename S>
+	PathT<S> & PathT<S>::join( const PathT<S> & path ) {
 		return _join( path );
 	}
 
-	template<typename T>
+	template<typename S>
 	template<typename C, typename ...Args>
-	PathT<T> & PathT<T>::join( const C & c, Args ... args ) {
+	PathT<S> & PathT<S>::join( const C & c, Args ... args ) {
 		return this -> _join( c ).join( args... );
 	}
 
-	template<typename T>
-	PathT<T> & PathT<T>::join() {
+	template<typename S>
+	PathT<S> & PathT<S>::join() {
 		return *this;
 	}
 
-	template<typename T>
-	inline bool PathT<T>::remove() const {
-		return PathT<T>::remove(*this);
+	template<typename S>
+	inline bool PathT<S>::remove() const {
+		return PathT<S>::remove(*this);
 	}
 
-	template<typename T>
-	T PathT<T>::basename() const {
-		T result;
+	template<typename S>
+	S PathT<S>::basename() const {
+		S result;
 
-		const typename T::Iterator separetorIt( this -> getLastIt( PathT<T>::separatorChar ) );
+		const typename S::Iterator separetorIt( this -> getLastIt( PathT<S>::separatorChar ) );
 		if ( separetorIt == this -> getEnd() ) {
 			return *this;
 		} else {
@@ -72,24 +72,24 @@ namespace OS {
 		}
 	}
 
-	template<typename T>
-	const T & PathT<T>::toString() const {
+	template<typename S>
+	const S & PathT<S>::toString() const {
 		return *this;
 	}
 
-	template<typename T>
-	inline bool PathT<T>::exists( const T & str ) {
+	template<typename S>
+	inline bool PathT<S>::exists( const S & str ) {
 		return std::filesystem::exists( str.toCString() );
 	}
 
-	template<typename T>
-	inline bool PathT<T>::remove(const T& str) {
+	template<typename S>
+	inline bool PathT<S>::remove(const S& str) {
 		return std::filesystem::remove(str.toCString());
 	}
 
-	template<typename T>
-	inline PathT<T> & PathT<T>::_join( const BasicString<T> & str ) {
-		this -> concat( PathT<T>::separatorChar );
+	template<typename S>
+	inline PathT<S> & PathT<S>::_join( const S & str ) {
+		this -> concat( PathT<S>::separatorChar );
 		this -> concat( str );
 		return *this;
 	}
