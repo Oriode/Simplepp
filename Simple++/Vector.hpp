@@ -65,7 +65,11 @@ Vector<T>::Vector( const Size size, const Size maxSize ) :
 	maxSize( maxSize ),
 	iteratorEnd( dataTable + maxSize )
 {
-	_ASSERT_SPP(maxSize);
+#if defined DEBUG
+	if ( maxSize == Size( 0 ) ) {
+		_ERROR_SPP( "Vector::Vector maxSize == 0." );
+	}
+#endif
 	this->size = size;
 	this->dataTable = new T[ maxSize ];
 	_updateIterators();

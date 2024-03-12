@@ -29,12 +29,12 @@ public:
 	P( T* p );
 
 	P( const P<T>& p );
-	P( const P<T>&& p );
+	P( P<T>&& p );
 
 	~P();
 
 	P<T>& operator=( const P<T>& p );
-	P<T>& operator=( const P<T>&& p );
+	P<T>& operator=( P<T>&& p );
 
 	const T* getValue() const;
 	T* getValue();
@@ -42,16 +42,16 @@ public:
 	const T* operator->() const;
 	T* operator->();
 
-	const T & operator*() const;
-	T & operator*();
+	const T& operator*() const;
+	T& operator*();
 
 	bool operator==( const T* p ) const;
-	bool operator==( const P<T> & p ) const;
+	bool operator==( const P<T>& p ) const;
 
 	bool operator!=( const T* p ) const;
 	bool operator!=( const P<T>& p ) const;
 
-	operator T*();
+	operator T* ( );
 
 
 private:
@@ -62,27 +62,30 @@ private:
 
 template<typename T>
 inline P<T>::P() :
-	sharedMemory( new SharedMemory( NULL ) ) {}
+	sharedMemory( NULL ) {}
 
 template<typename T>
-inline P<T>::P( T* p ) :
-	sharedMemory( new SharedMemory( p ) ) {
-
-
-
+inline P<T>::P( T* p ) {
+	if ( p == NULL ) {
+		this->sharedMemory = NULL;
+	} else {
+		this->sharedMemory = new SharedMemory( p );
+	}
 }
 
 template<typename T>
 inline P<T>::P( const P<T>& p ) :
 	sharedMemory( p.sharedMemory ) {
 
-	this->sharedMemory->setNbOccurences( this->sharedMemory->getNbOccurences + Size( 1 ) );
+	if ( this->sharedMemory ) {
+		this->sharedMemory->setNbOccurences( this->sharedMemory->getNbOccurences() + Size( 1 ) );
+	}
 }
 
 template<typename T>
-inline P<T>::P( const P<T>&& p ) :
+inline P<T>::P( P<T>&& p ) :
 	sharedMemory( p.sharedMemory ) {
-
+	p.sharedMemory = NULL;
 }
 
 template<typename T>
@@ -95,28 +98,41 @@ inline P<T>& P<T>::operator=( const P<T>& p ) {
 	_removeReference();
 
 	this->sharedMemory = p.sharedMemory;
-	this->sharedMemory->setNbOccurences( this->sharedMemory->getNbOccurences + Size( 1 ) );
+
+	if ( this->sharedMemory ) {
+		this->sharedMemory->setNbOccurences( this->sharedMemory->getNbOccurences() + Size( 1 ) );
+	}
 
 	return *this;
 }
 
 template<typename T>
-inline P<T>& P<T>::operator=( const P<T>&& p ) {
+inline P<T>& P<T>::operator=( P<T>&& p ) {
 	_removeReference();
 
+
 	this->sharedMemory = Utility::toRValue( p.sharedMemory );
+	p.sharedMemory = NULL;
 
 	return *this;
 }
 
 template<typename T>
 inline const T* P<T>::getValue() const {
-	return this->sharedMemory->getData();
+	if ( this->sharedMemory ) {
+		return this->sharedMemory->getData();
+	} else {
+		return NULL;
+	}
 }
 
 template<typename T>
 inline T* P<T>::getValue() {
-	return nullptr;
+	if ( this->sharedMemory ) {
+		return this->sharedMemory->getData();
+	} else {
+		return NULL;
+	}
 }
 
 template<typename T>
@@ -166,10 +182,12 @@ inline P<T>::operator T* ( ) {
 
 template<typename T>
 inline void P<T>::_removeReference() {
-	if ( this->sharedMemory->getNbOccurences() > Size( 1 ) ) {
-		this->sharedMemory->setNbOccurences( this->sharedMemory->getNbOccurences - Size( 1 ) );
-	} else {
-		delete this->sharedMemory;
+	if ( this->sharedMemory ) {
+		if ( this->sharedMemory->getNbOccurences() > Size( 1 ) ) {
+			this->sharedMemory->setNbOccurences( this->sharedMemory->getNbOccurences() - Size( 1 ) );
+		} else {
+			delete this->sharedMemory;
+		}
 	}
 }
 
