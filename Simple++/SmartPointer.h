@@ -2,9 +2,11 @@
 
 #include "Vector.h"
 #include "Utility.h"
+#include "JSON/Node.h"
+#include "IO/IO.h"
 
 template<typename T>
-class P {
+class P : public IO::BasicIO, public JSON::Jsonable {
 public:
 
 	class SharedMemory {
@@ -53,6 +55,28 @@ public:
 
 	operator T* ( );
 
+	///@brief read from a file stream
+	///@param stream stream used to read load this object
+	///@return boolean to know if the operation is a success of not.
+	template<typename Stream>
+	bool read( Stream* stream, int verbose = 0 );
+
+	///@brief write this object as binary into a file stream
+	///@param stream stream used to write this object
+	///@return boolean to know if the operation is a success of not.
+	template<typename Stream>
+	bool write( Stream* stream ) const;
+
+	///@brief Read a JSON object and set this to the read values.
+	///@param nodeArray Pointer to the JSON object to be read.
+	///@return true if success, false otherwise.
+	template<typename S = UTF8String>
+	bool fromJSON( const JSON::BasicNodeT<S>* node, int verbose = 0 );
+
+	///@brief Write this object to a Json object
+	///@param o Json node to write to.
+	template<typename S = UTF8String>
+	JSON::BasicNodeT<S>* toJSON() const;
 
 private:
 	void _removeReference();
@@ -214,4 +238,36 @@ inline Size P<T>::SharedMemory::getNbOccurences() const {
 template<typename T>
 inline void P<T>::SharedMemory::setNbOccurences( const Size nbOccurence ) {
 	this->nbOccurence = nbOccurence;
+}
+
+template<typename T>
+template<typename Stream>
+inline bool P<T>::read( Stream* stream, int verbose ) {
+	_removeReference();
+	this->sharedMemory = new SharedMemory( new T() );
+	// Simple redirection to the inside type.
+	return IO::read<Stream, T>( stream, getValue(), verbose );
+}
+
+template<typename T>
+template<typename Stream>
+inline bool P<T>::write( Stream* stream ) const {
+	// Simple redirection to the inside type.
+	return IO::write<Stream, T>( stream, getValue() );
+}
+
+template<typename T>
+template<typename S>
+inline bool P<T>::fromJSON( const JSON::BasicNodeT<S>* node, int verbose ) {
+	_removeReference();
+	this->sharedMemory = new SharedMemory( new T() );
+	// Simple redirection to the inside type.
+	return JSON::fromJSON<S, T>( node, getValue(), verbose );
+}
+
+template<typename T>
+template<typename S>
+inline JSON::BasicNodeT<S>* P<T>::toJSON() const {
+	// Simple redirection to the inside type.
+	return JSON::toJSON<S, T>( *getValue() );
 }

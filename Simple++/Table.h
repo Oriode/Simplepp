@@ -813,7 +813,7 @@ template<typename T>
 template<typename Stream>
 bool Table<T>::read( Stream * stream, int verbose ) {
 	Size readSize;
-	if ( !IO::read( stream, &readSize, verbose -1 ) ) {
+	if ( !IO::read( stream, &readSize, verbose - 1 ) ) {
 		return false;
 	}
 
@@ -822,7 +822,7 @@ bool Table<T>::read( Stream * stream, int verbose ) {
 	}
 
 	Size minSize(Math::min(readSize, this->size));
-	if ( !IO::read(stream, getData(), minSize) ) {
+	if ( !IO::read(stream, getData(), minSize, verbose - 1) ) {
 		return false;
 	}
 
