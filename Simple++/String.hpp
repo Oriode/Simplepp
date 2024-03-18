@@ -3173,7 +3173,7 @@ inline bool BasicString<T>::_fromString( const bool* ) const {
 }
 
 template<typename T>
-inline BasicString<T>& BasicString<T>::_fromString( ... ) const {
+inline const BasicString<T>& BasicString<T>::_fromString( ... ) const {
 	return *this;
 }
 

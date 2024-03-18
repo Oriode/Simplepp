@@ -1587,7 +1587,7 @@ private:
 	float _fromString(const float*) const;
 	double _fromString(const double*) const;
 	bool _fromString(const bool*) const;
-	BasicString<T>& _fromString(...) const;
+	const BasicString<T>& _fromString(...) const;
 
 	template<typename C, typename EndFunc = BasicString<T>::IsEndSentinel>
 	static char _fromString(const T** it, const EndFunc& endFunc, const char*);
