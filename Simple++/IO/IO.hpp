@@ -73,7 +73,7 @@ namespace IO {
 		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading a new file \"%\"...", filePath ) ); }
 
 		FileStream stream( filePath, IO::OpenMode::Read );
-		if ( stream.isOpen() ) {
+		if ( !stream.isOpen() ) {
 			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Unable to open the file." ) ); }
 
 			return Size( -1 );

@@ -2068,7 +2068,7 @@ namespace JSON {
 
 		if ( verbose > 0 ) { Log::startStep( __func__, String::format( "Reading a JSON objet." ) ); }
 
-		JSON::BasicNodeT<S> rootNode;
+		JSON::NodeMapT<S> rootNode;
 		if ( !rootNode.readFileJSON( filePath, verbose - 1 ) ) {
 			if ( verbose > 0 ) { Log::endStepFailure( __func__, String::format( "Failed to read the file \"%\".", filePath ) ); }
 			return false;
