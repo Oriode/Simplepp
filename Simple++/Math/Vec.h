@@ -117,7 +117,7 @@ namespace Math {
 		///@param nodeArray Pointer to the JSON object to be read.
 		///@return true if success, false otherwise.
 		template<typename C = UTF8String>
-		bool fromJSON(const JSON::BasicNodeT<C> * node);
+		bool fromJSON(const JSON::NodeT<C> * node);
 
 		///@brief Write this object to a Json object
 		///@param o Json node to write to.
@@ -252,7 +252,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline bool Vec<T>::fromJSON(const JSON::BasicNodeT<C>* node) {
+	inline bool Vec<T>::fromJSON(const JSON::NodeT<C>* node) {
 		return JSON::fromJSON<C>(node, reinterpret_cast< BasicVector<T> * >( this ));
 	}
 

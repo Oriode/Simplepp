@@ -138,12 +138,12 @@ namespace Math {
 		///@param nodeArray Pointer to the JSON object to be read.
 		///@return true if success, false otherwise.
 		template<typename C = UTF8String>
-		bool fromJSON(const JSON::BasicNodeT<C>* node);
+		bool fromJSON(const JSON::NodeT<C>* node);
 
 		///@brief Write this object to a Json object
 		///@param o Json node to write to.
 		template<typename C = UTF8String>
-		JSON::BasicNodeT<C>* toJSON() const;
+		JSON::NodeT<C>* toJSON() const;
 
 	protected:
 		Size getNbElem(const BasicVector<Size>& sizes) const;
@@ -156,13 +156,13 @@ namespace Math {
 		S _toString() const;
 
 		template<typename C = UTF8String>
-		bool _getSizeJSON(const JSON::BasicNodeT<C>* node, BasicVector<Size> & sizes);
+		bool _getSizeJSON(const JSON::NodeT<C>* node, BasicVector<Size> & sizes);
 
 		template<typename C = UTF8String>
-		bool _fromJSON(const JSON::BasicNodeT<C>* node, T * dataTable, const Size currentDim = Size(0));
+		bool _fromJSON(const JSON::NodeT<C>* node, T * dataTable, const Size currentDim = Size(0));
 
 		template<typename C = UTF8String>
-		JSON::BasicNodeT<C>* _toJSON(const T* dataTable, const Size currentDim = Size(0)) const;
+		JSON::NodeT<C>* _toJSON(const T* dataTable, const Size currentDim = Size(0)) const;
 	};
 
 	template<typename T>
@@ -449,7 +449,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline bool Tensor<T>::fromJSON(const JSON::BasicNodeT<C>* node) {
+	inline bool Tensor<T>::fromJSON(const JSON::NodeT<C>* node) {
 
 		BasicVector<Size> newSizes;
 		if ( !_getSizeJSON(node, newSizes) ) {
@@ -467,7 +467,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline JSON::BasicNodeT<C>* Tensor<T>::toJSON() const {
+	inline JSON::NodeT<C>* Tensor<T>::toJSON() const {
 		return _toJSON(this->dataTable, Size(0));
 	}
 
@@ -499,16 +499,16 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline bool Tensor<T>::_getSizeJSON(const JSON::BasicNodeT<C>* node, BasicVector<Size>& sizes) {
+	inline bool Tensor<T>::_getSizeJSON(const JSON::NodeT<C>* node, BasicVector<Size>& sizes) {
 
 		Size nbDim(0);
 		{
-			const JSON::BasicNodeT<C>* tmpNode(node);
+			const JSON::NodeT<C>* tmpNode(node);
 			while ( true ) {
-				if ( tmpNode->getType() == JSON::BasicNodeT<C>::Type::Value ) {
+				if ( tmpNode->getType() == JSON::NodeT<C>::Type::Value ) {
 					break;
 				}
-				if ( tmpNode->getType() != JSON::BasicNodeT<C>::Type::Array ) {
+				if ( tmpNode->getType() != JSON::NodeT<C>::Type::Array ) {
 					return false;
 				}
 				if ( tmpNode->getNbChildren() == Size(0) ) {
@@ -524,12 +524,12 @@ namespace Math {
 
 		{
 			Size dimI(0);
-			const JSON::BasicNodeT<C>* tmpNode(node);
+			const JSON::NodeT<C>* tmpNode(node);
 			while ( true ) {
-				if ( tmpNode->getType() == JSON::BasicNodeT<C>::Type::Value ) {
+				if ( tmpNode->getType() == JSON::NodeT<C>::Type::Value ) {
 					break;
 				}
-				if ( tmpNode->getType() != JSON::BasicNodeT<C>::Type::Array ) {
+				if ( tmpNode->getType() != JSON::NodeT<C>::Type::Array ) {
 					return false;
 				}
 				if ( tmpNode->getNbChildren() == Size(0) ) {
@@ -547,10 +547,10 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline bool Tensor<T>::_fromJSON(const JSON::BasicNodeT<C>* node, T* dataTable, const Size currentDim) {
+	inline bool Tensor<T>::_fromJSON(const JSON::NodeT<C>* node, T* dataTable, const Size currentDim) {
 		// If scalar
 		if ( currentDim >= getDim() ) {
-			if ( node->getType() != JSON::BasicNodeT<C>::Type::Value ) {
+			if ( node->getType() != JSON::NodeT<C>::Type::Value ) {
 				return false;
 			}
 			if ( !JSON::fromJSON(node, dataTable) ) {
@@ -565,7 +565,7 @@ namespace Math {
 		}
 
 		for ( Size i(0); i < getSize(currentDim); i++ ) {
-			const JSON::BasicNodeT<C>* nodeChild(node->getChild(i));
+			const JSON::NodeT<C>* nodeChild(node->getChild(i));
 			const Size nextDim(currentDim + Size(1));
 			if ( !_fromJSON(nodeChild, dataTable + getNbElem(nextDim) * i, nextDim) ) {
 				return false;
@@ -577,7 +577,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline JSON::BasicNodeT<C>* Tensor<T>::_toJSON(const T* dataTable, const Size currentDim) const {
+	inline JSON::NodeT<C>* Tensor<T>::_toJSON(const T* dataTable, const Size currentDim) const {
 		// If scalar
 		if ( currentDim >= getDim() ) {
 			return JSON::toJSON(*dataTable);
@@ -587,7 +587,7 @@ namespace Math {
 
 		for ( Size i(0); i < getSize(currentDim); i++ ) {
 			const Size nextDim(currentDim + Size(1));
-			JSON::BasicNodeT<C>* newNode(_toJSON(dataTable + getNbElem(nextDim) * i, nextDim));
+			JSON::NodeT<C>* newNode(_toJSON(dataTable + getNbElem(nextDim) * i, nextDim));
 
 			newNodeArray->addChild(newNode);
 		}

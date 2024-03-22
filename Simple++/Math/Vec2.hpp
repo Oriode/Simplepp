@@ -103,7 +103,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename S>
-	inline bool Vec2<T>::fromJSON(const JSON::BasicNodeT<S>* node) {
+	inline bool Vec2<T>::fromJSON(const JSON::NodeT<S>* node) {
 		if ( node->getNbChildren() != Size(2) ) {
 			return false;
 		}
@@ -120,7 +120,7 @@ namespace Math {
 
 	template<typename T>
 	template<typename S>
-	inline JSON::BasicNodeT<S>* Vec2<T>::toJSON() const {
+	inline JSON::NodeT<S>* Vec2<T>::toJSON() const {
 		JSON::NodeArrayT<S>* nodeArray(new JSON::NodeArrayT<S>());
 
 		nodeArray->addChild(JSON::toJSON<S>(this->x));

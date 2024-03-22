@@ -219,7 +219,7 @@ namespace Math {
 		///@param nodeArray Pointer to the JSON object to be read.
 		///@return true if success, false otherwise.
 		template<typename C = UTF8String>
-		bool fromJSON(const JSON::BasicNodeT<C>* node);
+		bool fromJSON(const JSON::NodeT<C>* node);
 
 		///@brief Write this object to a Json object
 		///@param o Json node to write to.
@@ -823,8 +823,8 @@ namespace Math {
 
 	template<typename T>
 	template<typename C>
-	inline bool Mat<T>::fromJSON(const JSON::BasicNodeT<C>* node) {
-		if ( node->getType() != JSON::BasicNodeT<C>::Type::Array ) {
+	inline bool Mat<T>::fromJSON(const JSON::NodeT<C>* node) {
+		if ( node->getType() != JSON::NodeT<C>::Type::Array ) {
 			return false;
 		}
 
@@ -839,15 +839,15 @@ namespace Math {
 		resizeNoCopy(node->getNbChildren(), node->getChild(Size(0))->getNbChildren());
 
 		for ( Size i(0); i < node->getNbChildren(); i++ ) {
-			const JSON::BasicNodeT<C>* childNode(node->getChild(i));
-			if ( childNode->getType() != JSON::BasicNodeT<C>::Type::Array ) {
+			const JSON::NodeT<C>* childNode(node->getChild(i));
+			if ( childNode->getType() != JSON::NodeT<C>::Type::Array ) {
 				return false;
 			}
 			if ( childNode->getNbChildren() != getSizeN() ) {
 				return false;
 			}
 			for ( Size j(0); j < childNode->getNbChildren(); j++ ) {
-				const JSON::BasicNodeT<C>* nodeValue(childNode->getChild(j));
+				const JSON::NodeT<C>* nodeValue(childNode->getChild(j));
 				if ( !JSON::fromJSON<C>(nodeValue, &getValueI(i, j)) ) {
 					return false;
 				}
@@ -865,7 +865,7 @@ namespace Math {
 		for ( Size i(0); i < getSizeM(); i++ ) {
 			JSON::NodeArrayT<C>* nodeArrayN(new JSON::NodeArrayT<C>());
 			for ( Size j(0); j < getSizeN(); j++ ) {
-				JSON::BasicNodeT<C>* nodeValue(JSON::toJSON(getValueI(i, j)));
+				JSON::NodeT<C>* nodeValue(JSON::toJSON(getValueI(i, j)));
 				nodeArrayN->addChild(nodeValue);
 			}
 			nodeArrayM->addChild(nodeArrayN);

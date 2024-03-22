@@ -39,7 +39,7 @@
  //#define DEBUG_UTILITY
  //#define DEBUG_GRAPHIC
  //#define DEBUG_XML
- //#define DEBUG_JSON
+#define DEBUG_JSON
  //#define DEBUG_LIST
  //#define DEBUG_MAP
  //#define DEBUG_UI
@@ -62,7 +62,7 @@
  //#define DEBUG_DEEP_NEURAL_NETWORK
  //#define DEBUG_TORCH
  //#define DEBUG_INTERVAL
-#define DEBUG_STATS
+// #define DEBUG_STATS
 
 
 #ifndef _LIB
@@ -97,7 +97,7 @@
 #include "Time/Time.h"
 #include "Test.h"
 #include "XML/XMLDocument.h"
-#include "JSON/Node.h"
+#include "JSON/Json.h"
 // #include "UI/UI.h"
 // #include "UI/Window.h"
 #include <functional>
@@ -505,7 +505,6 @@ int main( int argc, char* argv[] ) {
 #ifdef DEBUG_JSON
 	{
 		{
-			JSON::Document jsonDocument;
 			JSON::NodeMap* rootNode( new JSON::NodeMap() );
 			JSON::NodeMap* childNode( new JSON::NodeMap( "childNode" ) );
 			JSON::NodeMap* arrayNode( new JSON::NodeArray( "arrayNode" ) );
@@ -524,55 +523,48 @@ int main( int argc, char* argv[] ) {
 			Log::displayLog( rootNode->toString() );
 		}
 		{
-			JSON::Document jsonDocument;
-			jsonDocument.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }" );
+			JSON::NodeMap nodeMap;
+			nodeMap.readJSON( "{ \"test\": { \"test2\" : \"Hello World !\" }, \"xD\":42, \"empty\":{}, \"null\": null, \"array\" : [ \"Hello\" , 42, [{\"object\":10}] ] }" );
 
-			Vector<JSON::NodeMap*> searchNode = jsonDocument.getElementsByName( "test2" );
+			Vector<JSON::NodeMap*> searchNode = nodeMap.getElementsByName( "test2" );
 
 			if ( searchNode.getSize() ) {
 				// Should display "Hello World !"
 				Log::displayLog( searchNode[ 0 ]->getValue() );
 			}
 
-			Log::displayLog( jsonDocument.getRoot()->getName() );
-			Log::displayLog( jsonDocument.toString() );
+			Log::displayLog( nodeMap.getName() );
+			Log::displayLog( nodeMap.toString() );
 		}
 		{
-			JSON::Document jsonDocument;
-			jsonDocument.readFileJSON( "test.json" );
+			JSON::NodeMap nodeMap;
+			nodeMap.readFileJSON( "test.json" );
 
-			Log::displayLog( jsonDocument.toString() );
+			Log::displayLog( nodeMap.toString() );
 
 
-			ASSERT( IO::write( WString( "testJSON.cjson" ), &jsonDocument ) );
-			ASSERT( IO::read( WString( "testJSON.cjson" ), &jsonDocument ) );
+			ASSERT_SPP( IO::write( WString( "testJSON.cjson" ), &nodeMap ) );
+			ASSERT_SPP( IO::read( WString( "testJSON.cjson" ), &nodeMap ) );
 
-			Log::displayLog( jsonDocument.toString() );
+			Log::displayLog( nodeMap.toString() );
 		}
 		{
 			StringASCII jsonStr( "{\"futuresType\":\"\",\"rateLimits\":[{\"rateLimitType\":\"\",\"interval\":\"\",\"intervalNum\":1,\"limit\":2400}],\"exchangeFilters\":[],\"assets\":\"\"}" );
 
-			JSON::Document jsonDocument;
-			jsonDocument.readJSON( jsonStr );
-			Log::displayLog( jsonDocument.toString() );
+			JSON::NodeMap nodeMap;
+			nodeMap.readJSON( jsonStr );
+			Log::displayLog( nodeMap.toString() );
 		}
 		{
 			StringASCII jsonStr( "[1,2,3,4,5,6,7,8,9]" );
 
-			JSON::Document jsonDocument;
-			jsonDocument.readJSON( jsonStr );
+			JSON::NodeArray nodeArray;
+			nodeArray.readJSON( jsonStr );
 
-			ASSERT( IO::write( WString( "testJSONArray.cjson" ), &jsonDocument ) );
-			ASSERT( IO::read( WString( "testJSONArray.cjson" ), &jsonDocument ) );
+			ASSERT_SPP( IO::write( WString( "testJSONArray.cjson" ), &nodeArray ) );
+			ASSERT_SPP( IO::read( WString( "testJSONArray.cjson" ), &nodeArray ) );
 
-			Log::displayLog( jsonDocument.toString() );
-		}
-		{
-			StringASCII jsonStr( "" );
-
-			JSON::Document jsonDocument;
-			jsonDocument.readJSON( jsonStr );
-			Log::displayLog( jsonDocument.toString() );
+			Log::displayLog( nodeArray.toString() );
 		}
 	}
 #endif

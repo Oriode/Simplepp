@@ -71,12 +71,12 @@ public:
 	///@param nodeArray Pointer to the JSON object to be read.
 	///@return true if success, false otherwise.
 	template<typename S = UTF8String>
-	bool fromJSON( const JSON::BasicNodeT<S>* node, int verbose = 0 );
+	bool fromJSON( const JSON::NodeT<S>* node, int verbose = 0 );
 
 	///@brief Write this object to a Json object
 	///@param o Json node to write to.
 	template<typename S = UTF8String>
-	JSON::BasicNodeT<S>* toJSON() const;
+	JSON::NodeT<S>* toJSON() const;
 
 private:
 	void _removeReference();
@@ -258,7 +258,7 @@ inline bool P<T>::write( Stream* stream ) const {
 
 template<typename T>
 template<typename S>
-inline bool P<T>::fromJSON( const JSON::BasicNodeT<S>* node, int verbose ) {
+inline bool P<T>::fromJSON( const JSON::NodeT<S>* node, int verbose ) {
 	_removeReference();
 	this->sharedMemory = new SharedMemory( new T() );
 	// Simple redirection to the inside type.
@@ -267,7 +267,7 @@ inline bool P<T>::fromJSON( const JSON::BasicNodeT<S>* node, int verbose ) {
 
 template<typename T>
 template<typename S>
-inline JSON::BasicNodeT<S>* P<T>::toJSON() const {
+inline JSON::NodeT<S>* P<T>::toJSON() const {
 	// Simple redirection to the inside type.
 	return JSON::toJSON<S, T>( *getValue() );
 }

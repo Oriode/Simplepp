@@ -191,8 +191,16 @@
     <ClInclude Include="IO\Resource.hpp" />
     <ClInclude Include="IO\Manager.h" />
     <ClInclude Include="IO\Manager.hpp" />
+    <ClInclude Include="JSON\Json.h" />
+    <ClInclude Include="JSON\Json.hpp" />
     <ClInclude Include="JSON\Node.h" />
     <ClInclude Include="JSON\Node.hpp" />
+    <ClInclude Include="JSON\NodeArray.h" />
+    <ClInclude Include="JSON\NodeArray.hpp" />
+    <ClInclude Include="JSON\NodeMap.h" />
+    <ClInclude Include="JSON\NodeMap.hpp" />
+    <ClInclude Include="JSON\NodeValue.h" />
+    <ClInclude Include="JSON\NodeValue.hpp" />
     <ClInclude Include="List.h" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Log.hpp" />

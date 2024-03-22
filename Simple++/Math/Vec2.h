@@ -103,12 +103,12 @@ namespace Math {
 		///@param nodeArray Pointer to the JSON object to be read.
 		///@return true if success, false otherwise.
 		template<typename S = UTF8String>
-		bool fromJSON(const JSON::BasicNodeT<S>* node);
+		bool fromJSON(const JSON::NodeT<S>* node);
 
 		///@brief Write this object to a Json object
 		///@param o Json node to write to.
 		template<typename S = UTF8String>
-		JSON::BasicNodeT<S>* toJSON() const;
+		JSON::NodeT<S>* toJSON() const;
 
 		///@brief read from a file stream
 		///@param stream stream used to read load this object
