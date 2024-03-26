@@ -17,6 +17,7 @@ namespace Network {
 			GET,
 			POST,
 			DEL,
+			PUT,
 			Unknown
 		};
 
@@ -54,7 +55,7 @@ namespace Network {
 		static const StringASCII& getVerbStr( typename HTTPRequestT<T>::Verb verb );
 		static typename HTTPRequestT<T>::Verb getVerb( const StringASCII& verbStr );
 
-		static const StringASCII methodStrTable[];
+		static const StringASCII verbStrTable[];
 
 	protected:
 		void initHostParam();

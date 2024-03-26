@@ -2,7 +2,7 @@
 namespace Network {
 
 	template<typename T>
-	const StringASCII HTTPRequestT<T>::methodStrTable[] = { StringASCII( "GET" ), StringASCII( "POST" ), StringASCII( "DELETE" ) };
+	const StringASCII HTTPRequestT<T>::verbStrTable[] = { StringASCII( "GET" ), StringASCII( "POST" ), StringASCII( "DELETE" ),  StringASCII( "PUT" ) };
 
 	template<typename T>
 	inline HTTPRequestT<T>::HTTPRequestT() :
@@ -212,8 +212,8 @@ namespace Network {
 	template<typename T>
 	inline const StringASCII& HTTPRequestT<T>::getVerbStr( typename HTTPRequestT<T>::Verb verb ) {
 		unsigned char methodIndex( static_cast< unsigned char >( verb ) );
-		if ( methodIndex < sizeof( HTTPRequestT<T>::methodStrTable ) ) {
-			return HTTPRequestT<T>::methodStrTable[ methodIndex ];
+		if ( methodIndex < sizeof( HTTPRequestT<T>::verbStrTable ) ) {
+			return HTTPRequestT<T>::verbStrTable[ methodIndex ];
 		} else {
 			return StringASCII::null;
 		}
@@ -221,9 +221,9 @@ namespace Network {
 
 	template<typename T>
 	inline typename HTTPRequestT<T>::Verb HTTPRequestT<T>::getVerb( const StringASCII& verbStr ) {
-		constexpr Size enumSize( sizeof( HTTPRequestT<T>::methodStrTable ) );
+		constexpr Size enumSize( sizeof( HTTPRequestT<T>::verbStrTable ) );
 		for ( Size i( 0 ); i < enumSize; i++ ) {
-			if ( verbStr == HTTPRequestT<T>::methodStrTable[ i ] ) {
+			if ( verbStr == HTTPRequestT<T>::verbStrTable[ i ] ) {
 				return static_cast< typename HTTPRequestT<T>::Verb >( i );
 			}
 		}

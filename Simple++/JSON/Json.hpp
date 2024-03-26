@@ -110,7 +110,7 @@ namespace JSON {
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Vector<C>* v, int verbose ) {
-		return fromJSON<S>( node, reinterpret_cast< Table<C> * >( v ), verbose );
+		return fromJSON<S>( node, reinterpret_cast<BasicVector<C> * >( v ), verbose );
 	}
 
 	template<typename S, typename C>

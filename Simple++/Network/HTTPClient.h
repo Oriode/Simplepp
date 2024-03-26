@@ -23,7 +23,8 @@ namespace Network {
 		HTTPResponseT<T>* query( const HTTPRequestT<T>* request, int verbose = 0 );
 
 		HTTPResponseT<T>* GET( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, int verbose = 0 );
-		HTTPResponseT<T>* POST( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, typename HTTPQueryT<T>::ContentType contentType, const StringASCII& contentStr, int verbose = 0 );
+		HTTPResponseT<T>* POST( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, typename HTTPQueryT<T>::ContentType contentType, const StringASCII& contentStr = StringASCII::null, int verbose = 0);
+		HTTPResponseT<T>* PUT( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, typename HTTPQueryT<T>::ContentType contentType, const StringASCII& contentStr = StringASCII::null, int verbose = 0 );
 
 		const HTTPResponseT<T>* getLastResponse() const;
 
@@ -37,7 +38,7 @@ namespace Network {
 		bool bWasConnected;
 
 		StringASCII sendBuffer;
-		char * receiveBuffer { NULL };
+		char* receiveBuffer{ NULL };
 		Size bufferSize;
 	};
 
