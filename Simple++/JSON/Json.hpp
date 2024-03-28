@@ -110,7 +110,20 @@ namespace JSON {
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Vector<C>* v, int verbose ) {
-		return fromJSON<S>( node, reinterpret_cast<BasicVector<C> * >( v ), verbose );
+		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+			return false;
+		}
+
+		v->resizeNoCopy( node->getNbChildren() );
+
+		for ( Size i( 0 ); i < node->getNbChildren(); i++ ) {
+			const JSON::NodeT<S>* nodeChild( node->getChild( i ) );
+			if ( !JSON::fromJSON( nodeChild, &v->getValueI( i ), verbose - 1 ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	template<typename S, typename C>
