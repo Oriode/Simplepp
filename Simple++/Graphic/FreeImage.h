@@ -38,7 +38,7 @@ namespace Graphic {
 
 		enum class LoadingType { EMPTY, FILE };
 
-		enum class SavingFormat {
+		enum class CompressedFormat {
 			PNG = FIF_PNG,
 			JPG = FIF_JPEG,
 			BMP = FIF_BMP,
@@ -106,9 +106,14 @@ namespace Graphic {
 		///@param size the size of the image.
 		///@param format the loading format of this image.
 		///@param datasInvertY if we have to flip the image vertically or not.
-		void loadFromDatas( unsigned char * datas, const Math::Vec2<Size> & size, Format format, bool datasInvertY = false );
+		bool loadFromDatas( unsigned char * datas, const Math::Vec2<Size> & size, Format format, bool datasInvertY = false );
 
 
+		///@brief	Load this object using already memory loaded compressed data.
+		///@param format loading format
+		///@param invertY if we have to flip the image vertically.
+		///@param size the new size of the loaded image (Math::Vec2<Size>::null mean full image resolution).
+		bool loadFromBinary( const void * data, CompressedFormat format = CompressedFormat::PNG, bool invertY = false);
 
 
 		///@brief return a pixel as a Math::vec4 object. Value will be between 0.0f and 1.0f.
@@ -117,6 +122,8 @@ namespace Graphic {
 
 		///@brief Set the actual format of each pixel stored, it will change the BPP
 		void setFormat( Format format );
+
+
 
 
 
@@ -138,7 +145,7 @@ namespace Graphic {
 
 
 		///@brief Save the image to a file, the quality is only for JPG from 0 to 100
-		bool saveToFile( const OS::Path & filePath, SavingFormat savingFormat, unsigned int quality = 100 );
+		bool saveToFile( const OS::Path & filePath, CompressedFormat savingFormat, unsigned int quality = 100 );
 
 		///@brief Resize the image to the specified size using the specified Filter
 		void resize( const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );

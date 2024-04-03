@@ -58,6 +58,7 @@ namespace Network {
 		this->request.setVerb( HTTPRequestT<T>::Verb::GET );
 		this->request.setPath( path );
 		this->request.setUrlParams( urlParamVector );
+		this->request.setContentType( HTTPQueryT<T>::ContentType::None );
 
 		return _query( this->request, verbose );
 	}

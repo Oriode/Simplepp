@@ -234,7 +234,7 @@ BasicString<T>::BasicString( const BasicString<T>& str ) :
 
 template<typename T>
 BasicString<T>::BasicString( BasicString<T>&& str ) :
-	Vector<T>( Utility::toRValue( str ) ) {}
+	Vector<T>( Utility::toRValue( str ) ) { }
 
 template<typename T>
 BasicString<T>::BasicString( typename BasicString<T>::protectedCtor ) : Vector<T>( Vector<T>::protectedCtor::null ) {
@@ -255,7 +255,7 @@ inline BasicString<T>::BasicString( const typename Math::Compare::Value& compare
 }
 
 template<typename T>
-BasicString<T>::~BasicString() {}
+BasicString<T>::~BasicString() { }
 
 
 
@@ -3939,7 +3939,7 @@ template<typename T>
 inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVector, T** itP ) {
 
 	struct EncodeFunctor {
-		EncodeFunctor( const T* encodingTable ) : encodingTable( encodingTable ) {}
+		EncodeFunctor( const T* encodingTable ) : encodingTable( encodingTable ) { }
 
 		void encode( T* outputIt, const unsigned char* inputIt ) const {
 			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
@@ -4140,6 +4140,69 @@ inline Size BasicString<T>::getBase64EncodeSize( const Vector<unsigned char>& da
 template<typename T>
 inline Size BasicString<T>::getBase64DecodeReserveSize( const BasicString<T>& inputStr ) {
 	return ( inputStr.getSize() * Size( 3 ) + Size( 3 ) ) / Size( 4 );
+}
+
+template<typename T>
+inline Size BasicString<T>::encodeUrl( const T* inputStr, T** outStr ) {
+
+	static const T* urlTable[ 128 ] = {
+		 "%00" ,  "%01" ,  "%02" ,  "%03" ,  "%04" ,  "%05" ,  "%06" ,  "%07" ,  "%08" ,  "%09" ,  "%0A" ,  "%0B" ,  "%0C" ,  "%0D" ,  "%0E" ,  "%0F" ,
+		 "%10" ,  "%11" ,  "%12" ,  "%13" ,  "%14" ,  "%15" ,  "%16" ,  "%17" ,  "%18" ,  "%19" ,  "%1A" ,  "%1B" ,  "%1C" ,  "%1D" ,  "%1E" ,  "%1F" ,
+		 "%20" ,  "%21" ,  "%22" ,  "%23" ,  "%24" ,  "%25" ,  "%26" ,  "%27" ,  "%28" ,  "%29" ,  "%2A" ,  "%2B" ,  "%2C" ,  "%2D" ,  "%2E" ,  "%2F" ,
+		 "%30" ,  "%31" ,  "%32" ,  "%33" ,  "%34" ,  "%35" ,  "%36" ,  "%37" ,  "%38" ,  "%39" ,  "%3A" ,  "%3B" ,  "%3C" ,  "%3D" ,  "%3E" ,  "%3F" ,
+		 "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,  "%41" ,
+		 "%50" ,  "%51" ,  "%52" ,  "%53" ,  "%54" ,  "%55" ,  "%56" ,  "%57" ,  "%58" ,  "%59" ,  "%5A" ,  "%5B" ,  "%5C" ,  "%5D" ,  "%5E" ,  "%5F" ,
+		 "%60" ,  "%61" ,  "%62" ,  "%63" ,  "%64" ,  "%65" ,  "%66" ,  "%67" ,  "%68" ,  "%69" ,  "%6A" ,  "%6B" ,  "%6C" ,  "%6D" ,  "%6E" ,  "%6F" ,
+		 "%70" ,  "%71" ,  "%72" ,  "%73" ,  "%74" ,  "%75" ,  "%76" ,  "%77" ,  "%78" ,  "%79" ,  "%7A" ,  "%7B" ,  "%7C" ,  "%7D" ,  "%7E" ,  "%7F"
+	};
+
+	const T* inIt( inputStr );
+	T*& outIt( *outStr );
+	T* initOutIt( *outStr );
+
+	for ( ;; ) {
+		const T& c( *( inIt++ ) );
+
+		if ( c == T( '\0' ) ) {
+			break;
+		}
+
+		unsigned char i( static_cast< unsigned char >( c ) );
+
+
+		// Specials chars not to be printed.
+		if ( i < 32 ) {
+			continue;
+		}
+		// Only converting the ASCII base table actually.
+		if ( i > 126 ) {
+			continue;
+		}
+
+		const T* foundedUrlStr( urlTable[ i ] );
+
+		*( outIt++ ) = foundedUrlStr[ 0 ];
+		*( outIt++ ) = foundedUrlStr[ 1 ];
+		*( outIt++ ) = foundedUrlStr[ 2 ];
+
+	}
+
+	( *outIt ) = T( '\0' );
+	return Size( outIt - initOutIt );
+}
+
+template<typename T>
+inline BasicString<T> BasicString<T>::encodeUrl( const BasicString<T>& inputStr ) {
+
+	BasicString<T> outputStr;
+	outputStr.reserve( inputStr.getSize() * Size( 3 ) + Size( 1 ) );
+
+	T* outIt( outputStr.getData() );
+	Size generatedSize( BasicString<T>::encodeUrl( inputStr.getData(), &outIt ) );
+
+	outputStr.resize( generatedSize );
+
+	return outputStr;
 }
 
 template<typename T>
@@ -4927,7 +4990,7 @@ bool BasicString<T>::IsEndSentinel::operator()( const T* it ) const {
 
 template<typename T>
 BasicString<T>::IsEndIterator::IsEndIterator( const T* endIt ) :
-	endIt( endIt ) {}
+	endIt( endIt ) { }
 
 template<typename T>
 bool BasicString<T>::IsEndIterator::operator()( const T* it ) const {

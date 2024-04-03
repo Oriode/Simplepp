@@ -1478,7 +1478,16 @@ public:
 	///@return Binary data Vector reserve Size.
 	static Size getBase64DecodeReserveSize(const BasicString<T>& inputStr);
 
+	///@brief	Encode a String into a HTTP URL encoded one.
+	///@param	inputStr Input string to be converted.
+	///@param	out outStr Pointer to the string iterator to be generated, will point to the end character.
+	///@return	size of the generated string, will be at max size(inputStr) * 3. 
+	static Size encodeUrl( const T * inputStr, T ** outStr );
 
+	///@brief	Encode a String into a HTTP URL encoded one.
+	///@param	inputStr Input string to be converted.
+	///@return	Converted string.
+	static BasicString<T> encodeUrl( const BasicString<T> & inputStr );
 
 
 	///@brief Hexadecimal encode a binary data Vector to a BasicString<T>

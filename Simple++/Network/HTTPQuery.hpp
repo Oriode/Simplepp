@@ -14,7 +14,9 @@ namespace Network {
 	inline void HTTPQueryT<T>::formatQueryContent( StringASCII* outputStr ) const {
 		StringASCII& str( *outputStr );
 
-		str << this->contentStr;
+		if ( this->contentType != ContentType::None ) {
+			str << this->contentStr;
+		}
 	}
 
 	template<typename T>
@@ -158,6 +160,8 @@ namespace Network {
 
 				formatHeaderParam( &this->headerStr, ParamT<StringASCII, StringASCII>( contentTypeName, HTTPQueryT<T>::getContentTypeString( this->contentType ) ) );
 				formatHeaderParam( &this->headerStr, ParamT<StringASCII, StringASCII>( contentLengthParamName, StringASCII::toString( this->contentStr.getSize() ) ) );
+
+				
 			}
 
 			this->headerStr << StringASCII::ElemType( '\r' );

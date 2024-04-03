@@ -106,6 +106,9 @@ namespace Network {
 		template<typename S = String>
 		S toString() const;
 
+		///@brief	Url encode converting all the specials characters to url safe ones.
+		static StringASCII encode( const StringASCII& str );
+
 		static const StringASCII typeStrTable[];
 
 	private:

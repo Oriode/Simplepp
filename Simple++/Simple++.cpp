@@ -408,7 +408,7 @@ int main( int argc, char* argv[] ) {
 		/*
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char * ) textureResource.getObject() -> getDatas( 0 ), textureResource.getObject() -> getSize( 0 ), Graphic::FreeImage::Format::RGB );
-		freeImage.saveToFile( "sanctum test textureManager i will delete.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "sanctum test textureManager i will delete.png", Graphic::FreeImage::CompressedFormat::PNG );
 		*/
 	}
 #endif
@@ -726,7 +726,7 @@ int main( int argc, char* argv[] ) {
 
 	Graphic::FreeImage glyphFreeImage;
 	glyphFreeImage.loadFromDatas( ( unsigned char* ) font2[ 'A' ]->getDatas(), font2[ 'A' ]->getSize(), Graphic::FreeImage::Format::R );
-	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::SavingFormat::PNG );
+	glyphFreeImage.saveToFile( "glyph_A.png", Graphic::FreeImage::CompressedFormat::PNG );
 
 
 	Graphic::FreeImage freeImage( "sanctum.png", Graphic::FreeImage::Format::RGB );
@@ -984,7 +984,7 @@ int main( int argc, char* argv[] ) {
 
 			Graphic::FreeImage freeImage;
 			freeImage.loadFromDatas( ( unsigned char * ) imageTxt.getDatas(), imageTxt.getSize(), Graphic::FreeImage::Format::R );
-			freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::SavingFormat::PNG );
+			freeImage.saveToFile( "testHelloWorld.png", Graphic::FreeImage::CompressedFormat::PNG );
 		}*/
 
 
@@ -1210,7 +1210,7 @@ int main( int argc, char* argv[] ) {
 	// Saving to file										//
 	Graphic::FreeImage freeImage2;
 	freeImage2.loadFromDatas( ( unsigned char* ) textureLoaded.getDatas( 0 ), textureLoaded.getSize( 0 ), Graphic::FreeImage::Format::RGB );
-	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::SavingFormat::PNG );
+	freeImage2.saveToFile( "sanctum3.png", Graphic::FreeImage::CompressedFormat::PNG );
 #endif
 
 #ifdef DEBUG_NETWORK
@@ -1887,7 +1887,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "drawline.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "drawline.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -1909,7 +1909,7 @@ int main( int argc, char* argv[] ) {
 		Graphic::ImageT<unsigned char> imageUC( image );
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) imageUC.getDatas(), imageUC.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "drawline_float.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 
 #endif
@@ -1934,7 +1934,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "graph.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "graph.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -1957,7 +1957,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -1989,7 +1989,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "rectangleRounded.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -2015,7 +2015,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "drawText.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -2076,7 +2076,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImageOut;
 		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "resample.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.saveToFile( "resample.png", Graphic::FreeImage::CompressedFormat::PNG );
 
 	}
 #endif
@@ -2102,7 +2102,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::R );
-		freeImage.saveToFile( "polygon.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "polygon.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -2136,12 +2136,12 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImageOut;
 		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "filterUCHAR.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.saveToFile( "filterUCHAR.png", Graphic::FreeImage::CompressedFormat::PNG );
 
 
 		image = imagef;
 		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "filterFLOAT.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.saveToFile( "filterFLOAT.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -2164,7 +2164,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImageOut;
 		freeImageOut.loadFromDatas( ( unsigned char* ) image.getDatas(), image.getSize(), Graphic::FreeImage::Format::RGB );
-		freeImageOut.saveToFile( "stroke.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImageOut.saveToFile( "stroke.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
@@ -2294,7 +2294,7 @@ int main( int argc, char* argv[] ) {
 
 		Graphic::FreeImage freeImage;
 		freeImage.loadFromDatas( ( unsigned char* ) testblendCasted.getDatas(), testblendCasted.getSize(), Graphic::FreeImage::Format::RGBA );
-		freeImage.saveToFile( "blending.png", Graphic::FreeImage::SavingFormat::PNG );
+		freeImage.saveToFile( "blending.png", Graphic::FreeImage::CompressedFormat::PNG );
 	}
 #endif
 
