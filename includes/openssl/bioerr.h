@@ -37,9 +37,11 @@
 # define BIO_R_IN_USE                                     123
 # define BIO_R_LENGTH_TOO_LONG                            102
 # define BIO_R_LISTEN_V6_ONLY                             136
+# define BIO_R_LOCAL_ADDR_NOT_AVAILABLE                   111
 # define BIO_R_LOOKUP_RETURNED_NOTHING                    142
 # define BIO_R_MALFORMED_HOST_OR_SERVICE                  130
 # define BIO_R_NBIO_CONNECT_ERROR                         110
+# define BIO_R_NON_FATAL                                  112
 # define BIO_R_NO_ACCEPT_ADDR_OR_SERVICE_SPECIFIED        143
 # define BIO_R_NO_HOSTNAME_OR_SERVICE_SPECIFIED           144
 # define BIO_R_NO_PORT_DEFINED                            113
@@ -64,5 +66,7 @@
 # define BIO_R_UNSUPPORTED_PROTOCOL_FAMILY                131
 # define BIO_R_WRITE_TO_READ_ONLY_BIO                     126
 # define BIO_R_WSASTARTUP                                 122
+# define BIO_R_PORT_MISMATCH                              150
+# define BIO_R_PEER_ADDR_NOT_AVAILABLE                    151
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -158,7 +158,7 @@
 /*
  * Define macros for deprecation and simulated removal purposes.
  *
- * The macros OSSL_DEPRECATED_{major}_{minor} are always defined for
+ * The macros OSSL_DEPRECATEDIN_{major}_{minor} are always defined for
  * all OpenSSL versions we care for.  They can be used as attributes
  * in function declarations where appropriate.
  *
@@ -169,6 +169,7 @@
  * 'no-deprecated'.
  */
 
+# undef OPENSSL_NO_DEPRECATED_3_1
 # undef OPENSSL_NO_DEPRECATED_3_0
 # undef OPENSSL_NO_DEPRECATED_1_1_1
 # undef OPENSSL_NO_DEPRECATED_1_1_0
@@ -309,6 +310,16 @@
  */
 #  ifndef OPENSSL_FUNC
 #   define OPENSSL_FUNC "(unknown function)"
+#  endif
+# endif
+
+# ifndef OSSL_CRYPTO_ALLOC
+#  if defined(__GNUC__)
+#   define OSSL_CRYPTO_ALLOC __attribute__((__malloc__))
+#  elif defined(_MSC_VER)
+#   define OSSL_CRYPTO_ALLOC __declspec(restrict)
+#  else
+#   define OSSL_CRYPTO_ALLOC
 #  endif
 # endif
 
