@@ -238,13 +238,12 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	bool FreeImageT<T>::saveToFile( const OS::Path& filePath, CompressedFormat savingFormat, unsigned int quality ) {
-		load();
+	bool FreeImageT<T>::saveToFile( const OS::Path& filePath, CompressedFormat savingFormat, unsigned int quality ) const{
 
 	#if defined WIN32
-		bool r( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, filePath.toCString(), quality ) );
+		bool r( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, const_cast< FIBITMAP* >( this -> freeImage ), filePath.toCString(), quality ) );
 	#else
-		bool r( FreeImage_Save( ( FREE_IMAGE_FORMAT ) savingFormat, this -> freeImage, filePath.toCString(), quality ) );
+		bool r( FreeImage_Save( ( FREE_IMAGE_FORMAT ) savingFormat, const_cast< FIBITMAP* >( this -> freeImage ), filePath.toCString(), quality ) );
 	#endif
 
 		if ( r ) {
@@ -454,17 +453,23 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	inline bool FreeImageT<T>::loadFromBinary( const void * data, CompressedFormat format, bool invertY ) {
+	inline bool FreeImageT<T>::loadFromBinary( const void* data, Size size, bool invertY ) {
 
 		unload();
 		lock();
 		setLoading( true );
 
-		FREE_IMAGE_FORMAT freeImageFormat( static_cast< FREE_IMAGE_FORMAT >( format ) );
+		// Create the memory stream.
+		FIMEMORY* fiMemory( FreeImage_OpenMemory( const_cast< BYTE* >( reinterpret_cast< const BYTE* >( data ) ), size ) );
 
-		FIMEMORY fiMemory;
-		fiMemory.data = const_cast< void* >( data );
-		this -> freeImage = FreeImage_LoadFromMemory( freeImageFormat, &fiMemory, 0 );
+		// Get the file type from the binary.
+		FREE_IMAGE_FORMAT freeImageFormat( FreeImage_GetFileTypeFromMemory( fiMemory, 0 ) );
+
+		// Try to load the image.
+		this -> freeImage = FreeImage_LoadFromMemory( freeImageFormat, fiMemory, 0 );
+
+		// Close the memory stream.
+		FreeImage_CloseMemory( fiMemory );
 
 		if ( !this->freeImage ) {
 			setLoading( false );

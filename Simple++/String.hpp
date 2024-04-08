@@ -4958,7 +4958,7 @@ BasicString<T> BasicString<T>::format( const C( &str )[ N ], const T1& arg1, Typ
 template<typename T>
 template<typename C, size_t N>
 inline BasicString<T> BasicString<T>::format( const C( &str )[ N ] ) {
-	return BasicString<T>( str, Size( N ) );
+	return BasicString<T>( str, Size( N - 1 ) );
 }
 
 
