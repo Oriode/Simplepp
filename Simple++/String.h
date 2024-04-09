@@ -1489,6 +1489,17 @@ public:
 	///@return	Converted string.
 	static BasicString<T> encodeUrl( const BasicString<T> & inputStr );
 
+	///@brief	Create a new String with specials chars escaped, usefull to be formated in a quotted string in json/html/javascript...
+	///@param	inputStr Input string to be converted.
+	///@param	out outStr Pointer to the string iterator to be generated, will point to the end character.
+	///@return	size of the generated string, will be at max size(inputStr) * 3. 
+	static Size escapeSpecials( const T* inputStr, T** outStr );
+
+	///@brief	Create a new String with specials chars escaped, usefull to be formated in a quotted string in json/html/javascript...
+	///@param	inputStr Input string to be converted.
+	///@return	Converted string.
+	static BasicString<T> escapeSpecials( const BasicString<T>& inputStr );
+
 
 	///@brief Hexadecimal encode a binary data Vector to a BasicString<T>
 	///@param dataVector Binary data Vector to be encoded.

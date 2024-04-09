@@ -112,7 +112,7 @@ namespace Graphic {
 		///@brief	Load this object using already memory loaded compressed data.
 		///@param size buffer siwe<
 		///@param invertY if we have to flip the image vertically.
-		bool loadFromBinary( const void * data, Size size, bool invertY = false);
+		bool loadFromBinary( const void * data, ::Size size, bool invertY = false);
 
 
 		///@brief return a pixel as a Math::vec4 object. Value will be between 0.0f and 1.0f.

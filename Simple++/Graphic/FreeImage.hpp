@@ -453,7 +453,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	inline bool FreeImageT<T>::loadFromBinary( const void* data, Size size, bool invertY ) {
+	inline bool FreeImageT<T>::loadFromBinary( const void* data, ::Size size, bool invertY ) {
 
 		unload();
 		lock();

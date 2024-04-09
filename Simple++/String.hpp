@@ -4193,12 +4193,68 @@ inline Size BasicString<T>::encodeUrl( const T* inputStr, T** outStr ) {
 
 template<typename T>
 inline BasicString<T> BasicString<T>::encodeUrl( const BasicString<T>& inputStr ) {
-
 	BasicString<T> outputStr;
 	outputStr.reserve( inputStr.getSize() * Size( 3 ) + Size( 1 ) );
 
 	T* outIt( outputStr.getData() );
 	Size generatedSize( BasicString<T>::encodeUrl( inputStr.getData(), &outIt ) );
+
+	outputStr.resize( generatedSize );
+
+	return outputStr;
+}
+
+template<typename T>
+inline Size BasicString<T>::escapeSpecials( const T* inputStr, T** outStr ) {
+	const T* inIt( inputStr );
+	T*& outIt( *outStr );
+	T* initOutIt( *outStr );
+
+	for ( ;; ) {
+		const T& c( *( inIt++ ) );
+
+		if ( c == T( '\0' ) ) {
+			break;
+		}
+
+		switch ( c ) {
+			case T( '\n' ):
+				*( outIt++ ) = T( '\\' );
+				*( outIt++ ) = T( 'n' );
+				break;
+			case T( '\r' ):
+				*( outIt++ ) = T( '\\' );
+				*( outIt++ ) = T( 'r' );
+				break;
+			case T('\t'):
+				*( outIt++ ) = T( '\\' );
+				*( outIt++ ) = T( 't' );
+				break;
+			case T( '"' ):
+				*( outIt++ ) = T( '\\' );
+				*( outIt++ ) = T( '"' );
+				break;
+			case T( '\\' ):
+				*( outIt++ ) = T( '\\' );
+				*( outIt++ ) = T( '\\' );
+				break;
+			default:
+				( *outIt++ ) = c;
+				break;
+		}
+	}
+
+	( *outIt ) = T( '\0' );
+	return Size( outIt - initOutIt );
+}
+
+template<typename T>
+inline BasicString<T> BasicString<T>::escapeSpecials( const BasicString<T>& inputStr ) {
+	BasicString<T> outputStr;
+	outputStr.reserve( inputStr.getSize() * Size( 2 ) + Size( 1 ) );
+
+	T* outIt( outputStr.getData() );
+	Size generatedSize( BasicString<T>::escapeSpecials( inputStr.getData(), &outIt ) );
 
 	outputStr.resize( generatedSize );
 
