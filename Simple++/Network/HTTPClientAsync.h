@@ -1,13 +1,15 @@
 #pragma once
 
-#include "Simple++/Network/HTTPClient.h"
-#include "Simple++/Mutex.h"
-#include "Simple++/Thread.h"
+#include "../Mutex.h"
+#include "../Thread.h"
+#include "../List.h"
+#include "../Network/HTTPMessage.h"
+#include "../Notify.h"
+
+#include "HTTPClient.h"
 #include "ClientQueryHandler.h"
-#include "Simple++/List.h"
 #include "Query.h"
-#include "Simple++/Network/HTTPMessage.h"
-#include "Simple++/Notify.h"
+
 
 namespace Network {
 
@@ -214,7 +216,6 @@ namespace Network {
 
 		HTTPRequestT<T> request;
 
-
 		this->httpClientMutex.lock();
 		query->setMessageSent();
 		HTTPResponseT<T>* httpResponse( query->send( &this->httpClient, verbose - 1 ) );
@@ -223,19 +224,19 @@ namespace Network {
 		// Create the request from the message.
 		if ( !httpResponse ) {
 			query->setError( HTTPError::NetworkException );
-			if ( verbose > 0 ) { Log::endStep( __func__, "NetworkException" ); }
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, "NetworkException" ); }
 			return query->getError();
 		}
 
 		if ( typename HTTPError e( query->getResponseMessage()->fromResponse( httpResponse, verbose - 1 ) ); e != HTTPError::None ) {
 			query->setError( e );
-			if ( verbose > 0 ) { Log::endStep( __func__, "Failed" ); }
+			if ( verbose > 0 ) { Log::endStepFailure( __func__, "Failed" ); }
 			return query->getError();
 		}
 
 		query->setError( HTTPError::None );
 
-		if ( verbose > 0 ) { Log::endStep( __func__, "Success." ); }
+		if ( verbose > 0 ) { Log::endStepSuccess( __func__, "Success." ); }
 
 		return query->getError();
 	}

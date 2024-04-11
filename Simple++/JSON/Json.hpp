@@ -1,3 +1,4 @@
+#include "Json.h"
 namespace JSON {
 
 	template<typename S, typename C, typename EndFunc>
@@ -49,6 +50,21 @@ namespace JSON {
 	NodeT<S>* parseT( const S& str ) {
 		const typename S::ElemType* buffer( str.toCString() );
 		return parse<S, S::ElemType>( buffer );
+	}
+
+	template<typename S, typename C>
+	bool fromJSON( const NodeT<S>* node, const S& childName, C* outValue, int verbose ) {
+		const JSON::NodeT<S>* childNode( node->getChild( childName ) );
+		if ( !childNode ) {
+			if ( verbose > 0 ) { Log::displayError( String::format( "Missing node : %.", childName ) ); }
+			return false;
+		}
+
+		if ( !fromJSON( childNode, outValue, verbose ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	template<typename S, typename C>
@@ -122,6 +138,19 @@ namespace JSON {
 				return false;
 			}
 		}
+
+		return true;
+	}
+
+	template<typename S, typename Ratio>
+	bool fromJSON( const NodeT<S>* node, Time::TimePoint<Ratio>* t, int verbose ) {
+
+		Time::TimeT v;
+		if ( !fromJSON( node, &v, verbose ) ) {
+			return false;
+		}
+
+		t->setValue( v );
 
 		return true;
 	}

@@ -48,6 +48,9 @@ namespace Network {
 		///@brief	Get the last Response state.
 		HTTPError getError() const;
 
+		///@brief	Check if getError() == None.
+		bool hasSucceed() const;
+
 		///@brief	Set the message as sent.
 		void setMessageSent();
 
@@ -191,6 +194,11 @@ namespace Network {
 	template<typename T>
 	inline HTTPError BasicQueryT<T>::getError() const {
 		return this->receivedError;
+	}
+
+	template<typename T>
+	inline bool BasicQueryT<T>::hasSucceed() const {
+		return getError() == HTTPError::None;
 	}
 
 

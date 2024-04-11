@@ -284,7 +284,10 @@
     <ClInclude Include="Network\Address.hpp" />
     <ClInclude Include="Network\AddrInfo.hpp" />
     <ClInclude Include="Network\BasicNetwork.hpp" />
+    <ClInclude Include="Network\BasicQuery.h" />
+    <ClInclude Include="Network\ClientQueryHandler.h" />
     <ClInclude Include="Network\Connection.hpp" />
+    <ClInclude Include="Network\HTTPClientAsync.h" />
     <ClInclude Include="Network\HTTPMessage.h" />
     <ClInclude Include="Network\HTTPQuery.h" />
     <ClInclude Include="Network\HTTPQuery.hpp" />
@@ -292,6 +295,7 @@
     <ClInclude Include="Network\HTTPRequest.hpp" />
     <ClInclude Include="Network\HTTPResponse.h" />
     <ClInclude Include="Network\HTTPResponse.hpp" />
+    <ClInclude Include="Network\Query.h" />
     <ClInclude Include="Network\Server.hpp" />
     <ClInclude Include="Crypto\SSL.h" />
     <ClInclude Include="Crypto\SSL.hpp" />
@@ -300,6 +304,8 @@
     <ClInclude Include="Network\HTTPClient.hpp" />
     <ClInclude Include="Network\Url.h" />
     <ClInclude Include="Network\Url.hpp" />
+    <ClInclude Include="Notify.h" />
+    <ClInclude Include="Optional.h" />
     <ClInclude Include="OS\Path.h" />
     <ClInclude Include="OS\Path.hpp" />
     <ClInclude Include="Param.h" />

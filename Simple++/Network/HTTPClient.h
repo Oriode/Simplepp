@@ -25,6 +25,8 @@ namespace Network {
 		HTTPResponseT<T>* GET( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, int verbose = 0 );
 		HTTPResponseT<T>* POST( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, typename HTTPQueryT<T>::ContentType contentType, const StringASCII& contentStr = StringASCII::null, int verbose = 0);
 		HTTPResponseT<T>* PUT( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, typename HTTPQueryT<T>::ContentType contentType, const StringASCII& contentStr = StringASCII::null, int verbose = 0 );
+		HTTPResponseT<T>* DEL( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, int verbose = 0 );
+
 
 		const HTTPResponseT<T>* getLastResponse() const;
 

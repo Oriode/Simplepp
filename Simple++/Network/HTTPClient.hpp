@@ -86,6 +86,16 @@ namespace Network {
 	}
 
 	template<typename T>
+	inline HTTPResponseT<T>* HTTPClientT<T>::DEL( const StringASCII& path, const Vector<HTTPParam>& urlParamVector, int verbose ) {
+		this->request.setVerb( HTTPRequestT<T>::Verb::DEL );
+		this->request.setPath( path );
+		this->request.setUrlParams( urlParamVector );
+		this->request.setContentType( HTTPQueryT<T>::ContentType::None );
+
+		return _query( this->request, verbose );
+	}
+
+	template<typename T>
 	inline const HTTPResponseT<T>* HTTPClientT<T>::getLastResponse() const {
 		return &this->response;
 	}

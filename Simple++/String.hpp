@@ -4939,23 +4939,28 @@ void BasicString<T>::__format( const C* referenceStringBegin, const C* reference
 template<typename T>
 template<typename C, typename T1, typename... Types>
 void BasicString<T>::__format( const C* referenceStringBegin, const C* referenceStringEnd, BasicString<T>* newString, const T1& arg1, Types ... args ) {
+	auto itBegin( referenceStringBegin );
+
 	for ( auto it = referenceStringBegin; it != referenceStringEnd; it++ ) {
-		if ( *it == T( '/' ) && it + 1 < referenceStringEnd ) {
-			if ( *( it + 1 ) == T( '/' ) ) {
-				newString -> _concatWOS( T( '/' ) );
-				it++;
-			} else if ( *( it + 1 ) == T( '%' ) ) {
-				newString -> _concatWOS( T( '%' ) );
-				it++;
+		if ( *it == T( '\\' ) && it + 1 < referenceStringEnd && *( it + 1 ) == T( '%' ) ) {
+
+			if ( it - itBegin > 0 ) {
+				newString -> _concatWOS( itBegin, Size( it - itBegin ) );
 			}
+
+			it++;
+			itBegin = it;
+
+			newString -> _concatWOS( T( '%' ) );
+			continue;
 		} else if ( *it == T( '%' ) ) {
+
+			if ( it - itBegin > 0 ) {
+				newString -> _concatWOS( itBegin, Size( it - itBegin ) );
+			}
+
 			newString -> _concatWOS( arg1 );
 			return __format( it + 1, referenceStringEnd, newString, args... );
-		} else {
-			auto itBegin( it );
-			for ( ; *it != T( '%' ) && *it != T( '\0' ); it++ );
-			newString -> _concatWOS( itBegin, Size( it - itBegin ) );
-			it--;
 		}
 	}
 }

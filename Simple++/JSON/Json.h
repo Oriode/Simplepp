@@ -13,6 +13,7 @@
 #include "../Math/BasicMath.h"
 #include "../OS/Path.h"
 #include "../StaticTable.h"
+#include "../Time/TimePoint.h"
 
 #include "Node.h"
 #include "NodeValue.h"
@@ -38,6 +39,9 @@ namespace JSON {
 	NodeT<S>* parseT( const S& str );
 
 	template<typename S, typename C>
+	bool fromJSON( const NodeT<S>* node, const S& childName, C* outValue, int verbose = 0 );
+
+	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, C* v, int verbose = 0 );
 
 	template<typename S, typename C>
@@ -48,6 +52,8 @@ namespace JSON {
 	bool fromJSON( const NodeT<S>* node, BasicVector<C>* v, int verbose = 0 );
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Vector<C>* v, int verbose = 0 );
+	template<typename S, typename Ratio>
+	bool fromJSON( const NodeT<S>* node, Time::TimePoint<Ratio>* t, int verbose = 0 );
 
 	template<typename S, typename C>
 	bool _fromJSON( const NodeT<S>* node, C* v, const Jsonable* );
