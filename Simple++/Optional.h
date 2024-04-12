@@ -20,12 +20,16 @@ public:
 
 	///@brief	Conversion operator to the inner pointer.
 	operator T* ( ) const;
+	///@brief	Conversion operator to the inner object.
+	operator T() const;
 
 	Optional<T>& operator=( const Optional<T>& o );
 	Optional<T>& operator=( Optional<T>&& o );
 
 	T & getValue();
 	const T & getValue() const;
+
+	T getValueOrDefault() const;
 
 	void setValue( const T& v );
 
@@ -75,6 +79,11 @@ inline Optional<T>::operator T* ( ) const {
 }
 
 template<typename T>
+inline Optional<T>::operator T() const {
+	return getValueOrDefault();
+}
+
+template<typename T>
 inline Optional<T>& Optional<T>::operator=( const Optional<T>& o ) {
 	if ( this-> v ) {
 		delete this->v;
@@ -104,6 +113,15 @@ inline T&  Optional<T>::getValue() {
 template<typename T>
 inline const T & Optional<T>::getValue() const {
 	return *this->v;
+}
+
+template<typename T>
+inline T Optional<T>::getValueOrDefault() const {
+	if ( isSet() ) {
+		return getValue();
+	} else {
+		return T();
+	}
 }
 
 template<typename T>

@@ -14,6 +14,7 @@
 #include "../OS/Path.h"
 #include "../StaticTable.h"
 #include "../Time/TimePoint.h"
+#include "../Optional.h"
 
 #include "Node.h"
 #include "NodeValue.h"
@@ -38,11 +39,19 @@ namespace JSON {
 	template<typename S>
 	NodeT<S>* parseT( const S& str );
 
+
+	///@brief	Get a child node using it's name from a parent node and set the value to the given variable.
+	///			Powerfull method using type overloading to automatically convert the Node value to the correct type.
+	///			Native types are supported and Vector, BasicVector, StaticTable, Table, TimePoint and Optional.
+	///			Note : Optional are handled when a node is set to null but will still trigger an error if the node is missing.
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, const S& childName, C* outValue, int verbose = 0 );
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, C* v, int verbose = 0 );
+
+	template<typename S, typename C>
+	bool fromJSON( const NodeT<S>* node, Optional<C> * v, int verbose = 0 );
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Table<C>* t, int verbose = 0 );
@@ -56,9 +65,9 @@ namespace JSON {
 	bool fromJSON( const NodeT<S>* node, Time::TimePoint<Ratio>* t, int verbose = 0 );
 
 	template<typename S, typename C>
-	bool _fromJSON( const NodeT<S>* node, C* v, const Jsonable* );
+	bool _fromJSON( const NodeT<S>* node, C* v, int verbose, const Jsonable* );
 	template<typename S, typename C>
-	bool _fromJSON( const NodeT<S>* node, C* v, ... );
+	bool _fromJSON( const NodeT<S>* node, C* v, int verbose, ... );
 
 	template<typename S>
 	NodeT<S>* toJSON();

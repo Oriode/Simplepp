@@ -6,6 +6,7 @@
 #include "SimpleLog.h"
 #include "Table.h"
 
+///@brief	Resizable table without buffering.
 template<typename T>
 class BasicVector : public Table<T> {
 public:
@@ -56,6 +57,7 @@ public:
 	/* ================                MISC                ================ */
 	/************************************************************************/
 
+	void clear();
 	void resize(const Size newSize);
 	void resizeNoCopy(const Size newSize);
 
@@ -199,6 +201,11 @@ inline BasicVector<T>& BasicVector<T>::operator=(const BasicVector<T>& v) {
 }
 
 template<typename T>
+inline void BasicVector<T>::clear() {
+	resizeNoCopy( Size( 0 ) );
+}
+
+template<typename T>
 inline void BasicVector<T>::resize(const Size newSize) {
 	if ( newSize == this->size ) {
 		return;
@@ -212,7 +219,6 @@ inline void BasicVector<T>::resize(const Size newSize) {
 
 		if ( this->size > Size(0) ) {
 			Utility::copy(newDataTable, this->dataTable, Math::min(this->size, newSize));
-
 			delete[] this->dataTable;
 		}
 

@@ -2396,7 +2396,7 @@ template<typename T>
 template<typename Type, typename EndFunc>
 static Type BasicString<T>::_toUnsignedInteger( const T** itP, unsigned int base, const EndFunc& endFunc ) {
 	const T*& it( *itP );
-	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
+	for ( ; *it == T( ' ' ); it++ );		// Spaces are useless
 
 	if ( endFunc( it ) )
 		return 0;
@@ -2410,7 +2410,7 @@ static Type BasicString<T>::_toUnsignedInteger( const T** itP, unsigned int base
 	} else
 		return 0;
 
-	for ( ; !endFunc( it ); it++ ) {	//Start the computation
+	for ( ; !endFunc( it ); it++ ) {	// Start the computation
 		result = result * base + ( *it - T( '0' ) );
 	}
 
@@ -2445,14 +2445,14 @@ template<typename T>
 template<typename Type, typename EndFunc>
 static Type BasicString<T>::_toFloat( const T** itP, unsigned int base, const EndFunc& endFunc ) {
 	const T*& it( *itP );
-	for ( ; *it == T( ' ' ); it++ );		//Spaces are useless
+	for ( ; *it == T( ' ' ); it++ );		// Spaces are useless
 
 	if ( endFunc( it ) )
 		return Type( 0 );
 
 	Type result( 0 );
 	bool negative;
-	if ( *it == T( '-' ) ) {			//Check the sign
+	if ( *it == T( '-' ) ) {			// Check the sign
 		it++;
 		negative = true;
 	} else {
@@ -2460,7 +2460,7 @@ static Type BasicString<T>::_toFloat( const T** itP, unsigned int base, const En
 	}
 
 	const Type baseType( static_cast< Type >( base ) );
-	for ( ; !endFunc( it ) && *it != T( '.' ); it++ ) {			//Start the computation
+	for ( ; !endFunc( it ) && *it != T( '.' ); it++ ) {			// Start the computation
 		result *= baseType;
 		result += Type( *it - T( '0' ) );
 	}

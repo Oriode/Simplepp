@@ -69,12 +69,30 @@ namespace JSON {
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, C* v, int verbose ) {
-		return _fromJSON<S>( node, v, reinterpret_cast< const C* >( NULL ), verbose );
+		return _fromJSON<S>( node, v, verbose, reinterpret_cast< const C* >( NULL ) );
+	}
+
+	template<typename S, typename C>
+	bool fromJSON( const NodeT<S>* node, Optional<C>* v, int verbose ) {
+		if ( node -> getType() == JSON::NodeT<S>::Type::Null ) {
+			v -> unset();
+			return true;
+		}
+
+		// Set a new value using the default constructor.
+		v -> setValue( C() );
+
+		if ( !fromJSON( node, &v->getValue(), verbose ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Table<C>* t, int verbose ) {
 		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+			if ( verbose > 0 ) { Log::displayError( __func__, String::format( "Node \"%\" is not a array one.", node->getName() ) ); }
 			return false;
 		}
 
@@ -92,6 +110,7 @@ namespace JSON {
 	template<typename S, typename C, Size N>
 	bool fromJSON( const NodeT<S>* node, StaticTable<C, N>* t, int verbose ) {
 		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+			if ( verbose > 0 ) { Log::displayError( __func__, String::format( "Node \"%\" is not a array one.", node->getName() ) ); }
 			return false;
 		}
 
@@ -108,10 +127,19 @@ namespace JSON {
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, BasicVector<C>* v, int verbose ) {
-		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+		// If the node is a null one.
+		if ( node->getType() == JSON::NodeT<S>::Type::Null ) {
+			if ( verbose > 0 ) { Log::displayWarning( __func__, String::format( "Node \"%\" is null.", node->getName() ) ); }
+			v -> clear();
 			return false;
 		}
 
+		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+			if ( verbose > 0 ) { Log::displayError( __func__, String::format( "Node \"%\" is not a array one.", node->getName() ) ); }
+			return false;
+		}
+
+		// Resize the BasicVector to the right size.
 		v->resizeNoCopy( node->getNbChildren() );
 
 		for ( Size i( 0 ); i < node->getNbChildren(); i++ ) {
@@ -126,10 +154,19 @@ namespace JSON {
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Vector<C>* v, int verbose ) {
-		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+		// If the node is a null one.
+		if ( node->getType() == JSON::NodeT<S>::Type::Null ) {
+			if ( verbose > 0 ) { Log::displayWarning( __func__, String::format( "Node \"%\" is null.", node->getName() ) ); }
+			v -> clear();
 			return false;
 		}
 
+		if ( node->getType() != JSON::NodeT<S>::Type::Array ) {
+			if ( verbose > 0 ) { Log::displayError( __func__, String::format( "Node \"%\" is not a array one.", node->getName() ) ); }
+			return false;
+		}
+
+		// Resize the Vector to the right size.
 		v->resizeNoCopy( node->getNbChildren() );
 
 		for ( Size i( 0 ); i < node->getNbChildren(); i++ ) {
@@ -144,25 +181,39 @@ namespace JSON {
 
 	template<typename S, typename Ratio>
 	bool fromJSON( const NodeT<S>* node, Time::TimePoint<Ratio>* t, int verbose ) {
-
-		Time::TimeT v;
-		if ( !fromJSON( node, &v, verbose ) ) {
+		// If the node is a null one.
+		if ( node->getType() == JSON::NodeT<S>::Type::Null ) {
+			if ( verbose > 0 ) { Log::displayWarning( __func__, String::format( "Node \"%\" is null.", node->getName() ) ); }
+			t -> setValue( Time::TimeT( 0 ) );
 			return false;
 		}
 
-		t->setValue( v );
+		if ( node->getType() != JSON::NodeT<S>::Type::Value ) {
+			if ( verbose > 0 ) { Log::displayError( __func__, String::format( "Node \"%\" is not a value one.", node->getName() ) ); }
+			return false;
+		}
+
+		Time::Date d( Time::Date::parse( node->getValue() ) );
+		(*t) = d.toTimePoint();
 
 		return true;
 	}
 
 	template<typename S, typename C>
-	bool _fromJSON( const NodeT<S>* node, C* v, const Jsonable*, int verbose ) {
+	bool _fromJSON( const NodeT<S>* node, C* v, int verbose, const Jsonable* ) {
 		return v->fromJSON<S>( node, verbose );
 	}
 
 	template<typename S, typename C>
-	bool _fromJSON( const NodeT<S>* node, C* v, ... ) {
+	bool _fromJSON( const NodeT<S>* node, C* v, int verbose, ... ) {
+		// If the node is a null one.
+		if ( node->getType() == JSON::NodeT<S>::Type::Null ) {
+			if ( verbose > 0 ) { Log::displayWarning( __func__, String::format( "Node \"%\" is null.", node->getName() ) ); }
+			return false;
+		}
+
 		if ( node->getType() != NodeT<S>::Type::Value ) {
+			if ( verbose > 0 ) { Log::displayError( __func__, String::format( "Node \"%\" is not a value one.", node->getName() ) ); }
 			return false;
 		}
 		( *v ) = node->getValue().fromString<C>();

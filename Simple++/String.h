@@ -799,6 +799,8 @@ public:
 
 	bool toBool() const;
 
+	///@brief	Try to convert the String into the type C. Works only with native types.
+	///			Null strings will return 0 for Numbers and false for bool.
 	template<typename C>
 	C fromString() const;
 
