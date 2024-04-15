@@ -88,13 +88,16 @@ namespace Network {
 
 	template<typename T>
 	inline typename HTTPQueryT<T>::ContentType HTTPQueryT<T>::getContentType( const StringASCII& contentTypeStr ) {
-		constexpr Size enumSize( sizeof( HTTPQueryT<T>::contentTypeStrTable ) );
-		for ( Size i( 0 ); i < enumSize; i++ ) {
-			if ( contentTypeStr == HTTPQueryT<T>::contentTypeStrTable[ i ] ) {
-				return static_cast< typename HTTPQueryT<T>::ContentType >( i );
-			}
+
+		static const Map<StringASCII, HTTPQueryT<T>::ContentType> contentTypeMap( HTTPQueryT<T>::contentTypeStrTable );
+
+		const HTTPQueryT<T>::ContentType * v( contentTypeMap[ contentTypeStr ] );
+
+		if ( !v ) {
+			return HTTPQueryT<T>::ContentType::None;
 		}
-		return HTTPQueryT<T>::ContentType::None;
+
+		return *v;
 	}
 
 	template<typename T>
@@ -104,7 +107,8 @@ namespace Network {
 			StringASCII( "text/html" ),
 			StringASCII( "application/x-www-form-urlencoded" ),
 			StringASCII( "application/json" ),
-			StringASCII( "application/xml" )
+			StringASCII( "application/xml" ),
+			StringASCII( "image/png" )
 	};
 
 	template<typename T>
@@ -161,7 +165,7 @@ namespace Network {
 				formatHeaderParam( &this->headerStr, ParamT<StringASCII, StringASCII>( contentTypeName, HTTPQueryT<T>::getContentTypeString( this->contentType ) ) );
 				formatHeaderParam( &this->headerStr, ParamT<StringASCII, StringASCII>( contentLengthParamName, StringASCII::toString( this->contentStr.getSize() ) ) );
 
-				
+
 			}
 
 			this->headerStr << StringASCII::ElemType( '\r' );

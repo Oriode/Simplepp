@@ -26,6 +26,8 @@ namespace OS {
 		template<typename C, size_t N>
 		PathT(const C(&str)[N]);
 
+		PathT( const UTF8String& str );
+
 		bool exists() const;
 		PathT<S> & join( const S & str );
 		PathT<S> & join( const PathT<S> & path );

@@ -2,6 +2,8 @@
 
 #include "../String.h"
 #include "../ParamContainer.h"
+#include "../Map.h"
+
 #include "Url.h"
 #include "Network.h"
 
@@ -17,7 +19,8 @@ namespace Network {
 			Html,
 			Params,
 			Json,
-			Xml
+			Xml,
+			Png
 		};
 
 		HTTPQueryT();
@@ -57,7 +60,7 @@ namespace Network {
 		static const StringASCII& getContentTypeString( typename ContentType contentType );
 		static typename ContentType getContentType( const StringASCII& contentTypeStr );
 
-		static const StringASCII contentTypeStrTable[];
+		static const StringASCII contentTypeStrTable[7];
 
 	protected:
 		ContentType contentType;

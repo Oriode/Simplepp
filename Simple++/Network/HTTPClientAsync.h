@@ -67,7 +67,6 @@ namespace Network {
 
 	template<typename T>
 	inline HTTPClientAsyncT<T>::~HTTPClientAsyncT() {
-		clearQueue();
 
 		this->queryMutex.lock();
 		{
@@ -76,6 +75,8 @@ namespace Network {
 		this->queryMutex.unlock();
 
 		join();
+
+		clearQueue();
 	}
 
 	template<typename T>

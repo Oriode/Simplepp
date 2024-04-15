@@ -504,6 +504,12 @@ public:
 	 */
 	RBTree( const Compare & compareFunc = Compare() );
 
+	///@brief	Constructor from a static table, will simply use the table value as a key and the index as a value.
+	///			Usefull to access the index of a table easily using it's value. Like converting String to enum.
+	template<Size N>
+	RBTree( const I( &data )[ N ], const Compare& compareFunc = Compare() );
+
+
 	/**
 	 * @brief 	Copy Constructor
 	 *
@@ -517,6 +523,7 @@ public:
 	 * @param [in,out]	tree	Tree to move from.
 	 */
 	RBTree( RBTree<I, T, Compare> && tree );
+
 
 	/** @brief	destructor */
 	~RBTree();

@@ -10,15 +10,14 @@ namespace OS {
 	}
 
 	template<typename S>
-	PathT<S>::PathT( const S & str ) : S(str) {
+	PathT<S>::PathT( const S& str ) : S( str ) {
 
 	}
 
 	template<typename S>
 	template<typename C, size_t N>
-	PathT<S>::PathT(const C(&str)[N]) :
-		S(str)
-	{
+	PathT<S>::PathT( const C( &str )[ N ] ) :
+		S( str ) {
 
 	}
 
@@ -28,6 +27,10 @@ namespace OS {
 
 
 
+
+	template<typename S>
+	inline PathT<S>::PathT( const UTF8String& str ) :
+		S( str ) { }
 
 	template<typename S>
 	inline bool PathT<S>::exists() const {
@@ -35,29 +38,29 @@ namespace OS {
 	}
 
 	template<typename S>
-	PathT<S> & PathT<S>::join( const S & str ) {
+	PathT<S>& PathT<S>::join( const S& str ) {
 		return _join( str );
 	}
 
 	template<typename S>
-	PathT<S> & PathT<S>::join( const PathT<S> & path ) {
+	PathT<S>& PathT<S>::join( const PathT<S>& path ) {
 		return _join( path );
 	}
 
 	template<typename S>
 	template<typename C, typename ...Args>
-	PathT<S> & PathT<S>::join( const C & c, Args ... args ) {
+	PathT<S>& PathT<S>::join( const C& c, Args ... args ) {
 		return this -> _join( c ).join( args... );
 	}
 
 	template<typename S>
-	PathT<S> & PathT<S>::join() {
+	PathT<S>& PathT<S>::join() {
 		return *this;
 	}
 
 	template<typename S>
 	inline bool PathT<S>::remove() const {
-		return PathT<S>::remove(*this);
+		return PathT<S>::remove( *this );
 	}
 
 	template<typename S>
@@ -73,22 +76,22 @@ namespace OS {
 	}
 
 	template<typename S>
-	const S & PathT<S>::toString() const {
+	const S& PathT<S>::toString() const {
 		return *this;
 	}
 
 	template<typename S>
-	inline bool PathT<S>::exists( const S & str ) {
+	inline bool PathT<S>::exists( const S& str ) {
 		return std::filesystem::exists( str.toCString() );
 	}
 
 	template<typename S>
-	inline bool PathT<S>::remove(const S& str) {
-		return std::filesystem::remove(str.toCString());
+	inline bool PathT<S>::remove( const S& str ) {
+		return std::filesystem::remove( str.toCString() );
 	}
 
 	template<typename S>
-	inline PathT<S> & PathT<S>::_join( const S & str ) {
+	inline PathT<S>& PathT<S>::_join( const S& str ) {
 		this -> concat( PathT<S>::separatorChar );
 		this -> concat( str );
 		return *this;

@@ -1029,6 +1029,19 @@ RBTree<I, T, Compare>::RBTree( const Compare & compareFunc ) :
 }
 
 template<typename I, typename T, typename Compare>
+template<Size N>
+inline RBTree<I, T, Compare>::RBTree( const I( &data )[ N ], const Compare& compareFunc ) :
+	compareFunc( compareFunc ),
+	rootNode( NULL )
+{
+	static_assert( Utility::isBase<Math::Compare::Template, Compare>::value, "Functor should inherite from Math::Compare::Template" );
+
+	for ( Size i( 0 ); i < N; i++ ) {
+		insert( data[ i ], static_cast<T>(i) );
+	}
+}
+
+template<typename I, typename T, typename Compare>
 RBTree<I, T, Compare>::RBTree( const RBTree<I, T, Compare> & tree ) :
 	compareFunc( tree.compareFunc ) {
 
@@ -1412,6 +1425,8 @@ bool RBTree<I, T, Compare>::iterate( typename RBTree<I, T, Compare>::Iterator * 
 	iterate( it );
 	return true;
 }
+
+
 
 template<typename I, typename T, typename Compare>
 template<typename TestFunctor>
