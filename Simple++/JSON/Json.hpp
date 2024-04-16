@@ -68,13 +68,24 @@ namespace JSON {
 	}
 
 	template<typename S, typename C>
+	bool fromJSON( const NodeT<S>* node, const S& childName, Optional<C>* outValue, int verbose ) {
+		const JSON::NodeT<S>* childNode( node->getChild( childName ) );
+
+		if ( !fromJSON( childNode, outValue, verbose ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, C* v, int verbose ) {
 		return _fromJSON<S>( node, v, verbose, reinterpret_cast< const C* >( NULL ) );
 	}
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Optional<C>* v, int verbose ) {
-		if ( node -> getType() == JSON::NodeT<S>::Type::Null ) {
+		if ( !node || node -> getType() == JSON::NodeT<S>::Type::Null ) {
 			v -> unset();
 			return true;
 		}
@@ -228,6 +239,15 @@ namespace JSON {
 	template<typename S, typename C>
 	NodeT<S>* toJSON( const C& v ) {
 		return _toJSON<S>( v, reinterpret_cast< const C* >( NULL ) );
+	}
+
+	template<typename S, typename C>
+	NodeT<S>* toJSON( const Optional<C>& v ) {
+		if ( !v.isSet() ) {
+			return NULL;
+		}
+
+		return toJSON<S, C>( v.getValue() );
 	}
 
 	template<typename S, typename C>

@@ -127,7 +127,7 @@ namespace JSON {
 		virtual Size getNbChildren() const;
 
 		///@brief Get a child from his index
-		///@param i Index of the child to retrieve (betwwen [0 ; getNbChildren() - 1])
+		///@param i Index of the child to retrieve (between [0 ; getNbChildren() - 1])
 		///@return Child
 		virtual const NodeT<S>* getChild( Size i ) const;
 		virtual NodeT<S>* getChild( Size i );

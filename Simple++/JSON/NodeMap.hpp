@@ -89,25 +89,29 @@ namespace JSON {
 	}
 
 	template<typename S>
-	void NodeMapT<S>::addChild( NodeT<S>* child ) {
-		if ( child != NULL ) {
-			if ( child -> getParent() )
-				child -> getParent() -> removeChild( child );
+	void NodeMapT<S>::addChild( NodeT<S> * child ) {
+		if ( !child ) {
+			return;
+		}
 
-			if ( child -> getName().getSize() ) {
-				this -> childrenMap.insert( child -> getName(), child );
-			}
-		} else {
-			child = new NodeT<S>( Type::Null );
+		if ( child -> getParent() ) {
+			child -> getParent() -> removeChild( child );
+		}
+
+		if ( child -> getName().getSize() ) {
+			this -> childrenMap.insert( child -> getName(), child );
 		}
 
 		child -> parent = this;
-
 		this -> childrenVector.push( child );
 	}
 
 	template<typename S>
 	inline void NodeMapT<S>::addChild( const S& name, NodeT<S>* child ) {
+		if ( !child ) {
+			return;
+		}
+
 		child->setName( name );
 		addChild( child );
 	}

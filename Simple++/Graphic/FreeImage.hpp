@@ -238,7 +238,7 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	bool FreeImageT<T>::saveToFile( const OS::Path& filePath, CompressedFormat savingFormat, unsigned int quality ) const{
+	bool FreeImageT<T>::saveToFile( const OS::Path& filePath, CompressedFormat savingFormat, unsigned int quality ) const {
 
 	#if defined WIN32
 		bool r( FreeImage_SaveU( ( FREE_IMAGE_FORMAT ) savingFormat, const_cast< FIBITMAP* >( this -> freeImage ), filePath.toCString(), quality ) );
@@ -460,7 +460,7 @@ namespace Graphic {
 		setLoading( true );
 
 		// Create the memory stream.
-		FIMEMORY* fiMemory( FreeImage_OpenMemory( const_cast< BYTE* >( reinterpret_cast< const BYTE* >( data ) ), size ) );
+		FIMEMORY* fiMemory( FreeImage_OpenMemory( const_cast< BYTE* >( reinterpret_cast< const BYTE* >( data ) ), static_cast< DWORD >( size ) ) );
 
 		// Get the file type from the binary.
 		FREE_IMAGE_FORMAT freeImageFormat( FreeImage_GetFileTypeFromMemory( fiMemory, 0 ) );

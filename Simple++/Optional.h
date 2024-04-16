@@ -26,8 +26,10 @@ public:
 	Optional<T>& operator=( const Optional<T>& o );
 	Optional<T>& operator=( Optional<T>&& o );
 
-	T & getValue();
-	const T & getValue() const;
+	bool operator==( bool b ) const;
+
+	T& getValue();
+	const T& getValue() const;
 
 	T getValueOrDefault() const;
 
@@ -59,8 +61,13 @@ inline Optional<T>::Optional( const T& v ) :
 	v( new T( v ) ) { }
 
 template<typename T>
-inline Optional<T>::Optional( const Optional<T>& o ) :
-	v( new T( *o.v ) ) { }
+inline Optional<T>::Optional( const Optional<T>& o ) {
+	if ( o.v ) {
+		this->v = new T( *o.v );
+	} else {
+		this->v = NULL;
+	}
+}
 
 template<typename T>
 inline Optional<T>::Optional( Optional<T>&& o ) :
@@ -106,12 +113,17 @@ inline Optional<T>& Optional<T>::operator=( Optional<T>&& o ) {
 }
 
 template<typename T>
-inline T&  Optional<T>::getValue() {
+inline bool Optional<T>::operator==( bool b ) const {
+	return isSet() == b;
+}
+
+template<typename T>
+inline T& Optional<T>::getValue() {
 	return *this->v;
 }
 
 template<typename T>
-inline const T & Optional<T>::getValue() const {
+inline const T& Optional<T>::getValue() const {
 	return *this->v;
 }
 

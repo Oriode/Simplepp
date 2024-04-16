@@ -43,16 +43,16 @@ namespace JSON {
 	///@brief	Get a child node using it's name from a parent node and set the value to the given variable.
 	///			Powerfull method using type overloading to automatically convert the Node value to the correct type.
 	///			Native types are supported and Vector, BasicVector, StaticTable, Table, TimePoint and Optional.
-	///			Note : Optional are handled when a node is set to null but will still trigger an error if the node is missing.
+	///			Note : Optional are handled when a node is set to null or the node is missing.
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, const S& childName, C* outValue, int verbose = 0 );
+	template<typename S, typename C>
+	bool fromJSON( const NodeT<S>* node, const S& childName, Optional<C> * outValue, int verbose = 0 );
 
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, C* v, int verbose = 0 );
-
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Optional<C> * v, int verbose = 0 );
-
 	template<typename S, typename C>
 	bool fromJSON( const NodeT<S>* node, Table<C>* t, int verbose = 0 );
 	template<typename S, typename C, Size N>
@@ -73,6 +73,8 @@ namespace JSON {
 	NodeT<S>* toJSON();
 	template<typename S, typename C>
 	NodeT<S>* toJSON( const C& v );
+	template<typename S, typename C>
+	NodeT<S>* toJSON( const Optional<C> & v );
 	template<typename S, typename C>
 	NodeArrayT<S>* toJSON( const Table<C>& t );
 	template<typename S, typename C, Size N>
