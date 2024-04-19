@@ -75,7 +75,7 @@ namespace IO {
 
 		///@brief read the complete file stream (from begin to end) and allocate a new data and copy data inside.
 		///@param data [out] data buffer to be allocated and filled with the content of the file stream.
-		///@return number of char read. (Pointer will be set to NULL if failed, allocated otherwise.)
+		///@return number of char read if succeed, -1 otherwise. (Pointer will be set to NULL if failed, allocated otherwise.)
 		Size readToBuffer(char** buffer);
 
 		/************************************************************************/

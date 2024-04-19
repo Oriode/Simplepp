@@ -17,7 +17,8 @@ namespace Network {
 			None,
 			Text,
 			Html,
-			Params,
+			FormUrlEncoded,
+			FormMultiPart,
 			Json,
 			Xml,
 			Png
@@ -60,7 +61,7 @@ namespace Network {
 		static const StringASCII& getContentTypeString( typename ContentType contentType );
 		static typename ContentType getContentType( const StringASCII& contentTypeStr );
 
-		static const StringASCII contentTypeStrTable[7];
+		static const StringASCII contentTypeStrTable[8];
 
 	protected:
 		ContentType contentType;

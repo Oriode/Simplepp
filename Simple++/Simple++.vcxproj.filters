@@ -690,6 +690,9 @@
     <ClInclude Include="Notify.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Network\HTTPMultiPart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple++.cpp">

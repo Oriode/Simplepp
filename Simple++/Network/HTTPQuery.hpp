@@ -106,6 +106,7 @@ namespace Network {
 			StringASCII( "text/plain" ),
 			StringASCII( "text/html" ),
 			StringASCII( "application/x-www-form-urlencoded" ),
+			StringASCII( "multipart/form-data; boundary=boundary" ),
 			StringASCII( "application/json" ),
 			StringASCII( "application/xml" ),
 			StringASCII( "image/png" )

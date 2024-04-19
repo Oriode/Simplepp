@@ -2,11 +2,11 @@
 namespace Crypto {
 
 	template<typename T>
-	Vector<unsigned char> HMACSha256(const Vector<unsigned char>& keyBinary, const Vector<unsigned char>& dataBinary) {
-		Vector<unsigned char> binaryOutput;
+	Vector<char> HMACSha256(const Vector<char>& keyBinary, const Vector<char>& dataBinary) {
+		Vector<char> binaryOutput;
 		binaryOutput.reserve(EVP_MAX_MD_SIZE);
 		
-		unsigned char* it(binaryOutput.getData());
+		char* it(binaryOutput.getData());
 		if ( !HMACSha256<T>(keyBinary, dataBinary, &it) ) {
 			return binaryOutput;
 		}
@@ -18,7 +18,7 @@ namespace Crypto {
 	}
 
 	template<typename T>
-	bool HMACSha256(const Vector<unsigned char>& keyBinary, const Vector<unsigned char>& dataBinary, unsigned char** itP) {
+	bool HMACSha256(const Vector<char>& keyBinary, const Vector<char>& dataBinary, char** itP) {
 		
 		// EVP_MAX_MD_SIZE
 
@@ -28,7 +28,7 @@ namespace Crypto {
 			return false;
 		}*/
 
-		unsigned char*& it(*itP);
+		char*& it(*itP);
 
 		const EVP_MD* cypher(EVP_sha256());
 
@@ -50,11 +50,11 @@ namespace Crypto {
 	}
 
 	template<typename T>
-	Vector<unsigned char> digestSha256(const Vector<unsigned char>& dataBinary) {
-		Vector<unsigned char> binaryOutput;
+	Vector<char> digestSha256(const Vector<char>& dataBinary) {
+		Vector<char> binaryOutput;
 		binaryOutput.reserve(EVP_MAX_MD_SIZE);
 
-		unsigned char* it(binaryOutput.getData());
+		char* it(binaryOutput.getData());
 		if ( !digestSha256<T>(dataBinary, &it) ) {
 			return binaryOutput;
 		}
@@ -66,8 +66,8 @@ namespace Crypto {
 	}
 
 	template<typename T>
-	bool digestSha256(const Vector<unsigned char>& dataBinary, unsigned char** itP) {
-		unsigned char*& it(*itP);
+	bool digestSha256(const Vector<char>& dataBinary, char** itP) {
+		char*& it(*itP);
 
 		const EVP_MD* cypher(EVP_sha256());
 

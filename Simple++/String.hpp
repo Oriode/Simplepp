@@ -3936,16 +3936,16 @@ Size BasicString<T>::getLast( const T* buffer, const T* toSearch ) {
 }
 
 template<typename T>
-inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVector, T** itP ) {
+inline bool BasicString<T>::encodeBase64( const Vector<char>& dataVector, T** itP ) {
 
 	struct EncodeFunctor {
 		EncodeFunctor( const T* encodingTable ) : encodingTable( encodingTable ) { }
 
-		void encode( T* outputIt, const unsigned char* inputIt ) const {
-			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
-			unsigned char c1( ( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4 );
-			unsigned char c2( ( inputIt[ 1 ] & 0xF ) << 2 | ( inputIt[ 2 ] & 0xC0 ) >> 6 );
-			unsigned char c3( inputIt[ 2 ] & 0x3F );
+		void encode( T* outputIt, const char* inputIt ) const {
+			char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
+			char c1( ( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4 );
+			char c2( ( inputIt[ 1 ] & 0xF ) << 2 | ( inputIt[ 2 ] & 0xC0 ) >> 6 );
+			char c3( inputIt[ 2 ] & 0x3F );
 
 			outputIt[ 0 ] = this->encodingTable[ c0 ];
 			outputIt[ 1 ] = this->encodingTable[ c1 ];
@@ -3953,9 +3953,9 @@ inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVecto
 			outputIt[ 3 ] = this->encodingTable[ c3 ];
 		}
 
-		void encode1( T* outputIt, const unsigned char* inputIt ) const {
-			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
-			unsigned char c1( ( inputIt[ 0 ] & 0x3 ) << 4 );
+		void encode1( T* outputIt, const char* inputIt ) const {
+			char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
+			char c1( ( inputIt[ 0 ] & 0x3 ) << 4 );
 
 			outputIt[ 0 ] = this->encodingTable[ c0 ];
 			outputIt[ 1 ] = this->encodingTable[ c1 ];
@@ -3963,10 +3963,10 @@ inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVecto
 			outputIt[ 3 ] = T( '=' );
 		}
 
-		void encode2( T* outputIt, const unsigned char* inputIt ) const {
-			unsigned char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
-			unsigned char c1( ( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4 );
-			unsigned char c2( ( inputIt[ 1 ] & 0xF ) << 2 );
+		void encode2( T* outputIt, const char* inputIt ) const {
+			char c0( ( inputIt[ 0 ] & 0xFC ) >> 2 );
+			char c1( ( inputIt[ 0 ] & 0x3 ) << 4 | ( inputIt[ 1 ] & 0xF0 ) >> 4 );
+			char c2( ( inputIt[ 1 ] & 0xF ) << 2 );
 
 			outputIt[ 0 ] = this->encodingTable[ c0 ];
 			outputIt[ 1 ] = this->encodingTable[ c1 ];
@@ -3981,9 +3981,9 @@ inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVecto
 
 	T*& it( *itP );
 
-	const unsigned char* inputIt( dataVector.getBegin() );
-	const unsigned char* inputEndIt( dataVector.getEnd() );
-	const unsigned char* inputEndItFloor( dataVector.getBegin() + dataVector.getSize() / Size( 3 ) * Size( 3 ) );
+	const char* inputIt( dataVector.getBegin() );
+	const char* inputEndIt( dataVector.getEnd() );
+	const char* inputEndItFloor( dataVector.getBegin() + dataVector.getSize() / Size( 3 ) * Size( 3 ) );
 	for ( ; inputIt < inputEndItFloor; it += 4, inputIt += 3 ) {
 		encodeFunctor.encode( it, inputIt );
 	}
@@ -4009,7 +4009,7 @@ inline bool BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVecto
 }
 
 template<typename T>
-inline BasicString<T> BasicString<T>::encodeBase64( const Vector<unsigned char>& dataVector ) {
+inline BasicString<T> BasicString<T>::encodeBase64( const Vector<char>& dataVector ) {
 	BasicString<T> outputStr;
 	Size newSize( BasicString<T>::getBase64EncodeSize( dataVector ) );
 	outputStr.resize( newSize );
@@ -4021,62 +4021,62 @@ inline BasicString<T> BasicString<T>::encodeBase64( const Vector<unsigned char>&
 }
 
 template<typename T>
-inline bool BasicString<T>::decodeBase64( const BasicString<T>& inputStr, unsigned char** itP ) {
+inline bool BasicString<T>::decodeBase64( const BasicString<T>& inputStr, char** itP ) {
 	struct DecodeFunctor {
 		DecodeFunctor( const T* encodingTable ) {
 			for ( Size i( 0 ); i < Size( 256 ); i++ ) {
 				// Use the value 0 as an error.
-				this->decodingTable[ i ] = unsigned char( 0 );
+				this->decodingTable[ i ] = char( 0 );
 			}
 
-			for ( unsigned char i( 0 ); i < Size( 64 ); i++ ) {
-				this->decodingTable[ unsigned char( encodingTable[ i ] ) ] = i;
+			for ( char i( 0 ); i < Size( 64 ); i++ ) {
+				this->decodingTable[ char( encodingTable[ i ] ) ] = i;
 			}
-			this->decodingTable[ unsigned char( T( '=' ) ) ] = unsigned char( 0 );
+			this->decodingTable[ char( T( '=' ) ) ] = char( 0 );
 		}
 
-		void decode( unsigned char* outputIt, const T* inputIt ) {
-			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
-			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
-			unsigned char c2( this->decodingTable[ inputIt[ 2 ] ] );
-			unsigned char c3( this->decodingTable[ inputIt[ 3 ] ] );
+		void decode( char* outputIt, const T* inputIt ) {
+			char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			char c1( this->decodingTable[ inputIt[ 1 ] ] );
+			char c2( this->decodingTable[ inputIt[ 2 ] ] );
+			char c3( this->decodingTable[ inputIt[ 3 ] ] );
 
-			unsigned char b0( c0 << 2 | c1 >> 4 );
-			unsigned char b1( c1 << 4 | c2 >> 2 );
-			unsigned char b2( c2 << 6 | c3 );
+			char b0( c0 << 2 | c1 >> 4 );
+			char b1( c1 << 4 | c2 >> 2 );
+			char b2( c2 << 6 | c3 );
 
 			outputIt[ 0 ] = b0;
 			outputIt[ 1 ] = b1;
 			outputIt[ 2 ] = b2;
 		}
 
-		void decode2( unsigned char* outputIt, const T* inputIt ) {
-			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
-			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
+		void decode2( char* outputIt, const T* inputIt ) {
+			char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			char c1( this->decodingTable[ inputIt[ 1 ] ] );
 
-			unsigned char b0( c0 << 2 | c1 >> 4 );
+			char b0( c0 << 2 | c1 >> 4 );
 
 			outputIt[ 0 ] = b0;
 		}
 
-		void decode3( unsigned char* outputIt, const T* inputIt ) {
-			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
-			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
-			unsigned char c2( this->decodingTable[ inputIt[ 2 ] ] );
+		void decode3( char* outputIt, const T* inputIt ) {
+			char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			char c1( this->decodingTable[ inputIt[ 1 ] ] );
+			char c2( this->decodingTable[ inputIt[ 2 ] ] );
 
-			unsigned char b0( c0 << 2 | c1 >> 4 );
-			unsigned char b1( c1 << 4 | c2 >> 2 );
+			char b0( c0 << 2 | c1 >> 4 );
+			char b1( c1 << 4 | c2 >> 2 );
 
 			outputIt[ 0 ] = b0;
 			outputIt[ 1 ] = b1;
 		}
 
-		unsigned char decodingTable[ 256 ];
+		char decodingTable[ 256 ];
 	};
 
 	static DecodeFunctor decodeFunctor( BasicString<T>::base64CharTable );
 
-	unsigned char*& it( *itP );
+	char*& it( *itP );
 
 	const T* inputIt( inputStr.getBegin() );
 	const T* inputEndIt( inputStr.getEnd() );
@@ -4115,12 +4115,12 @@ inline bool BasicString<T>::decodeBase64( const BasicString<T>& inputStr, unsign
 }
 
 template<typename T>
-inline Vector<unsigned char> BasicString<T>::decodeBase64( const BasicString<T>& inputStr ) {
-	Vector<unsigned char> outputVector;
+inline Vector<char> BasicString<T>::decodeBase64( const BasicString<T>& inputStr ) {
+	Vector<char> outputVector;
 	Size reserveSize( BasicString<T>::getBase64DecodeReserveSize( inputStr ) );
 	outputVector.reserve( reserveSize );
 
-	unsigned char* it( outputVector.dataTable );
+	char* it( outputVector.dataTable );
 	if ( !decodeBase64( inputStr, &it ) ) {
 		outputVector.clear();
 		return outputVector;
@@ -4133,7 +4133,7 @@ inline Vector<unsigned char> BasicString<T>::decodeBase64( const BasicString<T>&
 }
 
 template<typename T>
-inline Size BasicString<T>::getBase64EncodeSize( const Vector<unsigned char>& dataVector ) {
+inline Size BasicString<T>::getBase64EncodeSize( const Vector<char>& dataVector ) {
 	return ( dataVector.getSize() + Size( 2 ) ) / Size( 3 ) * Size( 4 );
 }
 
@@ -4167,7 +4167,7 @@ inline Size BasicString<T>::encodeUrl( const T* inputStr, T** outStr ) {
 			break;
 		}
 
-		unsigned char i( static_cast< unsigned char >( c ) );
+		char i( static_cast< char >( c ) );
 
 
 		// Specials chars not to be printed.
@@ -4262,12 +4262,12 @@ inline BasicString<T> BasicString<T>::escapeSpecials( const BasicString<T>& inpu
 }
 
 template<typename T>
-inline bool BasicString<T>::encodeHexadecimal( const Vector<unsigned char>& dataVector, T** itP ) {
+inline bool BasicString<T>::encodeHexadecimal( const Vector<char>& dataVector, T** itP ) {
 
 	T*& it( *itP );
 
-	unsigned char* inputIt( dataVector.getBegin() );
-	const unsigned char* inputEndIt( dataVector.getEnd() );
+	char* inputIt( dataVector.getBegin() );
+	const char* inputEndIt( dataVector.getEnd() );
 
 	for ( ; inputIt < inputEndIt; inputIt++ ) {
 		BasicString<T>::toCStringHexadecimal( dataVector.getValueIt( inputIt ), &it );
@@ -4277,7 +4277,7 @@ inline bool BasicString<T>::encodeHexadecimal( const Vector<unsigned char>& data
 }
 
 template<typename T>
-inline BasicString<T> BasicString<T>::encodeHexadecimal( const Vector<unsigned char>& dataVector ) {
+inline BasicString<T> BasicString<T>::encodeHexadecimal( const Vector<char>& dataVector ) {
 	BasicString<T> outputStr;
 	outputStr.resize( dataVector.getSize() << 1 );
 
@@ -4290,36 +4290,36 @@ inline BasicString<T> BasicString<T>::encodeHexadecimal( const Vector<unsigned c
 }
 
 template<typename T>
-inline bool BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr, unsigned char** itP ) {
+inline bool BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr, char** itP ) {
 	struct DecodeFunctor {
 		DecodeFunctor( const T* encodingTable ) {
 			for ( Size i( 0 ); i < Size( 256 ); i++ ) {
 				// Use the value 0 as an error.
-				this->decodingTable[ i ] = unsigned char( 0 );
+				this->decodingTable[ i ] = char( 0 );
 			}
 
-			for ( unsigned char i( 0 ); i < Size( 16 ); i++ ) {
-				this->decodingTable[ unsigned char( encodingTable[ i ] ) ] = i;
+			for ( char i( 0 ); i < Size( 16 ); i++ ) {
+				this->decodingTable[ char( encodingTable[ i ] ) ] = i;
 			}
 		}
 
-		void decode( unsigned char* outputIt, const T* inputIt ) {
-			unsigned char c0( this->decodingTable[ inputIt[ 0 ] ] );
-			unsigned char c1( this->decodingTable[ inputIt[ 1 ] ] );
+		void decode( char* outputIt, const T* inputIt ) {
+			char c0( this->decodingTable[ inputIt[ 0 ] ] );
+			char c1( this->decodingTable[ inputIt[ 1 ] ] );
 
-			unsigned char b0( c0 << 4 | c1 );
+			char b0( c0 << 4 | c1 );
 
 			outputIt[ 0 ] = b0;
 		}
 
-		unsigned char decodingTable[ 256 ];
+		char decodingTable[ 256 ];
 	};
 
 	static DecodeFunctor decodeFunctor( BasicString<T>::numbers );
 
-	unsigned char*& it( *itP );
+	char*& it( *itP );
 
-	const unsigned char* endIt( it + ( inputStr.getSize() >> 1 ) );
+	const char* endIt( it + ( inputStr.getSize() >> 1 ) );
 	const T* inputIt( inputStr.getBegin() );
 
 	for ( ; it < endIt; inputIt += 2, it++ ) {
@@ -4330,11 +4330,11 @@ inline bool BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr, u
 }
 
 template<typename T>
-inline Vector<unsigned char> BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr ) {
-	Vector<unsigned char> outputVector;
+inline Vector<char> BasicString<T>::decodeHexadecimal( const BasicString<T>& inputStr ) {
+	Vector<char> outputVector;
 	outputVector.resize( inputStr.getSize() >> 1 );
 
-	unsigned char* it( outputVector.dataTable );
+	char* it( outputVector.dataTable );
 	if ( !BasicString<T>::decodeHexadecimal( inputStr, &it ) ) {
 		outputVector.clear();
 	}

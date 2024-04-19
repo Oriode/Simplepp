@@ -507,6 +507,49 @@ namespace Graphic {
 		return true;
 	}
 
+	template<typename T>
+	inline Size FreeImageT<T>::getCompressed( CompressedFormat format, void* outData, Size maxSize, int jpgQuality ) {
+
+		lock();
+
+		// If the object is not loaded, fails.
+		if ( !isLoaded() ) {
+			unload();
+			return Size( -1 );
+		}
+
+		// Create the memory stream.
+		FIMEMORY* fiMemory( FreeImage_OpenMemory() );
+
+		FREE_IMAGE_FORMAT freeImageFormat( static_cast< FREE_IMAGE_FORMAT >( format ) );
+
+		int flags = 0;
+		if ( format == CompressedFormat::JPG ) {
+			flags = jpgQuality;
+		}
+
+		// Save to memory.
+		if ( !FreeImage_SaveToMemory( freeImageFormat, this->freeImage, fiMemory, flags ) ) {
+			unlock();
+			return Size( -1 );
+		}
+
+		long writtenBytes = FreeImage_TellMemory( fiMemory );
+
+		// Seek the begining of the stream.
+		FreeImage_SeekMemory( fiMemory, 0L, SEEK_SET );
+
+		// Read the FreeImage stream to the output data buffer.
+		FreeImage_ReadMemory( outData, static_cast< unsigned int >( writtenBytes ), 1u, fiMemory );
+
+		// Close the memory stream.
+		FreeImage_CloseMemory( fiMemory );
+
+		unlock();
+
+		return Size( writtenBytes );
+	}
+
 	template <typename T>
 	Math::vec4 FreeImageT<T>::getPixelf( GSize x, GSize y ) const {
 		unsigned int iIndex = ( y * this -> size.x + x ) * ( this -> BPP / 8 );

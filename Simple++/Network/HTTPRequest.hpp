@@ -147,11 +147,6 @@ namespace Network {
 	template<typename T>
 	template<typename EndFunc>
 	inline bool HTTPRequestT<T>::parseQueryContent( const StringASCII::ElemType** itP, const EndFunc& endFunc ) {
-		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			if ( !this->url.parseParams( itP, endFunc ) ) {
-				return false;
-			}
-		}
 		return true;
 	}
 
@@ -166,12 +161,6 @@ namespace Network {
 	template<typename T>
 	inline void HTTPRequestT<T>::formatQuery( StringASCII* outputStr ) const {
 		formatQueryTitle( outputStr );
-
-		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			StringASCII paramStr;
-			this->url.formatParams( &paramStr );
-			const_cast< HTTPRequestT<T>* >( this )->setContent( paramStr );
-		}
 
 		HTTPQueryT<T>::formatQuery( outputStr );
 	}
@@ -236,11 +225,7 @@ namespace Network {
 
 		str << HTTPRequestT<T>::getVerbStr( this->verb );
 		str << StringASCII::ElemType( ' ' );
-		if ( this->contentType == HTTPQueryT<T>::ContentType::Params ) {
-			this->url.formatPathWOParams( &str );
-		} else {
-			this->url.formatPathAndParams( &str );
-		}
+		this->url.formatPathAndParams( &str );
 		str << StringASCII::ElemType( ' ' );
 		str << this->protocolStr;
 		str << StringASCII::ElemType( '\r' );
