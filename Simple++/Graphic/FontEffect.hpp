@@ -36,7 +36,7 @@ namespace Graphic {
 			ImageT<T> imageMask( buffer, size, LoadingFormat::R, true );
 
 			// Now Clear the final image
-			image -> clear( Math::Vec2<Size>( Size( -this -> bias.x + size.x ) + this -> margins.getRight(), Size( -this -> bias.y + size.y ) + this -> margins.getTop() ), Format::RGBA );
+			image -> clear( Math::Vec2<GSize>( Size( -this -> bias.x + size.x ) + this -> margins.getRight(), Size( -this -> bias.y + size.y ) + this -> margins.getTop() ), Format::RGBA );
 
 			image -> fillImage( ColorRGBA<T>( Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin(), Color<T>::getMin() ) );
 

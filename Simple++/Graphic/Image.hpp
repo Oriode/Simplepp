@@ -6,12 +6,12 @@ namespace Graphic {
 	ImageT<T>::ImageT( Format format ) :
 		format( format ),
 		buffer( NULL ),
-		size( Math::Vec2<Size>::null ),
+		size( Math::Vec2<GSize>::null ),
 		nbPixels( 0 ) {
 	}
 
 	template<typename T>
-	Graphic::ImageT<T>::ImageT( const Math::Vec2<Size> & size, Format format ) :
+	Graphic::ImageT<T>::ImageT( const Math::Vec2<GSize> & size, Format format ) :
 		format( format ),
 		size( size ),
 		nbPixels( size.x * size.y ),
@@ -91,20 +91,20 @@ namespace Graphic {
 
 
 	template<typename T>
-	ImageT<T>::ImageT( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	ImageT<T>::ImageT( const T * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 	template<typename T>
 	template<typename U>
-	ImageT<T>::ImageT( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	ImageT<T>::ImageT( const U * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 
 	template<typename T>
 	template<typename U>
-	void ImageT<T>::_allocateAndCopy( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::_allocateAndCopy( const U * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		this -> size = size;
 		this -> nbPixels = size.x * size.y;
 
@@ -128,10 +128,10 @@ namespace Graphic {
 						if ( invertY ) {
 							auto otherIt = ( const U * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							T * thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
 									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
 									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
@@ -145,10 +145,10 @@ namespace Graphic {
 						} else {
 							auto otherIt = data;
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
 									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
 									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
@@ -167,10 +167,10 @@ namespace Graphic {
 						if ( invertY ) {
 							auto otherIt = ( const U * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
 									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
 									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
@@ -185,10 +185,10 @@ namespace Graphic {
 						} else {
 							auto otherIt = data;
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									Color<T>::castComponent( thisIt2[0], otherIt2[2] );
 									Color<T>::castComponent( thisIt2[1], otherIt2[1] );
 									Color<T>::castComponent( thisIt2[2], otherIt2[0] );
@@ -210,10 +210,10 @@ namespace Graphic {
 							//Copy row per row.
 							auto otherIt = ( const U * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < nbComponentsPerRow; x++ ) {
+								for ( GSize x = 0; x < nbComponentsPerRow; x++ ) {
 									Color<T>::castComponent( thisIt2[0], otherIt2[0] );
 									thisIt2++;
 									otherIt2++;
@@ -226,10 +226,10 @@ namespace Graphic {
 							if ( stride ) {
 								auto otherIt = data;
 								auto thisIt = getDatas();
-								for ( Size y = 0; y < size.y; y++ ) {
+								for ( GSize y = 0; y < size.y; y++ ) {
 									auto thisIt2 = thisIt;
 									auto otherIt2 = otherIt;
-									for ( Size x = 0; x < nbComponentsPerRow; x++ ) {
+									for ( GSize x = 0; x < nbComponentsPerRow; x++ ) {
 										Color<T>::castComponent( thisIt2[0], otherIt2[0] );
 										thisIt2++;
 										otherIt2++;
@@ -252,7 +252,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void ImageT<T>::_allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::_allocateAndCopy( const T * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		this -> size = size;
 		this -> nbPixels = size.x * size.y;
 
@@ -277,10 +277,10 @@ namespace Graphic {
 
 							auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							T * thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									thisIt2[0] = otherIt2[2];
 									thisIt2[1] = otherIt2[1];
 									thisIt2[2] = otherIt2[0];
@@ -294,10 +294,10 @@ namespace Graphic {
 						} else {
 							auto otherIt = data;
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									thisIt2[0] = otherIt2[2];
 									thisIt2[1] = otherIt2[1];
 									thisIt2[2] = otherIt2[0];
@@ -316,10 +316,10 @@ namespace Graphic {
 						if ( invertY ) {
 							auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									thisIt2[0] = otherIt2[2];
 									thisIt2[1] = otherIt2[1];
 									thisIt2[2] = otherIt2[0];
@@ -334,10 +334,10 @@ namespace Graphic {
 						} else {
 							auto otherIt = data;
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								auto thisIt2 = thisIt;
 								auto otherIt2 = otherIt;
-								for ( Size x = 0; x < size.x; x++ ) {
+								for ( GSize x = 0; x < size.x; x++ ) {
 									thisIt2[0] = otherIt2[2];
 									thisIt2[1] = otherIt2[1];
 									thisIt2[2] = otherIt2[0];
@@ -359,7 +359,7 @@ namespace Graphic {
 							//Copy row per row.
 							auto otherIt = ( const T * ) ( ( ( const unsigned char * ) data ) + strideBytes * ( size.y - 1 ) );
 							auto thisIt = getDatas();
-							for ( Size y = 0; y < size.y; y++ ) {
+							for ( GSize y = 0; y < size.y; y++ ) {
 								Utility::copy( thisIt, otherIt, nbComponentsPerRow );
 								thisIt += nbComponentsPerRow;
 								otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) - strideBytes );
@@ -369,7 +369,7 @@ namespace Graphic {
 							if ( stride ) {
 								auto otherIt = data;
 								auto thisIt = getDatas();
-								for ( Size y = 0; y < size.y; y++ ) {
+								for ( GSize y = 0; y < size.y; y++ ) {
 									Utility::copy( thisIt, otherIt, nbComponentsPerRow );
 									thisIt += nbComponentsPerRow;
 									otherIt = ( const T* ) ( ( ( const unsigned char* ) otherIt ) + strideBytes );
@@ -397,7 +397,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void Graphic::ImageT<T>::setPixel( Size x, Size y, const T * p ) {
+	void Graphic::ImageT<T>::setPixel( GSize x, GSize y, const T * p ) {
 		switch ( this -> format ) {
 			case Format::R:
 				getDatas()[( this -> size.x * y + x )] = *p;
@@ -419,7 +419,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	const T * ImageT<T>::getPixel( Size x, Size y ) const {
+	const T * ImageT<T>::getPixel( GSize x, GSize y ) const {
 		return getDatas( x, y );
 	}
 
@@ -427,7 +427,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	T * Graphic::ImageT<T>::getPixel( Size x, Size y ) {
+	T * Graphic::ImageT<T>::getPixel( GSize x, GSize y ) {
 		return getDatas( x, y );
 	}
 
@@ -435,7 +435,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	size_t ImageT<T>::getDataOffset( Size x, Size y ) const {
+	size_t ImageT<T>::getDataOffset( GSize x, GSize y ) const {
 		return ( y * this -> size.x + x ) * getNbComponents();
 	}
 
@@ -458,14 +458,14 @@ namespace Graphic {
 
 
 	template<typename T>
-	void ImageT<T>::setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::setDatas( const T * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		delete[] this -> buffer;
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
 
 	template<typename T>
 	template<typename U>
-	void ImageT<T>::setDatas( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
+	void ImageT<T>::setDatas( const U * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat, bool invertY, size_t stride ) {
 		delete[] this -> buffer;
 		_allocateAndCopy( data, size, loadingFormat, invertY, stride );
 	}
@@ -597,24 +597,24 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	T * ImageT<T>::getDatas( Size x, Size y ) {
+	T * ImageT<T>::getDatas( GSize x, GSize y ) {
 		return this -> buffer + getDataOffset( x, y );
 	}
 
 	template<typename T>
-	const T * ImageT<T>::getDatas( Size x, Size y ) const {
+	const T * ImageT<T>::getDatas( GSize x, GSize y ) const {
 		return this -> buffer + getDataOffset( x, y );
 	}
 
 	template<typename T>
 	template<typename C>
-	C * ImageT<T>::getDatas( Size x, Size y ) {
+	C * ImageT<T>::getDatas( GSize x, GSize y ) {
 		return ( ( C* )this -> buffer ) + this -> size.x * y + x;
 	}
 
 	template<typename T>
 	template<typename C>
-	const C * ImageT<T>::getDatas( Size x, Size y ) const {
+	const C * ImageT<T>::getDatas( GSize x, GSize y ) const {
 		return ( ( const C* )this -> buffer ) + this -> size.x * y + x;
 	}
 
@@ -629,7 +629,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	const Math::Vec2<Size> & ImageT<T>::getSize() const {
+	const Math::Vec2<GSize> & ImageT<T>::getSize() const {
 		return this -> size;
 	}
 
@@ -644,7 +644,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	void ImageT<T>::clear( const Math::Vec2<Size> & size ) {
+	void ImageT<T>::clear( const Math::Vec2<GSize> & size ) {
 		delete[] this -> buffer;
 
 		this -> size = size;
@@ -658,7 +658,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	void ImageT<T>::clear( const Math::Vec2<Size> & size, Format format ) {
+	void ImageT<T>::clear( const Math::Vec2<GSize> & size, Format format ) {
 		delete[] this -> buffer;
 
 		this -> size = size;
@@ -678,7 +678,7 @@ namespace Graphic {
 	ImageT<T> * ImageT<T>::createMipmap() {
 		if ( getDatas() == NULL )
 			return NULL;
-		Math::Vec2<Size> newSize = getSize() / Math::Vec2<Size>( 2 );
+		Math::Vec2<GSize> newSize = getSize() / Math::Vec2<GSize>( 2 );
 		if ( newSize.x == 0 || newSize.y == 0 )
 			return NULL;
 
@@ -701,7 +701,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename SumType, typename C>
 	ImageT<T> * ImageT<T>::_createMipmap( ImageT<T> * newImage, ... ) {
-		Math::Vec2<Size> i( 0 );
+		Math::Vec2<GSize> i( 0 );
 
 		auto newSize = newImage -> getSize();
 		auto newImageData = newImage -> getDatas<C>();
@@ -734,7 +734,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename SumType, typename C>
 	ImageT<T> * ImageT<T>::_createMipmap( ImageT<T> * newImage, typename Float * ) {
-		Math::Vec2<Size> i( 0 );
+		Math::Vec2<GSize> i( 0 );
 
 		auto newSize = newImage -> getSize();
 		auto newImageData = newImage -> getDatas<C>();
@@ -896,12 +896,12 @@ namespace Graphic {
 	template<typename Functor, typename C>
 	void ImageT<T>::_setPixels( Functor & functor, const Rectangle & rectangle ) {
 
-		Math::Rectangle<Size> rectangleUI = clampRectangle( rectangle );
+		Math::Rectangle<GSize> rectangleUI = clampRectangle( rectangle );
 		auto it = getDatas<C>( rectangleUI.getLeft(), rectangleUI.getBottom() );
-		typename Math::Vec2<Size>::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
+		typename Math::Vec2<GSize>::Type width = rectangleUI.getRight() - rectangleUI.getLeft();
 		size_t nbComponentsPerLine = this -> size.x;
 
-		Math::Vec2<typename Math::Vec2<Size>::Type> i;
+		Math::Vec2<typename Math::Vec2<GSize>::Type> i;
 		for ( i.y = rectangleUI.getBottom(); i.y < rectangleUI.getTop(); i.y++ ) {
 			auto it2 = it;
 			for ( i.x = rectangleUI.getLeft(); i.x < rectangleUI.getRight(); i.x++ ) {
@@ -913,8 +913,8 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	Math::Rectangle<Size> ImageT<T>::clampRectangle( const Rectangle & rectangle ) const {
-		Math::Rectangle<Size> rectangleUI;
+	Math::Rectangle<GSize> ImageT<T>::clampRectangle( const Rectangle & rectangle ) const {
+		Math::Rectangle<GSize> rectangleUI;
 
 		if ( rectangle.getBottom() < 0 ) 		rectangleUI.setBottom( 0 );
 		else							rectangleUI.setBottom( rectangle.getBottom() );
@@ -1098,8 +1098,8 @@ namespace Graphic {
 		constexpr size_t N1 = sizeof( C1 ) / sizeof( T );
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
-		Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<Size> otherImageBegin;
+		Math::Vec2<GSize> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<GSize> otherImageBegin;
 		Point size;
 		if ( point.x < 0 ) {
 			begin.x = 0;
@@ -1289,8 +1289,8 @@ namespace Graphic {
 			}
 
 		} else {
-			Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-			Math::Vec2<Size> otherImageBegin;
+			Math::Vec2<GSize> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+			Math::Vec2<GSize> otherImageBegin;
 			Point size;
 			if ( point.x < 0 ) {
 				begin.x = 0;
@@ -1425,8 +1425,8 @@ namespace Graphic {
 			}
 		} else {
 
-			Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-			Math::Vec2<Size> otherImageBegin;
+			Math::Vec2<GSize> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+			Math::Vec2<GSize> otherImageBegin;
 			Point size;
 
 			if ( point.x < 0 ) {
@@ -1652,9 +1652,9 @@ namespace Graphic {
 
 
 		} else {
-			Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-			Math::Vec2<Size> otherImageBegin;
-			Math::Vec2<Size> maskBegin;
+			Math::Vec2<GSize> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+			Math::Vec2<GSize> otherImageBegin;
+			Math::Vec2<GSize> maskBegin;
 			Point size;
 
 			if ( maskPoint.x < 0 ) {
@@ -1824,7 +1824,7 @@ namespace Graphic {
 
 			Point size( rectangle.getRight() - rectangle.getLeft(), rectangle.getTop() - rectangle.getBottom() );
 
-			Math::Vec2<Size> i;
+			Math::Vec2<GSize> i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
@@ -1839,8 +1839,8 @@ namespace Graphic {
 				maskIt += maskImageOffset;
 			}
 		} else {
-			Math::Vec2<Size> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-			Math::Vec2<Size> maskImageBegin;
+			Math::Vec2<GSize> begin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+			Math::Vec2<GSize> maskImageBegin;
 			Point size;
 			if ( point.x < 0 ) {
 				begin.x = 0;
@@ -1868,7 +1868,7 @@ namespace Graphic {
 
 			if ( size.x <= 0 || size.y <= 0 ) return;
 
-			Math::Rectangle<Size> rectangleClamped( begin.x, begin.y, begin.x + size.x, begin.y + size.y );
+			Math::Rectangle<GSize> rectangleClamped( begin.x, begin.y, begin.x + size.x, begin.y + size.y );
 
 			colorFunc.init( rectangleClamped );
 
@@ -1879,7 +1879,7 @@ namespace Graphic {
 			auto maskImageOffset = maskImage.getSize().x;
 
 
-			Math::Vec2<Size> i;
+			Math::Vec2<GSize> i;
 			for ( i.y = 0; i.y < size.y; i.y++ ) {
 				auto thisIt2 = thisIt;
 				auto otherIt2 = maskIt;
@@ -1906,18 +1906,18 @@ namespace Graphic {
 
 
 	template<typename T>
-	ImageT<T> ImageT<T>::applyGaussianBlur( Size radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
+	ImageT<T> ImageT<T>::applyGaussianBlur( GSize radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) const {
 
 		typedef KernelType F;
 		struct ApplyGaussian {
 			ApplyGaussian( const ImageT<T> & image ) : image( image ) {
-				for ( Size i = 0; i < 10; i++ ) {
+				for ( GSize i = 0; i < 10; i++ ) {
 					Size diameter = i * 2 + 1;
 					kernels[i] = new F[diameter];
 					computeGaussianKernel( kernels[i], diameter );
 				}
 			}
-			inline ImageT<T> operator()( Size radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) {
+			inline ImageT<T> operator()( GSize radius, ConvolutionMode convolutionMode, const ColorRGBA<T> & color ) {
 				Size diameter = radius * 2 + 1;
 				if ( radius < 10 ) return this -> image.applyFilter<F>( this -> kernels[radius], this -> kernels[radius], diameter, ConvolutionOrder::HorizontalVertical, convolutionMode, color );
 				else {
@@ -1931,7 +1931,7 @@ namespace Graphic {
 			}
 
 			~ApplyGaussian() {
-				for ( Size i = 0; i < 10; i++ )
+				for ( GSize i = 0; i < 10; i++ )
 					delete[] this -> kernels[i];
 			}
 
@@ -1982,7 +1982,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename F, typename KernelFunc, typename T1>
-	ImageT<T> ImageT<T>::applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T> ImageT<T>::applyFilter( const F * filterX, const F * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		if ( getDatas() == NULL ) return *this;
 		switch ( getFormat() ) {
 			case Format::R: return _applyFilter<T1, ColorR<T>, T, ColorR<T>, ColorR<F>, KernelFunc>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
@@ -1993,18 +1993,18 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	ImageT<T2> ImageT<T>::_applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const float * filterX, const float * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		return _applyFilterf<T1, C1, T2, C2, KernelFunc, float>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
 	}
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	ImageT<T2> ImageT<T>::_applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const double * filterX, const double * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		return _applyFilterf<T1, C1, T2, C2, KernelFunc, double>( filterX, filterY, size, convolutionOrder, convolutionMode, color, kernelFunc );
 	}
 
 	template<typename T>
 	template<typename F, typename KernelFunc, typename T1>
-	ImageT<T> ImageT<T>::applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T> ImageT<T>::applyFilter( const F * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T> & color, KernelFunc & kernelFunc ) const {
 		if ( getDatas() == NULL ) return *this;
 		switch ( getFormat() ) {
 			case Format::R: return _applyFilter<T1, ColorR<T>, T, ColorR<T>, ColorR<F>, KernelFunc>( filter, size, convolutionMode, color, kernelFunc );
@@ -2018,19 +2018,19 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	ImageT<T2> ImageT<T>::_applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const float * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		return _applyFilterf<T1, C1, T2, C2, KernelFunc, float>( filter, size, convolutionMode, color, kernelFunc );
 	}
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename SumType, typename KernelFunc>
-	ImageT<T2> ImageT<T>::_applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const double * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		return _applyFilterf<T1, C1, T2, C2, KernelFunc, double>( filter, size, convolutionMode, color, kernelFunc );
 	}
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-	ImageT<T2> ImageT<T>::_applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const F * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		ASSERT_SPP( size.x % 2 == 1 );
 		ASSERT_SPP( size.y % 2 == 1 );
 
@@ -2053,8 +2053,8 @@ namespace Graphic {
 		Math::Vec2<typename Size> borderSize = borderSize1 + borderSize2;
 
 
-		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
-		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
+		Math::Vec2<GSize> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
+		Math::Vec2<GSize> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
 
 		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
 		ImageT<T2> imageExtended( sizeExtended, this -> getFormat() );
@@ -2072,7 +2072,7 @@ namespace Graphic {
 			// Left
 			for ( auto it = imageBorderIt; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize.x; x++ ) {
+				for ( GSize x = 0; x < borderSize.x; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2080,7 +2080,7 @@ namespace Graphic {
 			//Right
 			for ( auto it = imageBorderIt + imageBorder.getSize().x - borderSize.x; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize.x; x++ ) {
+				for ( GSize x = 0; x < borderSize.x; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2100,7 +2100,7 @@ namespace Graphic {
 		{
 			auto thisIt = this -> getDatas<C1>();
 			auto imageBorderIt = imageBorder.getDatas<C2>( borderSize.x, borderSize.y );
-			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < this -> size.y; y++ ) {
 				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
@@ -2114,17 +2114,17 @@ namespace Graphic {
 
 			constexpr F max( ( 1 << ImageT<T1>::getKernelSumNbBits<F>() ) * Color<T1>::getMax() );
 
-			for ( typename Math::Vec2<Size>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
 				auto imageExtendedIt2 = imageBorderIt;
 				auto imageHoriIt2 = imageExtendedIt;
-				for ( typename Math::Vec2<Size>::Type x = 0; x < imageExtended.getSize().x; x++ ) {
+				for ( typename Math::Vec2<GSize>::Type x = 0; x < imageExtended.getSize().x; x++ ) {
 					auto imageExtendedIt3 = imageExtendedIt2;
 					auto filterIt2 = filter;
 
 					Sum sum( 0 );
-					for ( Size y = 0; y < size.y; y++ ) {
+					for ( GSize y = 0; y < size.y; y++ ) {
 						auto imageExtendedIt4 = imageExtendedIt3;
-						for ( Size x = 0; x < size.x; x++ ) {
+						for ( GSize x = 0; x < size.x; x++ ) {
 							sum += Sum( imageExtendedIt4[0] ) * *( filterIt2 );
 
 							imageExtendedIt4++;
@@ -2150,7 +2150,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-	ImageT<T2> ImageT<T>::_applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilterf( const F * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		ASSERT_SPP( size.x % 2 == 1 );
 		ASSERT_SPP( size.y % 2 == 1 );
 
@@ -2173,8 +2173,8 @@ namespace Graphic {
 		Math::Vec2<typename Size> borderSize = borderSize1 + borderSize2;
 
 
-		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
-		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
+		Math::Vec2<GSize> sizeExtended( this -> size.x + borderSize2.x * 2, this -> size.y + borderSize2.y * 2 );
+		Math::Vec2<GSize> sizeBorder( this -> size.x + borderSize.x * 2, this -> size.y + borderSize.y * 2 );
 
 		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
 		ImageT<T2> imageExtended( sizeExtended, this -> getFormat() );
@@ -2192,7 +2192,7 @@ namespace Graphic {
 			// Left
 			for ( auto it = imageBorderIt; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize.x; x++ ) {
+				for ( GSize x = 0; x < borderSize.x; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2200,7 +2200,7 @@ namespace Graphic {
 			//Right
 			for ( auto it = imageBorderIt + imageBorder.getSize().x - borderSize.x; it < imageBorderEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize.x; x++ ) {
+				for ( GSize x = 0; x < borderSize.x; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2220,7 +2220,7 @@ namespace Graphic {
 		{
 			auto thisIt = this -> getDatas<C1>();
 			auto imageBorderIt = imageBorder.getDatas<C2>( borderSize.x, borderSize.y );
-			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < this -> size.y; y++ ) {
 				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
@@ -2234,17 +2234,17 @@ namespace Graphic {
 
 			constexpr F max( 1.0f * Color<T1>::getMax() );
 
-			for ( typename Math::Vec2<Size>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < imageExtended.getSize().y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageExtendedIt2 = imageExtendedIt;
-				for ( typename Math::Vec2<Size>::Type x = 0; x < imageExtended.getSize().y; x++ ) {
+				for ( typename Math::Vec2<GSize>::Type x = 0; x < imageExtended.getSize().y; x++ ) {
 					auto imageExtendedIt3 = imageBorderIt2;
 					auto filterIt2 = filter;
 
 					imageExtendedIt2[0] = C2( 0 );
-					for ( Size y = 0; y < size.y; y++ ) {
+					for ( GSize y = 0; y < size.y; y++ ) {
 						auto imageExtendedIt4 = imageExtendedIt3;
-						for ( Size x = 0; x < size.x; x++ ) {
+						for ( GSize x = 0; x < size.x; x++ ) {
 							imageExtendedIt2[0] += imageExtendedIt4[0] * *( filterIt2 );
 
 							imageExtendedIt4++;
@@ -2270,14 +2270,14 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-	ImageT<T2> ImageT<T>::_applyFilter( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilter( const F * filterX, const F * filterY, GSize kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		ASSERT_SPP( kernelSize % 2 == 1 );
 
-		typename Size NHalfed( kernelSize / 2 );
-		typename Size NEven( NHalfed * 2 );
+		typename GSize NHalfed( kernelSize / 2 );
+		typename GSize NEven( NHalfed * 2 );
 
-		typename Size borderSize1;
-		typename Size borderSize2;
+		typename GSize borderSize1;
+		typename GSize borderSize2;
 
 		switch ( convolutionMode ) {
 			case ConvolutionMode::ExtendedSize:
@@ -2289,11 +2289,11 @@ namespace Graphic {
 				borderSize2 = 0;
 		}
 
-		typename Math::Vec2<Size>::Type borderSize = borderSize1 + borderSize2;
+		typename Math::Vec2<GSize>::Type borderSize = borderSize1 + borderSize2;
 
 
-		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2 );
-		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize * 2, this -> size.y + borderSize * 2 );
+		Math::Vec2<GSize> sizeExtended( this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2 );
+		Math::Vec2<GSize> sizeBorder( this -> size.x + borderSize * 2, this -> size.y + borderSize * 2 );
 
 		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
 		ImageT<T2> imageFilter1( imageBorder.getSize(), this -> getFormat() );
@@ -2326,7 +2326,7 @@ namespace Graphic {
 			// Left
 			for ( auto it = imageHoriIt; it < imageHoriEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize; x++ ) {
+				for ( GSize x = 0; x < borderSize; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2334,7 +2334,7 @@ namespace Graphic {
 			//Right
 			for ( auto it = imageHoriIt + nbComponentsPerRowWithBorder - borderSize; it < imageHoriEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize; x++ ) {
+				for ( GSize x = 0; x < borderSize; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2354,7 +2354,7 @@ namespace Graphic {
 		{
 			auto thisIt = this -> getDatas<C1>();
 			C2 * imageBorderIt = imageBorder.getDatas<C2>( borderSize, borderSize );
-			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < this -> size.y; y++ ) {
 				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
@@ -2368,7 +2368,7 @@ namespace Graphic {
 			C2 * imageFilter1It;
 			C2 * imageBorderIt;
 			unsigned int filterOffset;
-			Math::Vec2<Size> size;
+			Math::Vec2<GSize> size;
 
 			if ( convolutionOrder == ConvolutionOrder::VerticalHorizontal ) {
 				filterOffset = nbComponentsPerRowWithBorder;
@@ -2385,14 +2385,14 @@ namespace Graphic {
 			}
 
 
-			for ( typename Math::Vec2<Size>::Type y = 0; y < size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageFilter1It2 = imageFilter1It;
-				for ( typename Math::Vec2<Size>::Type x = 0; x < size.x; x++ ) {
+				for ( typename Math::Vec2<GSize>::Type x = 0; x < size.x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2;
 
 					Sum sum( 0 );
-					for ( Size i = 0; i < kernelSize; i++ ) {
+					for ( GSize i = 0; i < kernelSize; i++ ) {
 						sum += Sum( imageBorderIt3[0] ) * filterX[i];
 						//imageBorderIt3++;
 						imageBorderIt3 += filterOffset;
@@ -2414,7 +2414,7 @@ namespace Graphic {
 			C2 * imageFilter2It;
 			C2 * imageFilter1It;
 			unsigned int filterOffset;
-			Math::Vec2<Size> size;
+			Math::Vec2<GSize> size;
 
 
 			if ( convolutionOrder == ConvolutionOrder::VerticalHorizontal ) {
@@ -2432,15 +2432,15 @@ namespace Graphic {
 			}
 
 
-			for ( typename Math::Vec2<Size>::Type y = 0; y < size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < size.y; y++ ) {
 				auto imageFilter2It2 = imageFilter2It;
 				auto imageFilter1It2 = imageFilter1It;
-				for ( typename Math::Vec2<Size>::Type x = 0; x < size.x; x++ ) {
+				for ( typename Math::Vec2<GSize>::Type x = 0; x < size.x; x++ ) {
 
 					auto resultHoriIt3 = imageFilter1It2;
 
 					Sum sum( 0 );
-					for ( Size i = 0; i < kernelSize; i++ ) {
+					for ( GSize i = 0; i < kernelSize; i++ ) {
 						sum += Sum( resultHoriIt3[0] ) * filterY[i];
 						resultHoriIt3 += filterOffset;
 					}
@@ -2466,15 +2466,15 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-	ImageT<T2> ImageT<T>::_applyFilterf( const F * filterX, const F * filterY, Size kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
+	ImageT<T2> ImageT<T>::_applyFilterf( const F * filterX, const F * filterY, GSize kernelSize, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & kernelFunc ) const {
 		ASSERT_SPP( size % 2 == 1 );
 		ASSERT_SPP( ( Utility::isSame<T, F>::value ) );
 
-		typename Size NHalfed( kernelSize / 2 );
-		typename Size NEven( NHalfed * 2 );
+		typename GSize NHalfed( kernelSize / 2 );
+		typename GSize NEven( NHalfed * 2 );
 
-		typename Size borderSize1;
-		typename Size borderSize2;
+		typename GSize borderSize1;
+		typename GSize borderSize2;
 
 		switch ( convolutionMode ) {
 			case ConvolutionMode::ExtendedSize:
@@ -2486,11 +2486,11 @@ namespace Graphic {
 				borderSize2 = 0;
 		}
 
-		typename Math::Vec2<Size>::Type borderSize = borderSize1 + borderSize2;
+		typename Math::Vec2<GSize>::Type borderSize = borderSize1 + borderSize2;
 
 
-		Math::Vec2<Size> sizeExtended( this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2 );
-		Math::Vec2<Size> sizeBorder( this -> size.x + borderSize * 2, this -> size.y + borderSize * 2 );
+		Math::Vec2<GSize> sizeExtended( this -> size.x + borderSize2 * 2, this -> size.y + borderSize2 * 2 );
+		Math::Vec2<GSize> sizeBorder( this -> size.x + borderSize * 2, this -> size.y + borderSize * 2 );
 
 		ImageT<T2> imageBorder( sizeBorder, this -> getFormat() );
 		ImageT<T2> imageFilter1( imageBorder.getSize(), this -> getFormat() );
@@ -2523,7 +2523,7 @@ namespace Graphic {
 			// Left
 			for ( auto it = imageHoriIt; it < imageHoriEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize; x++ ) {
+				for ( GSize x = 0; x < borderSize; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2531,7 +2531,7 @@ namespace Graphic {
 			//Right
 			for ( auto it = imageHoriIt + nbComponentsPerRowWithBorder - borderSize; it < imageHoriEndIt; it += nbComponentsPerRowWithBorder ) {
 				auto it2 = it;
-				for ( Size x = 0; x < borderSize; x++ ) {
+				for ( GSize x = 0; x < borderSize; x++ ) {
 					BlendingFunc::None::blendColor( *it2, color );
 					it2++;
 				}
@@ -2551,7 +2551,7 @@ namespace Graphic {
 		{
 			auto thisIt = this -> getDatas<C1>();
 			auto imageBorderIt = imageBorder.getDatas<C2>( borderSize, borderSize );
-			for ( typename Math::Vec2<Size>::Type y = 0; y < this -> size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < this -> size.y; y++ ) {
 				Utility::copy( imageBorderIt, thisIt, nbComponentsPerRow );
 
 				thisIt += nbComponentsPerRow;
@@ -2565,7 +2565,7 @@ namespace Graphic {
 			C2 * imageFilter1It;
 			C2 * imageBorderIt;
 			unsigned int filterOffset;
-			Math::Vec2<Size> size;
+			Math::Vec2<GSize> size;
 
 			if ( convolutionOrder == ConvolutionOrder::VerticalHorizontal ) {
 				filterOffset = nbComponentsPerRowWithBorder;
@@ -2582,14 +2582,14 @@ namespace Graphic {
 			}
 
 
-			for ( typename Math::Vec2<Size>::Type y = 0; y < size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < size.y; y++ ) {
 				auto imageBorderIt2 = imageBorderIt;
 				auto imageFilter1It2 = imageFilter1It;
-				for ( typename Math::Vec2<Size>::Type x = 0; x < size.x; x++ ) {
+				for ( typename Math::Vec2<GSize>::Type x = 0; x < size.x; x++ ) {
 					auto imageBorderIt3 = imageBorderIt2;
 
 					imageFilter1It2[0] = C2( 0.0 );
-					for ( Size i = 0; i < kernelSize; i++ ) {
+					for ( GSize i = 0; i < kernelSize; i++ ) {
 						imageFilter1It2[0] += imageBorderIt3[0] * filterX[i];
 						imageBorderIt3 += filterOffset;
 					}
@@ -2609,7 +2609,7 @@ namespace Graphic {
 			C2 * imageFilter2It;
 			C2 * imageFilter1It;
 			unsigned int filterOffset;
-			Math::Vec2<Size> size;
+			Math::Vec2<GSize> size;
 
 
 			if ( convolutionOrder == ConvolutionOrder::VerticalHorizontal ) {
@@ -2627,15 +2627,15 @@ namespace Graphic {
 			}
 
 
-			for ( typename Math::Vec2<Size>::Type y = 0; y < size.y; y++ ) {
+			for ( typename Math::Vec2<GSize>::Type y = 0; y < size.y; y++ ) {
 				auto imageFilter2It2 = imageFilter2It;
 				auto imageFilter1It2 = imageFilter1It;
-				for ( typename Math::Vec2<Size>::Type x = 0; x < size.x; x++ ) {
+				for ( typename Math::Vec2<GSize>::Type x = 0; x < size.x; x++ ) {
 
 					auto resultHoriIt3 = imageFilter1It2;
 
 					imageFilter2It2[0] = C2( 0.0 );
-					for ( Size i = 0; i < kernelSize; i++ ) {
+					for ( GSize i = 0; i < kernelSize; i++ ) {
 						imageFilter2It2[0] += resultHoriIt3[0] * filterY[i];
 						resultHoriIt3 += filterOffset;
 					}
@@ -2802,14 +2802,14 @@ namespace Graphic {
 	template<typename T>
 	template<typename BlendFunc, typename C1, typename C2>
 	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const C2 & color, const BlendFunc & functor ) {
-		Math::Rectangle<Size> rectangleClamped = clampRectangle( rectangle );
+		Math::Rectangle<GSize> rectangleClamped = clampRectangle( rectangle );
 		auto it = getDatas<C1>( rectangleClamped.getLeft(), rectangleClamped.getBottom() );
-		typename Math::Vec2<Size>::Type width = rectangleClamped.getRight() - rectangleClamped.getLeft();
+		typename Math::Vec2<GSize>::Type width = rectangleClamped.getRight() - rectangleClamped.getLeft();
 		Size nbComponentsPerLineRectangle = width;
 		Size nbComponentsPerLine = this -> size.x;
 
 
-		for ( typename Math::Vec2<Size>::Type y = rectangleClamped.getBottom(); y < rectangleClamped.getTop(); y++ ) {
+		for ( typename Math::Vec2<GSize>::Type y = rectangleClamped.getBottom(); y < rectangleClamped.getTop(); y++ ) {
 			auto maxIt = it + nbComponentsPerLineRectangle;
 			for ( auto it2 = it; it2 < maxIt; it2++ ) {
 				functor( *( it2 ), color );
@@ -2891,7 +2891,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t ImageT<T>::computeInterpolation( const Gradient::Horizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle )  const {
+	size_t ImageT<T>::computeInterpolation( const Gradient::Horizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle )  const {
 		float size = rectangle.getRight() - rectangle.getLeft();
 		*clampedRectangle = clampRectangle( rectangle );
 		Size clampedSize = clampedRectangle -> getRight() - clampedRectangle -> getLeft();
@@ -2916,13 +2916,13 @@ namespace Graphic {
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
 		C2 * gradientArray;
-		Math::Rectangle<Size> clampedRectangle;
+		Math::Rectangle<GSize> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		if ( ( N1 != 4 ) && ( N1 == N2 ) ) {
 			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 				Utility::copy( ( C2* ) thisIt, gradientArray, size );
@@ -2953,13 +2953,13 @@ namespace Graphic {
 		constexpr size_t N2 = sizeof( C2 ) / sizeof( T );
 
 		C2 * gradientArray;
-		Math::Rectangle<Size> clampedRectangle;
+		Math::Rectangle<GSize> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		if ( ( N1 == N2 ) ) {
 			for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 				Utility::copy( ( C2* ) thisIt, gradientArray, size );
@@ -2989,13 +2989,13 @@ namespace Graphic {
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const Gradient::Horizontal<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
 		C2 * gradientArray;
-		Math::Rectangle<Size> clampedRectangle;
+		Math::Rectangle<GSize> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto maxIt = thisIt + size;
 			auto gradientIt = gradientArray;
@@ -3013,7 +3013,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t ImageT<T>::computeInterpolation( const Gradient::Vertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
+	size_t ImageT<T>::computeInterpolation( const Gradient::Vertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const {
 		float size = rectangle.getTop() - rectangle.getBottom();
 		*clampedRectangle = clampRectangle( rectangle );
 		Size clampedSize = clampedRectangle -> getTop() - clampedRectangle -> getBottom();
@@ -3033,13 +3033,13 @@ namespace Graphic {
 	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const Gradient::Vertical<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
 
 		C2 * gradientArray;
-		Math::Rectangle<Size> clampedRectangle;
+		Math::Rectangle<GSize> clampedRectangle;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		auto gradientIt = gradientArray;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
@@ -3058,7 +3058,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t ImageT<T>::computeInterpolation( const Gradient::Linear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
+	size_t ImageT<T>::computeInterpolation( const Gradient::Linear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const {
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 		*clampedRectangle = clampRectangle( rectangle );
 
@@ -3078,7 +3078,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const Gradient::Linear<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
-		Math::Rectangle<Size> clampedRectangle;
+		Math::Rectangle<GSize> clampedRectangle;
 		C2 * gradientArray;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 		int gradientSizeMinusOne = int( size ) - 1;
@@ -3090,7 +3090,7 @@ namespace Graphic {
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
@@ -3106,10 +3106,10 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename InterFunc>
-	size_t ImageT<T>::computeInterpolation( const Gradient::Radial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const {
+	size_t ImageT<T>::computeInterpolation( const Gradient::Radial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const {
 		*clampedRectangle = clampRectangle( rectangle );
 		Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
-		Math::Vec2<Size> sizeClamped = clampedRectangle -> getRightTop() - clampedRectangle -> getLeftBottom();
+		Math::Vec2<GSize> sizeClamped = clampedRectangle -> getRightTop() - clampedRectangle -> getLeftBottom();
 
 		size_t gradientSize = int( Math::max<float>( gradient.getRadius().x * float( size.x ), gradient.getRadius().y * float( size.y ) ) * 2.0f );
 
@@ -3124,7 +3124,7 @@ namespace Graphic {
 	template<typename T>
 	template<typename BlendFunc, typename C1, typename C2, typename InterFunc>
 	void ImageT<T>::_drawRectangle( const Rectangle & rectangle, const Gradient::Radial<C2, InterFunc> & gradient, const BlendFunc & blendingFunctor ) {
-		Math::Rectangle<Size> clampedRectangle;
+		Math::Rectangle<GSize> clampedRectangle;
 		C2 * gradientArray;
 		size_t size = computeInterpolation( gradient, &gradientArray, rectangle, &clampedRectangle );
 		int gradientSizeMinusOne = int( size ) - 1;
@@ -3135,7 +3135,7 @@ namespace Graphic {
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		for ( i.y = clampedRectangle.getBottom(); i.y < clampedRectangle.getTop(); i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = clampedRectangle.getLeft(); i.x < clampedRectangle.getRight(); i.x++ ) {
@@ -3172,14 +3172,14 @@ namespace Graphic {
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void ImageT<T>::_drawRectangleFunctor( const Rectangle & rectangle, ColorFunc & colorFunctor, const BlendFunc & blendingFunctor ) {
-		Math::Rectangle<Size> clampedRectangle = clampRectangle( rectangle );
+		Math::Rectangle<GSize> clampedRectangle = clampRectangle( rectangle );
 		colorFunctor.init( clampedRectangle );
-		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Vec2<GSize> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 		auto thisIt = getDatas<C1>( clampedRectangle.getLeftBottom().x, clampedRectangle.getLeftBottom().y );
 		auto thisImageOffset = this -> size.x;
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto thisIt2 = thisIt;
 			for ( i.x = 0; i.x < size.x; i.x++ ) {
@@ -3326,9 +3326,9 @@ namespace Graphic {
 
 				auto p0It = getDatas<C1>( p1i.y, p0i.x );
 
-				Math::Rectangle<Size> rectangle( p1i.y, p0i.x, p0i.y + Size( thickness ) + 1, p1i.x );
+				Math::Rectangle<GSize> rectangle( p1i.y, p0i.x, p0i.y + Size( thickness ) + 1, p1i.x );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -3390,9 +3390,9 @@ namespace Graphic {
 
 				auto p0It = getDatas<C1>( p0i.y, p0i.x );
 
-				Math::Rectangle<Size> rectangle( p0i.y, p0i.x, p1i.y + Size( thickness ) + 1, p1i.x );
+				Math::Rectangle<GSize> rectangle( p0i.y, p0i.x, p1i.y + Size( thickness ) + 1, p1i.x );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -3456,9 +3456,9 @@ namespace Graphic {
 
 				auto p0It = getDatas<C1>( p0i.x, p1i.y );
 
-				Math::Rectangle<Size> rectangle( p0i.x, p1i.y, p1i.x, p0i.y + Size( thickness ) + 1 );
+				Math::Rectangle<GSize> rectangle( p0i.x, p1i.y, p1i.x, p0i.y + Size( thickness ) + 1 );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -3521,9 +3521,9 @@ namespace Graphic {
 
 				auto p0It = getDatas<C1>( p0i.x, p0i.y );
 
-				Math::Rectangle<Size> rectangle( p0i.x, p0i.y, p1i.x, p1i.y + Size( thickness ) + 1 );
+				Math::Rectangle<GSize> rectangle( p0i.x, p0i.y, p1i.x, p1i.y + Size( thickness ) + 1 );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -3685,9 +3685,9 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p1i.y, p0i.x );
 
 
-				Math::Rectangle<Size> rectangle( p1i.y, p0i.x, p0i.y + Size( thickness ) + 1, p1i.x );
+				Math::Rectangle<GSize> rectangle( p1i.y, p0i.x, p0i.y + Size( thickness ) + 1, p1i.x );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -3754,9 +3754,9 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p0i.y, p0i.x );
 
 
-				Math::Rectangle<Size> rectangle( p0i.y, p0i.x, p1i.y + Size( thickness ) + 1, p1i.x );
+				Math::Rectangle<GSize> rectangle( p0i.y, p0i.x, p1i.y + Size( thickness ) + 1, p1i.x );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -3824,9 +3824,9 @@ namespace Graphic {
 				auto p0It = getDatas<C1>( p0i.x, p1i.y );
 
 
-				Math::Rectangle<Size> rectangle( p0i.x, p1i.y, p1i.x, p0i.y + Size( thickness ) + 1 );
+				Math::Rectangle<GSize> rectangle( p0i.x, p1i.y, p1i.x, p0i.y + Size( thickness ) + 1 );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 
 				float intery = ( p0.y - float( p0i.y ) ) + ( p0i.y - p1i.y );
@@ -3892,9 +3892,9 @@ namespace Graphic {
 
 				auto p0It = getDatas<C1>( p0i.x, p0i.y );
 
-				Math::Rectangle<Size> rectangle( p0i.x, p0i.y, p1i.x, p1i.y + Size( thickness ) + 1 );
+				Math::Rectangle<GSize> rectangle( p0i.x, p0i.y, p1i.x, p1i.y + Size( thickness ) + 1 );
 				ASSERT_SPP( rectangle.getLeft() >= 0 && rectangle.getBottom() >= 0 && rectangle.getRight() <= this -> size.x && rectangle.getTop() <= this -> size.y );
-				Math::Vec2<Size> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
+				Math::Vec2<GSize> size( rectangle.getRightTop() - rectangle.getLeftBottom() );
 
 				colorFunc.init( rectangle );
 
@@ -4428,7 +4428,7 @@ namespace Graphic {
 		size_t borderSize2 = Math::max<size_t>( borderSize1, Math::ceil( thickness ) );
 		size_t borderSize = borderSize1 + borderSize2;
 
-		ImageT<DistanceType> imageOutside( Math::Vec2<Size>( image.getSize().x + borderSize * 2, image.getSize().y + borderSize * 2 ), Format::R );
+		ImageT<DistanceType> imageOutside( Math::Vec2<GSize>( image.getSize().x + borderSize * 2, image.getSize().y + borderSize * 2 ), Format::R );
 		ImageT<DistanceType> imageInside( imageOutside.getSize(), Format::R );
 
 
@@ -4562,8 +4562,8 @@ namespace Graphic {
 
 		//distance is now computed, now draw the result
 
-		Math::Vec2<Size> thisBegin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
-		Math::Vec2<Size> otherImageBegin;
+		Math::Vec2<GSize> thisBegin;			//0 <= beginX <= size.x && 0 <= beginY <= size.y
+		Math::Vec2<GSize> otherImageBegin;
 		Point size;
 		Rectangle rectangle( point.x - borderSize2, point.y - borderSize2, point.x + image.getSize().x + borderSize2, point.y + image.getSize().y + borderSize2 );
 
@@ -4590,10 +4590,10 @@ namespace Graphic {
 
 		if ( size.x <= 0 || size.y <= 0 ) return;
 
-		Math::Rectangle<Size> rectangleClamped( thisBegin.x, thisBegin.y, thisBegin.x + size.x, thisBegin.y + size.y );
+		Math::Rectangle<GSize> rectangleClamped( thisBegin.x, thisBegin.y, thisBegin.x + size.x, thisBegin.y + size.y );
 		colorFunc.init( rectangleClamped );
 
-		Math::Vec2<Size> rectangleSize( rectangleClamped.getRight() - rectangleClamped.getLeft(), rectangleClamped.getTop() - rectangleClamped.getBottom() );
+		Math::Vec2<GSize> rectangleSize( rectangleClamped.getRight() - rectangleClamped.getLeft(), rectangleClamped.getTop() - rectangleClamped.getBottom() );
 
 		auto thisIt = getDatas<C1>( thisBegin.x, thisBegin.y );
 		unsigned int thisImageOffset = this -> size.x;
@@ -4601,7 +4601,7 @@ namespace Graphic {
 		imageOutsideIt = imageOutside.getDatas<ColorR<DistanceType>>( otherImageBegin.x + borderSize1, otherImageBegin.y + borderSize1 );
 		imageInsideIt = imageInside.getDatas<ColorR<DistanceType>>( otherImageBegin.x + borderSize1, otherImageBegin.y + borderSize1 );
 
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		float thicknessPlus1( thickness + float( 1 ) );
 		DistanceType thicknessScaled = DistanceType( thickness * DistanceUtil::getMult() );
 		DistanceType thicknessScaledNext = DistanceType( ( thicknessPlus1 ) * DistanceUtil::getMult() );
@@ -4735,8 +4735,8 @@ namespace Graphic {
 		}
 
 
-		Math::Rectangle<Size> clampedRectangle = clampRectangle( rectangle );
-		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Rectangle<GSize> clampedRectangle = clampRectangle( rectangle );
+		Math::Vec2<GSize> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 
 		colorFunc.init( clampedRectangle );
@@ -4781,7 +4781,7 @@ namespace Graphic {
 
 
 			//for each pixel
-			Math::Vec2<Size> j;
+			Math::Vec2<GSize> j;
 			PointF p, p_;
 			p_.x = float( int( p0.x * float( size.x ) + float( clampedRectangle.getLeft() ) ) );
 			p_.y = p0.y * float( size.y ) + float( clampedRectangle.getBottom() );
@@ -4869,7 +4869,7 @@ namespace Graphic {
 	template<typename ColorFunc, typename BlendFunc, typename C1>
 	void ImageT<T>::_drawRectangleRoundedFunctor( const Rectangle & rectangle, unsigned int radiusi, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		auto clampedRectangle = clampRectangle( rectangle );
-		Math::Vec2<Size> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
+		Math::Vec2<GSize> size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
 
 		colorFunc.init( clampedRectangle );
@@ -4878,18 +4878,18 @@ namespace Graphic {
 		radiusi = Math::min<unsigned int>( radiusi, size.y / 2 );
 
 
-		Math::Vec2<Size> i;
-		Math::Vec2<Size> p( 0, radiusi );
+		Math::Vec2<GSize> i;
+		Math::Vec2<GSize> p( 0, radiusi );
 
 
 
 		Float radius2 = Float( radiusi * radiusi ) - Float( 0.01 );
 
 
-		Math::Vec2<Size> rightTopOffset( size.x - radiusi, size.y - radiusi );
-		Math::Vec2<Size> leftTopOffset( radiusi - 1, size.y - radiusi );
-		Math::Vec2<Size> leftBottomOffset( radiusi - 1, radiusi - 1 );
-		Math::Vec2<Size> rightBottomOffset( size.x - radiusi, radiusi - 1 );
+		Math::Vec2<GSize> rightTopOffset( size.x - radiusi, size.y - radiusi );
+		Math::Vec2<GSize> leftTopOffset( radiusi - 1, size.y - radiusi );
+		Math::Vec2<GSize> leftBottomOffset( radiusi - 1, radiusi - 1 );
+		Math::Vec2<GSize> rightBottomOffset( size.x - radiusi, radiusi - 1 );
 
 		auto p0it = ( ( C1* ) ( this -> buffer ) ) + clampedRectangle.getBottom() * this -> size.x + clampedRectangle.getLeft();
 
@@ -4914,7 +4914,7 @@ namespace Graphic {
 
 
 			{		//Octane 1
-				Math::Vec2<Size> i( p + rightTopOffset );
+				Math::Vec2<GSize> i( p + rightTopOffset );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -4930,7 +4930,7 @@ namespace Graphic {
 				}
 			}
 			{	//Octane 7
-				Math::Vec2<Size> i( leftTopOffset.x - p.y, leftTopOffset.y + p.x );
+				Math::Vec2<GSize> i( leftTopOffset.x - p.y, leftTopOffset.y + p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -4949,7 +4949,7 @@ namespace Graphic {
 
 			}
 			{	//Octane 3
-				Math::Vec2<Size> i( rightBottomOffset.x + p.y, rightBottomOffset.y - p.x );
+				Math::Vec2<GSize> i( rightBottomOffset.x + p.y, rightBottomOffset.y - p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -4966,7 +4966,7 @@ namespace Graphic {
 
 			}
 			{		//Octane 5
-				Math::Vec2<Size> i( leftBottomOffset.x - p.x, leftBottomOffset.y - p.y );
+				Math::Vec2<GSize> i( leftBottomOffset.x - p.x, leftBottomOffset.y - p.y );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -4989,7 +4989,7 @@ namespace Graphic {
 
 			if ( p.y != p.x ) {
 				{	//Octane 2
-					Math::Vec2<Size> i( p.y + rightTopOffset.y, p.x + rightTopOffset.x );
+					Math::Vec2<GSize> i( p.y + rightTopOffset.y, p.x + rightTopOffset.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5005,7 +5005,7 @@ namespace Graphic {
 
 				}
 				{		//Octane 8
-					Math::Vec2<Size> i( leftTopOffset.x - p.x, leftTopOffset.y + p.y );
+					Math::Vec2<GSize> i( leftTopOffset.x - p.x, leftTopOffset.y + p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5025,7 +5025,7 @@ namespace Graphic {
 					}
 				}
 				{	//Octane 4
-					Math::Vec2<Size> i( rightBottomOffset.x + p.x, rightBottomOffset.y - p.y );
+					Math::Vec2<GSize> i( rightBottomOffset.x + p.x, rightBottomOffset.y - p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5045,7 +5045,7 @@ namespace Graphic {
 					}
 				}
 				{	//Octane 6
-					Math::Vec2<Size> i( leftBottomOffset.x - p.y, leftBottomOffset.y - p.x );
+					Math::Vec2<GSize> i( leftBottomOffset.x - p.y, leftBottomOffset.y - p.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5136,22 +5136,22 @@ namespace Graphic {
 		Point pointClamped( point );
 		Math::clamp( &pointClamped, Math::Rectangle<typename Point::Type>( radiusi, radiusi, this -> size.x - radiusi, this -> size.y - radiusi ) );
 
-		Math::Rectangle<Size> rectangleClamped( pointClamped.x - radiusi, pointClamped.y - radiusi, pointClamped.x + radiusi, pointClamped.y + radiusi );
+		Math::Rectangle<GSize> rectangleClamped( pointClamped.x - radiusi, pointClamped.y - radiusi, pointClamped.x + radiusi, pointClamped.y + radiusi );
 		auto size = rectangleClamped.getRightTop() - rectangleClamped.getLeftBottom();
 
 
-		Math::Vec2<Size> i;
-		Math::Vec2<Size> p( 0, radiusi );
+		Math::Vec2<GSize> i;
+		Math::Vec2<GSize> p( 0, radiusi );
 
 
 		float radius2 = float( radius * radius ) - 0.01f;
 		auto p0it = ( ( C1* ) ( this -> buffer ) ) + rectangleClamped.getBottom() * this -> size.x + rectangleClamped.getLeft();
 
 
-		Math::Vec2<Size> rightTopOffset( radiusi, radiusi );
-		Math::Vec2<Size> leftTopOffset( radiusi - 1, radiusi );
-		Math::Vec2<Size> leftBottomOffset( radiusi - 1, radiusi - 1 );
-		Math::Vec2<Size> rightBottomOffset( radiusi, radiusi - 1 );
+		Math::Vec2<GSize> rightTopOffset( radiusi, radiusi );
+		Math::Vec2<GSize> leftTopOffset( radiusi - 1, radiusi );
+		Math::Vec2<GSize> leftBottomOffset( radiusi - 1, radiusi - 1 );
+		Math::Vec2<GSize> rightBottomOffset( radiusi, radiusi - 1 );
 
 		auto lastY = p.y;
 		auto xMid = ( size.x ) / 2;
@@ -5165,7 +5165,7 @@ namespace Graphic {
 
 
 			{		//Octane 1
-				Math::Vec2<Size> i( p + rightTopOffset );
+				Math::Vec2<GSize> i( p + rightTopOffset );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5181,7 +5181,7 @@ namespace Graphic {
 				}
 			}
 			{	//Octane 7
-				Math::Vec2<Size> i( leftTopOffset.x - p.y, leftTopOffset.y + p.x );
+				Math::Vec2<GSize> i( leftTopOffset.x - p.y, leftTopOffset.y + p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5200,7 +5200,7 @@ namespace Graphic {
 
 			}
 			{	//Octane 3
-				Math::Vec2<Size> i( rightBottomOffset.x + p.y, rightBottomOffset.y - p.x );
+				Math::Vec2<GSize> i( rightBottomOffset.x + p.y, rightBottomOffset.y - p.x );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5217,7 +5217,7 @@ namespace Graphic {
 
 			}
 			{		//Octane 5
-				Math::Vec2<Size> i( leftBottomOffset.x - p.x, leftBottomOffset.y - p.y );
+				Math::Vec2<GSize> i( leftBottomOffset.x - p.x, leftBottomOffset.y - p.y );
 				auto it = p0it + i.y * this -> size.x + i.x;
 
 				ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5240,7 +5240,7 @@ namespace Graphic {
 
 			if ( p.y != p.x ) {
 				{	//Octane 2
-					Math::Vec2<Size> i( p.y + rightTopOffset.y, p.x + rightTopOffset.x );
+					Math::Vec2<GSize> i( p.y + rightTopOffset.y, p.x + rightTopOffset.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5256,7 +5256,7 @@ namespace Graphic {
 
 				}
 				{		//Octane 8
-					Math::Vec2<Size> i( leftTopOffset.x - p.x, leftTopOffset.y + p.y );
+					Math::Vec2<GSize> i( leftTopOffset.x - p.x, leftTopOffset.y + p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5276,7 +5276,7 @@ namespace Graphic {
 					}
 				}
 				{	//Octane 4
-					Math::Vec2<Size> i( rightBottomOffset.x + p.x, rightBottomOffset.y - p.y );
+					Math::Vec2<GSize> i( rightBottomOffset.x + p.x, rightBottomOffset.y - p.y );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5296,7 +5296,7 @@ namespace Graphic {
 					}
 				}
 				{	//Octane 6
-					Math::Vec2<Size> i( leftBottomOffset.x - p.y, leftBottomOffset.y - p.x );
+					Math::Vec2<GSize> i( leftBottomOffset.x - p.y, leftBottomOffset.y - p.x );
 					auto it = p0it + i.y * this -> size.x + i.x;
 
 					ASSERT_SPP( i.x >= 0 && i.y >= 0 && i.x < size.x && i.y < size.y );
@@ -5329,7 +5329,7 @@ namespace Graphic {
 
 
 	template<typename T>
-	ImageT<T> ImageT<T>::resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode ) const {
+	ImageT<T> ImageT<T>::resample( const Math::Vec2<GSize> & newSize, ResamplingMode resamplingMode ) const {
 		if ( getDatas() == NULL ) return *this;
 		switch ( getFormat() ) {
 			case Format::R:
@@ -5346,7 +5346,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename C, typename ColorSum, typename ColorFloat, typename SumType>
-	ImageT<T> ImageT<T>::_resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode ) const {
+	ImageT<T> ImageT<T>::_resample( const Math::Vec2<GSize> & newSize, ResamplingMode resamplingMode ) const {
 		typedef typename Float Float;
 
 		if ( newSize.x == this -> size.x && newSize.y == this -> size.y )
@@ -5383,7 +5383,7 @@ namespace Graphic {
 
 
 					if ( !isUpscaling.x && !isUpscaling.y ) { // If downscaling
-						Math::Vec2<Size> i, j;
+						Math::Vec2<GSize> i, j;
 						Math::Vec2<float> realPosition( 0 );
 
 						for ( i.y = 0; i.y < newSize.y; i.y++ ) {
@@ -5411,7 +5411,7 @@ namespace Graphic {
 						}
 					} else if ( isUpscaling.x && isUpscaling.y ) { // If upscaling
 
-						Math::Vec2<Size> i, k, j0, j1;
+						Math::Vec2<GSize> i, k, j0, j1;
 						Math::Vec2<float> realPosition( 0 );
 
 						j0.y = Size( 0 );
@@ -5451,7 +5451,7 @@ namespace Graphic {
 							thisImageIt0 += this -> size.x;
 						}
 					} else if ( !isUpscaling.x && isUpscaling.y ) { //Upscaling Y, Downscaling X
-						Math::Vec2<Size> i, k, j0, j1;
+						Math::Vec2<GSize> i, k, j0, j1;
 						Math::Vec2<float> realPosition( 0 );
 
 						j0.y = Size( 0 );
@@ -5951,7 +5951,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc>
-	void ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
+	void ImageT<T>::drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		if ( getDatas() == NULL ) return;
 		switch ( getFormat() ) {
 			case Format::R:
@@ -5969,7 +5969,7 @@ namespace Graphic {
 
 	template<typename T>
 	template<typename ColorFunc, typename BlendFunc, typename C1>
-	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
+	void ImageT<T>::_drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc ) {
 		auto clampedRectangle = clampRectangle( rectangle );
 		auto size = clampedRectangle.getRightTop() - clampedRectangle.getLeftBottom();
 
@@ -5986,7 +5986,7 @@ namespace Graphic {
 		Float * intersectionsX = new Float[nbVertices];
 
 
-		Math::Vec2<Size> sizeMinusOne( size.x - 1, size.y - 1 );
+		Math::Vec2<GSize> sizeMinusOne( size.x - 1, size.y - 1 );
 
 		// Compute the absolute coordinate from the relatives [0;1] and the size of the rectangle.
 		Math::Vec2<Float> v0Last = vertices[nbVertices - 1];
@@ -6011,7 +6011,7 @@ namespace Graphic {
 
 
 		// For each line, compute the intersections.
-		Math::Vec2<Size> i;
+		Math::Vec2<GSize> i;
 		for ( i.y = 0; i.y < size.y; i.y++ ) {
 			auto intersectionsDxIt = intersectionsDx;
 			auto intersectionsXIt = intersectionsX;
@@ -6019,7 +6019,7 @@ namespace Graphic {
 
 
 			Math::Vec2<Float> vertexLast = absoluteVertices[nbVertices - 1].v;
-			for ( Size j = 0; j < nbVertices; j++ ) {
+			for ( GSize j = 0; j < nbVertices; j++ ) {
 				Vertex & vertex = absoluteVertices[j];
 
 				if ( ( yf < vertex.v.y && yf >= vertexLast.y ) || ( yf < vertexLast.y && yf >= vertex.v.y ) ) {
@@ -6051,7 +6051,7 @@ namespace Graphic {
 			}
 
 
-			for ( Size j = 1; j < nbIntersections; j += 2 ) {
+			for ( GSize j = 1; j < nbIntersections; j += 2 ) {
 
 				Float & intersection0 = intersectionsX[j - 1];
 				Float & intersection1 = intersectionsX[j];
@@ -6159,7 +6159,7 @@ namespace Graphic {
 					if ( gradient1 < 1.0f ) {
 						int intersection1i = int( intersection1 );
 
-						i.x = Math::max<Size>( intersection1i, xMin );
+						i.x = Math::max<GSize>( intersection1i, xMin );
 						Float opacity = ( intersection1 ) -Float( intersection1i );
 
 						C1 * p1it = p0it + i.x;
@@ -6493,17 +6493,17 @@ namespace Graphic {
 		struct Functor {
 			Functor( int hueBias, const Float & saturationFactor, const Float & lightnessFactor ) : hueBias( Float( hueBias ) / Float( 360 ) ), saturationFactor( saturationFactor ), lightnessFactor( lightnessFactor ) {};
 
-			void operator()( const Math::Vec2<Size> & p, ColorR<T> & c ) {
+			void operator()( const Math::Vec2<GSize> & p, ColorR<T> & c ) {
 				c.r = Math::min<Float>( Float( c.r * lightnessFactor ), Float( Color<T>::getMax() ) );
 			}
-			void operator()( const Math::Vec2<Size> & p, ColorRGB<T> & c ) {
+			void operator()( const Math::Vec2<GSize> & p, ColorRGB<T> & c ) {
 				ColorRGB<Float> colorHSL = c.toType<Float>().RGBtoHSL();
 				colorHSL.h = Math::modulus( colorHSL.h + hueBias, ( Color<Float>::getMax() ) );
 				colorHSL.s = Math::min<Float>( Float( colorHSL.s * saturationFactor ), Float( Color<Float>::getMax() ) );
 				colorHSL.l = Math::min<Float>( Float( colorHSL.l * lightnessFactor ), Float( Color<Float>::getMax() ) );
 				c = colorHSL.HSLtoRGB().toType<T>();
 			}
-			void operator()( const Math::Vec2<Size> & p, ColorRGBA<T> & c ) {
+			void operator()( const Math::Vec2<GSize> & p, ColorRGBA<T> & c ) {
 				ColorRGB<T> colorRGB( c );
 				ColorRGB<Float> colorHSL = colorRGB.toType<Float>().RGBtoHSL();
 				colorHSL.h = Math::modulus<SumType>( colorHSL.h + hueBias, Float( Color<Float>::getMax() ) );

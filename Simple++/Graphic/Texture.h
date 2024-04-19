@@ -21,7 +21,7 @@ namespace Graphic {
 		///@brief Constructor to create an not initialized image of specified size.
 		///@param size size of the image to create.
 		///@param format of the image
-		Texture( const Math::Vec2<Size> & size, typename Format format = Format::RGB );
+		Texture( const Math::Vec2<GSize> & size, typename Format format = Format::RGB );
 
 		///@brief copy constructor
 		Texture( const Texture<T> & image );
@@ -31,7 +31,7 @@ namespace Graphic {
 		///@param size size of the image to copy.
 		///@param format of the image
 		///@param invertY if the image has to be flipped vertically or not.
-		Texture( const T * dataBuffer, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
+		Texture( const T * dataBuffer, const Math::Vec2<GSize> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
 
 		///@brief Create a texture from an ImageT
 		///@param image Image to use to create the mipmap 0
@@ -45,23 +45,23 @@ namespace Graphic {
 		///@brief get the actual size (width:height) of the image
 		///@param i num of the mipmap
 		///@return the actual size of this image
-		const Math::Vec2<Size> & getSize( ::Size i = 0 ) const;
+		const Math::Vec2<GSize> & getSize( Size i = 0 ) const;
 
 		///@brief get the actual width of the image
 		///@param i num of the mipmap
 		///@return actual width of this image
-		unsigned int getWidth( ::Size i = 0 ) const;
+		unsigned int getWidth( Size i = 0 ) const;
 
 		///@brief get the actual height of the image
 		///@param i num of the mipmap
 		///@return actual height of this image
-		unsigned int getHeight( ::Size i = 0 ) const;
+		unsigned int getHeight( Size i = 0 ) const;
 
 		///@brief set the data from an another data buffer.
 		///@param data Data buffer to copy
 		///@param size size of the new image
 		///@param invertY if the image has to be flipped vertically or not.
-		void setDatas( const T * data, const Math::Vec2<Size> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
+		void setDatas( const T * data, const Math::Vec2<GSize> & size, typename LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false );
 
 		///@brief Set the data of this texture from an ImageT
 		///@param image Image to be used
@@ -69,27 +69,27 @@ namespace Graphic {
 
 		///@brief reset this image with a new size.
 		///@param size new size
-		void clear( const Math::Vec2<Size> & size );
+		void clear( const Math::Vec2<GSize> & size );
 
 
 		///@brief reset this image with a new size and a new format
 		///@param size new size
 		///@param format new format of the image
-		void clear( const Math::Vec2<Size> & size, typename Format format );
+		void clear( const Math::Vec2<GSize> & size, typename Format format );
 
 
 		///@brief get a mipmap from this texture
 		///@param i mipmap number (0 mean original size)
 		///@return pointer to the mipmap wanted.
-		const ImageT<T> & getMipmap( ::Size i = 0 ) const;
-		ImageT<T> & getMipmap( ::Size i = 0 );
+		const ImageT<T> & getMipmap( Size i = 0 ) const;
+		ImageT<T> & getMipmap( Size i = 0 );
 
 
 		///@brief get a mipmap from this texture
 		///@param i mipmap number (0 mean the original size)
 		///@return pointer to the mipmap
-		const ImageT<T> & operator[]( ::Size i ) const;
-		ImageT<T> & operator[]( ::Size i );
+		const ImageT<T> & operator[]( Size i ) const;
+		ImageT<T> & operator[]( Size i );
 
 		///@brief get the mipmaps vector
 		///@return Vector of mipmaps
@@ -104,12 +104,12 @@ namespace Graphic {
 		///@brief get the data buffer of this image
 		///@param i number of mipmap (0 = original image)
 		///@return data buffer
-		const T * getDatas( ::Size i = 0 ) const;
+		const T * getDatas( Size i = 0 ) const;
 
 		///@brief get the data buffer of this image
 		///@param i number of mipmap (0 = original image)
 		///@return data buffer
-		T * getDatas( ::Size i = 0 );
+		T * getDatas( Size i = 0 );
 
 
 		///@brief get a pixel from this texture
@@ -117,7 +117,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@return the pixel from the picture at the specified 2D coordinate.
-		const T * getPixel( ::Size i, unsigned int x, unsigned int y ) const;
+		const T * getPixel( Size i, unsigned int x, unsigned int y ) const;
 
 
 		///@brief set a pixel inside this image
@@ -125,7 +125,7 @@ namespace Graphic {
 		///@param x x coordinate of the pixel
 		///@param y y coordinate of the pixel
 		///@param p The pixel to set.
-		void setPixel( ::Size i, unsigned int x, unsigned int y, const T * p );
+		void setPixel( Size i, unsigned int x, unsigned int y, const T * p );
 
 
 		///@brief copy operator
@@ -157,7 +157,7 @@ namespace Graphic {
 
 		///@brief get the number of mipmap of this texture
 		///@return number of mipmaps
-		::Size getNbMipmaps() const;
+		Size getNbMipmaps() const;
 	protected:
 		enum ctor { null };
 		Texture( ctor );

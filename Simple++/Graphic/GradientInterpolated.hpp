@@ -11,7 +11,7 @@ namespace Graphic {
 	}
 
 	template<typename C, typename InterFunc>
-	const Math::Rectangle<Size> & GradientInterpolation<C, InterFunc>::getClampedRectangle() const {
+	const Math::Rectangle<GSize> & GradientInterpolation<C, InterFunc>::getClampedRectangle() const {
 		return this -> clampedRectangle;
 	}
 
@@ -109,12 +109,12 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		C GradientHorizontal<C, InterFunc>::operator()( const Math::Vec2<Size> & p ) const {
+		C GradientHorizontal<C, InterFunc>::operator()( const Math::Vec2<GSize> & p ) const {
 			return this -> interpolatedArray[p.x];
 
 		}
 		template<typename C, typename InterFunc>
-		void GradientHorizontal<C, InterFunc>::init( const Math::Rectangle<Size> & rectangle ) {
+		void GradientHorizontal<C, InterFunc>::init( const Math::Rectangle<GSize> & rectangle ) {
 			this -> size = rectangle.getRight() - rectangle.getLeft();
 			delete[] this -> interpolatedArray;
 			this -> interpolatedArray = new C[size];
@@ -178,11 +178,11 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		C GradientVertical<C, InterFunc>::operator()( const Math::Vec2<Size> & p ) const {
+		C GradientVertical<C, InterFunc>::operator()( const Math::Vec2<GSize> & p ) const {
 			return this -> interpolatedArray[p.y];
 		}
 		template<typename C, typename InterFunc>
-		void GradientVertical<C, InterFunc>::init( const Math::Rectangle<Size> & rectangle ) {
+		void GradientVertical<C, InterFunc>::init( const Math::Rectangle<GSize> & rectangle ) {
 			this -> size = rectangle.getTop() - rectangle.getBottom();
 			delete[] this -> interpolatedArray;
 			this -> interpolatedArray = new C[this -> size];
@@ -250,7 +250,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		void GradientLinear<C, InterFunc>::init( const Math::Rectangle<Size> & rectangle ) {
+		void GradientLinear<C, InterFunc>::init( const Math::Rectangle<GSize> & rectangle ) {
 			Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 
 			if ( gradient.getLength() == 0 )
@@ -269,7 +269,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		C GradientLinear<C, InterFunc>::operator()( const Math::Vec2<Size> & p ) const {
+		C GradientLinear<C, InterFunc>::operator()( const Math::Vec2<GSize> & p ) const {
 			auto index = gradient.computeIndex( Math::Vec2<float>( p.x - this -> origin.x, p.y - this -> origin.y ), this -> sizeMinusOne );
 			return this -> interpolatedArray[index];
 		}
@@ -339,7 +339,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		void GradientRadial<C, InterFunc>::init( const Math::Rectangle<Size> & rectangle ) {
+		void GradientRadial<C, InterFunc>::init( const Math::Rectangle<GSize> & rectangle ) {
 			Math::Vec2<int> size = rectangle.getRightTop() - rectangle.getLeftBottom();
 
 			this -> size = Math::max<float>( gradient.getRadius().x * float( size.x ), gradient.getRadius().y * float( size.y ) ) * 2.0f;
@@ -354,7 +354,7 @@ namespace Graphic {
 		}
 
 		template<typename C, typename InterFunc>
-		C GradientRadial<C, InterFunc>::operator()( const Math::Vec2<Size> & p ) const {
+		C GradientRadial<C, InterFunc>::operator()( const Math::Vec2<GSize> & p ) const {
 			auto index = gradient.computeIndex( Math::Vec2<float>( p.x - this -> center.x, p.y - this -> center.y ), this -> sizeMinusOne );
 			return this -> interpolatedArray[index];
 		}

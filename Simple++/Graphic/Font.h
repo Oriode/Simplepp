@@ -38,14 +38,14 @@ namespace Graphic {
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
-		///@param pixSize Size of the loaded font.
+		///@param pixSize GSize of the loaded font.
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
 		FontT( const WString & fileName, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 
 		///@brief Constructor using a font file dump and his size in bytes
 		///@param fileDump memory copy of a font file.
 		///@param fileSize size in bytes of the data buffer.
-		///@param pixSize Size in pixels of the font
+		///@param pixSize GSize in pixels of the font
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
 		FontT( const char * fileDump, size_t fileSize, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 

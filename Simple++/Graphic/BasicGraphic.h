@@ -13,7 +13,7 @@ namespace Graphic {
 	typedef ColorRGB<float> ColorRGBf;
 	typedef ColorR<float> ColorRf;
 
-	typedef int Size;
+	typedef int GSize;
 
 	typedef Math::Vec2<int> Point;
 	typedef Math::Vec2<float> PointF;

@@ -104,7 +104,7 @@ namespace Graphic {
 		 * @param	size  	size of the image to create.
 		 * @param	format	(Optional) of the image.
 		 */
-		ImageT( const Math::Vec2<Size> & size, Format format = Format::RGB );
+		ImageT( const Math::Vec2<GSize> & size, Format format = Format::RGB );
 
 
 		/**
@@ -116,7 +116,7 @@ namespace Graphic {
 		 * @param	invertY		 	(Optional) if the image has to be flipped vertically or not.
 		 * @param	stride		 	(Optional) width of ONE line of the image data in bytes, if stride == 0, the lines are supposed to be contiguous without any padding.
 		 */
-		ImageT( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		ImageT( const T * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 		/**
 		 * @brief	Constructor
 		 *
@@ -128,7 +128,7 @@ namespace Graphic {
 		 * @param	stride		 	(Optional) The stride.
 		 */
 		template<typename U>
-		ImageT( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		ImageT( const U * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 		/**
 		 * @brief	move constructor
@@ -145,7 +145,7 @@ namespace Graphic {
 		 *
 		 * @returns	the actual size of this image.
 		 */
-		const Math::Vec2<Size> & getSize() const;
+		const Math::Vec2<GSize> & getSize() const;
 
 		/**
 		 * @brief	get the actual width of the image
@@ -178,7 +178,7 @@ namespace Graphic {
 		 *
 		 * @param	size	new size.
 		 */
-		void clear( const Math::Vec2<Size> & size );
+		void clear( const Math::Vec2<GSize> & size );
 
 		/**
 		 * @brief	reset this image with a new size and a new format
@@ -186,7 +186,7 @@ namespace Graphic {
 		 * @param	size  	new size.
 		 * @param	format	new format of the image.
 		 */
-		void clear( const Math::Vec2<Size> & size, Format format );
+		void clear( const Math::Vec2<GSize> & size, Format format );
 
 
 		/**
@@ -198,7 +198,7 @@ namespace Graphic {
 		 * @param	invertY		 	(Optional) if the image has to be flipped vertically or not.
 		 * @param	stride		 	(Optional) width of ONE line of the image data in bytes, if stride == 0, the lines are supposed to be contiguous without any padding.
 		 */
-		void setDatas( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		void setDatas( const T * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 		/**
 		 * @brief	Sets the datas
 		 *
@@ -210,7 +210,7 @@ namespace Graphic {
 		 * @param	stride		 	(Optional) The stride.
 		 */
 		template<typename U>
-		void setDatas( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		void setDatas( const U * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 
 		/**
@@ -256,46 +256,46 @@ namespace Graphic {
 		/**
 		 * @brief	get the data buffer of this image starting with the selected pixel
 		 *
-		 * @param	x	A Size to process.
-		 * @param	y	A Size to process.
+		 * @param	x	A GSize to process.
+		 * @param	y	A GSize to process.
 		 *
 		 * @returns	data buffer.
 		 */
-		const T * getDatas( Size x, Size y ) const;
+		const T * getDatas( GSize x, GSize y ) const;
 		/**
 		 * @brief	Gets the datas
 		 *
 		 * @tparam	C	Type of the c.
-		 * @param	x	A Size to process.
-		 * @param	y	A Size to process.
+		 * @param	x	A GSize to process.
+		 * @param	y	A GSize to process.
 		 *
 		 * @returns	Null if it fails, else the datas.
 		 */
 		template<typename C>
-		const C * getDatas( Size x, Size y ) const;
+		const C * getDatas( GSize x, GSize y ) const;
 
 
 
 		/**
 		 * @brief	get the data buffer of this image starting with the selected pixel
 		 *
-		 * @param	x	A Size to process.
-		 * @param	y	A Size to process.
+		 * @param	x	A GSize to process.
+		 * @param	y	A GSize to process.
 		 *
 		 * @returns	data buffer.
 		 */
-		T * getDatas( Size x, Size y );
+		T * getDatas( GSize x, GSize y );
 		/**
 		 * @brief	Gets the datas
 		 *
 		 * @tparam	C	Type of the c.
-		 * @param	x	A Size to process.
-		 * @param	y	A Size to process.
+		 * @param	x	A GSize to process.
+		 * @param	y	A GSize to process.
 		 *
 		 * @returns	Null if it fails, else the datas.
 		 */
 		template<typename C>
-		C * getDatas( Size x, Size y );
+		C * getDatas( GSize x, GSize y );
 
 		/**
 		 * @brief	get a pixel from this image
@@ -305,7 +305,7 @@ namespace Graphic {
 		 *
 		 * @returns	the pixel from the picture at the specified 2D coordinate.
 		 */
-		const T * getPixel( Size x, Size y ) const;
+		const T * getPixel( GSize x, GSize y ) const;
 
 		/**
 		 * @brief	get a pixel from this image
@@ -315,7 +315,7 @@ namespace Graphic {
 		 *
 		 * @returns	the pixel from the picture at the specified 2D coordinate.
 		 */
-		T * getPixel( Size x, Size y );
+		T * getPixel( GSize x, GSize y );
 
 
 		/**
@@ -326,7 +326,7 @@ namespace Graphic {
 		 *
 		 * @returns	offset to be added to go from the begining of the data (getData()) and the selected pixel.
 		 */
-		size_t getDataOffset( Size x, Size y ) const;
+		size_t getDataOffset( GSize x, GSize y ) const;
 
 
 
@@ -337,7 +337,7 @@ namespace Graphic {
 		 * @param	y	y coordinate of the pixel.
 		 * @param	p	The pixel to set.
 		 */
-		void setPixel( Size x, Size y, const T * p );
+		void setPixel( GSize x, GSize y, const T * p );
 
 
 
@@ -444,7 +444,7 @@ namespace Graphic {
 		 * @returns	The calculated interpolation.
 		 */
 		template<typename C, typename InterFunc>
-		size_t computeInterpolation( const Gradient::Horizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const;
+		size_t computeInterpolation( const Gradient::Horizontal<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const;
 
 
 		/**
@@ -460,7 +460,7 @@ namespace Graphic {
 		 * @returns	The calculated interpolation.
 		 */
 		template<typename C, typename InterFunc>
-		size_t computeInterpolation( const Gradient::Vertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const;
+		size_t computeInterpolation( const Gradient::Vertical<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const;
 
 
 		/**
@@ -476,7 +476,7 @@ namespace Graphic {
 		 * @returns	The calculated interpolation.
 		 */
 		template<typename C, typename InterFunc>
-		size_t computeInterpolation( const Gradient::Linear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const;
+		size_t computeInterpolation( const Gradient::Linear<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const;
 
 		/**
 		 * @brief	Compute the interpolation for Radial gradient
@@ -491,7 +491,7 @@ namespace Graphic {
 		 * @returns	The calculated interpolation.
 		 */
 		template<typename C, typename InterFunc>
-		size_t computeInterpolation( const Gradient::Radial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<Size> * clampedRectangle ) const;
+		size_t computeInterpolation( const Gradient::Radial<C, InterFunc> & gradient, C ** buffer, const Rectangle & rectangle, Math::Rectangle<GSize> * clampedRectangle ) const;
 
 		/************************************************************************/
 		/* Drawing methods                                                      */
@@ -585,7 +585,7 @@ namespace Graphic {
 		 * @tparam	BlendFunc	Type of the blend function.
 		 * @param 		  	l		 	Line.
 		 * @param [in,out]	colorFunc	functor that will generate the color for each pixels (see Graphic::ColorFunc::Template), width the methods : "inline void init(const
-		 * 								Rectangle & rectangle);" "inline const C & operator()(const Math::Vec2<Size> & p) const;".
+		 * 								Rectangle & rectangle);" "inline const C & operator()(const Math::Vec2<GSize> & p) const;".
 		 * @param 		  	thickness	(Optional) The thickness.
 		 * @param 		  	blendFunc	(Optional) Functor with operator() overloaded with "template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const
 		 * 								Graphic::ColorR<T> & colorSrc, float alpha)const;" "template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const
@@ -606,8 +606,8 @@ namespace Graphic {
 		 *
 		 * @tparam	Functor	Type of the functor.
 		 * @param [in,out]	functor  	Functor with the methods :
-		 * 								  "inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);" "inline void operator()(const Math::Vec2<Size> & p,
-		 * 								  Graphic::ColorRGB<T> & c);" "inline void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGBA<T> & c);".
+		 * 								  "inline void operator()(const Math::Vec2<GSize> & p, Graphic::ColorR<T> & c);" "inline void operator()(const Math::Vec2<GSize> & p,
+		 * 								  Graphic::ColorRGB<T> & c);" "inline void operator()(const Math::Vec2<GSize> & p, Graphic::ColorRGBA<T> & c);".
 		 * @param 		  	rectangle	Rectangle where to apply the functor.
 		 */
 		template<typename Functor>
@@ -618,8 +618,8 @@ namespace Graphic {
 		 *
 		 * @tparam	Functor	Type of the functor.
 		 * @param [in,out]	functor	Functor with operator() overloaded with
-		 * 							  "template<typename T> void operator()(const Math::Vec2<Size> & p, Graphic::ColorR<T> & c);" "template<typename T> void operator()(const
-		 * 							  Math::Vec2<Size> & p, Graphic::ColorRGB<T> & c);" "template<typename T> void operator()(const Math::Vec2<Size> & p, Graphic::ColorRGBA<T> & c);
+		 * 							  "template<typename T> void operator()(const Math::Vec2<GSize> & p, Graphic::ColorR<T> & c);" "template<typename T> void operator()(const
+		 * 							  Math::Vec2<GSize> & p, Graphic::ColorRGB<T> & c);" "template<typename T> void operator()(const Math::Vec2<GSize> & p, Graphic::ColorRGBA<T> & c);
 		 * 							  ".
 		 */
 		template<typename Functor>
@@ -746,7 +746,7 @@ namespace Graphic {
 		 * @tparam	BlendFunc	Type of the blend function.
 		 * @param 		  	rectangle	Rectangle representing the pixels to draw. (the rectangle is clamped inside the image)
 		 * @param [in,out]	colorFunc	functor that will generate the color for each pixels (see Graphic::ColorFunc::Template), width the methods : "inline void init(const
-		 * 								Rectangle & rectangle);" "inline const C & operator()(const Math::Vec2<Size> & p) const;".
+		 * 								Rectangle & rectangle);" "inline const C & operator()(const Math::Vec2<GSize> & p) const;".
 		 * @param 		  	blendFunc	(Optional) Functor with the methods : "template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const Graphic::ColorR<T> &
 		 * 								colorSrc)const;" "template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;"
 		 * 								"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const Graphic::ColorR<T> & colorSrc)const;".
@@ -1038,7 +1038,7 @@ namespace Graphic {
 		 * @tparam	Fast	 	if the methods will check for overflow (set this to true only if you know exactly what you are doing)
 		 * @param 		  	point	 	Position where to draw.
 		 * @param [in,out]	colorFunc	functor that will generate the color for each pixels (see Graphic::ColorFunc::Template), width the methods : "inline void init(const
-		 * 								Rectangle & rectangle);" "inline const C & operator()(const Math::Vec2<Size> & p) const;".
+		 * 								Rectangle & rectangle);" "inline const C & operator()(const Math::Vec2<GSize> & p) const;".
 		 * @param 		  	rectangle	Rectangle of the maskImage to draw. (the rectangle has to be positive and smaller than the size of the maskImage)
 		 * @param 		  	maskImage	mask to use (only the first component will be used to determine the luminance)
 		 * @param 		  	blendFunc	(Optional) Functor with operator() overloaded with "template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const
@@ -1111,7 +1111,7 @@ namespace Graphic {
 		 * @param 		  	image	  	Image used to compute the stroking (R & RGB will use the r channel and RGBA the a channel)
 		 * @param 		  	thickness 	Thickness of the stroking.
 		 * @param [in,out]	colorFunc 	functor that will generate the color for each pixels, width the methods : "inline void init(const Rectangle & rectangle);" "inline const C &
-		 * 								operator()(const Math::Vec2<Size> & p) const;".
+		 * 								operator()(const Math::Vec2<GSize> & p) const;".
 		 * @param 		  	strokeType	(Optional) Type of the stroking (Outside, Inside or Middle)
 		 * @param 		  	blendFunc 	(Optional) Functor with operator() overloaded with "template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc,
 		 * 								float alpha)const;" "template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, float alpha)const;"
@@ -1236,7 +1236,7 @@ namespace Graphic {
 		 * @param 		  	thickness	size of the blurring of the shadow.
 		 * @param 		  	image	 	image from where to create a shadow.
 		 * @param [in,out]	colorFunc	functor that will generate the color for each pixels, width the methods : "inline void init(const Rectangle & rectangle);" "inline const C &
-		 * 								operator()(const Math::Vec2<Size> & p) const;".
+		 * 								operator()(const Math::Vec2<GSize> & p) const;".
 		 * @param 		  	blendFunc	(Optional) Functor with operator() overloaded with "template<typename T> void operator()(Graphic::ColorR<T> & colorDest, const C & colorSrc,
 		 * 								const T & alpha)const;" "template<typename T> void operator()(Graphic::ColorRGB<T> & colorDest, const C & colorSrc, const T & alpha)const;"
 		 * 								"template<typename T> void operator()(Graphic::ColorRGBA<T> & colorDest, const C & colorSrc, const T & alpha)const;".
@@ -1349,7 +1349,7 @@ namespace Graphic {
 		 * @sa	Graphic::KernelFunc for many preconfigured functors
 		 */
 		template<typename F, typename KernelFunc = KernelFunc::None, typename T1 = T>
-		ImageT<T> applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
+		ImageT<T> applyFilter( const F * filterX, const F * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		/**
@@ -1370,7 +1370,7 @@ namespace Graphic {
 		 * @sa	Graphic::KernelFunc for many preconfigured functors
 		 */
 		template<typename F, typename KernelFunc = KernelFunc::None, typename T1 = T>
-		ImageT<T> applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
+		ImageT<T> applyFilter( const F * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::null, KernelFunc & kernelFunc = KernelFunc::None() ) const;
 
 
 		/**
@@ -1382,7 +1382,7 @@ namespace Graphic {
 		 *
 		 * @returns	Image with the filter applied.
 		 */
-		ImageT<T> applyGaussianBlur( Size radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::black ) const;
+		ImageT<T> applyGaussianBlur( GSize radius, ConvolutionMode convolutionMode = ConvolutionMode::ExtendedSize, const ColorRGBA<T> & color = ColorRGBA<T>::black ) const;
 
 		/**
 		 * @brief	apply a Sobel filter and return the resulting image (note the final pixels components will be "min(sqrt(x*x + y*y) / 2, MAX)" where x is the sobel filter
@@ -1402,7 +1402,7 @@ namespace Graphic {
 		 *
 		 * @returns	A Rectangle clamped inside the image.
 		 */
-		inline Math::Rectangle<Size> clampRectangle( const Rectangle & rectangle ) const;
+		inline Math::Rectangle<GSize> clampRectangle( const Rectangle & rectangle ) const;
 
 
 		/**
@@ -1494,7 +1494,7 @@ namespace Graphic {
 		 *
 		 * @sa	https://en.wikipedia.org/wiki/Lanczos_resampling
 		 */
-		ImageT<T> resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+		ImageT<T> resample( const Math::Vec2<GSize> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 
 		/**
@@ -1517,7 +1517,7 @@ namespace Graphic {
 		 * @sa	Graphic::ColorFunc::Template for making your own color functor
 		 */
 		template<typename ColorFunc, typename BlendFunc = BlendingFunc::Normal>
-		void drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
+		void drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
 
 
 
@@ -1606,7 +1606,7 @@ namespace Graphic {
 		/* Kernels                                                              */
 		/************************************************************************/
 		/**
-		 * @brief	compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : Size of your kernel (has to be odd))
+		 * @brief	compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : GSize of your kernel (has to be odd))
 		 *
 		 * @tparam	K	Generic type parameter.
 		 * @tparam	N	Type of the n.
@@ -1619,7 +1619,7 @@ namespace Graphic {
 		static K computeGaussianKernel( K( &kernel )[ N ], const Float & sigma );
 
 		/**
-		 * @brief	compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : Size of your kernel (has to be odd))
+		 * @brief	compute the Vertical/Horizontal Gaussian Kernel (K : Type of Values in your Kernel, N : GSize of your kernel (has to be odd))
 		 *
 		 * @tparam	K	Generic type parameter.
 		 * @tparam	N	Type of the n.
@@ -1821,7 +1821,7 @@ namespace Graphic {
 		 * @param [in,out]	blendFunc 	(Optional) The blend function.
 		 */
 		template<typename ColorFunc, typename BlendFunc, typename C1>
-		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, ::Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
+		void _drawPolygonFunctor( const Math::Vec2<float> * vertices, Size nbVertices, const Rectangle & rectangle, ColorFunc & colorFunc, BlendFunc & blendFunc = BlendFunc() );
 
 		/**
 		 * @brief	Resamples
@@ -1836,7 +1836,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T>
 		 */
 		template<typename C1, typename Sum, typename SumF, typename K >
-		ImageT<T> _resample( const Math::Vec2<Size> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
+		ImageT<T> _resample( const Math::Vec2<GSize> & newSize, ResamplingMode resamplingMode = ResamplingMode::Nearest ) const;
 
 		/**
 		 * @brief	Draw rectangle rounded functor
@@ -2183,7 +2183,7 @@ namespace Graphic {
 		 * @param	invertY		 	(Optional) True to invert y coordinate.
 		 * @param	stride		 	(Optional) The stride.
 		 */
-		void _allocateAndCopy( const T * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		void _allocateAndCopy( const T * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 		/**
 		 * @brief	Allocate and copy
@@ -2196,7 +2196,7 @@ namespace Graphic {
 		 * @param	stride		 	(Optional) The stride.
 		 */
 		template<typename U>
-		void _allocateAndCopy( const U * data, const Math::Vec2<Size> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
+		void _allocateAndCopy( const U * data, const Math::Vec2<GSize> & size, LoadingFormat loadingFormat = LoadingFormat::RGB, bool invertY = false, size_t stride = 0 );
 
 		/**
 		 * @brief	Loading format 2 format
@@ -2269,7 +2269,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-		ImageT<T2> _applyFilter( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const F * filterX, const F * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filterf
@@ -2291,7 +2291,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-		ImageT<T2> _applyFilterf( const F * filterX, const F * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilterf( const F * filterX, const F * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filter
@@ -2313,7 +2313,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
-		ImageT<T2> _applyFilter( const float * filterX, const float * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const float * filterX, const float * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filter
@@ -2335,7 +2335,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc >
-		ImageT<T2> _applyFilter( const double * filterX, const double * filterY, Size size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const double * filterX, const double * filterY, GSize size, ConvolutionOrder convolutionOrder, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filter
@@ -2356,7 +2356,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc, typename F>
-		ImageT<T2> _applyFilter( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const F * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filter
@@ -2376,7 +2376,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
-		ImageT<T2> _applyFilter( const float * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const float * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filter
@@ -2396,7 +2396,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename Sum, typename KernelFunc>
-		ImageT<T2> _applyFilter( const double * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilter( const double * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Applies the filterf
@@ -2416,7 +2416,7 @@ namespace Graphic {
 		 * @returns	An ImageT<T2>
 		 */
 		template<typename T1, typename C1, typename T2, typename C2, typename KernelFunc, typename F>
-		ImageT<T2> _applyFilterf( const F * filter, const Math::Vec2<Size> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
+		ImageT<T2> _applyFilterf( const F * filter, const Math::Vec2<GSize> & size, ConvolutionMode convolutionMode, const ColorRGBA<T2> & color, KernelFunc & func ) const;
 
 		/**
 		 * @brief	Creates a mipmap
@@ -2460,7 +2460,7 @@ namespace Graphic {
 		/** @brief	Describes the format to use */
 		Format format;
 		/** @brief	The size */
-		Math::Vec2<Size> size;
+		Math::Vec2<GSize> size;
 		/** @brief	The nb pixels */
 		size_t nbPixels;
 		/** @brief	The buffer */

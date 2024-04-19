@@ -68,11 +68,11 @@ namespace Graphic {
 			StrokeColorFunc & getStrokeColorFunc();
 
 			///@brief set the stroking size
-			///@param size Size of the stroke
+			///@param size GSize of the stroke
 			void setStrokeSize( float size );
 
 			///@brief get the stroking size
-			///@return Size of the stroke
+			///@return GSize of the stroke
 			float getStrokeSize() const;
 
 			///@brief Set the color overlay functor
@@ -132,14 +132,14 @@ namespace Graphic {
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param fileName Path to the file to open
-		///@param pixSize Size of the loaded font.
+		///@param pixSize GSize of the loaded font.
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
 		FontEffect( const WString & fileName, int pixSize );
 
 		///@brief Constructor using a font file dump and his size in bytes
 		///@param fileDump memory copy of a font file.
 		///@param fileSize size in bytes of the data buffer.
-		///@param pixSize Size in pixels of the font to be loaded
+		///@param pixSize GSize in pixels of the font to be loaded
 		FontEffect( const char * fileDump, size_t fileSize, int pixSize );
 
 		///@brief Copy constructor
@@ -212,11 +212,11 @@ namespace Graphic {
 		StrokeColorFunc & getStrokeColorFunc();
 
 		///@brief set the stroking size
-		///@param size Size of the stroke
+		///@param size GSize of the stroke
 		void setStrokeSize( float size );
 
 		///@brief get the stroking size
-		///@return Size of the stroke
+		///@return GSize of the stroke
 		float getStrokeSize() const;
 
 

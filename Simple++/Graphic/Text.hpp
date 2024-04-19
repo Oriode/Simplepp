@@ -185,7 +185,7 @@ namespace Graphic {
 		rectangle.setRight( Math::ceil( maxLineWidth + font.getMargins().getLeft() + font.getMargins().getRight() ) );
 
 		// Clear the image with a new size
-		clear( Math::Vec2<Size>( rectangle.getRight(), rectangle.getTop() ) );
+		clear( Math::Vec2<GSize>( rectangle.getRight(), rectangle.getTop() ) );
 
 		// Use of memset for optimizations (because 0 of float/int/double/char is a representation of 0x00)
 		memset( getDatas(), 0, getNbPixels() * getNbComponents() );

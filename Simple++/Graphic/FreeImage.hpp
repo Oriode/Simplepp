@@ -5,7 +5,7 @@ namespace Graphic {
 	FreeImageT<T>::FreeImageT() :
 		loadingType( LoadingType::EMPTY ),
 		freeImage( NULL ),
-		size( Math::Vec2<Size>::null ),
+		size( Math::Vec2<GSize>::null ),
 		loadingFormat( Format::R ),
 		stride( 0 ),
 		BPP( getBitsFromFormat( this -> loadingFormat ) ) {
@@ -14,12 +14,12 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	FreeImageT<T>::FreeImageT( const OS::Path& filePath, Format format, bool invertY, const Math::Vec2<Size>& size ) {
+	FreeImageT<T>::FreeImageT( const OS::Path& filePath, Format format, bool invertY, const Math::Vec2<GSize>& size ) {
 		setFile( filePath, format, invertY, size );
 	}
 
 	template <typename T>
-	FreeImageT<T>::FreeImageT( const FreeImageT& freeImage, const Math::Vec2<Size>& newSize, Filter resampleFilter ) :
+	FreeImageT<T>::FreeImageT( const FreeImageT& freeImage, const Math::Vec2<GSize>& newSize, Filter resampleFilter ) :
 		BasicLoadable( freeImage ),
 		filePath( freeImage.filePath ),
 		size( newSize ),
@@ -29,7 +29,7 @@ namespace Graphic {
 		loadingFormat( freeImage.loadingFormat ),
 		resampleFilter( resampleFilter ) {
 		if ( freeImage.isLoaded() ) {
-			Math::Vec2<Size> toCopySize = freeImage.getSize();
+			Math::Vec2<GSize> toCopySize = freeImage.getSize();
 
 			if ( this -> size != toCopySize )
 				this -> freeImage = FreeImage_Rescale( freeImage.freeImage, this -> size.x, this -> size.y, ( FREE_IMAGE_FILTER ) this -> resampleFilter );
@@ -165,7 +165,7 @@ namespace Graphic {
 		if ( this -> BPP != FreeImage_GetBPP( this -> freeImage ) )
 			_updateBPP();
 		//resize
-		if ( this -> size != Math::Vec2<Size>( FreeImage_GetWidth( this -> freeImage ), FreeImage_GetHeight( this -> freeImage ) ) )
+		if ( this -> size != Math::Vec2<GSize>( FreeImage_GetWidth( this -> freeImage ), FreeImage_GetHeight( this -> freeImage ) ) )
 			_updateSize();
 
 		this -> stride = FreeImage_GetPitch( this -> freeImage );
@@ -173,7 +173,7 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	void FreeImageT<T>::resize( const Math::Vec2<Size>& newSize, Filter resampleFilter ) {
+	void FreeImageT<T>::resize( const Math::Vec2<GSize>& newSize, Filter resampleFilter ) {
 		this -> resampleFilter = resampleFilter;
 
 		if ( isLoaded() && this -> size != newSize ) {
@@ -256,7 +256,7 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	const Math::Vec2<Size>& FreeImageT<T>::getSize() const {
+	const Math::Vec2<GSize>& FreeImageT<T>::getSize() const {
 		return this -> size;
 	}
 
@@ -266,7 +266,7 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	void FreeImageT<T>::setFile( const OS::Path& filePath, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<Size>& size ) {
+	void FreeImageT<T>::setFile( const OS::Path& filePath, Format format /*= UNDEFINED*/, bool invertY, const Math::Vec2<GSize>& size ) {
 		unload();
 
 		this -> invertY = invertY;
@@ -282,7 +282,7 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	bool FreeImageT<T>::loadFromDatas( unsigned char* datas, const Math::Vec2<Size>& size, Format format, bool datasInvertY ) {
+	bool FreeImageT<T>::loadFromDatas( unsigned char* datas, const Math::Vec2<GSize>& size, Format format, bool datasInvertY ) {
 		unload();
 
 		lock();
@@ -453,7 +453,7 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	inline bool FreeImageT<T>::loadFromBinary( const void* data, ::Size size, bool invertY ) {
+	inline bool FreeImageT<T>::loadFromCompressed( const void* data, Size size, bool invertY ) {
 
 		unload();
 		lock();
@@ -508,7 +508,7 @@ namespace Graphic {
 	}
 
 	template <typename T>
-	Math::vec4 FreeImageT<T>::getPixelf( Size x, Size y ) const {
+	Math::vec4 FreeImageT<T>::getPixelf( GSize x, GSize y ) const {
 		unsigned int iIndex = ( y * this -> size.x + x ) * ( this -> BPP / 8 );
 
 

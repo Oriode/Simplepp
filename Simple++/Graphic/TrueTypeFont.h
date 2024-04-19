@@ -15,7 +15,7 @@ namespace Graphic {
 
 		///@brief constructor that take a filename of a font file (ttf, ttc, cff...)
 		///@param filePath Path to the file to open
-		///@param pixSize Size of the loaded font.
+		///@param pixSize GSize of the loaded font.
 		///@param loadingFunc Loading Functor (must inherite from FontLoadingFunc::Template)
 		TrueTypeFontT( const OS::Path & filePath, int pixSize, const LoadingFunc & loadingFunc = LoadingFunc() );
 

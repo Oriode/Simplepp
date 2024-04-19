@@ -63,14 +63,14 @@ namespace Graphic {
 		///@param filePath Path to the image to be opened.
 		///@param format Format of the image (Format::UNDEFINED meens automatic detection. The file will be converted instead.)
 		///@param invertY Specify if the image has to be flipped vertically when loaded.
-		///@param size the size the image will have. (Math::Vec2<Size>::null meens the original one).
-		FreeImageT( const OS::Path & filePath, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
+		///@param size the size the image will have. (Math::Vec2<GSize>::null meens the original one).
+		FreeImageT( const OS::Path & filePath, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<GSize> & size = Math::Vec2<GSize>::null );
 
 		///@brief Create a new Image, a copy from an another one existing but resize it directly.
 		///@param freeImage the image to be copied.
 		///@param newSize the new size to be applied to the copied version
 		///@param resampleFilter the re sample filter to be used during the resizing.
-		FreeImageT( const FreeImageT & freeImage, const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );
+		FreeImageT( const FreeImageT & freeImage, const Math::Vec2<GSize> & newSize, Filter resampleFilter = Filter::Bilinear );
 
 		///@brief Create a new Image, a copy from an another one existing.
 		///@param freeImage the image to be copied.
@@ -97,8 +97,8 @@ namespace Graphic {
 		///@param filePath new file Path to be opened
 		///@param format loading format to be used if every components are not useful. (Format::UNDEFINED will use the file's one.)
 		///@param invertY if we have to flip the image vertically.
-		///@param size the new size of the loaded image (Math::Vec2<Size>::null mean full image resolution).
-		void setFile( const OS::Path & filePath, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<Size> & size = Math::Vec2<Size>::null );
+		///@param size the new size of the loaded image (Math::Vec2<GSize>::null mean full image resolution).
+		void setFile( const OS::Path & filePath, Format format = Format::UNDEFINED, bool invertY = false, const Math::Vec2<GSize> & size = Math::Vec2<GSize>::null );
 
 
 		///@brief load this object using raw datas
@@ -106,17 +106,22 @@ namespace Graphic {
 		///@param size the size of the image.
 		///@param format the loading format of this image.
 		///@param datasInvertY if we have to flip the image vertically or not.
-		bool loadFromDatas( unsigned char * datas, const Math::Vec2<Size> & size, Format format, bool datasInvertY = false );
+		bool loadFromDatas( unsigned char * datas, const Math::Vec2<GSize> & size, Format format, bool datasInvertY = false );
 
 
 		///@brief	Load this object using already memory loaded compressed data.
 		///@param size buffer siwe<
 		///@param invertY if we have to flip the image vertically.
-		bool loadFromBinary( const void * data, ::Size size, bool invertY = false);
+		bool loadFromCompressed( const void * data, Size size, bool invertY = false);
+
+
+
+
+		// Size getCompressed(void * data, )
 
 
 		///@brief return a pixel as a Math::vec4 object. Value will be between 0.0f and 1.0f.
-		Math::vec4 getPixelf( Size x, Size y ) const;
+		Math::vec4 getPixelf( GSize x, GSize y ) const;
 
 
 		///@brief Set the actual format of each pixel stored, it will change the BPP
@@ -147,12 +152,12 @@ namespace Graphic {
 		bool saveToFile( const OS::Path & filePath, CompressedFormat savingFormat, unsigned int quality = 100 ) const;
 
 		///@brief Resize the image to the specified size using the specified Filter
-		void resize( const Math::Vec2<Size> & newSize, Filter resampleFilter = Filter::Bilinear );
+		void resize( const Math::Vec2<GSize> & newSize, Filter resampleFilter = Filter::Bilinear );
 
 
 
 		///@brief Retrieve this image size
-		const Math::Vec2<Size> & getSize() const;
+		const Math::Vec2<GSize> & getSize() const;
 
 
 
@@ -204,7 +209,7 @@ namespace Graphic {
 
 		OS::Path filePath;
 
-		Math::Vec2<Size> size;
+		Math::Vec2<GSize> size;
 		Filter resampleFilter;
 		size_t stride;
 

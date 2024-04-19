@@ -45,7 +45,7 @@ namespace Graphic {
 
 		FT_Bitmap * ftBitmap = &ftGlyph -> bitmap;
 
-		createImageFunctor( this, ( unsigned char * ) ( ftBitmap -> buffer ), Math::Vec2<Size>( ftBitmap -> width, ftBitmap -> rows ) );
+		createImageFunctor( this, ( unsigned char * ) ( ftBitmap -> buffer ), Math::Vec2<GSize>( ftBitmap -> width, ftBitmap -> rows ) );
 	}
 
 	template<typename T>

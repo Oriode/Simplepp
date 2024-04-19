@@ -32,7 +32,7 @@ namespace Graphic {
 
 		///@brief get the effective rectangle of this gradient (intersection between the specified rectangle and the specified image)
 		///@return rectangle
-		const Math::Rectangle<Size> & getClampedRectangle() const;
+		const Math::Rectangle<GSize> & getClampedRectangle() const;
 
 		///@brief get the size of the interpolations datas
 		///@return size of the interpolation array
@@ -63,8 +63,8 @@ namespace Graphic {
 	protected:
 
 		C * interpolatedArray;
-		Math::Rectangle<Size> clampedRectangle;
-		::Size size;
+		Math::Rectangle<GSize> clampedRectangle;
+		Size size;
 	};
 
 	
@@ -88,12 +88,12 @@ namespace Graphic {
 
 			///@brief Initialize the gradient with the rectangle where to draw
 			///@param rectangle Rectangle where to draw
-			inline void init( const Math::Rectangle<Size> & rectangle );
+			inline void init( const Math::Rectangle<GSize> & rectangle );
 
 			///@brief operator() to be able to use this object as a color functor
 			///@param p Point relative to the image rectangle (see init())
 			///@return Color
-			inline C operator()( const Math::Vec2<Size> & p ) const;
+			inline C operator()( const Math::Vec2<GSize> & p ) const;
 
 			///@brief Copy operator
 			GradientHorizontal<C, InterFunc> & operator=( const GradientHorizontal<C, InterFunc> & gradient );
@@ -134,13 +134,13 @@ namespace Graphic {
 
 			///@brief Initialize the gradient with the rectangle where to draw
 			///@param rectangle Rectangle where to draw
-			inline void init( const Math::Rectangle<Size> & rectangle );
+			inline void init( const Math::Rectangle<GSize> & rectangle );
 
 
 			///@brief operator() to be able to use this object as a color functor
 			///@param p Point relative to the image rectangle (see init())
 			///@return Color
-			inline C operator()( const Math::Vec2<Size> & p ) const;
+			inline C operator()( const Math::Vec2<GSize> & p ) const;
 
 			///@brief Copy operator
 			GradientVertical<C, InterFunc> & operator=( const GradientVertical<C, InterFunc> & gradient );
@@ -179,12 +179,12 @@ namespace Graphic {
 
 			///@brief Initialize the gradient with the rectangle where to draw
 			///@param rectangle Rectangle where to draw
-			inline void init( const Math::Rectangle<Size> & rectangle );
+			inline void init( const Math::Rectangle<GSize> & rectangle );
 
 			///@brief operator() to be able to use this object as a color functor
 			///@param p Point relative to the image rectangle (see init())
 			///@return Color
-			inline C operator()( const Math::Vec2<Size> & p ) const;
+			inline C operator()( const Math::Vec2<GSize> & p ) const;
 
 			///@brief Copy operator
 			GradientLinear<C, InterFunc> & operator=( const GradientLinear<C, InterFunc> & gradient );
@@ -224,12 +224,12 @@ namespace Graphic {
 
 			///@brief Initialize the gradient with the rectangle where to draw
 			///@param rectangle Rectangle where to draw
-			inline void init( const Math::Rectangle<Size> & rectangle );
+			inline void init( const Math::Rectangle<GSize> & rectangle );
 
 			///@brief operator() to be able to use this object as a color functor
 			///@param p Point relative to the image rectangle (see init())
 			///@return Color
-			inline C operator()( const Math::Vec2<Size> & p ) const;
+			inline C operator()( const Math::Vec2<GSize> & p ) const;
 
 			///@brief Copy operator
 			GradientRadial<C, InterFunc> & operator=( const GradientRadial<C, InterFunc> & gradient );

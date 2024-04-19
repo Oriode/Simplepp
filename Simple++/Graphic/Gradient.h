@@ -81,16 +81,16 @@ namespace Graphic {
 
 			///@brief get the number of points of this gradient.
 			///@return Number of points of this gradient.
-			::Size getNumPoints() const;
+			Size getNumPoints() const;
 
 
 			///@brief Operator [] to direct access points inside this gradient.
 			///@param i index of the points (in the order added first is 0)
-			Point<C> & operator[]( ::Size i );
+			Point<C> & operator[]( Size i );
 
 			///@brief Operator [] to direct access points inside this gradient.
 			///@param i index of the points (in the order added first is 0)
-			const Point<C> & operator[]( ::Size i ) const;
+			const Point<C> & operator[]( Size i ) const;
 
 
 			///@brief Compute the interpolation of every color of this gradient in an 1D array
@@ -198,7 +198,7 @@ namespace Graphic {
 			///@brief Compute the index in the interpolated array
 			///@param p Point relative of this gradient.
 			///@return Computed index.
-			static int computeIndex( const Math::Vec2<Size> & p );
+			static int computeIndex( const Math::Vec2<GSize> & p );
 
 			///@brief Compute the index in the interpolated array
 			///@param p Point relative of this gradient.
@@ -242,7 +242,7 @@ namespace Graphic {
 			///@brief Compute the index in the interpolated array
 			///@param p Point relative of this gradient.
 			///@return Computed index.
-			static int computeIndex( const Math::Vec2<Size> & p );
+			static int computeIndex( const Math::Vec2<GSize> & p );
 
 			///@brief Compute the index in the interpolated array
 			///@param p Point relative of this gradient.

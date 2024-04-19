@@ -20,13 +20,13 @@ namespace Graphic {
 
 			///@brief function called before any drawing to specify the rectangle where the drawing will be.
 			///@param rectangle Rectangle of the image where the functor is gonna call the operator()()
-			inline void init( const Math::Rectangle<Size> & rectangle ) {}
+			inline void init( const Math::Rectangle<GSize> & rectangle ) {}
 
 
 			///@brief operator() to be used as a functor, retrieve a color for a specified coordinate
 			///@param p Point representing the coordinate where to retrieve the color relatively of the rectangle given in the init()
 			///@return Color
-			inline C operator()( const Math::Vec2<Size> & p ) const { return C( 0 ); }
+			inline C operator()( const Math::Vec2<GSize> & p ) const { return C( 0 ); }
 		};
 
 
@@ -44,13 +44,13 @@ namespace Graphic {
 
 			///@brief function called before any drawing to specify the rectangle where the drawing will be.
 			///@param rectangle Rectangle of the image where the functor is gonna call the operator()()
-			inline void init( const Math::Rectangle<Size> & rectangle ) {}
+			inline void init( const Math::Rectangle<GSize> & rectangle ) {}
 
 
 			///@brief operator() to be used as a functor, retrieve a color for a specified coordinate
 			///@param p Point representing the coordinate where to retrieve the color relatively of the rectangle given in the init()
 			///@return Color
-			inline C operator()( const Math::Vec2<Size> & p ) { return this -> color; }
+			inline C operator()( const Math::Vec2<GSize> & p ) { return this -> color; }
 
 			///@brief Retrieve the color of this functor
 			///@return Color
