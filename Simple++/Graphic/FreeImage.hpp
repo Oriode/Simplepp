@@ -508,13 +508,14 @@ namespace Graphic {
 	}
 
 	template<typename T>
-	inline Size FreeImageT<T>::getCompressed( CompressedFormat format, void* outData, Size maxSize, int jpgQuality ) {
+	inline Size FreeImageT<T>::getCompressed( CompressedFormat format, char ** outData, int jpgQuality ) {
 
 		lock();
 
 		// If the object is not loaded, fails.
 		if ( !isLoaded() ) {
 			unload();
+			*outData = NULL;
 			return Size( -1 );
 		}
 
@@ -531,6 +532,7 @@ namespace Graphic {
 		// Save to memory.
 		if ( !FreeImage_SaveToMemory( freeImageFormat, this->freeImage, fiMemory, flags ) ) {
 			unlock();
+			*outData = NULL;
 			return Size( -1 );
 		}
 
@@ -539,8 +541,10 @@ namespace Graphic {
 		// Seek the begining of the stream.
 		FreeImage_SeekMemory( fiMemory, 0L, SEEK_SET );
 
+		*outData = new char[ writtenBytes ];
+
 		// Read the FreeImage stream to the output data buffer.
-		FreeImage_ReadMemory( outData, static_cast< unsigned int >( writtenBytes ), 1u, fiMemory );
+		FreeImage_ReadMemory( *outData, static_cast< unsigned int >( writtenBytes ), 1u, fiMemory );
 
 		// Close the memory stream.
 		FreeImage_CloseMemory( fiMemory );

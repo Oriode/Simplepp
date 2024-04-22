@@ -118,11 +118,11 @@ namespace Graphic {
 
 		///@brief	Try to compress the image in a specific format and retrieve the data.
 		///@param format	The format to compress the image to.
-		///@param outData	the output buffer already allocated.
+		///@param outData	the output buffer to be allocated or set to NULL if fails.
 		///@param maxSize	Size of the output buffer.
 		///@param jpgQuality	When using jpg format, the quality to be set [0 : 100].
 		///@return The number of bytes written into the given buffer if succeed. -1 if failed.
-		Size getCompressed( CompressedFormat format, void* outData, Size maxSize, int jpgQuality = 100 );
+		Size getCompressed( CompressedFormat format, char ** outData, int jpgQuality = 100 );
 
 
 		///@brief return a pixel as a Math::vec4 object. Value will be between 0.0f and 1.0f.
