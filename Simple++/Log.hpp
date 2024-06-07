@@ -313,7 +313,7 @@ inline void LogDefaultHandlerT<T>::message( const BasicString<T>& logTitle, cons
 	}
 
 	str << logMessage;
-	str << T( '\n' );
+	str << BasicString<T>::ElemType( '\n' );
 
 	if ( this->bSTDOut ) {
 		if ( sizeof( T ) == 2 ) {
