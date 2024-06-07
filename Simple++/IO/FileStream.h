@@ -10,7 +10,13 @@ namespace IO {
 	///@brief Mode to open a FileStream.
 	enum class OpenMode : unsigned char {
 		Write = std::ios::out,
-		Read = std::ios::in
+		Read = std::ios::in,
+		ReadWrite = std::ios::out | std::ios::in
+	};
+
+	enum class WriteMode : unsigned char {
+		Append = std::ios::app,
+		Truncate = std::ios::trunc
 	};
 
 	///@brief Representing a File on the Operating System that can be read or write.
@@ -22,7 +28,7 @@ namespace IO {
 		///			Position will be set to 0.
 		///@param filePath Path to be opened.
 		///@param openMode Mode to open the file. (Read or Write)
-		FileStreamT( const OS::PathT<T>& filePath, OpenMode openMode );
+		FileStreamT( const OS::PathT<T>& filePath, OpenMode openMode, WriteMode writeMode = WriteMode::Truncate );
 
 		~FileStreamT();
 

@@ -2,9 +2,9 @@
 namespace IO {
 
 	template<typename T>
-	FileStreamT<T>::FileStreamT( const OS::PathT<T>& filePath, OpenMode openMode ) :
+	FileStreamT<T>::FileStreamT( const OS::PathT<T>& filePath, OpenMode openMode, WriteMode writeMode ) :
 		filePath( filePath ),
-		stream( filePath.getData(), ( ( unsigned char ) openMode ) | std::ios::binary ) {
+		stream( filePath.getData(), ( ( unsigned char ) openMode ) | ( ( unsigned char ) writeMode ) | std::ios::binary ) {
 
 	}
 
