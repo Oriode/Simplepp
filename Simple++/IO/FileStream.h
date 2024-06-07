@@ -22,7 +22,9 @@ namespace IO {
 		///			Position will be set to 0.
 		///@param filePath Path to be opened.
 		///@param openMode Mode to open the file. (Read or Write)
-		FileStreamT(const OS::PathT<T> & filePath, OpenMode openMode);
+		FileStreamT( const OS::PathT<T>& filePath, OpenMode openMode );
+
+		~FileStreamT();
 
 		///@brief Get the associated path.
 		///@return File Path.
@@ -39,19 +41,22 @@ namespace IO {
 		///@param [out] stringP String to be modified.
 		///@return number of char read (-1) if an error has occurred.
 		template<typename C>
-		Size readToString(BasicString<C>* stringP);
+		Size readToString( BasicString<C>* stringP );
 
 		///@brief Write data into this file at the current position.
 		///@param data data to be wrtitten into the file.
 		///@param size number of bytes to be written.
 		///@return True if success, False otherwise.
-		bool write(const char* data, Size size);
+		bool write( const char* data, Size size );
 
 		///@brief read data from the file at the current position.
 		///@param data Buffer to be filled with the read data.
 		///@param size Number of bytes to be read.
 		///@return True if success, False otherwise.
-		bool read(char* data, Size size);
+		bool read( char* data, Size size );
+
+		///@brief	Flush.
+		void sync();
 
 		///@brief get the current position.
 		///@return Current position.
@@ -59,11 +64,11 @@ namespace IO {
 
 		///@brief Set the current position from the beginning.
 		///@param position New position to be set.
-		void setPositionFromBegin(Size position);
+		void setPositionFromBegin( Size position );
 
 		///@brief Set the current position from the end.
 		///@param position New position to be set.
-		void setPositionFromEnd(Size position);
+		void setPositionFromEnd( Size position );
 
 		///@brief Check if the last operation has failed or not.
 		///@return True if failed, False otherwise.
@@ -76,7 +81,7 @@ namespace IO {
 		///@brief read the complete file stream (from begin to end) and allocate a new data and copy data inside.
 		///@param data [out] data buffer to be allocated and filled with the content of the file stream.
 		///@return number of char read if succeed, -1 otherwise. (Pointer will be set to NULL if failed, allocated otherwise.)
-		Size readToBuffer(char** buffer);
+		Size readToBuffer( char** buffer );
 
 		/************************************************************************/
 		/* OPERATOR STREAM                                                      */
@@ -85,10 +90,10 @@ namespace IO {
 		///@brief Add a Character to the file.
 		///@param c Byte to be added.
 		///@return Reference to this.
-		FileStreamT<T>& operator<<(char c);
+		FileStreamT<T>& operator<<( char c );
 
 		///@brief Add multiples characteres to file.
-		FileStreamT<T>& operator<<(const char* buffer);
+		FileStreamT<T>& operator<<( const char* buffer );
 
 	private:
 		OS::PathT<T> filePath;

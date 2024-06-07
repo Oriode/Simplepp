@@ -76,6 +76,8 @@
 #include "Vector.h"
 #include "Time/TimePoint.h"
 #include "Time/Date.h"
+#include "OS/Path.h"
+#include "IO/FileStream.h"
 
 template<typename T>
 class LogHandlerT {
@@ -107,6 +109,7 @@ using LogHandler = LogHandlerT<char>;
 template<typename T>
 class LogDefaultHandlerT : public LogHandlerT<T> {
 public:
+	~LogDefaultHandlerT();
 
 	virtual void message( const BasicString<T>& logTitle,
 						  const BasicString<T>& logMessage,
@@ -126,9 +129,21 @@ public:
 	virtual void increaseIndent() override;
 	virtual void decreaseIndent() override;
 
+	///@brief	Set an output file path to write the resulting logs into a file.
+	void setOutFilePath( const OS::Path & outFilePath );
+
+	void setSTDOut( bool bSTDOut );
+	void setFileOut( bool bFileOut );
+
+
 private:
 	int indent{ 0 };
 	Vector<Time::TimePointMS> stepStartTimeStack;
+
+	bool bSTDOut{ false };
+	bool bFileOut{ false };
+
+	IO::FileStream* fileStream{ NULL };
 };
 
 using LogDefaultHandler = LogDefaultHandlerT<char>;
@@ -249,6 +264,9 @@ public:
 	static void increaseIndent();
 	static void lowerIndent();
 
+	const LogDefaultHandlerT<T> & getDefaultHandler() const;
+	LogDefaultHandlerT<T> & getDefaultHandler();
+
 
 #if defined WIN32 && defined ENABLE_WIN32
 	static void displayWindowsDebug( const BasicString<T>& message, const TCHAR* fileName, unsigned int lineNumber );
@@ -274,95 +292,4 @@ using Log = LogT<char>;
 
 #include "Log.hpp"
 
-template<typename T>
-inline void LogDefaultHandlerT<T>::message( const BasicString<T>& logTitle, const BasicString<T>& logMessage, typename SimpleLogT<T>::MessageSeverity severity, typename SimpleLogT<T>::MessageColor color ) {
-	static const BasicString<T> severityStrTable[] = { "  ERROR", "WARNING", "   INFO", "VERBOSE" };
 
-	if ( logTitle.getSize() == Size( 0 ) && logMessage.getSize() == Size( 0 ) ) {
-		std::cout << std::endl;
-		return;
-	}
-
-	SimpleLogT<T>::setConsoleColor( color );
-
-	BasicString<T> str;
-
-	// Display the current date.
-	str << BasicString<T>::ElemType( '[' );
-	str << Time::Date( Time::getTime<Time::Second>() ).toStringISO();
-	str << BasicString<T>::ElemType( ']' );
-
-	str << BasicString<T>::ElemType( '[' );
-	str << severityStrTable[ static_cast< unsigned char >( severity ) ];
-	str << BasicString<T>::ElemType( ']' );
-
-	//  Display the current indentation.
-	for ( Size i( 0 ); i < this->stepStartTimeStack.getSize(); i++ ) {
-		str << BasicString<T>::ElemType( ' ' );
-		str << BasicString<T>::ElemType( ' ' );
-		str << BasicString<T>::ElemType( '|' );
-	}
-
-	str << BasicString<T>::ElemType( ' ' );
-
-	if ( logTitle.getSize() > Size( 0 ) ) {
-		str << BasicString<T>::ElemType( '[' );
-		str << logTitle;
-		str << BasicString<T>::ElemType( ']' );
-		str << BasicString<T>::ElemType( ' ' );
-	}
-
-	
-
-	//  Display the current indentation.
-	for ( Size i( 0 ); i < this->indent; i++ ) {
-		str << BasicString<T>::ElemType( '\t' );
-	}
-
-	str << logMessage;
-
-	std::cout << str.toCString();
-	std::cout << std::endl;
-}
-
-template<typename T>
-inline void LogDefaultHandlerT<T>::startStep( const BasicString<T>& logTitle, const BasicString<T>& logMessage ) {
-
-	message( logTitle, logMessage, SimpleLogT<T>::MessageSeverity::Info, SimpleLogT<T>::MessageColor::Cyan );
-
-	this->stepStartTimeStack.push( Time::getTime<Time::MilliSecond>() );
-}
-
-template<typename T>
-inline void LogDefaultHandlerT<T>::endStep( const BasicString<T>& logTitle, const BasicString<T>& logMessage, typename SimpleLogT<T>::MessageColor color ) {
-	Time::TimePointMS nowTimeMS( Time::getTime<Time::MilliSecond>() );
-
-	Time::Duration<Time::MilliSecond> elapsedTime( 0 );
-
-	if ( this->stepStartTimeStack.getSize() > Size( 0 ) ) {
-		Time::TimePointMS& startTimePoint( this->stepStartTimeStack.pop() );
-		elapsedTime = Time::Duration<Time::MilliSecond>( nowTimeMS - startTimePoint );
-	}
-
-	BasicString<T> logTitleWTime;
-
-	logTitleWTime << logTitle;
-	logTitleWTime << BasicString<T>::ElemType( ' ' );
-	logTitleWTime << BasicString<T>::ElemType( '-' );
-	logTitleWTime << BasicString<T>::ElemType( ' ' );
-	logTitleWTime << BasicString<T>::toString( float( elapsedTime.getValue() ) / 1000.0f, 3 );
-	logTitleWTime << BasicString<T>::ElemType( 's' );
-
-
-	message( logTitleWTime, logMessage, SimpleLogT<T>::MessageSeverity::Info, color );
-}
-
-template<typename T>
-inline void LogDefaultHandlerT<T>::increaseIndent() {
-	this->indent++;
-}
-
-template<typename T>
-inline void LogDefaultHandlerT<T>::decreaseIndent() {
-	this->indent--;
-}
