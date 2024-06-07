@@ -4,7 +4,7 @@ namespace Math {
 
 
 		template<typename T>
-		inline typename Value Template::operator() ( const T & x, const T & y ) const {
+		inline Value Template::operator() ( const T & x, const T & y ) const {
 			return _compare( x, y, static_cast< const T * >( NULL ) );
 		}
 

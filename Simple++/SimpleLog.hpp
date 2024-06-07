@@ -162,7 +162,7 @@ void SimpleLogT<T>::displayWindowsDebug( const T * message, const TCHAR * fileNa
 	if ( GetLastError() ) {
 		T messageBuffer[ 2048 ];
 		getWindowsLastError( messageBuffer, sizeof( messageBuffer ) );
-		SimpleLogT<T>::callErrorHandler( messageBuffer, typename SimpleLogT<T>::MessageSeverity::Error, typename SimpleLogT<T>::MessageColor::Red, fileName, lineNumber );
+		SimpleLogT<T>::callErrorHandler( messageBuffer, SimpleLogT<T>::MessageSeverity::Error, SimpleLogT<T>::MessageColor::Red, fileName, lineNumber );
 	}
 }
 

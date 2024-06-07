@@ -73,6 +73,8 @@ public:
 	bool read( Stream * stream, int verbose = 0 );
 
 protected:
+	using Table<T>::protectedCtor;
+
 	BasicVector(BasicVector<T>::protectedCtor);
 };
 

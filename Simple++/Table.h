@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/Operations.h"
 #include "Math/Logical.h"
 #include "Utility.h"
 #include "SimpleLog.h"
@@ -658,7 +659,7 @@ Table<T>& Table<T>::set(Functor& functor) {
 
 template<typename T>
 Table<T>& Table<T>::fill(const T& data) {
-	return apply(Math::Operations::Assign(), data);
+	return apply( Math::Operations::Assign(), data);
 }
 
 template<typename T>

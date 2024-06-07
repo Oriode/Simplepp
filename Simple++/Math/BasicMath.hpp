@@ -68,7 +68,7 @@ namespace Math {
 		static unsigned long long int randomMax(BasicMathT<FakeType>::_randomDevice.max() );
 		unsigned long long int range( max - min );
 		unsigned long long int rng(BasicMathT<FakeType>::_randomDevice() );
-		return unsigned long long int( rng * range / randomMax ) + min;
+		return static_cast<unsigned long long int>( rng * range / randomMax ) + min;
 	}
 
 	template<typename FakeType>
@@ -116,7 +116,7 @@ namespace Math {
 	template<typename FakeType>
 	template<typename T>
 	MATH_FUNC_QUALIFIER constexpr T BasicMathT<FakeType>::pow( const T & v, unsigned int e ) {
-		return ( e == unsigned int( 0 ) ) ? T( 1 ) : v * pow( v, e - unsigned int( 1 ) );
+		return ( e == static_cast<unsigned int>( 0 ) ) ? T( 1 ) : v * pow( v, e - static_cast<unsigned int>( 1 ) );
 	}
 
 	template<typename FakeType>
@@ -158,12 +158,12 @@ namespace Math {
 
 	template<typename FakeType>
 	MATH_FUNC_QUALIFIER float BasicMathT<FakeType>::trunc( const float & x ) {
-		return float( int( x ) );
+		return static_cast<float>( static_cast<int>( x ) );
 	}
 
 	template<typename FakeType>
 	MATH_FUNC_QUALIFIER double BasicMathT<FakeType>::trunc( const double & x ) {
-		return double( long int( x ) );
+		return static_cast<double>( static_cast<long int>( x ) );
 	}
 
 	template<typename FakeType>

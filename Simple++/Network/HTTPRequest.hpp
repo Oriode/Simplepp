@@ -204,7 +204,7 @@ namespace Network {
 		if ( methodIndex < sizeof( HTTPRequestT<T>::verbStrTable ) ) {
 			return HTTPRequestT<T>::verbStrTable[ methodIndex ];
 		} else {
-			return StringASCII::null;
+			return StringASCII::null; 
 		}
 	}
 
