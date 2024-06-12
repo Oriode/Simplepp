@@ -316,7 +316,7 @@ inline void LogDefaultHandlerT<T>::message( const BasicString<T>& logTitle, cons
 	str << BasicString<T>::ElemType( '\n' );
 
 	if ( this->bSTDOut ) {
-		if ( sizeof( T ) == 2 ) {
+		if constexpr ( sizeof( T ) == 2 ) {
 			std::wcout << str.toCString();
 		} else {
 			std::cout << str.toCString();
@@ -325,6 +325,7 @@ inline void LogDefaultHandlerT<T>::message( const BasicString<T>& logTitle, cons
 
 	if ( this->bFileOut && this->fileStream ) {
 		this->fileStream -> operator<<( str.toCString() );
+		this->fileStream->sync();
 	}
 }
 
@@ -380,6 +381,13 @@ inline void LogDefaultHandlerT<T>::setOutFilePath( const OS::Path& outFilePath )
 
 	if ( outFilePath.getSize() > Size( 0 ) ) {
 		this->fileStream = new IO::FileStream( outFilePath, IO::OpenMode::Write );
+	}
+}
+
+template<typename T>
+inline void LogDefaultHandlerT<T>::sync() {
+	if ( this->fileStream ) {
+		this->fileStream->sync();
 	}
 }
 

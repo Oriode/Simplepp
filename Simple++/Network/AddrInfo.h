@@ -328,6 +328,10 @@ namespace Network {
 		 */
 		void setSockType( SockType sockType );
 
+
+		///@brief	Print the content of this object to the logs.
+		void printAddrInfo() const;
+
 	protected:
 		/** @brief	Values that represent Constructors */
 		enum ctor {

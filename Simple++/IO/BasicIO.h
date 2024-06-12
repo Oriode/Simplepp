@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../SimpleLog.h"
+
 namespace IO {
 
 	///@brief BasicIO is the base Class for every Class that can be read/write from a file.

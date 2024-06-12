@@ -132,6 +132,9 @@ public:
 	///@brief	Set an output file path to write the resulting logs into a file.
 	void setOutFilePath( const OS::Path & outFilePath );
 
+	///@brief	Sync the filestream.
+	void sync();
+
 	void setSTDOut( bool bSTDOut );
 	void setFileOut( bool bFileOut );
 

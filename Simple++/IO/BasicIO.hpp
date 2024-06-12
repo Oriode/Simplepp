@@ -25,7 +25,7 @@ namespace IO {
 		DEBUG_SPP( Size expectedSize( sizeof( C ) ); Size beginPos( stream->getPosition() ););
 		bool r( stream->write( ( char* ) buffer, sizeof( C ) ) );
 		DEBUG_SPP( Size charWrote( stream->getPosition() - beginPos ););
-		ASSERT_SPP( charWrote == expectedSize );
+		_ASSERT_SPP( charWrote == expectedSize );
 		return r;
 	}
 
@@ -46,7 +46,7 @@ namespace IO {
 		DEBUG_SPP( Size expectedSize( sizeof( C ) ); Size beginPos( stream->getPosition() ););
 		bool r( stream->read( ( char* ) buffer, sizeof( C ) ) );
 		DEBUG_SPP( Size charRead( stream->getPosition() - beginPos ););
-		ASSERT_SPP( charRead == expectedSize );
+		_ASSERT_SPP( charRead == expectedSize );
 		return r;
 	}
 
@@ -88,7 +88,7 @@ namespace IO {
 		DEBUG_SPP( Size expectedSize( sizeof( C ) * size ); Size beginPos( stream->getPosition() ););
 		bool r( stream->write( ( char* ) buffer, sizeof( C ) * size ) );
 		DEBUG_SPP( Size charWrote( stream->getPosition() - beginPos ););
-		ASSERT_SPP( charWrote == expectedSize );
+		_ASSERT_SPP( charWrote == expectedSize );
 		return r;
 	}
 
@@ -108,7 +108,7 @@ namespace IO {
 		DEBUG_SPP( Size expectedSize( sizeof( C ) * size ); Size beginPos( stream->getPosition() ););
 		bool r( stream->read( ( char* ) buffer, sizeof( C ) * size ) );
 		DEBUG_SPP( Size charRead( stream->getPosition() - beginPos ););
-		ASSERT_SPP( charRead == expectedSize );
+		_ASSERT_SPP( charRead == expectedSize );
 		return r;
 	}
 

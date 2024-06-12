@@ -595,7 +595,7 @@ Table<T>::Table(const Table<T>& v) :
 template<typename T>
 template<typename Functor, typename C>
 Table<T>& Table<T>::apply(Functor& functor, const Table<C>& v) {
-	ASSERT_SPP(getSize() == v.getSize());
+	_ASSERT_SPP(getSize() == v.getSize());
 	for ( Size i(0); i < getSize(); i++ ) {
 		functor(this->dataTable[ i ], v[ i ]);
 	}
@@ -626,7 +626,7 @@ Table<T>& Table<T>::apply(Functor& functor) {
 template<typename T>
 template<typename Functor, typename C>
 Table<T>& Table<T>::set(Functor& functor, const Table<C>& v) {
-	ASSERT_SPP(getSize() == v.getSize());
+	_ASSERT_SPP(getSize() == v.getSize());
 	for ( Size i(0); i < getSize(); i++ ) {
 		T& value(this->dataTable[ i ]);
 		value = functor(v[ i ]);

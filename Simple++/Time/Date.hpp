@@ -35,16 +35,16 @@ namespace Time {
 
 	}
 	template<typename T>
-	DateT<T>::DateT( const DateT & date ) {
+	DateT<T>::DateT( const DateT& date ) {
 		*this = date;
 	}
 	template<typename T>
-	DateT<T>::DateT( const tm & date, TimeT utcBias ) :
+	DateT<T>::DateT( const tm& date, TimeT utcBias ) :
 		utcBias( utcBias ) {
 		*this = date;
 	}
 	template<typename T>
-	DateT<T>::DateT( const TimePoint<Second> & timePoint, TimeT utcBias ) {
+	DateT<T>::DateT( const TimePoint<Second>& timePoint, TimeT utcBias ) {
 		setToTimePoint( timePoint, utcBias );
 	}
 
@@ -56,7 +56,7 @@ namespace Time {
 	/* OPERATOR =	                                                      */
 	/************************************************************************/
 	template<typename T>
-	DateT<T> & DateT<T>::operator=( const DateT<T> & date ) {
+	DateT<T>& DateT<T>::operator=( const DateT<T>& date ) {
 
 		this -> year = date.year;
 		this -> month = date.month;
@@ -69,7 +69,7 @@ namespace Time {
 		return *this;
 	}
 	template<typename T>
-	DateT<T> & DateT<T>::operator=( const tm & date ) {
+	DateT<T>& DateT<T>::operator=( const tm& date ) {
 
 		this -> year = date.tm_year + 1900;
 		this -> month = date.tm_mon;
@@ -83,7 +83,7 @@ namespace Time {
 
 
 	template<typename T>
-	DateT<T> & DateT<T>::operator=( const TimePoint<Second> & timePoint ) {
+	DateT<T>& DateT<T>::operator=( const TimePoint<Second>& timePoint ) {
 		setToTimePoint( timePoint );
 		return *this;
 	}
@@ -94,7 +94,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	void DateT<T>::setToTimePoint( const TimePoint<Second> & timePoint, TimeT utcBias ) {
+	void DateT<T>::setToTimePoint( const TimePoint<Second>& timePoint, TimeT utcBias ) {
 		this -> utcBias = utcBias;
 		this -> year = 1970;
 		this -> month = 0;
@@ -177,7 +177,7 @@ namespace Time {
 		return this -> utcBias;
 	}
 	template<typename T>
-	unsigned char DateT<T>::getWeekDay( const DateT & date ) {
+	unsigned char DateT<T>::getWeekDay( const DateT& date ) {
 		return getWeekDay( date.getDay(), date.getMonth(), date.getYear() );
 	}
 	template<typename T>
@@ -449,7 +449,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	DateT<T>::~DateT() {}
+	DateT<T>::~DateT() { }
 
 
 	template<typename T>
@@ -464,7 +464,7 @@ namespace Time {
 	/* OPERATOR ARITHMETIC                                                  */
 	/************************************************************************/
 	template<typename T>
-	DateT<T> & DateT<T>::operator+=( TimeT timeT ) {
+	DateT<T>& DateT<T>::operator+=( TimeT timeT ) {
 		bool isLeapYear;
 
 		//Get the Year Number
@@ -557,7 +557,7 @@ namespace Time {
 
 
 	template<typename T>
-	DateT<T> & DateT<T>::operator-=( TimeT timeT ) {
+	DateT<T>& DateT<T>::operator-=( TimeT timeT ) {
 		bool isLeapYear;
 
 		//Get the Year Number
@@ -651,7 +651,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	Duration<Second> operator-( const DateT<T> & d1, const DateT<T> & d2 ) {
+	Duration<Second> operator-( const DateT<T>& d1, const DateT<T>& d2 ) {
 		bool isLeapYear;
 
 
@@ -712,7 +712,7 @@ namespace Time {
 	/* OPERATOR LOGICAL                                                     */
 	/************************************************************************/
 	template<typename T>
-	bool DateT<T>::operator==( const DateT & d ) {
+	bool DateT<T>::operator==( const DateT& d ) {
 		return ( this -> getYear() == d.getYear() &&
 				 this -> getMonth() == d.getMonth() &&
 				 this -> getDay() == d.getDay() &&
@@ -722,7 +722,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	bool DateT<T>::operator!=( const DateT & d ) {
+	bool DateT<T>::operator!=( const DateT& d ) {
 		return ( this -> getYear() != d.getYear() ||
 				 this -> getMonth() != d.getMonth() ||
 				 this -> getDay() != d.getDay() ||
@@ -732,7 +732,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	bool DateT<T>::operator<( const DateT & d ) {
+	bool DateT<T>::operator<( const DateT& d ) {
 		return ( this -> getYear() < d.getYear() &&
 				 this -> getMonth() < d.getMonth() &&
 				 this -> getDay() < d.getDay() &&
@@ -742,7 +742,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	bool DateT<T>::operator>( const DateT & d ) {
+	bool DateT<T>::operator>( const DateT& d ) {
 		return ( this -> getYear() > d.getYear() &&
 				 this -> getMonth() > d.getMonth() &&
 				 this -> getDay() > d.getDay() &&
@@ -752,7 +752,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	bool DateT<T>::operator>=( const DateT & d ) {
+	bool DateT<T>::operator>=( const DateT& d ) {
 		return ( this -> getYear() >= d.getYear() &&
 				 this -> getMonth() >= d.getMonth() &&
 				 this -> getDay() >= d.getDay() &&
@@ -762,7 +762,7 @@ namespace Time {
 	}
 
 	template<typename T>
-	bool DateT<T>::operator<=( const DateT & d ) {
+	bool DateT<T>::operator<=( const DateT& d ) {
 		return ( this -> getYear() <= d.getYear() &&
 				 this -> getMonth() <= d.getMonth() &&
 				 this -> getDay() <= d.getDay() &&
@@ -773,14 +773,14 @@ namespace Time {
 
 	template<typename T>
 	template<typename S>
-	const S & DateT<T>::getWeekDayStr( unsigned char weekDay ) {
+	const S& DateT<T>::getWeekDayStr( unsigned char weekDay ) {
 		static const S weekDayShortStr[ 7 ] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fry", "Sat" };
 		return weekDayShortStr[ weekDay ];
 	}
 
 	template<typename T>
 	template<typename S>
-	const S & DateT<T>::getMonthStr( unsigned char month ) {
+	const S& DateT<T>::getMonthStr( unsigned char month ) {
 		static const S monthShortStr[ 12 ] = { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
 		return monthShortStr[ month ];
 	}
@@ -796,25 +796,25 @@ namespace Time {
 
 	template<typename T>
 	template<typename S>
-	void DateT<T>::concat( S & str ) const {
+	void DateT<T>::concat( S& str ) const {
 		str.concat( getWeekDayStr<S>( DateT<T>::getWeekDay( *this ) ) );
 		str.concat( S::ElemType( ' ' ) );
 		str.concat( getMonthStr<S>( getMonth() ) );
-		str.concat(S::ElemType( ' ' ) );
+		str.concat( S::ElemType( ' ' ) );
 		str.concat( getDay() );
-		str.concat(S::ElemType( ' ' ) );
+		str.concat( S::ElemType( ' ' ) );
 		str.concatFill( getHours(), 2, S::ElemType( '0' ) );
-		str.concat(S::ElemType( ':' ) );
+		str.concat( S::ElemType( ':' ) );
 		str.concatFill( getMinutes(), 2, S::ElemType( '0' ) );
-		str.concat(S::ElemType( ':' ) );
+		str.concat( S::ElemType( ':' ) );
 		str.concatFill( getSeconds(), 2, S::ElemType( '0' ) );
-		str.concat(S::ElemType(' '));
-		str.concat(getYear());
+		str.concat( S::ElemType( ' ' ) );
+		str.concat( getYear() );
 	}
 
 	template<typename T>
 	template<typename S>
-	S DateT<T>::toString( const S & tpl ) const {
+	S DateT<T>::toString( const S& tpl ) const {
 		S newString;
 		newString.reserve( 100 );
 		concat( newString, tpl );
@@ -823,7 +823,7 @@ namespace Time {
 
 	template<typename T>
 	template<typename S>
-	void DateT<T>::concat( S & str, const S & tpl ) const {
+	void DateT<T>::concat( S& str, const S& tpl ) const {
 		for ( auto it = tpl.getBegin(); it != tpl.getEnd(); it++ ) {
 			switch ( *it ) {
 				case S::ElemType( '\\' ):
@@ -884,7 +884,7 @@ namespace Time {
 
 	template<typename T>
 	template<typename S>
-	void DateT<T>::concatISO( S & str, DateT<T>::ISOFormat isoFormat ) const {
+	void DateT<T>::concatISO( S& str, DateT<T>::ISOFormat isoFormat ) const {
 
 		str.concatFill( getYear(), 4, S::ElemType( '0' ) );
 		str.concat( S::ElemType( '-' ) );
@@ -930,13 +930,13 @@ namespace Time {
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	DateT<T> DateT<T>::parse( const C ** buffer, const C ** tpl, const EndFunc & endFunc ) {
+	DateT<T> DateT<T>::parse( const C** buffer, const C** tpl, const EndFunc& endFunc ) {
 		DateT<T> newDate;
-		const C *& bufferIt( *buffer );
-		const C * tplIt( *tpl );
+		const C*& bufferIt( *buffer );
+		const C* tplIt( *tpl );
 
 		for ( ; !endFunc( tplIt ); tplIt++ ) {
-			const C & tplR( *tplIt );
+			const C& tplR( *tplIt );
 			switch ( tplR ) {
 				case C( 'H' ):
 					{
@@ -989,8 +989,8 @@ namespace Time {
 
 	template<typename T>
 	template<typename C>
-	void DateT<T>::readUTCBias( const C ** buffer ) {
-		const C *& bufferIt( *buffer );
+	void DateT<T>::readUTCBias( const C** buffer ) {
+		const C*& bufferIt( *buffer );
 
 		TimeT z;
 		C firstChar( bufferIt[ 0 ] );
@@ -1018,11 +1018,11 @@ namespace Time {
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	DateT<T> DateT<T>::parse( const C ** buffer, const EndFunc & endFunc ) {
+	DateT<T> DateT<T>::parse( const C** buffer, const EndFunc& endFunc ) {
 		DateT<T> newDate;
 		newDate.setUTCBias( DateT<T>::getLocalUTCBias() );
 
-		const C *& bufferIt( *buffer );
+		const C*& bufferIt( *buffer );
 
 		// If the string start with the date.
 		if ( bufferIt[ 0 ] != C( 'T' ) ) {
@@ -1033,7 +1033,7 @@ namespace Time {
 			int d = BasicString<C>::parseNumber<unsigned char, 2>( &bufferIt );
 
 			newDate.setYear( y );
-			newDate.setMonth( m - 1 );
+			newDate.setMonth( static_cast< unsigned char >( m - 1 ) );
 			newDate.setDay( d );
 		} else {
 			newDate.setYear( 0 );
@@ -1075,48 +1075,48 @@ namespace Time {
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	static DateT<T> DateT<T>::parse( const C * buffer, const EndFunc & endFunc ) {
-		const C ** tmpBuffer( &buffer );
+	static DateT<T> DateT<T>::parse( const C* buffer, const EndFunc& endFunc ) {
+		const C** tmpBuffer( &buffer );
 		return DateT<T>::parse( tmpBuffer, endFunc );
 	}
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	static DateT<T> DateT<T>::parse( const BasicString<C> & str, const EndFunc & endFunc ) {
+	static DateT<T> DateT<T>::parse( const BasicString<C>& str, const EndFunc& endFunc ) {
 		return DateT<T>::parse( str.toCString(), endFunc );
 	}
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	DateT<T> DateT<T>::parse( const C * buffer, const C * tpl, const EndFunc & endFunc ) {
-		const C ** tmpBuffer( &buffer );
-		const C ** tmpTpl( &tpl );
+	DateT<T> DateT<T>::parse( const C* buffer, const C* tpl, const EndFunc& endFunc ) {
+		const C** tmpBuffer( &buffer );
+		const C** tmpTpl( &tpl );
 		return DateT<T>::parse( tmpBuffer, tmpTpl, endFunc );
 	}
 
 	template<typename T>
 	template<typename C, typename EndFunc>
-	static DateT<T> DateT<T>::parse( const BasicString<C> & str, const BasicString<C> & tpl, const EndFunc & endFunc ) {
+	static DateT<T> DateT<T>::parse( const BasicString<C>& str, const BasicString<C>& tpl, const EndFunc& endFunc ) {
 		str.allocate( 10 );
 		return DateT<T>::parse( str.toCString(), tpl.toCString(), endFunc );
 	}
 
 	template<typename ratio, typename T>
-	DateT<T> operator+( const DateT<T> & date, const Duration<ratio> & duration ) {
+	DateT<T> operator+( const DateT<T>& date, const Duration<ratio>& duration ) {
 		DateT d( date );
 		d += duration;
 		return d;
 	}
 
 	template<typename ratio, typename T>
-	DateT<T> operator+( const Duration<ratio> & duration, const DateT<T> & date ) {
+	DateT<T> operator+( const Duration<ratio>& duration, const DateT<T>& date ) {
 		DateT d( date );
 		d += duration;
 		return d;
 	}
 
 	template<typename ratio, typename T>
-	DateT<T> operator-( const DateT<T> & date, const Duration<ratio> & duration ) {
+	DateT<T> operator-( const DateT<T>& date, const Duration<ratio>& duration ) {
 		DateT d( date );
 		d -= duration;
 		return d;
@@ -1124,12 +1124,12 @@ namespace Time {
 
 	template<typename T>
 	template<typename ratio>
-	DateT<T> & DateT<T>::operator+=( const Duration<ratio> & duration ) {
+	DateT<T>& DateT<T>::operator+=( const Duration<ratio>& duration ) {
 		return operator+=( Duration<Second>( duration ).getValue() );
 	}
 	template<typename T>
 	template<typename ratio>
-	DateT<T> & DateT<T>::operator-=( const Duration<ratio> & duration ) {
+	DateT<T>& DateT<T>::operator-=( const Duration<ratio>& duration ) {
 		return operator-=( Duration<Second>( duration ).getValue() );
 	}
 

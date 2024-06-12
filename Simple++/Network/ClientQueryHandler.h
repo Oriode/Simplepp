@@ -12,7 +12,7 @@ namespace Network {
 		///@param	queryMessage	HTTPQuery that triggered this answer.
 		///@param	responseMessage	Response,  can be NULL if corrupted or unexpected.
 		///@param	error	Error state if any. 
-		virtual void onAnswer( const HTTPMessage* queryMessage, const HTTPMessage* responseMessage, HTTPError error ) { };
+		virtual void onAnswer( const HTTPMessage*, const HTTPMessage*, HTTPError ) { };
 
 		///@brief	Called when the handler has finished it's job and can be deleted.
 		virtual void onDelete() { };
