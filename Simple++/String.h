@@ -11,6 +11,7 @@
 #include "SimpleLog.h"
 #include "Math/BasicComparable.h"
 #include "Vector.h"
+#include "Optional.h"
 
 #if defined WIN32 && defined ENABLE_WIN32
 #include <WinSock2.h>
@@ -206,6 +207,8 @@ public:
 	template<typename C, size_t N>
 	BasicString & operator<<( const C (& str)[N] );
 
+	template<typename C>
+	BasicString& operator<<( const Optional<C> & o );
 
 	BasicString & operator<<( const unsigned char & uc );
 	BasicString & operator<<( const unsigned short & us );
@@ -243,6 +246,9 @@ public:
 	///@returns	The result of the operation.
 	template<typename C, size_t N>
 	BasicString & operator+=( const C (& str)[N] );
+
+	template<typename C>
+	BasicString& operator+=( const Optional<C>& o );
 
 	///@brief		Concat operator with an Integer.
 	///@param	uc	Integer to be concatenated.
@@ -299,6 +305,9 @@ public:
 
 	template<typename C, size_t N>
 	BasicString & concat( const C (& str)[N] );
+
+	template<typename C>
+	BasicString& concat( const Optional<C>& o );
 
 	BasicString & concat( const bool & b );
 	BasicString & concat( const char & c );
@@ -1559,6 +1568,9 @@ protected:
 
 	template<typename C, size_t N>
 	BasicString & _concatWOS( const C (& str)[N] );
+
+	template<typename C>
+	BasicString& _concatWOS( const Optional<C> & o );
 
 	BasicString & _concatWOS( const bool & b );
 	BasicString & _concatWOS( const char & c );

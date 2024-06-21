@@ -504,6 +504,15 @@ BasicString<T>& BasicString<T>::concat( const C( &str )[ N ] ) {
 	return *this;
 }
 
+template<typename T>
+template<typename C>
+inline BasicString<T>& BasicString<T>::concat( const Optional<C>& o ) {
+	_concatWOS( o );
+
+	*this -> iteratorEnd = T( '\0' );
+	return *this;
+}
+
 
 
 template<typename T>
@@ -859,7 +868,16 @@ BasicString<T>& BasicString<T>::concat( const C* buffer, const Size& bufferSize 
 template<typename T>
 template<typename C, size_t N>
 BasicString<T>& BasicString<T>::_concatWOS( const C( &str )[ N ] ) {
-	this -> concat( str );
+	_concatWOS( str, N - 1 );
+	return *this;
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T>& BasicString<T>::_concatWOS( const Optional<C>& o ) {
+	if ( o.isSet() ) {
+		_concatWOS( o.getValue() );
+	}
 	return *this;
 }
 
@@ -4226,7 +4244,7 @@ inline Size BasicString<T>::escapeSpecials( const T* inputStr, T** outStr ) {
 				*( outIt++ ) = T( '\\' );
 				*( outIt++ ) = T( 'r' );
 				break;
-			case T('\t'):
+			case T( '\t' ):
 				*( outIt++ ) = T( '\\' );
 				*( outIt++ ) = T( 't' );
 				break;
@@ -4679,6 +4697,12 @@ BasicString<T>& BasicString<T>::operator<<( const C( &str )[ N ] ) {
 }
 
 template<typename T>
+template<typename C>
+inline BasicString<T>& BasicString<T>::operator<<( const Optional<C>& o ) {
+	return concat( o );
+}
+
+template<typename T>
 BasicString<T>& BasicString<T>::operator<<( const unsigned char& uc ) {
 	return concat( uc );
 }
@@ -4798,6 +4822,12 @@ template<typename T>
 template<typename C, size_t N>
 BasicString<T>& BasicString<T>::operator+=( const C( &str )[ N ] ) {
 	return concat( str );
+}
+
+template<typename T>
+template<typename C>
+inline BasicString<T>& BasicString<T>::operator+=( const Optional<C>& o ) {
+	return concat( o );
 }
 
 template<typename T>
